@@ -104,7 +104,13 @@
     "openFromFile": "Abrir desde archivo",
     "openFromImage": "Abrir desde imagen",
     "orDragFileHere": "o arrastra el archivo aquí",
-    "imageRecognitionUnavailable": "El servicio de reconocimiento de imágenes no está disponible"
+    "imageRecognitionUnavailable": "El servicio de reconocimiento de imágenes no está disponible",
+    "formats": {
+      "sequence": "Secuencia",
+      "peptide": "Péptido",
+      "oneLetterCode": "Código de 1 letra",
+      "threeLetterCode": "Código de 3 letras"
+    }
   },
   "save": {
     "title": "Guardar estructura",
@@ -114,7 +120,12 @@
     "convertError": "¡Error de conversión! {error}",
     "helmSmilesExportNotice": "La molécula se exportará usando SMILES en línea y, al cargarla, aparecerá como un monómero CHEM",
     "helmAliasExportNotice": "Algunos monómeros no tienen alias en la biblioteca principal de HELM; se exportan usando los alias de Ketcher.",
-    "sequenceTypeRecognitionError": "Error al reconocer el tipo de secuencia (ARN, ADN o péptido)"
+    "sequenceTypeRecognitionError": "Error al reconocer el tipo de secuencia (ARN, ADN o péptido)",
+    "formats": {
+      "sequence1Letter": "Secuencia (código de 1 letra)",
+      "sequence3Letter": "Secuencia (código de 3 letras)",
+      "svgDocument": "Documento SVG"
+    }
   },
   "updateSequence": {
     "title": "Actualizar secuencia",

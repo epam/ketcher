@@ -14,6 +14,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
 import { groupNameToTabLabelKey } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/groupNameToTabLabelKey';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -45,7 +46,7 @@ const RnaElementsTabsView = ({
   editPreset,
   libraryName,
 }: RnaElementsViewProps) => {
-  const { t } = useTranslation('macromoleculesDialogs');
+  const { t } = useTranslation(['macromoleculesDialogs', 'macromolecules']);
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -149,33 +150,45 @@ const RnaElementsTabsView = ({
           ) : (
             <DetailsContainer compact>
               <>
-                {groups.map(({ groupItems, groupTitle }) => (
-                  <MonomerGroup
-                    key={groupTitle}
-                    title={
-                      [MonomerGroups.BASES, MonomerGroups.NUCLEOTIDES].includes(
-                        groupName as MonomerGroups,
-                      ) || groups.length > 1
-                        ? groupTitle
-                        : undefined
-                    }
-                    groupName={groupName}
-                    items={groupItems}
-                    selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) => onSelectItem(monomer, groupName)}
-                  />
-                ))}
-                {variantMonomers.map(({ groupTitle, groupItems }) => (
-                  <MonomerGroup
-                    key={groupTitle}
-                    title={groupTitle}
-                    items={groupItems}
-                    groupName={groupName as MonomerGroups}
-                    libraryName={libraryName}
-                    selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) => onSelectItem(monomer, groupName)}
-                  />
-                ))}
+                {groups.map(({ groupItems, groupTitle }) => {
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={
+                        [
+                          MonomerGroups.BASES,
+                          MonomerGroups.NUCLEOTIDES,
+                        ].includes(groupName as MonomerGroups) ||
+                        groups.length > 1
+                          ? resolvedTitle
+                          : undefined
+                      }
+                      groupName={groupName}
+                      items={groupItems}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        onSelectItem(monomer, groupName)
+                      }
+                    />
+                  );
+                })}
+                {variantMonomers.map(({ groupTitle, groupItems }) => {
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={resolvedTitle}
+                      items={groupItems}
+                      groupName={groupName as MonomerGroups}
+                      libraryName={libraryName}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        onSelectItem(monomer, groupName)
+                      }
+                    />
+                  );
+                })}
               </>
             </DetailsContainer>
           );

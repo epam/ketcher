@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { ViewSwitcher } from './ViewSwitcher';
@@ -48,6 +48,7 @@ import { openErrorModal, openErrorTooltip } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { localizeOptions } from 'helpers/localizeOptions';
 import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
 export interface Props {
@@ -126,10 +127,10 @@ const FASTA = 'fasta';
 const ONE_LETTER = 'one-letter';
 const THREE_LETTER = 'three-letter';
 
-const options: Array<Option> = [
+const formatOptionsConfig: Array<Option> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'seq', label: 'Sequence' },
+  { id: 'seq', label: 'Sequence', labelKey: 'open.formats.sequence' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
@@ -137,15 +138,23 @@ const options: Array<Option> = [
   { id: 'biln', label: 'BILN' },
 ];
 
-const additionalOptions: Array<Option> = [
+const additionalOptionsConfig: Array<Option> = [
   { id: RNA, label: 'RNA' },
   { id: 'dna', label: 'DNA' },
-  { id: PEPTIDE, label: 'Peptide' },
+  { id: PEPTIDE, label: 'Peptide', labelKey: 'open.formats.peptide' },
 ];
 
-const peptideLettersFormatOptions: Array<Option> = [
-  { id: ONE_LETTER, label: '1-letter code' },
-  { id: THREE_LETTER, label: '3-letter code' },
+const peptideLettersFormatOptionsConfig: Array<Option> = [
+  {
+    id: ONE_LETTER,
+    label: '1-letter code',
+    labelKey: 'open.formats.oneLetterCode',
+  },
+  {
+    id: THREE_LETTER,
+    label: '3-letter code',
+    labelKey: 'open.formats.threeLetterCode',
+  },
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
@@ -344,6 +353,15 @@ const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
+  const options = useMemo(() => localizeOptions(formatOptionsConfig, t), [t]);
+  const additionalOptions = useMemo(
+    () => localizeOptions(additionalOptionsConfig, t),
+    [t],
+  );
+  const peptideLettersFormatOptions = useMemo(
+    () => localizeOptions(peptideLettersFormatOptionsConfig, t),
+    [t],
+  );
   const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
@@ -397,7 +415,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setFileName(fileName);
     if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
+      const option = formatOptionsConfig.find((el) => el.id === fileExtension);
       const id = option?.id ? option.id : SEQ;
       setFormatSelection(id);
     }

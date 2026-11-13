@@ -3,6 +3,20 @@ import { AmbiguousMonomerPreview } from './AmbiguousMonomerPreview';
 import { type AmbiguousMonomerPreviewState, PreviewType } from './types';
 import type { AmbiguousMonomerType } from 'ketcher-core';
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'ambiguousMonomerPreview.alternatives': 'Alternatives',
+        'ambiguousMonomerPreview.mixed': 'Mixed',
+        'ambiguousMonomerPreview.anyAminoAcid': 'Any amino acid',
+        'ambiguousMonomerPreview.anyBase': 'Any base',
+      };
+      return translations[key] ?? key;
+    },
+  }),
+}));
+
 describe('AmbiguousMonomerPreview', () => {
   it('should sort mixed monomers by percentage from highest to lowest', () => {
     const mockMonomer = {

@@ -10,8 +10,8 @@ import { isAttachmentGroupCreationSelectionValid } from '../utils';
 
 type Params = ItemEventParams<AtomContextMenuProps>;
 
-export const ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP =
-  'Selection must contain only continuous atoms without extra elements or bonds';
+export const ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP_KEY =
+  'components:rgroup.createAttachmentGroupDisabled';
 
 const useAttachmentGroupCreate = () => {
   const { ketcherId } = useAppContext();

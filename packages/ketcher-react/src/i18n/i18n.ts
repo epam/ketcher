@@ -83,7 +83,7 @@ export const SUPPORTED_LANGUAGES: SupportedLanguage[] = IS_MULTI_LANGUAGE_BUILD
         >
       ).map((code) => ({
         code,
-        label: languageLabel(code, { 'zh-CN': '简体中文' }),
+        label: languageLabel(code, { 'zh-CN': '简体中文', es: 'Español' }),
       })),
     ]
   : [{ code: 'en', label: languageLabel('en') }];

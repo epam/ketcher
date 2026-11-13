@@ -1,4 +1,5 @@
 import { type CSSProperties, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Container,
   Content,
@@ -15,12 +16,17 @@ interface Props {
 }
 
 const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
+  const { t } = useTranslation('components');
   const { monomer, presetMonomers } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
-  const header = isAlternatives ? 'Alternatives' : 'Mixed';
-  const aminoAcidFallback = monomer.label === 'X' ? 'Any amino acid' : null;
-  const baseFallback = monomer.label === 'N' ? 'Any base' : null;
+  const header = isAlternatives
+    ? t('ambiguousMonomerPreview.alternatives')
+    : t('ambiguousMonomerPreview.mixed');
+  const aminoAcidFallback =
+    monomer.label === 'X' ? t('ambiguousMonomerPreview.anyAminoAcid') : null;
+  const baseFallback =
+    monomer.label === 'N' ? t('ambiguousMonomerPreview.anyBase') : null;
   const fallback = aminoAcidFallback ?? baseFallback;
 
   const { monomers, options } = monomer;

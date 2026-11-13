@@ -1,8 +1,9 @@
 import { Tooltip } from '@mui/material';
 import type { FC } from 'react';
 import { Item } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import useAttachmentGroupCreate, {
-  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP,
+  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP_KEY,
 } from '../hooks/useAttachmentGroupCreate';
 import type {
   AtomContextMenuProps,
@@ -22,6 +23,7 @@ const AttachmentGroupActionMenuItem: FC<Props> = ({
   showCreate,
   ...menuItemProps
 }) => {
+  const { t } = useTranslation('components');
   const {
     handler: handleAttachmentGroupCreate,
     isDisabled: attachmentGroupCreateDisabled,
@@ -47,7 +49,7 @@ const AttachmentGroupActionMenuItem: FC<Props> = ({
       <Tooltip
         title={
           isAttachmentGroupCreateDisabled
-            ? ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP
+            ? t(ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP_KEY)
             : ''
         }
         placement="right"
@@ -57,7 +59,9 @@ const AttachmentGroupActionMenuItem: FC<Props> = ({
           },
         }}
       >
-        <span className={styles.tooltipTarget}>Create attachment group</span>
+        <span className={styles.tooltipTarget}>
+          {t('rgroup.createAttachmentGroup')}
+        </span>
       </Tooltip>
     </Item>
   );

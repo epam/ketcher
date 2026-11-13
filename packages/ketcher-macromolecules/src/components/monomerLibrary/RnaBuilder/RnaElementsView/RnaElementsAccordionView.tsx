@@ -4,6 +4,7 @@ import {
   selectFilteredMonomers,
 } from 'state/library';
 import { MonomerGroups } from '../../../../constants';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import { Summary } from './Summary';
 import { Icon, IconName } from 'ketcher-react';
 import {
@@ -50,7 +51,7 @@ const RnaElementsAccordionView = ({
   editPreset,
   libraryName,
 }: Props) => {
-  const { t } = useTranslation('macromoleculesDialogs');
+  const { t } = useTranslation(['macromoleculesDialogs', 'macromolecules']);
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -158,11 +159,12 @@ const RnaElementsAccordionView = ({
                     MonomerGroups.NUCLEOTIDES,
                     MonomerGroups.PEPTIDES,
                   ].includes(groupData.groupName as MonomerGroups);
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
 
                   return (
                     <MonomerGroup
                       key={groupTitle}
-                      title={shouldShowTitle ? groupTitle : undefined}
+                      title={shouldShowTitle ? resolvedTitle : undefined}
                       groupName={groupData.groupName}
                       items={groupItems}
                       selectedMonomerUniqueKey={activeMonomerKey}
@@ -172,19 +174,25 @@ const RnaElementsAccordionView = ({
                     />
                   );
                 })}
-                {variantMonomers.map((group) => (
-                  <MonomerGroup
-                    key={group.groupTitle}
-                    title={group.groupTitle}
-                    items={group.groupItems}
-                    groupName={groupData.groupName as MonomerGroups}
-                    libraryName={libraryName}
-                    selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) =>
-                      onSelectItem(monomer, groupData.groupName)
-                    }
-                  />
-                ))}
+                {variantMonomers.map((group) => {
+                  const resolvedTitle = resolveLocalizedTitle(
+                    group.groupTitle,
+                    t,
+                  );
+                  return (
+                    <MonomerGroup
+                      key={group.groupTitle}
+                      title={resolvedTitle}
+                      items={group.groupItems}
+                      groupName={groupData.groupName as MonomerGroups}
+                      libraryName={libraryName}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        onSelectItem(monomer, groupData.groupName)
+                      }
+                    />
+                  );
+                })}
               </>
             </DetailsContainer>
           );

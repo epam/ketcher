@@ -222,7 +222,7 @@ class ReStruct {
     if (!cc) return;
 
     cc.delete(aid);
-    if (cc.size < 1) this.connectedComponents.delete(atom.component);
+    if (cc.size === 0) this.connectedComponents.delete(atom.component);
 
     atom.component = -1;
   }

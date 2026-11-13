@@ -470,8 +470,7 @@
             "y": -4.25
         },
         "alias": "meL",
-        "templateId": "meL___N-Methyl-Leucine",
-        "seqid": 8
+        "templateId": "meL___N-Methyl-Leucine"
     },
     "monomer8": {
         "type": "monomer",

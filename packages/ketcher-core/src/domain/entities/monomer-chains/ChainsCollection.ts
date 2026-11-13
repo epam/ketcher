@@ -108,7 +108,7 @@ export class ChainsCollection {
       chain.forEachNode(({ node }) => {
         node.monomers.forEach((monomer) => {
           const sideConnections = monomer.sideConnections;
-          if (sideConnections.length) {
+          if (sideConnections.length > 0) {
             sideConnections.forEach((sideConnection) => {
               const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
               const anotherChain =
@@ -159,7 +159,7 @@ export class ChainsCollection {
     const firstMonomersInMiddleOfChains =
       this.getFirstMonomersInMiddleOfChains(filteredMonomers);
 
-    if (firstMonomersInMiddleOfChains.length) {
+    if (firstMonomersInMiddleOfChains.length > 0) {
       firstMonomersInMiddleOfChains.forEach(
         (firstMonomerInMiddleOfChain: BaseMonomer) => {
           chainsCollection.add(new Chain(firstMonomerInMiddleOfChain));
@@ -577,7 +577,7 @@ export class ChainsCollection {
     const monomerToChain = this.monomerToChain;
     const monomerToNode = this.monomerToNode;
 
-    while (chains.length) {
+    while (chains.length > 0) {
       const { group, chain } = chains.pop() as GrouppedChain;
       const chainNodes = chain.nodes;
 

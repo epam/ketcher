@@ -49,7 +49,7 @@ const useAtomStereo = () => {
       );
       stereoAtomIdsRef.current = stereoAtomIds;
 
-      if (Array.isArray(stereoAtomIds) && stereoAtomIds.length !== 0) {
+      if (Array.isArray(stereoAtomIds) && stereoAtomIds.length > 0) {
         return false;
       }
 

@@ -133,7 +133,7 @@ class Table extends Component<TableProps, TableState> {
 
   result = (): PeriodTableResult => {
     const { type, value } = this.state;
-    if (!value || (Array.isArray(value) && !value.length)) {
+    if (!value || (Array.isArray(value) && value.length === 0)) {
       return null;
     }
     if (type === 'atom') {

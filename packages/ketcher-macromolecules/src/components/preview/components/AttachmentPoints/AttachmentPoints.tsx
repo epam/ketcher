@@ -11,7 +11,7 @@ type Properties = {
 };
 
 const AttachmentPoints = ({ preparedAttachmentPointsData }: Properties) => {
-  if (!preparedAttachmentPointsData.length) {
+  if (preparedAttachmentPointsData.length === 0) {
     return null;
   }
 

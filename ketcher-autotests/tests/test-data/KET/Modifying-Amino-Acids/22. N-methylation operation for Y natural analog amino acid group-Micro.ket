@@ -856,8 +856,7 @@
             "y": -4.25
         },
         "alias": "meY",
-        "templateId": "meY___N-Methyl-Tyrosine",
-        "seqid": 15
+        "templateId": "meY___N-Methyl-Tyrosine"
     },
     "monomer15": {
         "type": "monomer",

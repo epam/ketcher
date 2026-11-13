@@ -268,7 +268,6 @@
             "y": -2.75
         },
         "alias": "meU",
-        "templateId": "meU___N-Methyl-Selenocysteine",
-        "seqid": 3
+        "templateId": "meU___N-Methyl-Selenocysteine"
     }
 }

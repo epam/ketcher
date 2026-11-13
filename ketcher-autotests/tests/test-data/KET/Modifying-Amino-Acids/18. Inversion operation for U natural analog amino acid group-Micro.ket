@@ -243,8 +243,7 @@
             "y": -1.25
         },
         "alias": "dU",
-        "templateId": "dU___D-selenocysteine",
-        "seqid": 2
+        "templateId": "dU___D-selenocysteine"
     },
     "monomer2": {
         "type": "monomer",

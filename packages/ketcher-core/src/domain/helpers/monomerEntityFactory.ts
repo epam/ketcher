@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -64,13 +63,11 @@ export type MonomerEntityClass =
 export function monomerEntityFactory(
   monomer: MonomerItemType,
 ): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
 export function monomerEntityFactory(
   monomer: MonomerOrAmbiguousType,
 ): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
 export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
+  monomer: MonomerOrAmbiguousType | MonomerItemType,
 ): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     return [

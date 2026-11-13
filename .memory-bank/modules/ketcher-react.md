@@ -60,6 +60,8 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 
 ## Assumptions & Constraints
 
+- `AtomMenuItems` checks `queryProperties.customQuery` on every editable target atom using the same truthiness check as Atom Properties. Any custom-query target disables the Query properties submenu, including for mixed atom selections; unrelated menu actions keep their existing availability.
+
 - The paste tool and S-Group dialog do not run a canvas-wide S-Group expansion pass. Non-SUP groups are always expanded according to `SGroup.isExpanded()`; these UI paths do not normalize the raw `data.expanded` flag of unrelated groups.
 
 - The `Editor.tsx` file manages the `window.isPolymerEditorTurnedOn` global flag. This is used to turn on/off some functionality in ketcher (f.e. some api methods, events). It is bad practice and should be refactored in the future to get rid of this flag.

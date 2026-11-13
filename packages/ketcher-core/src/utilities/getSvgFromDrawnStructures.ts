@@ -21,7 +21,7 @@ const getDrawnStructuresClientRect = (
     .map((child) => child.getBoundingClientRect())
     .filter((rect) => rect.width > 0 || rect.height > 0);
 
-  if (!contentRects.length) {
+  if (contentRects.length === 0) {
     return drawnStructures.getBoundingClientRect();
   }
 

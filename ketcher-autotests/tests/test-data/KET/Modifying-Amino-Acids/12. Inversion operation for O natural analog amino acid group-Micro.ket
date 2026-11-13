@@ -394,8 +394,7 @@
             "y": -1.25
         },
         "alias": "dO",
-        "templateId": "dO___D-pyrrolysine",
-        "seqid": 2
+        "templateId": "dO___D-pyrrolysine"
     },
     "monomer2": {
         "type": "monomer",

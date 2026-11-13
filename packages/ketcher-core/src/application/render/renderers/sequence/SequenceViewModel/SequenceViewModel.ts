@@ -33,13 +33,14 @@ interface IForEachNodeParams {
 
 export class SequenceViewModel {
   private readonly nodes: ITwoStrandedChainItem[] = [];
-  public chains: SequenceViewModelChain[] = [];
   private readonly monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     ITwoStrandedChainItem
   > = new Map();
 
   private readonly chainToHasAntisense: Map<Chain, boolean> = new Map();
+
+  public chains: SequenceViewModelChain[] = [];
 
   constructor(public chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
@@ -234,7 +235,7 @@ export class SequenceViewModel {
 
       if (
         lastTwoStrandedNodeWithHydrogenBond &&
-        nodesBeforeHydrogenConnectionToBase.length
+        nodesBeforeHydrogenConnectionToBase.length > 0
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
@@ -265,8 +266,7 @@ export class SequenceViewModel {
             currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
+                  monomer instanceof RNABase && monomer.hydrogenBonds.length > 0
                 );
               },
             );

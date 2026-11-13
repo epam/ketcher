@@ -20,7 +20,7 @@
         <fragment id="4">
             <n id="5" p="25.980762 -0.000000"/>
             <n id="6" p="0.000000 15.000000"/>
-            <n id="7" p="0.000000 44.999985">
+            <n id="7" NodeType="GenericNickname" GenericNickname="*" p="0.000000 44.999985">
                 <t p="0.000000 44.999985" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>
                 </t>

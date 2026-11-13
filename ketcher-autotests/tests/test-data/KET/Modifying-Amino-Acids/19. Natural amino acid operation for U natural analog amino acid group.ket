@@ -57,8 +57,7 @@
             "y": -1.25
         },
         "alias": "U",
-        "templateId": "U___Selenocysteine",
-        "seqid": 1
+        "templateId": "U___Selenocysteine"
     },
     "monomerTemplate-U___Selenocysteine": {
         "type": "monomerTemplate",

@@ -143,8 +143,7 @@
             "y": -1.25
         },
         "alias": "C",
-        "templateId": "C___Cysteine",
-        "seqid": 1
+        "templateId": "C___Cysteine"
     },
     "monomerTemplate-C___Cysteine": {
         "type": "monomerTemplate",

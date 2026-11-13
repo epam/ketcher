@@ -84,7 +84,8 @@
       "singledouble": "Single/Double Bond",
       "singlearomatic": "Single/Aromatic Bond",
       "doublearomatic": "Double/Aromatic Bond",
-      "dative": "Dative Bond"
+      "dative": "Dative Bond",
+      "haptic": "Haptic Bond"
     }
   },
   "server": {

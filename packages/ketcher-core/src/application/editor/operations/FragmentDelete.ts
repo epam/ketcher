@@ -21,11 +21,11 @@ import type { StructProperty } from 'domain/entities/struct';
 import { OperationType } from './OperationType';
 
 class FragmentDelete extends BaseOperation {
-  readonly frid: number;
   static InverseConstructor: new (
     fragmentId?: number | null,
     properties?: Array<StructProperty>,
   ) => BaseOperation;
+  readonly frid: number;
 
   constructor(fragmentId: number) {
     super(OperationType.FRAGMENT_DELETE, 100);

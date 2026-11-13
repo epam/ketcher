@@ -302,8 +302,7 @@
             "y": -1.25
         },
         "alias": "dM",
-        "templateId": "dM___D-Methionine",
-        "seqid": 2
+        "templateId": "dM___D-Methionine"
     },
     "monomer2": {
         "type": "monomer",

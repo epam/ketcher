@@ -406,7 +406,6 @@
             "y": -4.25
         },
         "alias": "meC",
-        "templateId": "meC___N-Methyl-Cysteine",
-        "seqid": 8
+        "templateId": "meC___N-Methyl-Cysteine"
     }
 }

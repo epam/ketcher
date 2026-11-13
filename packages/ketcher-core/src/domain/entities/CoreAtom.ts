@@ -49,29 +49,6 @@ export class Atom extends DrawingEntity {
     super(position);
   }
 
-  public get center() {
-    return this.position;
-  }
-
-  public addBond(bond: Bond | MonomerToAtomBond) {
-    if (!this.bonds.includes(bond)) {
-      this.bonds.push(bond);
-    }
-  }
-
-  public deleteBond(bondId: number) {
-    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
-  }
-
-  public setRenderer(renderer: AtomRenderer) {
-    this.renderer = renderer;
-    super.setBaseRenderer(renderer as BaseRenderer);
-  }
-
-  public get isCarbon() {
-    return this.label === AtomLabel.C;
-  }
-
   private calculateConnections() {
     let connectionsAmount = 0;
 
@@ -104,58 +81,6 @@ export class Atom extends DrawingEntity {
     }
 
     return connectionsAmount;
-  }
-
-  public get hasAlias() {
-    return Boolean(this.properties.alias);
-  }
-
-  public get hasRadical() {
-    return isNumber(this.properties.radical) && this.properties.radical !== 0;
-  }
-
-  public get hasCharge() {
-    return isNumber(this.properties.charge) && this.properties.charge !== 0;
-  }
-
-  public get hasExplicitValence() {
-    return (
-      isNumber(this.properties.explicitValence) &&
-      this.properties.explicitValence !== -1
-    );
-  }
-
-  public get hasExplicitIsotope() {
-    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
-  }
-
-  public get hasQueryProperties() {
-    const {
-      ringBondCount,
-      substitutionCount,
-      unsaturatedAtom,
-      hCount,
-      queryProperties,
-    } = this.properties;
-
-    return Boolean(
-      ringBondCount ||
-      substitutionCount ||
-      unsaturatedAtom ||
-      hCount ||
-      Object.values(queryProperties ?? {}).some(
-        (value) => Boolean(value) || value === 0,
-      ),
-    );
-  }
-
-  public get hasBadValence() {
-    const { hydrogenAmount } = this.calculateValence();
-    return hydrogenAmount < 0;
-  }
-
-  public get hasStereoLabel() {
-    return Boolean(this.properties.stereoLabel);
   }
 
   private get radicalAmount() {
@@ -233,6 +158,81 @@ export class Atom extends DrawingEntity {
     }
 
     return radicalAmount + connectionAmount + absoluteCharge;
+  }
+
+  public get center() {
+    return this.position;
+  }
+
+  public addBond(bond: Bond | MonomerToAtomBond) {
+    if (!this.bonds.includes(bond)) {
+      this.bonds.push(bond);
+    }
+  }
+
+  public deleteBond(bondId: number) {
+    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
+  }
+
+  public setRenderer(renderer: AtomRenderer) {
+    this.renderer = renderer;
+    super.setBaseRenderer(renderer as BaseRenderer);
+  }
+
+  public get isCarbon() {
+    return this.label === AtomLabel.C;
+  }
+
+  public get hasAlias() {
+    return Boolean(this.properties.alias);
+  }
+
+  public get hasRadical() {
+    return isNumber(this.properties.radical) && this.properties.radical !== 0;
+  }
+
+  public get hasCharge() {
+    return isNumber(this.properties.charge) && this.properties.charge !== 0;
+  }
+
+  public get hasExplicitValence() {
+    return (
+      isNumber(this.properties.explicitValence) &&
+      this.properties.explicitValence !== -1
+    );
+  }
+
+  public get hasExplicitIsotope() {
+    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
+  }
+
+  public get hasQueryProperties() {
+    const {
+      ringBondCount,
+      substitutionCount,
+      unsaturatedAtom,
+      hCount,
+      queryProperties,
+    } = this.properties;
+
+    return Boolean(
+      ringBondCount ||
+      substitutionCount ||
+      unsaturatedAtom ||
+      hCount ||
+      Object.values(queryProperties ?? {}).some(
+        (value) => Boolean(value) || value === 0,
+      ),
+    );
+  }
+
+  public get hasBadValence() {
+    const { hydrogenAmount } = this.calculateValence();
+    return hydrogenAmount < 0;
+  }
+
+  public get hasStereoLabel() {
+    return Boolean(this.properties.stereoLabel);
   }
 
   calculateValence() {

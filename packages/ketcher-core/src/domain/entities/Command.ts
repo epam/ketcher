@@ -2,9 +2,9 @@ import type { Operation } from 'domain/entities/Operation';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class Command {
-  public operations: Operation[] = [];
   private undoOperationReverse = false;
   private setUndoOperationByPriority = false;
+  public operations: Operation[] = [];
 
   public addOperation(operation: Operation) {
     this.operations.push(operation);

@@ -60,6 +60,11 @@ type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 
 export class RenderersManager {
   private readonly theme: ThemeType;
+  private needRecalculateMonomersEnumeration = false;
+  private shouldDeferPolymerBondEndpointRedraws = false;
+  private deferredPolymerBondEndpointRedraws = new Set<BaseMonomer>();
+  private deferredSelectionRedraws = new Set<DrawingEntity>();
+
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -73,11 +78,6 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   public sgroups = new Map<number, SGroupRenderer>();
-
-  private needRecalculateMonomersEnumeration = false;
-  private shouldDeferPolymerBondEndpointRedraws = false;
-  private deferredPolymerBondEndpointRedraws = new Set<BaseMonomer>();
-  private deferredSelectionRedraws = new Set<DrawingEntity>();
 
   constructor({ theme }: { theme: ThemeType }) {
     this.theme = theme;

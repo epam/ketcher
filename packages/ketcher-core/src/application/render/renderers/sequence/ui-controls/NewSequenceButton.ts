@@ -14,6 +14,21 @@ const BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW = 30;
 const RECT_MAX_WIDTH = 620;
 
 export class NewSequenceButton {
+  public static appendPlusIcon(
+    element: D3SvgElementSelection<SVGElement, void>,
+  ) {
+    element
+      .append('svg')
+      .attr('width', '16')
+      .attr('height', '16')
+      .attr('fill', 'currentColor')
+      .append('path')
+      .attr(
+        'd',
+        'M16 7.00095V9.00095H9V16.002H7V9.00095H0V7.00095H7V0.00195312H9V7.00095H16Z',
+      );
+  }
+
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
   private readonly canvas: D3SvgElementSelection<SVGGElement, void>;
   private rootElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -117,21 +132,6 @@ export class NewSequenceButton {
           indexOfRowBefore: this.indexOfRowBefore,
         });
       });
-  }
-
-  public static appendPlusIcon(
-    element: D3SvgElementSelection<SVGElement, void>,
-  ) {
-    element
-      .append('svg')
-      .attr('width', '16')
-      .attr('height', '16')
-      .attr('fill', 'currentColor')
-      .append('path')
-      .attr(
-        'd',
-        'M16 7.00095V9.00095H9V16.002H7V9.00095H0V7.00095H7V0.00195312H9V7.00095H16Z',
-      );
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {

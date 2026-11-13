@@ -82,16 +82,16 @@ function normalizeTextWhitespace(text: string): string {
 }
 
 class ReText extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
   constructor(text: Text) {
     super('text');
     this.item = text;
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   getReferencePoints(): Array<Vec2> {

@@ -50,6 +50,8 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { pageReload } from '@utils/common/helpers';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { DragonGhostElement } from '@tests/pages/macromolecules/canvas/DragonGhostElement';
 
 let page: Page;
 
@@ -953,14 +955,16 @@ for (const monomer of monomerToDrag) {
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
      * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled with right-click (Flex mode)
+     * Regression: https://github.com/epam/ketcher/issues/7376
      *
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
      * 3. Grab target monomer from library and hover it over canvas
      * 4. Do right-click
-     * 5. Release mouse button
-     * 6. Validate canvas has no monomers
+     * 5. Validate ghost is hidden and no context menu opens while left button is held
+     * 6. Release mouse button
+     * 7. Validate canvas has no monomers
      *
      * Version 3.6
      */
@@ -968,7 +972,13 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(100, 100);
+    const dragGhost = DragonGhostElement(page).dragonGhostElement;
+    await expect(dragGhost).toBeVisible();
     await page.mouse.click(100, 100, { button: 'right' });
+    await expect(dragGhost).toBeHidden();
+    await expect(
+      ContextMenu(page, { x: 100, y: 100 }).contextMenuBody,
+    ).toBeHidden();
     await page.mouse.up();
 
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -984,14 +994,16 @@ for (const monomer of monomerToDrag) {
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
      * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled with right-click (Snake mode)
+     * Regression: https://github.com/epam/ketcher/issues/7376
      *
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode
      * 3. Grab target monomer from library and hover it over canvas
      * 4. Do right-click
-     * 5. Release mouse button
-     * 6. Validate canvas has no monomers
+     * 5. Validate ghost is hidden and no context menu opens while left button is held
+     * 6. Release mouse button
+     * 7. Validate canvas has no monomers
      *
      * Version 3.6
      */
@@ -999,7 +1011,13 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(100, 100);
+    const dragGhost = DragonGhostElement(page).dragonGhostElement;
+    await expect(dragGhost).toBeVisible();
     await page.mouse.click(100, 100, { button: 'right' });
+    await expect(dragGhost).toBeHidden();
+    await expect(
+      ContextMenu(page, { x: 100, y: 100 }).contextMenuBody,
+    ).toBeHidden();
     await page.mouse.up();
 
     const monomerOnCanvas = getMonomerLocator(page, {});

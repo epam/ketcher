@@ -56,7 +56,7 @@ Two events are defined on the editor's event bus:
 - **Drag-state event** — carries the current item and cursor position, or null to clear. The editor stores the value internally; the ghost component reads it to position and render itself.
 - **Place-on-canvas event** — carries the item and the canvas-space position. The editor's handler for this event performs the actual model mutation.
 
-A right-click during a drag (context menu) also cancels the drag: the context-menu handler clears the drag state on the editor.
+A right mouse-button press on the canvas during a library drag cancels it before D3 can treat the following mouseup as a drop. The editor suppresses the corresponding context-menu event once, then allows ordinary right-click menus again. The context-menu handler also cancels a drag if that event arrives while dragging is still active.
 
 ## Placement handler (editor side)
 

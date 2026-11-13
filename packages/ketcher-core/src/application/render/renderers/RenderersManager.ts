@@ -119,7 +119,7 @@ export class RenderersManager {
     drawingEntity.baseRenderer.drawSelection();
   }
 
-  private markForReEnumeration() {
+  public markForReEnumeration() {
     this.needRecalculateMonomersEnumeration = true;
   }
 

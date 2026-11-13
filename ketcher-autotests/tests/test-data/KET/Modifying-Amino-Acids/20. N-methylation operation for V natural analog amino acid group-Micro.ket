@@ -504,8 +504,7 @@
             "y": -2.75
         },
         "alias": "meV",
-        "templateId": "meV___N-Methyl-Valine",
-        "seqid": 9
+        "templateId": "meV___N-Methyl-Valine"
     },
     "monomer9": {
         "type": "monomer",

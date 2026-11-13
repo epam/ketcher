@@ -138,6 +138,27 @@ describe('SequenceRenderer', () => {
     expect(getSequenceBondPaths()).toHaveLength(1);
   });
 
+  it.each([undefined, 42])(
+    'preserves imported sequence IDs when rendering and redrawing counters (seqId: %s)',
+    (seqId) => {
+      const peptide = new Peptide({ ...peptideMonomerItem, seqId });
+      const chain = new Chain(peptide);
+      const subChain = new PeptideSubChain();
+      subChain.add(new MonomerSequenceNode(peptide));
+      subChain.add(new MonomerSequenceNode(new Peptide(peptideMonomerItem)));
+      chain.subChains.push(subChain);
+      SequenceRenderer.show(new ChainsCollection().add(chain));
+      const renderer = peptide.renderer as BaseSequenceItemRenderer;
+
+      expect(renderer.counterElement?.text()).toBe(String(seqId ?? 1));
+
+      renderer.setEnumeration(7);
+      renderer.redrawEnumeration();
+
+      expect(renderer.counterElement?.text()).toBe(String(seqId ?? 7));
+    },
+  );
+
   it('avoids rescanning subchain nodes for each rendered sequence item', () => {
     setupCyclicTwoPeptideStructure();
     const chainsCollection = ChainsCollection.fromMonomers([

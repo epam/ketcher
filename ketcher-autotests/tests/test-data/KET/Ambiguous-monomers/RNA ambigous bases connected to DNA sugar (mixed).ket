@@ -1093,7 +1093,7 @@
         },
         "alias": "P",
         "templateId": "P___Phosphate",
-        "seqid": 0
+        "seqid": 1
     },
     "monomerTemplate-P___Phosphate": {
         "type": "monomerTemplate",

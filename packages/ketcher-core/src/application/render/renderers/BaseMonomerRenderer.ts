@@ -44,7 +44,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmentPoint: AttachmentPointName | null = null;
   private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
@@ -168,7 +167,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -179,7 +177,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public updateAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {
@@ -314,9 +311,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       canvas: this.canvasWrapper,
       attachmentPointName,
       isUsed: this.monomer.isAttachmentPointUsed(attachmentPointName),
-      isPotentiallyUsed:
-        this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
-        this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle ?? rotation,
       applyZoomForPositionCalculation: true,
       // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
@@ -324,6 +318,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
       isDragCircleHover:
         this._dragCircleHoverAttachmentPoint === attachmentPointName,
+      editorEvents: this.editorEvents,
+      isSnakeLayoutMode: () =>
+        provideEditorInstance().mode.modeName === 'snake-layout-mode',
     };
   }
 
@@ -347,8 +344,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
-    this.hoveredAttachmentPoint = attachmentPointName;
+  public hoverAttachmentPoint(_attachmentPointName: AttachmentPointName): void {
+    // No-op: the hover flag was reset by updateAttachmentPoints before any redraw read it. Kept for RenderersManager.
   }
 
   public setDragTargetAttachmentPoint(

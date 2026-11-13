@@ -33,8 +33,12 @@ import {
   getSelectionFromStruct,
   MonomerLibraryConvertError,
 } from './editor';
+import { MacromoleculesConverter } from './editor/MacromoleculesConverter';
 
-import { provideEditorInstance } from './editor/editorSingleton';
+import {
+  provideEditorInstance,
+  withEditorInstance,
+} from './editor/editorSingleton';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
@@ -560,19 +564,29 @@ export class Ketcher {
     structStr: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
-    const macromoleculesEditor = provideEditorInstance();
+    const macromoleculesEditor = ketcherProvider.getCoreEditor(this.id);
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (globalThis.isPolymerEditorTurnedOn) {
-        deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+      if (macromoleculesEditor?.isMacromoleculesMode) {
+        await parseAndAddMacromoleculesOnCanvas(
+          structStr,
+          this.structService,
+          false,
+          undefined,
+          true,
+          macromoleculesEditor,
+        );
 
         if (options?.needZoom !== false) {
-          macromoleculesEditor?.zoomToStructuresIfNeeded();
-          macromoleculesEditor.mode.initialize();
+          withEditorInstance(macromoleculesEditor, () => {
+            macromoleculesEditor?.zoomToStructuresIfNeeded();
+            if (!macromoleculesEditor?.isLongSequence) {
+              macromoleculesEditor?.mode.initialize();
+            }
+          });
         }
       } else {
         const struct: Struct = await prepareStructToRender(
@@ -580,6 +594,8 @@ export class Ketcher {
           this.structService,
           this,
         );
+        const isLongSequence =
+          MacromoleculesConverter.isLongSequenceStruct(struct);
 
         const shouldPreserveCanvasPosition =
           options?.preserveCanvasPosition === true;
@@ -598,6 +614,10 @@ export class Ketcher {
         this.editor.selection(getSelectionFromStruct(this.editor.struct()));
         // Clean up initiallySelected flags after restoring selection
         this.editor.struct().disableInitiallySelected();
+
+        if (isLongSequence) {
+          macromoleculesEditor?.modeEvents.switchToMacromoleculesMode.dispatch();
+        }
 
         if (!shouldPreserveCanvasPosition) {
           this.editor.zoomAccordingContent(struct);
@@ -759,8 +779,12 @@ export class Ketcher {
   }
 
   setMode(mode: SupportedModes) {
-    const editor = provideEditorInstance();
-    if (editor && mode) {
+    const editor = ketcherProvider.getCoreEditor(this.id);
+    if (
+      editor &&
+      mode &&
+      (!editor.isLongSequence || ModeTypes[mode] === 'sequence-layout-mode')
+    ) {
       editor.events.selectMode.dispatch(ModeTypes[mode]);
       editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
     }
@@ -979,7 +1003,7 @@ export class Ketcher {
   }
 
   public switchToMacromoleculesMode() {
-    const editor = provideEditorInstance();
+    const editor = ketcherProvider.getCoreEditor(this.id);
 
     if (!editor) {
       KetcherLogger.error('Editor instance is not available');
@@ -987,11 +1011,11 @@ export class Ketcher {
       return;
     }
 
-    editor.events.switchToMacromoleculesMode.dispatch();
+    editor.modeEvents.switchToMacromoleculesMode.dispatch();
   }
 
   public switchToMoleculesMode() {
-    const editor = provideEditorInstance();
+    const editor = ketcherProvider.getCoreEditor(this.id);
 
     if (!editor) {
       KetcherLogger.error('Editor instance is not available');
@@ -999,6 +1023,10 @@ export class Ketcher {
       return;
     }
 
-    editor.events.switchToMoleculesMode.dispatch();
+    if (editor.isLongSequence) {
+      return;
+    }
+
+    editor.modeEvents.switchToMoleculesMode.dispatch();
   }
 }

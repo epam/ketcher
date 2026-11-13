@@ -11,9 +11,11 @@ export class Command {
   }
 
   public merge(command: Command) {
-    // hot spot in large sequences, avoid allocations
+    // Avoid spread argument limits when merging large sequence commands.
     // safe as long as no one compares this.operations reference (e.g. redux-like shallow compare)
-    this.operations.push(...command.operations);
+    for (const operation of command.operations) {
+      this.operations.push(operation);
+    }
     this.setUndoOperationByPriority = command.setUndoOperationByPriority;
   }
 

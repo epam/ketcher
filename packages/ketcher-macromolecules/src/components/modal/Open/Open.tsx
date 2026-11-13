@@ -194,6 +194,10 @@ const hasAddedStructureToCanvas = ({
     return false;
   }
 
+  editor.ensureSequenceModeForLongSequence(
+    deserialisedKet.drawingEntitiesManager.monomers.size,
+  );
+
   const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
   const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
   const isFlexMode = editor.mode.modeName === 'flex-layout-mode';

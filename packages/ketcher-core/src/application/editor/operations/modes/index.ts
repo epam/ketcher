@@ -22,7 +22,10 @@ import type { Operation } from 'domain/entities/Operation';
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
-  constructor(private readonly shouldForceRecalculateAntisense = false) {}
+  constructor(
+    private readonly shouldForceRecalculateAntisense = false,
+    private readonly shouldReArrangeChains = true,
+  ) {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = provideEditorInstance();
@@ -30,7 +33,7 @@ export class ReinitializeModeOperation implements Operation {
     editor.mode.initialize(
       false,
       undefined,
-      true,
+      this.shouldReArrangeChains,
       this.shouldForceRecalculateAntisense,
     );
   }

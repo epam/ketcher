@@ -118,16 +118,14 @@ export class Chain {
   }
 
   private fillSubChains(monomer?: BaseMonomer) {
-    if (!monomer) return;
+    while (monomer) {
+      this.add(monomer);
 
-    this.add(monomer);
-
-    this.fillSubChains(
-      getNextMonomerInChain(
+      monomer = getNextMonomerInChain(
         this.lastNode?.lastMonomerInNode,
         this.firstMonomer,
-      ),
-    );
+      );
+    }
   }
 
   private getLastSubChain() {

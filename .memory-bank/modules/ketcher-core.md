@@ -54,6 +54,7 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 | `src/application/render/raphaelRender.ts`                       | Raphael canvas host                     |
 | `src/application/editor/EditorHistory.ts`                       | Undo/redo stack (max 32 steps)          |
 | `src/application/editor/MacromoleculesConverter.ts`             | Converts between macro and micro models |
+| `src/application/ketcherProvider.ts`                            | Registry for Ketcher and CoreEditor instances by Ketcher ID |
 | `src/domain/serializers/ket/ketSerializer.ts`                   | KET format serializer/deserializer      |
 | `src/application/formatters/formatterFactory.ts`                | Multi-format formatter registry         |
 | `src/application/indigo.ts`                                     | StructService wrapper (chemistry ops)   |
@@ -63,3 +64,6 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 - Must have **no React dependency** — it is consumed by both React packages but must stay framework-agnostic.
 - The `domain/` layer must have **no imports from `application/render/`** (domain must not know about rendering).
 - All canvas mutations must go through `Command` + `BaseOperation` — never mutate `DrawingEntitiesManager` or `Struct` directly from UI code.
+- Macromolecules mode-transition signals belong to each `CoreEditor` instance; they must not use the shared renderer/editor event bus.
+- Resolve an instance-specific `CoreEditor` through `ketcherProvider` using its Ketcher ID; the editor singleton is only a compatibility context for existing code paths.
+- After antisense creation, `CoreEditor` preserves the viewport only in Sequence mode with more than 3000 monomers; shorter structures retain the existing `scrollToTopLeftCorner()` behavior.

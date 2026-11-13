@@ -331,6 +331,12 @@ export const isCycleExistsForSelectedMonomers = (
   const monomerSet = new Set(selectedMonomers);
   const visited = new Set<BaseMonomer>();
   const inRecursionStack = new Set<BaseMonomer>();
+  type TraversalFrame = {
+    monomer: BaseMonomer;
+    parent: BaseMonomer | null;
+    neighbors: BaseMonomer[];
+    nextNeighborIndex: number;
+  };
 
   const getNeighbors = (monomer: BaseMonomer): BaseMonomer[] => {
     const neighbors: BaseMonomer[] = [];
@@ -357,17 +363,31 @@ export const isCycleExistsForSelectedMonomers = (
     return neighbors;
   };
 
-  const hasCycleFromMonomer = (
-    monomer: BaseMonomer,
-    parent: BaseMonomer | null,
-  ): boolean => {
-    visited.add(monomer);
-    inRecursionStack.add(monomer);
+  const hasCycleFromMonomer = (start: BaseMonomer): boolean => {
+    const stack: TraversalFrame[] = [
+      {
+        monomer: start,
+        parent: null,
+        neighbors: getNeighbors(start),
+        nextNeighborIndex: 0,
+      },
+    ];
+    visited.add(start);
+    inRecursionStack.add(start);
 
-    const neighbors = getNeighbors(monomer);
+    while (stack.length) {
+      const frame = stack[stack.length - 1];
 
-    for (const neighbor of neighbors) {
-      if (neighbor === parent) {
+      if (frame.nextNeighborIndex >= frame.neighbors.length) {
+        inRecursionStack.delete(frame.monomer);
+        stack.pop();
+        continue;
+      }
+
+      const neighbor = frame.neighbors[frame.nextNeighborIndex];
+      frame.nextNeighborIndex++;
+
+      if (neighbor === frame.parent) {
         continue;
       }
 
@@ -376,19 +396,23 @@ export const isCycleExistsForSelectedMonomers = (
       }
 
       if (!visited.has(neighbor)) {
-        if (hasCycleFromMonomer(neighbor, monomer)) {
-          return true;
-        }
+        visited.add(neighbor);
+        inRecursionStack.add(neighbor);
+        stack.push({
+          monomer: neighbor,
+          parent: frame.monomer,
+          neighbors: getNeighbors(neighbor),
+          nextNeighborIndex: 0,
+        });
       }
     }
 
-    inRecursionStack.delete(monomer);
     return false;
   };
 
   for (const monomer of selectedMonomers) {
     if (!visited.has(monomer)) {
-      if (hasCycleFromMonomer(monomer, null)) {
+      if (hasCycleFromMonomer(monomer)) {
         return true;
       }
     }

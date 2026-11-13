@@ -1,4 +1,5 @@
 import { CoreEditor, SequenceMode } from 'application/editor';
+import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { TwoStrandedNodesSelection } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -10,6 +11,7 @@ import {
   Vec2,
 } from 'domain/entities';
 import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Command } from 'domain/entities/Command';
 import type { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName, type MonomerItemType } from 'domain/types';
@@ -280,8 +282,34 @@ describe('antisense chain direction', () => {
     canvas.remove();
   });
 
+  it.each([false, true])(
+    'scrolls after creating a short antisense chain through the editor event (DNA: %s)',
+    (isDnaAntisense) => {
+      editor.setMode(new SequenceMode());
+      const nucleotide = createNucleotideNode('A', new Vec2(0, 0));
+      selectAllMonomers(editor);
+      const scrollSpy = jest
+        .spyOn(editor, 'scrollToTopLeftCorner')
+        .mockImplementation(() => undefined);
+
+      try {
+        editor.events.createAntisenseChain.dispatch(isDnaAntisense);
+
+        expect(editor.drawingEntitiesManager.monomers.size).toBe(6);
+        expect(nucleotide.rnaBase.hydrogenBonds).toHaveLength(1);
+        expect(scrollSpy).toHaveBeenCalledTimes(1);
+      } finally {
+        scrollSpy.mockRestore();
+      }
+    },
+  );
+
   it('runs an antisense chain in the opposite direction to the sense chain', () => {
     const drawingEntitiesManager = editor.drawingEntitiesManager;
+    const applySnakeLayoutSpy = jest.spyOn(
+      drawingEntitiesManager,
+      'applySnakeLayout',
+    );
     const firstNucleotide = createNucleotideNode('A', new Vec2(0, 0));
     const secondNucleotide = createNucleotideNode('C', new Vec2(1.6, 0));
 
@@ -293,6 +321,8 @@ describe('antisense chain direction', () => {
     );
     selectAllMonomers(editor);
     drawingEntitiesManager.createAntisenseChain(false);
+
+    expect(applySnakeLayoutSpy).toHaveBeenCalledWith(true, true);
 
     const senseSugar = firstNucleotide.sugar;
     // The second sense nucleotide's paired antisense base is the chain-start
@@ -318,6 +348,86 @@ describe('antisense chain direction', () => {
     expect(antisenseNext?.position.x).toBeLessThan(
       (antisenseSugar as Sugar).position.x,
     );
+  });
+
+  it('does not rescan a single antisense chain for every paired nucleotide', () => {
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
+    const senseNucleotides = Array.from({ length: 32 }, (_, index) =>
+      createNucleotideNode('A', new Vec2(index * 1.6, 0)),
+    );
+
+    for (let index = 0; index < senseNucleotides.length - 1; index++) {
+      drawingEntitiesManager.createPolymerBond(
+        senseNucleotides[index].phosphate,
+        senseNucleotides[index + 1].sugar,
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      );
+    }
+
+    selectAllMonomers(editor);
+    drawingEntitiesManager.createAntisenseChain(false);
+
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
+    const antisenseChain = chainsCollection.chains.find(
+      (chain) => chain.isAntisense,
+    );
+
+    if (!antisenseChain) {
+      throw new Error('Fixture setup failed: antisense chain not found');
+    }
+
+    const forEachNodeSpy = jest.spyOn(antisenseChain, 'forEachNode');
+    chainsCollection.rearrange();
+
+    expect(forEachNodeSpy.mock.calls.length).toBeLessThanOrEqual(4);
+  });
+
+  it('skips snake layout when antisense creation produces a long sequence', () => {
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
+    editor.setMode(new SequenceMode());
+    const senseNucleotides = Array.from({ length: 1001 }, (_, index) =>
+      createNucleotideNode('A', new Vec2(index * 1.6, 0)),
+    );
+
+    for (let index = 0; index < senseNucleotides.length - 1; index++) {
+      drawingEntitiesManager.createPolymerBond(
+        senseNucleotides[index].phosphate,
+        senseNucleotides[index + 1].sugar,
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      );
+    }
+
+    selectAllMonomers(editor);
+
+    const applySnakeLayoutSpy = jest.spyOn(
+      drawingEntitiesManager,
+      'applySnakeLayout',
+    );
+    const command = drawingEntitiesManager.createAntisenseChain(false);
+
+    expect(drawingEntitiesManager.monomers.size).toBeGreaterThan(3000);
+    expect(applySnakeLayoutSpy).not.toHaveBeenCalled();
+
+    const reinitializeModeOperation = command.operations.find(
+      (operation): operation is ReinitializeModeOperation =>
+        operation instanceof ReinitializeModeOperation,
+    );
+    if (!reinitializeModeOperation) {
+      throw new Error(
+        'Expected antisense creation to reinitialize Sequence mode',
+      );
+    }
+
+    const initializeSpy = jest
+      .spyOn(editor.mode, 'initialize')
+      .mockImplementation(() => new Command());
+    reinitializeModeOperation.execute(editor.renderersContainer);
+
+    expect(initializeSpy).toHaveBeenCalledWith(false, undefined, false, false);
   });
 
   it('replaces a single mid-strand antisense node and reconnects the chain', () => {

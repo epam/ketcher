@@ -28,12 +28,16 @@ export const LayoutModeButton = () => {
   const isSequenceEditInRNABuilderMode = useAppSelector(
     isRnaBuilderSequenceEditMode,
   );
+  const isLongSequence = editor?.isLongSequence ?? false;
 
   const menuContext = useMemo(
     () => ({
       isActive: (mode) => layoutMode === mode,
       activate: (mode) => {
-        if (mode === layoutMode) {
+        if (
+          mode === layoutMode ||
+          (isLongSequence && mode !== 'sequence-layout-mode')
+        ) {
           return;
         }
         // event to change active mode state in editor
@@ -42,7 +46,7 @@ export const LayoutModeButton = () => {
         editor?.events.layoutModeChange.dispatch(mode);
       },
     }),
-    [layoutMode, editor],
+    [layoutMode, editor, isLongSequence],
   );
 
   return (
@@ -63,11 +67,13 @@ export const LayoutModeButton = () => {
           itemId="snake-layout-mode"
           testId="snake-layout-mode"
           title={t('layoutMode.switchToSnake')}
+          disabled={isLongSequence}
         ></Menu.Item>
         <Menu.Item
           itemId="flex-layout-mode"
           testId="flex-layout-mode"
           title={t('layoutMode.switchToFlex')}
+          disabled={isLongSequence}
         ></Menu.Item>
       </Menu.Submenu>
     </MenuContext.Provider>

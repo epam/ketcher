@@ -228,6 +228,40 @@ The system SHALL ensure that its position is constrained to keep it visible with
 - **AND** positioning works both at the page origin and in an offset popup
 - **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
 
+### Requirement: Long sequences use Sequence mode
+
+The system SHALL treat a canvas containing more than 3,000 monomers as a long sequence. Loading a long sequence in Snake, Flex, or molecules mode SHALL switch to Sequence mode, and users SHALL NOT be able to switch a long sequence to Snake, Flex, or molecules mode.
+
+#### Scenario: Loading a long sequence from another mode
+
+- **WHEN** a structure containing more than 3,000 monomers is loaded while Snake, Flex, or molecules mode is active
+- **THEN** the structure is shown in Sequence mode
+
+#### Scenario: Preventing mode changes for a long sequence
+
+- **WHEN** more than 3,000 monomers are on the canvas in Sequence mode
+- **THEN** Snake, Flex, and molecules mode are unavailable
+
+#### Scenario: Keeping the threshold strict
+
+- **WHEN** 3,000 or fewer monomers are on the canvas
+- **THEN** the long-sequence mode restriction is not applied
+
+### Requirement: Long sequences remain usable
+
+The system SHALL load long nucleotide sequences in Sequence mode without a call-stack overflow and SHALL keep sequence operations, including antisense creation, available.
+
+#### Scenario: Operating on a long nucleotide sequence
+
+- **WHEN** a single-stranded or duplex nucleotide sequence containing more than 3,000 monomers is loaded in Sequence mode
+- **THEN** it loads without a call-stack overflow or unsupported-symbol error
+- **AND** the user can create its antisense strand and perform Sequence-mode operations
+
+#### Scenario: Preserving the current canvas when long FASTA conversion fails
+
+- **WHEN** loading a long FASTA sequence fails during conversion or KET deserialization
+- **THEN** the structure that was on the canvas before the load remains unchanged
+
 ## User interaction
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.

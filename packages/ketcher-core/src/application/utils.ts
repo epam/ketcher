@@ -1,4 +1,8 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import {
+  provideEditorInstance,
+  withEditorInstance,
+} from 'application/editor/editorSingleton';
+import type { CoreEditor } from 'application/editor/Editor';
 import type { Struct } from 'domain/entities';
 import {
   FormatterFactory,
@@ -47,20 +51,24 @@ export function parseStruct(
   return service.getStructureFromStringAsync(structStr);
 }
 
-export function deleteAllEntitiesOnCanvas() {
-  const editor = provideEditorInstance();
-  const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
-
-  EditorHistory.getInstance(editor).update(modelChanges);
-  editor.renderersContainer.update(modelChanges);
+export function deleteAllEntitiesOnCanvas(targetEditor?: CoreEditor) {
+  const editor = targetEditor ?? provideEditorInstance();
+  return withEditorInstance(editor, () => {
+    const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
+    EditorHistory.getInstance(editor).update(modelChanges);
+    editor.renderersContainer.update(modelChanges);
+  });
 }
 
 export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,
   shouldMergeWithLatestHistoryCommand = false,
+  inputFormat?: ChemicalMimeType,
+  shouldReplaceCanvas = false,
+  targetEditor?: CoreEditor,
 ) {
-  const editor = provideEditorInstance();
+  const editor = targetEditor ?? provideEditorInstance();
   const ketSerializer = new KetSerializer();
   const format = identifyStructFormat(struct, true);
   let ketStruct = struct;
@@ -69,20 +77,35 @@ export async function parseAndAddMacromoleculesOnCanvas(
       await structService.convert({
         struct,
         output_format: ChemicalMimeType.KET,
+        ...(inputFormat ? { input_format: inputFormat } : {}),
       })
     ).struct;
   }
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
-  const { command: modelChanges } =
-    deserialisedKet.drawingEntitiesManager.mergeInto(
-      editor.drawingEntitiesManager,
-    );
-
-  EditorHistory.getInstance(editor).update(
-    modelChanges,
-    shouldMergeWithLatestHistoryCommand,
+  if (shouldReplaceCanvas) {
+    deleteAllEntitiesOnCanvas(editor);
+  }
+  const isLongSequence = withEditorInstance(editor, () =>
+    editor.ensureSequenceModeForLongSequence(
+      deserialisedKet.drawingEntitiesManager.monomers.size,
+    ),
   );
-  editor.renderersContainer.update(modelChanges);
+  withEditorInstance(editor, () => {
+    const { command: modelChanges } =
+      deserialisedKet.drawingEntitiesManager.mergeInto(
+        editor.drawingEntitiesManager,
+      );
+
+    EditorHistory.getInstance(editor).update(
+      modelChanges,
+      shouldMergeWithLatestHistoryCommand,
+    );
+    editor.renderersContainer.update(modelChanges);
+    if (isLongSequence) {
+      editor.mode.initialize(false, false, false);
+      editor.events.layoutModeChange.dispatch(editor.mode.modeName);
+    }
+  });
 }

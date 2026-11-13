@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-11T14:33:36.510Z",
+    "rangeLabel": "all",
+    "agents": ["claude"],
+    "projectFilter": "all",
+    "totals": {
+      "sessions": 1,
+      "durationMs": 5703233,
+      "turns": 63,
+      "files": 27,
+      "netLines": 10,
+      "toolCallsTotal": 75,
+      "toolSuccessRate": 93.3,
+      "totalCostUSD": 0,
+      "cacheReadCostUSD": 0,
+      "pricedSessions": 0
+    },
+    "unpricedModels": [],
+    "estimatedModels": [],
+    "localModels": [],
+    "coverage": [
+      {
+        "agentName": "claude",
+        "total": 1,
+        "priced": 0,
+        "withLog": 1
+      }
+    ],
+    "userEmail": "tetiana_reshetnik@epam.com",
+    "periodStart": "2026-11-11T12:58:31.159Z",
+    "periodEnd": "2026-11-11T14:33:34.392Z"
+  },
+  "sessions": [
+    {
+      "sessionId": "47b9427f-7272-458e-b123-b37083fe5980",
+      "agentName": "claude",
+      "provider": "ai-run-sso",
+      "title": "find a micromolecule tooltip file",
+      "project": "/Users/Tetiana_Reshetnik_1/Desktop/proj/ketcher",
+      "branch": "7728-preview-tooltip-content-tiny",
+      "startTime": 1794401911159,
+      "durationMs": 5703233,
+      "turns": 63,
+      "fileOps": 27,
+      "linesAdded": 29,
+      "linesRemoved": 19,
+      "linesModified": 0,
+      "netLines": 10,
+      "filesChanged": 2,
+      "filesWritten": 0,
+      "filesEdited": 2,
+      "toolCallsTotal": 75,
+      "toolCallsSuccess": 70,
+      "toolCallsFailure": 5,
+      "models": ["claude-sonnet-5-5"],
+      "languages": ["typescript", "javascript"],
+      "tools": [
+        {
+          "toolName": "Grep",
+          "totalCalls": 22,
+          "successCount": 22,
+          "failureCount": 0,
+          "successRate": 100
+        },
+        {
+          "toolName": "Read",
+          "totalCalls": 21,
+          "successCount": 21,
+          "failureCount": 0,
+          "successRate": 100
+        },
+        {
+          "toolName": "Bash",
+          "totalCalls": 17,
+          "successCount": 12,
+          "failureCount": 5,
+          "successRate": 70.58823529411765
+        },
+        {
+          "toolName": "Edit",
+          "totalCalls": 12,
+          "successCount": 12,
+          "failureCount": 0,
+          "successRate": 100
+        },
+        {
+          "toolName": "Glob",
+          "totalCalls": 2,
+          "successCount": 2,
+          "failureCount": 0,
+          "successRate": 100
+        },
+        {
+          "toolName": "Skill",
+          "totalCalls": 1,
+          "successCount": 1,
+          "failureCount": 0,
+          "successRate": 100
+        }
+      ],
+      "tokens": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheCreation": 0,
+        "cacheCreation1h": 0,
+        "total": 0
+      },
+      "costUSD": 0,
+      "cacheReadCostUSD": 0,
+      "perModelCost": [],
+      "hadLog": true,
+      "agentSessionFile": "/Users/Tetiana_Reshetnik_1/.claude/projects/-Users-Tetiana-Reshetnik-1-Desktop-proj-ketcher/68017f80-1d94-433d-a672-d012c0cfe411.jsonl",
+      "dispatches": [
+        {
+          "kind": "command",
+          "name": "clear",
+          "start": 1794401909246,
+          "durationMs": 0,
+          "id": "command:fa2795a3-4efd-4ddb-8088-ba7c5038ae7a:0",
+          "ownerAgentId": "47b9427f-7272-458e-b123-b37083fe5980",
+          "relationshipStatus": "root",
+          "elapsedMs": 0,
+          "status": "completed",
+          "attributionStatus": "unavailable",
+          "attributionScope": "owner-window"
+        }
+      ],
+      "dispatchesComplete": true,
+      "rootOwnCostUSD": 0,
+      "unlinkedCostUSD": 0,
+      "unlinkedAgentIds": [],
+      "observedEnd": 1794407614392,
+      "rootOwnTokens": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheCreation": 0,
+        "cacheCreation1h": 0,
+        "total": 0
+      },
+      "unlinkedTokens": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheCreation": 0,
+        "cacheCreation1h": 0,
+        "total": 0
+      },
+      "skillInvocations": [],
+      "agentInvocations": [],
+      "commandInvocations": [
+        {
+          "name": "clear",
+          "totalCalls": 1,
+          "successCount": 1,
+          "failureCount": 0
+        }
+      ],
+      "sessionSource": "Pure chat"
+    }
+  ]
+}

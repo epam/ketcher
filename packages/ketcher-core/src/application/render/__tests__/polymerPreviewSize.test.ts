@@ -1,4 +1,24 @@
-import { getPolymerPreviewSvgSize } from '../polymerPreviewSize';
+import {
+  getFontSizeInUnits,
+  getPolymerPreviewSvgSize,
+  MICRO_LABEL_FONT_PX,
+} from '../polymerPreviewSize';
+
+describe('getFontSizeInUnits', () => {
+  it('gives a font that is drawn at the requested px size', () => {
+    const units = getFontSizeInUnits(MICRO_LABEL_FONT_PX, 100, 45);
+    expect(units * (45 / 100)).toBeCloseTo(MICRO_LABEL_FONT_PX);
+  });
+
+  it('keeps the on-screen size at any px per angstrom', () => {
+    const units = getFontSizeInUnits(MICRO_LABEL_FONT_PX, 100, 80);
+    expect(units * (80 / 100)).toBeCloseTo(MICRO_LABEL_FONT_PX);
+  });
+
+  it('uses the Ketcher default 10pt label font', () => {
+    expect(MICRO_LABEL_FONT_PX).toBeCloseTo(13.33, 2);
+  });
+});
 
 describe('getPolymerPreviewSvgSize', () => {
   const wrapper = { width: 300, height: 200 };

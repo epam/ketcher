@@ -3,11 +3,15 @@ import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
-import type { RenderOptions } from './render.types';
+import { MeasurementUnits, type RenderOptions } from './render.types';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Scale } from 'domain/helpers';
-import { getPolymerPreviewSvgSize } from './polymerPreviewSize';
+import {
+  getFontSizeInUnits,
+  getPolymerPreviewSvgSize,
+  MICRO_LABEL_FONT_PX,
+} from './polymerPreviewSize';
 import { UsageInMacromolecule } from './render.constants';
 
 /**
@@ -22,7 +26,9 @@ export type RenderStructOptions = Partial<RenderOptions> & {
 
 const renderCache = new Map<string, string>();
 let previousOptions: RenderStructOptions | undefined;
+// Fixed bond length keeps the monomer tooltip size independent of canvas zoom
 const MONOMER_PREVIEW_PX_PER_ANGSTROM = 45;
+const DEFAULT_MICRO_MODE_SCALE = 100;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
@@ -80,6 +86,14 @@ export class RenderStruct {
    * When the content does not fit the wrapper the svg keeps filling the wrapper
    * and the renderer fits the content into it.
    */
+  private static getPolymerPxPerAngstrom(
+    usage: UsageInMacromolecule | undefined,
+  ) {
+    return usage === UsageInMacromolecule.MonomerPreview
+      ? MONOMER_PREVIEW_PX_PER_ANGSTROM
+      : Coordinates.modelToCanvas(new Vec2(1, 0)).x;
+  }
+
   private static fitPolymerSvgToContent(
     render: Render,
     wrapperDimensions: Pick<DOMRectReadOnly, 'width' | 'height'>,
@@ -91,11 +105,9 @@ export class RenderStruct {
     const svgSize = getPolymerPreviewSvgSize({
       contentSizeInUnits,
       unitsPerAngstrom: render.options.microModeScale,
-      pxPerAngstrom:
-        render.options.usageInMacromolecule ===
-        UsageInMacromolecule.MonomerPreview
-          ? MONOMER_PREVIEW_PX_PER_ANGSTROM
-          : Coordinates.modelToCanvas(new Vec2(1, 0)).x,
+      pxPerAngstrom: this.getPolymerPxPerAngstrom(
+        render.options.usageInMacromolecule,
+      ),
       wrapper: wrapperDimensions,
     });
 
@@ -149,8 +161,17 @@ export class RenderStruct {
       };
 
       if (globalThis.isPolymerEditorTurnedOn) {
-        extendedOptions.fontsz = 30;
-        extendedOptions.fontszsub = 20;
+        // Labels get the Molecules mode font size on screen, whatever the
+        // preview scale is
+        const labelFontSizeInUnits = getFontSizeInUnits(
+          MICRO_LABEL_FONT_PX,
+          renderOptions.microModeScale ?? DEFAULT_MICRO_MODE_SCALE,
+          this.getPolymerPxPerAngstrom(renderOptions.usageInMacromolecule),
+        );
+        extendedOptions.fontsz = labelFontSizeInUnits;
+        extendedOptions.fontszUnit = MeasurementUnits.Px;
+        extendedOptions.fontszsub = labelFontSizeInUnits;
+        extendedOptions.fontszsubUnit = MeasurementUnits.Px;
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);
@@ -169,7 +190,7 @@ export class RenderStruct {
         (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
       }
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         this.fitPolymerSvgToContent(rnd, wrapperElementBoundingRect);
       }
 

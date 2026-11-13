@@ -25,10 +25,71 @@ interface CalculatePathPartAndTurnPointResult {
   readonly turnPoint: number;
 }
 
+export interface SideConnectionLaneRoute {
+  readonly id: number;
+  readonly side: -1 | 1;
+  readonly start: number;
+  readonly end: number;
+  readonly edge: number;
+}
+
+export interface OuterConnectionLane {
+  readonly index: number;
+  readonly baseline: { edge: number };
+}
+
 export class SideChainConnectionBondRendererUtility {
   public static readonly bondEndLength = 15;
   public static readonly cellHeight = 40;
   public static readonly smoothCornerSize = 5;
+
+  // Assign lanes per side, reusing a lane once its previous route has ended.
+  public static assignOuterConnectionLanes(
+    routes: readonly SideConnectionLaneRoute[],
+  ): Map<number, OuterConnectionLane> {
+    const laneById = new Map<number, OuterConnectionLane>();
+
+    for (const side of [-1, 1] as const) {
+      const laneEnds: number[] = [];
+      const sideRoutes = routes
+        .filter((route) => route.side === side)
+        .map((route) => ({
+          ...route,
+          top: Math.min(route.start, route.end),
+          bottom: Math.max(route.start, route.end),
+        }))
+        .sort(
+          (first, second) =>
+            first.top - second.top ||
+            first.bottom - second.bottom ||
+            first.id - second.id,
+        );
+
+      let groupEnd = -Infinity;
+      // Lanes in the same overlap group share this object so a later, wider
+      // route can move their common baseline outward.
+      let baseline = { edge: 0 };
+      const outermost = side === 1 ? Math.max : Math.min;
+
+      sideRoutes.forEach((route) => {
+        if (route.top > groupEnd) {
+          baseline = { edge: route.edge };
+        } else {
+          baseline.edge = outermost(baseline.edge, route.edge);
+        }
+        groupEnd = Math.max(groupEnd, route.bottom);
+
+        // Routes that meet on the same row still need separate lanes.
+        const lane = laneEnds.findIndex((laneEnd) => laneEnd < route.top);
+        const assignedLane = lane === -1 ? laneEnds.length : lane;
+
+        laneEnds[assignedLane] = route.bottom;
+        laneById.set(route.id, { index: assignedLane, baseline });
+      });
+    }
+
+    return laneById;
+  }
 
   public static calculatePathPartAndTurnPoint({
     cell,

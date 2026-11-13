@@ -1285,7 +1285,7 @@ abstract class SelectBase implements BaseTool {
     this.updateRotationView();
   }
 
-  protected updateRotationView() {
+  public updateRotationView() {
     const selectedEntities =
       this.editor.drawingEntitiesManager.selectedEntitiesArr;
     const selectedMonomersAndAtoms = selectedEntities.filter(

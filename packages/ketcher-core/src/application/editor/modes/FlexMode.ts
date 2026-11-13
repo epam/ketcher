@@ -5,6 +5,7 @@ import { provideEditorInstance } from '../editorSingleton';
 import { Command } from 'domain/entities/Command';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';
+import { moveSelectionByArrowKeysHandlers } from './moveSelectionByArrowKeys';
 
 export class FlexMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -72,6 +73,10 @@ export class FlexMode extends BaseMode {
 
   scrollForView(): void {
     // intentional no-op: flex mode does not implement automatic scroll for view
+  }
+
+  get keyboardEventHandlers() {
+    return moveSelectionByArrowKeysHandlers;
   }
 }
 

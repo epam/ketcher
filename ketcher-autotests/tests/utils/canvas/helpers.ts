@@ -89,7 +89,12 @@ export async function takePageScreenshot(
     hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
-  await expect(page).toHaveScreenshot(options);
+  await expect(page).toHaveScreenshot({
+    ...options,
+    stylePath: options?.hideMacromoleculeEditorScrollBars
+      ? scrollBarHideCssPath
+      : undefined,
+  });
 }
 
 export async function takePresetsScreenshot(
@@ -125,11 +130,12 @@ export async function takeMonomerLibraryScreenshot(
     hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
-  if (options?.hideMacromoleculeEditorScrollBars) {
-    // That works only for Macromolecule editor
-    await page.keyboard.press(`ControlOrMeta+KeyB`);
-  }
-  await takeElementScreenshot(page, Library(page).libraryBody, options);
+  await takeElementScreenshot(page, Library(page).libraryBody, {
+    ...options,
+    stylePath: options?.hideMacromoleculeEditorScrollBars
+      ? scrollBarHideCssPath
+      : undefined,
+  });
 }
 
 export async function takeEditorScreenshot(
@@ -143,12 +149,16 @@ export async function takeEditorScreenshot(
     stylePath?: string | string[];
   },
 ) {
-  if (options?.hideMacromoleculeEditorScrollBars) {
-    // That works only for Macromolecule editor
-    await page.keyboard.press(`ControlOrMeta+KeyB`);
-    options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
-  }
-  await takeElementScreenshot(page, await getVisibleCanvas(page), options);
+  const stylePath = options?.stylePath;
+  await takeElementScreenshot(page, await getVisibleCanvas(page), {
+    ...options,
+    stylePath: options?.hideMacromoleculeEditorScrollBars
+      ? [
+          ...(typeof stylePath === 'string' ? [stylePath] : stylePath || []),
+          scrollBarHideCssPath,
+        ]
+      : stylePath,
+  });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {

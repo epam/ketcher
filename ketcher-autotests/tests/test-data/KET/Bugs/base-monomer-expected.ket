@@ -21,8 +21,7 @@
             "y": -8.325000000000001
         },
         "alias": "A",
-        "templateId": "A___Adenine",
-        "seqid": 1
+        "templateId": "A___Adenine"
     },
     "monomerTemplate-A___Adenine": {
         "type": "monomerTemplate",

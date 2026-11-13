@@ -591,8 +591,7 @@
             "y": -2.75
         },
         "alias": "Lys_Ac",
-        "templateId": "Lys_Ac___N-epsilon-acetyl-L-lysine",
-        "seqid": 8
+        "templateId": "Lys_Ac___N-epsilon-acetyl-L-lysine"
     },
     "monomer8": {
         "type": "monomer",

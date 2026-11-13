@@ -17,10 +17,12 @@ import { IKetMacromoleculesContent } from 'ketcher-core';
 
 export interface IndigoVectorInt {
   push_back(value: number): void;
+  delete(): void;
 }
 
 export interface IndigoOptions {
   set(key: string, value: string): void;
+  delete(): void;
 }
 
 export interface IndigoModule {

@@ -74,26 +74,34 @@ Planned:
 
 ### AI review
 
-The `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill:
+The `Run Claude Review` label starts `claude-review.yml`, which runs the review hub, `scripts/review/`. The hub is deterministic code, not an agent: it decides every step, and each model run is an isolated, read-only `claude -p` call that answers with a JSON schema. The prompts and the rules come from the base branch, so a PR cannot change its own review.
 
 1. **Panel.** `scripts/review-panel.mjs` picks the code-review lenses the diff needs from its changed paths and the lines it adds to source code. A diff that no lens applies to gets only the linked-issue check and the brief.
-2. **Finders.** One subagent per lens on the panel reads the diff, without the PR description, with a suspicion stance.
-3. **Verifier.** Each finding is checked against the code before it is posted.
-4. **Output.** Verified inline comments, and the review brief as one top-level comment. Every finding follows the [output contract](#output-contract).
+2. **Finders.** One run per lens on the panel reads the diff, without the PR description, with a suspicion stance.
+3. **Merge and duplicates.** Findings of the same file and rule close to each other are merged in code. Findings that describe the same defect in different words are merged by one model run, and only when it answers with high confidence.
+4. **Verifier.** Each finding is checked against the code before it is posted, and is confirmed, dropped or re-rated. When the verifier asks for it, one extra pass per round deepens the security or the reuse lens.
+5. **Linked issue.** One run answers whether the diff fixes the issue the PR links.
+6. **Output.** At most ten verified findings, at most ten inline comments, and the review brief as one top-level comment. Every finding follows the [output contract](#output-contract).
 
-Planned (Phase 5):
+Rounds are manual. The hub removes the label when the run ends, so a new round needs the label again, and that round comments only on what the earlier rounds did not. After three rounds the hub posts the round-limit comment and runs no model.
 
-- Run on every PR instead of by label, with full history to the merge base (task 5.3).
+Both roles run on `claude-opus-5-5`. The `REVIEW_FINDER_MODEL` and `REVIEW_VERIFIER_MODEL` repository variables change a model without a pull request.
+
+`/review-pr` is the same review by hand, for local and agent runs. It shares the panel script, the lens files and the role prompts with the hub, and it posts nothing without approval.
+
+Planned:
+
 - Module docs loaded by their `paths:` lists from Phase 1 (task 5.3).
 - Suggestion blocks in inline comments, and a second, independent verifier pass (task 5.4).
 - AI review may raise a risk tier, never lower it (task 5.5).
+- An evaluation set that measures recall and false positives on known PRs, and sets the default models from the result (`openspec/changes/review-agent`, task 6).
 
 ### Human review
 
-- The reviewer reads the review brief first (planned: Phase 5), then, for large-scale change PRs, the review map.
+- The reviewer reads the review brief first, then, for large-scale change PRs, the review map.
 - Today, `.github/auto_assign.yml` assigns one reviewer from the `core` group.
 - Large-scale change PRs need two reviewers, one of them a code owner (planned: task 4.3; decision D9). A 30-minute walkthrough call replaces the first async review round.
-- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the panel, the count of findings per severity, the findings that did not fit the comment cap, and, for large-scale changes, the review map.
+- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the panel, the count of findings per severity, the findings that did not fit the comment cap, the feedback ask, and, for large-scale changes, the review map.
 
 ## Output contract
 
@@ -112,9 +120,11 @@ Applies to every AI reviewer, including `/review-pr` and the code-review lenses.
 
 ## Feedback loop and rule life cycle
 
-Feedback (planned):
+Feedback on a finding:
 
-- A 👎 on a bot comment makes the pattern a candidate for `.memory-bank/accepted-patterns.md` (planned: tracking in Phase 5, task 5.6).
+- The review brief asks for it. A 👎 on a bot comment marks the finding wrong, and a reply that starts with `Dismissed:` gives the reason in one sentence. The reason is what moves a rule; the reaction alone can only be counted.
+- A reason that says the pattern is fine here makes it a candidate for `.memory-bank/accepted-patterns.md`. A reason that says the rule does not apply to this code narrows the rule's `Scope`.
+- Reading the reactions and the `Dismissed:` replies back is not automated yet (planned: Phase 5, task 5.6). GitHub keeps both, so a later script still sees the feedback given before it existed.
 - A finding that repeats three times becomes a rule proposal (planned: Phase 6, task 6.3).
 - Each escaped defect becomes a case in the golden set for the eval (planned: Phase 5, task 5.1; Phase 6, task 6.3).
 

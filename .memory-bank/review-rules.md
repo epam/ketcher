@@ -50,12 +50,12 @@ Source: agent-docs
 
 ### R5: Do not add casts to satisfy the type checker
 
-Scope: packages/*/src/**
+Scope: packages/**
 Severity: major
 Enforced by: AI
 Status: proposed
-Why: A cast turns off the check at that point, so the mismatch it hid reaches runtime. Reviewers asked for a type guard or a corrected type in 36 PRs. No lint rule covers casts, because consistent-type-assertions is not configured.
-Source: PR #9214, PR #10804, PR #11950, PR #10657
+Why: A cast turns off the check at that point, so the mismatch it hid reaches runtime. Reviewers asked for a type guard or a corrected type in 36 PRs. Unit tests are included: a stub cast with `as unknown as` hides a missing member until a later change reads it, and reviewers asked to remove such casts in tests too. No lint rule covers casts, because consistent-type-assertions is not configured.
+Source: PR #9214, PR #10804, PR #11950, PR #10657, PR #10163
 Bad: `const atom = value as unknown as Atom;`
 Good: narrow value with a type guard, or correct the type where it is declared
 

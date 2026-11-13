@@ -1,0 +1,98 @@
+// Settings of the review hub. Data only: no file or process access.
+// The hub never changes these values. An override, such as the Opus label,
+// builds a new object: `{ ...MODELS, finder: MODELS.strong }`.
+//
+// The isolation options of the model runs (safe or bare mode, the read-only
+// tool list, the permission mode) are not settings. They are fixed in the
+// runner, so that no change here can turn them off.
+
+/** Folder of the lens and role prompts, relative to the base checkout. */
+export const PROMPT_DIR = '.agents/skills/code-review';
+
+// The lenses of a review come from scripts/review-panel.mjs, so the hub,
+// /review-pr and ketcher-flow pick the same lenses for the same diff.
+
+/** Prompt file of the verifier role, in PROMPT_DIR. */
+export const VERIFIER_ROLE = 'verifier';
+
+/** Prompt file of the linked-issue role, in PROMPT_DIR. */
+export const LINKED_ISSUE_ROLE = 'linked-issue';
+
+/** Prompt file of the duplicates role, in PROMPT_DIR. */
+export const DUPLICATES_ROLE = 'duplicates';
+
+/** Labels that start a review. The hub removes the one that started the run. */
+export const LABELS = {
+  standard: 'Run Claude Review',
+  opus: 'Claude Review: Opus',
+};
+
+/**
+ * Model IDs per role. Opus for both roles: the maintainer asked for the
+ * strongest review and set the cost aside, and the workflow this change
+ * replaces runs on Opus too. `strong` and the `Claude Review: Opus` label
+ * therefore change nothing now; they stay for a default that goes back to a
+ * cheaper model. A repository variable lowers a role without a pull request,
+ * and the evaluation (tasks 6.3, 6.4) can still change these.
+ */
+export const MODELS = {
+  finder: 'claude-opus-5-5',
+  verifier: 'claude-opus-5-5',
+  strong: 'claude-opus-5-5',
+};
+
+/**
+ * `oauth` runs `claude -p --safe-mode --restricted` with CLAUDE_CODE_OAUTH_TOKEN.
+ * `api-key` runs `claude -p --bare --restricted` with ANTHROPIC_API_KEY.
+ */
+export const AUTH_MODE = 'oauth';
+
+/** Files the finder passes never see. The panel is picked without them. */
+export const SKIP_PATHS = [
+  'ketcher-autotests/**',
+  '**/package-lock.json',
+  '**/__snapshots__/**',
+  '**/*.snap',
+  '**/dist/**',
+  '**/build/**',
+  'packages/ketcher-core/docs/**',
+  '.github/instructions/**',
+];
+
+/** At most this many merged findings go to verification, blockers first. */
+export const MAX_VERIFIED_FINDINGS = 10;
+
+/** At most this many inline comments per round. Set by the output contract. */
+export const MAX_INLINE_COMMENTS = 10;
+
+/** Model runs at the same time. */
+export const CONCURRENCY = 3;
+
+/** Findings of the same file and rule at most this many lines apart are merged. */
+export const MERGE_LINE_DISTANCE = 3;
+
+/**
+ * At most this many pairs go to the duplicates run. Pairs past the cap stay
+ * separate findings.
+ */
+export const MAX_DUPLICATE_PAIRS = 20;
+
+/** After this many rounds the hub posts the limit comment and runs no model. */
+export const MAX_ROUNDS = 3;
+
+/**
+ * Limits per model run, passed as `--max-turns` and `--max-budget-usd`.
+ * First values; tune them after the local dry runs (task 5.4).
+ */
+export const RUN_LIMITS = {
+  finder: { maxTurns: 30, maxBudgetUsd: 2 },
+  verifier: { maxTurns: 15, maxBudgetUsd: 0.5 },
+  linkedIssue: { maxTurns: 10, maxBudgetUsd: 0.5 },
+  duplicates: { maxTurns: 10, maxBudgetUsd: 0.5 },
+};
+
+/** Account that posts the brief. The hub reads round state only from its comments. */
+export const BOT_LOGIN = 'github-actions[bot]';
+
+/** Start of the hidden state marker in the brief. */
+export const MARKER_PREFIX = '<!-- claude-review:v1 ';

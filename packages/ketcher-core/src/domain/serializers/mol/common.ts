@@ -117,7 +117,7 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
       xBonds.push(bid);
     }
   });
-  if (xBonds.length !== 0 && xBonds.length !== 2) {
+  if (xBonds.length > 0 && xBonds.length !== 2) {
     const error = new Error(
       'Unsupported cross-bonds number',
     ) as SGroupSavingError;
@@ -398,12 +398,8 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   return lines;
 }
 
-// According Unicode Consortium sould be
-// nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// https://www.unicode.org/reports/tr18/#Line_Boundaries
-const nlRe = /\r\n|[\n\r]/g;
 function normalizeNewlines(str: string): string {
-  return str.replace(nlRe, '\n');
+  return str.split(/\r\n|[\n\r]/).join('\n');
 }
 
 function partitionLine(

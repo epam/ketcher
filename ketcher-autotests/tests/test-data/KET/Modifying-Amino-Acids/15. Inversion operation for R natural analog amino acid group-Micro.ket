@@ -514,8 +514,7 @@
             "y": -4.25
         },
         "alias": "dR",
-        "templateId": "dR___D-Arginine",
-        "seqid": 7
+        "templateId": "dR___D-Arginine"
     },
     "monomer7": {
         "type": "monomer",

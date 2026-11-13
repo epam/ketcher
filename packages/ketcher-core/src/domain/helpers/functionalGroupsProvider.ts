@@ -17,16 +17,18 @@ import type { Struct } from '../entities';
 
 export class FunctionalGroupsProvider {
   private static instance: FunctionalGroupsProvider;
-  functionalGroupsList: Struct[];
-  constructor() {
-    this.functionalGroupsList = [];
-  }
 
   public static getInstance(): FunctionalGroupsProvider {
     if (!this.instance) {
       FunctionalGroupsProvider.instance = new FunctionalGroupsProvider();
     }
     return this.instance;
+  }
+
+  functionalGroupsList: Struct[];
+
+  constructor() {
+    this.functionalGroupsList = [];
   }
 
   public getFunctionalGroupsList() {

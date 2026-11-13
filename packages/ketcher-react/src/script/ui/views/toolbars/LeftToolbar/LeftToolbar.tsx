@@ -78,7 +78,7 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
       [],
     ) ?? [];
 
-  return visibleItems.length ? (
+  return visibleItems.length > 0 ? (
     <div className={clsx(classes.group, className)}>
       {visibleItems.map((item) => {
         switch (item.id) {

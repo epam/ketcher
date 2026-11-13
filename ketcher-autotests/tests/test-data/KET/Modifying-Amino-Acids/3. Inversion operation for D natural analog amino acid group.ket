@@ -308,8 +308,7 @@
             "y": -2.75
         },
         "alias": "dD",
-        "templateId": "dD___D-Aspartic acid",
-        "seqid": 4
+        "templateId": "dD___D-Aspartic acid"
     },
     "monomer4": {
         "type": "monomer",

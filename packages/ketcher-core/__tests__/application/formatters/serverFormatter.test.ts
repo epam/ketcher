@@ -83,6 +83,30 @@ describe('ServerFormatter', () => {
     );
   });
 
+  it.each([
+    [SupportedFormat.mol, '2000'],
+    [SupportedFormat.rxn, '2000'],
+    [SupportedFormat.rdf, '2000'],
+    [SupportedFormat.sdf, '2000'],
+    [SupportedFormat.molV3000, '3000'],
+    [SupportedFormat.rxnV3000, '3000'],
+    [SupportedFormat.rdfV3000, '3000'],
+    [SupportedFormat.sdfV3000, '3000'],
+    [SupportedFormat.molAuto, 'auto'],
+  ])(
+    'requests molfile saving mode for %s explicitly',
+    async (format, molfileSavingMode) => {
+      const { convert, formatter } = createFormatter(format);
+
+      await formatter.getStringFromStructureAsync(new Struct());
+
+      expect(convert).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ 'molfile-saving-mode': molfileSavingMode }),
+      );
+    },
+  );
+
   it('uses convert (not layout) for IDT input', () => {
     const convert = jest.fn();
     const layout = jest.fn();

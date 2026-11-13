@@ -61,7 +61,7 @@ export function dispatchMonomerOrGroupDialog(
   editor: Editor,
   fgIds: number[],
 ): void {
-  if (!fgIds.length) return;
+  if (fgIds.length === 0) return;
 
   const struct = editor.render.ctab.molecule;
   const monomerIds: number[] = [];

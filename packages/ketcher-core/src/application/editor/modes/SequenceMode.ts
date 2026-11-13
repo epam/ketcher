@@ -19,6 +19,7 @@ import { Command } from 'domain/entities/Command';
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  Chem,
   LinkerSequenceNode,
   Phosphate,
   RNABase,
@@ -909,12 +910,14 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = provideEditorInstance();
     const modelChanges = new Command();
+    const nextNodeInChain =
+      nextNodeToConnect instanceof BackBoneSequenceNode
+        ? nextNodeToConnect.secondConnectedNode
+        : nextNodeToConnect;
     const creationResult =
-      nextNodeToConnect instanceof Nucleotide ||
-      nextNodeToConnect instanceof Nucleoside ||
-      (nextNodeToConnect instanceof BackBoneSequenceNode &&
-        (nextNodeToConnect.secondConnectedNode instanceof Nucleotide ||
-          nextNodeToConnect.secondConnectedNode instanceof Nucleoside))
+      nextNodeInChain instanceof Nucleotide ||
+      nextNodeInChain instanceof Nucleoside ||
+      nextNodeInChain?.monomer instanceof Chem
         ? Nucleotide.createOnCanvas(
             enteredSymbol,
             newNodePosition,
@@ -943,9 +946,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         nodeToAdd,
-        nextNodeToConnect instanceof BackBoneSequenceNode
-          ? nextNodeToConnect.secondConnectedNode
-          : nextNodeToConnect,
+        nextNodeInChain,
         previousNodeToConnect instanceof BackBoneSequenceNode
           ? previousNodeToConnect.firstConnectedNode
           : previousNodeToConnect,

@@ -18,7 +18,7 @@ export const LabelEditDialog = (page: Page) => {
     cancelButton: page.getByTestId('Cancel'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async fillLabel(label: string) {
@@ -41,10 +41,12 @@ export const LabelEditDialog = (page: Page) => {
     },
 
     async setLabel(label: string) {
-      await this.fillLabel(label);
-      await this.apply();
+      await pageObject.fillLabel(label);
+      await pageObject.apply();
     },
   };
+
+  return pageObject;
 };
 
 export type LabelEditDialogType = ReturnType<typeof LabelEditDialog>;

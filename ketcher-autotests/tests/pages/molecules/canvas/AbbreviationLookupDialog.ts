@@ -11,7 +11,7 @@ export const AbbreviationLookup = (page: Page) => {
     abbreviationLookupEditbox: page.getByTestId('AbbreviationLookup-input'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -32,13 +32,15 @@ export const AbbreviationLookup = (page: Page) => {
 
     async hide() {
       await page.mouse.move(9999, 9999);
-      await this.waitForBecomeHidden();
+      await pageObject.waitForBecomeHidden();
     },
 
     async setValue(value: string) {
       await locators.abbreviationLookupEditbox.fill(value);
     },
   };
+
+  return pageObject;
 };
 
 export type AbbreviationLookupLocatorsType = ReturnType<

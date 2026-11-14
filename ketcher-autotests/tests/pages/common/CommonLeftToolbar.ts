@@ -47,7 +47,7 @@ export const CommonLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') }),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async handTool() {
@@ -103,7 +103,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
 
       // alternative way to open the dropdown (doesn't work on Macro mode)
-      await this.handTool();
+      await pageObject.handTool();
       await locators.bondSelectionDropdownButton.click({
         force: true,
         timeout: bondToolbarActionTimeout,
@@ -120,15 +120,15 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async bondTool(bondTool: MacroBondTool | MicroBondTool) {
       if (
-        (await this.isBondToolActive()) &&
-        (await this.isBondToolSelected(bondTool))
+        (await pageObject.isBondToolActive()) &&
+        (await pageObject.isBondToolSelected(bondTool))
       ) {
         return;
       }
 
       if (
-        !(await this.isBondToolActive()) &&
-        (await this.isBondToolSelected(bondTool))
+        !(await pageObject.isBondToolActive()) &&
+        (await pageObject.isBondToolSelected(bondTool))
       ) {
         await locators.bondSelectionDropdownButton.click();
         return;
@@ -143,7 +143,7 @@ export const CommonLeftToolbar = (page: Page) => {
         .first();
       while (attempts < maxAttempts) {
         try {
-          await this.expandBondSelectionDropdown();
+          await pageObject.expandBondSelectionDropdown();
           await locators.toolSelectionDropdownPanel.waitFor({
             state: 'visible',
             timeout: bondTypeButtonVisibleTimeout,
@@ -188,6 +188,8 @@ export const CommonLeftToolbar = (page: Page) => {
         .isVisible();
     },
   };
+
+  return pageObject;
 };
 
 export type CommonLeftToolbarType = ReturnType<typeof CommonLeftToolbar>;

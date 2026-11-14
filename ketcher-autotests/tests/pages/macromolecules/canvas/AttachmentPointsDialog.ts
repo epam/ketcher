@@ -29,7 +29,7 @@ export const AttachmentPointsDialog = (page: Page) => {
     cancelButton: page.getByTestId('cancel-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -49,7 +49,7 @@ export const AttachmentPointsDialog = (page: Page) => {
       leftMonomer?: AttachmentPoint;
       rightMonomer?: AttachmentPoint;
     }) {
-      await this.window.waitFor({ state: 'visible' });
+      await pageObject.window.waitFor({ state: 'visible' });
       const leftAttachmentPointButton = buttons.leftMonomer
         ? LeftMonomerAttachmentPointButton[buttons.leftMonomer]
         : null;
@@ -59,13 +59,13 @@ export const AttachmentPointsDialog = (page: Page) => {
 
       if (
         leftAttachmentPointButton &&
-        !(await this.isActive(leftAttachmentPointButton))
+        !(await pageObject.isActive(leftAttachmentPointButton))
       ) {
         await page.getByTestId(leftAttachmentPointButton).click();
       }
       if (
         rightAttachmentPointButton &&
-        !(await this.isActive(rightAttachmentPointButton))
+        !(await pageObject.isActive(rightAttachmentPointButton))
       ) {
         await page.getByTestId(rightAttachmentPointButton).click();
       }
@@ -90,6 +90,8 @@ export const AttachmentPointsDialog = (page: Page) => {
       await locators.cancelButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type AttachmentPointsDialogLocatorsType = ReturnType<

@@ -148,72 +148,72 @@ export const AtomPropertiesDialog = (page: Page) => {
     cancelButton: page.getByTestId('Cancel'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     // prettier-ignore
     async setOptions(options: AtomPropertiesSettings) {
-      await ifNotNull(p => this.setGeneralProperties(p), options.GeneralProperties);
-      await ifNotNull(p => this.setQuerySpecificProperties(p), options.QuerySpecificProperties);
-      await ifNotNull(p => this.setReactionFlagsProperties(p), options.ReactionFlags);
-      await ifNotNull(p => this.setCustomQueryProperties(p), options.CustomQuery);
-      await this.apply();
+      await ifNotNull(p => pageObject.setGeneralProperties(p), options.GeneralProperties);
+      await ifNotNull(p => pageObject.setQuerySpecificProperties(p), options.QuerySpecificProperties);
+      await ifNotNull(p => pageObject.setReactionFlagsProperties(p), options.ReactionFlags);
+      await ifNotNull(p => pageObject.setCustomQueryProperties(p), options.CustomQuery);
+      await pageObject.apply();
     },
 
     // prettier-ignore
     async setGeneralProperties(generalProperties: GeneralPropertiesSettings) {
       if (generalProperties.Label) {
-        await ifNotNull(p => this.selectAtomType(p), AtomType.Single);
-        await ifNotNull(p => this.fillLabel(p), generalProperties.Label);
+        await ifNotNull(p => pageObject.selectAtomType(p), AtomType.Single);
+        await ifNotNull(p => pageObject.fillLabel(p), generalProperties.Label);
       } else if (generalProperties.List || generalProperties.NotListCheckbox) {
-        await ifNotNull(p => this.selectAtomType(p), AtomType.List);
-        await ifNotNull(p => this.selectAtomsList(p), generalProperties.List);
-        await ifNotNull(p => this.setNotListCheckbox(p), generalProperties.NotListCheckbox);
+        await ifNotNull(p => pageObject.selectAtomType(p), AtomType.List);
+        await ifNotNull(p => pageObject.selectAtomsList(p), generalProperties.List);
+        await ifNotNull(p => pageObject.setNotListCheckbox(p), generalProperties.NotListCheckbox);
       } else if (generalProperties.Special) {
-        await ifNotNull(p => this.selectAtomType(p), AtomType.Special);
-        await ifNotNull(p => this.fillSpecial(p), generalProperties.Special);
+        await ifNotNull(p => pageObject.selectAtomType(p), AtomType.Special);
+        await ifNotNull(p => pageObject.fillSpecial(p), generalProperties.Special);
       } else if (generalProperties.AtomType) {
-        await ifNotNull(p => this.selectAtomType(p), generalProperties.AtomType);
+        await ifNotNull(p => pageObject.selectAtomType(p), generalProperties.AtomType);
       }
-      await ifNotNull(p => this.fillAlias(p), generalProperties.Alias);
-      await ifNotNull(p => this.fillCharge(p), generalProperties.Charge);
-      await ifNotNull(p => this.fillIsotope(p), generalProperties.Isotope);
-      await ifNotNull(p => this.selectValence(p), generalProperties.Valence);
-      await ifNotNull(p => this.selectRadical(p), generalProperties.Radical);
+      await ifNotNull(p => pageObject.fillAlias(p), generalProperties.Alias);
+      await ifNotNull(p => pageObject.fillCharge(p), generalProperties.Charge);
+      await ifNotNull(p => pageObject.fillIsotope(p), generalProperties.Isotope);
+      await ifNotNull(p => pageObject.selectValence(p), generalProperties.Valence);
+      await ifNotNull(p => pageObject.selectRadical(p), generalProperties.Radical);
     },
 
     // prettier-ignore
     async setQuerySpecificProperties(
       querySpecificProperties: QuerySpecificPropertiesSettings,
     ) {
-      await this.expandQuerySpecific();
-      await ifNotNull(p => this.selectRingBondCount(p), querySpecificProperties.RingBondCount);
-      await ifNotNull(p => this.selectHCount(p), querySpecificProperties.HCount);
-      await ifNotNull(p => this.selectSubstitutionCount(p), querySpecificProperties.SubstitutionCount);
-      await ifNotNull(p => this.setUnsaturatedCheckbox(p), querySpecificProperties.UnsaturatedCheckbox);
-      await ifNotNull(p => this.selectAromaticity(p), querySpecificProperties.Aromaticity);
-      await ifNotNull(p => this.selectImplicitHCount(p), querySpecificProperties.ImplicitHCount);
-      await ifNotNull(p => this.selectRingMembership(p), querySpecificProperties.RingMembership);
-      await ifNotNull(p => this.selectRingSize(p), querySpecificProperties.RingSize);
-      await ifNotNull(p => this.selectConnectivity(p), querySpecificProperties.Connectivity);
-      await ifNotNull(p => this.selectChirality(p), querySpecificProperties.Chirality);
+      await pageObject.expandQuerySpecific();
+      await ifNotNull(p => pageObject.selectRingBondCount(p), querySpecificProperties.RingBondCount);
+      await ifNotNull(p => pageObject.selectHCount(p), querySpecificProperties.HCount);
+      await ifNotNull(p => pageObject.selectSubstitutionCount(p), querySpecificProperties.SubstitutionCount);
+      await ifNotNull(p => pageObject.setUnsaturatedCheckbox(p), querySpecificProperties.UnsaturatedCheckbox);
+      await ifNotNull(p => pageObject.selectAromaticity(p), querySpecificProperties.Aromaticity);
+      await ifNotNull(p => pageObject.selectImplicitHCount(p), querySpecificProperties.ImplicitHCount);
+      await ifNotNull(p => pageObject.selectRingMembership(p), querySpecificProperties.RingMembership);
+      await ifNotNull(p => pageObject.selectRingSize(p), querySpecificProperties.RingSize);
+      await ifNotNull(p => pageObject.selectConnectivity(p), querySpecificProperties.Connectivity);
+      await ifNotNull(p => pageObject.selectChirality(p), querySpecificProperties.Chirality);
     },
 
     // prettier-ignore
     async setReactionFlagsProperties(
       reactionFlagsProperties: ReactionFlagsPropertiesSettings,
     ) {
-      await this.expandReactionFlags();
-      await ifNotNull(p => this.selectInversion(p), reactionFlagsProperties.Inversion);
-      await ifNotNull(p => this.setExactChangeCheckbox(p), reactionFlagsProperties.ExactChangeCheckbox);
+      await pageObject.expandReactionFlags();
+      await ifNotNull(p => pageObject.selectInversion(p), reactionFlagsProperties.Inversion);
+      await ifNotNull(p => pageObject.setExactChangeCheckbox(p), reactionFlagsProperties.ExactChangeCheckbox);
     },
 
     // prettier-ignore
     async setCustomQueryProperties(
       customQueryProperties: CustomQueryPropertiesSettings,
     ) {
-      await ifNotNull(p => this.setCustomQueryCheckbox(p), customQueryProperties.CustomQueryCheckbox);
-      await ifNotNull(p => this.fillCustomQueryText(p), customQueryProperties.CustomQueryTextArea);
+      await ifNotNull(p => pageObject.setCustomQueryCheckbox(p), customQueryProperties.CustomQueryCheckbox);
+      await ifNotNull(p => pageObject.fillCustomQueryText(p), customQueryProperties.CustomQueryTextArea);
     },
 
     async closeWindow() {
@@ -221,7 +221,7 @@ export const AtomPropertiesDialog = (page: Page) => {
     },
 
     async editLabel() {
-      await this.expandQuerySpecific();
+      await pageObject.expandQuerySpecific();
       await locators.generalSection.editButton.click();
     },
 
@@ -256,7 +256,7 @@ export const AtomPropertiesDialog = (page: Page) => {
     },
 
     async selectAtomsList(value: { AtomsList: PeriodicTableElement[] }) {
-      await this.openTable();
+      await pageObject.openTable();
       await PeriodicTableDialog(page).addElements(value.AtomsList);
     },
 
@@ -429,6 +429,8 @@ export const AtomPropertiesDialog = (page: Page) => {
       }
     },
   };
+
+  return pageObject;
 };
 
 export type AtomPropertiesDialogType = ReturnType<typeof AtomPropertiesDialog>;

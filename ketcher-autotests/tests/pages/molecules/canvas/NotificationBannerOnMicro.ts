@@ -11,7 +11,7 @@ export const NotificationBannerOnMicro = (page: Page) => {
     closeButton: page.getByTestId('notification-banner-close-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -34,10 +34,12 @@ export const NotificationBannerOnMicro = (page: Page) => {
     },
 
     async getNotificationText() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.message.textContent();
     },
   };
+
+  return pageObject;
 };
 
 export type NotificationBannerOnMicroLocatorsType = ReturnType<

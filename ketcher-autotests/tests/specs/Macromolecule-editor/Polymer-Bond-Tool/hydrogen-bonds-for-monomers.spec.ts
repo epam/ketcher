@@ -494,9 +494,9 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       try {
-        await errorTooltip.waitForBecomeVisible(10000);
-        expect(await errorTooltip.message.textContent()).toContain(
+        await expect(errorTooltip.message).toContainText(
           'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+          { timeout: 10000 },
         );
 
         if (await errorTooltip.isVisible()) {

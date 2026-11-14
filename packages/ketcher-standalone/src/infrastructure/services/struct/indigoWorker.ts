@@ -63,7 +63,8 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  module.then((indigo: IndigoModule) => {
+  void (async () => {
+    const indigo = await module;
     const indigoOptions = new indigo.MapStringString();
     let msg: OutputMessage<string>;
     try {
@@ -88,7 +89,7 @@ function handle(
     }
 
     globalThis.postMessage(msg);
-  });
+  })();
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {

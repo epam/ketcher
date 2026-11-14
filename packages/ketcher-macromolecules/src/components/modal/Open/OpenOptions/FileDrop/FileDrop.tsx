@@ -102,10 +102,8 @@ const FileDrop = ({
     onFileDialogCancel: () => {
       const windowContext = globalThis as unknown as Record<string, unknown>;
       if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-        document.documentElement.requestFullscreen?.().catch(() => {
-          /*
-          Restore fullscreen silently if failed
-          */
+        void document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
         });
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }

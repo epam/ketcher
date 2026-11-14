@@ -18,7 +18,7 @@ import type { FC } from 'react';
 import { type AnalyzingFileProps, AnalyzingFile } from './AnalyzingFile';
 
 import { type OpenOptionsProps, OpenOptions } from './OpenOptions';
-import { type TextEditorProps, TextEditor } from './TextEditor';
+import { type TextEditorProperties, TextEditor } from './TextEditor';
 import CDXStructuresViewer from './CDXStructuresViewer';
 import type { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
 
@@ -34,7 +34,7 @@ type SwitchProps = {
   states: ViewStates;
   isAnalyzingFile: boolean;
 } & OpenOptionsProps &
-  TextEditorProps &
+  TextEditorProperties &
   AnalyzingFileProps &
   CDXStructuresViewerProps;
 

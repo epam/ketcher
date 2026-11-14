@@ -22,7 +22,7 @@ export type Group = {
   groupTitle?: string;
 };
 
-export interface IMonomerListProps {
+export interface IMonomerListProperties {
   libraryName: LibraryNameType;
   duplicatePreset: () => void;
   editPreset: () => void;

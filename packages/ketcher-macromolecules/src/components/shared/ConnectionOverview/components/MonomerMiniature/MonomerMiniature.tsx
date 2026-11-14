@@ -12,7 +12,7 @@ import { useCallback, useLayoutEffect, useRef } from 'react';
 
 import { Container, DEFAULT_MINIATURE_SIZE } from './MonomerMiniature.styles';
 
-interface Props {
+interface Properties {
   monomer: BaseMonomer;
   usage: UsageInMacromolecule;
   connectedAttachmentPoints?: string[];
@@ -28,9 +28,9 @@ const MonomerMiniature = ({
   connectedAttachmentPoints,
   usage,
   testId,
-}: Props) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+}: Properties) => {
+  const containerReference = useRef<HTMLDivElement>(null);
+  const svgReference = useRef<SVGSVGElement>(null);
 
   // Container size (`expanded` uses width/height: 'auto') isn't settled by
   // the time this first layout effect runs — it can still shift afterwards,
@@ -42,8 +42,8 @@ const MonomerMiniature = ({
   // whenever the container's actual box changes, so it always converges to
   // the final, stable size regardless of layout timing.
   const applyScale = useCallback(() => {
-    const svg = svgRef.current;
-    const container = containerRef.current;
+    const svg = svgReference.current;
+    const container = containerReference.current;
     if (!svg || !container) {
       return;
     }
@@ -57,7 +57,7 @@ const MonomerMiniature = ({
   }, []);
 
   useLayoutEffect(() => {
-    const svg = svgRef.current;
+    const svg = svgReference.current;
     if (svg) {
       const svgElement = select(svg) as unknown as Selection<
         SVGSVGElement,
@@ -110,7 +110,7 @@ const MonomerMiniature = ({
   ]);
 
   useLayoutEffect(() => {
-    const container = containerRef.current;
+    const container = containerReference.current;
     if (!container) {
       return;
     }
@@ -120,9 +120,13 @@ const MonomerMiniature = ({
   }, [applyScale]);
 
   return (
-    <Container ref={containerRef} expanded={expanded} data-testid={testId}>
+    <Container
+      ref={containerReference}
+      expanded={expanded}
+      data-testid={testId}
+    >
       <svg
-        ref={svgRef}
+        ref={svgReference}
         width={DEFAULT_MINIATURE_SIZE}
         height={DEFAULT_MINIATURE_SIZE}
       />

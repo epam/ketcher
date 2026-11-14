@@ -31,11 +31,11 @@ import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
 import { UsageInMacromolecule } from 'ketcher-core';
 import { MonomerPreviewState } from 'state';
 
-interface Props {
+interface Properties {
   className?: string;
 }
 
-const MonomerPreview = ({ className }: Props) => {
+const MonomerPreview = ({ className }: Properties) => {
   const preview = useAppSelector(selectShowPreview) as MonomerPreviewState;
   const LONG_NAME_THRESHOLD = 100;
 

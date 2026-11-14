@@ -21,7 +21,7 @@ import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
 
-interface IStyledButtonProps {
+interface IStyledButtonProperties {
   disabled: boolean;
 }
 
@@ -39,7 +39,7 @@ export const ActionButtonLeft = styled(ActionButton)(() => ({
   width: '97px !important',
 }));
 
-export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProperties>(
   (props) => ({
     width: '97px !important',
     color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',

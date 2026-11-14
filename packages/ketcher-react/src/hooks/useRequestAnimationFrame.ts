@@ -20,9 +20,9 @@ export const useRequestAnimationFrame = (
   isActive: boolean,
   onFrame: (deltaTimeInMilliseconds: number) => void,
 ) => {
-  const callbackRef = useRef(onFrame);
+  const callbackReference = useRef(onFrame);
   useEffect(() => {
-    callbackRef.current = onFrame;
+    callbackReference.current = onFrame;
   }, [onFrame]);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export const useRequestAnimationFrame = (
     const loop = (now: number) => {
       const dt = now - previousTime;
       previousTime = now;
-      callbackRef.current(dt);
+      callbackReference.current(dt);
       requestAnimationFrameId = requestAnimationFrame(loop);
     };
 

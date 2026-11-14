@@ -19,7 +19,7 @@ import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
-  type DialogParams,
+  type DialogParameters,
   LoadingCircles,
 } from '../../../../components';
 import classes from './Open.module.less';
@@ -188,7 +188,7 @@ const Open: FC<Props> = (props) => {
       title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
       // Dialog expects a looser `onOk` result type
-      params={rest as DialogParams}
+      params={rest as DialogParameters}
       result={() => null}
       data-testid="openStructureModal"
       footerContent={

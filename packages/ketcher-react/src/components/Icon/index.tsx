@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export { default as Icon } from './Icon';
-export type { IconName, IIconProps } from './types';
+export type { IconName, IIconProperties } from './types';
 export { getIconName } from './utils/getIconName';

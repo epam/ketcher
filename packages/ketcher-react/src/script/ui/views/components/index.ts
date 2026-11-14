@@ -15,6 +15,6 @@
  ***************************************************************************/
 
 export { Dialog } from '../../../../components/Dialog';
-export type { DialogParams } from '../../../../components/Dialog';
+export type { DialogParameters } from '../../../../components/Dialog';
 export { LoadingCircles } from './Spinner';
 export { default as StructEditor } from './StructEditor';

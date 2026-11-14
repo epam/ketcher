@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { IIconButtonCustomIconProps } from './types';
+import type { IIconButtonCustomIconProperties } from './types';
 import { IconButtonBase } from './IconButtonBase';
 import { StyledCustomIcon } from './styles';
 
 export const IconButtonCustomIcon = ({
   link,
-  ...props
-}: IIconButtonCustomIconProps) => {
+  ...properties
+}: IIconButtonCustomIconProperties) => {
   return (
-    <IconButtonBase {...props}>
-      <StyledCustomIcon src={link} alt={props.title} />
+    <IconButtonBase {...properties}>
+      <StyledCustomIcon src={link} alt={properties.title} />
     </IconButtonBase>
   );
 };

@@ -15,4 +15,4 @@
  ***************************************************************************/
 
 export { DropDown } from './dropDown';
-export type { DropDownProps } from './dropDown';
+export type { DropDownProperties } from './dropDown';

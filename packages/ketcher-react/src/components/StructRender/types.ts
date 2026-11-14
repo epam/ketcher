@@ -16,7 +16,7 @@
 
 import type { Struct, RenderStructOptions } from 'ketcher-core';
 
-export interface IStructRenderProps {
+export interface IStructRenderProperties {
   struct: Struct;
   options?: RenderStructOptions;
   className?: string;

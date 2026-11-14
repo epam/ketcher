@@ -19,7 +19,7 @@ export async function editRGroupAttachmentPoint(
     const previousAttachmentPoints = atom?.attachmentPoints;
     const currentAttachmentPoints = newAtom.attachmentPoints;
     if (previousAttachmentPoints !== currentAttachmentPoints) {
-      const actionFromAtomsAttrs = fromAtomsAttrs(
+      const actionFromAtomsAttributes = fromAtomsAttrs(
         editor.render.ctab,
         atomId,
         newAtom,
@@ -31,7 +31,7 @@ export async function editRGroupAttachmentPoint(
           atomId,
           currentAttachmentPoints ?? null,
         );
-      const action = actionFromAtomsAttrs.mergeWith(
+      const action = actionFromAtomsAttributes.mergeWith(
         actionFromRGroupAttachmentPointUpdate,
       );
       editor.update(action);

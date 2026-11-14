@@ -30,11 +30,11 @@ export const ContentLine = styled.div`
   white-space: pre;
 `;
 
-interface RatioBarProps {
+interface RatioBarProperties {
   ratio: number;
 }
 
-export const RatioBar = styled.div<RatioBarProps>`
+export const RatioBar = styled.div<RatioBarProperties>`
   display: flex;
   align-items: center;
   justify-content: center;

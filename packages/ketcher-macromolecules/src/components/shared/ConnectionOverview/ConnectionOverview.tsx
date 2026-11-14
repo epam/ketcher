@@ -8,7 +8,7 @@ import {
 } from './ConnectionOverview.styles';
 import getMonomerName from 'helpers/getMonomerName';
 
-interface Props {
+interface Properties {
   firstMonomer: BaseMonomer;
   secondMonomer: BaseMonomer;
   expanded?: boolean;
@@ -22,7 +22,7 @@ const ConnectionOverview = ({
   expanded,
   firstMonomerOverview,
   secondMonomerOverview,
-}: Props) => {
+}: Properties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const firstMonomerName = getMonomerName(firstMonomer, t);
   const secondMonomerName = getMonomerName(secondMonomer, t);

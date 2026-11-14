@@ -17,8 +17,8 @@
 import type { IconName } from '../../Icon/types';
 import type { ReactNode } from 'react';
 
-export interface IIconButtonBaseProps {
-  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+export interface IIconButtonBaseProperties {
+  onClick: (event_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   title?: string;
   className?: string;
   isHidden?: boolean;
@@ -29,21 +29,21 @@ export interface IIconButtonBaseProps {
   children: ReactNode;
 }
 
-type IIconButtonBasePropsWithoutChildren = Omit<
-  IIconButtonBaseProps,
+type IIconButtonBasePropertiesWithoutChildren = Omit<
+  IIconButtonBaseProperties,
   'children'
 >;
 
-export interface IIconButtonProps extends IIconButtonBasePropsWithoutChildren {
+export interface IIconButtonProperties extends IIconButtonBasePropertiesWithoutChildren {
   iconName: IconName;
   testid?: string;
 }
 
-export interface IIconButtonCustomIconProps extends IIconButtonBasePropsWithoutChildren {
+export interface IIconButtonCustomIconProperties extends IIconButtonBasePropertiesWithoutChildren {
   link: string;
 }
 
-export interface IStyledButtonProps {
+export interface IStyledButtonProperties {
   isActive: boolean;
   testId?: string;
 }

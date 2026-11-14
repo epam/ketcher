@@ -31,27 +31,31 @@ import StructRender from './StructRender';
  * - With memo: Only items whose props changed actually re-render
  * - Expected improvement: 95%+ faster on subsequent interactions after initial load
  */
-const MemoizedStructRender = memo(StructRender, (prevProps, nextProps) => {
-  // Return true if props are equal (skip re-render)
-  // Return false if props differ (perform re-render)
+const MemoizedStructRender = memo(
+  StructRender,
+  (previousProperties, nextProperties) => {
+    // Return true if props are equal (skip re-render)
+    // Return false if props differ (perform re-render)
 
-  const areStructsEqual = prevProps.struct === nextProps.struct;
-  const areOptionsEqual =
-    JSON.stringify(prevProps.options) === JSON.stringify(nextProps.options);
-  const areOtherPropsEqual =
-    prevProps.className === nextProps.className &&
-    prevProps.fullsize === nextProps.fullsize &&
-    prevProps.update === nextProps.update &&
-    prevProps.testId === nextProps.testId;
+    const structsEqual = previousProperties.struct === nextProperties.struct;
+    const optionsEqual =
+      JSON.stringify(previousProperties.options) ===
+      JSON.stringify(nextProperties.options);
+    const otherPropertiesEqual =
+      previousProperties.className === nextProperties.className &&
+      previousProperties.fullsize === nextProperties.fullsize &&
+      previousProperties.update === nextProperties.update &&
+      previousProperties.testId === nextProperties.testId;
 
-  // Props are equal, skip re-render
-  if (areStructsEqual && areOptionsEqual && areOtherPropsEqual) {
-    return true;
-  }
+    // Props are equal, skip re-render
+    if (structsEqual && optionsEqual && otherPropertiesEqual) {
+      return true;
+    }
 
-  // Props differ, perform re-render
-  return false;
-});
+    // Props differ, perform re-render
+    return false;
+  },
+);
 
 MemoizedStructRender.displayName = 'MemoizedStructRender';
 

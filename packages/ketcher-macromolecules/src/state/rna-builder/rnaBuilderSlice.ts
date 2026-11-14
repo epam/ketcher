@@ -568,7 +568,7 @@ export const selectFilteredPresets = createSelector(
         const modifications = item.idtAliases?.modifications;
         const modificationAliases = modifications
           ? Object.values(modifications).filter(
-              (mod): mod is string => typeof mod === 'string',
+              (module_): module_ is string => typeof module_ === 'string',
             )
           : [];
         let transformedIdtText = idtName;
@@ -591,8 +591,8 @@ export const selectFilteredPresets = createSelector(
           return (
             transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
             idtName?.startsWith(aliasRest) ||
-            modificationAliases.some((mod) =>
-              mod.toLowerCase().startsWith(aliasRest),
+            modificationAliases.some((module_) =>
+              module_.toLowerCase().startsWith(aliasRest),
             )
           );
         }
@@ -607,9 +607,9 @@ export const selectFilteredPresets = createSelector(
             (idtName?.endsWith(aliasRest) &&
               idtName.at(-1) === aliasLastSymbol) ||
             modificationAliases.some(
-              (mod) =>
-                mod.toLowerCase().endsWith(aliasRest) &&
-                mod.at(-1) === aliasLastSymbol,
+              (module_) =>
+                module_.toLowerCase().endsWith(aliasRest) &&
+                module_.at(-1) === aliasLastSymbol,
             )
           );
         }

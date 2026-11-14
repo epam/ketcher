@@ -329,7 +329,7 @@ class Editor implements KetcherEditor {
     clientArea: HTMLElement,
     options?: Record<string, unknown>,
     serverSettings?: Record<string, unknown>,
-    prevEditor?: KetcherEditor,
+    previousEditor?: KetcherEditor,
   ) {
     this.render = new Render(
       clientArea,
@@ -337,7 +337,7 @@ class Editor implements KetcherEditor {
         microModeScale: SCALE,
         ...options,
       } as RenderOptions,
-      prevEditor?.render,
+      previousEditor?.render,
       options?.reuseRestructIfExist !== false,
     );
 
@@ -409,7 +409,7 @@ class Editor implements KetcherEditor {
     this.#origin = position ? this.historyStack[position - 1] : null;
   }
 
-  tool(name?: string, opts?: unknown): Tool | null {
+  tool(name?: string, options?: unknown): Tool | null {
     if (arguments.length === 0) {
       return this._tool;
     }
@@ -420,7 +420,7 @@ class Editor implements KetcherEditor {
 
     const ToolConstructor: ToolConstructorInterface = toolsMap[name as string];
 
-    const tool = new ToolConstructor(this, opts);
+    const tool = new ToolConstructor(this, options);
 
     const isAtomToolChosen = name === 'atom';
     if (!isAtomToolChosen) {
@@ -518,11 +518,11 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule;
   }
 
-  setOptions(opts: string) {
-    const options = JSON.parse(opts);
+  setOptions(options_: string) {
+    const options = JSON.parse(options_);
     this.event.apiSettings.dispatch({ ...options });
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
-    const result = this.render.updateOptions(opts);
+    const result = this.render.updateOptions(options_);
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     return result;
   }
@@ -632,11 +632,11 @@ class Editor implements KetcherEditor {
     }
 
     const structCenter = getStructCenter(structure);
-    const viewBoxCenterInProto = Scale.canvasToModel(
+    const viewBoxCenterInPrototype = Scale.canvasToModel(
       this.getViewportCenterInCanvas(viewportElement),
       this.render.options,
     );
-    const shiftVector = viewBoxCenterInProto.sub(structCenter);
+    const shiftVector = viewBoxCenterInPrototype.sub(structCenter);
 
     const structureToMove = getSelectionMap(structure);
 
@@ -823,9 +823,9 @@ class Editor implements KetcherEditor {
 
     state.rnaComponentAtoms ??= new Map();
 
-    const prevComponentData = state.rnaComponentAtoms.get(componentKey);
-    const prevAtomIds = prevComponentData?.atoms ?? [];
-    const prevBondIds = prevComponentData?.bonds ?? [];
+    const previousComponentData = state.rnaComponentAtoms.get(componentKey);
+    const previousAtomIds = previousComponentData?.atoms ?? [];
+    const previousBondIds = previousComponentData?.bonds ?? [];
 
     const action = new Action([
       new MarkAsRnaComponentOperation(
@@ -833,8 +833,8 @@ class Editor implements KetcherEditor {
         componentKey,
         atomIds,
         bondIds,
-        prevAtomIds,
-        prevBondIds,
+        previousAtomIds,
+        previousBondIds,
       ),
     ]).perform(this.render.ctab);
 
@@ -1577,9 +1577,9 @@ class Editor implements KetcherEditor {
     const originalToSelectedAtomsIdMap = new Map<number, number>();
     [...(selection.atoms ?? [])]
       .sort((a, b) => a - b)
-      .forEach((atomId, i) => {
-        originalToSelectedAtomsIdMap.set(atomId, i);
-        this.selectedToOriginalAtomsIdMap.set(i, atomId);
+      .forEach((atomId, index) => {
+        originalToSelectedAtomsIdMap.set(atomId, index);
+        this.selectedToOriginalAtomsIdMap.set(index, atomId);
       });
 
     const assignedAttachmentPoints = new Map<
@@ -1637,8 +1637,8 @@ class Editor implements KetcherEditor {
         attachmentPointLabel !== AttachmentPointName.R2,
     );
     let sideAttachmentPointsNames: AttachmentPointName[] = [];
-    for (let i = 0; i < sideTerminalSGroupAtoms.length; i++) {
-      const attachmentPointNumber = i + 3;
+    for (let index = 0; index < sideTerminalSGroupAtoms.length; index++) {
+      const attachmentPointNumber = index + 3;
       if (attachmentPointNumber > 8) {
         break;
       }
@@ -1924,19 +1924,19 @@ class Editor implements KetcherEditor {
       const [, minimalAtomicNumberAtomId] = [...potentialLeavingAtoms]
         .sort((a, b) => a - b)
         .reduce(
-          (acc, currentAtomId) => {
+          (accumulator, currentAtomId) => {
             const atom = this.struct().atoms.get(currentAtomId);
             assert(atom);
 
             const atomicNumber = Elements.get(atom.label)?.number;
             if (atomicNumber !== undefined) {
-              const minimalAtomicNumber = acc[0];
+              const minimalAtomicNumber = accumulator[0];
               if (atomicNumber < minimalAtomicNumber) {
                 return [atomicNumber, currentAtomId];
               }
             }
 
-            return acc;
+            return accumulator;
           },
           [999, -1] as [number, number],
         );
@@ -2067,7 +2067,7 @@ class Editor implements KetcherEditor {
     );
 
     const monomerId = `${symbol}___${name}${hidden ? '___hidden' : ''}`;
-    const monomerRef = setMonomerTemplatePrefix(monomerId);
+    const monomerReference = setMonomerTemplatePrefix(monomerId);
     const monomerHELMClass = getHELMClassByKetMonomerClass(type);
     const naturalAnalogueToUse = fillNaturalAnalogueForPhosphateAndSugar(
       naturalAnalogue,
@@ -2095,7 +2095,7 @@ class Editor implements KetcherEditor {
         connections: [],
         templates: [
           {
-            $ref: monomerRef,
+            $ref: monomerReference,
           },
         ],
       },
@@ -2114,7 +2114,7 @@ class Editor implements KetcherEditor {
     return {
       monomer,
       monomerTemplate,
-      monomerRef,
+      monomerRef: monomerReference,
     };
   }
 
@@ -2507,7 +2507,7 @@ class Editor implements KetcherEditor {
       const {
         monomer,
         monomerTemplate,
-        monomerRef,
+        monomerRef: monomerReference,
         monomerStructureInWizard,
         atomIdMap,
       } = monomerData;
@@ -2546,7 +2546,7 @@ class Editor implements KetcherEditor {
         root: {
           ...templateRoot,
         },
-        [monomerRef]: {
+        [monomerReference]: {
           ...templateData,
         },
       };
@@ -2570,7 +2570,7 @@ class Editor implements KetcherEditor {
       const templateId = monomersData
         .map((monomerData) => monomerData.monomerTemplate.id)
         .join('_');
-      const templateRef = setMonomerGroupTemplatePrefix(templateId);
+      const templateReference = setMonomerGroupTemplatePrefix(templateId);
       const sugarMonomerTemplate = monomersData.find(
         ({ monomerTemplate }) =>
           monomerTemplate.class === KetMonomerClass.Sugar,
@@ -2623,9 +2623,9 @@ class Editor implements KetcherEditor {
 
       const libraryItem = {
         root: {
-          templates: [getKetRef(templateRef)],
+          templates: [getKetRef(templateReference)],
         },
-        [templateRef]: {
+        [templateReference]: {
           type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
           class: KetMonomerClass.RNA,
           name: rnaPresetName,
@@ -2639,8 +2639,8 @@ class Editor implements KetcherEditor {
         },
       };
 
-      ket.root.templates.push(getKetRef(templateRef));
-      ket[templateRef] = libraryItem[templateRef];
+      ket.root.templates.push(getKetRef(templateReference));
+      ket[templateReference] = libraryItem[templateReference];
     }
     ketcher.updateMonomersLibrary(JSON.stringify(ket), {
       format: 'ket',
@@ -3905,9 +3905,9 @@ class Editor implements KetcherEditor {
       shouldSelectAll = true;
       // TODO: better way will be this.struct()
       resolvedCi = structObjects.reduce(
-        (res, key) => {
-          res[key] = [...ReStruct[key].keys()];
-          return res;
+        (result, key) => {
+          result[key] = Array.from(ReStruct[key].keys());
+          return result;
         },
         {} as Record<string, number[]>,
       );
@@ -3919,16 +3919,16 @@ class Editor implements KetcherEditor {
     }
 
     if (resolvedCi) {
-      const res: Selection = {};
+      const result: Selection = {};
 
       Object.keys(resolvedCi).forEach((key) => {
         if (resolvedCi[key]?.length > 0)
           // TODO: deep merge
-          res[key] = [...resolvedCi[key]];
+          result[key] = resolvedCi[key].slice();
       });
 
-      if (Object.keys(res).length > 0) {
-        this._selection = res;
+      if (Object.keys(result).length > 0) {
+        this._selection = result;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
@@ -3940,7 +3940,7 @@ class Editor implements KetcherEditor {
             ...new Set([...this._selection.enhancedFlags, ...stereoFlags]),
           ];
         } else {
-          res.enhancedFlags = stereoFlags;
+          result.enhancedFlags = stereoFlags;
         }
       }
     }
@@ -4134,13 +4134,13 @@ class Editor implements KetcherEditor {
 
     switch (eventName) {
       case 'change': {
-        const subscribeFuncWrapper = (action: unknown) => {
+        const subscribeFunctionWrapper = (action: unknown) => {
           customOnChangeHandler(action as unknown, handler);
         };
-        subscriber.handler = subscribeFuncWrapper;
+        subscriber.handler = subscribeFunctionWrapper;
         ketcherProvider
           .getKetcher(this.ketcherId)
-          .changeEvent.add(subscribeFuncWrapper);
+          .changeEvent.add(subscribeFunctionWrapper);
         break;
       }
 
@@ -4199,32 +4199,37 @@ class Editor implements KetcherEditor {
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
   }
 
-  findMerge(srcItems: SelectedItems, maps: string[] | undefined) {
-    return closest.merge(this.render.ctab, srcItems, this.render.options, maps);
+  findMerge(sourceItems: SelectedItems, maps: string[] | undefined) {
+    return closest.merge(
+      this.render.ctab,
+      sourceItems,
+      this.render.options,
+      maps,
+    );
   }
 
-  explicitSelected(shouldAutoSelectBonds = true) {
+  explicitSelected(autoSelectBonds = true) {
     const selection = this.selection() ?? {};
-    const res = structObjects.reduce((acc, key) => {
-      acc[key] = selection[key] ? [...selection[key]] : [];
-      return acc;
+    const result = structObjects.reduce((accumulator, key) => {
+      accumulator[key] = selection[key] ? selection[key].slice() : [];
+      return accumulator;
     }, {} as Selection);
 
     const struct = this.render.ctab.molecule;
 
     // "auto-select" the atoms for the bonds in selection
-    if (res.bonds) {
-      res.bonds.forEach((bid) => {
+    if (result.bonds) {
+      result.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid);
         if (bond) {
           [bond.begin, bond.end].forEach((endpointId) => {
             if (struct.attachmentGroups.has(endpointId)) {
-              res.attachmentGroups = res.attachmentGroups ?? [];
-              if (!res.attachmentGroups.includes(endpointId)) {
-                res.attachmentGroups.push(endpointId);
+              result.attachmentGroups = result.attachmentGroups ?? [];
+              if (!result.attachmentGroups.includes(endpointId)) {
+                result.attachmentGroups.push(endpointId);
               }
-              res.atoms = res.atoms ?? [];
-              const selectedAtoms = res.atoms;
+              result.atoms = result.atoms ?? [];
+              const selectedAtoms = result.atoms;
               struct.attachmentGroups
                 .get(endpointId)
                 ?.atomIds.forEach((atomId) => {
@@ -4233,9 +4238,9 @@ class Editor implements KetcherEditor {
                   }
                 });
             } else {
-              res.atoms = res.atoms ?? [];
-              if (!res.atoms.includes(endpointId)) {
-                res.atoms.push(endpointId);
+              result.atoms = result.atoms ?? [];
+              if (!result.atoms.includes(endpointId)) {
+                result.atoms.push(endpointId);
               }
             }
           });
@@ -4244,25 +4249,25 @@ class Editor implements KetcherEditor {
     }
 
     // "auto-select" the bonds with both atoms selected
-    if (shouldAutoSelectBonds && res.atoms && res.bonds) {
+    if (autoSelectBonds && result.atoms && result.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
-          res.bonds &&
-          res.atoms &&
-          res.bonds.indexOf(bid) < 0 &&
+          result.bonds &&
+          result.atoms &&
+          result.bonds.indexOf(bid) < 0 &&
           (struct.attachmentGroups.has(bond.begin)
-            ? res.attachmentGroups?.includes(bond.begin)
-            : res.atoms.includes(bond.begin)) &&
+            ? result.attachmentGroups?.includes(bond.begin)
+            : result.atoms.includes(bond.begin)) &&
           (struct.attachmentGroups.has(bond.end)
-            ? res.attachmentGroups?.includes(bond.end)
-            : res.atoms.includes(bond.end))
+            ? result.attachmentGroups?.includes(bond.end)
+            : result.atoms.includes(bond.end))
         ) {
-          res.bonds.push(bid);
+          result.bonds.push(bid);
         }
       });
     }
 
-    return res;
+    return result;
   }
 
   structSelected(
@@ -4272,7 +4277,7 @@ class Editor implements KetcherEditor {
   ): Struct {
     const struct = this.render.ctab.molecule;
     const selection = existingSelection ?? this.explicitSelected();
-    const dst = struct.clone(
+    const destination = struct.clone(
       new Pile(selection.atoms),
       new Pile(selection.bonds),
       true,
@@ -4291,16 +4296,16 @@ class Editor implements KetcherEditor {
     // arrows/pluses id sets
     struct.rxnArrows.forEach((item, id) => {
       if ((selection.rxnArrows ?? []).includes(id))
-        dst.rxnArrows.add(item.clone());
+        destination.rxnArrows.add(item.clone());
     });
     struct.rxnPluses.forEach((item, id) => {
       if ((selection.rxnPluses ?? []).includes(id))
-        dst.rxnPluses.add(item.clone());
+        destination.rxnPluses.add(item.clone());
     });
 
-    dst.isReaction = struct.isReaction && struct.isRxn();
+    destination.isReaction = struct.isReaction && struct.isRxn();
 
-    return dst;
+    return destination;
   }
 
   alignDescriptors() {
@@ -4444,9 +4449,9 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     editor.event[eventName] = new DOMSubscription();
     const subs = editor.event[eventName];
 
-    target.addEventListener(eventName, (...args) => {
+    target.addEventListener(eventName, (...arguments_) => {
       if (globalThis.isPolymerEditorTurnedOn) return;
-      subs.dispatch(...args);
+      subs.dispatch(...arguments_);
     });
 
     subs.add((event) => {
@@ -4529,8 +4534,8 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       items: Record<string, number[]>;
     };
     Object.keys(mergeCi.items).forEach((mp) => {
-      mergeCi.items[mp].forEach((dstId) => {
-        item = getReStructMap(render, mp).get(dstId) ?? null;
+      mergeCi.items[mp].forEach((destinationId) => {
+        item = getReStructMap(render, mp).get(destinationId) ?? null;
 
         if (item) {
           item.setHover(isVisible, render, false);
@@ -4540,8 +4545,8 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
 
     if (isVisible) {
       const hoveredRenderers = Object.keys(mergeCi.items).flatMap((mp) => {
-        return mergeCi.items[mp].flatMap((dstId) => {
-          return getReStructMap(render, mp).get(dstId);
+        return mergeCi.items[mp].flatMap((destinationId) => {
+          return getReStructMap(render, mp).get(destinationId);
         });
       });
 

@@ -8,13 +8,13 @@ import {
 } from './AmbiguousMonomerPreview.styles';
 import type { AmbiguousMonomerPreviewState } from './types';
 
-interface Props {
+interface Properties {
   className?: string;
   preview: AmbiguousMonomerPreviewState;
   style?: CSSProperties;
 }
 
-const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
+const AmbiguousMonomerPreview = ({ className, preview, style }: Properties) => {
   const { monomer, presetMonomers } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
@@ -60,7 +60,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
       });
     } else {
       const overallRatio = sortedData.reduce(
-        (acc, item) => acc + (item.ratio ?? 1),
+        (accumulator, item) => accumulator + (item.ratio ?? 1),
         0,
       );
 

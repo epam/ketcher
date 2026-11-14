@@ -119,7 +119,7 @@ export abstract class DrawingEntity {
     ];
     let isSelected = false;
 
-    selectionPoints.forEach((point) => {
+    for (const point of selectionPoints) {
       const isLocatedInRectangle =
         rectangleBottomRightPoint.x > point.x &&
         rectangleBottomRightPoint.y > point.y &&
@@ -130,7 +130,7 @@ export abstract class DrawingEntity {
       } else {
         isSelected = isLocatedInRectangle;
       }
-    });
+    }
 
     if (isSelected) {
       this.turnOnSelection();
@@ -153,14 +153,14 @@ export abstract class DrawingEntity {
     ];
     let isSelected = false;
 
-    selectionPoints.forEach((point) => {
+    for (const point of selectionPoints) {
       const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
       if (isShiftKeyPressed) {
         isSelected = isPreviousSelected || locatedInPolygon;
       } else {
         isSelected = locatedInPolygon;
       }
-    });
+    }
 
     if (isSelected) {
       this.turnOnSelection();

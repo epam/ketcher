@@ -218,10 +218,10 @@ export class SGroupRenderer extends BaseRenderer {
     }
 
     if (this.sgroup.data.attached) {
-      SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
+      for (const atomId of SGroup.getAtoms(this.struct, this.sgroup)) {
         const atom = this.struct.atoms.get(atomId);
         if (!atom) {
-          return;
+          continue;
         }
 
         const position = Scale.modelToCanvas(atom.pp, this.editorSettings).add(
@@ -233,7 +233,7 @@ export class SGroupRenderer extends BaseRenderer {
         this.appendValue(position, (bbox) =>
           this.getAttachedDataSGroupLabelShift(position, bbox),
         );
-      });
+      }
 
       return;
     }
@@ -252,17 +252,17 @@ export class SGroupRenderer extends BaseRenderer {
   private calculateBracketBox(): Box2Abs | null {
     const contentBoxes: Box2Abs[] = [];
 
-    SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
+    for (const atomId of SGroup.getAtoms(this.struct, this.sgroup)) {
       const atom = this.struct.atoms.get(atomId);
 
       if (!atom) {
-        return;
+        continue;
       }
 
       contentBoxes.push(
         new Box2Abs(atom.pp, atom.pp).extend(BORDER_EXT, BORDER_EXT),
       );
-    });
+    }
 
     const bracketBox = contentBoxes.reduce<Box2Abs | null>(
       (box, contentBox) => (box ? Box2Abs.union(box, contentBox) : contentBox),
@@ -293,7 +293,7 @@ export class SGroupRenderer extends BaseRenderer {
       brackets[0],
     );
 
-    brackets.forEach((bracket) => this.appendBracket(bracket));
+    for (const bracket of brackets) this.appendBracket(bracket);
 
     if (lowerIndexText) {
       this.appendIndex(lowerIndexText, rightBracket, true, indexAttribute);
@@ -489,33 +489,33 @@ export class SGroupRenderer extends BaseRenderer {
     }
 
     if (attributes) {
-      Object.entries(attributes).forEach(([attribute, value]) => {
+      for (const [attribute, value] of Object.entries(attributes)) {
         textElement?.attr(attribute, value);
-      });
+      }
     }
 
     return textElement as D3SvgElementSelection<SVGTextElement, void>;
   }
 
   public moveLabelsToFront(): void {
-    this.labelElements.forEach((labelElement) => {
+    for (const labelElement of this.labelElements) {
       labelElement.raise();
-    });
+    }
   }
 
   public remove(): void {
     super.remove();
-    this.labelElements.forEach((labelElement) => {
+    for (const labelElement of this.labelElements) {
       labelElement.remove();
-    });
+    }
     this.labelElements = [];
   }
 
   public setVisibility(isVisible: boolean): void {
     super.setVisibility(isVisible);
-    this.labelElements.forEach((labelElement) => {
+    for (const labelElement of this.labelElements) {
       labelElement.style('opacity', isVisible ? 1 : 0);
-    });
+    }
   }
 
   public drawSelection(): void {
@@ -623,13 +623,13 @@ export class SGroupRenderer extends BaseRenderer {
 
     let combinedPath: paper.PathItem | undefined;
 
-    hoverPaths.forEach((path) => {
+    for (const path of hoverPaths) {
       if (!path.closed) {
         path.closePath();
       }
 
       combinedPath = combinedPath ? combinedPath.unite(path) : path;
-    });
+    }
 
     return combinedPath?.pathData;
   }

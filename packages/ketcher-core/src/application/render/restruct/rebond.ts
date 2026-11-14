@@ -685,7 +685,7 @@ class ReBond extends ReObject {
 
     const arrowsSet = render.paper.set();
 
-    offsets.forEach((delta) => {
+    for (const delta of offsets) {
       const start = new Vec2(
         arrowStart.x -
           arrowsOffsetFromContour * arrowsDirection.x +
@@ -723,7 +723,7 @@ class ReBond extends ReObject {
         });
 
       arrowsSet.push(path);
-    });
+    }
 
     render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, arrowsSet);
 

@@ -240,9 +240,9 @@ export function fromTemplateOnAtom(
       sg.data.name,
     );
     sgAction.operations.reverse();
-    sgAction.operations.forEach((oper) => {
+    for (const oper of sgAction.operations) {
       action.addOp(oper);
-    });
+    }
   });
 
   action.operations.reverse();

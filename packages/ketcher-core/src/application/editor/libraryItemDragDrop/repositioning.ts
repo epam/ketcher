@@ -66,9 +66,9 @@ export function computeAndApplyFlexDropRepositioning(
       monomer.position.y + delta.y,
     );
     command.merge(drawingEntitiesManager.moveMonomer(monomer, newPosition));
-    monomer.polymerBonds.forEach((polymerBond) => {
+    for (const polymerBond of monomer.polymerBonds) {
       drawingEntitiesManager.movePolymerBond(polymerBond);
-    });
+    }
   }
 
   return command;
@@ -156,9 +156,9 @@ export function shiftDownstreamChainMonomers(
       current.position.y,
     );
     command.merge(drawingEntitiesManager.moveMonomer(current, newPosition));
-    current.polymerBonds.forEach((bond) => {
+    for (const bond of current.polymerBonds) {
       command.addOperation(new PolymerBondSnapToMonomersOperation(bond));
-    });
+    }
     current = getNextMonomerInChain(current);
   }
 

@@ -40,9 +40,9 @@ function addAtomToMoleculeStruct(
 
   moleculeStruct.atoms.set(atom.atomIdInMicroMode, atomInMoleculeStruct);
 
-  bondsInMoleculeStruct.forEach(({ bondId, bond }) => {
+  for (const { bondId, bond } of bondsInMoleculeStruct) {
     moleculeStruct.bonds.set(bondId, bond);
-  });
+  }
 }
 
 function deleteAtomFromMoleculeStruct(atom: Atom) {

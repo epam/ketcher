@@ -198,25 +198,26 @@ export class BondRenderer extends BaseRenderer {
     const atomPositionInPixels = atom.renderer.scaledPosition;
     let shiftValue = 0;
 
-    atomLabelBBoxes?.forEach((labelSymbolBBox) => {
-      const relativeLabelSymbolBox2Abs = new Box2Abs(
-        labelSymbolBBox.x,
-        labelSymbolBBox.y,
-        labelSymbolBBox.x + labelSymbolBBox.width,
-        labelSymbolBBox.y + labelSymbolBBox.height,
-      );
-      const absoluteLabelSymbolBox2Abs =
-        relativeLabelSymbolBox2Abs.translate(atomPositionInPixels);
+    if (atomLabelBBoxes)
+      for (const labelSymbolBBox of atomLabelBBoxes) {
+        const relativeLabelSymbolBox2Abs = new Box2Abs(
+          labelSymbolBBox.x,
+          labelSymbolBBox.y,
+          labelSymbolBBox.x + labelSymbolBBox.width,
+          labelSymbolBBox.y + labelSymbolBBox.height,
+        );
+        const absoluteLabelSymbolBox2Abs =
+          relativeLabelSymbolBox2Abs.translate(atomPositionInPixels);
 
-      shiftValue = Math.max(
-        shiftValue,
-        util.shiftRayBox(
-          atomPositionInPixels,
-          halfEdge.direction,
-          absoluteLabelSymbolBox2Abs,
-        ),
-      );
-    });
+        shiftValue = Math.max(
+          shiftValue,
+          util.shiftRayBox(
+            atomPositionInPixels,
+            halfEdge.direction,
+            absoluteLabelSymbolBox2Abs,
+          ),
+        );
+      }
 
     return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }
@@ -527,7 +528,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    paths.forEach(({ d, attrs }) => {
+    for (const { d, attrs } of paths) {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
@@ -535,10 +536,10 @@ export class BondRenderer extends BaseRenderer {
         .attr('stroke-linecap', 'round')
         .attr('stroke-linejoin', 'round');
 
-      Object.entries(attrs).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(attrs)) {
         path?.attr(key, value);
-      });
-    });
+      }
+    }
 
     const combinedPath = paths.reduce((acc, { d }) => {
       return acc + d;

@@ -152,9 +152,8 @@ export class SequenceRenderer {
   }
 
   public static removeNewSequenceButtons() {
-    this.newSequenceButtons.forEach((newSequenceButton) =>
-      newSequenceButton.remove(),
-    );
+    for (const newSequenceButton of this.newSequenceButtons)
+      newSequenceButton.remove();
     this.newSequenceButtons = [];
   }
 
@@ -188,16 +187,16 @@ export class SequenceRenderer {
       provideEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SequenceNode>();
 
-    sequenceViewModel.chains.forEach((chain, chainIndex) => {
+    for (const [chainIndex, chain] of sequenceViewModel.chains.entries()) {
       currentMonomerIndexInChain = 0;
       chain.forEachRow((row) => {
         hasAntisenseInRow = false;
 
-        row.sequenceViewModelItems.forEach((chainItem) => {
+        for (const chainItem of row.sequenceViewModelItems) {
           const node = chainItem.senseNode;
 
           if (node && handledNodes.has(node)) {
-            return;
+            continue;
           }
 
           let antisenseNodeRenderer: BaseSequenceItemRenderer | undefined;
@@ -220,11 +219,11 @@ export class SequenceRenderer {
             );
 
             antisenseNodeRenderer.show();
-            chainItem.antisenseNode.monomers?.forEach((monomer) =>
-              monomer.setRenderer(
-                antisenseNodeRenderer as BaseSequenceItemRenderer,
-              ),
-            );
+            if (chainItem.antisenseNode.monomers)
+              for (const monomer of chainItem.antisenseNode.monomers)
+                monomer.setRenderer(
+                  antisenseNodeRenderer as BaseSequenceItemRenderer,
+                );
             handledNodes.add(chainItem.antisenseNode);
 
             if (
@@ -240,7 +239,7 @@ export class SequenceRenderer {
           }
 
           if (!node) {
-            return;
+            continue;
           }
 
           const renderer = SequenceNodeRendererFactory.fromNode(
@@ -257,7 +256,8 @@ export class SequenceRenderer {
           );
 
           renderer.show();
-          node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
+          if (node.monomers)
+            for (const monomer of node.monomers) monomer.setRenderer(renderer);
           currentMonomerIndexInChain++;
           currentMonomerIndexOverall++;
           handledNodes.add(node);
@@ -272,7 +272,7 @@ export class SequenceRenderer {
           ) {
             node.setRenderer(renderer);
           }
-        });
+        }
 
         if (hasAntisenseInRow) {
           previousRowsWithAntisense++;
@@ -309,7 +309,7 @@ export class SequenceRenderer {
           );
         }
       }
-    });
+    }
 
     if (this.caretPosition > currentMonomerIndexOverall) {
       this.setCaretPosition(currentMonomerIndexOverall);
@@ -339,14 +339,14 @@ export class SequenceRenderer {
     const handledHydrogenBonds: Set<HydrogenBond> = new Set();
     const monomerToChain = chainsCollection.monomerToChain;
 
-    chainsCollection.chains.forEach((chain) => {
-      chain.subChains.forEach((subChain) => {
-        subChain.nodes.forEach((node) => {
+    for (const chain of chainsCollection.chains) {
+      for (const subChain of chain.subChains) {
+        for (const node of subChain.nodes) {
           if (node instanceof EmptySequenceNode) {
-            return;
+            continue;
           }
 
-          node.monomers.forEach((monomer) => {
+          for (const monomer of node.monomers) {
             if (!handledMonomersToAttachmentPoints.has(monomer)) {
               handledMonomersToAttachmentPoints.set(monomer, new Set());
             }
@@ -464,9 +464,9 @@ export class SequenceRenderer {
                 ) as AttachmentPointName,
               );
             });
-          });
-        });
-      });
+          }
+        }
+      }
       if (chain.isCyclic) {
         const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
           .R1 as PolymerBond;
@@ -478,7 +478,7 @@ export class SequenceRenderer {
         this.showBondRenderer(bondRenderer);
         polymerBond.setRenderer(bondRenderer);
       }
-    });
+    }
   }
 
   public static showBondRenderer(bondRenderer: SequenceBondRenderer) {
@@ -682,12 +682,12 @@ export class SequenceRenderer {
     let restNodes = nodeIndexOverall;
     let nodeIndexInRow: number | undefined;
 
-    this.nodesGroupedByRows.forEach((row) => {
+    for (const row of this.nodesGroupedByRows) {
       if (nodeIndexInRow === undefined && restNodes - row.length < 0) {
         nodeIndexInRow = restNodes;
       }
       restNodes -= row.length;
-    });
+    }
 
     return nodeIndexInRow;
   }
@@ -1492,16 +1492,16 @@ export class SequenceRenderer {
 
     if (this.chainsCollection) {
       const handledBonds = new Set();
-      this.chainsCollection.chains.forEach((chain) => {
-        chain.monomers.forEach((monomer) => {
+      for (const chain of this.chainsCollection.chains) {
+        for (const monomer of chain.monomers) {
           monomer.forEachBond((bond) => {
             if (!handledBonds.has(bond)) {
               handledBonds.add(bond);
               bond.renderer?.remove();
             }
           });
-        });
-      });
+        }
+      }
     }
     this.removeNewSequenceButtons();
     this.removeDelegatedEvents();

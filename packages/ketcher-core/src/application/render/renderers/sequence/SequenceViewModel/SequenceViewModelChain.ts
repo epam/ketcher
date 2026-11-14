@@ -68,19 +68,19 @@ export class SequenceViewModelChain {
   ) {
     let nodeIndexInChain = 0;
 
-    this.rows.forEach((row) => {
-      row.sequenceViewModelItems.forEach((node) => {
+    for (const row of this.rows) {
+      for (const node of row.sequenceViewModelItems) {
         callback(node, nodeIndexInChain);
         nodeIndexInChain++;
-      });
-    });
+      }
+    }
   }
 
   public forEachRow(
     callback: (row: ISequenceViewModelRow, rowIndex: number) => void,
   ) {
-    this.rows.forEach((row, rowIndex) => {
+    for (const [rowIndex, row] of this.rows.entries()) {
       callback(row, rowIndex);
-    });
+    }
   }
 }

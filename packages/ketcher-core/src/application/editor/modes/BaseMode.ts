@@ -89,12 +89,12 @@ export abstract class BaseMode {
       drawingEntitiesManager.allEntities[0]?.[1].position;
     const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
 
-    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
+    for (const [, drawindEntity] of drawingEntitiesManager.allEntities) {
       drawingEntitiesManager.moveDrawingEntityModelChange(
         drawindEntity,
         offset,
       );
-    });
+    }
   }
 
   private checkIfTargetIsInput(event: Event): boolean {

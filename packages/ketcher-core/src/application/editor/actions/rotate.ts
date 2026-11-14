@@ -91,10 +91,10 @@ function fromRxnArrowFlip(
 ) {
   const action = new Action();
 
-  rxnArrowIds.forEach((arrowId) => {
+  for (const arrowId of rxnArrowIds) {
     const rxnArrow = reStruct.molecule.rxnArrows.get(arrowId);
     if (!rxnArrow) {
-      return;
+      continue;
     }
 
     const [start, end] = rxnArrow.pos;
@@ -110,7 +110,7 @@ function fromRxnArrowFlip(
       flipDirection,
     );
     action.addOp(new RxnArrowMove(arrowId, difference));
-  });
+  }
 
   return action.perform(reStruct);
 }
@@ -123,15 +123,15 @@ function fromRxnPlusFlip(
 ) {
   const action = new Action();
 
-  rxnPlusIds.forEach((plusId) => {
+  for (const plusId of rxnPlusIds) {
     const rxnPlus = reStruct.molecule.rxnPluses.get(plusId);
     if (!rxnPlus) {
-      return;
+      continue;
     }
 
     const difference = flipPointByCenter(rxnPlus.pp, center, flipDirection);
     action.addOp(new RxnPlusMove(plusId, difference));
-  });
+  }
 
   return action.perform(reStruct);
 }
@@ -144,10 +144,10 @@ function fromTextFlip(
 ) {
   const action = new Action();
 
-  textIds.forEach((textId) => {
+  for (const textId of textIds) {
     const text = reStruct.molecule.texts.get(textId);
     if (!text) {
-      return;
+      continue;
     }
 
     // Note: text has two position properties
@@ -160,7 +160,7 @@ function fromTextFlip(
 
     const difference = flipPointByCenter(textCenter, center, flipDirection);
     action.addOp(new TextMove(textId, difference));
-  });
+  }
 
   return action.perform(reStruct);
 }
@@ -174,16 +174,16 @@ function fromEnhancedFlagsFlip(
   const action = new Action();
 
   // Clear stored flag positions so they recalculate based on new atom positions
-  enhancedFlagIds.forEach((flagId) => {
+  for (const flagId of enhancedFlagIds) {
     const frId = flagId;
     const frag = reStruct.molecule.frags.get(frId);
     if (!frag) {
-      return;
+      continue;
     }
 
     // Clear the position - it will auto-recalculate to top-right of new bounding box
     action.addOp(new EnhancedFlagClear(flagId));
-  });
+  }
 
   return action.perform(reStruct);
 }
@@ -193,26 +193,26 @@ export const flipBonds = (
   struct: Struct,
   action: Action,
 ) => {
-  bondIds.forEach((bondId) => {
+  for (const bondId of bondIds) {
     const bond = struct.bonds.get(bondId);
 
     if (!bond) {
-      return;
+      continue;
     }
 
     if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-      return;
+      continue;
     }
 
     if (bond.stereo === Bond.PATTERN.STEREO.UP) {
       action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN));
-      return;
+      continue;
     }
 
     if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
       action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
     }
-  });
+  }
 };
 
 function fromStructureFlip(
@@ -248,10 +248,10 @@ function fromStructureFlip(
     sg.atoms.forEach((aid) => atomIdToMonomerSGroup.set(aid, sg));
   });
 
-  selection?.atoms?.forEach((atomId) => {
+  for (const atomId of selection?.atoms ?? []) {
     const atom = struct.atoms.get(atomId);
     if (!atom) {
-      return;
+      continue;
     }
 
     const monomerSGroup = atomIdToMonomerSGroup.get(atomId);
@@ -261,7 +261,7 @@ function fromStructureFlip(
       // the monomer's contracted position, preserving relative atom
       // positions within the structure.
       if (!monomerSGroup.pp) {
-        return;
+        continue;
       }
       const difference = flipPointByCenter(
         monomerSGroup.pp,
@@ -269,12 +269,12 @@ function fromStructureFlip(
         flipDirection,
       );
       action.addOp(new AtomMove(atomId, difference));
-      return;
+      continue;
     }
 
     const difference = flipPointByCenter(atom.pp, center, flipDirection);
     action.addOp(new AtomMove(atomId, difference));
-  });
+  }
 
   sGroups.forEach((sGroup) => {
     if (!sGroup.pp) {
@@ -335,23 +335,23 @@ export function fromRotate(restruct, selection, center, angle: number) {
       sg.atoms.forEach((aid) => atomIdToMonomerSGroup.set(aid, sg));
     });
 
-    selection.atoms.forEach((aid) => {
+    for (const aid of selection.atoms) {
       const atom = struct.atoms.get(aid);
-      if (!atom) return;
+      if (!atom) continue;
 
       const monomerSGroup = atomIdToMonomerSGroup.get(aid);
 
       if (monomerSGroup && !hasExpandedMonomer) {
-        if (!monomerSGroup.pp) return;
+        if (!monomerSGroup.pp) continue;
 
         action.addOp(
           new AtomMove(aid, rotateDelta(monomerSGroup.pp, center, angle)),
         );
-        return;
+        continue;
       }
 
       action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)));
-    });
+    }
 
     if (!selection.sgroupData) {
       sgroups.forEach((sg) => {
@@ -367,47 +367,47 @@ export function fromRotate(restruct, selection, center, angle: number) {
   }
 
   if (selection.rxnArrows) {
-    selection.rxnArrows.forEach((arrowId) => {
+    for (const arrowId of selection.rxnArrows) {
       action.addOp(new RxnArrowRotate(arrowId, angle, center));
-    });
+    }
   }
 
   if (selection.rxnPluses) {
-    selection.rxnPluses.forEach((pid) => {
+    for (const pid of selection.rxnPluses) {
       const plus = struct.rxnPluses.get(pid);
-      if (!plus) return;
+      if (!plus) continue;
 
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
-    });
+    }
   }
 
   if (selection.texts) {
-    selection.texts.forEach((textId) => {
+    for (const textId of selection.texts) {
       const text = struct.texts.get(textId);
-      if (!text) return;
+      if (!text) continue;
 
       action.addOp(
         new TextMove(textId, rotateDelta(text.position, center, angle)),
       );
-    });
+    }
   }
 
   if (selection.sgroupData) {
-    selection.sgroupData.forEach((did) => {
+    for (const did of selection.sgroupData) {
       const data = struct.sgroups.get(did);
-      if (!data?.pp) return;
+      if (!data?.pp) continue;
 
       action.addOp(
         new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),
       );
-    });
+    }
   }
 
   if (selection.enhancedFlags) {
-    selection.enhancedFlags.forEach((flagId) => {
+    for (const flagId of selection.enhancedFlags) {
       const frId = flagId;
       const frag = restruct.molecule.frags.get(frId);
-      if (!frag) return;
+      if (!frag) continue;
 
       action.addOp(
         new EnhancedFlagMove(
@@ -420,7 +420,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
           ),
         ),
       );
-    });
+    }
   }
 
   return action.perform(restruct);

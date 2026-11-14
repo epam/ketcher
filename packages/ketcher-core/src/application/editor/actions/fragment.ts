@@ -55,29 +55,29 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     const bondlist: Array<number> = [];
     const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
 
-    restruct.bonds.forEach((bond, bid) => {
+    for (const [bid, bond] of restruct.bonds) {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
         bondlist.push(bid);
         // add all adjacent loops
         // those that are not completely inside the structure will get redrawn anyway
-        ['hb1', 'hb2'].forEach((hb) => {
+        for (const hb of ['hb1', 'hb2']) {
           const loop = struct.halfBonds.get(bond.b[hb]).loop;
           if (loop >= 0) loops.add(loop);
-        });
-        return;
+        }
+        continue;
       }
 
       if (atomSet.has(bond.b.begin)) {
         atomsToInvalidate.add(bond.b.begin);
-        return;
+        continue;
       }
 
       if (atomSet.has(bond.b.end)) atomsToInvalidate.add(bond.b.end);
-    });
+    }
 
-    bondlist.forEach((bond) => {
+    for (const bond of bondlist) {
       action.addOp(new BondMove(bond, d));
-    });
+    }
 
     loops.forEach((loopId) => {
       const loop = restruct.reloops.get(loopId);
@@ -87,16 +87,16 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       }
     });
 
-    lists.atoms.forEach((aid) => {
+    for (const aid of lists.atoms) {
       action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)));
-    });
+    }
 
     relatedSgroups.forEach((sgroup) => {
-      sgroup?.atoms.forEach((aid) => {
+      for (const aid of sgroup?.atoms ?? []) {
         if (!atomSet.has(aid)) {
           action.addOp(new AtomMove(aid, d, true));
         }
-      });
+      }
     });
 
     if (lists.sgroupData?.length === 0) {
@@ -107,51 +107,51 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   }
 
   if (lists.rxnArrows) {
-    lists.rxnArrows.forEach((rxnArrow) => {
+    for (const rxnArrow of lists.rxnArrows) {
       action.addOp(new RxnArrowMove(rxnArrow, d, true));
-    });
+    }
   }
 
   if (lists.rxnPluses) {
-    lists.rxnPluses.forEach((rxnPulse) => {
+    for (const rxnPulse of lists.rxnPluses) {
       action.addOp(new RxnPlusMove(rxnPulse, d, true));
-    });
+    }
   }
 
   if (lists.simpleObjects) {
-    lists.simpleObjects.forEach((simpleObject) => {
+    for (const simpleObject of lists.simpleObjects) {
       action.addOp(new SimpleObjectMove(simpleObject, d, true));
-    });
+    }
   }
 
   if (lists.sgroupData) {
-    lists.sgroupData.forEach((sgData) => {
+    for (const sgData of lists.sgroupData) {
       action.addOp(new SGroupDataMove(sgData, d));
-    });
+    }
   }
 
   if (lists.enhancedFlags) {
-    lists.enhancedFlags.forEach((fid) => {
+    for (const fid of lists.enhancedFlags) {
       action.addOp(new EnhancedFlagMove(fid, d));
-    });
+    }
   }
 
   if (lists.texts) {
-    lists.texts.forEach((text) => {
+    for (const text of lists.texts) {
       action.addOp(new TextMove(text, d, true));
-    });
+    }
   }
 
   if (lists[IMAGE_KEY]) {
-    lists[IMAGE_KEY].forEach((image) => {
+    for (const image of lists[IMAGE_KEY]) {
       action.addOp(new ImageMove(image, d));
-    });
+    }
   }
 
   if (lists[MULTITAIL_ARROW_KEY]) {
-    lists[MULTITAIL_ARROW_KEY].forEach((multitailArrow) => {
+    for (const multitailArrow of lists[MULTITAIL_ARROW_KEY]) {
       action.addOp(new MultitailArrowMove(multitailArrow, d));
-    });
+    }
   }
 
   return action.perform(restruct);
@@ -164,11 +164,11 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
     const struct = restruct.molecule;
     const frag = restruct.molecule.frags.get(frid);
     if (frag) {
-      frag.stereoAtoms.forEach((aid) => {
+      for (const aid of frag.stereoAtoms) {
         if (struct.atoms.get(aid).stereoLabel === null) {
           action.addOp(new FragmentDeleteStereoAtom(frid, aid));
         }
-      });
+      }
     }
   }
 
@@ -191,13 +191,13 @@ function processAtom(restruct, aid, frid, newfrid) {
   const atomAction = fromAtomsFragmentAttr(restruct, atomIds, newfrid);
   const action = new Action();
 
-  struct.attachmentGroups.forEach((group, groupId) => {
+  for (const [groupId, group] of struct.attachmentGroups) {
     if (group.atomIds.some((id) => atomIds.has(id))) {
       action.addOp(
         new AttachmentGroupAttr(groupId, 'fragment', newfrid).perform(restruct),
       );
     }
-  });
+  }
 
   // fromFragmentSplit reverses these operations so undo restores atoms before
   // the group recalculates its fragment from its members.
@@ -219,7 +219,7 @@ export function fromFragmentSplit(
   const action = new Action();
   const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
-  restruct.molecule.atoms.forEach((atom, aid) => {
+  for (const [aid, atom] of restruct.molecule.atoms) {
     if (atom.fragment === frid) {
       const newfrid = (
         action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
@@ -229,7 +229,7 @@ export function fromFragmentSplit(
 
       if (rgid) action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
     }
-  });
+  }
 
   if (frid !== -1) {
     action.mergeWith(fromRGroupFragment(restruct, 0, frid));

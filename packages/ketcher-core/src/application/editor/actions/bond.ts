@@ -233,10 +233,10 @@ export function fromBondsAttrs(
   const action = new Action();
   const bids = Array.isArray(ids) ? ids : [ids];
 
-  bids.forEach((bid) => {
+  for (const bid of bids) {
     const bond = struct.bonds.get(bid);
     if (!bond) {
-      return;
+      continue;
     }
 
     const resultingType =
@@ -249,14 +249,14 @@ export function fromBondsAttrs(
       typeof resultingType === 'number' &&
       !isBondTypeAllowedForEndpoints(struct, bond, resultingType)
     ) {
-      return;
+      continue;
     }
 
     let shouldRecalculateImplicitH = false;
     let shouldUpdateStereo = false;
 
-    Object.keys(Bond.attrlist).forEach((key) => {
-      if (!(key in attrs) && !shouldReset) return;
+    for (const key of Object.keys(Bond.attrlist)) {
+      if (!(key in attrs) && !shouldReset) continue;
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
@@ -272,7 +272,7 @@ export function fromBondsAttrs(
         shouldRecalculateImplicitH = true;
         shouldUpdateStereo = true;
       }
-    });
+    }
 
     if (shouldRecalculateImplicitH) {
       action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
@@ -280,7 +280,7 @@ export function fromBondsAttrs(
     if (shouldUpdateStereo) {
       action.mergeWith(fromBondStereoUpdate(restruct, bond));
     }
-  });
+  }
 
   return action;
 }
@@ -455,7 +455,7 @@ function addAttachmentPointToSuperatom(
   beginAtomId: number,
   endAtomId: number,
 ) {
-  (sgroup.item?.atoms as number[]).forEach((atomId) => {
+  for (const atomId of sgroup.item?.atoms as number[]) {
     if (beginAtomId === atomId || endAtomId === atomId) {
       if (
         !(sgroup.item as SGroup)
@@ -467,7 +467,7 @@ function addAttachmentPointToSuperatom(
           new SGroupAttachmentPoint(atomId, undefined, undefined),
         );
     }
-  });
+  }
 }
 
 export function removeAttachmentPointFromSuperatom(
@@ -477,7 +477,7 @@ export function removeAttachmentPointFromSuperatom(
   action: Action,
   restruct: ReStruct,
 ) {
-  (sgroup.item?.atoms as number[]).forEach((atomId) => {
+  for (const atomId of sgroup.item?.atoms as number[]) {
     if (beginAtomId === atomId || endAtomId === atomId) {
       const anotherSideAtomId =
         beginAtomId === atomId ? endAtomId : beginAtomId;
@@ -491,5 +491,5 @@ export function removeAttachmentPointFromSuperatom(
         ),
       );
     }
-  });
+  }
 }

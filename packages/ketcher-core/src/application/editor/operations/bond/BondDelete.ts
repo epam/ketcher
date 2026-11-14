@@ -60,34 +60,34 @@ class BondDelete extends BaseOperation {
     // notifyBondRemoved
     const rebond = restruct.bonds.get(bid);
     if (!rebond) return;
-    [rebond.b.hb1, rebond.b.hb2].forEach((hbid) => {
-      if (hbid === undefined) return;
+    for (const hbid of [rebond.b.hb1, rebond.b.hb2]) {
+      if (hbid === undefined) continue;
       const halfBond = restruct.molecule.halfBonds.get(hbid);
       if (halfBond && halfBond.loop >= 0) {
         restruct.loopRemove(halfBond.loop);
       }
-    });
+    }
     restruct.clearVisel(rebond.visel);
     restruct.bonds.delete(bid);
     restruct.markItemRemoved();
 
     const structBond = struct.bonds.get(bid);
     if (!structBond) return;
-    [structBond.hb1, structBond.hb2].forEach((hbid) => {
-      if (hbid === undefined) return;
+    for (const hbid of [structBond.hb1, structBond.hb2]) {
+      if (hbid === undefined) continue;
       const halfBond = struct.halfBonds.get(hbid);
       if (!halfBond) {
-        return;
+        continue;
       }
 
       const atom = struct.getBondEndpoint(halfBond.begin);
-      if (!atom) return;
+      if (!atom) continue;
       const pos = atom.neighbors.indexOf(hbid);
       const prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;
       const next = (pos + 1) % atom.neighbors.length;
       struct.setHbNext(atom.neighbors[prev], atom.neighbors[next]);
       atom.neighbors.splice(pos, 1);
-    });
+    }
     if (structBond.hb1 !== undefined) struct.halfBonds.delete(structBond.hb1);
     if (structBond.hb2 !== undefined) struct.halfBonds.delete(structBond.hb2);
 

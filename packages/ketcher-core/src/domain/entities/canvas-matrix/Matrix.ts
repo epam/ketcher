@@ -31,6 +31,38 @@ export class Matrix<T> {
     return this.matrix.reduce((max, row) => Math.max(max, row.length), 0);
   }
 
+  *[Symbol.iterator](): IterableIterator<T> {
+    for (const row of this.matrix) {
+      for (const value of row) {
+        if (value) {
+          yield value;
+        }
+      }
+    }
+  }
+
+  *valuesRightToLeft(): IterableIterator<T> {
+    for (let x = this.matrix.length - 1; x >= 0; x--) {
+      for (let y = this.matrix[x]?.length - 1; y >= 0; y--) {
+        const value = this.matrix[x][y];
+        if (value) {
+          yield value;
+        }
+      }
+    }
+  }
+
+  *valuesBottomToTop(): IterableIterator<T> {
+    for (let y = this.matrix[0]?.length - 1; y >= 0; y--) {
+      for (let x = this.matrix.length - 1; x >= 0; x--) {
+        const value = this.matrix[x][y];
+        if (value) {
+          yield value;
+        }
+      }
+    }
+  }
+
   forEach(callback: (value: T, x: number, y: number) => void): void {
     for (let x = 0; x < this.matrix.length; x++) {
       for (let y = 0; y < this.matrix[x]?.length; y++) {

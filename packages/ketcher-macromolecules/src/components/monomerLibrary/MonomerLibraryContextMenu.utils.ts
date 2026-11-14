@@ -39,7 +39,7 @@ export const deleteMonomerWithPresets = (
 ) => {
   const parsedJson = editor.monomersLibraryParsedJson;
 
-  referencingPresets.forEach((presetTemplate) => {
+  for (const presetTemplate of referencingPresets) {
     const presetRef = parsedJson?.root.templates.find(
       ({ $ref }) => parsedJson[$ref] === presetTemplate,
     )?.$ref;
@@ -53,7 +53,7 @@ export const deleteMonomerWithPresets = (
     if (customPreset) {
       deleteCustomPreset(customPreset);
     }
-  });
+  }
 
   editor.removeMonomerFromLibrary(monomer);
 };

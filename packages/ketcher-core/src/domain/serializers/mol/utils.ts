@@ -20,8 +20,6 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { RGroup } from 'domain/entities/rgroup';
 import { Fragment } from 'domain/entities/fragment';
-import type { Atom } from 'domain/entities/atom';
-import type { SGroup } from 'domain/entities/sgroup';
 
 /**
  * Bounding box with min and max coordinates
@@ -292,9 +290,9 @@ function categorizeMolecules(
       molProd.push(mol);
     }
 
-    mol.atoms.forEach((atom: Atom) => {
+    for (const atom of mol.atoms.values()) {
       atom.rxnFragmentType = fragmentType;
-    });
+    }
   }
 
   return { bbReact, bbAgent, bbProd, molReact, molAgent, molProd };
@@ -320,13 +318,13 @@ function shiftMol(
     xorig - bb.min.x,
     isAboveReactionArrow ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
   );
-  mol.atoms.forEach((atom: Atom) => {
+  for (const atom of mol.atoms.values()) {
     atom.pp.add_(d);
-  });
+  }
 
-  mol.sgroups.forEach((item: SGroup) => {
+  for (const item of mol.sgroups.values()) {
     if (item.pp) item.pp.add_(d);
-  });
+  }
   bb.min.add_(d);
   bb.max.add_(d);
   mol.mergeInto(ret);
@@ -546,7 +544,7 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
 
   scaffold.mergeInto(ret, null, null, false, true);
 
-  Object.keys(rgroups).forEach((id: string) => {
+  for (const id of Object.keys(rgroups)) {
     const rgid = Number.parseInt(id, 10);
 
     for (const ctab of rgroups[rgid]) {
@@ -554,12 +552,12 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
       const frag = new Fragment();
       const frid = ctab.frags.add(frag);
       ctab.rgroups.get(rgid)?.frags.add(frid);
-      ctab.atoms.forEach((atom: Atom) => {
+      for (const atom of ctab.atoms.values()) {
         atom.fragment = frid;
-      });
+      }
       ctab.mergeInto(ret);
     }
-  });
+  }
 
   return ret;
 }

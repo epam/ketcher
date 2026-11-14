@@ -31,9 +31,9 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
     return struct;
   }
   const rgroup = rgroupLogicToStruct(rlogic);
-  struct.frags.forEach((_value, key) => {
+  for (const [key, _value] of struct.frags.entries()) {
     rgroup.frags.add(key);
-  });
+  }
   struct.rgroups.set(rlogic.number, rgroup);
   return struct;
 }

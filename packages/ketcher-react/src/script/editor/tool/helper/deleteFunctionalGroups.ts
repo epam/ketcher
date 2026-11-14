@@ -15,7 +15,7 @@ export function deleteFunctionalGroups(
   const deletedAtoms: number[] = [];
   const functionalGroups = struct.molecule.functionalGroups;
   const sgroups = struct.sgroups;
-  sGroupsId.forEach((sGroupId) => {
+  for (const sGroupId of sGroupsId) {
     const sGroupItem = sgroups.get(sGroupId)?.item as SGroup;
     if (
       FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
@@ -37,6 +37,6 @@ export function deleteFunctionalGroups(
         }),
       );
     }
-  });
+  }
   return deletedAtoms;
 }

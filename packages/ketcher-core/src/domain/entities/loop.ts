@@ -30,7 +30,7 @@ export class Loop {
     this.aromatic = true;
     this.convex = isConvex || false;
 
-    hbs.forEach((hb) => {
+    for (const hb of hbs) {
       const halfBond = struct.halfBonds.get(hb);
       assert(
         halfBond,
@@ -45,6 +45,6 @@ export class Loop {
 
       if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) this.aromatic = false;
       if (bond.type === Bond.PATTERN.TYPE.DOUBLE) this.dblBonds++;
-    });
+    }
   }
 }

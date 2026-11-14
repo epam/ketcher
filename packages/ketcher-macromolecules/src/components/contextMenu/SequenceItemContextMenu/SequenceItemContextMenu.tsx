@@ -320,7 +320,7 @@ export const SequenceItemContextMenu = ({
                 .map((nodeSelection) => nodeSelection.twoStrandedNode)
             : [props.sequenceItemRenderer?.twoStrandedNode];
 
-        selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
+        for (const selectedTwoStrandedNode of selectedTwoStrandedNodes) {
           if (
             selectedTwoStrandedNode.antisenseChain &&
             selectedTwoStrandedNode.antisenseNode &&
@@ -348,12 +348,12 @@ export const SequenceItemContextMenu = ({
               );
 
             if (!antisenseChainSelectedNodes) {
-              return;
+              continue;
             }
 
             antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
           }
-        });
+        }
 
         let isGoingToDeleteAllHydrogenBondsForAnyChain = false;
 

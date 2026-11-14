@@ -16,7 +16,7 @@ export function updateSelectedBonds({
   if (bonds) {
     Promise.resolve(changeBondPromise)
       .then((userChangedBond) => {
-        bonds.forEach((bondId) => {
+        for (const bondId of bonds) {
           const unchangedBond = molecule.bonds.get(bondId);
           const bondWithChangedProperties = updateOnlyChangedProperties(
             unchangedBond,
@@ -30,7 +30,7 @@ export function updateSelectedBonds({
               false,
             ),
           );
-        });
+        }
         editor.update(action);
       })
       .catch((error) => {

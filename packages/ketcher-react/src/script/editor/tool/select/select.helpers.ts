@@ -22,13 +22,13 @@ function uniqArray(dest, add, isReversible: boolean) {
 // TODO: deep-merge?
 export function selMerge(selection, add, isReversible: boolean) {
   if (add) {
-    Object.keys(add).forEach((item) => {
+    for (const item of Object.keys(add)) {
       if (selection[item]) {
         selection[item] = uniqArray(selection[item], add[item], isReversible);
       } else {
-        selection[item] = [...add[item]];
+        selection[item] = add[item].slice();
       }
-    });
+    }
   }
   return selection;
 }
@@ -219,11 +219,11 @@ export function getAttachmentGroupSelection(
   const atomIdSet = new Set(atomIds);
   const bondIds: number[] = [];
 
-  molecule.bonds.forEach((bond, bondId) => {
+  for (const [bondId, bond] of molecule.bonds.entries()) {
     if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
       bondIds.push(bondId);
     }
-  });
+  }
 
   return {
     attachmentGroups: [attachmentGroupId],

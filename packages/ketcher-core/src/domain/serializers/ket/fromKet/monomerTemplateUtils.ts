@@ -67,10 +67,10 @@ export function fillMonomerTemplateStruct(ket): Struct {
   const resultingStruct = new Struct();
   const nodes = ket.root.nodes;
 
-  Object.keys(nodes).forEach((i) => {
+  for (const i of Object.keys(nodes)) {
     if (nodes[i].type) parseNode(nodes[i], resultingStruct);
     else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
-  });
+  }
   resultingStruct.name = ket.header?.moleculeName ?? '';
 
   return resultingStruct;
@@ -211,7 +211,10 @@ export function fillStructRgLabelsByMonomerTemplate(
   monomerItem.struct.initHalfBonds();
   monomerItem.struct.initNeighbors();
 
-  attachmentPoints?.forEach((attachmentPoint, attachmentPointIndex) => {
+  for (const [
+    attachmentPointIndex,
+    attachmentPoint,
+  ] of attachmentPoints?.entries() ?? []) {
     const firstAtomInLeavingGroup = attachmentPoint.leavingGroup?.atoms[0];
     const leavingGroupAtomId = isNumber(firstAtomInLeavingGroup)
       ? firstAtomInLeavingGroup
@@ -219,7 +222,7 @@ export function fillStructRgLabelsByMonomerTemplate(
     const leavingGroupAtom = monomerItem.struct.atoms.get(leavingGroupAtomId);
 
     if (!leavingGroupAtom) {
-      return;
+      continue;
     }
     leavingGroupAtom.rglabel =
       0 |
@@ -238,5 +241,5 @@ export function fillStructRgLabelsByMonomerTemplate(
       monomerItem.struct,
       leavingGroupAtomId,
     );
-  });
+  }
 }

@@ -8,13 +8,15 @@ export function mergeFragmentsToStruct(
 ): Struct {
   let atomsOffset = 0;
   if (ketItem.fragments) {
-    ketItem.fragments.forEach((fragment) => {
-      fragment.atoms?.forEach((atom) => struct.atoms.add(atomToStruct(atom)));
-      fragment.bonds?.forEach((bond) =>
-        struct.bonds.add(bondToStruct(bond, atomsOffset)),
-      );
+    for (const fragment of ketItem.fragments) {
+      for (const atom of fragment.atoms ?? []) {
+        struct.atoms.add(atomToStruct(atom));
+      }
+      for (const bond of fragment.bonds ?? []) {
+        struct.bonds.add(bondToStruct(bond, atomsOffset));
+      }
       atomsOffset += fragment.atoms?.length ?? 0;
-    });
+    }
   }
   return struct;
 }

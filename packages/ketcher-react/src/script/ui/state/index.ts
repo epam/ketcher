@@ -172,13 +172,16 @@ function sanitizeForDevTools(value: unknown): unknown {
 
   const sanitized: Record<string, unknown> = { ...value };
 
-  ['editor', 'server', 'functionalGroups', 'saltsAndSolvents'].forEach(
-    (key) => {
-      if (key in sanitized) {
-        sanitized[key] = NOT_SERIALIZED;
-      }
-    },
-  );
+  for (const key of [
+    'editor',
+    'server',
+    'functionalGroups',
+    'saltsAndSolvents',
+  ]) {
+    if (key in sanitized) {
+      sanitized[key] = NOT_SERIALIZED;
+    }
+  }
 
   const { templates } = sanitized;
   if (isRecord(templates) && templates.lib) {

@@ -47,28 +47,6 @@ type FragmentSelectionPreviewOptions = {
 };
 
 class ReBond extends ReObject {
-  b: Bond;
-  doubleBondShift: number;
-  // A bond's rendered path is a single Element for most bond types, or a
-  // RaphaelSet (paper.set([...])) for aromatic bonds.
-  path: RenderPath;
-  neihbid1 = -1;
-  neihbid2 = -1;
-  boldStereo?: boolean;
-  rbb?: RelativeBox;
-  cip?: {
-    // Raphael paths
-    path: RaphaelSet;
-    text: Element;
-    rectangle: Element;
-  };
-
-  constructor(bond: Bond) {
-    super('bond');
-    this.b = bond; // TODO rename b to item
-    this.doubleBondShift = 0;
-  }
-
   static isSelectable() {
     return true;
   }
@@ -148,6 +126,27 @@ class ReBond extends ReObject {
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
+  b: Bond;
+  doubleBondShift: number;
+  // A bond's rendered path is a single Element for most bond types, or a
+  // RaphaelSet (paper.set([...])) for aromatic bonds.
+  path: RenderPath;
+  neihbid1 = -1;
+  neihbid2 = -1;
+  boldStereo?: boolean;
+  rbb?: RelativeBox;
+  cip?: {
+    // Raphael paths
+    path: RaphaelSet;
+    text: Element;
+    rectangle: Element;
+  };
+
+  constructor(bond: Bond) {
+    super('bond');
+    this.b = bond; // TODO rename b to item
+    this.doubleBondShift = 0;
+  }
   drawHover(render: Render, shouldDrawOutline = true) {
     const ret = this.makeHoverPlate(render, shouldDrawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
@@ -278,7 +277,7 @@ class ReBond extends ReObject {
   getSelectionContour(render: Render, isHighlight: boolean) {
     const { paper } = render;
     const selectionPoints = this.getSelectionPoints(render, isHighlight);
-    if (!selectionPoints.length) return null;
+    if (selectionPoints.length === 0) return null;
     const [
       startPadTop,
       startTop,

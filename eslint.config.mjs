@@ -147,13 +147,6 @@ const defaults = [
     },
   },
   {
-    files: ['**/*.{ts,tsx}'],
-    rules: {
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-redeclare': 'error',
-    },
-  },
-  {
     files: ['ketcher-autotests/**/*.{ts,tsx,js,jsx}'],
     rules: {
       'no-unused-vars': 'off',

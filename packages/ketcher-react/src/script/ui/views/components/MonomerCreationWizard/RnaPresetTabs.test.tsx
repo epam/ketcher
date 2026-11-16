@@ -36,6 +36,7 @@ type HighlightObject = {
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({
   Icon: ({ name }: { name: string }) => <div data-testid={`icon-${name}`} />,
+  Tooltip: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Mock the selectors

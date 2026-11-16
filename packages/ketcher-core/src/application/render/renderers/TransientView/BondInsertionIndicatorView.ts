@@ -38,9 +38,8 @@ export class BondInsertionIndicatorView {
       .attr('cx', params.position.x)
       .attr('cy', params.position.y)
       .attr('r', BOND_INSERTION_INDICATOR_RADIUS[params.level])
-      .attr('fill', '#167782')
-      .attr('fill-opacity', 0.35)
-      .attr('stroke', '#167782')
+      .attr('fill', 'white')
+      .attr('stroke', '#0097A8')
       .attr('stroke-width', 1);
   }
 }

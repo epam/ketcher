@@ -45,6 +45,8 @@ import { KetcherLogger } from 'utilities';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 import {
   buildCircularReplacementExtension,
   buildShiftCommand,
@@ -831,11 +833,20 @@ export class LibraryItemDragDropHandler {
         );
       }
       if (base) {
-        const sugarPosition = sugar.position;
+        // Place the base perpendicular to the bond at the standard side-chain
+        // distance. For a horizontal bond (direction = (1,0)) the 90° CCW
+        // perpendicular is (0,1) — directly below — matching the snake-layout
+        // and autochain conventions.
+        const { macroModeScale } = provideEditorSettings();
+        const baseDistance = SnakeLayoutCellWidth / macroModeScale;
+        const perp = new Vec2(-direction.y, direction.x);
         command.merge(
           drawingEntitiesManager.moveMonomer(
             base,
-            new Vec2(sugarPosition.x, sugarPosition.y + 1.5),
+            new Vec2(
+              sugar.position.x + perp.x * baseDistance,
+              sugar.position.y + perp.y * baseDistance,
+            ),
           ),
         );
       }

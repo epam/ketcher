@@ -99,15 +99,6 @@ async function switchToMicro(page: Page) {
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 }
 
-// turnOnMicromoleculesEditor() skips the click when Molecules mode is already
-// active, so the switcher option is clicked directly here
-async function reselectMoleculesMode(page: Page) {
-  const option = page.getByTestId(Mode.Molecules);
-  await CommonTopRightToolbar(page).ketcherModeSwitcherCombobox.click();
-  await option.click();
-  await option.waitFor({ state: 'hidden' });
-}
-
 async function addBenzene(page: Page) {
   await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
   // the pasted structure follows the cursor until the canvas is clicked
@@ -585,7 +576,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      */
     await addBenzene(page);
     const initialKet = await getKet(page);
-    await reselectMoleculesMode(page);
+    await CommonTopRightToolbar(page).selectModeOption(Mode.Molecules);
     await expectCanvas(page, { mode: 'micro' });
     await switchToMacro(page);
 

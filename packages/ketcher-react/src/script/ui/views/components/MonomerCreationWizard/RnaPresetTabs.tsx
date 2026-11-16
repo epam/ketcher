@@ -49,6 +49,7 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
+  getConnectionAttachmentPointAtomIdsForComponent,
   getConnectionAttachmentPointAtomIdsForRnaPreset,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
@@ -268,7 +269,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     editor.selection(null);
   }, [applyHighlights, currentTabStructure, editor, selectedTab]);
 
-  // Keep all inter-component connection points visible while editing any tab.
+  // Keep all inter-component connection points visible while editing any tab,
+  // and track each component's AP namespace for assignment.
   useEffect(() => {
     editor.setVisibleAssignedAttachmentPoints(undefined);
     editor.setConnectionAttachmentPoints(
@@ -276,6 +278,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         wizardState,
         struct,
         phosphatePosition as PhosphatePosition | undefined,
+      ),
+    );
+    editor.setRnaComponentConnectionAttachmentPoints(
+      new Map(
+        RNA_COMPONENT_KEYS.map((componentKey) => [
+          componentKey,
+          getConnectionAttachmentPointAtomIdsForComponent(
+            wizardState,
+            struct,
+            componentKey,
+            phosphatePosition as PhosphatePosition | undefined,
+          ),
+        ]),
       ),
     );
   }, [editor, struct, wizardState, phosphatePosition]);

@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`should be rendered correctly should be rendered without crashing 1`] = `
+exports[`should be rendered correctly > should be rendered without crashing 1`] = `
 <DocumentFragment>
   <div
-    class="colorPickerWrapper"
+    class="_colorPickerWrapper_200ea8"
     data-testid="color-picker-field"
     role="none"
   >
@@ -11,17 +11,27 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
       aria-controls="color-picker-_r_0_"
       aria-expanded="false"
       aria-haspopup="true"
-      class="colorPickerInput"
+      class="_colorPickerInput_200ea8"
       type="button"
     >
       <div
-        class="colorPickerPreview"
+        class="_colorPickerPreview_200ea8"
         data-testid="testname-color-picker-preview"
         style="background-color: rgb(0, 0, 0);"
       />
-      <icon-chevron.svg
-        class="expandIcon turnedIcon"
-      />
+      <svg
+        class="_expandIcon_200ea8 _turnedIcon_200ea8"
+        fill="none"
+        height="48"
+        viewBox="0 0 48 48"
+        width="48"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M24.0002 33.2303L9.78223 19.0123L12.6102 16.1843L24.0002 27.5743L35.3882 16.1843L38.2182 19.0123L24.0002 33.2303Z"
+          fill="#231F20"
+        />
+      </svg>
     </button>
   </div>
 </DocumentFragment>

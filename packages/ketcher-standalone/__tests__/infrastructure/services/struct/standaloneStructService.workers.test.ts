@@ -1,13 +1,16 @@
 import { Command } from '../../../../src/infrastructure/services/struct/indigoWorker.types';
 import type StandaloneStructServiceClass from '../../../../src/infrastructure/services/struct/standaloneStructService';
 
+// Paper.js needs a canvas, which the test environment does not provide.
+vi.mock('paper', () => ({ default: {} }));
+
 // The browser's Worker is the system boundary. Everything else - the service
 // and the worker shim that decides how many workers exist - stays real.
 // useNativeWorkerUrl is the shim the example's production build uses;
-// useViteInlineWorker has the same shape but cannot load under Jest because it
-// needs Vite's `?worker&inline` import.
-jest.mock('_indigo-worker-import-alias_', () =>
-  jest.requireActual(
+// useViteInlineWorker has the same shape but is not used here because it needs
+// Vite's `?worker&inline` import.
+vi.mock('_indigo-worker-import-alias_', async () =>
+  vi.importActual(
     '../../../../src/infrastructure/services/struct/indigoWorkerImports/useNativeWorkerUrl',
   ),
 );
@@ -66,14 +69,11 @@ class FakeIndigoWorker {
 
 // A fresh module registry per test: the shim may keep a worker in module
 // state, and that must not leak from one test into the next.
-function loadService(): typeof StandaloneStructServiceClass {
-  let service: typeof StandaloneStructServiceClass | undefined;
-  jest.isolateModules(() => {
-    service = jest.requireActual(
-      '../../../../src/infrastructure/services/struct/standaloneStructService',
-    ).default;
-  });
-  return service as typeof StandaloneStructServiceClass;
+async function loadService(): Promise<typeof StandaloneStructServiceClass> {
+  vi.resetModules();
+  const module =
+    await import('../../../../src/infrastructure/services/struct/standaloneStructService');
+  return module.default as typeof StandaloneStructServiceClass;
 }
 
 // Resolves to whether `promise` has settled once all work that does not wait
@@ -84,29 +84,29 @@ async function settles(promise: Promise<unknown>) {
     () => (settled = true),
     () => (settled = true),
   );
-  await jest.advanceTimersByTimeAsync(100);
+  await vi.advanceTimersByTimeAsync(100);
   return settled;
 }
 
 describe('StandaloneStructService with several services on one page', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     FakeIndigoWorker.instances = [];
     FakeIndigoWorker.replying = true;
     Object.assign(globalThis, {
       Worker: FakeIndigoWorker,
       // Node has no window; the service announces "Indigo is ready" on it.
-      dispatchEvent: jest.fn(),
+      dispatchEvent: vi.fn(),
     });
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   it('answers info() of every service, as two editors on one page create two services', async () => {
-    const StandaloneStructService = loadService();
+    const StandaloneStructService = await loadService();
     const first = new StandaloneStructService({});
     const second = new StandaloneStructService({});
 
@@ -118,7 +118,7 @@ describe('StandaloneStructService with several services on one page', () => {
   });
 
   it('keeps a service working after another one is destroyed', async () => {
-    const StandaloneStructService = loadService();
+    const StandaloneStructService = await loadService();
     const first = new StandaloneStructService({});
     const second = new StandaloneStructService({});
 
@@ -129,7 +129,7 @@ describe('StandaloneStructService with several services on one page', () => {
 
   it('leaves a call that was pending at destroy() unsettled instead of timing it out', async () => {
     FakeIndigoWorker.replying = false;
-    const StandaloneStructService = loadService();
+    const StandaloneStructService = await loadService();
     const service = new StandaloneStructService({});
     let rejected = false;
     service.info().catch(() => {
@@ -139,7 +139,7 @@ describe('StandaloneStructService with several services on one page', () => {
     service.destroy();
     // Past DEFAULT_WORKER_TIMEOUT: a rejection would reach the editor's error
     // dialog long after the editor is gone.
-    await jest.advanceTimersByTimeAsync(60_000);
+    await vi.advanceTimersByTimeAsync(60_000);
 
     expect(rejected).toBe(false);
   });

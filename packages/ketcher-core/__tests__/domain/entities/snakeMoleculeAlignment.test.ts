@@ -19,13 +19,13 @@ import {
 } from '../../helpers/dom';
 
 // Only browser APIs unavailable in jsdom are stubbed.
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
   x: 0,
   y: 0,
   width: 12,
@@ -62,7 +62,7 @@ describe('Snake molecule row alignment (#8042)', () => {
     SettingsManager.editorLineLength = {
       'snake-layout-mode': previousLineLength,
     };
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     document.body.innerHTML = '';
   });
 

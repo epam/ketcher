@@ -19,7 +19,11 @@ function fakeOctokit(answers = {}) {
   };
   const octokit = {
     rest: {
-      pulls: { get: method('pulls.get'), createReview: method('createReview') },
+      pulls: {
+        get: method('pulls.get'),
+        createReview: method('createReview'),
+        createReviewComment: method('createReviewComment'),
+      },
       issues: {
         get: method('issues.get'),
         listComments: 'issues.listComments',
@@ -50,12 +54,13 @@ function fakeExec(rules = []) {
   return { exec, calls };
 }
 
-const github = (answers, rules) => {
+const github = (answers, rules, secrets = []) => {
   const fake = fakeOctokit(answers);
   const git = fakeExec(rules);
   const gh = createGitHub({
     repo: 'epam/ketcher',
     prDir: '/pr',
+    secrets,
     octokit: fake.octokit,
     exec: git.exec,
   });
@@ -131,6 +136,25 @@ test('a review posts the inline comments on the new side of the diff', async () 
     event: 'COMMENT',
     comments: [{ path: 'src/a.ts', line: 3, side: 'RIGHT', body: 'Body.' }],
   });
+});
+
+test('a secret value never reaches a posted comment', async () => {
+  const secret = 'sk-ant-oat01-ffffffffffff';
+  const { gh, calls } = github(undefined, undefined, [secret]);
+  const comment = { path: 'src/a.ts', line: 3, body: `Leaked ${secret}.` };
+  await gh.postReview(7, { commitId: 'h'.repeat(40), comments: [comment] });
+  await gh.postReviewComment(7, { commitId: 'h'.repeat(40), comment });
+  await gh.postComment(7, `## Brief with ${secret}`);
+
+  const bodies = [
+    calls[0].params.comments[0].body,
+    calls[1].params.body,
+    calls[2].params.body,
+  ];
+  for (const body of bodies) {
+    assert.ok(!body.includes(secret));
+    assert.match(body, /\[redacted\]/);
+  }
 });
 
 test('a review without comments posts nothing', async () => {

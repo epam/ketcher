@@ -5,6 +5,7 @@
 
 import { Octokit } from '@octokit/rest';
 import { execa } from 'execa';
+import { redact, secretValues } from './redact.mjs';
 
 /**
  * The pull request fields the hub uses.
@@ -78,10 +79,16 @@ export function createGitHub({
   repo: fullName,
   prDir,
   token,
+  secrets = secretValues(process.env),
   octokit = new Octokit({ auth: token }),
   exec = execa,
 }) {
   const [owner, repo] = fullName.split('/');
+
+  // Everything below goes to a public pull request, so every text posted
+  // passes here first: see redact.mjs.
+  /** @param {string} text */
+  const safe = (text) => redact(text, secrets);
 
   /** Runs git in the pull request checkout. */
   const git = async (args) => {
@@ -170,7 +177,9 @@ export function createGitHub({
         pull_number: number,
         commit_id: commitId,
         event: 'COMMENT',
-        comments: comments.map(reviewComment),
+        comments: comments.map((comment) =>
+          reviewComment({ ...comment, body: safe(comment.body) }),
+        ),
       });
     },
 
@@ -187,7 +196,7 @@ export function createGitHub({
         repo,
         pull_number: number,
         commit_id: commitId,
-        ...reviewComment(comment),
+        ...reviewComment({ ...comment, body: safe(comment.body) }),
       });
     },
 
@@ -201,7 +210,7 @@ export function createGitHub({
         owner,
         repo,
         issue_number: number,
-        body,
+        body: safe(body),
       });
     },
 

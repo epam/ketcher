@@ -34,6 +34,8 @@ Bond extension (3 Å minimum; variable `2C` for phosphate presets) and the shift
 
 For the phosphate triangle: B = 0.75 Å, A = 1.5 Å, α opposite A is the angle between the bond and the horizontal. By the law of sines, sin(β) = B·sin(α)/A for the angle β opposite B, then γ = π − α − β and C = A·sin(γ)/sin(α). The bond is extended to `2C` only when its current length is smaller.
 
+The base is placed at `SnakeLayoutCellWidth / macroModeScale` model-units from the sugar in the direction perpendicular to the bond (90° CCW rotation of the bond direction vector). For a horizontal bond this places the base directly below the sugar, matching the snake-layout convention. For non-horizontal bonds the base is perpendicular to the sugar–phosphate axis.
+
 ### Decision 5 — Circular-structure detection via cycle membership of the bond
 
 A bond is "in a circular structure" if removing it leaves its endpoints connected. This is evaluated on the polymer-bond graph before the bond is removed.

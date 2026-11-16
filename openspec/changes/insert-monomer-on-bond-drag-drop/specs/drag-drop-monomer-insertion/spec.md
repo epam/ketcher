@@ -136,12 +136,17 @@ In Flex mode, for a non-circular chain with a bond shorter than 3 Å, the bond S
 
 ### Requirement: Flex-mode layout for preset insertion
 
-A phosphateless preset SHALL be inserted like a monomer with the sugar at the midpoint and the base in its default position below the sugar. For a phosphate-containing preset the bond extension SHALL be variable: with B = 0.75 Å (preset component to sugar–phosphate bond centre), A = 1.5 Å (original monomer to preset component) and α the angle between the original bond and the horizontal, side C of the resulting triangle is computed and the bond is extended to 2C if shorter. The centre of the sugar–phosphate bond SHALL be placed at the midpoint of the extended bond. The preset MAY be flipped when dropped on an antisense chain.
+A phosphateless preset SHALL be inserted like a monomer with the sugar at the midpoint and the base placed perpendicular to the bond direction at the standard side-chain distance (`SnakeLayoutCellWidth / macroModeScale`). For a phosphate-containing preset the bond extension SHALL be variable: with B = 0.75 Å (preset component to sugar–phosphate bond centre), A = 1.5 Å (original monomer to preset component) and α the angle between the original bond and the horizontal, side C of the resulting triangle is computed and the bond is extended to 2C if shorter. The centre of the sugar–phosphate bond SHALL be placed at the midpoint of the extended bond. The base SHALL be placed perpendicular to the sugar–phosphate bond at the standard side-chain distance. The preset MAY be flipped when dropped on an antisense chain.
 
 #### Scenario: Phosphateless preset
 
 - **WHEN** a preset without phosphate is dropped on a bond in Flex mode
-- **THEN** the sugar is at the bond midpoint and the base is below the sugar
+- **THEN** the sugar is at the bond midpoint and the base is perpendicular to the bond at the standard side-chain distance
+
+#### Scenario: Phosphate preset base position
+
+- **WHEN** a phosphate-containing preset is dropped on a bond in Flex mode
+- **THEN** the base is placed perpendicular to the sugar–phosphate axis at the standard side-chain distance (90° to sugar–phosphate)
 
 #### Scenario: Phosphate preset on short bond
 

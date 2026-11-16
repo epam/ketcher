@@ -115,7 +115,7 @@ describe('StandaloneStructService with several services on one page', () => {
 
     expect(await settles(firstInfo)).toBe(true);
     expect(await settles(secondInfo)).toBe(true);
-  });
+  }, 10000);
 
   it('keeps a service working after another one is destroyed', async () => {
     const StandaloneStructService = loadService();

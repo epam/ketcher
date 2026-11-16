@@ -32,8 +32,10 @@ export class NucleotideSequenceItemRenderer extends RNASequenceItemRenderer {
     }
   }
 
-  protected appendRootElement() {
-    this.rootElement = super.appendRootElement();
+  protected appendRootElement(
+    parentElement?: D3SvgElementSelection<SVGGElement, void>,
+  ) {
+    this.rootElement = super.appendRootElement(parentElement);
     this.rootElement?.attr(
       'data-symbol-type',
       this.node.sugar.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA

@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@fixtures';
+import { test, expect, Page, Locator } from '@fixtures';
 import { waitForPageInit, getCanvasByMode } from '@utils';
 import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -12,13 +12,20 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { Mode } from '@tests/pages/constants/commonTopRightToolbar/Constants';
+import {
+  openFileAndAddToCanvasMacro,
+  pasteFromClipboardAndAddToCanvas,
+} from '@utils/files/readFile';
+import { getKet } from '@utils/formats';
 import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
-import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
-import { clickOnCanvas, dragTo } from '@utils/clicks';
+import {
+  getArrowLocator,
+  getPlusLocator,
+} from '@utils/canvas/arrow-signes/getArrowLocator';
+import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 
 async function expectMicroMode(page: Page) {
   await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -28,6 +35,40 @@ async function expectMacroMode(page: Page) {
   await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
 }
 
+// Undo/Redo buttons in Macromolecules mode stay enabled regardless of the
+// history state, so their disabled state is asserted only in Molecules mode.
+
+// The inactive editor keeps its rendered elements in the DOM, so counts are
+// scoped to the visible canvas. A visibility filter on the elements themselves
+// is not enough: a horizontal bond has zero height and counts as hidden.
+const onActiveCanvas = (page: Page, elements: Locator) =>
+  getCanvasByMode(page, 'molecules')
+    .or(getCanvasByMode(page, 'macromolecules'))
+    .filter({ visible: true })
+    .locator(elements);
+const visibleAtoms = (page: Page, atomLabel?: string) =>
+  onActiveCanvas(page, getAtomLocator(page, atomLabel ? { atomLabel } : {}));
+const visibleBonds = (page: Page) =>
+  onActiveCanvas(page, getBondLocator(page, {}));
+const visibleArrows = (page: Page) =>
+  onActiveCanvas(page, getArrowLocator(page));
+
+// turnOnMicromoleculesEditor() skips the click when Molecules mode is already
+// active, so the switcher option is clicked directly here
+async function reselectMoleculesMode(page: Page) {
+  const option = page.getByTestId(Mode.Molecules);
+  await CommonTopRightToolbar(page).ketcherModeSwitcherCombobox.click();
+  await option.click();
+  await option.waitFor({ state: 'hidden' });
+}
+
+async function addBenzene(page: Page) {
+  await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
+  // the pasted structure follows the cursor until the canvas is clicked
+  await clickInTheMiddleOfTheCanvas(page);
+  await expect(visibleAtoms(page)).toHaveCount(6);
+}
+
 test.describe('Retain history between macro and micro molecules modes', () => {
   // Pattern B: every case asserts history order or boundaries, so each test
   // starts from a fresh page with an empty undo/redo stack.
@@ -35,51 +76,314 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await waitForPageInit(page);
   });
 
-  test('Case 7 - Reaction arrow edits in Macro remain undoable after switching to Micro', async ({
+  test('Case 1 - Molecule added in Micro is undoable after switching to Macro', async ({
     page,
   }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
-     * Description: A reaction arrow moved in Macro retains its position history.
+     * Description: A molecule added in Molecules mode can still be removed by
+     *              Undo after switching to Macromolecules mode.
      * Scenario:
-     * 1. Draw an arrow in Micro and move it in Macro
-     * 2. Switch to Micro and undo the switch and movement
-     * 3. Redo the movement and switch and verify the arrow remains present
+     * 1. Add benzene in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Undo — Molecules mode is shown with benzene
+     * 4. Undo — benzene is removed and Undo is disabled
      *
      * Version 3.21.0
      */
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await clickOnCanvas(page, 200, 200);
-    await expect(getArrowLocator(page)).toHaveCount(1);
+    await addBenzene(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).areaSelectionTool();
-    const arrow = getArrowLocator(page).filter({ visible: true });
-    const initial = await arrow.boundingBox();
-    if (!initial) throw new Error('Reaction arrow is not visible');
-    await dragTo(page, arrow, {
-      x: initial.x + initial.width / 2 + 70,
-      y: initial.y + initial.height / 2 + 70,
-    });
-    const moved = await arrow.boundingBox();
-    if (!moved) throw new Error('Moved reaction arrow is not visible');
-    expect(moved.x).toBeGreaterThan(initial.x + 30);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await CommonTopLeftToolbar(page).undo();
-    await expectMacroMode(page);
-    await expect(arrow).toHaveCount(1);
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+
     await CommonTopLeftToolbar(page).undo();
-    const restored = await arrow.boundingBox();
-    if (!restored) throw new Error('Restored reaction arrow is not visible');
-    expect(restored.x).toBeCloseTo(initial.x, 0);
-    expect(restored.y).toBeCloseTo(initial.y, 0);
-    await CommonTopLeftToolbar(page).redo();
-    const redone = await arrow.boundingBox();
-    if (!redone) throw new Error('Redone reaction arrow is not visible');
-    expect(redone.x).toBeCloseTo(moved.x, 0);
-    expect(redone.y).toBeCloseTo(moved.y, 0);
+    await expect(visibleAtoms(page)).toHaveCount(0);
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+  });
+
+  test('Case 2 - Undoing the molecule addition keeps the mode switch as its own history entry', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: After the molecule addition is undone, Redo re-applies the
+     *              addition first and the mode switch as a separate next step.
+     * Scenario:
+     * 1. Add benzene in Molecules mode and switch to Macromolecules mode
+     * 2. Undo twice — the canvas is empty in Molecules mode
+     * 3. Redo — benzene is restored and Molecules mode stays active
+     * 4. Redo — Macromolecules mode is shown
+     * 5. Redo again — nothing changes; Undo returns to Molecules mode with
+     *    benzene
+     *
+     * Version 3.21.0
+     */
+    await addBenzene(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(0);
+
     await CommonTopLeftToolbar(page).redo();
     await expectMicroMode(page);
-    await expect(arrow).toHaveCount(1);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
+
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+
+    // the switch was the last entry: an extra Redo changes nothing
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+  });
+
+  test('Case 3 - Monomer added in Macro is undoable after switching to Micro', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: A monomer added in Macromolecules mode can still be removed
+     *              by Undo after switching to Molecules mode.
+     * Scenario:
+     * 1. Switch to Macromolecules mode (Flex) and add a Tza monomer
+     * 2. Switch to Molecules mode
+     * 3. Undo — Macromolecules mode is shown with the monomer
+     * 4. Undo — the monomer is removed
+     *
+     * Version 3.21.0
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+  });
+
+  test('Case 4 - Undoing the monomer addition keeps the mode switch as its own history entry', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: After the monomer addition is undone, Redo re-applies the
+     *              addition first and the switch to Molecules mode next.
+     * Scenario:
+     * 1. Switch to Macromolecules mode (Flex), add a Tza monomer, switch to
+     *    Molecules mode
+     * 2. Undo twice — the monomer is removed in Macromolecules mode
+     * 3. Redo — the monomer is restored and Macromolecules mode stays active
+     * 4. Redo — Molecules mode is shown and Redo is disabled
+     *
+     * Version 3.21.0
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
+
+    await CommonTopLeftToolbar(page).redo();
+    await expectMicroMode(page);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+  });
+
+  test('Case 5 - Atoms added in Micro are undone in reverse order after a switch', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: Atoms added before a mode switch are removed one per Undo,
+     *              latest first.
+     * Scenario:
+     * 1. Add a carbon atom, then a nitrogen atom in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Undo — Molecules mode is shown with both atoms
+     * 4. Undo — only the nitrogen atom is removed
+     * 5. Undo — the carbon atom is removed
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
+    await addAtoms(page, Atom.Nitrogen, [{ x: 400, y: 300 }]);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page, 'C')).toHaveCount(1);
+    await expect(visibleAtoms(page, 'N')).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page, 'C')).toHaveCount(1);
+    await expect(visibleAtoms(page, 'N')).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(0);
+  });
+
+  test('Case 6 - Bond added before a switch is undone as a separate step', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: A bond added in Molecules mode is its own history entry
+     *              behind the mode switch.
+     * Scenario:
+     * 1. Add a carbon atom and draw a single bond from it in Molecules mode
+     * 2. Switch to Macromolecules mode
+     * 3. Undo — Molecules mode is shown with two atoms and one bond
+     * 4. Undo — the bond and its new atom are removed, the first atom stays
+     * 5. Undo — the canvas is empty
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 400, y: 300 }]);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+    await visibleAtoms(page, 'C').click();
+    await expect(visibleBonds(page)).toHaveCount(1);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(2);
+    await expect(visibleBonds(page)).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(1);
+    await expect(visibleBonds(page)).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(0);
+  });
+
+  test('Case 7 - Reaction added in Macro is undoable after switching to Micro', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: A reaction added in Macromolecules mode is one history entry
+     *              that stays undoable and redoable across a switch.
+     * Scenario:
+     * 1. Switch to Macromolecules mode (Flex) and open a reaction with an
+     *    arrow, a plus and three molecules
+     * 2. Switch to Molecules mode
+     * 3. Undo — Macromolecules mode is shown with the reaction
+     * 4. Undo — the reaction is removed
+     * 5. Redo — the reaction is restored
+     * 6. Redo — Molecules mode is shown with the reaction
+     *
+     * Version 3.21.0
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasMacro(
+      page,
+      'KET/reaction-with-arrow-and-plus.ket',
+    );
+    await expect(visibleArrows(page)).toHaveCount(1);
+    await expect(visibleAtoms(page)).toHaveCount(16);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(visibleArrows(page)).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleArrows(page)).toHaveCount(0);
+    await expect(onActiveCanvas(page, getPlusLocator(page))).toHaveCount(0);
+    await expect(visibleAtoms(page)).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).redo();
+    await expect(visibleArrows(page)).toHaveCount(1);
+    await expect(visibleAtoms(page)).toHaveCount(16);
+
+    await CommonTopLeftToolbar(page).redo();
+    await expectMicroMode(page);
+    await expect(visibleArrows(page)).toHaveCount(1);
+    await expect(visibleAtoms(page)).toHaveCount(16);
+  });
+
+  test('Case 8 - One molecule edited in both modes keeps every edit in history', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: Edits of the same molecule made in Molecules and in
+     *              Macromolecules mode are all separate history entries.
+     * Scenario:
+     * 1. Add benzene in Molecules mode
+     * 2. Switch to Macromolecules mode (Flex) and erase one benzene bond
+     * 3. Switch to Molecules mode and add a nitrogen atom
+     * 4. Undo five times, checking mode, atoms and bonds after each step
+     * 5. Redo five times, checking mode, atoms and bonds after each step
+     *
+     * Version 3.21.0
+     */
+    await addBenzene(page);
+    const ringBonds = await visibleBonds(page).count();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await CommonLeftToolbar(page).erase();
+    // micro bonds in Macro mode accept the Erase click only when forced
+    await visibleBonds(page).first().click({ force: true });
+    await expect(visibleBonds(page)).toHaveCount(ringBonds - 1);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await addAtoms(page, Atom.Nitrogen, [{ x: 300, y: 450 }]);
+    await expect(visibleAtoms(page)).toHaveCount(7);
+
+    // undo: nitrogen, switch, erased bond, switch, benzene
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await expect(visibleBonds(page)).toHaveCount(ringBonds - 1);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(visibleBonds(page)).toHaveCount(ringBonds - 1);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleBonds(page)).toHaveCount(ringBonds);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await expect(visibleBonds(page)).toHaveCount(ringBonds);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).redo();
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+    await expect(visibleBonds(page)).toHaveCount(ringBonds);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(visibleBonds(page)).toHaveCount(ringBonds - 1);
+    await CommonTopLeftToolbar(page).redo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await expect(visibleBonds(page)).toHaveCount(ringBonds - 1);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(visibleAtoms(page)).toHaveCount(7);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
   test('Case 9 - Monomer deletion and additions survive switches in a mixed history', async ({
@@ -158,6 +462,94 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
+  test('Case 10 - Undo and redo across multiple switches lose no history', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: Undoing everything and redoing everything across several
+     *              switches restores exactly the final structure.
+     * Scenario:
+     * 1. Add a carbon atom in Molecules mode
+     * 2. Switch to Macromolecules mode (Flex) and add a Tza monomer
+     * 3. Switch to Molecules mode and add a nitrogen atom
+     * 4. Undo until Undo is disabled — the canvas is empty
+     * 5. Redo until Redo is disabled — the structure equals the one from step 3
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await addAtoms(page, Atom.Nitrogen, [{ x: 400, y: 300 }]);
+    const finalKet = await getKet(page);
+
+    // five entries: carbon, switch, monomer, switch, nitrogen
+    for (let step = 0; step < 5; step++) {
+      await CommonTopLeftToolbar(page).undo();
+    }
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(0);
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+
+    for (let step = 0; step < 5; step++) {
+      await CommonTopLeftToolbar(page).redo();
+    }
+    await expectMicroMode(page);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+    expect(await getKet(page)).toEqual(finalKet);
+  });
+
+  test('Case 11 - Undo to the switch point and redo keeps the sequence', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: After undoing back past a mode switch, Redo replays the
+     *              switch and then the edits made after it, in order.
+     * Scenario:
+     * 1. Add a carbon atom in Molecules mode
+     * 2. Switch to Macromolecules mode (Flex) and add two Tza monomers
+     * 3. Undo three times — Molecules mode is shown with the carbon atom
+     * 4. Redo — Macromolecules mode is shown without monomers
+     * 5. Redo twice — the monomers are restored one by one
+     * 6. Redo again — nothing changes
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 450, y: 450 });
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page, 'C')).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+
+    // nothing is left to redo
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+  });
+
   test('Case 12 - A longer history remains traversable across repeated mode switches', async ({
     page,
   }) => {
@@ -221,5 +613,137 @@ test.describe('Retain history between macro and micro molecules modes', () => {
       );
     }
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+  });
+
+  test('Case 13 - Complex sequence with molecules, monomers and a reaction is fully undoable', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: A history mixing a molecule, monomers and a reaction across
+     *              two switches can be undone and redone completely.
+     * Scenario:
+     * 1. Add benzene in Molecules mode
+     * 2. Switch to Macromolecules mode (Flex), add two Tza monomers and open a
+     *    reaction
+     * 3. Switch to Molecules mode
+     * 4. Undo six times, checking the mode and content after each step
+     * 5. Redo six times — the structure equals the one from step 3
+     *
+     * Version 3.21.0
+     */
+    await addBenzene(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 150, y: 450 });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
+    await openFileAndAddToCanvasMacro(
+      page,
+      'KET/reaction-with-arrow-and-plus.ket',
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    const finalKet = await getKet(page);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(visibleArrows(page)).toHaveCount(1);
+    await expect(visibleAtoms(page)).toHaveCount(22);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleArrows(page)).toHaveCount(0);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(6);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(0);
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+
+    for (let step = 0; step < 6; step++) {
+      await CommonTopLeftToolbar(page).redo();
+    }
+    await expectMicroMode(page);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+    expect(await getKet(page)).toEqual(finalKet);
+  });
+
+  test('Case 14 - Switching modes adds no state change and no extra history entry', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: Re-selecting the active mode adds nothing to history, and
+     *              undoing a switch restores the exact previous structure.
+     * Scenario:
+     * 1. Add benzene in Molecules mode and remember the structure
+     * 2. Select Molecules mode again in the mode switcher
+     * 3. Switch to Macromolecules mode
+     * 4. Undo — Molecules mode is shown and the structure equals step 1
+     * 5. Undo — benzene is removed and Undo is disabled, so step 2 added no entry
+     *
+     * Version 3.21.0
+     */
+    await addBenzene(page);
+    const initialKet = await getKet(page);
+    await reselectMoleculesMode(page);
+    await expectMicroMode(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    expect(await getKet(page)).toEqual(initialKet);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(visibleAtoms(page)).toHaveCount(0);
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+  });
+
+  test('Case 15 - A full-length history across modes stays traversable', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: A history filled to its 32-step limit with edits and mode
+     *              switches can be undone and redone completely within the
+     *              default test timeout.
+     * Scenario:
+     * 1. Eight times: add two carbon atoms, switch to Macromolecules mode and
+     *    back (32 entries)
+     * 2. Add one more carbon atom (33rd entry, the oldest one is dropped)
+     * 3. Undo 32 times — Undo is disabled and one carbon atom is left
+     * 4. Redo 32 times — Redo is disabled and all 17 carbon atoms are present
+     *
+     * Version 3.21.0
+     */
+    for (let round = 0; round < 8; round++) {
+      await addAtoms(page, Atom.Carbon, [
+        { x: 150 + round * 60, y: 200 },
+        { x: 150 + round * 60, y: 300 },
+      ]);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    }
+    await addAtoms(page, Atom.Carbon, [{ x: 150, y: 400 }]);
+    await expect(visibleAtoms(page)).toHaveCount(17);
+
+    for (let step = 0; step < 32; step++) {
+      await CommonTopLeftToolbar(page).undo();
+    }
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(1);
+
+    for (let step = 0; step < 32; step++) {
+      await CommonTopLeftToolbar(page).redo();
+    }
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+    await expectMicroMode(page);
+    await expect(visibleAtoms(page)).toHaveCount(17);
   });
 });

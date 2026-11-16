@@ -36,7 +36,7 @@ describe('imported sequence IDs', () => {
   let editor: CoreEditor;
   const serializer = new KetSerializer();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const theme = {
       ...polymerEditorTheme,
       monomer: {
@@ -53,6 +53,7 @@ describe('imported sequence IDs', () => {
       renderersContainer: createRenderersManager(theme),
       mode: new FlexMode(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

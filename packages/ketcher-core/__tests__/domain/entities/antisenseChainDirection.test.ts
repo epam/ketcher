@@ -268,7 +268,7 @@ describe('antisense chain direction', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -276,6 +276,7 @@ describe('antisense chain direction', () => {
       theme: {},
       renderersContainer: createRenderersManager(testRenderTheme),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

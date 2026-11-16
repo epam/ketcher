@@ -79,6 +79,8 @@
 | ESM     | ECMAScript Modules                               | JavaScript module format (import/export)                                     |
 | CJS     | CommonJS                                         | JavaScript module format (require/module.exports)                            |
 | HMR     | Hot Module Replacement                           | Development feature for live code updates                                    |
+| Vite    | Build tool                                       | Dev server and production builds for every target ([build.md](./build.md))   |
+| Rolldown | Rust bundler inside Vite 8                      | Bundles each library and app; replaced Rollup and Webpack                    |
 | SSR     | Server-Side Rendering                            | Rendering React on server (Next.js example)                                  |
 | DRY     | Don't Repeat Yourself                            | Code reuse principle                                                         |
 | RNA     | Ribonucleic Acid                                 | Biological polymer (one of main use cases)                                   |

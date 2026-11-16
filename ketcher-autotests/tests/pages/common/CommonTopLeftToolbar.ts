@@ -41,17 +41,17 @@ export const CommonTopLeftToolbar = (page: Page) => {
         try {
           await locators.clearCanvasButton.click({
             force: false,
-            timeout: 2000,
+            timeout: 1000,
           });
           return;
         } catch {
           attempts++;
           await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
           await page.keyboard.press('Escape');
-          if (await closeWindowXButton.isVisible()) {
-            await closeWindowXButton.click();
+          if (await closeWindowXButton.first().isVisible()) {
+            await closeWindowXButton.first().click();
           }
-          await page.waitForTimeout(200);
+          await page.waitForTimeout(100);
         }
       }
 

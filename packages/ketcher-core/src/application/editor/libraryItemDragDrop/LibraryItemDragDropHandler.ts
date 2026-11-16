@@ -379,13 +379,30 @@ export class LibraryItemDragDropHandler {
       this.clearReplacementTarget();
     }
 
-    // --- ORIGINAL AP PROXIMITY CHECK ---
-    const nearestAP = this.findNearestFreeAttachmentPointForDrag(
-      state.position,
-    );
-    const circleHoverAP = this.findNearestFreeAttachmentPointForDrag(
-      state.position,
-      DRAG_CIRCLE_HOVER_THRESHOLD_PX,
+    // --- AP PROXIMITY CHECK ---
+    const { target: nearestAP, distance: nearestAPDist } =
+      this.findNearestFreeAttachmentPointForDrag(state.position);
+    const { target: circleHoverAP, distance: circleHoverAPDist } =
+      this.findNearestFreeAttachmentPointForDrag(
+        state.position,
+        DRAG_CIRCLE_HOVER_THRESHOLD_PX,
+      );
+
+    // --- BOND INSERTION CHECK with conflict resolution ---
+    // Always run the bond check so we can compare distances when both AP and
+    // bond are within range. When they conflict, whichever is geometrically
+    // closer wins and the other is suppressed — effectively reducing each
+    // hover area to avoid ambiguity (critical on circular or dense chains).
+    const bondTarget = this.findInsertTarget(state.position);
+    const minAPDist = Math.min(nearestAPDist, circleHoverAPDist);
+    const bondWins = bondTarget !== null && bondTarget.distance < minAPDist;
+
+    // Resolve the effective AP targets after the conflict check.
+    const effectiveNearestAP = bondWins ? null : nearestAP;
+    const effectiveCircleHoverAP = bondWins ? null : circleHoverAP;
+
+    this.updateInsertTarget(
+      effectiveNearestAP || effectiveCircleHoverAP ? null : bondTarget,
     );
 
     // Update circle hover state independently — no re-render needed, just
@@ -395,7 +412,7 @@ export class LibraryItemDragDropHandler {
       hasTargetChanged: hasCircleHoverTargetChanged,
     } = this.updateAttachmentPointTarget(
       this.dragCircleHoverTarget,
-      circleHoverAP,
+      effectiveCircleHoverAP,
       this.setMonomerDragCircleHoverAP.bind(this),
     );
     this.dragCircleHoverTarget = updatedCircleHoverTarget;
@@ -405,13 +422,8 @@ export class LibraryItemDragDropHandler {
       hasTargetChanged: hasBondTargetChanged,
     } = this.updateAttachmentPointTarget(
       this.dragDropBondTarget,
-      nearestAP,
+      effectiveNearestAP,
       this.setMonomerDragTargetAP.bind(this),
-    );
-
-    // --- BOND INSERTION CHECK (lowest priority) ---
-    this.updateInsertTarget(
-      nearestAP || circleHoverAP ? null : this.findInsertTarget(state.position),
     );
 
     // No change in either proximity target — avoid unnecessary re-renders
@@ -425,9 +437,11 @@ export class LibraryItemDragDropHandler {
     const command = new Command();
     command.merge(drawingEntitiesManager.removeHoverForAllMonomers());
 
-    if (nearestAP) {
+    if (effectiveNearestAP) {
       command.merge(
-        drawingEntitiesManager.intendToStartBondCreation(nearestAP.monomer),
+        drawingEntitiesManager.intendToStartBondCreation(
+          effectiveNearestAP.monomer,
+        ),
       );
     }
 
@@ -1580,9 +1594,9 @@ export class LibraryItemDragDropHandler {
   private findNearestFreeAttachmentPointForDrag(
     position: { x: number; y: number },
     threshold = DRAG_BOND_PROXIMITY_THRESHOLD_PX,
-  ): AttachmentPointTarget | null {
+  ): { target: AttachmentPointTarget | null; distance: number } {
     const rootOffset = this.dependencies.getKetcherRootRect();
-    if (!rootOffset) return null;
+    if (!rootOffset) return { target: null, distance: Infinity };
 
     const canvasOffset = this.dependencies.getCanvasOffset();
     // Convert the cursor from ketcherRoot-relative screen coords to SVG
@@ -1628,7 +1642,7 @@ export class LibraryItemDragDropHandler {
       }
     }
 
-    return nearest;
+    return { target: nearest, distance: nearest ? minDist : Infinity };
   }
 
   /**

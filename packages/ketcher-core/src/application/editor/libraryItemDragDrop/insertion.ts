@@ -49,6 +49,11 @@ export type BondInsertionTarget = {
   Closest point of the bond to the cursor, canvas-space pixels
   */
   indicatorPosition: Vec2;
+  /**
+  Exact cursor-to-bond distance in canvas-space pixels (used for conflict
+  resolution when an attachment point is also within range).
+  */
+  distance: number;
 };
 
 function distanceToSegment(
@@ -104,6 +109,7 @@ export function findBondInsertionTarget(
         bond,
         level: distance <= thresholds.inner ? 'nearest' : 'near',
         indicatorPosition: closest,
+        distance,
       };
     }
   }

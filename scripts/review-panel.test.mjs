@@ -48,11 +48,25 @@ test('a test-only change gets code-quality and not correctness', () => {
   );
 });
 
-test('plain source code gets correctness and code-quality', () => {
+test('plain source code gets correctness, reuse and code-quality', () => {
   assert.deepEqual(
     lensesFor(diffOf('packages/ketcher-react/src/script/ui/App.tsx', ['a'])),
-    ['correctness', 'code-quality'],
+    ['correctness', 'reuse', 'code-quality'],
   );
+});
+
+test('reuse comes with any source change and not with tests or docs', () => {
+  assert.ok(
+    lensesFor(diffOf('packages/ketcher-core/src/utilities/x.ts')).includes(
+      'reuse',
+    ),
+  );
+  assert.ok(
+    !lensesFor(diffOf('packages/ketcher-core/src/domain/x.test.ts')).includes(
+      'reuse',
+    ),
+  );
+  assert.ok(!lensesFor(diffOf('README.md')).includes('reuse'));
 });
 
 test('a render file or a cloneDeep in source brings performance', () => {

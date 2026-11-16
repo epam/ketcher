@@ -78,13 +78,14 @@ describe('Chain phosphate nodes', () => {
     return chains[0].nodes;
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
       canvas,
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

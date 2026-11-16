@@ -34,7 +34,7 @@ describe('CoreEditor stored monomer library updates', () => {
     jest.restoreAllMocks();
   });
 
-  it('should not crash on an invalid stored update and should still apply the remaining ones', () => {
+  it('should not crash on an invalid stored update and should still apply the remaining ones', async () => {
     const invalidStoredUpdate = JSON.stringify(
       createChemTemplate('STOREDBAD', ['Unknown monomer']),
     );
@@ -61,6 +61,7 @@ describe('CoreEditor stored monomer library updates', () => {
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
     }).not.toThrow();
+    await editor?.ensureDefaultMonomersLibraryLoaded();
 
     const monomerNames = editor?.monomersLibrary.map(
       (monomer) => monomer.props?.MonomerName,

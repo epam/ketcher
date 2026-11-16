@@ -250,26 +250,11 @@ notes:` block as shown above, after the category sections.
 
 Public releases ship the built binaries as 6 zip attachments.
 
-**Clear stale rollup caches before building.** A leftover
-`packages/*/node_modules/.cache` (rollup-plugin-typescript2 cache) from a
-previous build can feed stale compiled output into the new `dist/` instead
-of retranspiling, surfacing as `Attempted import error: 'X' is not
-exported from 'ketcher-core'` for a symbol that no longer exists anywhere
-in source. Clear the cache first, every time:
-
-```bash
-rm -rf packages/*/node_modules/.cache
-```
-
-Then build from repo root:
+Build from repo root:
 
 ```bash
 npm run build   # = build:packages (core, react, macromolecules, standalone) + build:example (remote, standalone)
 ```
-
-If it still fails on an "is not exported from" error after clearing the
-cache, that's a real regression on the branch — don't chase it as another
-cache issue.
 
 Then zip each package's `dist/` folder, named after the package, plus the
 two example bundles under `example/dist/`, named with the version:

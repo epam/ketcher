@@ -129,7 +129,7 @@ describe('duplex traversal', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -137,6 +137,7 @@ describe('duplex traversal', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {
@@ -263,7 +264,7 @@ describe('createMirroredBaseCommand', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -271,6 +272,7 @@ describe('createMirroredBaseCommand', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {
@@ -745,7 +747,7 @@ describe('resolveMirroredBaseTarget', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -753,6 +755,7 @@ describe('resolveMirroredBaseTarget', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

@@ -48,7 +48,7 @@ export default function MonomerPreviewProperties({
       : []),
   ];
 
-  if (!rows.length) return null;
+  if (rows.length === 0) return null;
 
   return (
     <MonomerPreviewContainer preset={preset}>

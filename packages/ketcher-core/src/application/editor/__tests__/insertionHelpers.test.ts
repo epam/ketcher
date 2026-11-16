@@ -1,8 +1,6 @@
 import {
   computeShiftSet,
-  computeTriangleSideC,
   getExtendedBondLength,
-  getPhosphatePresetRequiredBondLength,
   isBondInCycle,
   orderBondEnds,
   resolveMonomerInsertion,
@@ -14,25 +12,16 @@ import { AttachmentPointName } from 'domain/types';
 const { R1, R2, R3 } = AttachmentPointName;
 
 describe('phosphate preset bond extension', () => {
-  it('uses A + B for a horizontal bond', () => {
-    expect(computeTriangleSideC(0)).toBeCloseTo(2.25);
-    expect(getPhosphatePresetRequiredBondLength(0)).toBeCloseTo(4.5);
-  });
-
-  it('satisfies the law of cosines for a 90° angle', () => {
-    expect(computeTriangleSideC(Math.PI / 2)).toBeCloseTo(
-      Math.sqrt(1.5 * 1.5 - 0.75 * 0.75),
-    );
+  it('uses 2*(A+B) = 4.5 as the minimum for all bond angles', () => {
+    // Constant formula: external bond is always A = 1.5 regardless of direction.
+    expect(getExtendedBondLength(1, true)).toBeCloseTo(4.5);
+    expect(getExtendedBondLength(4, true)).toBeCloseTo(4.5);
+    expect(getExtendedBondLength(5, true)).toBe(5); // already long enough
   });
 
   it('never shortens the bond and enforces 3 Å for plain monomers', () => {
-    const from = { x: 0, y: 0 };
-    expect(getExtendedBondLength(2, from, { x: 2, y: 0 }, false)).toBe(3);
-    expect(getExtendedBondLength(5, from, { x: 5, y: 0 }, false)).toBe(5);
-    expect(getExtendedBondLength(1, from, { x: 1, y: 0 }, true)).toBeCloseTo(
-      4.5,
-    );
-    expect(getExtendedBondLength(6, from, { x: 6, y: 0 }, true)).toBe(6);
+    expect(getExtendedBondLength(2, false)).toBe(3);
+    expect(getExtendedBondLength(5, false)).toBe(5);
   });
 });
 

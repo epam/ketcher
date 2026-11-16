@@ -36,47 +36,30 @@ export type Point = { x: number; y: number };
 // ---------------------------------------------------------------------------
 
 /**
- * Angle (radians, 0..π/2) between the segment `from → to` and a horizontal line.
+ * Minimum extended bond length for a phosphate-containing preset: 2*(A+B).
+ *
+ * The preset components sit ON the bond axis, shifted by B from the midpoint.
+ * The external bond from an original monomer to its preset component is
+ * always extendedLength/2 − B. For this to equal A (the standard bond
+ * length) we need extendedLength = 2*(A+B) — a constant independent of the
+ * bond's angle. The angle-dependent triangle formula was only correct for
+ * horizontal bonds (α=0); for other angles it produced shorter external bonds.
  */
-export function getAngleToHorizontal(from: Point, to: Point): number {
-  const dx = Math.abs(to.x - from.x);
-  const dy = Math.abs(to.y - from.y);
-  return Math.atan2(dy, dx);
-}
-
-/**
- * Side C of the triangle (A, B, C) where A is opposite the angle α, i.e.
- * A² = B² + C² − 2·B·C·cos α, taking the positive root:
- * C = B·cos α + √(A² − B²·sin² α).
- */
-export function computeTriangleSideC(alpha: number): number {
-  const a = PRESET_TRIANGLE_SIDE_A_ANGSTROM;
-  const b = PRESET_TRIANGLE_SIDE_B_ANGSTROM;
-  const sinAlpha = Math.sin(alpha);
-  return b * Math.cos(alpha) + Math.sqrt(a * a - b * b * sinAlpha * sinAlpha);
-}
-
-/**
- * Length (Å) the bond must have after inserting a phosphate-containing preset:
- * 2C, where C comes from {@link computeTriangleSideC}.
- */
-export function getPhosphatePresetRequiredBondLength(alpha: number): number {
-  return 2 * computeTriangleSideC(alpha);
-}
+export const PHOSPHATE_PRESET_MIN_BOND_LENGTH =
+  2 * (PRESET_TRIANGLE_SIDE_A_ANGSTROM + PRESET_TRIANGLE_SIDE_B_ANGSTROM);
 
 /**
  * Length the original bond has after insertion. Never shorter than the current
- * length; a plain monomer / phosphateless preset needs at least 3 Å, a
- * phosphate-containing preset at least 2C.
+ * length; a plain monomer / phosphateless preset needs at least
+ * MIN_INSERTION_BOND_LENGTH_ANGSTROM, a phosphate-containing preset at least
+ * PHOSPHATE_PRESET_MIN_BOND_LENGTH.
  */
 export function getExtendedBondLength(
   currentLength: number,
-  from: Point,
-  to: Point,
   hasPhosphate: boolean,
 ): number {
   const required = hasPhosphate
-    ? getPhosphatePresetRequiredBondLength(getAngleToHorizontal(from, to))
+    ? PHOSPHATE_PRESET_MIN_BOND_LENGTH
     : MIN_INSERTION_BOND_LENGTH_ANGSTROM;
   return Math.max(currentLength, required);
 }

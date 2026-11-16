@@ -20,6 +20,7 @@ import {
   FormatterFactory,
   SGroup,
   identifyStructFormat,
+  isMolfileWithQueryFeatures,
   SupportedFormat,
   notifyRequestCompleted,
   KetcherLogger,
@@ -76,11 +77,10 @@ export function parseStruct(
       struct = `base64::${struct.split(/\s+/).join('')}`;
     }
     const factory = new FormatterFactory(server);
-    const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
     const service = factory.create(
       format,
       formatterOptions,
-      queryPropertiesAreUsed,
+      isMolfileWithQueryFeatures(format, struct),
     );
     return service.getStructureFromStringAsync(struct);
   } else {

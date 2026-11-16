@@ -11,16 +11,20 @@ import {
   MacroFileType,
   copyContentToClipboard,
   MonomerType,
+  selectAllStructuresOnCanvas,
+  moveMouseAway,
 } from '@utils';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { macromoleculesFilesInputFormats } from 'ketcher-core';
+import { getStructure, macromoleculesFilesInputFormats } from 'ketcher-core';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { expandMonomer } from '@utils/sgroup/helpers';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -157,6 +161,32 @@ test('Case 5: ', async () => {
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await page.mouse.up();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
 
-  await page.pause();
+test('Case 6: ', async () => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/5831
+   * Description: Copy/Cut/Paste operations works inconsistently with S-Groups (abbreviations) - paste from clipboard in collapsed state
+   * Scenario:
+   * 1. Go to Molecules
+   * 2. Load from file any monomer using Open as New Project: 1. Petide D (from library).zip
+   * 3. Right click on appeared monomer and click on Expand monomer at context menu
+   * 4. Select expanded monomer and copy (or cut) it to clipboard
+   * 5. Paste it from clipboard to the canvas
+
+   * Actual result: System paste monomer in collapsed state
+   * Expected result: System paste monomer in expanded state
+   */
+  await openFileAndAddToCanvas(
+    page,
+    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+  );
+  await expandMonomer(page, getAbbreviationLocator(page, { name: 'D' }));
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
+  await clickOnCanvas(page, 100, 0, { from: 'pageCenter' });
+  await takeEditorScreenshot(page);
 });

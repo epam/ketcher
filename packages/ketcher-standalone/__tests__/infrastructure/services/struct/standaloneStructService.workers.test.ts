@@ -76,21 +76,8 @@ function loadService(): typeof StandaloneStructServiceClass {
   return service as typeof StandaloneStructServiceClass;
 }
 
-// Resolves to whether `promise` has settled once all work that does not wait
-// on the 30 s worker timeout has run.
-async function settles(promise: Promise<unknown>) {
-  let settled = false;
-  promise.then(
-    () => (settled = true),
-    () => (settled = true),
-  );
-  await jest.advanceTimersByTimeAsync(100);
-  return settled;
-}
-
 describe('StandaloneStructService with several services on one page', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
     FakeIndigoWorker.instances = [];
     FakeIndigoWorker.replying = true;
     Object.assign(globalThis, {
@@ -113,8 +100,16 @@ describe('StandaloneStructService with several services on one page', () => {
     const firstInfo = first.info();
     const secondInfo = second.info();
 
-    expect(await settles(firstInfo)).toBe(true);
-    expect(await settles(secondInfo)).toBe(true);
+    await expect(firstInfo).resolves.toEqual({
+      indigoVersion: '1.0.0',
+      imagoVersions: [],
+      isAvailable: true,
+    });
+    await expect(secondInfo).resolves.toEqual({
+      indigoVersion: '1.0.0',
+      imagoVersions: [],
+      isAvailable: true,
+    });
   }, 10000);
 
   it('keeps a service working after another one is destroyed', async () => {
@@ -124,10 +119,15 @@ describe('StandaloneStructService with several services on one page', () => {
 
     first.destroy();
 
-    expect(await settles(second.info())).toBe(true);
+    await expect(second.info()).resolves.toEqual({
+      indigoVersion: '1.0.0',
+      imagoVersions: [],
+      isAvailable: true,
+    });
   });
 
   it('leaves a call that was pending at destroy() unsettled instead of timing it out', async () => {
+    jest.useFakeTimers();
     FakeIndigoWorker.replying = false;
     const StandaloneStructService = loadService();
     const service = new StandaloneStructService({});

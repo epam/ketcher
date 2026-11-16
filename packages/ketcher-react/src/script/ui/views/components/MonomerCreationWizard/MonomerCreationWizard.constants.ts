@@ -1,6 +1,9 @@
 import {
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_LENGTH_ERROR_MESSAGE,
+  IDT_ALIAS_SLASH_ERROR_MESSAGE,
   KetMonomerClass,
 } from 'ketcher-core';
 
@@ -73,6 +76,10 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   notUniqueHELMAlias: i18n.t(`${n}notUniqueHELMAlias`),
   invalidBILNAlias: BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   notUniqueBILNAlias: i18n.t(`${n}notUniqueBILNAlias`),
+  invalidIDTAlias: IDT_ALIAS_FORMAT_ERROR_MESSAGE,
+  idtAliasNonTerminalSlash: IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  idtAliasTooLong: IDT_ALIAS_LENGTH_ERROR_MESSAGE,
+  notUniqueIDTAlias: 'The IDT alias for every position must be unique.',
   invalidRnaPresetStructure: i18n.t(`${n}invalidRnaPresetStructure`),
   rnaPresetAtomsOutsideComponents: i18n.t(
     `${n}rnaPresetAtomsOutsideComponents`,
@@ -125,6 +132,10 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   notUniqueHELMAlias: 'error',
   invalidBILNAlias: 'error',
   notUniqueBILNAlias: 'error',
+  invalidIDTAlias: 'error',
+  idtAliasNonTerminalSlash: 'error',
+  idtAliasTooLong: 'error',
+  notUniqueIDTAlias: 'error',
   invalidRnaPresetStructure: 'error',
   rnaPresetAtomsOutsideComponents: 'error',
   rnaPresetAtomsInMultipleComponents: 'error',

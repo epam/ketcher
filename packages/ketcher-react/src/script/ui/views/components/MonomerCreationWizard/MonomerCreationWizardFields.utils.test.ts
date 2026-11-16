@@ -1,5 +1,6 @@
 import { KetMonomerClass, type MonomerItemType, Struct } from 'ketcher-core';
 import {
+  getIdtAliasCollisions,
   getMonomerPropertyVisibility,
   getOtherLibraryMonomers,
   hasMonomerFieldCollision,
@@ -8,23 +9,31 @@ import {
 
 describe('getMonomerPropertyVisibility', () => {
   it.each`
-    type                         | naturalAnalogue | modificationTypes | helmAlias | bilnAlias
-    ${KetMonomerClass.CHEM}      | ${false}        | ${false}          | ${true}   | ${true}
-    ${KetMonomerClass.AminoAcid} | ${true}         | ${true}           | ${true}   | ${true}
-    ${KetMonomerClass.Sugar}     | ${false}        | ${false}          | ${true}   | ${false}
-    ${KetMonomerClass.Base}      | ${true}         | ${false}          | ${true}   | ${false}
-    ${KetMonomerClass.Phosphate} | ${false}        | ${false}          | ${true}   | ${false}
-    ${KetMonomerClass.RNA}       | ${true}         | ${false}          | ${false}  | ${false}
-    ${'rnaPreset'}               | ${false}        | ${false}          | ${false}  | ${false}
+    type                         | naturalAnalogue | modificationTypes | helmAlias | bilnAlias | idtAlias
+    ${KetMonomerClass.CHEM}      | ${false}        | ${false}          | ${true}   | ${true}   | ${true}
+    ${KetMonomerClass.AminoAcid} | ${true}         | ${true}           | ${true}   | ${true}   | ${false}
+    ${KetMonomerClass.Sugar}     | ${false}        | ${false}          | ${true}   | ${false}  | ${false}
+    ${KetMonomerClass.Base}      | ${true}         | ${false}          | ${true}   | ${false}  | ${false}
+    ${KetMonomerClass.Phosphate} | ${false}        | ${false}          | ${true}   | ${false}  | ${true}
+    ${KetMonomerClass.RNA}       | ${true}         | ${false}          | ${false}  | ${false}  | ${true}
+    ${'rnaPreset'}               | ${false}        | ${false}          | ${false}  | ${false}  | ${false}
   `(
     'returns supported properties for $type',
-    ({ type, naturalAnalogue, modificationTypes, helmAlias, bilnAlias }) => {
+    ({
+      type,
+      naturalAnalogue,
+      modificationTypes,
+      helmAlias,
+      bilnAlias,
+      idtAlias,
+    }) => {
       expect(getMonomerPropertyVisibility(type)).toEqual({
         displayNaturalAnalogue: naturalAnalogue,
         displayModificationTypes: modificationTypes,
-        displayAliases: helmAlias || bilnAlias,
+        displayAliases: helmAlias || bilnAlias || idtAlias,
         displayHelmAlias: helmAlias,
         displayBilnAlias: bilnAlias,
+        displayIdtAlias: idtAlias,
       });
     },
   );
@@ -63,6 +72,43 @@ describe('library edit field uniqueness', () => {
       aliasBILN: 'bilnB',
     },
   };
+
+  it('checks IDT aliases against other entries when replacing a monomer', () => {
+    const aliases = {
+      base: 'custom',
+      modifications: { endpoint5: '/5custom/' },
+    };
+    const edited = {
+      ...original,
+      props: { ...original.props, idtAliases: aliases },
+    };
+    expect(
+      getIdtAliasCollisions(getOtherLibraryMonomers([edited], edited), aliases),
+    ).toEqual({
+      base: false,
+      endpoint5: false,
+      internal: false,
+      endpoint3: false,
+    });
+    const conflicting = {
+      ...other,
+      props: { ...other.props, idtAliases: aliases },
+    };
+    expect(
+      getIdtAliasCollisions(
+        getOtherLibraryMonomers([edited, conflicting], edited),
+        aliases,
+      ),
+    ).toEqual({
+      base: true,
+      endpoint5: true,
+      internal: false,
+      endpoint3: false,
+    });
+    expect(
+      getIdtAliasCollisions(getOtherLibraryMonomers([edited]), aliases).base,
+    ).toBe(true);
+  });
 
   it.each([
     ['symbol', 'A'],

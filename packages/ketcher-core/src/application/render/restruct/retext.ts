@@ -82,6 +82,10 @@ function normalizeTextWhitespace(text: string): string {
 }
 
 class ReText extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
@@ -90,12 +94,8 @@ class ReText extends ReObject {
     this.item = text;
   }
 
-  static isSelectable() {
-    return true;
-  }
-
   getReferencePoints(): Array<Vec2> {
-    if (!this.paths.length) return [];
+    if (this.paths.length === 0) return [];
 
     const { p0, p1 } = this.getRelBox(this.paths);
 
@@ -172,7 +172,7 @@ class ReText extends ReObject {
   }
 
   drawHover(render: Render): Element | null {
-    if (!this.paths.length) return null;
+    if (this.paths.length === 0) return null;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
@@ -183,7 +183,7 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-    if (!paper || !this.paths.length) return null;
+    if (this.paths.length === 0 || !paper) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 

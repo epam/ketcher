@@ -99,6 +99,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     rectangle: Element;
   };
 
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private expandedMonomerAttachmentPoints?: Element | null;
 
   // Number of visel.boxes entries that belong to the atom's own label
@@ -122,10 +126,6 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     this.color = '#000000';
     this.component = -1;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   getVBoxObj(render: Render): Box2Abs | null {

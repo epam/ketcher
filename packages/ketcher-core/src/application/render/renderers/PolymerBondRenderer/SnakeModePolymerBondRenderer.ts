@@ -886,7 +886,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', SELECTION_COLOR)
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
           .attr('d', this.path)

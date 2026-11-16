@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
@@ -195,8 +196,8 @@ export class StereoFlagRenderer extends BaseRenderer {
 
     this.selectionElement = this.canvas
       ?.insert('rect', ':first-child')
-      .attr('fill', '#57ff8f')
-      .attr('stroke', '#57ff8f')
+      .attr('fill', SELECTION_COLOR)
+      .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');
 
     this.setSelectionContourAttributes(

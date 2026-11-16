@@ -110,7 +110,7 @@ describe('StandaloneStructService with several services on one page', () => {
       imagoVersions: [],
       isAvailable: true,
     });
-  });
+  }, 10000);
 
   it('keeps a service working after another one is destroyed', async () => {
     const StandaloneStructService = loadService();

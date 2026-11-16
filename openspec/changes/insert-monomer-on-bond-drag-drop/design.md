@@ -32,7 +32,7 @@ AP choice for the new monomer reuses the default-bond table in `bondConnectionHe
 
 Bond extension (3 Å minimum; variable `2C` for phosphate presets) and the shift set (right/bottom part of the chain; for circular structures all monomers past the line perpendicular to the bond) are pure functions in the replacement/repositioning helpers, unit-testable without a canvas. Req. 8 reuses the `2C` function from the replacement path.
 
-For the phosphate triangle: B = 0.75 Å, A = 1.5 Å, α opposite A is the angle between the bond and the horizontal. By the law of sines, sin(β) = B·sin(α)/A for the angle β opposite B, then γ = π − α − β and C = A·sin(γ)/sin(α). The bond is extended to `2C` only when its current length is smaller.
+For the phosphate preset: B = 0.75 Å (component offset from midpoint along bond axis), A = 1.5 Å (external bond from original monomer to preset component). Both components sit ON the bond axis, shifted ±B from the midpoint. The external bond is therefore `extendedLength/2 − B`; for it to equal A the required extended bond is `2*(A+B) = 4.5 Å`, a constant independent of the bond angle. The bond is extended to 4.5 Å only when its current length is smaller. (The earlier angle-dependent triangle formula was correct only for horizontal bonds; at other angles it produced shorter external bonds.)
 
 The base is placed at `SnakeLayoutCellWidth / macroModeScale` model-units from the sugar in the direction perpendicular to the bond (90° CCW rotation of the bond direction vector). For a horizontal bond this places the base directly below the sugar, matching the snake-layout convention. For non-horizontal bonds the base is perpendicular to the sugar–phosphate axis.
 

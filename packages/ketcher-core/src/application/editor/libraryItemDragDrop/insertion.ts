@@ -275,7 +275,7 @@ export function computeFlexInsertionLayout(
   const to = ends.right.position;
   const length = Math.hypot(to.x - from.x, to.y - from.y);
   const direction = getBondDirection(from, to);
-  const extendedLength = getExtendedBondLength(length, from, to, hasPhosphate);
+  const extendedLength = getExtendedBondLength(length, hasPhosphate);
   const delta = Math.max(0, extendedLength - length);
 
   const nodes = collectNodes(drawingEntitiesManager);
@@ -336,8 +336,8 @@ export function buildShiftCommand(
 /**
  * Req. 8: after a phosphate-containing preset replaced a monomer inside a
  * circular structure, the bond between the new phosphate and its external
- * neighbour is extended to 2C (see `getPhosphatePresetRequiredBondLength`) and
- * the monomers past the perpendicular line are shifted to keep the angles.
+ * neighbour is extended to PHOSPHATE_PRESET_MIN_BOND_LENGTH and the monomers
+ * past the perpendicular line are shifted to keep the angles.
  * Returns an empty command when the structure is not circular or the bond is
  * already long enough.
  */
@@ -358,7 +358,7 @@ export function buildCircularReplacementExtension(
   const from = phosphate.position;
   const to = neighbour.position;
   const length = Math.hypot(to.x - from.x, to.y - from.y);
-  const delta = getExtendedBondLength(length, from, to, true) - length;
+  const delta = getExtendedBondLength(length, true) - length;
   if (delta <= 0) return new Command();
 
   const shiftedIds = computeShiftSet({

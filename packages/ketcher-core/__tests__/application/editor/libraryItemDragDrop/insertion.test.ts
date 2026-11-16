@@ -146,10 +146,10 @@ describe('buildCircularReplacementExtension', () => {
 
     const command = buildCircularReplacementExtension(manager, m1, m0);
 
-    // vertical bond: 2C = 2·√(1.5² − 0.75²) ≈ 2.6 Å, so it grows by ≈ 1.1 Å
+    // vertical bond: min = 2*(A+B) = 4.5, delta = 4.5 - 1.5 = 3.0
     expect(command.operations.length).toBeGreaterThan(0);
-    expect(m2.position.y).toBeCloseTo(1.5 + (2.598 - 1.5), 1);
-    expect(m3.position.y).toBeCloseTo(1.5 + (2.598 - 1.5), 1);
+    expect(m2.position.y).toBeCloseTo(4.5, 1);
+    expect(m3.position.y).toBeCloseTo(4.5, 1);
     expect(m0.position.y).toBe(0);
     expect(m1.position.y).toBe(0);
   });

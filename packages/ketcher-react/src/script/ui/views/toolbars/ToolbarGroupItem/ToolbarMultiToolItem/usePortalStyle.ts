@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +38,6 @@ function usePortalStyle([
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
   useLayoutEffect(() => {
-    // eslint-disable-next-line react-you-might-not-need-an-effect/no-event-handler -- false positive: this measures DOM layout after mount/open, it isn't an event handler that belongs in the parent
     if (!ref.current) {
       return;
     }
@@ -62,7 +60,6 @@ function usePortalStyle([
       (isTop ? 0 : spaceBetween + menuItemRect.width) -
       (isTop ? alignmentOffset : 0);
 
-    // eslint-disable-next-line react-you-might-not-need-an-effect/no-derived-state -- false positive: portalStyle depends on DOM measurements only available after layout, it can't be computed synchronously during render
     setPortalStyle({ top: `${top}px`, left: `${left}px` });
   }, [ref, isOpen, isTop, rootElementSelector]);
 

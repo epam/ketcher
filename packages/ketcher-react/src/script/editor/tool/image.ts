@@ -20,7 +20,7 @@ const TAG = 'tool/image.ts';
 const supportedMimes = ['png', 'svg+xml'];
 
 const supportedMimesForRegex = supportedMimes
-  .map((item) => item.replace('+', '\\+'))
+  .map((item) => item.replace('+', String.raw`\+`))
   .join('|');
 
 const allowList = new RegExp(`^image/(${supportedMimesForRegex})$`);
@@ -40,6 +40,30 @@ export class ImageTool implements Tool {
 
   constructor(private readonly editor: Editor) {
     this.element = this.getElement();
+  }
+
+  private createElement(): HTMLInputElement {
+    const uploader = document.createElement('input');
+    uploader.style.display = 'none';
+    uploader.id = ImageTool.INPUT_ID;
+    uploader.type = 'file';
+    uploader.accept = supportedMimes.map((item) => `image/${item}`).join(',');
+    document.body.appendChild(uploader);
+    return uploader;
+  }
+
+  private getElement(): HTMLInputElement {
+    const element = document.getElementById(ImageTool.INPUT_ID);
+
+    if (element instanceof HTMLInputElement) {
+      return element;
+    }
+    element?.remove();
+    return this.createElement();
+  }
+
+  private resetElementValue(): void {
+    this.getElement().value = '';
   }
 
   mousedown(event: MouseEvent) {
@@ -188,29 +212,5 @@ export class ImageTool implements Tool {
 
       reader.readAsDataURL(file);
     }
-  }
-
-  private createElement(): HTMLInputElement {
-    const uploader = document.createElement('input');
-    uploader.style.display = 'none';
-    uploader.id = ImageTool.INPUT_ID;
-    uploader.type = 'file';
-    uploader.accept = supportedMimes.map((item) => `image/${item}`).join(',');
-    document.body.appendChild(uploader);
-    return uploader;
-  }
-
-  private getElement(): HTMLInputElement {
-    const element = document.getElementById(ImageTool.INPUT_ID);
-
-    if (element instanceof HTMLInputElement) {
-      return element;
-    }
-    element?.remove();
-    return this.createElement();
-  }
-
-  private resetElementValue(): void {
-    this.getElement().value = '';
   }
 }

@@ -76,6 +76,9 @@ jest.mock('d3', () => {
     }),
     zoom() {
       return {
+        extent() {
+          return this;
+        },
         scaleExtent() {
           return this;
         },
@@ -93,7 +96,7 @@ jest.mock('d3', () => {
   };
 });
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
@@ -148,7 +151,7 @@ describe('Select Rectangle Tool', () => {
       .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
       .mockImplementation(() => {});
     const fn = jest
-      .spyOn(window, 'requestAnimationFrame')
+      .spyOn(globalThis, 'requestAnimationFrame')
       .mockImplementation((func) => {
         func(0);
         return 0;
@@ -187,5 +190,32 @@ describe('Select Rectangle Tool', () => {
 
     expect(onMove).toHaveBeenCalled();
     fn.mockRestore();
+  });
+
+  it('should select monomer and start moving when Ctrl is held before mousedown in flex mode', () => {
+    const editor = new CoreEditor({
+      theme: coreEditorTheme,
+      canvas: createPolymerEditorCanvas(),
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+      mode: new FlexMode(),
+    });
+    const modelChanges = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(modelChanges);
+    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+    const selectRectangleTool = new SelectRectangle(editor);
+    const event = {
+      target: {
+        __data__: peptide.renderer,
+      },
+      ctrlKey: true,
+    } as MouseEvent;
+
+    selectRectangleTool.mousedown(event);
+
+    expect(peptide.selected).toBeTruthy();
+    expect(selectRectangleTool.mode).toBe('moving');
   });
 });

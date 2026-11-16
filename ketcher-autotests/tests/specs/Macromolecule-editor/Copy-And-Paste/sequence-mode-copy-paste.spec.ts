@@ -165,7 +165,6 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await takeEditorScreenshot(page);
 
       await CommonTopLeftToolbar(page).undo();
-      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     },
   );

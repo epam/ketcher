@@ -173,6 +173,7 @@ test.describe('Plus and Arrows tools ', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/four-structures.mol');
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, xOffsetFromCenter1, 0, { from: 'pageCenter' });
+    await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, xOffsetFromCenter2, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 

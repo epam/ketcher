@@ -201,8 +201,7 @@
             "y": -1.25
         },
         "alias": "L",
-        "templateId": "L___Leucine",
-        "seqid": 1
+        "templateId": "L___Leucine"
     },
     "monomerTemplate-L___Leucine": {
         "type": "monomerTemplate",

@@ -8,13 +8,20 @@ jest.mock('ketcher-react', () => ({
   IconButton: ({
     onClick,
     iconName,
+    title,
     testId,
   }: {
     onClick: () => void;
     iconName: string;
+    title?: string;
     testId: string;
   }) => (
-    <button data-icon-name={iconName} data-testid={testId} onClick={onClick} />
+    <button
+      data-icon-name={iconName}
+      data-testid={testId}
+      title={title}
+      onClick={onClick}
+    />
   ),
   getFullscreenElement: () => mockGetFullscreenElement(),
 }));
@@ -46,6 +53,15 @@ describe('FullscreenButton component', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should show the Fullscreen mode tooltip (#4170)', () => {
+    render(<FullscreenButton />);
+
+    expect(screen.getByTestId('fullscreen-mode-button')).toHaveAttribute(
+      'title',
+      'buttons.fullscreen',
+    );
   });
 
   it('should sync button state with document fullscreen changes', () => {

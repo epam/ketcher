@@ -3,13 +3,15 @@ module.exports = {
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',
   transform: {
-    '\\.(js|jsx)$': 'babel-jest',
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
         tsconfig: {
           module: 'commonjs',
           moduleResolution: 'node16',
+        },
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
         },
       },
     ],

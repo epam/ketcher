@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,17 +21,19 @@ import {
   ANALYZING_FILE,
 } from './request.types';
 
-export function indigoVerification(data: boolean): RequestActionTypes {
+export function indigoVerification(
+  isVerifyingWithIndigo: boolean,
+): RequestActionTypes {
   return {
     type: INDIGO_VERIFICATION,
-    data,
+    data: isVerifyingWithIndigo,
   };
 }
 
-export function setAnalyzingFile(data: boolean): RequestActionTypes {
+export function setAnalyzingFile(isAnalyzingFile: boolean): RequestActionTypes {
   return {
     type: ANALYZING_FILE,
-    data,
+    data: isAnalyzingFile,
   };
 }
 

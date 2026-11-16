@@ -1,8 +1,20 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MonomerItemType, Struct } from 'ketcher-core';
+import { AmbiguousMonomerType, MonomerItemType, Struct } from 'ketcher-core';
 import { MonomerItem } from './MonomerItem';
 
 describe('Test Monomer Item component', () => {
+  it('does not show editing actions for ambiguous monomers', () => {
+    const ambiguous = {
+      id: 'ambiguous',
+      label: 'X',
+      isAmbiguous: true,
+      monomers: [],
+      options: [],
+    } as unknown as AmbiguousMonomerType;
+    render(withThemeAndStoreProvider(<MonomerItem item={ambiguous} />));
+    expect(screen.queryByLabelText('Actions for X')).not.toBeInTheDocument();
+  });
+
   it('Test click event', () => {
     const monomerItemHandleClick = jest.fn();
     const monomer: MonomerItemType = {

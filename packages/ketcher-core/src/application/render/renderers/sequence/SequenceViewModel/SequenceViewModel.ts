@@ -33,13 +33,14 @@ interface IForEachNodeParams {
 
 export class SequenceViewModel {
   private readonly nodes: ITwoStrandedChainItem[] = [];
-  public chains: SequenceViewModelChain[] = [];
   private readonly monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     ITwoStrandedChainItem
   > = new Map();
 
   private readonly chainToHasAntisense: Map<Chain, boolean> = new Map();
+
+  public chains: SequenceViewModelChain[] = [];
 
   constructor(public chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
@@ -93,7 +94,15 @@ export class SequenceViewModel {
       let nodesBeforeHydrogenConnectionToBase: SubChainNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
         ITwoStrandedChainItem | undefined;
-      let lastSenseChain: Chain = this.nodes[this.nodes.length - 1].chain;
+      const lastSenseNode = this.nodes.at(-1);
+
+      if (!lastSenseNode) {
+        throw new Error(
+          'Cannot process antisense chain without sense sequence nodes',
+        );
+      }
+
+      let lastSenseChain: Chain = lastSenseNode.chain;
       let lastSenseNodeIndex: number = this.nodes.length - 1;
 
       chain.forEachNodeReversed(({ node }) => {
@@ -139,14 +148,13 @@ export class SequenceViewModel {
                 firstSenseMonomerConnectedByHydrogenBond,
               )
             : undefined;
-        let twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-          return node === twoStrandedSnakeLayoutNode;
-        });
-        const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-          (node) => {
-            return node === lastTwoStrandedNodeWithHydrogenBond;
-          },
-        );
+        let twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+          ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+          : -1;
+        const lastTwoStrandedNodeWithHydrogenBondIndex =
+          lastTwoStrandedNodeWithHydrogenBond
+            ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+            : -1;
 
         if (
           firstSenseMonomerConnectedByHydrogenBond &&
@@ -158,10 +166,10 @@ export class SequenceViewModel {
           lastTwoStrandedNodeWithHydrogenBond =
             this.nodes[twoStrandedSnakeLayoutNodeIndex];
           for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-            // need to get rid of this findIndex to reduce complexity
-            twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-              return node === twoStrandedSnakeLayoutNode;
-            });
+            // need to get rid of this repeated index lookup to reduce complexity
+            twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+              ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+              : -1;
 
             const currentTwoStrandedSnakeLayoutNodeIndex =
               twoStrandedSnakeLayoutNodeIndex - i;
@@ -194,8 +202,8 @@ export class SequenceViewModel {
 
             if (
               currentTwoStrandedSnakeLayoutNode &&
-              !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-              isNodeInSameChain
+              isNodeInSameChain &&
+              !currentTwoStrandedSnakeLayoutNode.antisenseNode
             ) {
               currentTwoStrandedSnakeLayoutNode.antisenseNode =
                 currentNodeBeforeHydrogenConnectionToBase;
@@ -226,15 +234,14 @@ export class SequenceViewModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length > 0
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-            (node) => {
-              return node === lastTwoStrandedNodeWithHydrogenBond;
-            },
-          );
+          const lastTwoStrandedNodeWithHydrogenBondIndex =
+            lastTwoStrandedNodeWithHydrogenBond
+              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+              : -1;
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
@@ -259,8 +266,7 @@ export class SequenceViewModel {
             currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
+                  monomer instanceof RNABase && monomer.hydrogenBonds.length > 0
                 );
               },
             );
@@ -317,13 +323,13 @@ export class SequenceViewModel {
           ? getPreviousConnectedNode(lastHandledSenseNode, monomerToNode)
           : undefined;
 
-        if (!lastHandledSenseNode || !previousConnectedSenseNode) {
-          node.senseNode = new EmptySequenceNode();
-        } else {
+        if (lastHandledSenseNode && previousConnectedSenseNode) {
           node.senseNode = new BackBoneSequenceNode(
             previousConnectedSenseNode,
             lastHandledSenseNode,
           );
+        } else {
+          node.senseNode = new EmptySequenceNode();
         }
       }
 
@@ -332,13 +338,13 @@ export class SequenceViewModel {
           ? getNextConnectedNode(lastHandledAntisenseNode, monomerToNode)
           : undefined;
 
-        if (!lastHandledAntisenseNode || !nextConnectedAntisenseNode) {
-          node.antisenseNode = new EmptySequenceNode();
-        } else {
+        if (lastHandledAntisenseNode && nextConnectedAntisenseNode) {
           node.antisenseNode = new BackBoneSequenceNode(
             lastHandledAntisenseNode,
             nextConnectedAntisenseNode,
           );
+        } else {
+          node.antisenseNode = new EmptySequenceNode();
         }
       } else if (
         !lastHandledAntisenseChain ||
@@ -495,7 +501,7 @@ export class SequenceViewModel {
   }
 
   public get lastTwoStrandedNode() {
-    const lastChain = this.chains[this.chains.length - 1];
+    const lastChain = this.chains.at(-1);
 
     return lastChain?.lastNode;
   }

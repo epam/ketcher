@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -224,9 +224,51 @@ function fromStructureFlip(
   const struct = reStruct.molecule;
   const action = new Action();
 
+  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
+
+  // Monomer sgroups present in the selection, regardless of their
+  // expanded/collapsed state.
+  const monomerSGroups: MonomerMicromolecule[] = [];
+  sGroups.forEach((sg) => {
+    if (sg instanceof MonomerMicromolecule) {
+      monomerSGroups.push(sg);
+    }
+  });
+
+  // If at least one monomer in the selection is expanded, every monomer in
+  // the selection gets its atoms flipped (reflected) and a
+  // `FlipMonomerOperation` assigned. If none are expanded (all collapsed),
+  // no monomer gets a transformation, and their atoms are only translated
+  // (rigid-body move) so their internal structure keeps its shape, with
+  // only the overall position changing to match the flipped monomer shape.
+  const hasExpandedMonomer = monomerSGroups.some((sg) => sg.isExpanded());
+
+  const atomIdToMonomerSGroup = new Map<number, MonomerMicromolecule>();
+  monomerSGroups.forEach((sg) => {
+    sg.atoms.forEach((aid) => atomIdToMonomerSGroup.set(aid, sg));
+  });
+
   selection?.atoms?.forEach((atomId) => {
     const atom = struct.atoms.get(atomId);
     if (!atom) {
+      return;
+    }
+
+    const monomerSGroup = atomIdToMonomerSGroup.get(atomId);
+
+    if (monomerSGroup && !hasExpandedMonomer) {
+      // Rigid-body translation: move the atom by the same delta applied to
+      // the monomer's contracted position, preserving relative atom
+      // positions within the structure.
+      if (!monomerSGroup.pp) {
+        return;
+      }
+      const difference = flipPointByCenter(
+        monomerSGroup.pp,
+        center,
+        flipDirection,
+      );
+      action.addOp(new AtomMove(atomId, difference));
       return;
     }
 
@@ -234,7 +276,6 @@ function fromStructureFlip(
     action.addOp(new AtomMove(atomId, difference));
   });
 
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
   sGroups.forEach((sGroup) => {
     if (!sGroup.pp) {
       return;
@@ -242,7 +283,7 @@ function fromStructureFlip(
     const difference = flipPointByCenter(sGroup.pp, center, flipDirection);
     action.addOp(new SGroupDataMove(sGroup.id, difference));
 
-    if (sGroup instanceof MonomerMicromolecule) {
+    if (hasExpandedMonomer && sGroup instanceof MonomerMicromolecule) {
       action.addOp(
         new FlipMonomerOperation({
           id: sGroup.id,
@@ -269,16 +310,50 @@ export function fromRotate(restruct, selection, center, angle: number) {
   }
 
   if (selection.atoms) {
+    const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
+
+    // Monomer sgroups present in the selection, regardless of their
+    // expanded/collapsed state.
+    const monomerSGroups: MonomerMicromolecule[] = [];
+    sgroups.forEach((sg) => {
+      if (sg instanceof MonomerMicromolecule) {
+        monomerSGroups.push(sg);
+      }
+    });
+
+    // If at least one monomer in the selection is expanded, every monomer
+    // gets its atoms rotated individually about the common center. If none
+    // are expanded (all collapsed), no monomer's atoms are rotated
+    // individually - instead they are translated as a rigid body (by the
+    // same delta applied to the monomer's contracted position), so their
+    // internal structure keeps its shape and only the overall position
+    // changes to match the rotated monomer position.
+    const hasExpandedMonomer = monomerSGroups.some((sg) => sg.isExpanded());
+
+    const atomIdToMonomerSGroup = new Map<number, MonomerMicromolecule>();
+    monomerSGroups.forEach((sg) => {
+      sg.atoms.forEach((aid) => atomIdToMonomerSGroup.set(aid, sg));
+    });
+
     selection.atoms.forEach((aid) => {
       const atom = struct.atoms.get(aid);
       if (!atom) return;
+
+      const monomerSGroup = atomIdToMonomerSGroup.get(aid);
+
+      if (monomerSGroup && !hasExpandedMonomer) {
+        if (!monomerSGroup.pp) return;
+
+        action.addOp(
+          new AtomMove(aid, rotateDelta(monomerSGroup.pp, center, angle)),
+        );
+        return;
+      }
 
       action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)));
     });
 
     if (!selection.sgroupData) {
-      const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
-
       sgroups.forEach((sg) => {
         if (!sg.pp) {
           return;
@@ -320,7 +395,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.sgroupData) {
     selection.sgroupData.forEach((did) => {
       const data = struct.sgroups.get(did);
-      if (!data || !data.pp) return;
+      if (!data?.pp) return;
 
       action.addOp(
         new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),

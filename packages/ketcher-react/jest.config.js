@@ -4,8 +4,14 @@ module.exports = {
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',
   transform: {
-    '\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': [
+      'ts-jest',
+      {
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
+        },
+      },
+    ],
     '\\.svg$': '<rootDir>/testFileTransformer.js',
   },
   moduleNameMapper: {
@@ -13,6 +19,8 @@ module.exports = {
     '^src(.*)$': '<rootDir>/src/$1',
     '^components$': '<rootDir>/src/components',
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
+    // intl-messageformat is ESM-only (no CJS build) — see testIntlMessageFormatMock.js
+    '^intl-messageformat$': '<rootDir>/testIntlMessageFormatMock.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   setupFiles: ['./jest.setup.js'],

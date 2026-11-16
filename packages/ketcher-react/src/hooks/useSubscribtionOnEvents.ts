@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +18,7 @@ import { indigoVerification } from '../script/ui/state/request';
 import {
   type Ketcher,
   KetcherAsyncEvents,
+  KetcherLogger,
   ketcherProvider,
 } from 'ketcher-core';
 import { useEffect } from 'react';
@@ -65,15 +65,34 @@ export const useSubscriptionOnEvents = () => {
       );
     };
 
+    // Instance may already be removed from the provider (fast mount/unmount, duo mode) - #3515, #7568.
+    const getKetcherSafely = () => {
+      try {
+        return ketcherProvider.getKetcher(ketcherId);
+      } catch (error) {
+        KetcherLogger.error(
+          `Failed to get ketcher instance with id ${ketcherId}`,
+          error,
+        );
+        return undefined;
+      }
+    };
+
     const subscribeOnInit = () => {
-      subscribe(ketcherProvider.getKetcher(ketcherId));
+      const ketcher = getKetcherSafely();
+      if (ketcher) {
+        subscribe(ketcher);
+      }
     };
 
     const initEventName = ketcherInitEventName(ketcherId);
-    window.addEventListener(initEventName, subscribeOnInit);
+    globalThis.addEventListener(initEventName, subscribeOnInit);
     return () => {
-      unsubscribe(ketcherProvider.getKetcher(ketcherId));
-      window.removeEventListener(initEventName, subscribeOnInit);
+      const ketcher = getKetcherSafely();
+      if (ketcher) {
+        unsubscribe(ketcher);
+      }
+      globalThis.removeEventListener(initEventName, subscribeOnInit);
     };
   }, [ketcherId, dispatch]);
 };

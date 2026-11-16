@@ -1,7 +1,10 @@
 /* eslint-disable no-undef */
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import {
+  CANVAS_BACKGROUND_COLOR,
+  SELECTION_COLOR,
+} from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
@@ -9,14 +12,13 @@ import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import paperjs from 'paper';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#a9a9a9';
-const DATA_SGROUP_BACKGROUND = '#F5F5F5';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
 const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
@@ -60,6 +62,14 @@ export class SGroupRenderer extends BaseRenderer {
 
   private get sgroup() {
     return this.sgroupDrawingEntity.sgroup;
+  }
+
+  public get labelTooltipText(): string | null {
+    if (this.sgroup.type !== SGroup.TYPES.DAT) {
+      return null;
+    }
+
+    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
   }
 
   private addLabelElement<ElementType extends SVGElement>(
@@ -428,7 +438,7 @@ export class SGroupRenderer extends BaseRenderer {
 
     const valueBackgroundColor = this.sgroup.selected
       ? SELECTION_COLOR
-      : DATA_SGROUP_BACKGROUND;
+      : CANVAS_BACKGROUND_COLOR;
 
     valueGroup
       .insert('rect', 'text')
@@ -608,7 +618,7 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => Boolean(path)),
+        .filter((path): path is paper.CompoundPath => path !== null),
     ];
 
     let combinedPath: paper.PathItem | undefined;
@@ -685,11 +695,11 @@ export class SGroupRenderer extends BaseRenderer {
 
     this.hoverAreaElement
       .on('mouseover', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

@@ -108,7 +108,7 @@ export class ChainsCollection {
       chain.forEachNode(({ node }) => {
         node.monomers.forEach((monomer) => {
           const sideConnections = monomer.sideConnections;
-          if (sideConnections.length) {
+          if (sideConnections.length > 0) {
             sideConnections.forEach((sideConnection) => {
               const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
               const anotherChain =
@@ -159,7 +159,7 @@ export class ChainsCollection {
     const firstMonomersInMiddleOfChains =
       this.getFirstMonomersInMiddleOfChains(filteredMonomers);
 
-    if (firstMonomersInMiddleOfChains.length) {
+    if (firstMonomersInMiddleOfChains.length > 0) {
       firstMonomersInMiddleOfChains.forEach(
         (firstMonomerInMiddleOfChain: BaseMonomer) => {
           chainsCollection.add(new Chain(firstMonomerInMiddleOfChain));
@@ -237,10 +237,10 @@ export class ChainsCollection {
 
         handledMonomers.add(previousMonomerInChain);
 
-        if (!previousMonomer) {
-          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
-        } else {
+        if (previousMonomer) {
           previousMonomerInChain = previousMonomer;
+        } else {
+          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
         }
       }
     });
@@ -314,7 +314,7 @@ export class ChainsCollection {
       }
 
       if (monomer === nextMonomerInChain) {
-        cyclicChains.push(Array.from(monomersInSameChain));
+        cyclicChains.push([...monomersInSameChain]);
       }
     });
 
@@ -328,7 +328,7 @@ export class ChainsCollection {
   private static getMonomerWithLowerCoordsFromMonomerList(
     monomerList: BaseMonomer[],
   ): BaseMonomer {
-    const monomerListShallowCopy = monomerList.slice();
+    const monomerListShallowCopy = [...monomerList];
 
     monomerListShallowCopy.sort((monomer1, monomer2) => {
       if (
@@ -347,7 +347,13 @@ export class ChainsCollection {
   }
 
   public get lastNode() {
-    return this.chains[0].lastSubChain.lastNode;
+    const lastNode = this.chains[0]?.lastSubChain?.lastNode;
+
+    if (!lastNode) {
+      throw new Error('Cannot get the last node of an empty chains collection');
+    }
+
+    return lastNode;
   }
 
   public get length() {
@@ -530,9 +536,7 @@ export class ChainsCollection {
               ) ?? {};
             if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
               const curChainIdx =
-                reorderedSenseForSequentialAntisenseChains.findIndex(
-                  (v) => v === chain,
-                );
+                reorderedSenseForSequentialAntisenseChains.indexOf(chain);
               let last = anotherSenseChain;
               for (
                 let i = curChainIdx;
@@ -573,7 +577,7 @@ export class ChainsCollection {
     const monomerToChain = this.monomerToChain;
     const monomerToNode = this.monomerToNode;
 
-    while (chains.length) {
+    while (chains.length > 0) {
       const { group, chain } = chains.pop() as GrouppedChain;
       const chainNodes = chain.nodes;
 

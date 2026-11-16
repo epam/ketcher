@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import useFunctionalGroupEoc from './useFunctionalGroupEoc';
-import type { FunctionalGroup } from 'ketcher-core';
+import { SGroup, type FunctionalGroup } from 'ketcher-core';
 import type {
   ItemEventParams,
   FunctionalGroupsContextMenuProps,
@@ -68,6 +68,31 @@ describe('useFunctionalGroupEoc', () => {
         name: 'ABS',
         isExpanded: true,
         relatedSGroupId: 1,
+      } as FunctionalGroup;
+
+      const params: ItemEventParams<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParams<FunctionalGroupsContextMenuProps>;
+
+      // toExpand = false means "Contract Abbreviation"
+      const shouldHide = hidden(params, false);
+      expect(shouldHide).toBe(false);
+    });
+
+    it('should not hide Contract Abbreviation for a nucleotide component', () => {
+      const { result } = renderHook(() => useFunctionalGroupEoc());
+      const [, hidden] = result.current;
+
+      const sgroup = new SGroup(SGroup.TYPES.SUP);
+      sgroup.data.class = 'BASE';
+      const mockFunctionalGroup = {
+        name: '',
+        isExpanded: true,
+        relatedSGroupId: 1,
+        relatedSGroup: sgroup,
       } as FunctionalGroup;
 
       const params: ItemEventParams<FunctionalGroupsContextMenuProps> = {

@@ -34,9 +34,9 @@ export class SideChainConnectionBondRendererUtility {
     cell,
     connection,
     direction,
-    horizontal,
+    horizontal: isHorizontal,
     turnPoint,
-    turnPointIsUsed,
+    turnPointIsUsed: isTurnPointUsed,
   }: CalculatePathPartAndTurnPointParameter): CalculatePathPartAndTurnPointResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
@@ -44,33 +44,33 @@ export class SideChainConnectionBondRendererUtility {
     const yOffset = (this.cellHeight / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
-        return max > connection.xOffset ? max : connection.xOffset;
+        return Math.max(max, connection.xOffset);
       },
       0,
     );
     const maxYOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
         const connectionYOffset = connection.yOffset || 0;
-        return max > connectionYOffset ? max : connectionYOffset;
+        return Math.max(max, connectionYOffset);
       },
       0,
     );
 
     let endOfPathPart: number;
-    if (horizontal && turnPointIsUsed) {
+    if (isHorizontal && isTurnPointUsed) {
       endOfPathPart = turnPoint;
     } else {
       const { monomerSize, scaledMonomerPosition } = (
         cell.monomer as BaseMonomer
       ).renderer as BaseMonomerRenderer | BaseSequenceItemRenderer;
-      endOfPathPart = horizontal
+      endOfPathPart = isHorizontal
         ? scaledMonomerPosition.x + monomerSize.width / 2 + xOffset
         : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
     }
 
     const turnPointInternal = endOfPathPart;
 
-    if (horizontal) {
+    if (isHorizontal) {
       endOfPathPart +=
         -(connection.yOffset || 0) * 3 +
         cos * -connection.xOffset * 3 +
@@ -78,7 +78,7 @@ export class SideChainConnectionBondRendererUtility {
         (maxYOffset + 1) * 3;
     }
     let pathPart = '';
-    if (horizontal) {
+    if (isHorizontal) {
       const absoluteLineX = endOfPathPart - this.smoothCornerSize * cos;
       pathPart +=
         SVGPathDAttributeUtility.generateHorizontalAbsoluteLine(absoluteLineX) +

@@ -37,7 +37,7 @@ export const stylesForExpanded = {
 export const Loader = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -69,7 +69,7 @@ export const PreviewContainer = styled('div')(({ theme }) => ({
   '& button': {
     opacity: 0,
     position: 'absolute',
-    right: '12px',
+    insetInlineEnd: '12px',
     top: '12px',
     borderRadius: '4px',
     padding: '2px',

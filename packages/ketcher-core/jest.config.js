@@ -3,8 +3,7 @@ module.exports = {
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',
   transform: {
-    '\\.js?$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': [
+    '^.+\\.(js|ts|tsx)$': [
       'ts-jest',
       {
         diagnostics: {
@@ -12,7 +11,7 @@ module.exports = {
         },
       },
     ],
-    '\\.ket': '<rootDir>/textFileTransformer.js',
+    '\\.ket': '<rootDir>/textFileTransformer.ts',
   },
   moduleNameMapper: {
     '^application(.*)$': '<rootDir>/src/application/$1',

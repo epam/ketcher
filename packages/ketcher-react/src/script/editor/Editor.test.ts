@@ -1,4 +1,11 @@
-import { Bond } from 'ketcher-core';
+import {
+  Bond,
+  ketcherProvider,
+  resetEditorInstance,
+  setEditorInstance,
+  type CoreEditor,
+} from 'ketcher-core';
+import { Subscription } from 'subscription';
 import Editor from './Editor';
 
 type MockBond = {
@@ -131,11 +138,23 @@ const createMockEditorForRGroupBond = (
 
 describe('Editor.isMonomerCreationWizardEnabled', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
+    jest.spyOn(globalThis, 'dispatchEvent').mockImplementation(() => true);
+    setEditorInstance({} as unknown as CoreEditor);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
+    resetEditorInstance();
+  });
+
+  it('disables monomer creation when the macromolecules editor is unavailable', () => {
+    resetEditorInstance();
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.SINGLE,
+      Bond.PATTERN.STEREO.UP,
+    );
+
+    expect(getIsMonomerCreationWizardEnabled(editor)).toBe(false);
   });
 
   it('disables monomer creation for explicit R-group with non-compliant bond stereo', () => {
@@ -220,5 +239,195 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
     expect(terminalRGroupAtoms.length).toBe(1);
     expect(terminalRGroupAtoms[0][0]).toBe(0);
+  });
+
+  it('does not open the wizard when the macromolecules editor is unavailable', () => {
+    resetEditorInstance();
+    const editor = Object.create(Editor.prototype) as Editor;
+
+    expect(() => editor.openMonomerCreationWizard()).not.toThrow();
+  });
+
+  describe('openMonomerCreationWizardWhenLibraryLoaded', () => {
+    const setUp = () => {
+      let resolveLoad!: () => void;
+      const libraryLoad = new Promise<void>((resolve) => {
+        resolveLoad = resolve;
+      });
+      const coreEditor = {
+        ensureDefaultMonomersLibraryLoaded: jest.fn(() => libraryLoad),
+      };
+      setEditorInstance(coreEditor as unknown as CoreEditor);
+      const editor = Object.create(Editor.prototype) as Editor;
+      let isWizardActive = false;
+      Object.defineProperty(editor, 'isMonomerCreationWizardEnabled', {
+        get: () => !isWizardActive,
+      });
+      const openMonomerCreationWizard = jest.fn(() => {
+        isWizardActive = true;
+      });
+      editor.openMonomerCreationWizard = openMonomerCreationWizard;
+      return {
+        editor,
+        openMonomerCreationWizard,
+        resolveLoad,
+      };
+    };
+
+    afterEach(() => {
+      window.isPolymerEditorTurnedOn = false;
+      resetEditorInstance();
+    });
+
+    it('opens the wizard only after the default monomers library has loaded', async () => {
+      const { editor, openMonomerCreationWizard, resolveLoad } = setUp();
+
+      const opening = editor.openMonomerCreationWizardWhenLibraryLoaded();
+      await Promise.resolve();
+      expect(openMonomerCreationWizard).not.toHaveBeenCalled();
+
+      resolveLoad();
+      await opening;
+      expect(openMonomerCreationWizard).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens the wizard once when it is requested twice during the load', async () => {
+      const { editor, openMonomerCreationWizard, resolveLoad } = setUp();
+
+      const openings = [
+        editor.openMonomerCreationWizardWhenLibraryLoaded(),
+        editor.openMonomerCreationWizardWhenLibraryLoaded(),
+      ];
+      resolveLoad();
+      await Promise.all(openings);
+
+      expect(openMonomerCreationWizard).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not open the wizard when macromolecules mode is turned on during the load', async () => {
+      const { editor, openMonomerCreationWizard, resolveLoad } = setUp();
+
+      const opening = editor.openMonomerCreationWizardWhenLibraryLoaded();
+      window.isPolymerEditorTurnedOn = true;
+      resolveLoad();
+      await opening;
+
+      expect(openMonomerCreationWizard).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('Editor.hover', () => {
+  it('forwards Attachment Group hover to its renderer', () => {
+    const attachmentGroupRenderer = {
+      setHover: jest.fn(),
+    };
+    const tool = {};
+    const render = {
+      ctab: {
+        attachmentGroups: new Map([[7, attachmentGroupRenderer]]),
+      },
+    };
+    const editor = Object.create(Editor.prototype) as Editor;
+
+    Reflect.set(editor, '_tool', tool);
+    Reflect.set(editor, 'render', render);
+
+    editor.hover({ map: 'attachmentGroups', id: 7 });
+
+    expect(attachmentGroupRenderer.setHover).toHaveBeenCalledWith(true, render);
+    expect(Reflect.get(tool, 'ci')).toEqual({
+      map: 'attachmentGroups',
+      id: 7,
+    });
+  });
+});
+
+describe('Editor.options', () => {
+  const ketcherId = 'editor-options-test';
+
+  // Raphael cannot create a paper on a jsdom element, so the editor is given the
+  // document itself as its client area, like in rotate-controller.test.ts.
+  const createEditor = () =>
+    new Editor(ketcherId, document as unknown as HTMLElement, {
+      bondThickness: 2,
+      bondSpacing: 15,
+    });
+
+  beforeEach(() => {
+    ketcherProvider.addKetcherInstance({
+      id: ketcherId,
+      changeEvent: new Subscription(),
+    } as never);
+  });
+
+  afterEach(() => {
+    ketcherProvider.removeKetcherInstance(ketcherId);
+  });
+
+  it('keeps the current settings when an unrelated option is applied', () => {
+    const editor = createEditor();
+    const { bondThickness, bondSpacingInPx } = editor.options();
+
+    const options = editor.options({ showAtomIds: true });
+
+    expect(options.bondThickness).toBe(bondThickness);
+    expect(options.bondSpacingInPx).toBe(bondSpacingInPx);
+    expect(options.showAtomIds).toBe(true);
+  });
+
+  it('keeps the current settings when view-only mode is switched', () => {
+    const editor = createEditor();
+    const { bondThickness, bondSpacingInPx } = editor.options();
+
+    const options = editor.options({ viewOnlyMode: true });
+
+    expect(options.viewOnlyMode).toBe(true);
+    expect(options.bondThickness).toBe(bondThickness);
+    expect(options.bondSpacingInPx).toBe(bondSpacingInPx);
+  });
+
+  it('applies an option that is passed explicitly', () => {
+    const editor = createEditor();
+
+    const options = editor.options({ bondThickness: 5 });
+
+    expect(options.bondThickness).toBe(5);
+  });
+
+  it('recomputes the derived values when the settings change the scale', () => {
+    const editor = createEditor();
+    const { lineWidth, atomSelectionPlateRadius } = editor.options();
+
+    const options = editor.options({
+      bondLength: 80,
+      bondLengthUnit: 'px',
+      fontsz: 26,
+      fontszUnit: 'px',
+    });
+
+    expect(options.microModeScale).toBe(80);
+    expect(options.lineWidth).toBe(4);
+    expect(options.lineWidth).not.toBe(lineWidth);
+    expect(options.atomSelectionPlateRadius).toBe(26);
+    expect(options.atomSelectionPlateRadius).not.toBe(atomSelectionPlateRadius);
+  });
+
+  it('keeps the values applied through setOptions', () => {
+    const editor = createEditor();
+    editor.setOptions(JSON.stringify({ bondThickness: 4 }));
+
+    const options = editor.options({ showAtomIds: true });
+
+    expect(options.bondThickness).toBe(4);
+  });
+
+  it('preserves the zoom level across the render rebuild', () => {
+    const editor = createEditor();
+    editor.zoom(2);
+
+    const options = editor.options({ showAtomIds: true });
+
+    expect(options.zoom).toBe(2);
   });
 });

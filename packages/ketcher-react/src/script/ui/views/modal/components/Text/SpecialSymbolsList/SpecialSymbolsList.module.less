@@ -3,14 +3,13 @@
 .window {
   position: absolute;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  right: 27px;
+  flex-flow: row wrap;
+  inset-inline-end: 27px;
   width: 160px;
   background-color: @color-background-primary;
   z-index: 10;
   overflow: visible;
-  border-radius: 0 6px 6px 6px;
+  border-radius: 0 6px 6px;
   padding: 8px;
   box-shadow: 2px 2px 6px 0 @color-grey-4;
 }

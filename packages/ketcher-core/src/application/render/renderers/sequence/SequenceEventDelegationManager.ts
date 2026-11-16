@@ -1,5 +1,5 @@
 import type { D3SvgElementSelection } from 'application/render/types';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import type { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
 import { select } from 'd3';
 
@@ -11,45 +11,15 @@ type ElementType = 'text' | 'background' | 'spacer';
  */
 export class SequenceEventDelegationManager {
   private static _instance: SequenceEventDelegationManager | null = null;
+
+  public static get instance() {
+    this._instance ??= new SequenceEventDelegationManager();
+    return this._instance;
+  }
+
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
   private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
     new Map();
-
-  public static get instance() {
-    if (!SequenceEventDelegationManager._instance) {
-      SequenceEventDelegationManager._instance =
-        new SequenceEventDelegationManager();
-    }
-    return SequenceEventDelegationManager._instance;
-  }
-
-  public attachDelegatedEvents(
-    canvas: D3SvgElementSelection<SVGGElement, void>,
-  ): void {
-    if (this.canvas) {
-      this.removeDelegatedEvents();
-    }
-
-    this.canvas = canvas;
-
-    this.attachHandler('mouseover', this.handleMouseOver.bind(this));
-    this.attachHandler('mousemove', this.handleMouseMove.bind(this));
-    this.attachHandler('mouseout', this.handleMouseOut.bind(this));
-    this.attachHandler('mousedown', this.handleMouseDown.bind(this));
-    this.attachHandler('click', this.handleClick.bind(this));
-    this.attachHandler('dblclick', this.handleDblClick.bind(this));
-  }
-
-  public removeDelegatedEvents(): void {
-    if (!this.canvas) return;
-
-    this.boundHandlers.forEach((_, eventType) => {
-      this.canvas?.on(eventType, null);
-    });
-
-    this.boundHandlers.clear();
-    this.canvas = null;
-  }
 
   private attachHandler(
     eventType: string,
@@ -81,7 +51,7 @@ export class SequenceEventDelegationManager {
   }
 
   private getElementType(target: SVGElement): ElementType | null {
-    const dataType = target.getAttribute('data-element-type');
+    const dataType = target.dataset.elementType;
     if (
       dataType === 'text' ||
       dataType === 'background' ||
@@ -97,8 +67,8 @@ export class SequenceEventDelegationManager {
       if (parentGroup) return 'spacer';
       return 'background';
     }
-    if (tagName === 'g' && target.hasAttribute('data-element-type')) {
-      return target.getAttribute('data-element-type') as ElementType;
+    if (tagName === 'g' && target.dataset.elementType !== undefined) {
+      return target.dataset.elementType as ElementType;
     }
 
     return null;
@@ -113,7 +83,7 @@ export class SequenceEventDelegationManager {
     if (elementType === 'text' || elementType === 'background') {
       renderer.drawBackgroundElementHover();
       if (elementType === 'text') {
-        provideEditorInstance().events.mouseOverSequenceItem.dispatch(event);
+        editorEvents.mouseOverSequenceItem.dispatch(event);
       }
     }
   }
@@ -125,7 +95,7 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'text') {
-      provideEditorInstance().events.mouseOnMoveSequenceItem.dispatch(event);
+      editorEvents.mouseOnMoveSequenceItem.dispatch(event);
     }
   }
 
@@ -139,7 +109,7 @@ export class SequenceEventDelegationManager {
 
     renderer.removeBackgroundElementHover();
     if (elementType === 'text') {
-      provideEditorInstance().events.mouseLeaveSequenceItem.dispatch(event);
+      editorEvents.mouseLeaveSequenceItem.dispatch(event);
     }
   }
 
@@ -150,11 +120,9 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'spacer') {
-      provideEditorInstance().events.mousedownBetweenSequenceItems.dispatch(
-        event,
-      );
+      editorEvents.mousedownBetweenSequenceItems.dispatch(event);
     } else if (elementType === 'background') {
-      provideEditorInstance().events.mouseDownOnSequenceItem.dispatch(event);
+      editorEvents.mouseDownOnSequenceItem.dispatch(event);
     }
   }
 
@@ -165,7 +133,7 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'background') {
-      provideEditorInstance().events.clickOnSequenceItem.dispatch(event);
+      editorEvents.clickOnSequenceItem.dispatch(event);
     }
   }
 
@@ -176,7 +144,35 @@ export class SequenceEventDelegationManager {
     const { elementType } = result;
 
     if (elementType === 'text' || elementType === 'background') {
-      provideEditorInstance().events.doubleClickOnSequenceItem.dispatch(event);
+      editorEvents.doubleClickOnSequenceItem.dispatch(event);
     }
+  }
+
+  public attachDelegatedEvents(
+    canvas: D3SvgElementSelection<SVGGElement, void>,
+  ): void {
+    if (this.canvas) {
+      this.removeDelegatedEvents();
+    }
+
+    this.canvas = canvas;
+
+    this.attachHandler('mouseover', this.handleMouseOver.bind(this));
+    this.attachHandler('mousemove', this.handleMouseMove.bind(this));
+    this.attachHandler('mouseout', this.handleMouseOut.bind(this));
+    this.attachHandler('mousedown', this.handleMouseDown.bind(this));
+    this.attachHandler('click', this.handleClick.bind(this));
+    this.attachHandler('dblclick', this.handleDblClick.bind(this));
+  }
+
+  public removeDelegatedEvents(): void {
+    if (!this.canvas) return;
+
+    this.boundHandlers.forEach((_, eventType) => {
+      this.canvas?.on(eventType, null);
+    });
+
+    this.boundHandlers.clear();
+    this.canvas = null;
   }
 }

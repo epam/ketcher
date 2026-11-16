@@ -14,13 +14,13 @@ class MockIntersectionObserver {
   takeRecords = jest.fn();
 }
 
-Object.defineProperty(window, 'IntersectionObserver', {
+Object.defineProperty(globalThis, 'IntersectionObserver', {
   writable: true,
   configurable: true,
   value: MockIntersectionObserver,
 });
 
-Object.defineProperty(global, 'IntersectionObserver', {
+Object.defineProperty(globalThis, 'IntersectionObserver', {
   writable: true,
   configurable: true,
   value: MockIntersectionObserver,
@@ -29,11 +29,11 @@ const muiTheme = createTheme();
 const mergedTheme = merge(muiTheme, { ketcher: defaultTheme });
 
 // Type declarations for global functions are in typings.d.ts
-global.withThemeProvider = function (component: JSX.Element) {
+globalThis.withThemeProvider = function (component: JSX.Element) {
   return <ThemeProvider theme={mergedTheme}>{component}</ThemeProvider>;
 };
 
-global.withStoreProvider = function (
+globalThis.withStoreProvider = function (
   component: JSX.Element,
   initialState: RootState = {},
 ) {
@@ -41,7 +41,7 @@ global.withStoreProvider = function (
   return <StoreProvider store={store}>{component}</StoreProvider>;
 };
 
-global.withThemeAndStoreProvider = function (
+globalThis.withThemeAndStoreProvider = function (
   component: JSX.Element,
   initialState: RootState = {},
 ) {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,17 +31,18 @@ import type { IKetTemplateConnection } from 'application/formatters';
 import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 
 class RnaPresetTool implements Tool {
-  rnaBase: MonomerItemType | undefined;
-  sugar: MonomerItemType | undefined;
-  phosphate: MonomerItemType | undefined;
-  connections: IKetTemplateConnection[] | undefined;
-
   private rnaBasePreview: RNABase | undefined;
   private phosphatePreview: Phosphate | undefined;
   private sugarPreview: Sugar | undefined;
   private rnaBasePreviewRenderer: BaseMonomerRenderer | undefined;
   private phosphatePreviewRenderer: BaseMonomerRenderer | undefined;
   private sugarPreviewRenderer: BaseMonomerRenderer | undefined;
+
+  rnaBase: MonomerItemType | undefined;
+  sugar: MonomerItemType | undefined;
+  phosphate: MonomerItemType | undefined;
+  connections: IKetTemplateConnection[] | undefined;
+
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.5;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;

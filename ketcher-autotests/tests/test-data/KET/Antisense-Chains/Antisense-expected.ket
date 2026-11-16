@@ -384,8 +384,7 @@
             "y": -1.25
         },
         "alias": "R",
-        "templateId": "R___Ribose",
-        "seqid": 1
+        "templateId": "R___Ribose"
     },
     "monomerTemplate-R___Ribose": {
         "type": "monomerTemplate",
@@ -630,8 +629,7 @@
             "y": -2.75
         },
         "alias": "U",
-        "templateId": "U___Uracil",
-        "seqid": 2
+        "templateId": "U___Uracil"
     },
     "monomerTemplate-U___Uracil": {
         "type": "monomerTemplate",
@@ -801,8 +799,7 @@
             "y": -1.25
         },
         "alias": "P",
-        "templateId": "P___Phosphate",
-        "seqid": 3
+        "templateId": "P___Phosphate"
     },
     "monomerTemplate-P___Phosphate": {
         "type": "monomerTemplate",
@@ -922,8 +919,7 @@
             "y": -1.25
         },
         "alias": "R",
-        "templateId": "R___Ribose",
-        "seqid": 4
+        "templateId": "R___Ribose"
     },
     "monomer4": {
         "type": "monomer",
@@ -933,8 +929,7 @@
             "y": -2.75
         },
         "alias": "G",
-        "templateId": "G___Guanine",
-        "seqid": 5
+        "templateId": "G___Guanine"
     },
     "monomerTemplate-G___Guanine": {
         "type": "monomerTemplate",
@@ -1156,8 +1151,7 @@
             "y": -1.25
         },
         "alias": "P",
-        "templateId": "P___Phosphate",
-        "seqid": 6
+        "templateId": "P___Phosphate"
     },
     "monomer6": {
         "type": "monomer",
@@ -1167,8 +1161,7 @@
             "y": -1.25
         },
         "alias": "R",
-        "templateId": "R___Ribose",
-        "seqid": 7
+        "templateId": "R___Ribose"
     },
     "monomer7": {
         "type": "monomer",
@@ -1178,8 +1171,7 @@
             "y": -2.75
         },
         "alias": "C",
-        "templateId": "C___Cytosine",
-        "seqid": 8
+        "templateId": "C___Cytosine"
     },
     "monomerTemplate-C___Cytosine": {
         "type": "monomerTemplate",
@@ -1349,8 +1341,7 @@
             "y": -1.25
         },
         "alias": "P",
-        "templateId": "P___Phosphate",
-        "seqid": 9
+        "templateId": "P___Phosphate"
     },
     "monomer9": {
         "type": "monomer",
@@ -1360,8 +1351,7 @@
             "y": -1.25
         },
         "alias": "1Nal",
-        "templateId": "1Nal___3-(1-naphthyl)-alanine",
-        "seqid": 10
+        "templateId": "1Nal___3-(1-naphthyl)-alanine"
     },
     "monomerTemplate-1Nal___3-(1-naphthyl)-alanine": {
         "type": "monomerTemplate",
@@ -1671,8 +1661,7 @@
             "y": -1.25
         },
         "alias": "Cys_Bn",
-        "templateId": "Cys_Bn___S-benzylcysteine",
-        "seqid": 11
+        "templateId": "Cys_Bn___S-benzylcysteine"
     },
     "monomerTemplate-Cys_Bn___S-benzylcysteine": {
         "type": "monomerTemplate",
@@ -1945,8 +1934,7 @@
             "y": -1.25
         },
         "alias": "AspOMe",
-        "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
-        "seqid": 12
+        "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
     },
     "monomerTemplate-AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid": {
         "type": "monomerTemplate",
@@ -2152,8 +2140,7 @@
             "y": -5.75
         },
         "alias": "AspOMe",
-        "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
-        "seqid": 12
+        "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
     },
     "monomer13": {
         "type": "monomer",
@@ -2163,8 +2150,7 @@
             "y": -5.75
         },
         "alias": "Cys_Bn",
-        "templateId": "Cys_Bn___S-benzylcysteine",
-        "seqid": 11
+        "templateId": "Cys_Bn___S-benzylcysteine"
     },
     "monomer14": {
         "type": "monomer",
@@ -2174,8 +2160,7 @@
             "y": -5.75
         },
         "alias": "1Nal",
-        "templateId": "1Nal___3-(1-naphthyl)-alanine",
-        "seqid": 10
+        "templateId": "1Nal___3-(1-naphthyl)-alanine"
     },
     "monomer15": {
         "type": "monomer",

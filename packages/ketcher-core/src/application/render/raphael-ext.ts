@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
 // require() is unavailable in strict-ESM bundler output (e.g. Vite), so
 // guard against it the same way we guard against a missing `window` (SSR)
 const canRequireRaphael =
-  typeof window !== 'undefined' && typeof require !== 'undefined';
+  typeof globalThis.window !== 'undefined' && typeof require !== 'undefined';
 
 const raphaelModule: RaphaelModule | undefined = canRequireRaphael
   ? require('raphael')

@@ -1,3 +1,4 @@
+import { editorEvents } from 'application/editor/editorEvents';
 import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -35,14 +36,18 @@ const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
 export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
-  private readonly editor: CoreEditor;
-  private get editorEvents() {
-    return provideEditorInstance().events;
+  static isSelectable() {
+    return true;
   }
 
+  static get selectionCircleRadius() {
+    return 21;
+  }
+
+  private readonly editorEvents: typeof editorEvents;
+  private readonly editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
@@ -51,26 +56,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
-  public readonly monomerSize: { width: number; height: number };
-
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
-  public enumeration: number | null = null;
-
   private terminalIndicatorElement?: D3SvgElementSelection<
     SVGTextElement,
     void
   >;
 
+  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
+  public readonly monomerSize: { width: number; height: number };
+  public enumeration: number | null = null;
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '';
-
-  static isSelectable() {
-    return true;
-  }
-
-  static get selectionCircleRadius() {
-    return 21;
-  }
 
   protected constructor(
     public monomer: BaseMonomer,
@@ -81,6 +77,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
+    this.editorEvents = editorEvents;
     this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
@@ -89,12 +86,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // as getBoundingClientRect() and getBBox() return 0 values in Firefox
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
-      width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') ?? 0
-      ),
-      height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
-      ),
+      width: +(this.monomerSymbolElement?.dataset.actualWidth ?? 0),
+      height: +(this.monomerSymbolElement?.dataset.actualHeight ?? 0),
     };
     setMonomerSize(this.monomerSize);
   }
@@ -231,7 +224,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       customAngle?: number,
     ) => Pick<AttachmentPoint, 'getAngle'>,
   ) {
-    if (this.attachmentPoints.length) {
+    if (this.attachmentPoints.length > 0) {
       return;
     }
 
@@ -494,16 +487,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public static getScaledMonomerPosition(
     positionInAngstoms: Vec2,
-    monomerSize: { width: number; height: number } = { width: 0, height: 0 },
+    monomerSize?: { width?: number; height?: number },
   ) {
+    const { width = 0, height = 0 } = monomerSize ?? {};
+
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const monomerPositionInPixels =
       Coordinates.modelToCanvas(positionInAngstoms);
 
     return new Vec2(
-      monomerPositionInPixels.x - monomerSize.width / 2,
-      monomerPositionInPixels.y - monomerSize.height / 2,
+      monomerPositionInPixels.x - width / 2,
+      monomerPositionInPixels.y - height / 2,
     );
   }
 
@@ -586,7 +581,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   } | void;
 
   public setEnumeration(enumeration: number | null) {
-    this.enumeration = enumeration;
+    this.enumeration =
+      enumeration === null
+        ? null
+        : (this.monomer.monomerItem.seqId ?? enumeration);
   }
 
   protected appendEnumeration() {
@@ -609,15 +607,15 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.raiseAttachmentPoints();
   }
 
-  public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
-    this.redrawChainTerminalIndicator(needToDrawTerminalIndicator);
+  public redrawEnumeration(shouldDrawTerminalIndicator: boolean) {
+    this.redrawChainTerminalIndicator(shouldDrawTerminalIndicator);
 
     if (!this.enumerationElement) return;
 
     this.enumerationElement.text(this.enumeration);
   }
 
-  public redrawChainTerminalIndicator(needToDraw: boolean) {
+  public redrawChainTerminalIndicator(shouldDraw: boolean) {
     if (
       !this.rootElement ||
       !this.CHAIN_START_TERMINAL_INDICATOR_TEXT ||
@@ -628,7 +626,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     this.terminalIndicatorElement?.remove();
 
-    if (!needToDraw) {
+    if (!shouldDraw) {
       return;
     }
 
@@ -657,10 +655,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected drawModification() {
     const config = this.modificationConfig;
-    const DARK_COLOR = '#333333';
-    const LIGHT_COLOR = 'white';
-
     if (config && this.monomer.isModification) {
+      const DARK_COLOR = '#333333';
+      const LIGHT_COLOR = 'white';
       let fillColor: string | undefined;
 
       if (config.requiresFill) {

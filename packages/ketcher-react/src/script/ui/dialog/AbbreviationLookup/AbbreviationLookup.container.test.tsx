@@ -23,7 +23,7 @@ jest.mock('./hooks/useOptions', () => {
 
 let mockedIsOpen = false;
 jest.mock('../../state/abbreviationLookup/selectors', () => ({
-  selectIsAbbreviationLookupOpen: () => mockedIsOpen,
+  isAbbreviationLookupOpen: () => mockedIsOpen,
 }));
 
 describe('AbbreviationLookupContainer', () => {

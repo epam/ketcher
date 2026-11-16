@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -75,5 +75,29 @@ describe('fromAtomMerge', () => {
     const restoredAttachmentPoints = sgroup.getAttachmentPoints();
     expect(restoredAttachmentPoints).toHaveLength(1);
     expect(restoredAttachmentPoints[0].atomId).toBe(srcId);
+  });
+
+  // Regression test for https://github.com/epam/ketcher/issues/346:
+  // fromAtomMerge must no-op, not throw, when dstId was already removed.
+  it('does not throw and returns an empty Action when dstId no longer exists', () => {
+    const struct = new Struct();
+
+    const srcId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0), fragment: 0 }),
+    );
+    const dstId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0), fragment: 0 }),
+    );
+
+    // Simulate dstId having already been removed by a prior merge.
+    struct.atoms.delete(dstId);
+
+    const restruct = { molecule: struct };
+
+    let action;
+    expect(() => {
+      action = fromAtomMerge(restruct as ReStruct, srcId, dstId);
+    }).not.toThrow();
+    expect(action?.operations).toHaveLength(0);
   });
 });

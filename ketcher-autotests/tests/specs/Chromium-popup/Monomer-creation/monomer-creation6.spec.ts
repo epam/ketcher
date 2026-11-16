@@ -665,7 +665,9 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: true,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -707,7 +709,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: false,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -753,8 +757,6 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   const presetSection = NucleotidePresetSection(page);
 
   await LeftToolbar(page).createMonomer();
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await dialog.selectType(MonomerType.NucleotidePreset);
 

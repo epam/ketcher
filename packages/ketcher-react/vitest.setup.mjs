@@ -33,9 +33,9 @@ class CaseSensitiveMutationObserver extends HappyDomMutationObserver {
     const { attributeFilter, ...rest } = options;
     if (attributeFilter) {
       this.#filters.set(target, new Set(attributeFilter));
-      super.observe(target, { attributes: true, ...rest });
+      super.observe(target, { ...rest, attributes: true });
     } else {
-      this.#filters.delete(target);
+      this.#filters.set(target, null);
       super.observe(target, options);
     }
   }
@@ -45,10 +45,12 @@ class CaseSensitiveMutationObserver extends HappyDomMutationObserver {
     super.disconnect();
   }
 
+  // The nearest observed target decides, as each target has its own options.
   #accepts(record) {
-    for (const [target, names] of this.#filters) {
-      if (target === record.target || target.contains(record.target)) {
-        return names.has(record.attributeName);
+    for (let node = record.target; node; node = node.parentNode) {
+      if (this.#filters.has(node)) {
+        const names = this.#filters.get(node);
+        return !names || names.has(record.attributeName);
       }
     }
     return true;

@@ -7,6 +7,7 @@ import {
 import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
   getAttachmentPointsForRnaPresetComponent,
+  getConnectionAttachmentPointAtomIdsForComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointAtomIdsForRnaPreset,
   getVisibleAttachmentPointsForRnaPreset,
@@ -173,6 +174,47 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
         [AttachmentPointName.R4, [3, 4]],
       ]),
     );
+  });
+
+  it('returns connection attachment point names within their respective components', () => {
+    const wizardState = createWizardState();
+    wizardState.base.structure = { atoms: [1], bonds: [] };
+    wizardState.sugar.structure = { atoms: [2, 4], bonds: [] };
+    wizardState.phosphate.structure = { atoms: [3], bonds: [] };
+    const struct = createStruct([
+      [1, 2],
+      [4, 3],
+    ]);
+
+    expect(
+      getConnectionAttachmentPointAtomIdsForComponent(
+        wizardState,
+        struct,
+        'base',
+        '3',
+      ),
+    ).toEqual(new Map([[AttachmentPointName.R1, [1, 2]]]));
+    expect(
+      getConnectionAttachmentPointAtomIdsForComponent(
+        wizardState,
+        struct,
+        'sugar',
+        '3',
+      ),
+    ).toEqual(
+      new Map([
+        [AttachmentPointName.R3, [2, 1]],
+        [AttachmentPointName.R2, [4, 3]],
+      ]),
+    );
+    expect(
+      getConnectionAttachmentPointAtomIdsForComponent(
+        wizardState,
+        struct,
+        'phosphate',
+        '3',
+      ),
+    ).toEqual(new Map([[AttachmentPointName.R1, [3, 4]]]));
   });
 
   it.each<{

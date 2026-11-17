@@ -140,6 +140,7 @@ const createMockEditor = () => {
     update: jest.fn(),
     setVisibleAssignedAttachmentPoints: jest.fn(),
     setConnectionAttachmentPoints: jest.fn(),
+    setRnaComponentConnectionAttachmentPoints: jest.fn(),
   } as unknown as Editor & {
     highlights: {
       clear: jest.Mock;
@@ -703,6 +704,15 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(screen.getByTestId('nucleotide-base-tab'));
     expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
       'R1',
+    );
+    expect(
+      mockEditor.setRnaComponentConnectionAttachmentPoints,
+    ).toHaveBeenLastCalledWith(
+      new Map([
+        ['base', new Map([[AttachmentPointName.R1, [1, 2]]])],
+        ['sugar', new Map([[AttachmentPointName.R3, [2, 1]]])],
+        ['phosphate', new Map()],
+      ]),
     );
   });
 

@@ -11,14 +11,10 @@ Cleared once the bond is committed or the dialog is cancelled.
 */
 export type InsertionSession = {
   /**
-  Everything applied so far; inverted if the user cancels a dialog.
+  Everything applied so far; inverted if the user cancels the dialog.
   */
   command: Command;
   ends: InsertionEnds;
-  /**
-  Dialog step: bond with the left/top original, then with the right/bottom one.
-  */
-  step: 'left' | 'right';
   drawingEntities: DrawingEntity[];
   lastMonomer: BaseMonomer;
 };

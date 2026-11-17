@@ -14,6 +14,7 @@ import type { TransientDrawingView } from 'application/render/renderers/Transien
 import type { IEditorEvents } from 'application/editor/editorEvents';
 import type {
   AttachmentPointTarget,
+  CreateInsertionBondsViaModalPayload,
   LibraryItemDragState,
 } from 'application/editor/editor.types';
 import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalculations';
@@ -106,6 +107,7 @@ export interface LibraryItemDragDropHandlerDependencies {
     | 'setLibraryItemDragState'
     | 'placeLibraryItemOnCanvas'
     | 'openMonomerConnectionModal'
+    | 'openInsertionConnectionModal'
     | 'openConfirmationDialog'
     | 'openErrorModal'
     | 'error'
@@ -218,11 +220,6 @@ export class LibraryItemDragDropHandler {
     firstSelectedAttachmentPoint: AttachmentPointName;
     secondSelectedAttachmentPoint: AttachmentPointName;
   }): void {
-    if (this.dragDropModalContext?.insertion) {
-      this.continueInsertion(payload);
-      return;
-    }
-
     const {
       firstMonomer,
       secondMonomer,
@@ -778,7 +775,6 @@ export class LibraryItemDragDropHandler {
       session = {
         command,
         ends,
-        step: 'left',
         drawingEntities: addResult.drawingEntities,
         lastMonomer: addResult.lastMonomer,
       };
@@ -942,76 +938,62 @@ export class LibraryItemDragDropHandler {
     session: InsertionSession,
     newMonomer: BaseMonomer,
   ): void {
-    const original =
-      session.step === 'left' ? session.ends.left : session.ends.right;
-    const originalAp =
-      session.step === 'left' ? session.ends.leftAp : session.ends.rightAp;
-
-    original.setPotentialSecondAttachmentPoint(originalAp);
     this.isDragDropBondModalOpen = true;
     this.dragDropModalContext = {
       insertion: session,
       droppedMonomer: newMonomer,
       addedMonomers: [newMonomer],
-      targetMonomer: original,
-      targetAP: originalAp,
+      targetMonomer: session.ends.left,
+      targetAP: session.ends.leftAp,
     };
-    this.deps.events.openMonomerConnectionModal.dispatch({
-      firstMonomer: newMonomer,
-      secondMonomer: original,
+    this.deps.events.openInsertionConnectionModal.dispatch({
+      leftMonomer: session.ends.left,
+      newMonomer,
+      rightMonomer: session.ends.right,
+      leftAp: session.ends.leftAp,
+      rightAp: session.ends.rightAp,
     });
   }
 
   /**
-   * Handles **Connect** in the *Select Attachment Points* dialog opened by an
-   * insertion: bonds the new monomer to one original monomer, then either asks
-   * for the other bond or commits the whole insertion.
+   * Called from Editor when the user clicks Connect in the insertion-connection
+   * dialog. Creates both new bonds and commits the insertion to history.
    */
-  private continueInsertion(payload: {
-    firstMonomer: BaseMonomer;
-    secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: AttachmentPointName;
-    secondSelectedAttachmentPoint: AttachmentPointName;
-  }): void {
-    const context = this.dragDropModalContext;
-    const session = context?.insertion;
-    if (!context || !session) return;
+  handleInsertionConnection(
+    payload: CreateInsertionBondsViaModalPayload,
+  ): void {
+    const session = this.dragDropModalContext?.insertion;
+    if (!session) return;
     const { drawingEntitiesManager, renderersContainer } = this.deps;
-    const {
-      firstMonomer,
-      secondMonomer,
-      firstSelectedAttachmentPoint,
-      secondSelectedAttachmentPoint,
-    } = payload;
 
-    session.ends.left.setPotentialSecondAttachmentPoint(null);
-    session.ends.right.setPotentialSecondAttachmentPoint(null);
-
-    const bondCommand = drawingEntitiesManager.createPolymerBond(
-      firstMonomer,
-      secondMonomer,
-      firstSelectedAttachmentPoint,
-      secondSelectedAttachmentPoint,
+    const leftBondCmd = drawingEntitiesManager.createPolymerBond(
+      payload.leftMonomer,
+      payload.newMonomer,
+      payload.leftAp,
+      payload.leftNewAp,
     );
-    renderersContainer.update(bondCommand);
-    session.command.merge(bondCommand);
+    renderersContainer.update(leftBondCmd);
+    session.command.merge(leftBondCmd);
 
-    if (session.step === 'left') {
-      session.step = 'right';
-      // The dialog closes itself right after dispatching; reopen on the next tick.
-      setTimeout(() => this.openInsertionDialog(session, firstMonomer), 0);
-      return;
-    }
+    const rightBondCmd = drawingEntitiesManager.createPolymerBond(
+      payload.newMonomer,
+      payload.rightMonomer,
+      payload.rightNewAp,
+      payload.rightAp,
+    );
+    renderersContainer.update(rightBondCmd);
+    session.command.merge(rightBondCmd);
 
     this.isDragDropBondModalOpen = false;
     this.dragDropModalContext = null;
+
     this.finishInsertion(
       session.command,
-      [firstMonomer],
+      [payload.newMonomer],
       session.ends,
       {
         modelChanges: session.command,
-        firstMonomer,
+        firstMonomer: payload.newMonomer,
         lastMonomer: session.lastMonomer,
         drawingEntities: session.drawingEntities,
       },

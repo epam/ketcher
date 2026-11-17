@@ -348,8 +348,8 @@ describe('Editor.hover', () => {
 describe('Editor.options', () => {
   const ketcherId = 'editor-options-test';
 
-  // Raphael cannot create a paper on a jsdom element, so the editor is given the
-  // document itself as its client area, like in rotate-controller.test.ts.
+  // The editor is given the document itself as its client area, like in
+  // rotate-controller.test.ts.
   const createEditor = () =>
     new Editor(ketcherId, document as unknown as HTMLElement, {
       bondThickness: 2,

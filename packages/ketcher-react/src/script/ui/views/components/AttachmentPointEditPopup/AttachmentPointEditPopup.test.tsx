@@ -14,6 +14,7 @@ vi.mock(
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  Reflect.deleteProperty(HTMLElement.prototype, 'offsetParent');
   document.body.innerHTML = '';
   document.body.scrollLeft = 0;
   document.body.scrollTop = 0;
@@ -48,9 +49,11 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
       }) as DOMRect;
     canvas.appendChild(element);
   });
-  const offsetParent = vi
-    .spyOn(HTMLElement.prototype, 'offsetParent', 'get')
-    .mockReturnValue(document.body);
+  // happy-dom does not implement offsetParent, so there is no getter to spy on.
+  Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+    configurable: true,
+    get: () => document.body,
+  });
   let height = 60;
   vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(132);
   const popupHeight = vi
@@ -115,7 +118,6 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
   expect(measure).not.toHaveBeenCalled();
 
   unmount();
-  offsetParent.mockRestore();
   popupHeight.mockRestore();
   canvas.remove();
 });

@@ -110,9 +110,9 @@ describe('should pick color correctly', () => {
 
   it('should display picked color correctly', () => {
     renderColorPicker();
-    expect(
-      screen.getByTestId('testname-color-picker-preview').style.backgroundColor,
-    ).toBe('rgb(0, 0, 0)');
+    expect(screen.getByTestId('testname-color-picker-preview')).toHaveStyle({
+      backgroundColor: '#000000',
+    });
   });
 
   it('should persist custom colors via SettingsService', async () => {

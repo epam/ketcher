@@ -17,7 +17,7 @@ exports[`should be rendered correctly > should be rendered without crashing 1`] 
       <div
         class="_colorPickerPreview_200ea8"
         data-testid="testname-color-picker-preview"
-        style="background-color: rgb(0, 0, 0);"
+        style="background-color: #000000;"
       />
       <svg
         class="_expandIcon_200ea8 _turnedIcon_200ea8"

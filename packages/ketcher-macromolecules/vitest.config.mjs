@@ -26,7 +26,7 @@ export default mergeConfig(viteConfig, {
     ],
   },
   test: {
-    environment: 'jsdom',
+    environment: 'happy-dom',
     globals: true,
     // Threads start faster than forks; keeps per-file isolation.
     pool: 'threads',

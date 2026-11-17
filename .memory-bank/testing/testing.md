@@ -10,7 +10,9 @@ The project uses three levels of testing:
 
 Each package runs unit tests with Vitest using a `vitest.config.mjs` that merges the package's
 Vite configuration. This keeps test transforms and path aliases aligned with production. Core,
-React, and macromolecules use the `jsdom` environment; standalone uses `node`.
+React, and macromolecules use the `happy-dom` environment; standalone uses `node`. jsdom is not
+a dependency: if it were installed, Paper.js would build a canvas-less jsdom window on the server
+and break the `example-ssr` prerender.
 
 - **ketcher-core**: `packages/ketcher-core/__tests__/` and
   `packages/ketcher-core/src/**/__tests__/` (the former Jest `testMatch` also required

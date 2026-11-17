@@ -16,7 +16,7 @@ exports[`Modal component > should render correctly 1`] = `
       <div
         aria-hidden="true"
         class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
-        style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 0.4; background: rgba(94, 94, 94, .8); transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
         data-testid="sentinelStart"
@@ -32,7 +32,7 @@ exports[`Modal component > should render correctly 1`] = `
           aria-labelledby="_r_0_"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
+          style="background: #FFFFFF; border-radius: 8px; color: #333333;"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e1gf4okc1 css-1qwf79-MuiTypography-root-MuiDialogTitle-root-Header"

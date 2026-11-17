@@ -30,6 +30,15 @@ user `excluded` and `flagged` before finalizing a release body, and do a
 quick read over the kept entries yourself for typos (don't reword
 chemistry/domain terms that merely look unfamiliar).
 
+Entries may reference several tickets (`* #5857, #5676 - title`); the
+script keeps all numbers and categorizes by the first one. When `combine`
+reads an already-sectioned draft, any `*` bullet it can't parse is printed
+to stderr as a warning (with `--report`, it's in `flagged`) rather than
+dropped — never ignore that output, since those entries were already
+human-approved. As a cross-check, the combined body's entry count should
+equal the sectioned drafts' entries plus the kept raw entries, minus
+tickets that appear in more than one input.
+
 ## Mode: `draft-candidate`
 
 **Figure out which case you're in first:**
@@ -166,23 +175,47 @@ draft from `draft-candidate` mode was already cleaned and categorized once;
 redoing that work by hand (or re-running the cleaner over the full public
 diff) is exactly the duplicated effort this skill exists to avoid.
 
-Find all candidates in this cycle and save each body to a file, in
-candidate order — don't hand-count N or copy-paste one `gh release view`
-per candidate, drive it from the actual list:
+Drive this from the cycle's **git tags**, not from the releases list — a
+candidate can be tagged without anyone creating its draft release (in 3.19,
+rc.3 and rc.4 were tagged but had no drafts, so their fixes were missing
+from every draft). Walk the rc tags in order and save each draft body that
+exists; for a tag with no draft, generate that candidate's notes from the
+previous tag instead (a raw body — `combine` cleans it):
 
 ```bash
-N=$(gh release list --repo epam/ketcher | grep -c "vX.Y.0-rc\.")
-for i in $(seq 1 "$N"); do
-  gh release view "vX.Y.0-rc.$i" --repo epam/ketcher --json body --jq .body > "/tmp/rc$i.txt"
+git fetch --tags --quiet
+PREV=""
+for t in $(git tag -l 'vX.Y.0-rc.*' --sort=v:refname); do
+  if body=$(gh release view "$t" --repo epam/ketcher --json body --jq .body 2>/dev/null); then
+    printf '%s\n' "$body" > "/tmp/$t.txt"
+    echo "$t: draft saved"
+  elif [ -n "$PREV" ]; then
+    gh api repos/epam/ketcher/releases/generate-notes \
+      -f tag_name="$t" -f previous_tag_name="$PREV" --jq .body > "/tmp/$t.txt"
+    echo "$t: NO draft - generated raw notes from $PREV"
+  else
+    echo "$t: NO draft and no previous rc tag - stop and ask the user"
+  fi
+  PREV=$t
 done
 ```
 
-This assumes rc numbers run contiguously from 1 to N. If any candidate was
-skipped, retagged, or is otherwise out of sequence, list the actual tags
-first (`gh release list --repo epam/ketcher | grep "vX.Y.0-rc\."`) and
-adjust the loop to match.
+If the first candidate (`rc.1`) has no draft, stop and ask the user for the
+start tag — it's the previous cycle's rc.1, the same choice as
+`draft-candidate` Case A — rather than guessing. Once confirmed, generate
+`/tmp/vX.Y.0-rc.1.txt` with `generate-notes` from that start tag to
+`vX.Y.0-rc.1`, the same way as in the loop. Then always add the tail
+from the **last rc tag to the public tag**. Normally it holds only the
+`promote-public` bump (which the cleaner excludes), but anything merged to
+`release/X.Y` after the last candidate shows up here instead of being lost:
 
-**Sanity check before running the cleaner:** `grep -c '^\* #' /tmp/rcK.txt`
+```bash
+LAST=$(git tag -l 'vX.Y.0-rc.*' --sort=v:refname | tail -1)
+gh api repos/epam/ketcher/releases/generate-notes \
+  -f tag_name=vX.Y.Z -f previous_tag_name="$LAST" --jq .body > /tmp/tail.txt
+```
+
+**Sanity check before running the cleaner:** `grep -c '^\* #' /tmp/vX.Y.0-rc.K.txt`
 on each file. A candidate draft created by `draft-candidate` mode is
 already sectioned (has `### ` headers) and gets merged as-is, cheaply. But
 if a draft predates this skill, it will be a raw, un-sectioned body, and
@@ -194,17 +227,21 @@ mode as the Case A bug above) and should be re-created with
 `draft-candidate` against the correct start tag first, rather than combined
 as-is.
 
+Pass the inputs in candidate order, with the tail last:
+
 ```bash
 python3 .agents/skills/create-release/scripts/clean_changelog.py \
   --owner epam --repo ketcher combine --report \
-  /tmp/rc1.txt /tmp/rc2.txt ... /tmp/rcN.txt \
+  $(git tag -l 'vX.Y.0-rc.*' --sort=v:refname | sed 's|.*|/tmp/&.txt|') /tmp/tail.txt \
   > /tmp/release-notes.md
 ```
 
-`--report` prints any `excluded`/`flagged` items from raw (unreviewed)
-inputs to stderr — show those to the user the same way as in
-`draft-candidate` mode. Sectioned inputs are trusted as-is (a human already
-reviewed them when that draft was created), so nothing to re-review there.
+`--report` prints any `excluded`/`flagged` items to stderr — from raw
+inputs (generated notes for draft-less candidates, and the tail) and any
+unparseable bullets from sectioned drafts. Show those to the user the same
+way as in `draft-candidate` mode. Parsed entries from sectioned drafts are
+trusted as-is (a human already reviewed them when that draft was created),
+so there's nothing to re-review there.
 
 ### Append the Indigo compatibility line
 
@@ -235,11 +272,21 @@ release actually shipped with. Build the two links from it:
 - **remote** → the Docker Hub image layer page:
   `https://hub.docker.com/layers/epmlsop/indigo-service/{X.Y.Z}/images`
   (the trailing `sha256-...` digest segment is only needed if the tag has
-  more than one image. Check first: `curl -s
-"https://hub.docker.com/v2/repositories/epmlsop/indigo-service/tags/{X.Y.Z}"`
-  and count entries in the response's `images` array. Exactly one → the
-  digest-less `/images` URL is unambiguous, use it as-is. More than one →
-  pick the correct image and append its digest to the URL instead.)
+  more than one **real** image. The tag's `images` array also lists
+  build-attestation manifests (provenance/SBOM) — they show
+  `architecture`/`os` as `unknown` and are only ~1 KB, so don't count
+  them as images. List the real ones:
+
+  ```bash
+  curl -s "https://hub.docker.com/v2/repositories/epmlsop/indigo-service/tags/{X.Y.Z}" |
+    python3 -c "import json,sys; [print(i['os'], i['architecture'], i['digest']) for i in json.load(sys.stdin)['images'] if i.get('architecture') != 'unknown']"
+  ```
+
+  Exactly one → the digest-less `/images` URL is unambiguous, use it as-is
+  (e.g. 1.47.0 lists `linux/amd64` plus one `unknown/unknown`
+  attestation — that's one image). More than one real image (e.g. several
+  architectures) → pick the correct one and append its digest to the URL,
+  as `/images/sha256-<hex>`.)
 
 The visible link text conventionally drops the trailing `.0` patch
 (`1.45` reads better than `1.45.0`) — use `{X.Y}` in the sentence and the
@@ -318,18 +365,20 @@ have served their purpose — their content is now folded into the public
 release body, and leaving them around just clutters the releases list.
 Deleting a draft release destroys its body text for good (the underlying
 tag stays, but the description doesn't) — before deleting, make sure the
-`/tmp/rc1.txt` .. `/tmp/rcN.txt` files saved during the changelog step are
+`/tmp/vX.Y.0-rc.N.txt` files saved during the changelog step are
 still around and move them somewhere durable if `/tmp` isn't reliably kept
 on this machine; don't delete drafts if those files are already gone and
 you have no other copy of their content.
 
 Confirm with the user before deleting (this destroys the draft release
-entries, though their tags stay intact for history):
+entries, though their tags stay intact for history). Delete only the rc
+releases that actually exist as drafts — some rc tags may never have had
+one:
 
 ```bash
-N=$(gh release list --repo epam/ketcher | grep -c "vX.Y.0-rc\.")
-for i in $(seq 1 "$N"); do
-  gh release delete "vX.Y.0-rc.$i" --repo epam/ketcher --yes
+for t in $(gh release list --repo epam/ketcher --limit 100 --json tagName,isDraft \
+    --jq '.[] | select(.isDraft) | .tagName' | grep '^vX\.Y\.0-rc\.'); do
+  gh release delete "$t" --repo epam/ketcher --yes
 done
 ```
 

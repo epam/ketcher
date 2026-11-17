@@ -116,7 +116,7 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
   let editor: CoreEditor;
   let mode: SequenceMode;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     mode = new SequenceMode();
@@ -126,6 +126,7 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
       renderersContainer: createRenderersManager(testRenderTheme),
       mode,
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

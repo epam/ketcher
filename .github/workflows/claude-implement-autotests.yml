@@ -60,7 +60,7 @@ jobs:
               throw new Error('No issue found in context');
             }
 
-            const issueBody = issue.body ?? '';
+            const issueBody = issue.body || '';
             const checklistMatches = issueBody.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
             if (checklistMatches.length === 0) {
               throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');

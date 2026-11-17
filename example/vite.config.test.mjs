@@ -8,6 +8,12 @@ const standaloneSource = fileURLToPath(
   new URL('../packages/ketcher-standalone/src/index.ts', import.meta.url),
 );
 const binaryWasmImport = 'ketcher-standalone/dist/binaryWasm';
+const raphaelEntry = fileURLToPath(
+  new URL(
+    '../packages/ketcher-core/src/application/render/raphael-ext.ts',
+    import.meta.url,
+  ),
+);
 
 test('example development resolves the binaryWasm entry to source without a library build', async () => {
   const server = await createServer({
@@ -24,6 +30,27 @@ test('example development resolves the binaryWasm entry to source without a libr
     );
     assert.equal(resolved?.id, standaloneSource);
     await server.environments.client.transformRequest('/src/utils.ts');
+  } finally {
+    await server.close();
+  }
+});
+
+test('example development serves the Raphael entry with its require guard intact', async () => {
+  const server = await createServer({
+    root,
+    configFile: `${root}vite.config.js`,
+    logLevel: 'silent',
+    server: { middlewareMode: true },
+    optimizeDeps: { noDiscovery: true, include: [] },
+  });
+  try {
+    const result = await server.environments.client.transformRequest(
+      `/@fs/${raphaelEntry.replace(/^\//, '')}`,
+    );
+    assert.ok(result, 'the Raphael entry was not transformed');
+    assert.doesNotMatch(result.code, /typeof\s+await\s+import/);
+    assert.doesNotMatch(result.code, /typeof\s+require/);
+    assert.match(result.code, /import\(/);
   } finally {
     await server.close();
   }

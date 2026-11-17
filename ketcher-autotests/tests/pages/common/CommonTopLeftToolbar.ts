@@ -48,10 +48,11 @@ export const CommonTopLeftToolbar = (page: Page) => {
           attempts++;
           await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
           await page.keyboard.press('Escape');
+          await page.waitForTimeout(100);
           if (await closeWindowXButton.first().isVisible()) {
             await closeWindowXButton.first().click();
+            await closeWindowXButton.first().waitFor({ state: 'detached' });
           }
-          await page.waitForTimeout(100);
         }
       }
 

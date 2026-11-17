@@ -1149,6 +1149,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await dragMouseTo(page, 200, 450);
     await getPlusLocator(page).hover({ force: true });
     await dragMouseTo(page, 200, 500);
+    await page.waitForTimeout(100);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

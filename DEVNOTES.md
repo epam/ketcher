@@ -210,7 +210,7 @@ npm test
 `npm install` sets up the hooks with husky. They check only the files you change:
 
 - `pre-commit` runs lint-staged on the staged files: Prettier, ESLint, and stylelint (`.lintstagedrc.json`).
-- `pre-push` runs the Jest tests related to the files your branch changes against `origin/master`, one run per package (`lint-staged.pre-push.mjs`).
+- `pre-push` runs the Vitest tests related to the files your branch changes against `origin/master`, one run per package (`lint-staged.pre-push.mjs`).
 
 A new git worktree gets the hooks when you run `npm install` or `npx husky` in it.
 

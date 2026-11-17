@@ -133,6 +133,8 @@ export const CommonTopRightToolbar = (page: Page) => {
           await macroOption.waitFor({ state: 'visible' });
           await macroOption.click();
         });
+        // Wait for a short time to ensure the mode switch is fully rendered
+        await page.waitForTimeout(100);
       }
 
       await MacromoleculesTopToolbar(

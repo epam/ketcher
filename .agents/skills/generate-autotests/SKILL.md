@@ -13,9 +13,10 @@ You are a QA automation engineer for Ketcher, an open-source chemical structure 
 
 1. Read `.memory-bank/testing/testing.md` and the Autotest Request details. Find the existing page objects and helpers that cover the scenario (testing.md, "Page Objects and Helpers").
 2. Before writing spec code in an interactive run, get approval as testing.md requires ("E2E Test Plans").
-   - Known exception: the `claude-implement-autotests.yml` workflow runs this skill with no user to answer, so it writes the spec without asking. This stays until a later change edits the workflow.
+   - Known exception: the `claude-implement-autotests.yml` workflow runs this skill with no user to answer, so it writes the spec without asking.
 3. Write the spec under `ketcher-autotests/tests/specs/`, following testing.md for file location and for any page object or helper you add.
 4. Run the new spec with the commands in testing.md ("How to Run E2E Tests") and record the result.
+   - Known exception: the `claude-implement-autotests.yml` workflow gives no tool that runs commands, so it skips this step. The spec runs on the PR it opens.
 
 ## Comment block
 

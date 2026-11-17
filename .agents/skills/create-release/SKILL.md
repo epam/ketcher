@@ -315,19 +315,34 @@ rm -rf packages/*/dist packages/*/node_modules/.cache example/node_modules/.cach
 npm install     # local node_modules can drift from the lockfile after branch switches; this syncs it without changing tracked files
 ```
 
-Then build from repo root:
+But a single clean pass is **not** what ships either. With no
+macromolecules `dist/` on disk, `ketcher-react` leaves
+`import('ketcher-macromolecules')` external (rollup prints `(!) Unresolved
+dependencies`), whereas the `ketcher-react` package that CodeBuild
+publishes to npm *does* bundle it as an `index.modern-<hash>.js` chunk. To
+match npm, build the packages, then rebuild `ketcher-react` now that the
+fresh macromolecules `dist/` exists, then build the examples:
 
 ```bash
-npm run build   # = build:packages (core, react, macromolecules, standalone) + build:example (remote, standalone)
-git status --short   # must still be clean
+npm run build:packages   # core, standalone + react, macromolecules
+npm run build:react      # second pass: bundles the fresh macromolecules dist, as the npm package does
+npm run build:example    # remote, standalone
+git status --short       # must still be clean
 ```
 
-From a clean slate, rollup prints `(!) Unresolved dependencies` for
-`ketcher-macromolecules` while building `ketcher-react` — that's expected
-and matches CI's fresh-checkout build: the import stays external and the
-example build resolves it against the freshly built macromolecules
-package. (Verified on `release/3.20`, which still builds packages with
-rollup; on Vite-based branches, the clean slate is still the safe start.)
+Cross-check `ketcher-react` against the published npm package before
+zipping — the file list should match (one `index.js` plus one
+`index.modern-<hash>.js`), and the contents should differ only in the
+embedded `buildDate` and the chunk's hash/sourcemap name:
+
+```bash
+mkdir -p /tmp/npm-react && (cd /tmp/npm-react && npm pack ketcher-react@X.Y.Z --silent && tar -xzf ketcher-react-X.Y.Z.tgz)
+ls packages/ketcher-react/dist/*.js /tmp/npm-react/package/dist/*.js
+```
+
+(Verified on `release/3.20`, which still builds packages with rollup. On
+Vite-based branches, re-check this against the npm package the same way
+rather than assuming the same chunking.)
 
 If it still fails with an "is not exported from" error after starting
 clean, that's a real regression on the branch — don't chase it as another

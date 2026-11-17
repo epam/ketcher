@@ -107,8 +107,7 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
       );
     }
 
-    const WAIT_TIME_MS = 2000;
-    await page.waitForTimeout(WAIT_TIME_MS);
+    await page.waitForTimeout(2000);
 
     const allErrors = [...consoleErrors, ...pageErrors];
 
@@ -623,6 +622,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await CalculateVariablesPanel(page).setOligonucleotidesValue(
       '99999999999999999999999999999999999999999999999999',
     );
+    await page.waitForTimeout(100);
     await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
   });
 

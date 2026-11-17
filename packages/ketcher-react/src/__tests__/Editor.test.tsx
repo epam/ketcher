@@ -89,10 +89,16 @@ const mockCreateEvent = () => {
   };
 };
 const mockCreateMacromoleculesEditor = () => ({
+  isLongSequence: false,
   events: {
+    modelChange: mockCreateEvent(),
+    layoutModeChange: mockCreateEvent(),
+    openMonomerCreationWizard: mockCreateEvent(),
+  },
+  modeEvents: {
     switchToMacromoleculesMode: mockCreateEvent(),
     switchToMoleculesMode: mockCreateEvent(),
-    openMonomerCreationWizard: mockCreateEvent(),
+    macromoleculesModeActivated: mockCreateEvent(),
   },
   ensureDefaultMonomersLibraryLoaded: jest.fn().mockResolvedValue(undefined),
   switchToMacromolecules: jest.fn(),
@@ -264,7 +270,7 @@ describe('Editor', () => {
     await screen.findByTestId('macromolecules-editor');
     const original = mockMacromoleculesEditors[0];
 
-    act(() => original.events.switchToMacromoleculesMode.dispatch());
+    act(() => original.modeEvents.switchToMacromoleculesMode.dispatch());
     await waitFor(() => {
       expect(original.switchToMacromolecules).toHaveBeenCalledTimes(1);
     });
@@ -300,7 +306,7 @@ describe('Editor', () => {
       }),
     );
 
-    act(() => original.events.switchToMacromoleculesMode.dispatch());
+    act(() => original.modeEvents.switchToMacromoleculesMode.dispatch());
     rerender(<Editor {...editorProps} disableMacromoleculesEditor />);
     rerender(<Editor {...editorProps} disableMacromoleculesEditor={false} />);
     await waitFor(() => {

@@ -35,7 +35,10 @@ import { cloneDeepWith, invert, isNumber } from 'lodash';
 import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { Atom } from 'domain/entities/CoreAtom';
-import type { CoreAtomLabel } from 'domain/constants';
+import {
+  isLongSequenceMonomerCount,
+  type CoreAtomLabel,
+} from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
@@ -43,6 +46,17 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 
 export class MacromoleculesConverter {
+  public static isLongSequenceStruct(struct: Struct) {
+    let monomerCount = 0;
+    struct.sgroups.forEach((sgroup) => {
+      if (sgroup instanceof MonomerMicromolecule) {
+        monomerCount++;
+      }
+    });
+
+    return isLongSequenceMonomerCount(monomerCount);
+  }
+
   public static convertMonomerToMonomerMicromolecule(
     monomer: BaseMonomer,
     struct: Struct,

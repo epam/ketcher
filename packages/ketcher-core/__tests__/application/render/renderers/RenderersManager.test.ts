@@ -2,7 +2,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
 import { SugarRenderer } from 'application/render/renderers/SugarRenderer';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, SequenceMode } from 'application/editor';
 import {
   LinkerSequenceNode,
   MonomerSequenceNode,
@@ -14,6 +14,9 @@ import {
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Command } from 'domain/entities/Command';
+import { DrawingEntitySelectOperation } from 'application/editor/operations/drawingEntity';
+import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
@@ -23,6 +26,8 @@ import { KetMonomerClass } from 'domain/constants/monomers';
 import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types/ket';
 import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { peptideMonomerItem } from '../../../mock-data';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -99,6 +104,9 @@ const createNucleotide = (isAntisense = false) =>
 const mockRenderer = (monomer: BaseMonomer) => {
   const enumerations: Array<number | null> = [];
   const terminalMarkers: boolean[] = [];
+  const redrawAttachmentPoints = jest.fn();
+  const drawSelection = jest.fn();
+  const redrawHover = jest.fn();
 
   monomer.renderer = {
     setEnumeration: (enumeration: number | null) => {
@@ -107,9 +115,18 @@ const mockRenderer = (monomer: BaseMonomer) => {
     redrawEnumeration: (needToDrawTerminalMarker: boolean) => {
       terminalMarkers.push(needToDrawTerminalMarker);
     },
+    redrawAttachmentPoints,
+    drawSelection,
+    redrawHover,
   } as unknown as BaseMonomerRenderer;
 
-  return { enumerations, terminalMarkers };
+  return {
+    enumerations,
+    terminalMarkers,
+    redrawAttachmentPoints,
+    drawSelection,
+    redrawHover,
+  };
 };
 
 const mockNucleotideRenderers = (nucleotide: Nucleotide) => ({
@@ -621,6 +638,86 @@ describe('RenderersManager', () => {
 
     expect(baseRenderer.enumerations).toEqual([1, null]);
     expect(baseRenderer.terminalMarkers).toEqual([false]);
+  });
+});
+
+describe('batched polymer bond rendering', () => {
+  let canvas: SVGSVGElement;
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+  });
+
+  afterEach(() => {
+    canvas.remove();
+    jest.restoreAllMocks();
+  });
+
+  it('redraws each unique polymer-bond endpoint once for a batched update', () => {
+    const renderersManager = new RenderersManager({ theme: {} });
+    const editor = new CoreEditor({
+      canvas,
+      theme: {},
+      renderersContainer: renderersManager,
+    });
+    editor.setMode(new SequenceMode());
+    Array.from({ length: 3001 }, createSugar).forEach((monomer) =>
+      editor.drawingEntitiesManager.monomers.set(monomer.id, monomer),
+    );
+
+    jest
+      .spyOn(renderersManager, 'reinitializeViewModel')
+      .mockImplementation(() => {});
+    jest
+      .spyOn(renderersManager, 'runPostRenderMethods')
+      .mockImplementation(() => {});
+    jest
+      .spyOn(FlexModePolymerBondRenderer.prototype, 'show')
+      .mockImplementation(() => {});
+    jest
+      .spyOn(SnakeModePolymerBondRenderer.prototype, 'show')
+      .mockImplementation(() => {});
+    const createPolymerBondRendererSpy = jest.spyOn(
+      PolymerBondRendererFactory,
+      'createInstance',
+    );
+
+    const first = createSugar();
+    const second = createPhosphate();
+    const third = createPhosphate();
+    const firstRenderer = mockRenderer(first);
+    const secondRenderer = mockRenderer(second);
+    const thirdRenderer = mockRenderer(third);
+    const firstBond = connect(
+      first,
+      AttachmentPointName.R1,
+      second,
+      AttachmentPointName.R1,
+    );
+    const secondBond = connect(
+      first,
+      AttachmentPointName.R2,
+      third,
+      AttachmentPointName.R1,
+    );
+    const command = new Command();
+    command.addOperation({
+      execute: (manager) => {
+        manager.finishPolymerBondCreation(firstBond);
+        manager.finishPolymerBondCreation(secondBond);
+      },
+      invert: () => {},
+    });
+    command.addOperation(new DrawingEntitySelectOperation(first));
+
+    renderersManager.update(command, true);
+
+    expect(firstRenderer.redrawAttachmentPoints).toHaveBeenCalledTimes(1);
+    expect(firstRenderer.drawSelection).toHaveBeenCalledTimes(1);
+    expect(firstRenderer.redrawHover).toHaveBeenCalledTimes(1);
+    expect(secondRenderer.redrawAttachmentPoints).toHaveBeenCalledTimes(1);
+    expect(thirdRenderer.redrawAttachmentPoints).toHaveBeenCalledTimes(1);
+    expect(createPolymerBondRendererSpy).not.toHaveBeenCalled();
   });
 });
 

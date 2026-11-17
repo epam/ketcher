@@ -191,6 +191,7 @@ function EditorContainer({
 }
 
 function Editor({
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -225,6 +226,7 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
+        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,

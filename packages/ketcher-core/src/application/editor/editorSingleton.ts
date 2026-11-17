@@ -13,3 +13,16 @@ export function setEditorInstance(editor: CoreEditor): void {
 export function resetEditorInstance(): void {
   editorInstance = undefined;
 }
+
+export function withEditorInstance<T>(
+  editor: CoreEditor,
+  callback: () => T,
+): T {
+  const previousEditor = editorInstance;
+  editorInstance = editor;
+  try {
+    return callback();
+  } finally {
+    editorInstance = previousEditor;
+  }
+}

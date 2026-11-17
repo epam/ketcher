@@ -27,12 +27,53 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
+import type { ConsoleMessage } from '@playwright/test';
+
+async function verifyLongSequenceImport(
+  page: Page,
+  filename: string,
+  monomerCount: number,
+) {
+  const errors: string[] = [];
+  const onConsole = (message: ConsoleMessage) => {
+    if (message.type() === 'error') {
+      errors.push(message.text());
+    }
+  };
+  const onPageError = (error: Error) => errors.push(error.message);
+  page.on('console', onConsole);
+  page.on('pageerror', onPageError);
+
+  try {
+    await openFileAndAddToCanvasMacro(page, filename);
+    const actualMonomerCount = await page.evaluate(async () => {
+      const ket = JSON.parse(await window.ketcher.getKet());
+      return ket.root.nodes.length;
+    });
+    expect(actualMonomerCount).toBe(monomerCount);
+
+    const toolbar = MacromoleculesTopToolbar(page);
+    await toolbar.expandSwitchLayoutModeDropdown();
+    await expect(page.getByTestId(LayoutMode.Sequence).first()).toHaveClass(
+      /active/,
+    );
+    await expect(page.getByTestId(LayoutMode.Snake).first()).toBeDisabled();
+    await expect(page.getByTestId(LayoutMode.Flex).first()).toBeDisabled();
+    await toolbar.switchLayoutModeDropdownButton.click();
+    await expect(page.getByTestId('multi-tool-dropdown')).toBeHidden();
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    expect(errors).toEqual([]);
+  } finally {
+    page.off('console', onConsole);
+    page.off('pageerror', onPageError);
+  }
+}
 
 async function createBondedMonomers(page: Page) {
   await Library(page).dragMonomerOnCanvas(Peptide.dU, {
@@ -874,110 +915,32 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for large chains', async ({
+  test('Loading 2000-base RNA from Flex switches to Sequence and disables Snake and Flex', async ({
     FlexCanvas: _,
   }) => {
-    /* 
-    Test case: Snake Mode
-    Description: Open chain with 2000 or more rna items. Turn on snake mode. Snake mode is applied on structure 
-    and maximum call stack size exceeded error not appears during snake layout.
-    */
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-    await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-2000.ket`);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await verifyLongSequenceImport(page, 'KET/sequence-rna-2000.ket', 5999);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 4000 RNA', async () => {
-    /* 
-    Test case: Snake Mode
-    Description: Open chain with 4000 rna items. Turn on snake mode. Snake mode is applied on structure 
-    and maximum call stack size exceeded error not appears during snake layout.
-    */
+  test('Loading 4000-base RNA from Flex switches to Sequence and disables Snake and Flex', async () => {
     test.slow();
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-
-    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    // ---
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-4000.ket`);
-    await moveMouseAway(page);
-
-    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await page.mouse.wheel(0, 400);
-    await page.mouse.wheel(0, -400);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await verifyLongSequenceImport(page, 'KET/sequence-rna-4000.ket', 11999);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 4000 Peptides', async () => {
-    /* 
-    Test case: Snake Mode
-    Description: Open chain with 4000 peptides items. Turn on snake mode. Snake mode is applied on structure 
-    and maximum call stack size exceeded error not appears during snake layout.
-    */
+  test('Loading 4000 peptides from Flex switches to Sequence and disables Snake and Flex', async () => {
     test.slow();
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-    await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await verifyLongSequenceImport(
+      page,
+      'KET/sequence-peptides-4000.ket',
+      4000,
+    );
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async ({
-    MoleculesCanvas: _,
-  }) => {
-    /* 
-    Test case: Snake Mode
-    Description: Open chain with 8000 peptides items. Turn on snake mode. Snake mode is applied on structure 
-    and maximum call stack size exceeded error not appears during snake layout.
-    */
-
-    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    // ---
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-    await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  test('Loading the second large peptide fixture from Flex switches to Sequence and disables Snake and Flex', async () => {
+    await verifyLongSequenceImport(
+      page,
+      'KET/sequence-peptides-8000.ket',
+      4000,
+    );
   });
 
   test('Activate Snake mode and open external rna-modified file', async ({

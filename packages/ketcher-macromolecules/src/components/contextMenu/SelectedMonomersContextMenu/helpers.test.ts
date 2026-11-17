@@ -14,10 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 import cloneDeep from 'lodash/cloneDeep';
-import { Sugar, UnsplitNucleotide } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  BaseMonomer,
+  PolymerBond,
+  Sugar,
+  UnsplitNucleotide,
+} from 'ketcher-core';
 import {
   hasUnsplitNucleotide,
   isAntisenseCreationDisabled,
+  isCycleExistsForSelectedMonomers,
   isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 
@@ -47,6 +54,39 @@ const createSugar = () =>
       },
     }),
   );
+
+const createBackbone = (length: number, isCyclic = false) => {
+  const monomers = Array.from({ length }, () =>
+    Object.assign(Object.create(BaseMonomer.prototype), {
+      attachmentPointsToBonds: {},
+      hydrogenBonds: [],
+    }),
+  );
+
+  const addBond = (
+    firstIndex: number,
+    secondIndex: number,
+    firstAttachmentPoint: AttachmentPointName,
+    secondAttachmentPoint: AttachmentPointName,
+  ) => {
+    const firstMonomer = monomers[firstIndex];
+    const secondMonomer = monomers[secondIndex];
+    const bond = new PolymerBond(firstMonomer, secondMonomer);
+
+    firstMonomer.attachmentPointsToBonds[firstAttachmentPoint] = bond;
+    secondMonomer.attachmentPointsToBonds[secondAttachmentPoint] = bond;
+  };
+
+  for (let index = 0; index < length - 1; index++) {
+    addBond(index, index + 1, AttachmentPointName.R2, AttachmentPointName.R1);
+  }
+
+  if (isCyclic && length > 2) {
+    addBond(length - 1, 0, AttachmentPointName.R2, AttachmentPointName.R1);
+  }
+
+  return monomers;
+};
 
 describe('SelectedMonomersContextMenu helpers — unsplit nucleotides', () => {
   it('shows antisense option for unsplit with natural analogue A', () => {
@@ -96,5 +136,19 @@ describe('SelectedMonomersContextMenu helpers — unsplit nucleotides', () => {
       true,
     );
     expect(hasUnsplitNucleotide([createSugar()])).toBe(false);
+  });
+});
+
+describe('isCycleExistsForSelectedMonomers', () => {
+  it('handles a linear selection longer than the call stack', () => {
+    expect(isCycleExistsForSelectedMonomers(createBackbone(11_500))).toBe(
+      false,
+    );
+  });
+
+  it('detects a cycle in a selected backbone', () => {
+    expect(isCycleExistsForSelectedMonomers(createBackbone(3, true))).toBe(
+      true,
+    );
   });
 });

@@ -492,6 +492,10 @@ export class ChainsCollection {
   }
 
   private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {
+    if (this.chains.filter((chain) => !chain.isAntisense).length <= 1) {
+      return;
+    }
+
     const handledChain = new Set<Chain>();
     const monomerToChain = this.monomerToChain;
     const monomerToNode = this.monomerToNode;

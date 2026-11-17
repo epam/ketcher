@@ -2,6 +2,7 @@ import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { select } from 'd3';
 import {
   canvasSelector,
@@ -46,9 +47,9 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   protected canvas: D3SvgElementSelection<SVGGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
-    this.canvasWrapper =
-      ZoomTool.instance?.canvasWrapper ?? select(canvasSelector);
-    this.canvas = ZoomTool.instance?.canvas ?? select(drawnStructuresSelector);
+    const zoomTool = provideEditorInstance()?.zoomTool ?? ZoomTool.instance;
+    this.canvasWrapper = zoomTool?.canvasWrapper ?? select(canvasSelector);
+    this.canvas = zoomTool?.canvas ?? select(drawnStructuresSelector);
   }
 
   protected get editorSettings() {

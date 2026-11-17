@@ -75,6 +75,7 @@ export const Editor = (props: Props) => {
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
+  const [isLongSequence, setIsLongSequence] = useState(false);
   const initializedKetcherRef = useRef<Ketcher | null>(null);
 
   const [ketcherId, setKetcherId] = useState<string>('');
@@ -111,10 +112,18 @@ export const Editor = (props: Props) => {
   const togglerComponent = disableMacromoleculesEditor ? undefined : (
     <ModeControl
       toggle={(value) => {
-        if (!isMonomerWizardOpen) togglePolymerEditor(value);
+        if (
+          !isMonomerWizardOpen &&
+          (value || !macromoleculesEditor?.isLongSequence)
+        ) {
+          togglePolymerEditor(value);
+        }
       }}
       isPolymerEditor={isMacromoleculesEditorTurnedOn}
-      disabled={isMonomerWizardOpen}
+      disabled={
+        isMonomerWizardOpen ||
+        (isMacromoleculesEditorTurnedOn && isLongSequence)
+      }
     />
   );
 
@@ -131,12 +140,40 @@ export const Editor = (props: Props) => {
   }, [moleculesEditor]);
 
   useEffect(() => {
+    if (!macromoleculesEditor) {
+      return;
+    }
+
+    const updateLongSequenceState = () => {
+      setIsLongSequence(macromoleculesEditor.isLongSequence);
+    };
+
+    macromoleculesEditor.events.modelChange.add(updateLongSequenceState);
+    macromoleculesEditor.events.layoutModeChange.add(updateLongSequenceState);
+    macromoleculesEditor.modeEvents.macromoleculesModeActivated.add(
+      updateLongSequenceState,
+    );
+
+    return () => {
+      macromoleculesEditor.events.modelChange.remove(updateLongSequenceState);
+      macromoleculesEditor.events.layoutModeChange.remove(
+        updateLongSequenceState,
+      );
+      macromoleculesEditor.modeEvents.macromoleculesModeActivated.remove(
+        updateLongSequenceState,
+      );
+    };
+  }, [macromoleculesEditor]);
+
+  useEffect(() => {
     const switchToMacromoleculesModeHandler = () => {
       if (wizardSessionActive.current) return;
       togglePolymerEditor(true);
     };
     const switchToMoleculesModeHandler = () => {
-      if (wizardSessionActive.current) return;
+      if (wizardSessionActive.current || macromoleculesEditor?.isLongSequence) {
+        return;
+      }
       togglePolymerEditor(false);
     };
     const openWizardHandler = (request: MonomerCreationWizardRequest) => {
@@ -148,10 +185,10 @@ export const Editor = (props: Props) => {
     };
 
     if (macromoleculesEditor && isMacromoleculesEditorEnabled) {
-      macromoleculesEditor.events.switchToMacromoleculesMode.add(
+      macromoleculesEditor.modeEvents.switchToMacromoleculesMode.add(
         switchToMacromoleculesModeHandler,
       );
-      macromoleculesEditor.events.switchToMoleculesMode.add(
+      macromoleculesEditor.modeEvents.switchToMoleculesMode.add(
         switchToMoleculesModeHandler,
       );
       macromoleculesEditor.events.openMonomerCreationWizard.add(
@@ -161,10 +198,10 @@ export const Editor = (props: Props) => {
 
     return () => {
       if (macromoleculesEditor) {
-        macromoleculesEditor.events.switchToMacromoleculesMode.remove(
+        macromoleculesEditor.modeEvents.switchToMacromoleculesMode.remove(
           switchToMacromoleculesModeHandler,
         );
-        macromoleculesEditor.events.switchToMoleculesMode.remove(
+        macromoleculesEditor.modeEvents.switchToMoleculesMode.remove(
           switchToMoleculesModeHandler,
         );
         macromoleculesEditor.events.openMonomerCreationWizard.remove(
@@ -385,6 +422,7 @@ export const Editor = (props: Props) => {
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
     macromoleculesEditorRef.current = macromoleculesEditor;
+    setIsLongSequence(macromoleculesEditor.isLongSequence);
     setMacromoleculesEditor(macromoleculesEditor);
     notifyInitIfReady();
   };

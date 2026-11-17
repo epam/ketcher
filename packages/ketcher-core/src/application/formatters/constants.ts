@@ -1,4 +1,5 @@
 import type { Struct } from 'domain/entities/struct';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 export const MOLFILE_V2000_ATOM_BOND_LIMIT = 999;
 
@@ -21,9 +22,9 @@ export const macromoleculesFilesInputFormats = {
     peptide3Letter: 'chemical/x-peptide-sequence-3-letter',
   },
   fasta: {
-    rna: 'chemical/x-rna-fasta',
-    dna: 'chemical/x-dna-fasta',
-    peptide: 'chemical/x-peptide-fasta',
+    rna: ChemicalMimeType.RNAFasta,
+    dna: ChemicalMimeType.DNAFasta,
+    peptide: ChemicalMimeType.PeptideFasta,
   },
   idt: 'chemical/x-idt',
   'axo-labs': 'chemical/x-axo-labs',

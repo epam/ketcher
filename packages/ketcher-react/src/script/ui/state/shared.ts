@@ -17,10 +17,17 @@
 import {
   type Struct,
   type Editor,
+  type CoreEditor,
   FormatterFactory,
+  type ChemicalMimeType,
   SGroup,
   identifyStructFormat,
   SupportedFormat,
+  isLongSequenceMonomerCount,
+  macromoleculesFilesInputFormats,
+  ketcherProvider,
+  withEditorInstance,
+  parseAndAddMacromoleculesOnCanvas,
   notifyRequestCompleted,
   KetcherLogger,
   SettingsManager,
@@ -56,6 +63,61 @@ export function loadStruct(struct) {
     const editor = getState().editor;
     editor.struct(struct);
   };
+}
+
+export function isLongSequenceFasta(struct: string): boolean {
+  if (identifyStructFormat(struct) !== SupportedFormat.fasta) {
+    return false;
+  }
+
+  const sequence = getFastaSequence(struct);
+  const isNucleotideSequence = isNucleotideFasta(sequence);
+  // Nucleotides expand to sugar, base, and phosphate monomers.
+  const monomerCount = sequence.length * (isNucleotideSequence ? 3 : 1);
+
+  return isLongSequenceMonomerCount(monomerCount);
+}
+
+export function getFastaSequenceInputFormat(struct: string): ChemicalMimeType {
+  const sequence = getFastaSequence(struct);
+  if (!isNucleotideFasta(sequence)) {
+    return macromoleculesFilesInputFormats.fasta.peptide;
+  }
+
+  const sequenceType =
+    /U/i.test(sequence) && !/T/i.test(sequence) ? 'rna' : 'dna';
+  return macromoleculesFilesInputFormats.fasta[sequenceType];
+}
+
+function getFastaSequence(struct: string): string {
+  return struct
+    .split(/\r?\n/)
+    .filter((line) => !/^\s*>/.test(line))
+    .join('')
+    .replace(/\s/g, '');
+}
+
+function isNucleotideFasta(sequence: string): boolean {
+  return /^[ACGTURYSWKMBDHVN]+$/i.test(sequence);
+}
+
+function waitForMacromoleculesMode(editor: CoreEditor): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let timeout: ReturnType<typeof setTimeout>;
+    const onModeActivated = () => {
+      clearTimeout(timeout);
+      editor.modeEvents.macromoleculesModeActivated.remove(onModeActivated);
+      resolve();
+    };
+    timeout = setTimeout(() => {
+      editor.modeEvents.macromoleculesModeActivated.remove(onModeActivated);
+      reject(
+        new Error('Timed out waiting for Macromolecules mode to activate'),
+      );
+    }, 10000);
+
+    editor.modeEvents.macromoleculesModeActivated.add(onModeActivated);
+  });
 }
 
 export function parseStruct(
@@ -124,6 +186,43 @@ export function load(struct: string | Struct, options?) {
     dispatch(setAnalyzingFile(true));
 
     try {
+      if (
+        !otherOptions.fragment &&
+        !method &&
+        typeof struct === 'string' &&
+        isLongSequenceFasta(struct)
+      ) {
+        const macromoleculesEditor = ketcherProvider.getCoreEditor(
+          editor.ketcherId,
+        );
+        if (!macromoleculesEditor) {
+          throw new Error(
+            `No Macromolecules editor is registered for Ketcher ${editor.ketcherId}`,
+          );
+        }
+        if (!macromoleculesEditor.isMacromoleculesMode) {
+          const modeActivated = waitForMacromoleculesMode(macromoleculesEditor);
+          macromoleculesEditor.modeEvents.switchToMacromoleculesMode.dispatch();
+          await modeActivated;
+        }
+
+        await parseAndAddMacromoleculesOnCanvas(
+          struct,
+          server,
+          false,
+          getFastaSequenceInputFormat(struct),
+          true,
+          macromoleculesEditor,
+        );
+        withEditorInstance(macromoleculesEditor, () =>
+          macromoleculesEditor.zoomToStructuresIfNeeded(),
+        );
+
+        dispatch(setAnalyzingFile(false));
+        dispatch({ type: 'MODAL_CLOSE' });
+        return;
+      }
+
       const parsedStruct = await parseStruct(struct, server, otherOptions);
       const { fragment } = otherOptions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(

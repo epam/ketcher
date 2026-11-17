@@ -368,6 +368,7 @@ test('8. Switching from Micro mode to Sequence and back to Micromolecules mode d
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
     LayoutMode.Sequence,
   );
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassCheck.ket',

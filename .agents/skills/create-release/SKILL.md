@@ -297,11 +297,41 @@ notes:` block as shown above, after the category sections.
 
 Public releases ship the built binaries as 6 zip attachments.
 
-Build from repo root:
+**Start from a clean slate — delete every package's previous build output
+and build caches first.** `build:packages` builds `ketcher-react` *before*
+`ketcher-macromolecules`, and `ketcher-react` bundles the macromolecules
+`dist/` as a lazy chunk. So whatever `packages/ketcher-macromolecules/dist`
+already sits on disk — typically left over from building a different branch
+— gets baked into the new `ketcher-react` bundle. In 3.20 that stale copy
+imported an export that doesn't exist on the release branch, and the
+example build failed with `Attempted import error: 'i18n' is not exported
+from 'ketcher-react'`. A successful build is no proof either: a stale copy
+that happens to compile silently ships the wrong macromolecules code inside
+`ketcher-react.zip`. Clearing only the caches is not enough; remove the
+`dist/` folders too:
+
+```bash
+rm -rf packages/*/dist packages/*/node_modules/.cache example/node_modules/.cache example/dist
+npm install     # local node_modules can drift from the lockfile after branch switches; this syncs it without changing tracked files
+```
+
+Then build from repo root:
 
 ```bash
 npm run build   # = build:packages (core, react, macromolecules, standalone) + build:example (remote, standalone)
+git status --short   # must still be clean
 ```
+
+From a clean slate, rollup prints `(!) Unresolved dependencies` for
+`ketcher-macromolecules` while building `ketcher-react` — that's expected
+and matches CI's fresh-checkout build: the import stays external and the
+example build resolves it against the freshly built macromolecules
+package. (Verified on `release/3.20`, which still builds packages with
+rollup; on Vite-based branches, the clean slate is still the safe start.)
+
+If it still fails with an "is not exported from" error after starting
+clean, that's a real regression on the branch — don't chase it as another
+cache issue.
 
 Then zip each package's `dist/` folder, named after the package, plus the
 two example bundles under `example/dist/`, named with the version:

@@ -39,8 +39,12 @@ ISSUE_TYPE_TO_CATEGORY = {
 }
 EXCLUDE_TITLE_PREFIXES = re.compile(r"^(autotest s?|backmerge|refactor)\b", re.IGNORECASE)
 # Our own prepare-release commit titles - never real changelog content, always drop.
+# Also matches hand-written variants seen in 3.20 ("- bumped ketcher to 3.20.0-rc.2",
+# "Updated ketcher to 3.20.0-rc.3"); "update ketcher to" only counts when followed
+# by a version, so a real "Update Ketcher to support X" title is not dropped.
 VERSION_BUMP_TITLE_RE = re.compile(
-    r"^(update ketcher to (release candidate|public version)|bump(ed)? ketcher)\b", re.IGNORECASE
+    r"^(?:-\s*)?(updated? ketcher to (release candidate|public version|v?\d)|bump(ed)? ketcher)\b",
+    re.IGNORECASE,
 )
 SKIP_LINE_PREFIXES = ("**full changelog**",)
 

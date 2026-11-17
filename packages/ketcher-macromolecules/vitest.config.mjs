@@ -31,6 +31,6 @@ export default mergeConfig(viteConfig, {
     // Threads start faster than forks; keeps per-file isolation.
     pool: 'threads',
     include: ['src/**/*.{spec,test}.{ts,tsx}'],
-    setupFiles: ['./vitest.setup.mjs'],
+    setupFiles: ['../vitest.happy-dom.setup.mjs', './vitest.setup.mjs'],
   },
 });

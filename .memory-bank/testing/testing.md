@@ -12,7 +12,10 @@ Each package runs unit tests with Vitest using a `vitest.config.mjs` that merges
 Vite configuration. This keeps test transforms and path aliases aligned with production. Core,
 React, and macromolecules use the `happy-dom` environment; standalone uses `node`. jsdom is not
 a dependency: if it were installed, Paper.js would build a canvas-less jsdom window on the server
-and break the `example-ssr` prerender.
+and break the `example-ssr` prerender. `packages/vitest.happy-dom.setup.mjs` runs first in those
+three packages and corrects happy-dom where tests depend on it: it removes happy-dom's `getBBox`,
+so stubs on `SVGElement.prototype.getBBox` apply, and makes `MutationObserver`'s `attributeFilter`
+case-sensitive.
 
 - **ketcher-core**: `packages/ketcher-core/__tests__/` and
   `packages/ketcher-core/src/**/__tests__/` (the former Jest `testMatch` also required

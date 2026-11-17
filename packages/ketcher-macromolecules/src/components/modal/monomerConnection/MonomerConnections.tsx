@@ -19,7 +19,6 @@ import {
 } from 'ketcher-core';
 import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
-import { DropDown } from 'components/shared/dropDown';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
 
 interface IStyledButtonProps {
@@ -49,6 +48,16 @@ export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
     minHeight: '0',
   }),
 );
+
+export const ActionButtonAttachmentPoint = styled(ActionButton)((props) => ({
+  borderRadius: 5,
+  minWidth: '45px !important',
+  padding: '4px',
+  border: `1px solid ${props.theme.ketcher.color.border.secondary}`,
+  color: props.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+  background: props.disabled ? 'rgba(225, 229, 234)' : '',
+  borderColor: props.disabled ? 'rgba(225, 229, 234) !important' : '',
+}));
 
 const MonomerConnection = ({
   onClose,
@@ -236,13 +245,6 @@ function AttachmentPointSelectionPanel({
     return leavingGroup ?? null;
   };
 
-  // Attachment points already bonded to something else cannot be chosen.
-  const selectableAttachmentPoints = monomer.listOfAttachmentPoints.filter(
-    (attachmentPoint) =>
-      !connectedAttachmentPoints.includes(attachmentPoint) ||
-      attachmentPoint === selectedAttachmentPoint,
-  );
-
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
     const selectedBond = selectedAttachmentPoint
       ? monomer.attachmentPointsToBonds[selectedAttachmentPoint]
@@ -265,24 +267,38 @@ function AttachmentPointSelectionPanel({
       usage={UsageInMacromolecule.MonomerConnectionsModal}
       update={isExpanded}
       expanded={isExpanded}
-      attachmentPoints={
-        <AttachmentPoint>
-          <DropDown
-            options={selectableAttachmentPoints.map((attachmentPoint) => ({
-              id: attachmentPoint,
-              label: attachmentPoint,
-            }))}
-            currentSelection={selectedAttachmentPoint ?? ''}
-            selectionHandler={handleSelectAttachmentPoint}
-            testId={`${position}-attachment-point-dropdown`}
-          />
-          <AttachmentPointNameComponent data-testid="leaving-group-value">
-            {selectedAttachmentPoint
-              ? getLeavingGroup(selectedAttachmentPoint)
-              : null}
-          </AttachmentPointNameComponent>
-        </AttachmentPoint>
-      }
+      attachmentPoints={monomer.listOfAttachmentPoints.map(
+        (attachmentPoint) => {
+          const isDisabled = Boolean(
+            connectedAttachmentPoints.includes(attachmentPoint) &&
+            attachmentPoint !== selectedAttachmentPoint,
+          );
+          return (
+            <AttachmentPoint key={attachmentPoint}>
+              <ActionButtonAttachmentPoint
+                label={attachmentPoint}
+                styleType={
+                  attachmentPoint === selectedAttachmentPoint
+                    ? 'primary'
+                    : 'secondary'
+                }
+                clickHandler={() =>
+                  handleSelectAttachmentPoint(attachmentPoint)
+                }
+                disabled={isDisabled}
+                data-testid={`${position}-${attachmentPoint}`}
+                data-isactive={attachmentPoint === selectedAttachmentPoint}
+              />
+              <AttachmentPointNameComponent
+                data-testid="leaving-group-value"
+                disabled={isDisabled}
+              >
+                {getLeavingGroup(attachmentPoint)}
+              </AttachmentPointNameComponent>
+            </AttachmentPoint>
+          );
+        },
+      )}
       testId={`${position}-monomer-preview`}
     />
   );

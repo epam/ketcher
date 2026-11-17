@@ -70,17 +70,23 @@ The new monomer's APs SHALL be chosen so both new bonds are default bonds: R1–
 
 ### Requirement: Select Attachment Points dialog when no default connection exists
 
-If no default connection exists and the dropped monomer has two or more APs, the system SHALL open the *Select Attachment Points* dialog. After the user picks APs and clicks **Connect**, the monomer SHALL be inserted using them.
+If no default connection exists and the dropped monomer has two or more APs, the system SHALL open a single *Select Attachment Points* dialog showing all three monomers (left original, new, right original). The new monomer SHALL show two AP drop-downs — one for each new bond. After the user picks both APs and clicks **Connect**, the monomer SHALL be inserted in one step.
 
 #### Scenario: Dialog opens
 
 - **WHEN** a monomer with two or more APs is dropped on a bond and no default connection exists
-- **THEN** the *Select Attachment Points* dialog opens
+- **THEN** the *Select Attachment Points* dialog opens showing the left original monomer, the new monomer, and the right original monomer
+
+#### Scenario: Original monomer APs are pre-populated
+
+- **WHEN** the dialog is open
+- **THEN** the left and right original monomers show their bond APs as fixed labels (not selectable)
+- **AND** the new monomer shows two drop-downs for choosing its left-side and right-side APs
 
 #### Scenario: Connect inserts the monomer
 
-- **WHEN** the user selects APs and clicks **Connect**
-- **THEN** the monomer is inserted between the original monomers using the selected APs
+- **WHEN** the user selects both APs on the new monomer and clicks **Connect**
+- **THEN** the monomer is inserted between the original monomers using the selected APs in a single step
 
 ---
 

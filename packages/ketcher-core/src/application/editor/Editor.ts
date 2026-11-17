@@ -1519,6 +1519,9 @@ export class CoreEditor {
       this.onSelectTool(tool, options),
     );
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
+    this.events.createInsertionBondsViaModal.add((payload) =>
+      this.dragDropHandler.handleInsertionConnection(payload),
+    );
     this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
       this.onCancelBondCreation(secondMonomer),
     );

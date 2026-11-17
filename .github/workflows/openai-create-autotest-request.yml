@@ -95,7 +95,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Autotests: ${featureTitle}`,
-              body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
+              body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${checklistMatches.join('\n')}`,
               labels: ['Autotests'],
               type: 'Task',
             });

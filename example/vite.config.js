@@ -40,10 +40,7 @@ const polymerEditorValues = createReplaceValues({
   isProduction,
 });
 
-// The dev server serves the package sources as native ES modules, where
-// `require` does not exist, so `require(...)` is rewritten to a dynamic
-// import. A `typeof require` guard has to be rewritten as a whole: on its own
-// the word would become `typeof await import`, which is not valid code.
+// `typeof require` is replaced as a whole, or it turns into `typeof await import`
 const requireToDynamicImportValues = {
   'typeof require': JSON.stringify('function'),
   require: 'await import',

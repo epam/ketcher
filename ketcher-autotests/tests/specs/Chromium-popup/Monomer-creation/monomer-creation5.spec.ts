@@ -32,7 +32,6 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
   MicroAtomOption,

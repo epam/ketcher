@@ -14,7 +14,6 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 /* 
 Test case: #2497 - Add chem to canvas

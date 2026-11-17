@@ -14,7 +14,6 @@ import { waitForPageInit } from '@utils/common';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor

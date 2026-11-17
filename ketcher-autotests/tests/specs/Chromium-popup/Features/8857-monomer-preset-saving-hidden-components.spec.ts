@@ -18,7 +18,6 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { MonomerType } from '@utils/types';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;

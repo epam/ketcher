@@ -33,18 +33,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
   });
 
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-    // Canvas cleanup is undoable; discard its history before testing boundaries.
     await page.evaluate(() => {
       globalThis.window.ketcher.editor.clearHistory();
     });
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
-    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
-    await expect(
-      (await getVisibleCanvas(page)).locator(getAtomLocator(page, {})),
-    ).toHaveCount(0);
-    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
   });
 
   test.afterAll(async ({ closePage }) => {

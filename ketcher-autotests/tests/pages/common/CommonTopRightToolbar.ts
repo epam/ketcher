@@ -111,13 +111,11 @@ export const CommonTopRightToolbar = (page: Page) => {
     },
 
     async turnOnMacromoleculesEditor(
+      layoutMode?: LayoutMode,
       options?: TurnOnMacromoleculesEditorOptions,
     ) {
-      const {
-        disableChainLengthRuler = true,
-        disableAutozoom = true,
-        enableFlexMode = false,
-      } = options ?? {};
+      const { disableChainLengthRuler = true, disableAutozoom = true } =
+        options ?? {};
 
       if (disableChainLengthRuler) {
         await hideRuler(page);
@@ -141,10 +139,8 @@ export const CommonTopRightToolbar = (page: Page) => {
         page,
       ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
 
-      if (enableFlexMode) {
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-          LayoutMode.Flex,
-        );
+      if (layoutMode) {
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(layoutMode);
       }
 
       if (disableAutozoom) {

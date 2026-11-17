@@ -201,8 +201,9 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await expect(NotificationBannerOnMicro(page).message).not.toBeVisible();
 
     // Verify the preset was not created by switching to macro mode and checking library
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const canceledPreset = {
       alias: 'CanceledPreset',
       testId: 'CanceledPreset_CncB_CncS_CncP',

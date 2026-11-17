@@ -16,8 +16,9 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 test.describe('Macromolecules connect phosphate and sugar', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
   });
 
   test('Open file and connect phosphate and sugar', async ({ page }) => {

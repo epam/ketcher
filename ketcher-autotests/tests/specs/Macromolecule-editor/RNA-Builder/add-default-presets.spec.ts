@@ -15,8 +15,9 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.collapse();
   });

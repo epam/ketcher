@@ -557,8 +557,7 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await createMonomerDialog.submit();
 
   await WarningMessageDialog(page).ok();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, {
     monomerAlias: 'TempNucleotide1',
   });

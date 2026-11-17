@@ -23,8 +23,9 @@ const endY = 600;
 test.describe('Flex mode copy&paste', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const ZOOM_OUT_VALUE = 400;
 
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');

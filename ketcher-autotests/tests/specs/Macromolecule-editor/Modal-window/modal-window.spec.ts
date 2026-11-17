@@ -20,8 +20,9 @@ test.describe('Modal window', () => {
   let chem2: Locator;
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).switchToCHEMTab();
 
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {

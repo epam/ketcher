@@ -24,8 +24,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
   await waitForPageInit(page);
 
   // Click on POLYMER_TOGGLER
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await Library(page).dragMonomerOnCanvas(Chem.sDBL, {
     x: 0,
     y: 0,
@@ -40,8 +39,9 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 test.describe('Actions with CHEM', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
   });
 
   test('Check that CHEM name fits in its icon when placed on canvas', async ({

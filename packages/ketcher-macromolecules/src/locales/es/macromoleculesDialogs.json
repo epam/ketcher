@@ -1,0 +1,145 @@
+{
+  "monomerLibrary": {
+    "searchPlaceholder": "Buscar por nombre...",
+    "hideLibrary": "Ocultar biblioteca",
+    "showLibrary": "Mostrar biblioteca",
+    "favoritesTooltip": "Favoritos",
+    "peptidesTab": "Péptidos",
+    "presetsTab": "Preajustes",
+    "sugarsTab": "Azúcares",
+    "basesTab": "Bases",
+    "phosphatesTab": "Fosfatos",
+    "nucleotidesTab": "Nucleótidos",
+    "monomersSectionHeader": "Monómeros",
+    "presetsSectionHeader": "Preajustes",
+    "toggleFavoriteAriaLabel": "Alternar favorito",
+    "autochainErrorR2": "Selecciona un monómero o una cadena que tenga un R2 disponible.",
+    "autochainErrorR1": "Este monómero no se puede añadir a una cadena con este botón porque no tiene R1.",
+    "errorModalTitle": "Mensaje de error",
+    "presetNameExists": "Ya existe un preajuste con el nombre \"{name}\". Elige otro nombre.",
+    "invalidPreset": "El preajuste con nombre \"{name}\" no se puede usar porque es imposible establecer enlaces entre los monómeros. Edita su estructura o elige otro.",
+    "invalidPresetNameFormat": "El código del preajuste solo puede contener letras mayúsculas y minúsculas, números, guiones (-), guiones bajos (_) y asteriscos (*).",
+    "rnaBuilderHeader": "Constructor de ARN",
+    "saveDisabledPhosphateTooltip": "Antes de guardar debes elegir la posición del fosfato.",
+    "phosphateDisabledLeftTooltip": "El azúcar debe tener R1 y el fosfato debe tener R2.",
+    "phosphateDisabledRightTooltip": "El azúcar debe tener R2 y el fosfato debe tener R1.",
+    "phosphateOnLeft": "Fosfato a la izquierda",
+    "phosphateOnRight": "Fosfato a la derecha",
+    "switchToLeft": "Cambiar a la izquierda",
+    "switchToRight": "Cambiar a la derecha",
+    "selectPhosphatePositionAriaLabel": "Seleccionar la posición del fosfato",
+    "nameYourStructure": "Nombra tu estructura",
+    "addToPresets": "Añadir a preajustes",
+    "update": "Actualizar",
+    "edit": "Editar",
+    "duplicateAndEdit": "Duplicar y editar",
+    "notSelected": "No seleccionado",
+    "groupLabelSugar": "Azúcar",
+    "groupLabelBase": "Base",
+    "groupLabelPhosphate": "Fosfato",
+    "addNewPreset": "Añadir nuevo",
+    "filterPresetsAriaLabel": "Filtrar preajustes por posición del fosfato",
+    "filterTitle": "Filtro",
+    "fivePrimePhosphate": "5'-fosfato",
+    "threePrimePhosphate": "3'-fosfato",
+    "noPhosphateGroup": "Sin grupo fosfato",
+    "resetAll": "Restablecer todo",
+    "setFilter": "Establecer"
+  },
+  "contextMenu": {
+    "copy": "Copiar",
+    "paste": "Pegar",
+    "delete": "Eliminar",
+    "modifyAminoAcids": "Modificar aminoácidos",
+    "rnaContextMenu": {
+      "duplicateAndEdit": "Duplicar y editar...",
+      "edit": "Editar...",
+      "deletePreset": "Eliminar preajuste"
+    },
+    "selectedMonomers": {
+      "createRnaAntisenseStrand": "Crear cadena antisentido de ARN",
+      "createDnaAntisenseStrand": "Crear cadena antisentido de ADN",
+      "arrangeAsRing": "Disponer como anillo",
+      "editAttachmentPoints": "Editar puntos de unión..."
+    },
+    "sequenceItem": {
+      "editSequence": "Editar secuencia",
+      "startNewSequence": "Iniciar nueva secuencia",
+      "createRnaAntisenseStrand": "Crear cadena antisentido de ARN",
+      "createDnaAntisenseStrand": "Crear cadena antisentido de ADN",
+      "establishHydrogenBonds": "Establecer enlaces de hidrógeno",
+      "removeHydrogenBonds": "Eliminar enlaces de hidrógeno",
+      "modifyInRnaBuilder": "Modificar en el constructor de ARN...",
+      "deleteAllHydrogenBondsTitle": "Eliminación de todos los enlaces de hidrógeno",
+      "deleteAllHydrogenBondsConfirm": "Eliminar todos los enlaces de hidrógeno provocará la separación de dos cadenas. ¿Deseas continuar?",
+      "nucleotidesCount": "{count} nucleótidos",
+      "elementsCount": "{count} elementos"
+    }
+  },
+  "settings": {
+    "importFailed": "Error al importar: {message}",
+    "exportFailed": "Error al exportar"
+  },
+  "confirmationDialog": {
+    "defaultTitle": "Confirma tu acción"
+  },
+  "delete": {
+    "title": "Eliminar preajuste de ARN",
+    "confirmationLineOne": "Estás a punto de eliminar",
+    "confirmationLineTwo": "el preajuste de ARN \"{name}\".",
+    "irreversible": "Esta operación no se puede deshacer."
+  },
+  "error": {
+    "defaultTitle": "Mensaje de error"
+  },
+  "open": {
+    "title": "Abrir estructura",
+    "openAsNew": "Abrir como nuevo",
+    "addToCanvas": "Añadir al lienzo",
+    "addToCanvasTooltip": "La estructura se cargará como fragmento y se añadirá al portapapeles",
+    "convertError": "¡Error de conversión! {error}",
+    "unsupportedSymbols": "Símbolos no compatibles",
+    "fileParsingError": "Error al analizar el archivo.",
+    "pasteFromClipboard": "Pegar desde el portapapeles",
+    "openFromFile": "Abrir desde archivo",
+    "openFromImage": "Abrir desde imagen",
+    "orDragFileHere": "o arrastra el archivo aquí",
+    "imageRecognitionUnavailable": "El servicio de reconocimiento de imágenes no está disponible"
+  },
+  "save": {
+    "title": "Guardar estructura",
+    "fileName": "Nombre de archivo:",
+    "fileFormat": "Formato de archivo:",
+    "copyToClipboard": "Copiar al portapapeles",
+    "convertError": "¡Error de conversión! {error}",
+    "helmSmilesExportNotice": "La molécula se exportará usando SMILES en línea y, al cargarla, aparecerá como un monómero CHEM",
+    "helmAliasExportNotice": "Algunos monómeros no tienen alias en la biblioteca principal de HELM; se exportan usando los alias de Ketcher.",
+    "sequenceTypeRecognitionError": "Error al reconocer el tipo de secuencia (ARN, ADN o péptido)"
+  },
+  "updateSequence": {
+    "title": "Actualizar secuencia",
+    "confirmText": "Vas a modificar {count} nucleótidos. ¿Estás seguro?",
+    "duplexConfirmText": "Vas a modificar {count} nucleótidos, y eso cambiará {mirroredCount} nucleótidos adicionales. ¿Estás seguro?"
+  },
+  "monomerConnection": {
+    "editTitle": "Editar puntos de unión",
+    "selectTitle": "Seleccionar puntos de unión",
+    "reconnect": "Reconectar",
+    "connect": "Conectar"
+  },
+  "modal": {
+    "closeWindow": "Cerrar ventana",
+    "expandWindow": "Expandir ventana",
+    "minimizeWindow": "Minimizar ventana"
+  },
+  "monomerName": {
+    "anyDnaBase": "Cualquier base de ADN",
+    "ambiguousDnaBase": "Base de ADN ambigua",
+    "anyRnaBase": "Cualquier base de ARN",
+    "ambiguousRnaBase": "Base de ARN ambigua",
+    "ambiguousBase": "Base ambigua",
+    "anyAminoAcid": "Cualquier aminoácido",
+    "ambiguousAminoAcid": "Aminoácido ambiguo",
+    "ambiguousGeneric": "{class} ambiguo"
+  }
+}

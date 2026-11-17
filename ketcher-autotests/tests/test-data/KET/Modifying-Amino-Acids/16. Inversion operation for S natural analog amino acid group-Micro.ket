@@ -404,8 +404,7 @@
             "y": -1.25
         },
         "alias": "dS",
-        "templateId": "dS___D-Serine",
-        "seqid": 4
+        "templateId": "dS___D-Serine"
     },
     "monomer4": {
         "type": "monomer",

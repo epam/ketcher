@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 /**
- * This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
- * configuration in `rollup.config.mjs`. The alias `_indigo-ketcher-import-alias_` is
- * replaced with the actual Indigo WASM module path during the build.
+ * This module alias is resolved at build time via the `resolve.alias`
+ * configuration in `vite.config.mjs`. The alias `_indigo-ketcher-import-alias_`
+ * is replaced with the actual Indigo WASM module path during the build.
  */
 declare module '_indigo-ketcher-import-alias_' {
   import { IndigoModule } from './indigoWorker.types';

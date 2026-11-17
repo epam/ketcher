@@ -519,8 +519,7 @@
             "y": -2.75
         },
         "alias": "meW",
-        "templateId": "meW___N-Methyl-Tryptophan",
-        "seqid": 6
+        "templateId": "meW___N-Methyl-Tryptophan"
     },
     "monomer6": {
         "type": "monomer",

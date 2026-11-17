@@ -55,6 +55,8 @@ There is an abstract base renderer, an abstract base for monomer renderers, and 
 3. Run post-render methods — recompute monomer enumeration when flagged and render aromatic circles e t c.
 4. Notify that rendering is complete.
 
+Convex aromatic circles use the shared `BondWidth` from `BondPathRenderer/constants`, matching the surrounding atomic bond paths.
+
 Monomer add uses the factory to pick the renderer class; bond add uses a polymer-bond renderer factory. Coordinates are stored in angstroms in model and converted to pixels in the renderer layer. Monomer bodies reference shared `<symbol>` defs via `<use href>`.
 
 ### Polymer-bond rendering

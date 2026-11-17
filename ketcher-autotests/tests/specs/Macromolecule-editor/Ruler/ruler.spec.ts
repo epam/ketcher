@@ -21,11 +21,11 @@ test.describe('Tests for Ruler', () => {
   });
 
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
+      {
+        disableChainLengthRuler: false,
+      },
     );
   });
 

@@ -18,7 +18,7 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-// happy-dom has no getBBox and only a no-op ResizeObserver; both are stubbed.
+// Browser APIs that the test DOM lacks or leaves as no-ops are stubbed.
 globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),

@@ -14,46 +14,46 @@ vi.stubGlobal('__require', createRequire(import.meta.url));
 
 // happy-dom lowercases `attributeFilter` names but compares them with the
 // attribute name as written, so a camelCase SVG attribute such as `viewBox`
-// never matches (the DOM spec compares names case-sensitively). Observe
-// without the filter and apply it to the records instead.
+// never matches (the DOM spec compares names case-sensitively). Each observed
+// target gets its own happy-dom observer without the filter, and its records
+// are filtered here.
 const HappyDomMutationObserver = globalThis.MutationObserver;
-class CaseSensitiveMutationObserver extends HappyDomMutationObserver {
-  #filters = new Map();
+class CaseSensitiveMutationObserver {
+  #callback;
+  #registrations = new Map();
 
   constructor(callback) {
-    super((records, observer) => {
-      const kept = records.filter(
-        (record) => record.type !== 'attributes' || this.#accepts(record),
-      );
-      if (kept.length > 0) callback(kept, observer);
-    });
+    this.#callback = callback;
   }
 
   observe(target, options = {}) {
+    this.#registrations.get(target)?.observer.disconnect();
     const { attributeFilter, ...rest } = options;
-    if (attributeFilter) {
-      this.#filters.set(target, new Set(attributeFilter));
-      super.observe(target, { ...rest, attributes: true });
-    } else {
-      this.#filters.set(target, null);
-      super.observe(target, options);
-    }
+    const names = attributeFilter && new Set(attributeFilter);
+    const keep = (records) =>
+      names
+        ? records.filter(
+            (record) =>
+              record.type !== 'attributes' || names.has(record.attributeName),
+          )
+        : records;
+    const observer = new HappyDomMutationObserver((records) => {
+      const kept = keep(records);
+      if (kept.length > 0) this.#callback(kept, this);
+    });
+    observer.observe(target, names ? { ...rest, attributes: true } : options);
+    this.#registrations.set(target, { observer, keep });
   }
 
   disconnect() {
-    this.#filters.clear();
-    super.disconnect();
+    this.#registrations.forEach(({ observer }) => observer.disconnect());
+    this.#registrations.clear();
   }
 
-  // The nearest observed target decides, as each target has its own options.
-  #accepts(record) {
-    for (let node = record.target; node; node = node.parentNode) {
-      if (this.#filters.has(node)) {
-        const names = this.#filters.get(node);
-        return !names || names.has(record.attributeName);
-      }
-    }
-    return true;
+  takeRecords() {
+    return [...this.#registrations.values()].flatMap(({ observer, keep }) =>
+      keep(observer.takeRecords()),
+    );
   }
 }
 vi.stubGlobal('MutationObserver', CaseSensitiveMutationObserver);

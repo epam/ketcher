@@ -59,3 +59,45 @@ export const hasPhosphatePositionAttachmentPointConflict = (
     phosphateAttachmentPoints?.has(requiredAttachmentPoints.phosphate),
   );
 };
+
+export type AttachmentPointRename = [
+  currentName: AttachmentPointName,
+  newName: AttachmentPointName,
+];
+
+/**
+ * Names of user-created sugar/phosphate attachment points that collide with
+ * the connection attachment points of the newly selected phosphate position
+ * must be swapped with the previous connection names.
+ */
+export const getAttachmentPointRenamesForPhosphatePositionChange = (
+  previousPosition: PhosphatePosition | undefined,
+  newPosition: PhosphatePosition,
+  sugarAttachmentPoints?: AttachmentPointMap,
+  phosphateAttachmentPoints?: AttachmentPointMap,
+): AttachmentPointRename[] => {
+  if (!previousPosition || previousPosition === newPosition) {
+    return [];
+  }
+
+  const previous =
+    getRequiredAttachmentPointsForPhosphatePosition(previousPosition);
+  const next = getRequiredAttachmentPointsForPhosphatePosition(newPosition);
+  const renames: AttachmentPointRename[] = [];
+
+  if (sugarAttachmentPoints?.has(next.sugar)) {
+    renames.push([next.sugar, previous.sugar]);
+  }
+  if (phosphateAttachmentPoints?.has(next.phosphate)) {
+    renames.push([next.phosphate, previous.phosphate]);
+  }
+
+  // Attachment point names are unique across the preset, so renaming one onto
+  // the other already swaps them; applying the inverse rename would undo it.
+  const [first, second] = renames;
+  if (first && second && first[0] === second[1] && first[1] === second[0]) {
+    return [first];
+  }
+
+  return renames;
+};

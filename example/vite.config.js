@@ -40,6 +40,15 @@ const polymerEditorValues = createReplaceValues({
   isProduction,
 });
 
+// The dev server serves the package sources as native ES modules, where
+// `require` does not exist, so `require(...)` is rewritten to a dynamic
+// import. A `typeof require` guard has to be rewritten as a whole: on its own
+// the word would become `typeof await import`, which is not valid code.
+const requireToDynamicImportValues = {
+  'typeof require': JSON.stringify('function'),
+  require: 'await import',
+};
+
 const dotEnv = loadEnv(process.env.NODE_ENV || 'development', __dirname, '');
 Object.assign(process.env, dotEnv, exampleEnv, {
   MODE: process.env.MODE || exampleEnv.MODE || 'standalone',
@@ -612,9 +621,7 @@ export default defineConfig(({ command }) => ({
       ...replace({
         include: '**/example/src/**',
         preventAssignment: true,
-        values: {
-          require: 'await import',
-        },
+        values: requireToDynamicImportValues,
       }),
       apply: 'serve',
     },
@@ -622,9 +629,7 @@ export default defineConfig(({ command }) => ({
       ...replace({
         include: '**/ketcher-core/src/**',
         preventAssignment: true,
-        values: {
-          require: 'await import',
-        },
+        values: requireToDynamicImportValues,
       }),
       apply: 'serve',
     },

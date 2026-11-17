@@ -353,12 +353,11 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   const action = new Action();
   action.addOp(new BondDelete(id).perform(restruct));
 
-  // TODO: find better way to avoid problem with bond.begin = 0
-  if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
-    const bondAddOp = new BondAdd(bond?.end, bond?.begin, bond);
+  if (bond) {
+    const bondAddOp = new BondAdd(bond.end, bond.begin, bond);
     action.addOp(bondAddOp.perform(restruct));
 
-    if (bond?.stereo && bond.stereo !== Bond.PATTERN.STEREO.NONE) {
+    if (bond.stereo && bond.stereo !== Bond.PATTERN.STEREO.NONE) {
       const oldBeginId = bond.begin;
       const oldEndId = bond.end; // becomes new begin after flip
       const oldBeginAtom = struct.atoms.get(oldBeginId);

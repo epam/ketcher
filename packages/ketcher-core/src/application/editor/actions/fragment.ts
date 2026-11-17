@@ -205,12 +205,16 @@ function processAtom(restruct, aid, frid, newfrid) {
 }
 
 /**
+ * Gives each connected component of fragment `frid` its own new fragment,
+ * moving its atoms, attachment groups and R-group membership. Unless `frid`
+ * is -1, the old fragment is then removed from its R-group and deleted.
+ * Called after atoms or bonds are erased, when a fragment may fall apart.
+ * The operations are reversed at the end (see processAtom).
  * @param restruct { ReStruct }
  * @param frid { number }
  * @param rgForRemove
  * @return { Action }
  */
-// TODO [RB] the thing is too tricky :) need something else in future
 export function fromFragmentSplit(
   restruct,
   frid,

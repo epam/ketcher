@@ -38,6 +38,16 @@ The render object owns the paper, viewBox, zoom, and connection table. There are
 
 Selection is drawn on dedicated selection/info layers. The layer map fixes z-order from low to high: background, images, selection plate, selection points, hovering, atoms, bond skeleton, warnings, data, additional info, indices.
 
+### Images and the broken-image placeholder
+
+The image wrapper (`ReImage`) draws an image entity's bitmap, a data URI, as an SVG `<image>`. When the bitmap is corrupted, it draws a broken-image placeholder (`BROKEN_IMAGE_PLACEHOLDER`) in the same bounding box instead. Selection, move, resize and delete work on the placeholder as on any image.
+
+- **Structural check.** `isImageBitmapCorrupted` (`domain/helpers/imageIntegrity.ts`) checks PNG (signature, `IHDR` first, every chunk CRC, `IEND`) and SVG (parses as XML with an `<svg>` root). A failing image gets the placeholder straight away. This check is needed because browsers draw a PNG with a broken pixel stream partially and still fire `load`.
+- **Browser fallback.** Other types are drawn as is and loaded through a browser `Image`. On `error` the element switches to the placeholder, but only if it is still in the document.
+- **Cache.** Results are cached per image entity (a `WeakMap`) and checked again when the bitmap changes, so re-renders do not re-check.
+- **View only.** The placeholder is never written to the model. Export and undo/redo keep the original bitmap.
+- **Test hook.** The placeholder keeps `data-testid="image"` and `data-image-id`, and adds `data-image-placeholder="true"`.
+
 ### Editor integration
 
 The render object is constructed by the micro editor. Operations mutate `Struct` and mark the render-structure dirty; after an action the render update re-shows only the marked items.

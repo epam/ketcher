@@ -1,0 +1,20 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "type": "image",
+                "format": "image/png",
+                "boundingBox": {
+                    "x": 18.424999999999997,
+                    "y": -9.774999999999997,
+                    "z": 0,
+                    "width": 4.900000000000002,
+                    "height": 4.775000000000006
+                },
+                "data": "iVBORw0KGgoAAAANSUhEUgAAAHIAAAB6CAYAAABjjgcQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAC4JSURBVHhe7Z1XVFTbtq7v43099/G0ds/ZZ++1SCaQKGJA"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    }
+}

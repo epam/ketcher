@@ -927,9 +927,11 @@ export class LibraryItemDragDropHandler {
     if (alreadyRendered) {
       renderersContainer.update(finishing);
       command.merge(finishing);
+      command.setUndoOperationsByPriority();
       EditorHistory.getInstance(getEditor()).update(command);
     } else {
       command.merge(finishing);
+      command.setUndoOperationsByPriority();
       EditorHistory.getInstance(getEditor()).update(command);
       renderersContainer.update(command);
     }

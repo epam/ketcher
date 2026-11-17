@@ -104,12 +104,17 @@ When insertion cannot proceed the system SHALL insert nothing and SHALL show a m
 
 ### Requirement: Snake-mode layout after insertion
 
-In Snake mode the system SHALL run the snake layout after insertion.
+In Snake mode the system SHALL run the snake layout after insertion. The insertion and the layout SHALL be a single undo step, so that undoing the insertion also reverts the layout and leaves no stray bonds on the canvas.
 
 #### Scenario: Layout triggered
 
 - **WHEN** an item is inserted on a bond in Snake mode
 - **THEN** the snake layout runs and repositions the chain
+
+#### Scenario: Undo in Snake mode
+
+- **WHEN** an item is inserted on a bond in Snake mode and the user undoes
+- **THEN** the new monomer and bonds are removed, the original bond is restored, and no extra bonds remain on the canvas
 
 ---
 

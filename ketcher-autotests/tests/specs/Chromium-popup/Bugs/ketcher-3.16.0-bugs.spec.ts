@@ -25,6 +25,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { expandMonomer } from '@utils/sgroup/helpers';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -188,5 +189,38 @@ test('Case 6: ', async () => {
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 100, 0, { from: 'pageCenter' });
+  await takeEditorScreenshot(page);
+});
+
+test('Case 7: ', async ({ SnakeCanvas: _ }) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6090
+   * Description: Antisense creating doesn't work if ambiguous phosphate present in the chain selection
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM using paste from clipboard: RNA1{R(A)([gly],[hn])}$$$$V2.0
+   * 3. Select all monomers on the canvas and click Create Antisense Strand from context menu
+
+   * Actual result: Nothing happens, there is an error in console
+   * Expected result: Antisense chain created. Phosphate in anti-sence chain should be natural P
+   */
+  const consoleErrors: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      consoleErrors.push(msg.text());
+    }
+  });
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)([gly],[hn])}$$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await MacromoleculesTopToolbar(page).createAntisenseStrand();
+  const filteredErrors = consoleErrors.filter((error) =>
+    error.includes('Cannot read properties of undefined'),
+  );
+  expect(filteredErrors.length).toBe(0);
   await takeEditorScreenshot(page);
 });

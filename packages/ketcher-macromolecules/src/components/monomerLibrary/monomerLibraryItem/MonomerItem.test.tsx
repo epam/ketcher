@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import { AmbiguousMonomerType, MonomerItemType, Struct } from 'ketcher-core';
 import { MonomerItem } from './MonomerItem';
@@ -16,7 +19,7 @@ describe('Test Monomer Item component', () => {
   });
 
   it('Test click event', () => {
-    const monomerItemHandleClick = jest.fn();
+    const monomerItemHandleClick = vi.fn();
     const monomer: MonomerItemType = {
       label: 'for test',
       props: {
@@ -43,7 +46,7 @@ describe('Test Monomer Item component', () => {
   });
 
   it('calls onStarClick when the favorite star is clicked', () => {
-    const onStarClick = jest.fn();
+    const onStarClick = vi.fn();
     const monomer: MonomerItemType = {
       label: 'for test',
       props: {

@@ -1,3 +1,4 @@
-[data-testid="vertical-bar"] {
+[data-testid='vertical-bar'],
+[data-testid='horizontal-bar'] {
   opacity: 0 !important;
 }

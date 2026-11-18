@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import i18next from 'i18next';
 import { AmbiguousMonomer, BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import getMonomerName from './getMonomerName';
@@ -5,9 +7,8 @@ import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
 
 // Plain i18next interpolation configured with the same {var} delimiters as
 // the real app's i18next-icu plugin (not the plugin itself - its
-// intl-messageformat dependency ships ESM this package's Jest config can't
-// transform inside node_modules). Plain variable substitution is all these
-// keys need.
+// intl-messageformat dependency ships ESM the test runner can't transform
+// inside node_modules). Plain variable substitution is all these keys need.
 const i18nTestInstance = i18next.createInstance();
 i18nTestInstance.init({
   lng: 'en',
@@ -21,26 +22,21 @@ interface MockVariantMonomerItem {
   options: Array<{ templateId: string }>;
 }
 
-// Mock the AmbiguousMonomer class
-jest.mock('ketcher-core', () => {
-  const actualKetcherCore = jest.requireActual('ketcher-core');
-
-  // Create a mock class that will be recognized by instanceof check
+const { MockAmbiguousMonomer } = vi.hoisted(() => {
   class MockAmbiguousMonomer {
-    variantMonomerItem: {
-      label: string;
-      options: Array<{ templateId: string }>;
-    };
-
-    monomerClass = '';
-
-    constructor(variantMonomerItem: {
-      label: string;
-      options: Array<{ templateId: string }>;
-    }) {
-      this.variantMonomerItem = variantMonomerItem;
-    }
+    constructor(
+      public variantMonomerItem: MockVariantMonomerItem,
+      public monomerClass: KetMonomerClass,
+    ) {}
   }
+
+  return { MockAmbiguousMonomer };
+});
+
+// Mock the AmbiguousMonomer class
+vi.mock('ketcher-core', async (importOriginal) => {
+  const actualKetcherCore =
+    await importOriginal<typeof import('ketcher-core')>();
 
   return {
     ...actualKetcherCore,
@@ -50,7 +46,7 @@ jest.mock('ketcher-core', () => {
 
 const createMockAmbiguousMonomer = (
   variantMonomerItem: MockVariantMonomerItem,
-  monomerClass: string,
+  monomerClass: KetMonomerClass,
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const monomer = new AmbiguousMonomer(variantMonomerItem as any);

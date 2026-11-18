@@ -6,7 +6,7 @@ exports[`Monomer List > should render correct with groups 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-15k7m6m-MonomerListContainer e1q2pzb30"
+        class="css-15k7m6m-MonomerListContainer e1e9e690"
       >
         <div
           class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
@@ -60,7 +60,7 @@ exports[`Monomer List > should render correct with groups 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-15k7m6m-MonomerListContainer e1q2pzb30"
+      class="css-15k7m6m-MonomerListContainer e1e9e690"
     >
       <div
         class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
@@ -171,7 +171,7 @@ exports[`Monomer List > should render correct without groups 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-15k7m6m-MonomerListContainer e1q2pzb30"
+        class="css-15k7m6m-MonomerListContainer e1e9e690"
       >
         <div
           class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
@@ -225,7 +225,7 @@ exports[`Monomer List > should render correct without groups 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-15k7m6m-MonomerListContainer e1q2pzb30"
+      class="css-15k7m6m-MonomerListContainer e1e9e690"
     >
       <div
         class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"

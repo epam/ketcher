@@ -59,7 +59,7 @@ describe('monomer library menu', () => {
     const editor = {
       mode: { modeName: 'flex-layout-mode' },
       events: {
-        layoutModeChange: { add: jest.fn(), remove: jest.fn() },
+        layoutModeChange: { add: vi.fn(), remove: vi.fn() },
         openMonomerCreationWizard: { dispatch: openWizard },
         openConfirmationDialog: { dispatch: openConfirmation },
       },

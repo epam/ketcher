@@ -4,8 +4,8 @@ import { LayoutMode, MonomerItemType, Struct } from 'ketcher-core';
 import { MonomerItem } from './monomerLibraryItem/MonomerItem';
 import RnaPresetItem from './RnaPresetItem/RnaPresetItem';
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
+vi.mock('ketcher-core', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('ketcher-core')>()),
   ketcherProvider: {
     getKetcher: () => ({
       editor: { struct: () => ({ isBlank: () => true }) },
@@ -32,10 +32,10 @@ describe.each([
     <RnaPresetItem
       preset={{ name: 'A' }}
       isSelected={false}
-      onClick={jest.fn()}
-      onContextMenu={jest.fn()}
-      onMouseLeave={jest.fn()}
-      onMouseMove={jest.fn()}
+      onClick={vi.fn()}
+      onContextMenu={vi.fn()}
+      onMouseLeave={vi.fn()}
+      onMouseMove={vi.fn()}
     />,
   ],
 ])('%s autochain button', (_name, component) => {

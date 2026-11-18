@@ -33,9 +33,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
   });
 
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-    await page.evaluate(() => {
-      globalThis.window.ketcher.editor.clearHistory();
-    });
+    // await page.evaluate(() => {
+    //   globalThis.window.ketcher.editor.clearHistory();
+    // });
   });
 
   test.afterAll(async ({ closePage }) => {

@@ -9,6 +9,7 @@ import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
 import type {
   CreateBondViaModalPayload,
+  CreateInsertionBondsViaModalPayload,
   SelectLayoutModePayload,
   MonomerCreationWizardRequest,
 } from './editor.types';
@@ -28,6 +29,8 @@ export interface IEditorEvents {
   error: Subscription;
   openErrorModal: Subscription;
   openMonomerConnectionModal: Subscription;
+  openInsertionConnectionModal: Subscription;
+  createInsertionBondsViaModal: Subscription<CreateInsertionBondsViaModalPayload>;
   mouseOverPolymerBond: Subscription;
   mouseLeavePolymerBond: Subscription;
   mouseOnMovePolymerBond: Subscription;
@@ -109,6 +112,9 @@ export const editorEvents: IEditorEvents = {
   error: new Subscription(),
   openErrorModal: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
+  openInsertionConnectionModal: new Subscription(),
+  createInsertionBondsViaModal:
+    new Subscription<CreateInsertionBondsViaModalPayload>(),
   mouseOverPolymerBond: new Subscription(),
   mouseLeavePolymerBond: new Subscription(),
   mouseOnMovePolymerBond: new Subscription(),

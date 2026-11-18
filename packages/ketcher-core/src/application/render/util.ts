@@ -237,6 +237,7 @@ function useLabelStyles(
       }
       break;
     case UsageInMacromolecule.MonomerConnectionsModal:
+    case UsageInMacromolecule.InsertionConnectionsModal:
       if (isAttachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';

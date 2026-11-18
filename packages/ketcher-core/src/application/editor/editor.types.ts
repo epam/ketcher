@@ -51,6 +51,16 @@ export type CreateBondViaModalPayload = {
   initialSecondMonomerAttachmentPoint?: AttachmentPointName;
 };
 
+export type CreateInsertionBondsViaModalPayload = {
+  leftMonomer: BaseMonomer;
+  newMonomer: BaseMonomer;
+  rightMonomer: BaseMonomer;
+  leftAp: AttachmentPointName;
+  leftNewAp: AttachmentPointName;
+  rightNewAp: AttachmentPointName;
+  rightAp: AttachmentPointName;
+};
+
 export type SelectLayoutModePayload =
   LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 

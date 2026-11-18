@@ -20,9 +20,9 @@ jest.mock('react-contexify', () => ({
   ),
 }));
 
-jest.mock('../hooks/useAttachmentGroupDelete', () => ({
+vi.mock('../hooks/useAttachmentGroupDelete', () => ({
   __esModule: true,
-  default: () => jest.fn(),
+  default: () => vi.fn(),
 }));
 
 describe('AttachmentGroupMenuItems', () => {

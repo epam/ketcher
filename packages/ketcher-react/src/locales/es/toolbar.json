@@ -84,7 +84,8 @@
       "singledouble": "Enlace simple/doble",
       "singlearomatic": "Enlace simple/aromático",
       "doublearomatic": "Enlace doble/aromático",
-      "dative": "Enlace dativo"
+      "dative": "Enlace dativo",
+      "haptic": "Enlace haptic"
     }
   },
   "server": {

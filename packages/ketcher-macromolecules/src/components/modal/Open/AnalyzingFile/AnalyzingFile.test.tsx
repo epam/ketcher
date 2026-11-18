@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen } from '@testing-library/react';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import { AnalyzingFile } from './AnalyzingFile';
 

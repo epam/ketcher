@@ -41,7 +41,7 @@ export default function ModificationTypeDropdown(
 ) {
   const editor = provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =
-    editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
+    editor?.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() ?? {};
   const modificationTypesOthersFromCurrentNaturalAnalogue = [
     ...new Set(
       Object.entries(modificationTypesGroupedByNaturalAnalogue)

@@ -3,9 +3,16 @@ import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
-import type { RenderOptions } from './render.types';
+import { MeasurementUnits, type RenderOptions } from './render.types';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { Scale } from 'domain/helpers';
+import {
+  getFontSizeInUnits,
+  getPolymerPreviewSvgSize,
+  MICRO_LABEL_FONT_PX,
+} from './polymerPreviewSize';
+import { UsageInMacromolecule } from './render.constants';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -19,6 +26,9 @@ export type RenderStructOptions = Partial<RenderOptions> & {
 
 const renderCache = new Map<string, string>();
 let previousOptions: RenderStructOptions | undefined;
+// Fixed bond length keeps the monomer tooltip size independent of canvas zoom
+const MONOMER_PREVIEW_PX_PER_ANGSTROM = 45;
+const DEFAULT_MICRO_MODE_SCALE = 100;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
@@ -67,6 +77,45 @@ export class RenderStruct {
     });
   }
 
+  /**
+   * In polymer mode the structure is shown at the bond length of the
+   * macromolecules canvas, so the svg has to be as large as the rendered
+   * content (labels included) is at that bond length. Otherwise the renderer
+   * squeezes the content into a box that was sized from atom coordinates only,
+   * and structures with short bonds (e.g. "R1 - CH3") come out tiny.
+   * When the content does not fit the wrapper the svg keeps filling the wrapper
+   * and the renderer fits the content into it.
+   */
+  private static getPolymerPxPerAngstrom(
+    usage: UsageInMacromolecule | undefined,
+  ) {
+    return usage === UsageInMacromolecule.MonomerPreview
+      ? MONOMER_PREVIEW_PX_PER_ANGSTROM
+      : Coordinates.modelToCanvas(new Vec2(1, 0)).x;
+  }
+
+  private static fitPolymerSvgToContent(
+    render: Render,
+    wrapperDimensions: Pick<DOMRectReadOnly, 'width' | 'height'>,
+  ) {
+    const contentSizeInUnits = render.ctab
+      .getVBoxObj()
+      .transform(Scale.modelToCanvas, render.options)
+      .sz();
+    const svgSize = getPolymerPreviewSvgSize({
+      contentSizeInUnits,
+      unitsPerAngstrom: render.options.microModeScale,
+      pxPerAngstrom: this.getPolymerPxPerAngstrom(
+        render.options.usageInMacromolecule,
+      ),
+      wrapper: wrapperDimensions,
+    });
+
+    if (svgSize !== undefined) {
+      render.setSize(svgSize, svgSize);
+    }
+  }
+
   static render(
     wrapperElement: HTMLElement | null,
     struct: Struct | null,
@@ -98,13 +147,6 @@ export class RenderStruct {
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();
       preparedStruct.markFragments();
-      const structureSize = preparedStruct.getCoordBoundingBox();
-      const structureSizeInPixels = Coordinates.modelToCanvas(
-        new Vec2(
-          structureSize.max.x - structureSize.min.x,
-          structureSize.max.y - structureSize.min.y,
-        ),
-      );
 
       // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
       // This is critical for batch rendering scenarios (e.g., template tables)
@@ -113,31 +155,23 @@ export class RenderStruct {
         width: wrapperElement.getBoundingClientRect().width,
         height: wrapperElement.getBoundingClientRect().height,
       };
-
-      const isStructureLessThanWrapper =
-        structureSizeInPixels.x < wrapperElementBoundingRect.width &&
-        structureSizeInPixels.y < wrapperElementBoundingRect.height;
-      const structureRectangleSize = Math.max(
-        structureSizeInPixels.x,
-        structureSizeInPixels.y,
-      );
-      const svgSize = isStructureLessThanWrapper
-        ? Math.min(
-            structureRectangleSize,
-            wrapperElementBoundingRect.width,
-            wrapperElementBoundingRect.height,
-          )
-        : undefined;
       const extendedOptions: Partial<RenderOptions> = {
         autoScale: true,
         ...renderOptions,
       };
 
       if (globalThis.isPolymerEditorTurnedOn) {
-        extendedOptions.fontsz = 30;
-        extendedOptions.fontszsub = 20;
-        extendedOptions.width = svgSize;
-        extendedOptions.height = svgSize;
+        // Labels get the Molecules mode font size on screen, whatever the
+        // preview scale is
+        const labelFontSizeInUnits = getFontSizeInUnits(
+          MICRO_LABEL_FONT_PX,
+          renderOptions.microModeScale ?? DEFAULT_MICRO_MODE_SCALE,
+          this.getPolymerPxPerAngstrom(renderOptions.usageInMacromolecule),
+        );
+        extendedOptions.fontsz = labelFontSizeInUnits;
+        extendedOptions.fontszUnit = MeasurementUnits.Px;
+        extendedOptions.fontszsub = labelFontSizeInUnits;
+        extendedOptions.fontszsubUnit = MeasurementUnits.Px;
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);
@@ -154,6 +188,10 @@ export class RenderStruct {
         // appear thinner than bonds in the interior. Override it so strokes
         // can paint the few pixels beyond the viewBox that they need.
         (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+      }
+
+      if (globalThis.isPolymerEditorTurnedOn) {
+        this.fitPolymerSvgToContent(rnd, wrapperElementBoundingRect);
       }
 
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);

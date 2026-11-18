@@ -131,11 +131,11 @@ export class ViewModel {
 
   private partitionLoop(halfEdgesInLoop: HalfEdge[]) {
     const subloops: Array<HalfEdge[]> = [];
-    let continueFlag = true;
+    let shouldContinue = true;
 
-    while (continueFlag) {
+    while (shouldContinue) {
       const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-      continueFlag = false;
+      shouldContinue = false;
 
       for (let l = 0; l < halfEdgesInLoop.length; ++l) {
         const halfEdge = halfEdgesInLoop[l];
@@ -150,12 +150,12 @@ export class ViewModel {
             // remove half-bonds corresponding to the subloop
             halfEdgesInLoop.splice(s, l - s + 1);
           }
-          continueFlag = true;
+          shouldContinue = true;
           break;
         }
         atomToHalfBond[firstAtomId] = l;
       }
-      if (!continueFlag) subloops.push(halfEdgesInLoop); // we're done, no more subloops found
+      if (!shouldContinue) subloops.push(halfEdgesInLoop); // we're done, no more subloops found
     }
     return subloops;
   }
@@ -245,7 +245,7 @@ export class ViewModel {
         index <= this.halfEdges.size;
         currentHalfEdge = currentHalfEdge.nextHalfEdge, ++index
       ) {
-        if (!(index > 0 && currentHalfEdge === halfEdge)) {
+        if (index === 0 || currentHalfEdge !== halfEdge) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
           continue;
         }
@@ -295,6 +295,13 @@ export class ViewModel {
     };
   }
 
+  private clearState() {
+    this.halfEdges.clear();
+    this.loops.clear();
+    this.atomsToHalfEdges.clear();
+    this.bondsToHalfEdges.clear();
+  }
+
   /*
    * Finds the largest angular gap between consecutive bonds around an atom by sorting bond angles,
    * calculating angular differences between adjacent bonds (including wraparound from last to first),
@@ -331,13 +338,6 @@ export class ViewModel {
     }
 
     return { neighborAngle, largestAngle };
-  }
-
-  private clearState() {
-    this.halfEdges.clear();
-    this.loops.clear();
-    this.atomsToHalfEdges.clear();
-    this.bondsToHalfEdges.clear();
   }
 
   public initialize(bonds: Bond[]) {

@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import {
   Action,
   Atom,
@@ -30,7 +32,7 @@ describe('History across molecule and macromolecule modes', () => {
   let macro: CoreEditor;
   let history: EditorHistory;
   const ketcherId = 'mode-history-test';
-  const originalGetBBox = SVGElement.prototype.getBBox;
+  const originalGetBBox = Reflect.get(SVGElement.prototype, 'getBBox');
   const theme = {
     ketcher: {
       peptide: { color: {} },
@@ -38,7 +40,7 @@ describe('History across molecule and macromolecule modes', () => {
     },
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     Object.defineProperty(SVGElement.prototype, 'getBBox', {
       configurable: true,
       value: () => ({ x: 0, y: 0, width: 10, height: 10 }),
@@ -48,7 +50,7 @@ describe('History across molecule and macromolecule modes', () => {
       id: ketcherId,
       editor: micro,
       changeEvent: new Subscription(),
-      updateMonomersLibrary: jest.fn(),
+      updateMonomersLibrary: vi.fn(),
     } as never);
     const canvas = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -77,17 +79,20 @@ describe('History across molecule and macromolecule modes', () => {
     macro.events.switchToMoleculesMode.add(() =>
       macro.switchToMicromolecules(),
     );
+    await macro.ensureDefaultMonomersLibraryLoaded();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-    jest.useRealTimers();
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+    // Core defers mode initialization to a timer that uses the registered editor.
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
     macro.destroy();
     ketcherProvider.removeKetcherInstance(ketcherId);
     globalThis.isPolymerEditorTurnedOn = false;
     document.body.innerHTML = '';
     if (originalGetBBox) {
-      SVGElement.prototype.getBBox = originalGetBBox;
+      Reflect.set(SVGElement.prototype, 'getBBox', originalGetBBox);
     } else {
       Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
     }
@@ -210,9 +215,10 @@ describe('History across molecule and macromolecule modes', () => {
     const originalManager = macro.drawingEntitiesManager;
     expect(originalManager.atoms.size).toBe(1);
     const previousHistoryPointer = history.historyPointer;
-    jest
-      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
-      .mockReturnValue({ modelChanges: new Command() } as never);
+    vi.spyOn(
+      MacromoleculesConverter,
+      'convertStructToDrawingEntities',
+    ).mockReturnValue({ modelChanges: new Command() } as never);
 
     macro.beginMonomerWizardSession();
     macro.finishMonomerWizardSession(true);
@@ -235,7 +241,7 @@ describe('History across molecule and macromolecule modes', () => {
   ])(
     'undoes a saved molecule monomer (partial selection: $partialSelection, attachment group: $withAttachmentGroup)',
     ({ partialSelection, withAttachmentGroup }) => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       const struct = new Struct();
       for (let index = 0; index < 12; index++) {
         struct.atoms.add(
@@ -330,7 +336,7 @@ describe('History across molecule and macromolecule modes', () => {
           },
         },
       ]);
-      jest.runAllTimers();
+      vi.runAllTimers();
 
       expect(micro.historySize()).toEqual({ undo: 2, redo: 0 });
       expect(micro.struct().sgroups.size).toBe(1);
@@ -367,7 +373,7 @@ describe('History across molecule and macromolecule modes', () => {
   );
 
   it('preserves ABS after saving a monomer connected to a stereocenter', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const struct = new Struct();
     ['N', 'C', 'N', 'C', 'C', 'N', 'C', 'N', 'C', 'C', 'C', 'C', 'C'].forEach(
       (label, index) => {
@@ -440,7 +446,7 @@ describe('History across molecule and macromolecule modes', () => {
         },
       },
     ]);
-    jest.runAllTimers();
+    vi.runAllTimers();
     expect(micro.struct().sgroups.size).toBe(1);
     expectAbs();
     micro.undo();

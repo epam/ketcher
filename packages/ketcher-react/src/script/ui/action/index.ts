@@ -18,7 +18,7 @@ import atoms from './atoms';
 import copyAs from './copyAs';
 import copyImageToClipboard from './copyImageToClipboard';
 import debug from './debug';
-import { exec } from '../component/cliparea/cliparea';
+import { canExecuteClipboardCommand } from '../component/cliparea/cliparea';
 import isHidden from './isHidden';
 import server from './server';
 import templates from './templates';
@@ -33,7 +33,7 @@ import type Editor from '../../editor/Editor';
 
 export * from './action.types';
 
-const disableIfViewOnly = (editor: Editor): boolean =>
+const isViewOnly = (editor: Editor): boolean =>
   !!editor.render.options.viewOnlyMode;
 
 const updateConfigItem = (item: UiAction): UiAction => {
@@ -44,12 +44,12 @@ const updateConfigItem = (item: UiAction): UiAction => {
     return {
       ...item,
       disabled: (...props) =>
-        disableIfViewOnly(props[0]) || originalDisabled(...props),
+        isViewOnly(props[0]) || originalDisabled(...props),
     };
   } else {
     return {
       ...item,
-      disabled: disableIfViewOnly,
+      disabled: isViewOnly,
     };
   }
 };
@@ -125,7 +125,7 @@ const config: Record<string, UiAction> = {
     title: 'toolbar:menu.cut',
     action: {
       thunk: (dispatch, _) => {
-        const isCutSupported = exec('cut');
+        const isCutSupported = canExecuteClipboardCommand('cut');
 
         if (!isCutSupported) {
           dispatch(openInfoModal('Cut'));
@@ -148,7 +148,7 @@ const config: Record<string, UiAction> = {
     title: 'toolbar:menu.copy',
     action: {
       thunk: (dispatch, _) => {
-        const isCopySupported = exec('copy');
+        const isCopySupported = canExecuteClipboardCommand('copy');
 
         if (!isCopySupported) {
           dispatch(openInfoModal('Copy'));
@@ -193,7 +193,7 @@ const config: Record<string, UiAction> = {
     title: 'toolbar:menu.paste',
     action: {
       thunk: (dispatch, _) => {
-        const isPasteSupported = exec('paste');
+        const isPasteSupported = canExecuteClipboardCommand('paste');
 
         if (!isPasteSupported) {
           dispatch(openInfoModal('Paste'));

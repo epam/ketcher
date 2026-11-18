@@ -99,7 +99,7 @@ export interface Editor {
   setOrigin: () => void;
   struct: (
     struct?: Struct,
-    needToCenterStruct?: boolean,
+    shouldCenterStruct?: boolean,
     x?: number,
     y?: number,
     ignoreHistory?: boolean,
@@ -161,7 +161,7 @@ export interface Editor {
   };
   update: (
     action: Action | true,
-    ignoreHistory?: boolean,
+    shouldIgnoreHistory?: boolean,
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
@@ -174,7 +174,7 @@ export interface Editor {
   closeMonomerCreationWizard: () => void;
   openMonomerCreationWizardFromMacro: (
     request: MonomerCreationWizardRequest,
-    onFinish: (savedCanvas: boolean) => void,
+    onFinish: (isCanvasSaved: boolean) => void,
   ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;

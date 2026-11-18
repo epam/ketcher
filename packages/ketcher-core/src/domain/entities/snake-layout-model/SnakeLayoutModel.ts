@@ -32,20 +32,21 @@ import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/Mole
 
 export class SnakeLayoutModel {
   private readonly nodes: ITwoStrandedSnakeLayoutNode[] = [];
-  public chains: SnakeLayoutModelChain[] = [];
   private readonly monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     ITwoStrandedSnakeLayoutNode
   > = new Map();
 
+  public chains: SnakeLayoutModelChain[] = [];
+
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needFillMolecules = true,
+    shouldFillMolecules = true,
   ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
-    if (needFillMolecules) {
+    if (shouldFillMolecules) {
       this.fillMolecules(drawingEntitiesManager);
     }
   }
@@ -231,8 +232,8 @@ export class SnakeLayoutModel {
 
               if (
                 currentTwoStrandedSnakeLayoutNode &&
-                !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-                isNodeInSameChain
+                isNodeInSameChain &&
+                !currentTwoStrandedSnakeLayoutNode.antisenseNode
               ) {
                 currentTwoStrandedSnakeLayoutNode.antisenseNode =
                   currentNodeBeforeHydrogenConnectionToBase;
@@ -263,8 +264,8 @@ export class SnakeLayoutModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length > 0
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
@@ -295,8 +296,7 @@ export class SnakeLayoutModel {
             currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
+                  monomer instanceof RNABase && monomer.hydrogenBonds.length > 0
                 );
               },
             );
@@ -535,7 +535,7 @@ export class SnakeLayoutModel {
         });
 
         // Fill the rest of the last row with empty nodes
-        if (currentRowToHandle.snakeLayoutModelItems.length) {
+        if (currentRowToHandle.snakeLayoutModelItems.length > 0) {
           for (
             let i = currentRowToHandle.snakeLayoutModelItems.length;
             i < lineLength;

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import type { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import type { ActionStatus } from '../../state/action';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -167,6 +168,10 @@ interface ToolbarItem {
   options?: ToolbarItem[];
 }
 
+type ToolbarStatus = {
+  [key in ToolbarItemVariant]?: ActionStatus;
+};
+
 export type { ToolbarGroupVariant };
 
 export type {
@@ -178,4 +183,4 @@ export type {
   ToolbarItemVariant,
 };
 
-export type { ToolbarItem };
+export type { ToolbarItem, ToolbarStatus };

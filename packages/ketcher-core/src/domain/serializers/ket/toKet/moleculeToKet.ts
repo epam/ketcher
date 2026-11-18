@@ -47,10 +47,9 @@ function assertCustomQueryLength(customQuery: string, context: string): void {
 function fromRlabel(rg: number): number[] {
   const res: number[] = [];
   let rgi;
-  let val;
   for (rgi = 0; rgi < 32; rgi++) {
     if (rg & (1 << rgi)) {
-      val = rgi + 1;
+      const val = rgi + 1;
       res.push(val); // push the string
     }
   }
@@ -69,17 +68,17 @@ export function moleculeToKet(
   const body: Omit<KetMoleculeNode, 'type'> = {
     atoms: [...struct.atoms.values()].map((atom) => {
       // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
-      if (atom.label === 'R#' && !monomer) return rglabelToKet(atom);
+      if (!monomer && atom.label === 'R#') return rglabelToKet(atom);
       return atomToKet(atom, monomer);
     }),
   };
 
-  if (struct.bonds.size !== 0) {
-    body.bonds = [...struct.bonds.values()].map(bondToKet);
+  if (struct.bonds.size > 0) {
+    body.bonds = Array.from(struct.bonds.values()).map(bondToKet);
   }
 
-  if (struct.sgroups.size !== 0) {
-    body.sgroups = [...struct.sgroups.values()].map((sGroup) =>
+  if (struct.sgroups.size > 0) {
+    body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
       sgroupToKet(struct, sGroup),
     );
   }
@@ -104,7 +103,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
     ifDef(
       result,
       'label',
-      source.label === 'R#' && monomer
+      monomer && source.label === 'R#'
         ? monomer.monomerItem.props.MonomerCaps?.[
             getAttachmentPointLabelWithBinaryShift(source.rglabel ?? 0)
           ]

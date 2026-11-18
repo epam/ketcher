@@ -67,7 +67,7 @@ function computeSelectedMatchingMonomerCount(
  * Returns true when the selection contains atoms or bonds that do NOT belong
  * to any monomer functional group (i.e. plain chemical structure elements).
  */
-function computeHasNonMonomerStructure(
+function hasSelectedNonMonomerStructure(
   editor: Editor,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
 ): boolean {
@@ -122,7 +122,7 @@ export function getAttachmentGroupTargetForBondHalf(
       };
 }
 
-export const getIsItemInSelection = ({
+export const isItemInSelection = ({
   item,
   selection,
   selectedSGroupsIds,
@@ -164,13 +164,13 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      const noFunctionalGroup =
+      const hasNoLabeledFunctionalGroup =
         functionalGroup === null ||
         functionalGroup?.relatedSGroup.isSuperatomWithoutLabel;
       const isMonomer =
         functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
 
-      if (noFunctionalGroup) {
+      if (hasNoLabeledFunctionalGroup) {
         return {
           id: CONTEXT_MENU_ID.FOR_BONDS + ketcherId,
           bondIds: [closestItem.id],
@@ -197,13 +197,13 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      const noFunctionalGroup =
+      const hasNoLabeledFunctionalGroup =
         functionalGroup === null ||
         functionalGroup?.relatedSGroup.isSuperatomWithoutLabel;
       const isMonomer =
         functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
 
-      if (noFunctionalGroup) {
+      if (hasNoLabeledFunctionalGroup) {
         return {
           id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
           atomIds: [closestItem.id],
@@ -334,7 +334,7 @@ export function getMenuPropsForSelection(
             : computeTotalMonomerCount(editor, primaryMonomerFG)
           : undefined,
         hasNonMonomerStructure: editor
-          ? computeHasNonMonomerStructure(editor, selectedFunctionalGroups)
+          ? hasSelectedNonMonomerStructure(editor, selectedFunctionalGroups)
           : undefined,
       };
     }

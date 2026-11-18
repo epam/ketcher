@@ -54,10 +54,10 @@ function calculateTop(
   }
 
   const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
-  const exceedsBottomBoundary = target.top + height > editorRootHeight;
+  const isBeyondBottomBoundary = target.top + height > editorRootHeight;
   const isLowerHalf = target.top > editorRootHeight / 2;
 
-  if (exceedsBottomBoundary && isLowerHalf) {
+  if (isBeyondBottomBoundary && isLowerHalf) {
     return topPreviewPosition;
   }
 

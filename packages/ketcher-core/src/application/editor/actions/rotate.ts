@@ -283,7 +283,7 @@ function fromStructureFlip(
     const difference = flipPointByCenter(sGroup.pp, center, flipDirection);
     action.addOp(new SGroupDataMove(sGroup.id, difference));
 
-    if (sGroup instanceof MonomerMicromolecule && hasExpandedMonomer) {
+    if (hasExpandedMonomer && sGroup instanceof MonomerMicromolecule) {
       action.addOp(
         new FlipMonomerOperation({
           id: sGroup.id,

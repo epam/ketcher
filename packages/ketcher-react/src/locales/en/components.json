@@ -113,6 +113,8 @@
       "invalidPhosphatePositionAttachmentPoints": "3′ position requires phosphate R1 and sugar R2, 5′ position requires phosphate R2 and sugar R1.",
       "phosphatePositionNotSelected": "You must choose the position of the phosphate (5' or 3').",
       "usedAttachmentPointsWarning": "Deleting attachment point {points} will result in deleting of bonds that use those attachment points after saving.",
+      "editAllPresetWarning": "The edited version of the monomer must be the same monomer type and must have attachment point {points}, because the monomer participates in a preset.",
+      "editAllPresetError": "The changes made to the monomer prevent it from participating in a preset. The monomer must be a {type} and contain {points} attachment points.",
       "aminoAcidLeavingGroupWarning": "Amino acid monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?",
       "sugarLeavingGroupWarning": "Sugar monomers typically have a hydrogen as the leaving group for R1 and R2, and a hydroxyl as a leaving group for R3. Do you wish to proceed with the current attachment points?",
       "baseLeavingGroupWarning": "Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?",

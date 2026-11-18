@@ -41,7 +41,7 @@ const exitFullscreen = () => {
   }
 };
 
-const getIfFullScreen = () => {
+const isFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||
@@ -52,7 +52,7 @@ const getIfFullScreen = () => {
 
 const toggleFullscreen = () => {
   const fullscreenElement = getFullscreenElement();
-  if (getIfFullScreen()) {
+  if (isFullScreen()) {
     exitFullscreen();
   } else {
     requestFullscreen(fullscreenElement);

@@ -36,19 +36,29 @@ export class BondAttr extends BaseOperation {
     bondId?: number,
     attribute?: BondAttributeName,
     value?: unknown,
-    needInvalidateBond = true,
+    shouldInvalidateBond = true,
   ) {
     super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
     this.data =
       bondId === undefined || attribute === undefined
         ? null
-        : { bid: bondId, attribute, value, needInvalidateBond };
+        : {
+            bid: bondId,
+            attribute,
+            value,
+            needInvalidateBond: shouldInvalidateBond,
+          };
     this.data2 = null;
   }
 
   execute(restruct: ReStruct) {
     if (this.data) {
-      const { attribute, bid, value, needInvalidateBond } = this.data;
+      const {
+        attribute,
+        bid,
+        value,
+        needInvalidateBond: shouldInvalidateBond,
+      } = this.data;
       const bond = restruct.molecule.bonds.get(bid);
       if (!bond) {
         return;
@@ -58,7 +68,7 @@ export class BondAttr extends BaseOperation {
         bid,
         attribute,
         value: bond[attribute],
-        needInvalidateBond,
+        needInvalidateBond: shouldInvalidateBond,
       };
 
       (bond as unknown as Record<BondAttributeName, unknown>)[attribute] =

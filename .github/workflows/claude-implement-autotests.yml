@@ -1,21 +1,20 @@
 name: Claude Implement Autotests
-
+ 
 on:
   issues:
     types: [labeled]
-
+ 
 permissions:
   contents: write
   issues: write
   pull-requests: write
   id-token: write
-  actions: read
-
+ 
 jobs:
   implement-autotests:
     if: |
+      github.event.label.name == 'Run TA creation workflow' &&
       contains(github.event.issue.labels.*.name, 'Autotests') &&
-      contains(github.event.issue.labels.*.name, 'Run TA creation workflow') &&
       (
         github.event.issue.issue_type.name == 'Task' ||
         github.event.issue.type.name == 'Task' ||
@@ -23,63 +22,135 @@ jobs:
         github.event.issue.type == 'Task'
       )
     runs-on: ubuntu-latest
+    environment: ai-workflows
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
+ 
+      # The spec file name and the Version line come from the feature issue,
+      # which is the first issue link under "Source task(s):".
       - name: Extract and check data
         id: issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
+            /**
+             * Returns the number of the first issue linked under "Source task(s):".
+             * @param {string} body Autotest Request issue body.
+             * @returns {number | null} Feature issue number, or null when there is no link.
+             */
+            const findFeatureNumber = (body) => {
+              const match = body.match(/Source task\(s\):[\s\S]*?\/issues\/(\d+)/);
+              return match ? Number(match[1]) : null;
+            };
+ 
+            /**
+             * Turns a feature title into the Feature-Name part of a spec file name.
+             * @param {string} title Feature issue title.
+             * @returns {string} Title with every run of other characters replaced by one hyphen.
+             */
+            const toFileNamePart = (title) =>
+              title.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+ 
+            /**
+             * Takes the release version from a milestone title, without the -rc.N suffix.
+             * @param {string} milestoneTitle Milestone title, such as "Ketcher 3.13.0-rc.1".
+             * @returns {string | null} Version, such as "3.13.0", or null when the title has none.
+             */
+            const toVersion = (milestoneTitle) => milestoneTitle.match(/\d+\.\d+\.\d+/)?.[0] || null;
+ 
             const issue = context.payload.issue;
-
             if (!issue) {
               throw new Error('No issue found in context');
             }
-            
-            const issueBody = issue.body
-            const checklistMatches = issueBody?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+ 
+            const issueBody = issue.body || '';
+            const checklistMatches = issueBody.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
             if (checklistMatches.length === 0) {
               throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');
             }
-
+ 
+            const featureNumber = findFeatureNumber(issueBody);
+            if (featureNumber === null) {
+              throw new Error('Autotest Request issue must link the feature issue under "Source task(s):".');
+            }
+ 
+            const { data: feature } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: featureNumber,
+            });
+ 
+            const version = toVersion(feature.milestone?.title || '');
+            if (version === null) {
+              throw new Error(`Feature issue #${featureNumber} must have a release milestone. The Version line of the comment block comes from it.`);
+            }
+ 
             core.setOutput('issue_body', issueBody);
-
+            core.setOutput('checklist_count', String(checklistMatches.length));
+            core.setOutput('spec_file_name', `${featureNumber}-${toFileNamePart(feature.title)}.spec.ts`);
+            core.setOutput('version', version);
+ 
+      - name: Create branch for the autotests
+        id: vars
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          BRANCH="autotests/${ISSUE_NUMBER}"
+          git checkout -b "$BRANCH"
+          echo "branch_name=$BRANCH" >> "$GITHUB_OUTPUT"
+ 
+      # The issue text is part of the prompt, so Claude gets only what writing
+      # the spec needs: it can read the repository and write files under
+      # ketcher-autotests/. It cannot run commands, commit, or push; the next
+      # step does that. Read the issue text before adding the label.
       - name: Implement autotests with Claude
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          model: claude-sonnet-4-6
-          direct_prompt: |
-            1. Use the generate-autotests skill (.claude/skills/generate-autotests/SKILL.md) to generate Playwright autotests based on Autotest Request issue.
-               AUTOTEST_REQUEST_NUMBER: ${{ github.event.issue.number }}.
-               AUTOTEST_REQUEST_TITLE: ${{ github.event.issue.title }}.
-               AUTOTEST_REQUEST_URL: ${{ github.event.issue.html_url }}.
-               AUTOTEST_REQUEST_DETAILS:
-               ${{ steps.issue.outputs.issue_body }}                        
-               !!!AUTOTEST_REQUEST_URL must always be used in the Test task: comment.             
-            
-            2. Under the **Source task(s):** header in the Autotest Request details AUTOTEST_REQUEST_DETAILS, 
-               find the link to the Feature. Use it to get the Feature Issue Number and Feature Title. 
-               !!!Feature Issue data is only for folder naming.
-            3. Sanitize Feature title.
-            4. Create the directory: ketcher-autotests/tests/specs/Chromium-popup/Features/<Feature Number>-<Sanitized Feature Title>. 
-               Example: ketcher-autotests/tests/specs/Chromium-popup/Features/3227-Introducing-Copolymer-S-group-type
-               You MUST use the exact format `<Feature Number>-<Sanitized Feature Title>`. Don't modify it!
-            5. Save the code into a .spec.ts file in that directory.
-            6. Commit the changes and push the new branch to origin.
-
-      - name: Get current branch name
-        id: vars
+          claude_args: |
+            --model claude-sonnet-4-6
+            --allowedTools "Read" "Glob" "Grep" "Edit(ketcher-autotests/**)" "Write(ketcher-autotests/**)"
+          prompt: |
+            Follow the generate-autotests skill (.agents/skills/generate-autotests/SKILL.md) to write a Playwright autotest for this Autotest Request.
+ 
+            AUTOTEST_REQUEST_NUMBER: ${{ github.event.issue.number }}
+            AUTOTEST_REQUEST_TITLE: ${{ github.event.issue.title }}
+            AUTOTEST_REQUEST_URL: ${{ github.event.issue.html_url }}
+            SPEC_FILE_NAME: ${{ steps.issue.outputs.spec_file_name }}
+            KETCHER_VERSION: ${{ steps.issue.outputs.version }}
+            AUTOTEST_REQUEST_DETAILS:
+            ${{ steps.issue.outputs.issue_body }}
+ 
+            Rules for this run:
+            - Name the spec file SPEC_FILE_NAME. Put it in the folder that .memory-bank/testing/testing.md ("Naming") gives for the mode the feature is tested in.
+            - Write one test for each checklist item in AUTOTEST_REQUEST_DETAILS, in the same order. Start each test title with the item number, such as `Case 3 - ...`.
+            - If a checklist item cannot be automated, do not leave it out. Add it as `test.skip` with the same title, and a comment that gives the reason and links AUTOTEST_REQUEST_URL.
+            - The Version line of each comment block is KETCHER_VERSION.
+            - Do not run the tests, and do not commit or push. The workflow commits your changes under ketcher-autotests/ and opens the PR.
+ 
+      - name: Commit and push the autotests
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
         run: |
-          BRANCH=$(git branch --show-current)
-          echo "Branch name: $BRANCH"
-          echo "branch_name=$BRANCH" >> $GITHUB_OUTPUT
-
+          git add -- ketcher-autotests
+          if git diff --cached --quiet; then
+            echo "Claude made no changes under ketcher-autotests/." >&2
+            exit 1
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "#${ISSUE_NUMBER} - ${ISSUE_TITLE}"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" "HEAD:refs/heads/${BRANCH_NAME}"
+ 
+      # The PR body shows both counts, so a reviewer sees a missing test at once.
       - name: Create pull request
         id: create_pr
         env:
@@ -87,14 +158,20 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
+          CHECKLIST_COUNT: ${{ steps.issue.outputs.checklist_count }}
         run: |
+          TEST_COUNT=$(git show --name-only --format= HEAD -- 'ketcher-autotests/*.spec.ts' \
+            | xargs -r cat \
+            | grep -cE '^\s*test(\.skip)?\(' || true)
+          BODY=$(printf 'Closes #%s\n\nChecklist items in the issue: %s. Tests in the spec, test.skip included: %s.\n' \
+            "$ISSUE_NUMBER" "$CHECKLIST_COUNT" "$TEST_COUNT")
           PR_URL=$(gh pr create \
             --title "#${ISSUE_NUMBER} - ${ISSUE_TITLE}" \
-            --body "Closes #${ISSUE_NUMBER}" \
+            --body "$BODY" \
             --head "${BRANCH_NAME}" \
             --base master)
-          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+ 
       - name: Comment on issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

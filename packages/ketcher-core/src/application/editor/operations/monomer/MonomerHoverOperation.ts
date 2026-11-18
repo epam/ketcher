@@ -21,13 +21,13 @@ import type { RenderersManager } from 'application/render/renderers/RenderersMan
 export class MonomerHoverOperation implements Operation {
   constructor(
     private readonly peptide: BaseMonomer,
-    private readonly needRedrawAttachmentPoints: boolean,
+    private readonly shouldRedrawAttachmentPoints: boolean,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.hoverMonomer(
       this.peptide,
-      this.needRedrawAttachmentPoints,
+      this.shouldRedrawAttachmentPoints,
     );
   }
 

@@ -17,10 +17,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
@@ -80,7 +77,7 @@ export const SequenceTypeGroupButton = () => {
     editor?.events.changeSequenceTypeEnterMode,
   );
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const layoutMode = useLayoutMode();
   const isSequenceMode = layoutMode === 'sequence-layout-mode';

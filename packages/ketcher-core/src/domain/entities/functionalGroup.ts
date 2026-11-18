@@ -48,31 +48,6 @@ const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
 };
 
 export class FunctionalGroup {
-  readonly #sgroup: SGroup;
-
-  constructor(sgroup: SGroup) {
-    assert(sgroup != null);
-
-    this.#sgroup = sgroup;
-    sgroup.setFunctionalGroup(this);
-  }
-
-  get name(): string {
-    return this.#sgroup.data.name;
-  }
-
-  get relatedSGroupId(): number {
-    return this.#sgroup.id;
-  }
-
-  get isExpanded(): boolean {
-    return Boolean(this.#sgroup.data.expanded);
-  }
-
-  get relatedSGroup(): SGroup {
-    return this.#sgroup;
-  }
-
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance();
     const functionalGroups = provider.getFunctionalGroupsList();
@@ -256,21 +231,46 @@ export class FunctionalGroup {
 
   static isContractedFunctionalGroup(sgroup, functionalGroups): boolean {
     let isFunctionalGroup = false;
-    let expanded = false;
+    let isExpanded = false;
 
     if (sgroup instanceof SGroup) {
       if (sgroup.functionalGroup) {
         isFunctionalGroup = true;
-        expanded = sgroup.functionalGroup.isExpanded;
+        isExpanded = sgroup.functionalGroup.isExpanded;
       }
     } else {
       functionalGroups.forEach((fg) => {
         if (fg.relatedSGroupId === sgroup) {
           isFunctionalGroup = true;
-          expanded = fg.isExpanded;
+          isExpanded = fg.isExpanded;
         }
       });
     }
-    return !expanded && isFunctionalGroup;
+    return !isExpanded && isFunctionalGroup;
+  }
+
+  readonly #sgroup: SGroup;
+
+  constructor(sgroup: SGroup) {
+    assert(sgroup != null);
+
+    this.#sgroup = sgroup;
+    sgroup.setFunctionalGroup(this);
+  }
+
+  get name(): string {
+    return this.#sgroup.data.name;
+  }
+
+  get relatedSGroupId(): number {
+    return this.#sgroup.id;
+  }
+
+  get isExpanded(): boolean {
+    return Boolean(this.#sgroup.data.expanded);
+  }
+
+  get relatedSGroup(): SGroup {
+    return this.#sgroup;
   }
 }

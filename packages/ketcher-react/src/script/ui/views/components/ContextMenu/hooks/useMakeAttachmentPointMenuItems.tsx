@@ -66,7 +66,7 @@ const useMakeAttachmentPointMenuItems = ({
     ...assignedAttachmentPoints.keys(),
     ...(connectionAttachmentPoints?.keys() ?? []),
   ]);
-  const attachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
+  const isAttachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
 
   const menuItems: ReactNode[] = [];
 
@@ -82,7 +82,7 @@ const useMakeAttachmentPointMenuItems = ({
         {...props}
         onClick={handleMarkLeavingGroupAtomClick}
         disabled={
-          attachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
+          isAttachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
         }
         key="mark-as-leaving-group"
         data-testid="mark-as-leaving-group"
@@ -104,7 +104,7 @@ const useMakeAttachmentPointMenuItems = ({
       {...props}
       onClick={handleMarkConnectionPointAtomClick}
       disabled={
-        attachmentPointsLimitReached ||
+        isAttachmentPointsLimitReached ||
         !isPotentialAttachmentAtom ||
         isAtomAlreadyLeavingAtom
       }

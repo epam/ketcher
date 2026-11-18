@@ -19,41 +19,10 @@ import { assert } from 'utilities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(
-    type: string,
-    public monomer: BaseMonomer,
-  ) {
-    super(type);
-    this.data.absolute = false;
-    this.data.attached = false;
-    this.data.expanded = Boolean(monomer.monomerItem.expanded);
-  }
-
-  public get isMonomer() {
-    return true;
-  }
-
-  private ensureMonomerItemMutable(): void {
-    if (Object.isFrozen(this.monomer.monomerItem)) {
-      this.monomer.monomerItem = { ...this.monomer.monomerItem };
-    }
-  }
-
-  public setExpanded(expanded: boolean): void {
-    this.ensureMonomerItemMutable();
-    this.monomer.monomerItem.expanded = expanded;
-  }
-
-  public override getContractedPosition(struct: Struct) {
-    assert(this.pp);
-    const sgroupContractedPosition = super.getContractedPosition(struct);
-    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
-  }
-
   public static clone(
     monomerMicromolecule: MonomerMicromolecule,
     atomIdMap?: Map<number, number>,
-    needCloneAttachmentPoints = false,
+    shouldCloneAttachmentPoints = false,
   ) {
     const monomerMicromoleculeClone = new MonomerMicromolecule(
       monomerMicromolecule.type,
@@ -69,7 +38,7 @@ export class MonomerMicromolecule extends SGroup {
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
-    if (needCloneAttachmentPoints && atomIdMap) {
+    if (shouldCloneAttachmentPoints && atomIdMap) {
       monomerMicromoleculeClone.addAttachmentPoints(
         monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
         false,
@@ -77,5 +46,36 @@ export class MonomerMicromolecule extends SGroup {
     }
 
     return monomerMicromoleculeClone;
+  }
+
+  constructor(
+    type: string,
+    public monomer: BaseMonomer,
+  ) {
+    super(type);
+    this.data.absolute = false;
+    this.data.attached = false;
+    this.data.expanded = Boolean(monomer.monomerItem.expanded);
+  }
+
+  private ensureMonomerItemMutable(): void {
+    if (Object.isFrozen(this.monomer.monomerItem)) {
+      this.monomer.monomerItem = { ...this.monomer.monomerItem };
+    }
+  }
+
+  public get isMonomer() {
+    return true;
+  }
+
+  public setExpanded(expanded: boolean): void {
+    this.ensureMonomerItemMutable();
+    this.monomer.monomerItem.expanded = expanded;
+  }
+
+  public override getContractedPosition(struct: Struct) {
+    assert(this.pp);
+    const sgroupContractedPosition = super.getContractedPosition(struct);
+    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
   }
 }

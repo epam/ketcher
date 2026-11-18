@@ -16,7 +16,7 @@ For features and high-risk changes. Only those need a spec.
 2. **Implement.** Tick each task when it is done, one at a time.
 3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/`.
 
-Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
+Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI runs `openspec validate --all --strict` and `openspec validate --archived` on every PR.
 
 ### Ticket flow
 
@@ -28,14 +28,16 @@ For changes too large to read line by line. Follow the [large-scale change proto
 
 ## PR-type contract
 
-Checked for every PR, whatever flow the author used. A PR that matches no row follows the PR template checklist only.
+Checked for every PR, whatever flow the author used. The author ticks nothing: the AI review names the type in the brief, from the diff and the linked issue. A linked issue of type `Bug` makes a bug fix. A new folder in `openspec/changes/` makes a feature, and a move into `openspec/changes/archive/` an archive. A structure change with no behavior change is a refactor when it adds tests that pin the behavior, and a small change when it adds none. A large-scale change also has one of the other types. A PR that matches no row has no contract beyond review.
 
-| PR type                       | Must contain                                             | Checked by                                                                                                                 |
-| ----------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Bug fix                       | Linked issue, a regression test                          | PR template checklist today. Planned: Danger warns when a bug fix has no test change (Phase 3, task 3.4)                   |
-| Feature                       | An OpenSpec change (or a spec in the same format), tests | Planned: Danger fails the PR without an OpenSpec change, and `openspec validate --all --strict` (Phase 3, tasks 3.4, 3.10) |
-| Large-scale change            | The large-scale change protocol sections                 | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)             |
-| Archive of an OpenSpec change | No unchecked tasks                                       | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                               |
+| PR type                       | Must contain                                                     | Checked by                                                                                                                                                              |
+| ----------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bug fix                       | Linked issue, a regression test                                  | AI review brief. Danger warns when the PR changes no unit or E2E test                                                                                                   |
+| Feature                       | An OpenSpec change (or a spec in the same format), tests         | `openspec validate --all --strict` in CI. Danger fails the PR without a file in `openspec/changes/`, and warns when it changes no unit or E2E test (backmerges skipped) |
+| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                                                                         |
+| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                                                                         |
+| Large-scale change            | The large-scale change protocol sections                         | Danger fails the PR when a section is missing or still holds the template text. Planned: the codemod replay check (Phase 3, task 3.8)                                   |
+| Archive of an OpenSpec change | No unchecked tasks                                               | `openspec validate --archived` in CI                                                                                                                                    |
 
 ## Review pipeline
 
@@ -43,15 +45,26 @@ The stages run in this order: gates, risk tier, AI review, human review.
 
 ### Gates
 
-Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, and the example-ssr build, lint, and test. `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
+Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, `openspec validate`, the example-ssr build, lint, and test, and `check:autotests` (type check and lint of `ketcher-autotests`). `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
+
+`danger.yml` runs Danger on every PR to `master` and `release/**`. The rules are in `scripts/pr-checks.mjs`. A fail blocks the PR; a warning only shows in Danger's comment.
+
+| Rule         | Fails                                                                                                | Warns                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Title        | No issue prefix while the PR links an issue. A `Backmerge: ` prefix is allowed                       | An issue in the title that the PR does not link                                             |
+| Branch       | Its name contains `#`                                                                                |                                                                                             |
+| Linked issue |                                                                                                      | The PR links no issue (`Closes #N`)                                                         |
+| Size         |                                                                                                      | Over 400 changed lines, lockfiles and snapshots not counted. Skipped on large-scale changes |
+| File length  |                                                                                                      | A package source file grows past 1,000 lines (R16). A file already over it is skipped       |
+| Unit test    |                                                                                                      | `ketcher-core` domain or operations code changed with no unit test change                   |
+| PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing | Bug fix or Feature without a test change                                                    |
+| Memory bank  |                                                                                                      | The body has no `Memory bank:` line (`not needed` is a valid answer). Backmerges skipped    |
+| Reviewers    |                                                                                                      | No requested reviewer or team. Draft PRs skipped                                            |
 
 Planned:
 
-- Danger on every PR (Phase 3, task 3.4).
 - `check:agent-docs` in CI. It runs locally today: `npm run check:agent-docs`.
-- `check:autotests` in CI (Phase 3, task 3.5).
 - Codemod replay check and compare scripts, on large-scale change PRs only (Phase 3, tasks 3.8, 3.9).
-- `openspec validate` in CI (Phase 3, task 3.10).
 
 ### Risk tier (planned: Phase 4)
 
@@ -59,23 +72,28 @@ Planned:
 - A `large-scale-change` PR is at least `high` (planned: task 4.6).
 - Code owners per module, so that high-tier PRs need one (planned: task 4.3; decision D3).
 
-### AI review (planned rebuild: Phase 5)
+### AI review
 
-Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill with the code-review skill's four lenses. The rebuild replaces that with these steps:
+The `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill:
 
-1. **Inputs.** The diff. On the first pass, the PR description is withheld. Then the linked issue. Rules from `.memory-bank/review-rules.md`, `.memory-bank/invariants.md`, and the module docs whose `paths:` match the diff (planned: `paths:` lists from Phase 1).
-2. **Finders.** Separate passes that read the diff with a suspicion stance (planned: task 5.4).
-3. **Verifier.** A second pass checks each finding against the code before it is posted (planned: task 5.4).
-4. **Output.** Verified inline comments with suggestion blocks, and the review brief as one top-level comment (planned: task 5.4). Every finding follows the [output contract](#output-contract).
+1. **Panel.** `scripts/review-panel.mjs` picks the code-review lenses the diff needs from its changed paths and the lines it adds to source code. A diff that no lens applies to gets only the linked-issue check and the brief.
+2. **Finders.** One subagent per lens on the panel reads the diff, without the PR description, with a suspicion stance.
+3. **Verifier.** Each finding is checked against the code before it is posted.
+4. **Output.** Verified inline comments, and the review brief as one top-level comment. Every finding follows the [output contract](#output-contract).
 
-AI review may raise a risk tier, never lower it (planned: task 5.5).
+Planned (Phase 5):
+
+- Run on every PR instead of by label, with full history to the merge base (task 5.3).
+- Module docs loaded by their `paths:` lists from Phase 1 (task 5.3).
+- Suggestion blocks in inline comments, and a second, independent verifier pass (task 5.4).
+- AI review may raise a risk tier, never lower it (task 5.5).
 
 ### Human review
 
 - The reviewer reads the review brief first (planned: Phase 5), then, for large-scale change PRs, the review map.
 - Today, `.github/auto_assign.yml` assigns one reviewer from the `core` group.
 - Large-scale change PRs need two reviewers, one of them a code owner (planned: task 4.3; decision D9). A 30-minute walkthrough call replaces the first async review round.
-- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the count of findings per severity, the findings that did not fit the comment cap, and, for large-scale changes, the review map.
+- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the panel, the count of findings per severity, the findings that did not fit the comment cap, and, for large-scale changes, the review map.
 
 ## Output contract
 
@@ -87,9 +105,10 @@ Applies to every AI reviewer, including `/review-pr` and the code-review lenses.
    - `major`: breaks a rule in `.memory-bank/review-rules.md` or a PR-type requirement, with no change in behavior. Fix before merge.
    - `nit`: style or wording. Optional, never blocks.
 3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a finding no rule covers. A finding without a failing scenario is dropped. For a structural finding, the failing scenario is the concrete change it makes harder, named: "adding a fourth bond type needs edits in these three switches".
-4. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
-5. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
-6. **No praise, and no summary** of what the diff does.
+4. **Evidence.** A performance or security finding also carries a command and its output (a failing test, a repro script, a measurement) that show the failure. Without one, it is an open question: it goes in the brief or the report, not in an inline comment or a fix.
+5. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
+6. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
+7. **No praise, and no summary** of what the diff does.
 
 ## Feedback loop and rule life cycle
 
@@ -126,13 +145,15 @@ For a change that is too large to read line by line but mostly mechanical. The p
 
 **Required PR body sections** when the `large-scale-change` label is set. Open the PR with `?template=large-scale-change.md` to get them from `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md`.
 
+- **Summary:** a diagram, diff sketch, or tree of the change.
 - **Split decision:** which option, and why the earlier options do not work.
 - **Codemod:** script path, how to run it, and the known cases it skips.
 - **Evidence of equivalence:** output of the compare scripts (planned: Phase 3, task 3.9), before and after the change.
   - Test runner migration: test count per package; tests added, removed, skipped, or renamed; coverage.
   - Build tool upgrade: `dist/` file list and sizes; diff of the public `.d.ts` exports; standalone consumer check passes; E2E passes.
 - **Review map:** the 5 to 10 files with decisions, one line each. The author adds self-review comments on those lines.
-- **Revert plan:** how to roll back, and what else must roll back with it.
+- **Merge Danger:** the door and the blast radius. Its **Revert plan** says how to roll back, and what else must roll back with it.
+- **Closes and Memory bank** lines, as in the standard template.
 
 **Process**
 

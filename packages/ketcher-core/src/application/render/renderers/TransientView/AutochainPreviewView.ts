@@ -91,11 +91,11 @@ export class AutochainPreviewView {
         return;
       }
 
-      const phosphateOnLeft =
+      const isPhosphateOnLeft =
         (monomerOrRnaItem.phosphatePosition ??
           getRnaPresetPhosphatePosition(monomerOrRnaItem)) === 'left';
       const sugarPosition =
-        phosphateOnLeft && monomerOrRnaItem.phosphate
+        isPhosphateOnLeft && monomerOrRnaItem.phosphate
           ? position.add(new Vec2(1.5, 0))
           : position;
       const scaledSugarPosition = Coordinates.modelToCanvas(sugarPosition);
@@ -128,7 +128,7 @@ export class AutochainPreviewView {
       }
 
       if (monomerOrRnaItem.phosphate) {
-        const phosphatePosition = phosphateOnLeft
+        const phosphatePosition = isPhosphateOnLeft
           ? position
           : sugarPosition.add(new Vec2(1.5, 0));
         const scaledPhosphatePosition =
@@ -142,19 +142,19 @@ export class AutochainPreviewView {
 
         this.showBondPreview(
           transientLayer,
-          phosphateOnLeft
+          isPhosphateOnLeft
             ? scaledPhosphatePosition.x +
                 sizeOfPhosphateAutochainPreview.width / 2
             : scaledSugarPosition.x + sizeOfAutochainPreviewToConnect.width / 2,
           scaledSugarPosition.y,
-          phosphateOnLeft
+          isPhosphateOnLeft
             ? scaledSugarPosition.x - sizeOfAutochainPreviewToConnect.width / 2
             : scaledPhosphatePosition.x -
                 sizeOfPhosphateAutochainPreview.width / 2,
           scaledSugarPosition.y,
         );
 
-        if (phosphateOnLeft) {
+        if (isPhosphateOnLeft) {
           leftConnectionPointX =
             scaledPhosphatePosition.x -
             sizeOfPhosphateAutochainPreview.width / 2;

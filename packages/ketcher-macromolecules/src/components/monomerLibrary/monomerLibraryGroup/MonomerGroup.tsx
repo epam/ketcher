@@ -35,7 +35,7 @@ import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,
 } from 'ketcher-react';
-import { needSkipPreviewForElement } from 'components/preview/helpers';
+import { shouldSkipPreviewForElement } from 'components/preview/helpers';
 
 const MonomerGroup = ({
   items,
@@ -89,7 +89,7 @@ const MonomerGroup = ({
   ) => {
     closeLibraryPreview();
 
-    if (needSkipPreviewForElement(e.target as HTMLElement)) {
+    if (shouldSkipPreviewForElement(e.target as HTMLElement)) {
       return;
     }
 

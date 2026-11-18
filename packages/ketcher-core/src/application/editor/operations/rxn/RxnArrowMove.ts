@@ -29,9 +29,9 @@ interface RxnArrowMoveData {
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(id?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct): void {

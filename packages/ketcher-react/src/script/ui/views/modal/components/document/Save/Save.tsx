@@ -232,10 +232,10 @@ const PreviewContent = ({
 
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static readonly contextType = ErrorsContext;
-  declare context: ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
+  declare context: ContextType<typeof ErrorsContext>;
 
   constructor(props: SaveDialogProps) {
     super(props);
@@ -366,7 +366,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
       // temporary check if query properties are used
-      const queryPropertiesAreUsed = !!(
+      const hasQueryProperties = !!(
         type === SupportedFormat.mol &&
         [...struct.atoms].some(
           ([_, atom]) =>
@@ -381,7 +381,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       const service = factory.create(
         type,
         { ...options, ignoreChiralFlag },
-        queryPropertiesAreUsed,
+        hasQueryProperties,
         struct,
       );
       const getStructFromStringByType = () => {
@@ -597,7 +597,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     const warnings = this.getWarnings(format);
 
-    return warnings.length ? (
+    return warnings.length > 0 ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer} key={warning}>
@@ -619,14 +619,14 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     options.outputFormat = imageFormat;
 
     const savingStruct =
+      !isLoading &&
       this.isValidStringFormat(format) &&
-      this.isBinaryCdxFormat(format) &&
-      !isLoading
+      this.isBinaryCdxFormat(format)
         ? b64toBlob(structStr || '')
         : structStr;
 
     const isMoleculeContain =
-      this.props.struct.atoms.size && this.props.struct.bonds.size;
+      this.props.struct.atoms.size > 0 && this.props.struct.bonds.size > 0;
     const buttons = [
       <button
         key="save-tmpl"

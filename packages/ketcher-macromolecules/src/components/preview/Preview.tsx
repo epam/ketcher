@@ -112,7 +112,7 @@ export const Preview = () => {
       ref={previewRef}
       style={{
         ...preview?.style,
-        pointerEvents: preview.style || !isPopupMode ? 'auto' : 'none',
+        pointerEvents: !isPopupMode || preview.style ? 'auto' : 'none',
       }}
     >
       {preview.type === PreviewType.Monomer && <MonomerPreview />}

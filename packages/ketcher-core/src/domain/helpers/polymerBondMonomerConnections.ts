@@ -57,7 +57,7 @@ const getSugarFromRnaBase = (
     ? r3PolymerBond.getAnotherMonomer(r1ConnectedMonomer)
     : undefined;
 
-  return isSugarMonomer(r1ConnectedMonomer) && r3ConnectedMonomer === monomer
+  return r3ConnectedMonomer === monomer && isSugarMonomer(r1ConnectedMonomer)
     ? r1ConnectedMonomer
     : undefined;
 };

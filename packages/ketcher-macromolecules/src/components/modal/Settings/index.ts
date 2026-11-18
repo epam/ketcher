@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { Settings } from './Settings';
+export { SettingsPanelAdapter } from './SettingsPanelAdapter';

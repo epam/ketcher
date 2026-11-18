@@ -30,7 +30,7 @@ interface SystemControlsProps {
   onHelp: () => void;
 }
 
-const getIfFullScreen = () => {
+const isFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||
@@ -57,10 +57,10 @@ export const SystemControls = ({
   className,
 }: SystemControlsProps) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
-  const [isFullscreen, setIsFullscreen] = useState(getIfFullScreen);
+  const [isFullscreen, setIsFullscreen] = useState(isFullScreen);
 
   useEffect(() => {
-    const syncFullscreenMode = () => setIsFullscreen(getIfFullScreen());
+    const syncFullscreenMode = () => setIsFullscreen(isFullScreen());
 
     document.addEventListener('fullscreenchange', syncFullscreenMode);
     document.addEventListener('webkitfullscreenchange', syncFullscreenMode);

@@ -2248,8 +2248,9 @@ test(`53. Check that newly added two phosphates displaying correct after switchi
    * Version 3.8
    */
   for (const phosphate of newPhosphates) {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).clickMonomerAutochain(phosphate);
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -2278,8 +2279,9 @@ test(`54. Check that newly added eleven presets displaying correct after switchi
    * Version 3.8
    */
   for (const preset of newPresets) {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).clickMonomerAutochain(preset);
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -2308,8 +2310,9 @@ test(`55. Check that newly added nineteen standalone nucleotide displaying corre
    * Version 3.8
    */
   for (const nucleotide of newNucleotides) {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).clickMonomerAutochain(nucleotide);
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -2339,8 +2342,9 @@ test(`56. Check that newly added sixty-five new CHEMs displaying correct after s
    */
   test.slow();
   for (const chem of newCHEMs) {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).clickMonomerAutochain(chem);
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

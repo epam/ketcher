@@ -133,12 +133,13 @@ const MeasureInput = ({
 
   const handleChange = (value: unknown) => {
     const newStringifiedValue = String(value);
-    const startsWithZero =
+    const hasLeadingZero =
       newStringifiedValue !== '0' && newStringifiedValue.startsWith('0');
-    const zeroWithDot = startsWithZero && newStringifiedValue.includes('.');
+    const hasLeadingZeroWithDot =
+      hasLeadingZero && newStringifiedValue.includes('.');
 
     const endorcedValue =
-      startsWithZero && !zeroWithDot
+      hasLeadingZero && !hasLeadingZeroWithDot
         ? newStringifiedValue.replace(/^0/, '')
         : newStringifiedValue || '0';
     const isNumber = !Number.isNaN(Number(endorcedValue));

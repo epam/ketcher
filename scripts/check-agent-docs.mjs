@@ -154,6 +154,25 @@ const pathsExist = {
   },
 };
 
+const printEslintConfig = (repo, target) => {
+  const result = repo.exec('npx', [
+    '--no-install',
+    'eslint',
+    '--print-config',
+    target,
+  ]);
+  if (result.status !== 0) {
+    return null;
+  }
+  try {
+    return JSON.parse(result.stdout);
+  } catch {
+    // `--print-config` prints the literal string `undefined` for files that no
+    // config block matches, such as JSON or markdown files; no config rules them.
+    return null;
+  }
+};
+
 const lintClaims = {
   id: 'lint-claims',
   run(repo, parsed) {
@@ -163,34 +182,34 @@ const lintClaims = {
     const findings = [];
     const configs = new Map();
     for (const rule of claims) {
-      const target = repo
+      const candidates = repo
         .files()
-        .find((file) =>
+        .filter((file) =>
           rule.scope.some((glob) => globToRegExp(glob).test(file)),
         );
-      if (!target) {
+      // A rule may cover files ESLint does not lint (package.json, README, ...);
+      // the claim holds when at least one scope match runs the claimed rule.
+      const usable = candidates.find((file) => {
+        if (!configs.has(file)) {
+          configs.set(file, printEslintConfig(repo, file));
+        }
+        return configs.get(file) !== null;
+      });
+      if (!usable) {
         findings.push({
-          code: 'lint-claim-no-file',
+          code: candidates.length
+            ? 'lint-claim-not-error'
+            : 'lint-claim-no-file',
           file: RULE_FILE,
           line: rule.line,
-          message: `${rule.id} is enforced by lint, but no file matches its Scope`,
+          message: candidates.length
+            ? `${rule.id} is enforced by lint, but eslint never lints any file matching its Scope`
+            : `${rule.id} is enforced by lint, but no file matches its Scope`,
           fix: 'fix the Scope, or change Enforced by to AI or human',
         });
         continue;
       }
-      if (!configs.has(target)) {
-        const result = repo.exec('npx', [
-          '--no-install',
-          'eslint',
-          '--print-config',
-          target,
-        ]);
-        configs.set(
-          target,
-          result.status === 0 ? JSON.parse(result.stdout) : null,
-        );
-      }
-      const config = configs.get(target);
+      const config = configs.get(usable);
       const setting = config?.rules?.[rule.enforcedBy.rule];
       const level = Array.isArray(setting) ? setting[0] : setting;
       if (!LINT_ERROR_LEVELS.includes(level)) {
@@ -198,7 +217,7 @@ const lintClaims = {
           code: 'lint-claim-not-error',
           file: RULE_FILE,
           line: rule.line,
-          message: `${rule.id} says lint enforces ${rule.enforcedBy.rule}, but eslint gives ${target} ${JSON.stringify(level ?? null)}`,
+          message: `${rule.id} says lint enforces ${rule.enforcedBy.rule}, but eslint gives ${usable} ${JSON.stringify(level ?? null)}`,
           fix: `set ${rule.enforcedBy.rule} to error in eslint.config.mjs, or change Enforced by`,
         });
       }

@@ -1,4 +1,8 @@
 {
-  "*.{js,jsx,ts,tsx,json}": ["prettier --write"],
+  "*.{js,jsx,ts,tsx,mjs,cjs}": [
+    "prettier --write",
+    "eslint --quiet --no-warn-ignored"
+  ],
+  "*.json": ["prettier --write"],
   "*.{css,less}": ["stylelint --formatter verbose --fix --allow-empty-input"]
 }

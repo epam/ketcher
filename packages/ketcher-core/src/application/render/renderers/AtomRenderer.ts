@@ -1,6 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -351,9 +352,12 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    return (
-      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1
-    );
+    // Bonds to monomers are not half-edges, so count them separately
+    const monomerBondsCount = this.atom.bonds.filter(
+      (bond) => bond instanceof MonomerToAtomBond,
+    ).length;
+
+    return (atomNeighborsHalfEdges?.length ?? 0) + monomerBondsCount <= 1;
   }
 
   public get isLabelVisible() {
@@ -361,14 +365,15 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
-    const visibleTerminal = true;
+    const isTerminalVisible = true;
     const isAtomTerminal = this.isAtomTerminal;
-    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
+    const isAtomInMiddleOfChain = !isAtomTerminal;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
     const hasAlias = this.atom.hasAlias;
     const hasExplicitValence = this.atom.hasExplicitValence;
     const hasExplicitIsotope = this.atom.hasExplicitIsotope;
+    const hasBadValence = this.atom.hasBadValence;
 
     if (
       isCarbon &&
@@ -377,7 +382,8 @@ export class AtomRenderer extends BaseRenderer {
       !hasRadical &&
       !hasAlias &&
       !hasExplicitValence &&
-      !hasExplicitIsotope
+      !hasExplicitIsotope &&
+      !hasBadValence
     ) {
       // Show carbon label when bonds are collinear (180 degree angle),
       if (atomNeighborsHalfEdges?.length === 2) {
@@ -389,7 +395,7 @@ export class AtomRenderer extends BaseRenderer {
       return false;
     }
 
-    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain) {
+    if ((isAtomTerminal && isTerminalVisible) || isAtomInMiddleOfChain) {
       return true;
     }
 
@@ -488,12 +494,12 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
+    if (!isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias) {
       textElement
         ?.append('tspan')
         .attr(
           'dy',
-          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+          shouldHydrogenBeOnLeft && this.atom.hasExplicitIsotope ? 4 : 0,
         )
         .text('H');
 
@@ -867,13 +873,13 @@ export class AtomRenderer extends BaseRenderer {
       .getKetcher(editor.ketcherId)
       .settingsService?.getSettings();
     const labelStyle = getStereoLabelStyleType(settings?.stereoLabelStyle);
-    const ignoreChiralFlag = settings?.ignoreChiralFlag ?? false;
+    const shouldIgnoreChiralFlag = settings?.ignoreChiralFlag ?? false;
     const enhancedStereoFlag = this.getEnhancedStereoFlag();
 
     return shouldDisplayStereoLabel(
       stereoLabel,
       labelStyle,
-      ignoreChiralFlag,
+      shouldIgnoreChiralFlag,
       enhancedStereoFlag,
     );
   }
@@ -1053,15 +1059,15 @@ function getStereoLabelStyleType(
 function shouldDisplayStereoLabel(
   stereoLabel: string,
   labelStyle: StereoLabelStyleType | undefined,
-  ignoreChiralFlag: boolean,
+  shouldIgnoreChiralFlag: boolean,
   flag: StereoFlag | undefined,
 ): boolean {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
 
-  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
     return false;
   }
-  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
     return true;
   }
 

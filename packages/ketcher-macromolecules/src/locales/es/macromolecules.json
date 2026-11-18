@@ -1,0 +1,90 @@
+{
+  "topMenu": {
+    "clearCanvas": "Borrar lienzo ({shortcut})",
+    "open": "Abrir...",
+    "saveAs": "Guardar como...",
+    "undo": "Deshacer ({shortcut})",
+    "redo": "Rehacer ({shortcut})",
+    "copy": "Copiar ({shortcut})",
+    "copyAsKet": "Copiar como KET ({shortcut})",
+    "copyAsMol": "Copiar como MOL ({shortcut})",
+    "copyImage": "Copiar imagen ({shortcut})",
+    "cut": "Cortar ({shortcut})",
+    "paste": "Pegar ({shortcut})",
+    "arrangeAsRing": "Disponer como anillo ({shortcut})",
+    "createAntisenseStrand": "Crear cadena antisentido",
+    "createRnaAntisenseStrand": "Crear cadena antisentido de ARN ({shortcut})",
+    "createDnaAntisenseStrand": "Crear cadena antisentido de ADN ({shortcut})"
+  },
+  "leftMenu": {
+    "handTool": "mano ({shortcut})",
+    "selectRectangle": "Seleccionar rectángulo ({shortcut})",
+    "lassoSelection": "Selección con lazo ({shortcut})",
+    "structureSelection": "Selección de estructura ({shortcut})",
+    "erase": "Borrar ({shortcut})",
+    "singleBond": "Enlace simple (1)",
+    "hydrogenBond": "Enlace de hidrógeno (2)"
+  },
+  "floatingTools": {
+    "flipHorizontally": "Voltear horizontalmente",
+    "flipVertically": "Voltear verticalmente",
+    "delete": "Eliminar"
+  },
+  "zoom": {
+    "zoomOutTitle": "Alejar",
+    "zoomOutLabel": "Alejar",
+    "zoomInTitle": "Acercar",
+    "zoomInLabel": "Acercar",
+    "zoomReset": "Zoom 100%"
+  },
+  "layoutMode": {
+    "switchToSequence": "Cambiar al modo de disposición de secuencia",
+    "switchToSnake": "Cambiar al modo de disposición en serpiente",
+    "switchToFlex": "Cambiar al modo de disposición flexible"
+  },
+  "buttons": {
+    "help": "Ayuda (?)",
+    "settings": "Configuración",
+    "about": "Acerca de",
+    "fullscreen": "Modo de pantalla completa"
+  },
+  "sequenceType": {
+    "rnaTooltip": "ARN ({shortcut})",
+    "dnaTooltip": "ADN ({shortcut})",
+    "peptidesTooltip": "Péptidos ({shortcut})"
+  },
+  "ruler": {
+    "monomersInLine": "Número de monómeros en una línea"
+  },
+  "macromoleculeProperties": {
+    "calculateProperties": "Calcular propiedades ({shortcut})",
+    "noDataAvailable": "No hay datos disponibles",
+    "selectMonomerForPeptides": "Selecciona un monómero, una cadena o parte de una cadena",
+    "selectMonomerForNucleotides": "Selecciona un nucleótido/nucleósido, una cadena o parte de una cadena que contenga nucleótidos/nucleósidos",
+    "isoelectricPoint": "Punto isoeléctrico",
+    "isoelectricPointHintBefore": "El punto isoeléctrico se calcula como la mediana de todos los valores de pKa de los aminoácidos (valores de ",
+    "isoelectricPointHintAfter": "). En el cálculo solo se usan los análogos naturales de los aminoácidos.",
+    "extinctionCoefficient": "Coef. de extinción (1/Mcm)",
+    "extinctionCoefficientHintBefore": "El coeficiente de extinción para una longitud de onda de 280 nm se calcula con el método de ",
+    "extinctionCoefficientHintAfter": " Se usa el análogo natural en lugar de un aminoácido modificado.",
+    "hydrophobicity": "Hidrofobicidad",
+    "hydrophobicityHintYAxis": "y = Puntuación de hidrofobicidad",
+    "hydrophobicityHintXAxis": "x = Posición del residuo de aminoácido",
+    "hydrophobicityHintBefore": "La hidrofobicidad se calcula con el método de ",
+    "hydrophobicityHintAfter": " Se usa el análogo natural en lugar de un aminoácido modificado.",
+    "meltingTemp": "Temp. de fusión (°C)",
+    "meltingTempHintBefore": "La temperatura de fusión se calcula con el método de ",
+    "meltingTempHintAfter": " Se usa el análogo natural en lugar de una base modificada.",
+    "unipositiveIons": "[Iones monopositivos]",
+    "oligonucleotides": "[Oligonucleótidos]",
+    "otherMonomerCount": "Otros",
+    "peptidesTab": "Péptidos",
+    "rnaDnaTab": "ARN/ADN"
+  },
+  "preview": {
+    "modificationType": "Tipo de modificación",
+    "unknownStructure": "Estructura desconocida",
+    "phosphateOnLeft": "Fosfato a la izquierda (5')",
+    "phosphateOnRight": "Fosfato a la derecha (3')"
+  }
+}

@@ -17,6 +17,7 @@
 import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
+import { selectIsSettingsPanelOpen } from 'state/modal';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { SELECT_SUBMENU_ID } from 'components/menu/constants';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,8 @@ export function LeftMenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
+  const isDisabled = isSequenceMode || isSettingsPanelOpen;
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {
@@ -43,10 +46,12 @@ export function LeftMenuComponent() {
           itemId="hand"
           title={t('leftMenu.handTool', { shortcut: hotkeysShortcuts.hand })}
           testId="hand"
+          disabled={isSettingsPanelOpen}
         />
         <Menu.Group>
           <Menu.Submenu
             testId="select-drop-down-button"
+            disabled={isSettingsPanelOpen}
             subMenuId={SELECT_SUBMENU_ID}
             needOpenByMenuItemClick={true}
           >
@@ -56,6 +61,7 @@ export function LeftMenuComponent() {
                 shortcut: hotkeysShortcuts.switchSelectTool,
               })}
               testId="select-rectangle"
+              disabled={isSettingsPanelOpen}
             />
             <Menu.Item
               itemId="select-lasso"
@@ -63,6 +69,7 @@ export function LeftMenuComponent() {
                 shortcut: hotkeysShortcuts.switchSelectTool,
               })}
               testId="select-lasso"
+              disabled={isSettingsPanelOpen}
             />
             <Menu.Item
               itemId="select-structure"
@@ -70,6 +77,7 @@ export function LeftMenuComponent() {
                 shortcut: hotkeysShortcuts.switchSelectTool,
               })}
               testId="select-structure"
+              disabled={isSettingsPanelOpen}
             />
           </Menu.Submenu>
         </Menu.Group>
@@ -77,12 +85,12 @@ export function LeftMenuComponent() {
           itemId="erase"
           title={t('leftMenu.erase', { shortcut: hotkeysShortcuts.erase })}
           testId="erase"
-          disabled={isSequenceMode}
+          disabled={isDisabled}
         />
       </Menu.Group>
       <Menu.Group>
         <Menu.Submenu
-          disabled={isSequenceMode}
+          disabled={isDisabled}
           testId="bonds-drop-down-button"
           needOpenByMenuItemClick={false}
         >
@@ -90,13 +98,13 @@ export function LeftMenuComponent() {
             itemId="bond-single"
             title={t('leftMenu.singleBond')}
             testId="single-bond"
-            disabled={isSequenceMode}
+            disabled={isDisabled}
           />
           <Menu.Item
             itemId="bond-hydrogen"
             title={t('leftMenu.hydrogenBond')}
             testId="hydrogen-bond"
-            disabled={isSequenceMode}
+            disabled={isDisabled}
           />
         </Menu.Submenu>
       </Menu.Group>

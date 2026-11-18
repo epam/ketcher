@@ -40,11 +40,17 @@ export class RxnArrowResize extends Base {
     d: Vec2,
     current: Vec2,
     anchor: Vec2 | null,
-    noinvalidate: boolean,
+    shouldSkipInvalidation: boolean,
     isSnappingEnabled: boolean,
   ) {
     super(OperationType.RXN_ARROW_RESIZE);
-    this.data = { id, d, current, anchor, noinvalidate };
+    this.data = {
+      id,
+      d,
+      current,
+      anchor,
+      noinvalidate: shouldSkipInvalidation,
+    };
     this.isSnappingEnabled = isSnappingEnabled;
   }
 

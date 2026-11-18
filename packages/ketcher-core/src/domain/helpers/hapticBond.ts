@@ -116,7 +116,7 @@ export function getAttachmentGroupIdForHapticBondHalf(
   bond: Pick<Bond, 'type' | 'begin' | 'end'> | null | undefined,
   pointer: Vec2,
 ): number | null {
-  if (!isHapticBondWithAttachmentGroup(struct, bond) || !bond) {
+  if (!bond || !isHapticBondWithAttachmentGroup(struct, bond)) {
     return null;
   }
 
@@ -172,19 +172,19 @@ export function isHapticBondPairAllowed(
     return false;
   }
 
-  const beginIsAttachmentGroup = isAttachmentGroup(beginAtom);
-  const endIsAttachmentGroup = isAttachmentGroup(endAtom);
+  const isBeginAttachmentGroup = isAttachmentGroup(beginAtom);
+  const isEndAttachmentGroup = isAttachmentGroup(endAtom);
 
-  if (beginIsAttachmentGroup || endIsAttachmentGroup) {
-    return beginIsAttachmentGroup !== endIsAttachmentGroup;
+  if (isBeginAttachmentGroup || isEndAttachmentGroup) {
+    return isBeginAttachmentGroup !== isEndAttachmentGroup;
   }
 
-  const beginAtomIsAllowedMetal =
+  const isBeginAtomAllowedMetal =
     isAllowedNonAttachmentGroupHapticBondMetal(beginAtom);
-  const endAtomIsAllowedMetal =
+  const isEndAtomAllowedMetal =
     isAllowedNonAttachmentGroupHapticBondMetal(endAtom);
 
-  return beginAtomIsAllowedMetal !== endAtomIsAllowedMetal;
+  return isBeginAtomAllowedMetal !== isEndAtomAllowedMetal;
 }
 
 export function isBondTypeAllowedForEndpoints(

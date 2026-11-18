@@ -51,7 +51,7 @@ export class SGroupAttr extends BaseOperation {
     }
 
     const sgroupData = restruct.sgroupData.get(sgid);
-    if (sgroup.type === 'DAT' && sgroupData) {
+    if (sgroupData && sgroup.type === 'DAT') {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
       restruct.clearVisel(sgroupData.visel);
       restruct.sgroupData.delete(sgid);

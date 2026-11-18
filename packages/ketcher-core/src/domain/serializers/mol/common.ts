@@ -40,18 +40,24 @@ function getAtom(mol: Struct, id: number): Atom {
 /*
 Parse Mol
 */
-function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
+function parseMol(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
   if (ctabLines[0].search(String.raw`\$MDL`) === 0) {
-    const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag);
+    const struct = v2000.parseRg2000(ctabLines, shouldIgnoreChiralFlag);
     struct.name = ctabLines[3].trim();
     return struct;
   }
-  const struct = parseCTab(ctabLines.slice(3), ignoreChiralFlag);
+  const struct = parseCTab(ctabLines.slice(3), shouldIgnoreChiralFlag);
   struct.name = ctabLines[0].trim();
   return struct;
 }
 
-function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
+function parseCTab(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
   const countsSplit = partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition,
@@ -59,7 +65,7 @@ function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   const version = countsSplit[11].trim();
   ctabLines = ctabLines.slice(1);
   if (version === 'V2000') {
-    return v2000.parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
+    return v2000.parseCTabV2000(ctabLines, countsSplit, shouldIgnoreChiralFlag);
   }
   throw new Error('Molfile version unknown: ' + version);
 }
@@ -70,7 +76,7 @@ Parse Rxn
 function parseRxn(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
-  ignoreChiralFlag?: boolean,
+  shouldIgnoreChiralFlag?: boolean,
 ): Struct {
   const version = ctabLines[0].trim().split(/\s+/)[1];
   if (version && version !== 'V2000') {
@@ -79,7 +85,7 @@ function parseRxn(
   const struct = v2000.parseRxn2000(
     ctabLines,
     shouldReactionRelayout,
-    ignoreChiralFlag,
+    shouldIgnoreChiralFlag,
   );
   struct.name = ctabLines[1].trim();
   return struct;
@@ -111,7 +117,7 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
       xBonds.push(bid);
     }
   });
-  if (xBonds.length !== 0 && xBonds.length !== 2) {
+  if (xBonds.length > 0 && xBonds.length !== 2) {
     const error = new Error(
       'Unsupported cross-bonds number',
     ) as SGroupSavingError;
@@ -392,23 +398,19 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   return lines;
 }
 
-// According Unicode Consortium sould be
-// nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// https://www.unicode.org/reports/tr18/#Line_Boundaries
-const nlRe = /\r\n|[\n\r]/g;
 function normalizeNewlines(str: string): string {
-  return str.replace(nlRe, '\n');
+  return str.split(/\r\n|[\n\r]/).join('\n');
 }
 
 function partitionLine(
   str: string,
   parts: number[],
-  withspace?: boolean,
+  hasSpaceBetweenParts?: boolean,
 ): string[] {
   const res: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
-    if (withspace) shift++;
+    if (hasSpaceBetweenParts) shift++;
     shift += parts[i];
   }
   return res;

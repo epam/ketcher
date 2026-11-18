@@ -1,0 +1,126 @@
+{
+  "menu": {
+    "clear": "Borrar lienzo",
+    "open": "Abrir…",
+    "save": "Guardar como…",
+    "atomProps": "Propiedades del átomo",
+    "bondProps": "Propiedades del enlace",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "cut": "Cortar",
+    "copy": "Copiar",
+    "copyImage": "Copiar imagen",
+    "copyMol": "Copiar como MOL",
+    "copyKet": "Copiar como KET",
+    "paste": "Pegar",
+    "settings": "Configuración",
+    "about": "Acerca de",
+    "reactionAutomap": "automapeo de reacciones",
+    "periodTable": "Tabla periódica",
+    "extendedTable": "Tabla extendida",
+    "selectAll": "Seleccionar todo",
+    "deselectAll": "Deseleccionar todo",
+    "selectDescriptors": "Seleccionar descriptores",
+    "anyAtom": "Cualquier átomo",
+    "errorMessage": "Mensaje de error"
+  },
+  "tools": {
+    "hand": "mano",
+    "selectRectangle": "Selección rectangular",
+    "selectLasso": "Selección con lazo",
+    "selectStructure": "Selección de estructura",
+    "selectFragment": "Selección de fragmento",
+    "erase": "Borrar",
+    "chain": "Cadena",
+    "stereochemistry": "Estereoquímica",
+    "chargePlus": "Carga positiva",
+    "chargeMinus": "Carga negativa",
+    "rotate": "rotación",
+    "flipHorizontal": "Voltear horizontalmente",
+    "flipVertical": "Voltear verticalmente",
+    "sgroup": "Grupo S",
+    "arrowOpenAngle": "flecha de ángulo abierto",
+    "arrowFilledTriangle": "flecha de triángulo relleno",
+    "arrowFilledBow": "flecha de arco relleno",
+    "arrowDashedOpenAngle": "flecha de ángulo abierto discontinuo",
+    "arrowFailed": "flecha de reacción fallida",
+    "arrowRetrosynthetic": "flecha retrosintética",
+    "arrowBothEndsFilledTriangle": "flecha con triángulo relleno en ambos extremos",
+    "arrowEquilibriumFilledHalfBow": "flecha de equilibrio con medio arco relleno",
+    "arrowEquilibriumFilledTriangle": "flecha de equilibrio con triángulo relleno",
+    "arrowEquilibriumOpenAngle": "flecha de equilibrio con ángulo abierto",
+    "arrowUnbalancedEquilibriumFilledHalfBow": "flecha de equilibrio no balanceado con medio arco relleno",
+    "arrowUnbalancedEquilibriumOpenHalfAngle": "flecha de equilibrio no balanceado con medio ángulo abierto",
+    "arrowUnbalancedEquilibriumLargeFilledHalfBow": "flecha de equilibrio no balanceado con medio arco relleno grande",
+    "arrowUnbalancedEquilibriumFilledHalfTriangle": "flecha de equilibrio no balanceado con medio triángulo relleno",
+    "arrowEllipticalArcFilledBow": "flecha de arco elíptico relleno",
+    "arrowEllipticalArcFilledTriangle": "flecha de arco elíptico con triángulo relleno",
+    "arrowEllipticalArcOpenAngle": "flecha de arco elíptico con ángulo abierto",
+    "arrowEllipticalArcOpenHalfAngle": "flecha de arco elíptico con medio ángulo abierto",
+    "multitailArrow": "flecha de múltiples colas",
+    "reactionPlus": "signo más de reacción",
+    "reactionMap": "mapeo de reacción",
+    "reactionUnmap": "desmapeo de reacción",
+    "rgroupLabel": "etiqueta de grupo R",
+    "rgroupFragment": "fragmento de grupo R",
+    "attachmentPoint": "punto de unión",
+    "createMonomer": "Crear un monómero",
+    "shapeEllipse": "Forma de elipse",
+    "shapeRectangle": "Forma de rectángulo",
+    "shapeLine": "Forma de línea",
+    "addText": "Añadir texto",
+    "addImage": "Añadir imagen",
+    "bondTypeTitles": {
+      "single": "Enlace simple",
+      "up": "Enlace simple hacia arriba",
+      "down": "Enlace simple hacia abajo",
+      "updown": "Enlace simple arriba/abajo",
+      "double": "Enlace doble",
+      "crossed": "Enlace doble cis/trans",
+      "triple": "Enlace triple",
+      "aromatic": "Enlace aromático",
+      "any": "Enlace cualquiera",
+      "hydrogen": "Enlace de hidrógeno",
+      "singledouble": "Enlace simple/doble",
+      "singlearomatic": "Enlace simple/aromático",
+      "doublearomatic": "Enlace doble/aromático",
+      "dative": "Enlace dativo",
+      "haptic": "Enlace haptic"
+    }
+  },
+  "server": {
+    "layout": "Disposición",
+    "clean": "Limpiar",
+    "aromatize": "Aromatizar",
+    "dearomatize": "Desaromatizar",
+    "calculateCip": "Calcular CIP",
+    "checkStructure": "Comprobar estructura",
+    "calculatedValues": "Valores calculados",
+    "recognizeMolecule": "Reconocer molécula",
+    "viewer3d": "Visor 3D",
+    "explicitHydrogens": "Añadir/eliminar hidrógenos explícitos"
+  },
+  "zoom": {
+    "in": "Acercar",
+    "out": "Alejar"
+  },
+  "templates": {
+    "structureLibrary": "Biblioteca de estructuras"
+  },
+  "functionalGroups": {
+    "title": "Grupos funcionales"
+  },
+  "fullscreen": {
+    "title": "Modo de pantalla completa"
+  },
+  "atoms": {
+    "title": "Átomo {symbol}"
+  },
+  "highlight": {
+    "label": "Resaltar",
+    "noHighlight": "Sin resaltado"
+  },
+  "copy": {
+    "notAvailableForSimpleObjects": "Esta función no está disponible para objetos simples y objetos de texto"
+  }
+}

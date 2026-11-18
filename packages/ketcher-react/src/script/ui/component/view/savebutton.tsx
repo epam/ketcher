@@ -79,7 +79,7 @@ const SaveButton = (props: SaveButtonProps) => {
 
   const saveImage = () => {
     const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
-    if (options?.outputFormat && typeof data === 'string') {
+    if (typeof data === 'string' && options?.outputFormat) {
       ketcherInstance
         .generateImage(data, options)
         .then((blob) => {

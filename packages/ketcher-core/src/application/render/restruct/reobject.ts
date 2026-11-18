@@ -34,7 +34,7 @@ class ReObject {
     this.visel = new Visel(viselType);
   }
 
-  changeSelectionStyle(options: RenderOptions, drawOutline = true) {
+  changeSelectionStyle(options: RenderOptions, shouldDrawOutline = true) {
     const { hoverStyle } = options;
     if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
@@ -44,7 +44,7 @@ class ReObject {
       this.hovering?.attr({
         fill: hoverStyle.fill,
         'fill-opacity': this.selected ? 1 : 0,
-        stroke: drawOutline ? hoverStyle.stroke : 'none',
+        stroke: shouldDrawOutline ? hoverStyle.stroke : 'none',
       });
     }
   }
@@ -58,38 +58,38 @@ class ReObject {
     return vbox.transform(Scale.canvasToModel, render.options);
   }
 
-  setHover(hover: boolean, render: Render, drawOutline = true): void {
+  setHover(isHovered: boolean, render: Render, shouldDrawOutline = true): void {
     // TODO render should be field
     const { options } = render;
-    if (hover) {
-      let noredraw = 'hovering' in this && this.hovering !== null;
-      if (noredraw) {
+    if (isHovered) {
+      let canReuseHover = 'hovering' in this && this.hovering !== null;
+      if (canReuseHover) {
         if (this.hovering.type === 'set') {
           if (!this.hovering[0]) return;
-          noredraw = !this.hovering[0].removed;
+          canReuseHover = !this.hovering[0].removed;
         } else {
-          noredraw = !this.hovering.removed;
+          canReuseHover = !this.hovering.removed;
         }
       }
-      if (noredraw) {
-        this.changeSelectionStyle(options, drawOutline);
+      if (canReuseHover) {
+        this.changeSelectionStyle(options, shouldDrawOutline);
         this.hovering.show();
       } else {
         render.paper.setStart();
-        this.drawHover(render, drawOutline);
+        this.drawHover(render, shouldDrawOutline);
         this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {
-      this.changeSelectionStyle(options, drawOutline);
+      this.changeSelectionStyle(options, shouldDrawOutline);
       this.hovering.hide();
     }
 
-    this.hover = hover;
+    this.hover = isHovered;
   }
 
   drawHover(
     _render: Render,
-    _drawOutline?: boolean,
+    _shouldDrawOutline?: boolean,
   ): RaphaelSet | Element | void {
     throw new Error('ReObject.drawHover is not overridden.');
   }

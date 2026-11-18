@@ -152,7 +152,7 @@ export const modifyTransformation = (transformation: MonomerTransformation) => {
 export const populateStructWithSelection = (
   populatedStruct: Struct,
   selection?: EditorSelection,
-  resetSelection = false,
+  shouldResetSelection = false,
 ) => {
   if (!selection) {
     return populatedStruct;
@@ -161,7 +161,7 @@ export const populateStructWithSelection = (
     const selectedEntities = selection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
       if (typeof value.setInitiallySelected === 'function') {
-        if (resetSelection) {
+        if (shouldResetSelection) {
           value.setInitiallySelected(
             selectedEntities.includes(key) || undefined,
           );

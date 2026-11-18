@@ -91,6 +91,7 @@ import type {
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 import { useTranslation } from 'react-i18next';
+import i18n from 'src/i18n/i18n';
 import {
   getOtherLibraryMonomers,
   hasMonomerFieldCollision,
@@ -116,6 +117,15 @@ const getInitialWizardState = (
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
+
+/** "R2", "R2 and R3", "R1, R2 and R3" — for preset requirement messages. */
+const formatAttachmentPoints = (points: AttachmentPointName[]): string => {
+  if (points.length <= 1) {
+    return points[0] ?? '';
+  }
+
+  return `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
+};
 
 /**
  * Builds initial wizard state seeded with values from an existing monomer
@@ -162,22 +172,35 @@ const getInitialWizardStateForEdit = ({
     },
   };
 
-  if (!hasDefaultAttachmentPoints) {
-    return state;
+  const notifications = new Map(state.notifications);
+
+  /*
+   * A library monomer that takes part in an RNA preset must keep its type and
+   * the attachment points its presets require, otherwise it loses preset
+   * eligibility. Reported as a dismissible warning when the wizard loads.
+   */
+  if (initialValues.libraryOnly && initialValues.presetRequirements) {
+    notifications.set('editAllPresetWarning', {
+      type: NotificationTypes.editAllPresetWarning,
+      message: i18n.t(
+        'components:monomerCreationWizard.notifications.editAllPresetWarning',
+        {
+          points: formatAttachmentPoints(
+            initialValues.presetRequirements.attachmentPoints,
+          ),
+        },
+      ),
+    });
   }
 
-  return {
-    ...state,
-    notifications: new Map([
-      [
-        'defaultAttachmentPoints',
-        {
-          type: NotificationTypes.defaultAttachmentPoints,
-          message: NotificationMessages.defaultAttachmentPoints,
-        },
-      ],
-    ]),
-  };
+  if (hasDefaultAttachmentPoints) {
+    notifications.set('defaultAttachmentPoints', {
+      type: NotificationTypes.defaultAttachmentPoints,
+      message: NotificationMessages.defaultAttachmentPoints,
+    });
+  }
+
+  return { ...state, notifications };
 };
 
 // BILN alias errors remain visible until the next submit attempt.
@@ -229,6 +252,12 @@ const getComponentSuffix = (componentType: KetMonomerClass): string => {
       return '';
     }
   }
+};
+
+const presetTypeLabelKey: Partial<Record<KetMonomerClass, string>> = {
+  [KetMonomerClass.Sugar]: 'common:monomerType.sugar',
+  [KetMonomerClass.Base]: 'common:monomerType.base',
+  [KetMonomerClass.Phosphate]: 'common:monomerType.phosphate',
 };
 
 const wizardReducer = (
@@ -829,7 +858,7 @@ const validateModificationTypes = (
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const errors: Record<string, boolean> = {};
   const existingModificationTypes = getOtherLibraryMonomers(
-    editor.monomersLibrary,
+    editor?.monomersLibrary,
     originalMonomerItem,
   )
     .filter(
@@ -939,6 +968,8 @@ const MonomerCreationWizardInternal = ({
     monomerCreationState.editInstanceInitialValues?.originalMonomerItem;
   const libraryOnly =
     monomerCreationState.editInstanceInitialValues?.libraryOnly;
+  const presetRequirements =
+    monomerCreationState.editInstanceInitialValues?.presetRequirements;
   const [modificationTypes, setModificationTypes] = useState<string[]>(
     () =>
       monomerCreationState.editInstanceInitialValues?.modificationTypes ?? [],
@@ -1395,6 +1426,51 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
+    /*
+     * A library monomer that participates in a preset must keep its type and
+     * the attachment points its presets require. Losing eligibility is
+     * reported as a single error that takes precedence over all other
+     * validation results.
+     */
+    if (libraryOnly && presetRequirements) {
+      const missingRequiredAttachmentPoints =
+        presetRequirements.attachmentPoints.filter(
+          (attachmentPoint) =>
+            !monomerAssignedAttachmentPoints.has(attachmentPoint),
+        );
+
+      if (
+        type !== presetRequirements.type ||
+        missingRequiredAttachmentPoints.length > 0
+      ) {
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'editAllPresetError',
+              {
+                type: 'error',
+                message: t(
+                  'components:monomerCreationWizard.notifications.editAllPresetError',
+                  {
+                    type: t(
+                      presetTypeLabelKey[presetRequirements.type] ??
+                        'common:monomerType.sugar',
+                    ),
+                    points: formatAttachmentPoints(
+                      presetRequirements.attachmentPoints,
+                    ),
+                  },
+                ),
+              },
+            ],
+          ]),
+        });
+
+        return false;
+      }
+    }
+
     const structure = editor.structSelected(wizardState.structure);
     const { values: valuesToSave } = wizardState;
     const { errors: inputsErrors, notifications: inputsNotifications } =
@@ -1632,7 +1708,7 @@ const MonomerCreationWizardInternal = ({
       if (presetCodeRegex.test(presetCode)) {
         // Validate preset code uniqueness (only if format is valid)
         const coreEditor = provideEditorInstance();
-        if (coreEditor.checkIfPresetCodeExists(presetCode)) {
+        if (coreEditor?.checkIfPresetCodeExists(presetCode)) {
           canSaveMonomers = false;
           rnaPresetWizardStateDispatch({
             type: 'SetErrors',
@@ -1813,6 +1889,7 @@ const MonomerCreationWizardInternal = ({
     if (isSaving) {
       return;
     }
+
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
     wizardStateDispatch({ type: 'ResetValidationNotifications' });
@@ -2366,7 +2443,7 @@ const MonomerCreationWizardInternal = ({
 const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
-  if (!monomerCreationState) {
+  if (!provideEditorInstance() || !monomerCreationState) {
     return null;
   }
 

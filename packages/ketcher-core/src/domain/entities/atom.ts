@@ -180,6 +180,48 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     implicitHCount: null,
   };
 
+  static getConnectedBondIds(struct: Struct, atomId: number): number[] {
+    return struct.getConnectedBondIds(atomId);
+  }
+
+  static getAttrHash(atom: Atom) {
+    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
+    for (const attr in Atom.attrlist) {
+      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
+    }
+    return attrs;
+  }
+
+  static attrGetDefault(attr: string) {
+    if (attr in Atom.attrlist) {
+      return Atom.attrlist[attr];
+    }
+  }
+
+  static isHeteroAtom(label: string): boolean {
+    return label !== 'C' && label !== 'H';
+  }
+
+  static isInAromatizedRing(struct: Struct, atomId: number): boolean {
+    const atom = struct.atoms.get(atomId);
+    if (atom && Atom.isHeteroAtom(atom.label)) {
+      for (const [_, loop] of struct.loops) {
+        const halfBondIds = loop.hbs;
+        if (loop.aromatic) {
+          for (const halfBondId of halfBondIds) {
+            const halfBond = struct.halfBonds.get(halfBondId);
+            if (!halfBond) return false;
+            const { begin, end } = halfBond;
+            if (begin === atomId || end === atomId) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   label: string;
   fragment: number;
   atomList: AtomList | null;
@@ -212,13 +254,6 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   stereoParity: number;
   hasImplicitH?: boolean;
   pseudo!: string;
-
-  /**
-  @deprecated
-  */
-  get attpnt() {
-    return this.attachmentPoints;
-  }
 
   constructor(attributes: AtomAttributes) {
     super(attributes?.initiallySelected);
@@ -331,46 +366,9 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     this.attachmentPoints = AttachmentPoints.FirstSideOnly;
   }
 
-  static getConnectedBondIds(struct: Struct, atomId: number): number[] {
-    return struct.getConnectedBondIds(atomId);
-  }
-
-  static getAttrHash(atom: Atom) {
-    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-    for (const attr in this.attrlist) {
-      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
-    }
-    return attrs;
-  }
-
-  static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
-      return this.attrlist[attr];
-    }
-  }
-
-  static isHeteroAtom(label: string): boolean {
-    return label !== 'C' && label !== 'H';
-  }
-
-  static isInAromatizedRing(struct: Struct, atomId: number): boolean {
-    const atom = struct.atoms.get(atomId);
-    if (atom && this.isHeteroAtom(atom.label)) {
-      for (const [_, loop] of struct.loops) {
-        const halfBondIds = loop.hbs;
-        if (loop.aromatic) {
-          for (const halfBondId of halfBondIds) {
-            const halfBond = struct.halfBonds.get(halfBondId);
-            if (!halfBond) return false;
-            const { begin, end } = halfBond;
-            if (begin === atomId || end === atomId) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
+  /** @deprecated */
+  get attpnt() {
+    return this.attachmentPoints;
   }
 
   clone(fidMap?: Map<number, number>): Atom {

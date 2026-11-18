@@ -392,7 +392,7 @@ export class KetSerializer implements Serializer<Struct> {
       originalAtomToKetLocation,
       attachmentGroupLocations,
     );
-    if (connections.length) {
+    if (connections.length > 0) {
       result.root.connections = connections;
     }
 

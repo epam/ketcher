@@ -88,9 +88,10 @@ export const SequenceItemContextMenu = ({
     contextMenuEvent?.target as
       (EventTarget & { __data__?: BaseSequenceItemRenderer }) | undefined
   )?.__data__;
-  const monomersToEdit = selectedMonomers.length
-    ? selectedMonomers
-    : (clickedRenderer?.node?.monomers ?? []);
+  const monomersToEdit =
+    selectedMonomers.length > 0
+      ? selectedMonomers
+      : (clickedRenderer?.node?.monomers ?? []);
   const monomerCreationMenu = useMonomerCreationMenu(
     editor,
     monomersToEdit,
@@ -239,7 +240,7 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
       separator: true,
     },

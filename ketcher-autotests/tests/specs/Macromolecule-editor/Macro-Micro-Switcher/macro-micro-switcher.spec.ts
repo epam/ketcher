@@ -356,24 +356,34 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that the zoomed in/out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode', async () => {
-    /* 
-    Test case: Macro-Micro-Switcher
-    Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
+  test('Check that the zoom level is persisted when switching from Macro to Micro mode and back to Macro mode', async () => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/12152
+    Description: Zoom level set in Macro mode is persisted when switching to Micro
+    mode, and the zoom level set in Micro mode is persisted when switching back to
+    Macro mode (zoom is carried over in both directions, not reset to 100%).
     */
+    const toolbar = CommonTopRightToolbar(page);
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
       page,
       'KET/three-monomers-connected-with-bonds.ket',
     );
-    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomIn);
+    await toolbar.selectZoomOutTool(numberOfPressZoomIn);
+    const macroZoom = (await toolbar.zoomSelector.textContent())?.trim();
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await toolbar.turnOnMicromoleculesEditor();
+    // Zoom from Macro mode is carried over to Micro mode (not reset to 100%)
+    expect((await toolbar.zoomSelector.textContent())?.trim()).toBe(macroZoom);
     await takeEditorScreenshot(page);
 
     await zoomWithMouseWheel(page, 250);
+    const microZoom = (await toolbar.zoomSelector.textContent())?.trim();
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await toolbar.turnOnMacromoleculesEditor();
+    // Zoom from Micro mode is carried over back to Macro mode (not reset to 100%)
+    expect((await toolbar.zoomSelector.textContent())?.trim()).toBe(microZoom);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

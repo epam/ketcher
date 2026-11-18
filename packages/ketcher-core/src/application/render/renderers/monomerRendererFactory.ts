@@ -72,10 +72,7 @@ export const monomerRendererFactory = (
   RendererClass: DerivedRendererClass,
   ketMonomerClass: KetMonomerClass,
 ] => {
-  const [EntityClass, ketMonomerClass] = monomerEntityFactory(monomer) as [
-    ConcreteMonomerEntityClass,
-    KetMonomerClass,
-  ];
+  const [EntityClass, ketMonomerClass] = monomerEntityFactory(monomer);
   const RendererClass = entityToRenderer.get(EntityClass);
   // 'RendererClass as DerivedRendererClass' - to satisfy the return type, but it should always be defined since the map is exhaustive
   return [EntityClass, RendererClass as DerivedRendererClass, ketMonomerClass];

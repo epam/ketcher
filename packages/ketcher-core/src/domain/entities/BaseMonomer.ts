@@ -228,7 +228,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   ) {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       const bond = this.attachmentPointsToBonds[attachmentPointName];
-      if (bond !== null && bond !== undefined) {
+      if (bond) {
         callback(bond, attachmentPointName as AttachmentPointName);
       }
     }
@@ -319,7 +319,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     let hasBonds = false;
     for (const bondName in this.attachmentPointsToBonds) {
       const bond = this.attachmentPointsToBonds[bondName];
-      if (bond !== null && bond !== undefined) {
+      if (bond) {
         hasBonds = true;
       }
     }
@@ -634,7 +634,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       const bond = oldAttachmentPointsToBonds[attachmentPointName];
-      if (bond !== null && bond !== undefined) {
+      if (bond) {
         this.attachmentPointsToBonds[attachmentPointName] = bond;
       }
     }

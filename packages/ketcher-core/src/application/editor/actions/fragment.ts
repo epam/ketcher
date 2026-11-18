@@ -143,14 +143,14 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   }
 
   const images = lists[IMAGE_KEY];
-  if (images !== undefined && images !== null) {
+  if (Array.isArray(images)) {
     images.forEach((image) => {
       action.addOp(new ImageMove(image, d));
     });
   }
 
   const multitailArrows = lists[MULTITAIL_ARROW_KEY];
-  if (multitailArrows !== undefined && multitailArrows !== null) {
+  if (Array.isArray(multitailArrows)) {
     multitailArrows.forEach((multitailArrow) => {
       action.addOp(new MultitailArrowMove(multitailArrow, d));
     });

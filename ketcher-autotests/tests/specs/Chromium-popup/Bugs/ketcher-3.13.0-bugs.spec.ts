@@ -495,8 +495,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      */
 
     // Step 1: Switch to Macromolecules → Snake mode
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
 
     // Step 2: Load the huge HELM structure
     await pasteFromClipboardAndAddToMacromoleculesCanvas(

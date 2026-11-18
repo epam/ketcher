@@ -195,7 +195,7 @@ test('some test', async () => {
 });
 ```
 
-**When to use**: Test suites with many tests that share the same editor mode.
+**When to use**: The default for every suite, also for small ones.
 
 #### Pattern B — per-test page (simpler, but slower)
 
@@ -212,7 +212,7 @@ test('some test', async ({ page }) => {
 });
 ```
 
-**When to use**: Small suites, isolated tests, or tests that need a fresh page each time.
+**When to use**: Only for API tests and low-level cases without a canvas preset, and for tests that assert on undo/redo stack depth or boundaries or otherwise need a fully clean editor state (see below).
 
 **Choosing between A and B.** Pattern A reuses one page for the whole suite, so it is fast — but the canvas fixtures only reset the canvas, zoom, localStorage and settings; they do **not** fully reset the undo/redo history (some cleanup steps leave entries behind), and other subtle editor state can persist across tests. Use Pattern B when a test asserts on undo/redo stack depth or boundaries, or otherwise depends on a fully clean editor state — the extra per-test page-init cost is worth the isolation.
 
@@ -238,7 +238,7 @@ Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates
 - For API tests and low-level cases that should not use a canvas preset, take the `page` fixture and call `waitForPageInit(page)` (Pattern B).
 - Prefer one `test.describe()` per file, with `let page: Page;` at file scope.
 - If a test changes the mode, restore the default with the matching canvas fixture in `test.afterEach`, for example `test.afterEach(async ({ SnakeCanvas: _ }) => {});`.
-- If a test must run on a canvas other than the suite's default, pass that canvas fixture as a test parameter, for example `async ({ FlexCanvas: _ })`.
+- If a test must run on a canvas other than the suite's default, pass that canvas fixture as a test parameter, for example `async ({ FlexCanvas: _ })`. Do not switch the mode by hand at the start of the test.
 
 **Good**
 
@@ -475,7 +475,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Test Structure
 
-6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time. Prefer a per-test page (Pattern B) instead when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
+6. **Use the shared-page pattern (`initXxxCanvas`)** by default, whatever the number of tests — it significantly reduces test suite execution time. Use a per-test page (Pattern B) only when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
 8. **Add a comment block** in each test following the standard pattern — issue link, description, numbered scenario steps, and the Ketcher version the test was written for:
    ```ts
@@ -555,6 +555,8 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **`await page.waitForTimeout(N)`** as a wait for an action to complete — fragile and slow. Use `waitForRender`, `waitFor({ state })`, or structural waits instead. Raw `waitForTimeout` is only acceptable in rare edge cases (e.g. after a spinner disappears, to allow animation to settle) and must have a comment explaining why.
 - **Bare `await page.keyboard.press(key)`** for canvas actions — prefer the named helpers when one exists (`undoByKeyboard`, `deleteByKeyboard`, …); otherwise wrap in `waitForRender` or use `keyboardPressOnCanvas`.
 - **Bare `await locator.click()`** without waiting for any result — use the POM method that wraps with the appropriate wait.
+- **Asserting on a value that was read once**, such as `expect(await banner.getNotificationText()).toContain('...')` — it does not retry. Use a web-first assertion on a locator, such as `await expect(locator).toContainText('...')`, `toBeVisible()` or `toHaveAttribute()`.
+- **Negative check right after an action**, such as `not.toBeVisible()` straight after opening a file — it can pass before the element has a chance to appear. First wait until the action has finished (`waitForSpinnerFinishedWork`, `waitForRender`, or a visible result of the action), then check the absence.
 - **Clicking a disabled button via a POM method** — Playwright waits for the element to become enabled, and with `actionTimeout: 0` (no timeout) this hangs forever. To check that a control is disabled, assert `toBeDisabled()`;
 
 ### Selector Anti-Patterns
@@ -570,6 +572,8 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **`page.reload()` in `beforeEach` of a shared-page suite** — this resets the page context and loses the shared page, causing subsequent tests to fail.
 - **Tests that depend on execution order** — each test in a suite must be independently executable. Use `beforeEach` / the canvas fixture for cleanup.
 - **Commented-out tests or `test.skip`** left indefinitely — use `test.skip` with a comment and a tracking issue reference; do not comment out code.
+- **Using an expected file as test input** — files named `*-expected.*` are outputs of other tests, and `GENERATE_DATA=true` can rewrite them. Add a separate input file.
+- **Inventing a test-data folder name** — put new input files for a feature in a folder named like the spec file, `<featureID>-<Feature-Name>` (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`).
 - **Overly broad screenshots** — `takePageScreenshot` captures the entire page including the library panel, which is noisy. Prefer `takeEditorScreenshot` or `takeElementScreenshot`.
 - **Single giant test file** (>500 lines) — split by feature or connection rule type. The `connection-rules-for-*.spec.ts` pattern is the right approach.
 

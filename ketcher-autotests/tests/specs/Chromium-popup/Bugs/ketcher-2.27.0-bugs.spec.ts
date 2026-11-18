@@ -197,8 +197,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await takeEditorScreenshot(page, {
@@ -233,8 +232,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 3. Toggle to Sequence mode
      * 4. Toggle back to Flex mode
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
@@ -307,8 +307,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     ];
 
     for (const filePath of files) {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await openFileAndAddToCanvasAsNewProjectMacro(page, filePath);
@@ -378,8 +377,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 4. Toggle back to Macromolecules mode
      * 5. System opens Flex mode canvas
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',

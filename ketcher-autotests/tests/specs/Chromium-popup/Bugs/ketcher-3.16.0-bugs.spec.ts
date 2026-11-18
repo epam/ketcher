@@ -19,13 +19,19 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { getStructure, macromoleculesFilesInputFormats } from 'ketcher-core';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  createRNAAntisenseChain,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { expandMonomer } from '@utils/sgroup/helpers';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -141,9 +147,7 @@ test('Case 5: ', async () => {
    * Expected result: Attachment points are shown, Select Connection point dialog doesn't appear
    */
   const helmString = 'RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0';
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: true,
-  });
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -217,7 +221,74 @@ test('Case 7: ', async ({ SnakeCanvas: _ }) => {
     'RNA1{R(A)([gly],[hn])}$$$$V2.0',
   );
   await selectAllStructuresOnCanvas(page);
-  await MacromoleculesTopToolbar(page).createAntisenseStrand();
+  await ContextMenu(
+    page,
+    getMonomerLocator(page, { monomerType: MonomerType.Phosphate }).first(),
+  ).click(MonomerOption.CreateAntisenseRNAStrand);
+  const filteredErrors = consoleErrors.filter((error) =>
+    error.includes('Cannot read properties of undefined'),
+  );
+  expect(filteredErrors.length).toBe(0);
+  await takeEditorScreenshot(page);
+});
+
+test('Case 8: ', async ({ SnakeCanvas: _ }) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6091
+   * Description: Antisense creating doesn't work if ambiguous sugar present in the chain selection
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM using paste from clipboard: RNA1{([25mo3r],[25R])(A)P}$$$$V2.0
+   * 3. Select all monomers on the canvas and call context menu
+
+   * Actual result: Create Antisense Strand option is absent
+   * Expected result: Create Antisense Strand option is present and works correct (antisense creation is possible)
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{([25mo3r],[25R])(A)P}$$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(
+    page,
+    getMonomerLocator(page, { monomerType: MonomerType.Sugar }).first(),
+  ).click(MonomerOption.CreateAntisenseRNAStrand);
+
+  await takeEditorScreenshot(page);
+});
+
+test('Case 9: ', async ({ SnakeCanvas: _ }) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6092
+   * Description: Antisense creating doesn't work if ambiguous peptide present in the chain selection
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM using paste from clipboard: RNA1{R(A)P}|PEPTIDE1{(A,C,D,E)}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0
+   * 3. Select all monomers on the canvas and click Create Antisense Strand from context menu
+
+   * Actual result: Nothing happens, there is an error in console
+   * Expected result: Antisense chain created but with no monomers created for ambiguous monomer in antisence chain
+   */
+  const consoleErrors: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      consoleErrors.push(msg.text());
+    }
+  });
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P}|PEPTIDE1{(A,C,D,E)}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(
+    page,
+    getMonomerLocator(page, { monomerType: MonomerType.Peptide }).first(),
+  ).click(MonomerOption.CreateAntisenseRNAStrand);
   const filteredErrors = consoleErrors.filter((error) =>
     error.includes('Cannot read properties of undefined'),
   );

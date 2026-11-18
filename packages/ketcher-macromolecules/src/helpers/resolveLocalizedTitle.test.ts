@@ -5,13 +5,13 @@ const translations: Record<string, string> = {
   'macromolecules:library.noNaturalAnalogue': 'No natural analogue',
 };
 
-const t = jest.fn(
+const t = vi.fn(
   (key: string) => translations[key] ?? key,
 ) as unknown as TFunction;
 
 describe('resolveLocalizedTitle', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('returns undefined for an undefined title', () => {

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 
 import CustomColorSwatches from './CustomColorSwatches';
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) =>
       ({

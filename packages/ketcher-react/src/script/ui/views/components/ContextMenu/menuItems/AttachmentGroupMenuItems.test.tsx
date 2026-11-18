@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import AttachmentGroupMenuItems from './AttachmentGroupMenuItems';
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) =>
       ({
@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('react-contexify', () => ({
+vi.mock('react-contexify', () => ({
   Item: ({
     children,
     ...props

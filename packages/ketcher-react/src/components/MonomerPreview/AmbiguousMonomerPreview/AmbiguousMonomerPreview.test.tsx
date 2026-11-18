@@ -3,7 +3,7 @@ import { AmbiguousMonomerPreview } from './AmbiguousMonomerPreview';
 import { type AmbiguousMonomerPreviewState, PreviewType } from './types';
 import type { AmbiguousMonomerType } from 'ketcher-core';
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {

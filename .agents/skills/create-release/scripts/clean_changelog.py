@@ -4,7 +4,7 @@ Cleans up GitHub auto-generated release notes for Ketcher releases.
 
 Two modes:
   clean    Take one raw (or already-sectioned) release body on stdin,
-           strip "by @author in <PR URL>" suffixes, look up each ticket's
+           strip "by @author [with @co-author] in <PR URL>" suffixes, look up each ticket's
            GitHub issue type via `gh issue view --json issueType`, drop
            Autotest/Backmerge/Refactor/Task entries into an "excluded" bucket, flag
            anything with no ticket number or no resolvable issue type, and
@@ -51,9 +51,18 @@ SKIP_LINE_PREFIXES = ("**full changelog**",)
 # One or more ticket refs before the title: "#123 - x" or "#123, #456 - x".
 TICKETS_PATTERN = r"(?P<tickets>#\d+(?:\s*,\s*#\d+)*)"
 DASH_PATTERN = r"\s*[-–—]\s*"
+# PR titles don't always put a dash after the ticket ("#3709 Displaying ...");
+# raw lines accept a plain space too, or such entries end up flagged as having
+# no ticket number. Sectioned drafts are produced by format_entry, always dashed.
+RAW_SEPARATOR_PATTERN = r"(?:" + DASH_PATTERN + r"|\s+)"
+# GitHub's attribution suffix: "by @a in <url>", and co-authored PRs as
+# "by @a with @b in <url>" / "by @a, @b and @c in <url>".
+AUTHOR_SUFFIX_PATTERN = (
+    r"\s+by\s+@\S+(?:(?:\s*,|\s+and|\s+with)\s+@\S+)*\s+in\s+https?://\S+"
+)
 RAW_LINE_RE = re.compile(
-    r"^\*\s+" + TICKETS_PATTERN + DASH_PATTERN + r"(?P<title>.*?)"
-    r"(?:\s+by\s+@\S+\s+in\s+https?://\S+)?\s*$"
+    r"^\*\s+" + TICKETS_PATTERN + RAW_SEPARATOR_PATTERN + r"(?P<title>.*?)"
+    r"(?:" + AUTHOR_SUFFIX_PATTERN + r")?\s*$"
 )
 SECTION_HEADER_RE = re.compile(r"^###\s+(.+?)\s*$", re.MULTILINE)
 BULLET_RE = re.compile(r"^\*\s+" + TICKETS_PATTERN + DASH_PATTERN + r"(?P<title>.+?)\s*$")
@@ -99,7 +108,7 @@ def parse_raw_body(body, owner, repo):
         m = RAW_LINE_RE.match(line)
         if not m:
             bare_title = re.sub(r"^\*\s+", "", line)
-            bare_title = re.sub(r"\s+by\s+@\S+\s+in\s+https?://\S+\s*$", "", bare_title)
+            bare_title = re.sub(AUTHOR_SUFFIX_PATTERN + r"\s*$", "", bare_title)
             if VERSION_BUMP_TITLE_RE.match(bare_title):
                 excluded.append({"title": bare_title, "reason": "version bump commit, not a changelog entry"})
             elif EXCLUDE_TITLE_PREFIXES.match(bare_title):

@@ -304,11 +304,18 @@ in 3.20, a stale `ketcher-macromolecules/dist` got bundled into
 `ketcher-react` and the example build failed with `Attempted import error:
 'i18n' is not exported from 'ketcher-react'` (a stale copy that happens to
 compile is worse — it silently ships the wrong code). Clearing only the
-caches is not enough; remove the `dist/` folders too:
+caches is not enough; remove the `dist/` folders too.
+
+Run the `rm` through `bash -c`: in zsh (the macOS default shell) a glob
+that matches nothing — e.g. `packages/*/node_modules/.vite` on a rollup
+branch — is a fatal `no matches found` error, so nothing is deleted and an
+`&&`-chained build silently runs against the stale `dist/` folders. Check
+that they're really gone before building:
 
 ```bash
-rm -rf packages/*/dist packages/*/node_modules/.cache packages/*/node_modules/.vite \
-  example/node_modules/.cache example/dist
+bash -c 'rm -rf packages/*/dist packages/*/node_modules/.cache packages/*/node_modules/.vite \
+  example/node_modules/.cache example/dist'
+ls -d packages/*/dist example/dist 2>/dev/null   # must print nothing
 npm install     # local node_modules can drift from the lockfile after branch switches; this syncs it without changing tracked files
 ```
 
@@ -331,18 +338,28 @@ git status --short       # must still be clean
 ```
 
 **Rollup (`rollup.config.mjs`; 3.21 and earlier):** `build:packages` builds
-`ketcher-react` *before* `ketcher-macromolecules`, and `ketcher-react`
-bundles whatever macromolecules `dist/` is on disk as an
-`index.modern-<hash>.js` chunk — that chunk is what the npm package
-CodeBuild publishes contains. From a clean slate there is nothing to
-bundle yet (rollup prints `(!) Unresolved dependencies` and leaves
-`import('ketcher-macromolecules')` external), so a single pass does *not*
-match npm. Build the packages, rebuild `ketcher-react` now that the fresh
-macromolecules `dist/` exists, then build the examples:
+`ketcher-react` *before* `ketcher-macromolecules`. What `ketcher-react`
+does with macromolecules depends on whether `ketcher-react/package.json`
+declares it as a dependency:
+
+- **Not declared (3.20 and earlier):** `ketcher-react` bundles whatever
+  macromolecules `dist/` is on disk as an `index.modern-<hash>.js` chunk —
+  that chunk is what the npm package CodeBuild publishes contains. From a
+  clean slate there is nothing to bundle yet (rollup prints `(!)
+  Unresolved dependencies` and leaves `import('ketcher-macromolecules')`
+  external), so a single pass does *not* match npm; the second
+  `build:react` pass below bundles the fresh macromolecules `dist/`.
+- **Declared (3.21, since #11796):** `rollup-plugin-peer-deps-external`
+  keeps `import('ketcher-macromolecules')` external, so `ketcher-react/dist`
+  has only `index.js` (plus `cjs/`) and no chunk, matching npm. Its zip is
+  ~0.75 MB smaller than 3.20's for that reason — expected, not a broken
+  build. The second pass is a no-op here but harmless.
+
+Run the same sequence for both:
 
 ```bash
 npm run build:packages   # core, standalone + react, macromolecules
-npm run build:react      # second pass: bundles the fresh macromolecules dist, as the npm package does
+npm run build:react      # second pass: bundles the fresh macromolecules dist where react bundles it (3.20 and earlier)
 npm run build:example    # remote, standalone
 git status --short       # must still be clean
 ```
@@ -360,7 +377,8 @@ mkdir -p /tmp/npm-react && (cd /tmp/npm-react && npm pack ketcher-react@X.Y.Z --
 ls packages/ketcher-react/dist/*.js /tmp/npm-react/package/dist/*.js
 ```
 
-(The rollup sequence was verified against npm on `release/3.20`. The Vite
+(The rollup sequence was verified against npm on `release/3.20` (bundled
+chunk) and `release/3.21` (external macromolecules, no chunk). The Vite
 sequence follows from `ketcher-react`'s `vite.config.mjs` and the
 `build:packages` order on `master`, but hasn't been through a release yet
 — the cross-check above is what confirms it the first time.)

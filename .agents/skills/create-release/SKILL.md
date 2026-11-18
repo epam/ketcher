@@ -17,6 +17,15 @@ tags still use the real semver/npm convention `X.Y.0-rc.N` (e.g.
 `v3.19.0-rc.1`). Don't rewrite those to "candidate" — `rc` there is a
 literal part of the published version string, not just a label.
 
+**Shell and tools.** Every snippet below is bash, run from the repo root.
+On Linux and macOS use bash directly or wrap a snippet in `bash -c '…'`
+when your interactive shell is something else (zsh, fish); on Windows run
+them in Git Bash or WSL — not PowerShell or cmd. They need `git`, `gh`
+(authenticated for `epam/ketcher`), `node`/`npm`, `python3`, `curl`,
+`zip` and `tar` on `PATH`; if `python3` isn't the interpreter's name on
+your machine (some Windows installs only have `python` or `py`), use
+whichever runs Python 3.
+
 A changelog-cleanup script lives at `scripts/clean_changelog.py` next to
 this file — both modes below use it. It strips GitHub's `by @author in
 <PR URL>` noise, looks up each ticket's GitHub issue type (`gh issue view
@@ -305,11 +314,14 @@ from the packages' `dist/` folders, so a stale one either breaks the build
 worse, compiles and silently ships the wrong code. Clearing only the
 caches is not enough; remove the `dist/` folders too.
 
-Run the cleanup and its check through `bash -c`: in zsh (the macOS default
-shell) a glob that matches nothing — e.g. `packages/*/node_modules/.vite`
-when no package has one — is a fatal `no matches found` error, so nothing
-is deleted and an `&&`-chained build silently runs against the stale
-`dist/` folders.
+Keep the cleanup and its check wrapped in `bash -c` even if you're
+already in bash: the paths are globs, and some may match nothing (e.g.
+`packages/*/node_modules/.vite` when no package has one). Bash passes an
+unmatched glob through literally and `rm -rf` ignores it, but other shells
+treat it as an error — zsh, for one, aborts the whole command with `no
+matches found`, deleting nothing, so an `&&`-chained build would run
+against the stale `dist/` folders. The wrapper gives the same behaviour
+whatever shell you call it from.
 
 ```bash
 bash -c 'rm -rf packages/*/dist packages/*/node_modules/.cache packages/*/node_modules/.vite \
@@ -384,7 +396,8 @@ npm view ketcher-core time --json | python3 -c "
 import json, sys
 from datetime import datetime
 t = json.load(sys.stdin)['X.Y.Z']
-print(datetime.fromisoformat(t.replace('Z', '+00:00')).strftime('%B %-d, %Y'))
+d = datetime.fromisoformat(t.replace('Z', '+00:00'))
+print(f'{d:%B} {d.day}, {d.year}')  # not %-d: that flag isn't supported on Windows
 "
 ```
 

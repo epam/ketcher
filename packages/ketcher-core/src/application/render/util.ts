@@ -243,11 +243,11 @@ function useLabelStyles(
       }
       break;
     }
-    case UsageInMacromolecule.MonomerConnectionsModal: {
+    case UsageInMacromolecule.MonomerConnectionsModal:
+    case UsageInMacromolecule.InsertionConnectionsModal: {
       if (isAttachmentPointSelected) {
-        // Selected leaving group: orange outline instead of a filled pill.
-        fill = '#FFF';
-        stroke = '#FF9A00';
+        fill = '#167782';
+        color = '#FFF';
       } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';

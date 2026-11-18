@@ -20,7 +20,7 @@ Dragging a library monomer or preset onto the canvas can already establish a bon
 - If no default connection exists and the monomer has two or more APs, the new *Select Attachment Points* dialog opens; **Connect** completes the insertion.
 - If no default connection exists for a preset, nothing is inserted and a modal with only **Close** shows: "Preset cannot be inserted because default bonds cannot be established."
 - If no default connection exists and the monomer has one AP, a **Close**-only modal shows: "The monomer cannot be inserted because it only has one attachment point."
-- The existing *Select Attachment Points* (two structures) and *Edit Attachment Points* dialogs adopt the new look: orange outline on leaving groups, drop-down instead of buttons for choosing APs.
+- The new *Select Attachment Points* dialog (three structures) matches the existing dialogs' presentation: a selected AP shows the same filled blue pill, chosen via buttons for the new monomer's two sides. The existing *Select Attachment Points* (two structures) and *Edit Attachment Points* dialogs are untouched.
 
 **Layout**
 
@@ -38,15 +38,11 @@ Dragging a library monomer or preset onto the canvas can already establish a bon
 
 ### New Capabilities
 
-- `drag-drop-monomer-insertion`: Bond-proximity indicator, drop-to-insert behaviour, AP resolution, the two error modals, and Flex/Snake layout rules for inserting a library monomer or preset into an existing polymer bond.
-
-### Modified Capabilities
-
-- `drag-drop-bond-establishment`: The *Select Attachment Points* dialog requirement gains the new visual design and drop-down AP selection (applies to both existing and new entry points).
+- `drag-drop-monomer-insertion`: Bond-proximity indicator, drop-to-insert behaviour, AP resolution, the two error modals, the new *Select Attachment Points* dialog, and Flex/Snake layout rules for inserting a library monomer or preset into an existing polymer bond.
 
 ## Impact
 
-- **`ketcher-core`** — `LibraryItemDragDropHandler` gains a bond-proximity check (after the replacement and AP checks) and an insertion path; `DrawingEntitiesManager` gains an insert-on-bond command built from existing delete-bond / add-monomer / add-bond operations in one history entry; `replacementHelpers`/`DrawingEntitiesManager.replaceMonomer` reuse the new bond-extension geometry; default-bond resolution in `bondConnectionHelpers.ts` is reused with the sequence-mode R1–R2 fallback.
-- **`ketcher-macromolecules`** — a bond-hover circle (transient view) driven by drag state; two new error modals; redesigned *Select Attachment Points* / *Edit Attachment Points* dialogs; new strings in `macromoleculesDialogs.json`.
+- **`ketcher-core`** — `LibraryItemDragDropHandler` gains a bond-proximity check (after the replacement and AP checks) and an insertion path; `DrawingEntitiesManager` gains an insert-on-bond command built from existing delete-bond / add-monomer / add-bond operations in one history entry; `replacementHelpers`/`DrawingEntitiesManager.replaceMonomer` reuse the new bond-extension geometry; default-bond resolution in `bondConnectionHelpers.ts` is reused with the sequence-mode R1–R2 fallback; `UsageInMacromolecule` gains a value dedicated to the new dialog's presentation so the existing *Select Attachment Points* / *Edit Attachment Points* dialogs keep their current look.
+- **`ketcher-macromolecules`** — a bond-hover circle (transient view) driven by drag state; two new error modals; the new `InsertionConnection` dialog; new strings in `macromoleculesDialogs.json`. The existing `MonomerConnections` (*Select Attachment Points* / *Edit Attachment Points*) dialog is not modified.
 - **`ketcher-autotests`** — new `data-testid`s and Playwright specs (to be planned per `testing.md`, user approval required before writing).
 - No public API changes, no format/serialization impact. Depends on the layout work in #7455 and relates to #7926.

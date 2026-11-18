@@ -23,7 +23,7 @@
 
 - [x] 4.1 Add the bond indicator transient view with near/nearer sizes
 - [x] 4.2 Add the two Close-only error modals (reuse `openErrorModal`; strings are constants in core, like the existing "Deletion of bonds" dialog)
-- [x] 4.3 Redesign *Select Attachment Points* and *Edit Attachment Points*: orange LGA outline, AP drop-down in place of buttons
+- [x] 4.3 Build the new three-monomer *Select Attachment Points* dialog (`InsertionConnection`) with AP buttons for the new monomer's two sides, matching the existing filled-blue-pill AP presentation. Use a dedicated `UsageInMacromolecule` value so the existing *Select Attachment Points* / *Edit Attachment Points* dialog (`MonomerConnections`) is not touched.
 - [x] 4.4 Wire **Connect** in the AP dialog to the insertion command when opened from a bond drop
 
 ## 5. Replacement Update (req. 8)

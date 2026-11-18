@@ -33,10 +33,8 @@ import {
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import {
-  MACROMOLECULES_BOND_TYPES,
-  ToolName,
-} from 'application/editor/tools/types';
+import { ToolName } from 'application/editor/tools/types';
+import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';

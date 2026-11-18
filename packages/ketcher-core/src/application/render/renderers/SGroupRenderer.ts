@@ -9,7 +9,7 @@ import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
-import { SgContexts } from 'application/editor/shared/constants';
+import { SgContexts } from 'domain/constants/sgroup';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { editorEvents } from 'application/editor/editorEvents';

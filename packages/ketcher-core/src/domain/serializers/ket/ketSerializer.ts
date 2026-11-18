@@ -115,7 +115,7 @@ import {
   prepareStructForHapticKetSerialization,
 } from './hapticKet';
 
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';

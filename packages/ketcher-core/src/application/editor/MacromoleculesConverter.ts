@@ -39,7 +39,7 @@ import type { CoreAtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 
 export class MacromoleculesConverter {

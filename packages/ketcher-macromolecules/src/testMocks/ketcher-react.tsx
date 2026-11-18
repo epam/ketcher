@@ -225,3 +225,19 @@ export const usePortalStyle = () => [{}] as const;
 export const calculateAmbiguousMonomerPreviewTop = () => () => '0px';
 export const calculateMonomerPreviewTop = () => '0px';
 export const calculateNucleoElementPreviewTop = () => '0px';
+
+// Minimal stand-in for the real drag/resize hook (see
+// ketcher-react's useSettingsPanelDrag.ts). Tests render Modal with
+// isDraggable=false by default, so a no-op implementation is enough -
+// it only needs to satisfy Modal.tsx's usage shape.
+export const useSettingsPanelDrag = () => ({
+  rect: null,
+  setRect: () => undefined,
+  isDragging: false,
+  startDrag: () => undefined,
+  startResizeTop: () => undefined,
+  startResizeBottom: () => undefined,
+  clamp: () => undefined,
+  getBounds: () => null,
+  setPreferredHeight: () => undefined,
+});

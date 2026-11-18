@@ -106,9 +106,9 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
       ...assignedAttachmentPoints.keys(),
       ...(connectionAttachmentPoints?.keys() ?? []),
     ]);
-    const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(occupiedAttachmentPointNames),
-    );
+    const attachmentPointName = getNextFreeAttachmentPoint([
+      ...occupiedAttachmentPointNames,
+    ]);
     this.attachmentPointName = attachmentPointName;
 
     assignedAttachmentPoints.set(attachmentPointName, atomPairForLeavingGroup);

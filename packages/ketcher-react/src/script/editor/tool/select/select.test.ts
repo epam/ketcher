@@ -154,17 +154,18 @@ function mergeAtom(src: number, dst: number) {
 
 describe('SelectTool', () => {
   beforeAll(() => {
-    global.window.PointerEvent = MouseEvent as unknown as typeof PointerEvent;
+    globalThis.window.PointerEvent =
+      MouseEvent as unknown as typeof PointerEvent;
   });
 
   beforeEach(() => {
-    jest.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
-      changeEvent: { dispatch: jest.fn() },
+    vi.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      changeEvent: { dispatch: vi.fn() },
     } as unknown as ReturnType<typeof ketcherProvider.getKetcher>);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('mouseup after dragging a nucleotide component', () => {
@@ -289,8 +290,8 @@ describe('SelectTool Attachment Group selection', () => {
       atoms: [firstAtomId, secondAtomId, unrelatedAtomId],
       bonds: [internalBondId],
     };
-    const hover = jest.fn();
-    const selection = jest.fn((...args: [Selection | null] | []) => {
+    const hover = vi.fn();
+    const selection = vi.fn((...args: [Selection | null] | []) => {
       if (args.length === 0) {
         return currentSelection;
       }
@@ -298,7 +299,7 @@ describe('SelectTool Attachment Group selection', () => {
       return currentSelection;
     });
     const editor = {
-      findItem: jest.fn().mockReturnValue({
+      findItem: vi.fn().mockReturnValue({
         map: 'attachmentGroups',
         id: attachmentGroupId,
         dist: 0,
@@ -327,11 +328,11 @@ describe('SelectTool Attachment Group selection', () => {
       explicitSelected: () => ({ bonds: [] }),
       event: {
         message: {
-          dispatch: jest.fn(),
+          dispatch: vi.fn(),
         },
       },
       rotateController: {
-        rerender: jest.fn(),
+        rerender: vi.fn(),
       },
       struct: () => struct,
     } as unknown as Editor;

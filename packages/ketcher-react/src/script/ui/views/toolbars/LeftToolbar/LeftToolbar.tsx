@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,11 +74,11 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
         status[item.id]?.hidden ||
         item.options?.every((option) => status[option.id]?.hidden)
           ? acc
-          : acc.concat(item),
+          : [...acc, item],
       [],
     ) ?? [];
 
-  return visibleItems.length ? (
+  return visibleItems.length > 0 ? (
     <div className={clsx(classes.group, className)}>
       {visibleItems.map((item) => {
         switch (item.id) {

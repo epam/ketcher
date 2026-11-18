@@ -85,7 +85,7 @@ You can use the buttons of the _Main_ toolbar:
 
 - **Settings** button (19) to make some settings for molecular files;
 
-<img src=images/Settings-3.0..png width = "300"/>
+<img src=images/Settings-3.21..png width = "300"/>
 
 - **Help** button (20) to view Help;
 - **About** button (21) to display version and copyright information of the program;
@@ -568,11 +568,11 @@ Depending on the size of the Ketcher window, the library might have a slightly d
 Hovering over a library card will show the preview for that library element. 
 In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, HELM alias, BILN alias, modification type(s), AxoLabs alias(es), and the IDT alias(es) (if the monomer has modification type(s), HELM, BILN, AxoLabs and IDT alias(es)):
 
-<img src=images/Monomer-Preview-3.18..png width = "400"/>
+<img src=images/Monomer-Preview-3.21..png width = "400"/>
 
 In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as AxoLabs and IDT alias(es) (if the preset has AxoLabs and IDT alias(es)):
 
-<img src=images/Preset-Preview-3.18..png width = "200"/>
+<img src=images/Preset-Preview-3.21..png width = "200"/>
 
 In case of an ambiguous monomer, names of monomers making up that ambiguous monomer will be shown, as well as a type of ambiguous monomer (alternatives or mixed):
 
@@ -604,7 +604,7 @@ Clicking on _Add to Presets_ will save the preset and add it to the Presets sect
 
 Right clicking on selected presets in sequence mode gives the option to _Modify in RNA Builder..._
 
-<img src=images/Modify-in-RNA-Builder-3.6..png width = "200"/>
+<img src=images/Modify-in-RNA-Builder-21..png width = "200"/>
 <img src=images/Modify-in-RNA-Builder-2-3.0..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will again open appropriate sections of the library so that selected nucleotides can be conveniently modified.
@@ -625,6 +625,8 @@ A chemical structure can be loaded into the monomer creation wizard in molecules
 , choosing the same option from the context menu, or using the hotkey (_Ctrl+M_):
 
 <img src=images/Monomer-Creation-Wizard-2-3.17..png width = "450"/>
+
+In macromolecules mode, the wizard can be entered from the context menu.
 
 If no structure is selected, the entire contents of the canvas will be loaded into the Wizard.
 
@@ -689,6 +691,12 @@ Or by choosing _Mark as a..._ from the context menu:
 
 <img src=images/Monomer-Creation-Wizard-15-3.17..png width = "200"/>
 
+##### Modifying existing monomers
+
+In the three dot menu on monomer library cards, options _Edit_ and _Duplicate and Edit_ exist. _Duplicate and Edit_ will load a copy of the original monomer into the wizard, whereas the _Edit_ option will load that monomer without any changes. That way the user is able to edit already existing monomers in the library.
+
+<img src=images/Modify-monomer-3.21..png width = "150"/>
+
 #### Monomer Addition Through API
 
 New monomers can be added and already existing ones replaced using an API function (see [README.md](https://github.com/epam/ketcher/blob/master/README.md))
@@ -719,7 +727,7 @@ In addition to typing and pasting text or formats who always result in natural m
 
 Already existing monomers can also be replaced by selecting them and clicking on a library card. Nuclotides can be modified in RNA builder by choosing _Modify in RNA Builder..._ from the right-click drop-down menu (see above), and amino acids can be modified by choosing an appropriate modification from the right-click drop-down menu:
 
-<img src=images/Modify-AAs-Sequence-3.6..png width = "500"/>
+<img src=images/Modify-AAs-Sequence-3.21..png width = "500"/>
 
 ## Snake and Flex Modes
 
@@ -831,7 +839,7 @@ There are two differences between snake and flex modes:
 
 After a selection of a circular structure is made, in _Flex layout mode_, a new option in the context menu and on the top toolbar exists: _Arrange as a Ring_:
 
-<img src=images/Arrange-as-ring-3.20..png width = "500"/>
+<img src=images/Arrange-as-ring-3.21..png width = "500"/>
 
 When the option is chosen, the selected monomers get arranged in a regular n-agon where the monomers occupy the vertices:
 
@@ -861,7 +869,7 @@ Antisense chains can be created in all layout modes from a right-click drop-down
 
 Creation of an RNA antisense strand in sequence layout mode from the right-click drop-down menu:
 
-<img src=images/Create-AS-In-Sequence-1-3.6..png width = "300"/>
+<img src=images/Create-AS-In-Sequence-1-3.21..png width = "300"/>
 <img src=images/Create-AS-In-Sequence-2-3.2..png width = "125"/>
 
 Creation of a DNA antisense strand in flex layout mode using the _Create Antisense Strand_ icon:
@@ -883,12 +891,12 @@ In sequence layout mode:
 
 Hydrogen bond establishment/deletion is available in the right-click drop-down menu. When deleting, all hydrogen bonds that the selected monomers participate in will be removed:
 
-<img src=images/Delete-H-Bonds-1-3.6..png width = "250"/>
+<img src=images/Delete-H-Bonds-1-3.21..png width = "250"/>
 <img src=images/Delete-H-Bonds-2-3.2..png width = "125"/>
 
 When establishing, hydrogen bonds will be established with the monomers represented on the other side of the double-stranded sequence:
 
-<img src=images/Establish-H-Bonds-1-3.6..png width = "250"/>
+<img src=images/Establish-H-Bonds-1-3.21..png width = "250"/>
 <img src=images/Establish-H-Bonds-2-3.2..png width = "125"/>
 
 Depending on if the sync/non-sync toggle on the main toolbar is on or off, editing of the double-stranded sequence will happen differently.
@@ -901,7 +909,7 @@ changes made to one side of the squence impact the other, like in the example be
 
 <img src=images/Sync-Editing-3.2..gif width = "200"/>
 
-When the toggle is off
+When the toggle is off:
 
 <img src=images/Sync-Toggle-Off-3.2..png width = "50"/>
 
@@ -926,7 +934,7 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
      - *Melting temperature* - Calculated only for double stranded sequences, and only taking natural analogues into account; The user is able to modify the variables of oligonucleotide concentration and unipositive ion concentration; Method from _Khandelwal G. and Bhyravabhotla J. (2010)_;
      - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleoside.
  
-<img src=images/Calculate-Properties-2-3.8..png width = "800"/>
+<img src=images/Calculate-Properties-2-3.21..png width = "800"/>
 
 The *Calculate Properties* window is available in all modes.
 

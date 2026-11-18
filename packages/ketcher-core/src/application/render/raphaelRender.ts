@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -95,6 +95,12 @@ export type MonomerCreationState = {
 } | null;
 
 export class Render {
+  private userOpts: Partial<RenderOptions>;
+  private oldCb: Box2Abs | null = null;
+  private scrollbar: ScrollbarContainer;
+  private resizeObserver: ResizeObserver | null = null;
+  private _monomerCreationState: MonomerCreationState = null;
+
   public skipRaphaelInitialization = false;
   public readonly clientArea: HTMLElement;
   public readonly paper: RaphaelPaper;
@@ -105,17 +111,26 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
-  private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
-  private _monomerCreationState: MonomerCreationState = null;
+
+  observeCanvasResize = () => {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.sz = this.getCanvasSizeVector();
+      this.resizeViewBox();
+    });
+
+    this.resizeObserver.observe(this.paper.canvas);
+  };
+
+  unobserveCanvasResize = () => {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+  };
 
   constructor(
     clientArea: HTMLElement,
     options: Partial<RenderOptions>,
     currentRender?: Render,
-    reuseRestructIfExist?: boolean,
+    shouldReuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
     this.clientArea = clientArea;
@@ -126,7 +141,7 @@ export class Render {
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
-    if (reuseRestructIfExist && currentRender?.ctab) {
+    if (shouldReuseRestructIfExist && currentRender?.ctab) {
       this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
@@ -143,92 +158,10 @@ export class Render {
     });
   }
 
-  observeCanvasResize = () => {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.sz = this.getCanvasSizeVector();
-      this.resizeViewBox();
-    });
-
-    this.resizeObserver.observe(this.paper.canvas);
-  };
-
-  unobserveCanvasResize = () => {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-  };
-
-  /**
-   * The options this render was asked for, without the values defaultOptions
-   * derives from them. This is the right base for building a render with
-   * changed options: the derived values get recomputed instead of carried over.
-   */
-  get userOptions(): Partial<RenderOptions> {
-    return this.userOpts;
-  }
-
-  updateOptions(opts: string) {
-    try {
-      const passedOptions = JSON.parse(opts);
-      if (passedOptions && typeof passedOptions === 'object') {
-        this.userOpts = { ...this.userOpts, ...passedOptions };
-        this.options = { ...this.options, ...passedOptions };
-        return this.options;
-      }
-    } catch (e) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
-      console.log('Not a valid settings object');
-    }
-    return false;
-  }
-
-  selectionPolygon(polygon: Vec2[]) {
-    return draw.selectionPolygon(this.paper, polygon, this.options);
-  }
-
-  selectionLine(point0: Vec2, point1: Vec2) {
-    return draw.selectionLine(this.paper, point0, point1, this.options);
-  }
-
-  selectionRectangle(point0: Vec2, point1: Vec2) {
-    return draw.selectionRectangle(this.paper, point0, point1, this.options);
-  }
-
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
-  page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
-    return CoordinateTransformation.pageToModel(event, this);
-  }
-
-  setZoom(zoom: number, event?: WheelEvent) {
-    const zoomedWidth = this.sz.x / zoom;
-    const zoomedHeight = this.sz.y / zoom;
-    const [viewBoxX, viewBoxY] = event
-      ? this.zoomOnMouse(event, zoomedWidth, zoomedHeight)
-      : this.zoomOnCanvasCenter(zoomedWidth, zoomedHeight);
-    this.setViewBox({
-      minX: viewBoxX,
-      minY: viewBoxY,
-      width: zoomedWidth,
-      height: zoomedHeight,
-    });
-
-    this.options.zoom = zoom;
-  }
-
   private getCanvasSizeVector() {
     return this.userOpts.width
       ? new Vec2(this.userOpts.width, this.userOpts.height)
       : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
-  }
-
-  resizeViewBox() {
-    this.sz = this.getCanvasSizeVector();
-    const newWidth = this.sz.x / this.options.zoom;
-    const newHeight = this.sz.y / this.options.zoom;
-    this.setViewBox((prev) => ({
-      ...prev,
-      width: newWidth,
-      height: newHeight,
-    }));
   }
 
   private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
@@ -255,6 +188,76 @@ export class Render {
     return [viewBoxX, viewBoxY];
   }
 
+  updateOptions(opts: string) {
+    try {
+      const passedOptions = JSON.parse(opts);
+      if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
+        this.options = { ...this.options, ...passedOptions };
+        return this.options;
+      }
+    } catch (error) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
+      console.log('Not a valid settings object');
+    }
+    return false;
+  }
+
+  selectionPolygon(polygon: Vec2[]) {
+    return draw.selectionPolygon(this.paper, polygon, this.options);
+  }
+
+  selectionLine(point0: Vec2, point1: Vec2) {
+    return draw.selectionLine(this.paper, point0, point1, this.options);
+  }
+
+  selectionRectangle(point0: Vec2, point1: Vec2) {
+    return draw.selectionRectangle(this.paper, point0, point1, this.options);
+  }
+
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
+  page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
+    return CoordinateTransformation.pageToModel(event, this);
+  }
+
+  setZoom(zoom: number, event?: WheelEvent) {
+    const zoomedWidth = this.sz.x / zoom;
+    const zoomedHeight = this.sz.y / zoom;
+    const [viewBoxX, viewBoxY] = event
+      ? this.zoomOnMouse(event, zoomedWidth, zoomedHeight)
+      : this.zoomOnCanvasCenter(zoomedWidth, zoomedHeight);
+    this.setViewBox({
+      minX: viewBoxX,
+      minY: viewBoxY,
+      width: zoomedWidth,
+      height: zoomedHeight,
+    });
+
+    this.options.zoom = zoom;
+  }
+
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
+  }
+
+  resizeViewBox() {
+    this.sz = this.getCanvasSizeVector();
+    const newWidth = this.sz.x / this.options.zoom;
+    const newHeight = this.sz.y / this.options.zoom;
+    this.setViewBox((prev) => ({
+      ...prev,
+      width: newWidth,
+      height: newHeight,
+    }));
+  }
+
   /**
    * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
    */
@@ -270,7 +273,7 @@ export class Render {
     this.scrollbar.update();
   }
 
-  setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
+  setMolecule(struct: Struct, shouldForceUpdateWithTimeout = false) {
     this.paper.clear(); // removes scrollbar rects also
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
@@ -279,7 +282,7 @@ export class Render {
 
     // need to use force update with timeout to have ability select bonds in case of usage:
     // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
-    if (forceUpdateWithTimeout) {
+    if (shouldForceUpdateWithTimeout) {
       setTimeout(() => {
         this.update(true);
       }, 0);
@@ -288,7 +291,7 @@ export class Render {
     }
   }
 
-  update(force = false, viewSz: Vec2 | null = null) {
+  update(shouldForce = false, viewSz: Vec2 | null = null) {
     viewSz =
       viewSz ??
       new Vec2(
@@ -296,9 +299,9 @@ export class Render {
         this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
-    const changes = this.ctab.update(force);
+    const hasChanges = this.ctab.update(shouldForce);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (changes) {
+    if (hasChanges) {
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.modelToCanvas, this.options)

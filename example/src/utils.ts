@@ -2,6 +2,7 @@ import {
   RemoteStructServiceProvider,
   StructServiceProvider,
 } from 'ketcher-core';
+import { StandaloneStructServiceProvider } from 'ketcher-standalone/dist/binaryWasm';
 
 export async function getStructServiceProvider() {
   let structServiceProvider: StructServiceProvider =
@@ -10,8 +11,6 @@ export async function getStructServiceProvider() {
     );
 
   if (process.env.MODE === 'standalone') {
-    const { StandaloneStructServiceProvider } =
-      await import('ketcher-standalone');
     structServiceProvider =
       new StandaloneStructServiceProvider() as StructServiceProvider;
   }

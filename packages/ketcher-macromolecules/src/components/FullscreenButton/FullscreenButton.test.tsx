@@ -1,27 +1,38 @@
+import { type Mock, vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { FullscreenButton } from '.';
 
-const mockGetFullscreenElement = jest.fn();
+const { mockGetFullscreenElement } = vi.hoisted(() => ({
+  mockGetFullscreenElement: vi.fn(),
+}));
 
-jest.mock('ketcher-react', () => ({
+vi.mock('ketcher-react', () => ({
   IconButton: ({
     onClick,
     iconName,
+    title,
     testId,
   }: {
     onClick: () => void;
     iconName: string;
+    title?: string;
     testId: string;
   }) => (
-    <button data-icon-name={iconName} data-testid={testId} onClick={onClick} />
+    <button
+      data-icon-name={iconName}
+      data-testid={testId}
+      title={title}
+      onClick={onClick}
+    />
   ),
   getFullscreenElement: () => mockGetFullscreenElement(),
 }));
 
 describe('FullscreenButton component', () => {
-  const mockExitFullscreen = jest.fn();
-  const mockRequestFullscreen = jest.fn();
+  const mockExitFullscreen = vi.fn();
+  const mockRequestFullscreen = vi.fn();
   let fullscreenElement: Element | null = null;
 
   beforeEach(() => {
@@ -38,14 +49,23 @@ describe('FullscreenButton component', () => {
     });
 
     const container = document.createElement('div') as HTMLDivElement & {
-      requestFullscreen: jest.Mock;
+      requestFullscreen: Mock;
     };
     container.requestFullscreen = mockRequestFullscreen;
     mockGetFullscreenElement.mockReturnValue(container);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+  });
+
+  it('should show the Fullscreen mode tooltip (#4170)', () => {
+    render(<FullscreenButton />);
+
+    expect(screen.getByTestId('fullscreen-mode-button')).toHaveAttribute(
+      'title',
+      'buttons.fullscreen',
+    );
   });
 
   it('should sync button state with document fullscreen changes', () => {

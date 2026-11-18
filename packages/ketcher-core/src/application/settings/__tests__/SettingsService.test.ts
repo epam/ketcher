@@ -2,10 +2,12 @@
  * Unit tests for SettingsService
  */
 
+import { vi } from 'vitest';
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';
 import { getDefaultSettings } from '../schema';
+import { SettingsManager } from 'utilities';
 
 describe('SettingsService', () => {
   let service: SettingsService;
@@ -172,7 +174,7 @@ describe('SettingsService', () => {
     });
 
     it('should emit settings:changed event', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.updateSettings({
@@ -240,7 +242,7 @@ describe('SettingsService', () => {
     });
 
     it('should emit settings:changed event', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.resetToDefaults();
@@ -273,7 +275,7 @@ describe('SettingsService', () => {
     });
 
     it('should emit settings:changed event when loading preset', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.loadPreset('acs');
@@ -330,7 +332,7 @@ describe('SettingsService', () => {
 
   describe('subscription management', () => {
     it('should subscribe to settings changes', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.updateSettings({ resetToSelect: false });
@@ -339,8 +341,8 @@ describe('SettingsService', () => {
     });
 
     it('should support multiple subscribers', async () => {
-      const listener1 = jest.fn();
-      const listener2 = jest.fn();
+      const listener1 = vi.fn();
+      const listener2 = vi.fn();
 
       service.subscribe(listener1);
       service.subscribe(listener2);
@@ -352,7 +354,7 @@ describe('SettingsService', () => {
     });
 
     it('should unsubscribe correctly', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       const unsubscribe = service.subscribe(listener);
 
       unsubscribe();
@@ -363,7 +365,7 @@ describe('SettingsService', () => {
     });
 
     it('should pass updated settings to listener', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.updateSettings({ resetToSelect: false });
@@ -460,6 +462,32 @@ describe('SettingsService', () => {
 
       const stored = await storage.load('ketcher-opts');
       expect(stored?.resetToSelect).toBe(false);
+    });
+  });
+
+  describe('domain-layer settings sync (SettingsManager)', () => {
+    afterEach(() => {
+      SettingsManager.valenceMode = 'default';
+    });
+
+    it('should mirror valence-mode into SettingsManager on init', async () => {
+      await storage.save('ketcher-opts', {
+        resetToSelect: false,
+        'valence-mode': 'biovia-2017',
+      } as Settings);
+
+      SettingsService.resetInstance();
+      await SettingsService.getInstance({ storage });
+
+      expect(SettingsManager.valenceMode).toBe('biovia-2017');
+    });
+
+    it('should mirror valence-mode into SettingsManager on updateSettings', async () => {
+      expect(SettingsManager.valenceMode).toBe('default');
+
+      await service.updateSettings({ 'valence-mode': 'biovia-2017' });
+
+      expect(SettingsManager.valenceMode).toBe('biovia-2017');
     });
   });
 });

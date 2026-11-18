@@ -4,7 +4,6 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jestPlugin from 'eslint-plugin-jest';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
@@ -14,6 +13,12 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import testingLibraryPlugin from 'eslint-plugin-testing-library';
 import reactYouMightNotNeedAnEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
 import globals from 'globals';
+import { readFileSync } from 'node:fs';
+import {
+  rules as invariantRules,
+  ALLOWED_HTML_SINKS,
+  ALLOWED_MODEL_MUTATIONS,
+} from './scripts/eslint-invariants-rules.mjs';
 
 const sanitizeGlobals = (source) => {
   if (!source || typeof source !== 'object') {
@@ -27,7 +32,7 @@ const sanitizeGlobals = (source) => {
   );
 };
 
-export default [
+const defaults = [
   {
     ignores: [
       '**/node_modules/**',
@@ -75,7 +80,6 @@ export default [
         ...sanitizeGlobals(globals.browser),
         ...sanitizeGlobals(globals.node),
         ...sanitizeGlobals(globals.es2024),
-        ...sanitizeGlobals(globals.jest),
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
@@ -93,7 +97,6 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint,
       import: importPlugin,
-      jest: jestPlugin,
       'jsx-a11y': jsxA11yPlugin,
       n: nPlugin,
       promise: promisePlugin,
@@ -132,7 +135,6 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/preserve-manual-memoization': 'off',
-      'jest/expect-expect': 'off',
       'testing-library/no-container': 'off',
       'testing-library/no-node-access': 'off',
       'testing-library/no-unnecessary-act': 'off',
@@ -349,3 +351,65 @@ export default [
   },
   prettierConfig,
 ];
+
+const coreDependencies = Object.keys(
+  JSON.parse(
+    readFileSync(
+      new URL('./packages/ketcher-core/package.json', import.meta.url),
+    ),
+  ).dependencies ?? {},
+);
+
+const invariantsPlugin = { rules: invariantRules };
+
+const invariantsBlocks = [
+  {
+    files: ['packages/*/src/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+    ],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/no-html-sinks': [
+        'error',
+        { allowedFiles: ALLOWED_HTML_SINKS },
+      ],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/domain/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/domain-no-application-imports': 'error',
+      'ketcher-invariants/ui-imports-in-core': 'error',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/ui-imports-in-core': 'error',
+      'ketcher-invariants/ui-deps-in-core': [
+        'error',
+        { forbiddenDeps: coreDependencies },
+      ],
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/application/render/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/renderer-no-model-mutations': [
+        'error',
+        { allowedFiles: ALLOWED_MODEL_MUTATIONS },
+      ],
+    },
+  },
+];
+
+export default [...defaults, ...invariantsBlocks];

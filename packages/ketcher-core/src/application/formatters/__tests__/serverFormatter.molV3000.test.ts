@@ -7,13 +7,13 @@ import { ServerFormatter } from '../serverFormatter';
 import { SupportedFormat } from '../structFormatter.types';
 
 describe('ServerFormatter Mol V3000 monomer library context', () => {
-  const convert = jest.fn().mockResolvedValue({ struct: 'molfile' });
-  const serialize = jest.fn().mockReturnValue('serialized KET');
+  const convert = vi.fn().mockResolvedValue({ struct: 'molfile' });
+  const serialize = vi.fn().mockReturnValue('serialized KET');
   const structService = { convert } as unknown as StructService;
   const ketSerializer = { serialize } as unknown as KetSerializer;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('skips library transfer for Mol V3000 when the exported canvas has no monomers', async () => {

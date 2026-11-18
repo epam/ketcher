@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { Command } from 'domain/entities/Command';
 import { Vec2 } from 'domain/entities';
@@ -6,24 +7,24 @@ import { provideEditorInstance } from '../../editorSingleton';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { convertSvgToPng, getSvgFromDrawnStructures } from 'utilities';
 
-jest.mock('../../editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('../../editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
 
-jest.mock('application/ketcherProvider', () => ({
-  ketcherProvider: { getKetcher: jest.fn() },
+vi.mock('application/ketcherProvider', () => ({
+  ketcherProvider: { getKetcher: vi.fn() },
 }));
 
-jest.mock('domain/serializers/ket/ketSerializer', () => ({
-  KetSerializer: jest.fn().mockImplementation(() => ({
-    serialize: jest.fn(() => 'KET_STRING'),
-  })),
+vi.mock('domain/serializers/ket/ketSerializer', () => ({
+  KetSerializer: class {
+    serialize = vi.fn(() => 'KET_STRING');
+  },
 }));
 
-jest.mock('utilities', () => ({
-  ...jest.requireActual('utilities'),
-  getSvgFromDrawnStructures: jest.fn(),
-  convertSvgToPng: jest.fn(),
+vi.mock('utilities', async () => ({
+  ...(await vi.importActual<typeof import('utilities')>('utilities')),
+  getSvgFromDrawnStructures: vi.fn(),
+  convertSvgToPng: vi.fn(),
 }));
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
@@ -70,21 +71,21 @@ const createCanvasWithTransientLayers = () => {
 };
 
 describe('BaseMode.onCopyAs', () => {
-  const writeText = jest.fn();
-  const write = jest.fn();
-  const convert = jest.fn();
-  const openErrorModalDispatch = jest.fn();
+  const writeText = vi.fn();
+  const write = vi.fn();
+  const convert = vi.fn();
+  const openErrorModalDispatch = vi.fn();
 
   const setupEditor = (
     selectedEntities: unknown[] = [['id', {}]],
     canvas: SVGSVGElement = document.createElementNS(SVG_NAMESPACE_URI, 'svg'),
   ) => {
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    (provideEditorInstance as Mock).mockReturnValue({
       ketcherId: 'ketcher-id',
       canvas,
       drawingEntitiesManager: {
         selectedEntities,
-        filterSelection: jest.fn(() => ({})),
+        filterSelection: vi.fn(() => ({})),
         hasMonomers: false,
       },
       events: { openErrorModal: { dispatch: openErrorModalDispatch } },
@@ -92,7 +93,7 @@ describe('BaseMode.onCopyAs', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     writeText.mockResolvedValue(undefined);
     write.mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', {
@@ -101,7 +102,7 @@ describe('BaseMode.onCopyAs', () => {
     });
     (globalThis as unknown as { ClipboardItem: unknown }).ClipboardItem =
       ClipboardItemMock;
-    (ketcherProvider.getKetcher as jest.Mock).mockReturnValue({
+    (ketcherProvider.getKetcher as Mock).mockReturnValue({
       structService: { convert },
     });
     setupEditor();
@@ -132,8 +133,8 @@ describe('BaseMode.onCopyAs', () => {
     const { canvas } = createCanvasWithTransientLayers();
     setupEditor(undefined, canvas);
     const image = new Blob(['png'], { type: 'image/png' });
-    (getSvgFromDrawnStructures as jest.Mock).mockReturnValue('<svg />');
-    (convertSvgToPng as jest.Mock).mockResolvedValue(image);
+    (getSvgFromDrawnStructures as Mock).mockReturnValue('<svg />');
+    (convertSvgToPng as Mock).mockResolvedValue(image);
 
     await new TestMode().onCopyAs('image');
 
@@ -147,7 +148,7 @@ describe('BaseMode.onCopyAs', () => {
   });
 
   it('shows an error modal and copies nothing when the canvas cannot be exported', async () => {
-    (getSvgFromDrawnStructures as jest.Mock).mockReturnValue(undefined);
+    (getSvgFromDrawnStructures as Mock).mockReturnValue(undefined);
 
     await new TestMode().onCopyAs('image');
 

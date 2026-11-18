@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,9 +45,9 @@ import {
   customQueryValid,
   pseudoAtomValid,
 } from './helper';
-import AtomElement from './AtomElement/AtomElement';
+import AtomElement, { type AtomFormResult } from './AtomElement/AtomElement';
 
-interface AtomProps extends BaseCallProps, BaseProps {
+interface AtomProps extends BaseCallProps, BaseProps<AtomFormResult> {
   alias: string;
   charge: string;
   exactChangeFlag: boolean;
@@ -121,7 +121,7 @@ const Atom: FC<Props> = (props: Props) => {
   };
 
   const handleCustomQueryCheckBoxChange = (
-    value: boolean,
+    isCustomQueryEnabled: boolean,
     formState,
     setCustomQuery: (value: string) => void,
   ) => {
@@ -129,8 +129,8 @@ const Atom: FC<Props> = (props: Props) => {
       return;
     }
 
-    const query = value ? getAtomCustomQuery(formState) : '';
-    setIsCustomQuery(value);
+    const query = isCustomQueryEnabled ? getAtomCustomQuery(formState) : '';
+    setIsCustomQuery(isCustomQueryEnabled);
     setExpandedAccordions([]);
     setCustomQuery(query);
   };

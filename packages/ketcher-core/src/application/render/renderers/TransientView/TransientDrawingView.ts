@@ -200,7 +200,7 @@ export class TransientDrawingView {
     selectedMonomerToConnect?: BaseMonomer,
   ) {
     this.addView(AutochainPreviewView.viewName, {
-      show: AutochainPreviewView.show,
+      show: (layer, params) => AutochainPreviewView.show(layer, params),
       params: { monomerOrRnaItem, position, selectedMonomerToConnect },
     });
   }
@@ -222,7 +222,7 @@ export class TransientDrawingView {
 
   public showRotation(params: RotationViewParams) {
     this.addView(RotationView.viewName, {
-      show: RotationView.show,
+      show: (layer, viewParams) => RotationView.show(layer, viewParams),
       params,
       topLayer: true,
     });
@@ -234,7 +234,8 @@ export class TransientDrawingView {
 
   public showReplacementHighlight(params: ReplacementHighlightViewParams) {
     this.addView(ReplacementHighlightView.viewName, {
-      show: ReplacementHighlightView.show,
+      show: (layer, viewParams) =>
+        ReplacementHighlightView.show(layer, viewParams),
       params,
       topLayer: true,
     });

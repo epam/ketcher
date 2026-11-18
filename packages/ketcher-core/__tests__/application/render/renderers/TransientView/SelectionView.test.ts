@@ -1,5 +1,3 @@
-/** @jest-environment jsdom */
-
 import {
   type SelectionViewParams,
   SelectionView,

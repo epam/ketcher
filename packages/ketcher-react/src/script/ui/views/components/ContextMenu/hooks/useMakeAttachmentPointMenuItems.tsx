@@ -37,27 +37,27 @@ const useMakeAttachmentPointMenuItems = ({
     connectionAttachmentPoints,
   } = editor.monomerCreationState;
 
-  const isAtomInAssignedAttachmentPoint = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
+  const isAtomInAssignedAttachmentPoint = [
+    ...assignedAttachmentPoints.values(),
+  ].some((atomPair) => {
     const [attachmentAtomId, leavingAtomId] = atomPair;
     return (
       selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId
     );
   });
 
-  const isAtomAlreadyLeavingAtom = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [, leavingAtomId] = atomPair;
-    return selectedAtomId === leavingAtomId;
-  });
+  const isAtomAlreadyLeavingAtom = [...assignedAttachmentPoints.values()].some(
+    (atomPair) => {
+      const [, leavingAtomId] = atomPair;
+      return selectedAtomId === leavingAtomId;
+    },
+  );
 
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
-  const isPotentialLeavingGroupAtom = Array.from(
-    potentialAttachmentPoints.values(),
-  ).some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
+  const isPotentialLeavingGroupAtom = [
+    ...potentialAttachmentPoints.values(),
+  ].some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
   const isPotentialAttachmentAtom =
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);
@@ -66,7 +66,7 @@ const useMakeAttachmentPointMenuItems = ({
     ...assignedAttachmentPoints.keys(),
     ...(connectionAttachmentPoints?.keys() ?? []),
   ]);
-  const attachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
+  const isAttachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
 
   const menuItems: ReactNode[] = [];
 
@@ -82,7 +82,7 @@ const useMakeAttachmentPointMenuItems = ({
         {...props}
         onClick={handleMarkLeavingGroupAtomClick}
         disabled={
-          attachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
+          isAttachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
         }
         key="mark-as-leaving-group"
         data-testid="mark-as-leaving-group"
@@ -104,7 +104,7 @@ const useMakeAttachmentPointMenuItems = ({
       {...props}
       onClick={handleMarkConnectionPointAtomClick}
       disabled={
-        attachmentPointsLimitReached ||
+        isAttachmentPointsLimitReached ||
         !isPotentialAttachmentAtom ||
         isAtomAlreadyLeavingAtom
       }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,10 +15,12 @@
  ***************************************************************************/
 
 import compiledSchema from './compiledSchema';
-import { validateMultitailArrows } from './multitailArrowsValidator';
+import { areMultitailArrowsValid } from './multitailArrowsValidator';
 import type { KetFileRootContent } from 'domain/serializers/serializers.types';
 
-export function validate(ket: KetFileRootContent): boolean {
+export function isValidKet(ket: KetFileRootContent): boolean {
   const result = compiledSchema(ket);
-  return result ? validateMultitailArrows(ket) : result;
+  return result ? areMultitailArrowsValid(ket) : result;
 }
+
+export { isValidKet as validate };

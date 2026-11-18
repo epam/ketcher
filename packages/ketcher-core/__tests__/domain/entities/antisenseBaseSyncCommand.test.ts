@@ -48,13 +48,13 @@ const createNucleosideNode = (base: string, position: Vec2) => {
   return created.node;
 };
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -129,7 +129,7 @@ describe('duplex traversal', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -137,6 +137,7 @@ describe('duplex traversal', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {
@@ -263,7 +264,7 @@ describe('createMirroredBaseCommand', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -271,6 +272,7 @@ describe('createMirroredBaseCommand', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {
@@ -745,7 +747,7 @@ describe('resolveMirroredBaseTarget', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -753,6 +755,7 @@ describe('resolveMirroredBaseTarget', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

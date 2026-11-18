@@ -1,22 +1,20 @@
 # Feature Specifications
 
-Each file in this directory describes the **current observable behavior** of a product feature. They are the canonical description of product behavior and intentionally avoid implementation details.
+Each file in this directory is a short entry point for a product feature: a summary, a link to its spec, and its Limitations and Related links. The current observable behavior itself lives in the OpenSpec main spec, `openspec/specs/<feature>/spec.md`, which is the canonical description of product behavior and intentionally avoids implementation details.
 
 ## Convention
 
-Every Feature Specification answers:
+Every feature has one spec, `openspec/specs/<feature>/spec.md`, with:
 
-- **Problem** — What problem does this feature solve?
-- **User interaction** — How does the user interact with it?
-- **Expected behavior** — What behavior is expected? (captured as OpenSpec-style `#### Scenario:` blocks with **WHEN** / **THEN** clauses)
-- **Guarantees** — What invariants/guarantees does it provide?
-- **Limitations** — What limitations or edge cases exist?
+- **Purpose** — What problem the feature solves.
+- **Requirements** — `### Requirement:` blocks with SHALL text, each with `#### Scenario:` **WHEN** / **THEN** blocks.
+- **User interaction** and **Guarantees** — what the user does and what the feature guarantees.
 
-Feature Specifications are updated whenever the product behavior changes.
+Limitations are not requirements. They stay in the feature file. Update the spec whenever the product behavior changes.
 
 ## Documented Features
 
-The ten most important features, distilled from [documentation/help.md](../../documentation/help.md):
+The main features, distilled from [documentation/help.md](../../documentation/help.md):
 
 ### Molecules mode (small molecules & reactions)
 

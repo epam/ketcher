@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,16 @@
 import { initLib } from './init-lib';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
+import { isNumber } from 'lodash';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
 
 export { default as initTmplLib } from './init-lib';
 
-/* TEMPLATES */
+/*
+TEMPLATES
+*/
 export function selectTmpl(tmpl) {
   return {
     type: 'TMPL_SELECT',
@@ -52,7 +55,9 @@ export function changeTab(tab) {
   };
 }
 
-/* TEMPLATE-ATTACH-EDIT */
+/*
+TEMPLATE-ATTACH-EDIT
+*/
 export function initAttach(name, attach) {
   return {
     type: 'INIT_ATTACH',
@@ -99,8 +104,8 @@ export function editTmpl(tmpl) {
         () => null,
       )
       .then(() =>
-        openDialog(dispatch, 'templates').catch((e) => {
-          KetcherLogger.error('index.ts::editTmpl', e);
+        openDialog(dispatch, 'templates').catch((error) => {
+          KetcherLogger.error('index.ts::editTmpl', error);
         }),
       );
   };
@@ -123,7 +128,9 @@ export function deleteTmpl(tmpl) {
   };
 }
 
-/* SAVE */
+/*
+SAVE
+*/
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
   const tmpl = { struct: struct.clone(), props: {} };
@@ -138,12 +145,12 @@ export function saveUserTmpl(struct) {
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
-        const lib = getState().templates.lib.concat(tmpl);
+        const lib = [...getState().templates.lib, tmpl];
         dispatch(initLib(lib));
         updateLocalStore(lib);
       })
-      .catch((e) => {
-        KetcherLogger.error('index.ts::saveUserTmpl', e);
+      .catch((error) => {
+        KetcherLogger.error('index.ts::saveUserTmpl', error);
       });
   };
 }
@@ -160,7 +167,9 @@ function updateLocalStore(lib) {
   storage.setItem('ketcher-tmpls', userLib);
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 export const initTmplsState = {
   lib: [],
   selected: null,
@@ -187,6 +196,14 @@ const attachActions = new Set([
 
 function templatesReducer(state = initTmplsState, action) {
   if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
+
+  if (
+    action.type === 'MODAL_OPEN' &&
+    action.data?.name === 'templates' &&
+    isNumber(action.data?.prop?.tab)
+  ) {
+    return { ...state, tab: action.data.prop.tab };
+  }
 
   if (attachActions.has(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };

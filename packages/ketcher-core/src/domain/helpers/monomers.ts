@@ -180,8 +180,8 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
 } {
   let previous: BaseMonomer | undefined;
   let next: BaseMonomer | undefined;
-  let nextViaChemBackbone = false;
-  let previousViaChemBackbone = false;
+  let isNextViaChemBackbone = false;
+  let isPreviousViaChemBackbone = false;
 
   chem.usedAttachmentPointsNamesList.forEach((attachmentPointName) => {
     const bond = chem.attachmentPointsToBonds[attachmentPointName];
@@ -201,14 +201,14 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
     const isChemBackboneR2 = attachmentPointName === AttachmentPointName.R2;
 
     if (neighborAttachmentPoint === AttachmentPointName.R1) {
-      if (!next || (isChemBackboneR2 && !nextViaChemBackbone)) {
+      if (!next || (isChemBackboneR2 && !isNextViaChemBackbone)) {
         next = neighbor;
-        nextViaChemBackbone = isChemBackboneR2;
+        isNextViaChemBackbone = isChemBackboneR2;
       }
     } else if (neighborAttachmentPoint === AttachmentPointName.R2) {
-      if (!previous || (isChemBackboneR1 && !previousViaChemBackbone)) {
+      if (!previous || (isChemBackboneR1 && !isPreviousViaChemBackbone)) {
         previous = neighbor;
-        previousViaChemBackbone = isChemBackboneR1;
+        isPreviousViaChemBackbone = isChemBackboneR1;
       }
     }
   });
@@ -316,8 +316,8 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
       ? r1PolymerBondOfConnectedMonomer?.getAnotherMonomer(r3ConnectedMonomer)
       : undefined;
 
-  return isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer) &&
-    r1ConnectedMonomer === monomer
+  return r1ConnectedMonomer === monomer &&
+    isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer)
     ? r3ConnectedMonomer
     : undefined;
 }
@@ -341,8 +341,8 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       ? r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer)
       : undefined;
 
-  return isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar) &&
-    r3ConnectedMonomer === monomer
+  return r3ConnectedMonomer === monomer &&
+    isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar)
     ? r1ConnectedMonomer
     : undefined;
 }

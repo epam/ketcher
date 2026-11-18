@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,6 +42,10 @@ interface SimpleObjectItem {
   pos: Array<Vec2>;
 }
 class ReSimpleObject extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private readonly item: SimpleObjectItem;
   private selectionSet: RaphaelSet;
   private selectionPointsSet: RaphaelSet;
@@ -49,10 +53,6 @@ class ReSimpleObject extends ReObject {
   constructor(simpleObject: SimpleObjectItem) {
     super('simpleObject');
     this.item = simpleObject;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {
@@ -72,16 +72,16 @@ class ReSimpleObject extends ReObject {
         const ry = rad.y / 2;
         const center = Vec2.sum(pos[0], new Vec2(rx, ry));
         const pointToCenter = Vec2.diff(point, center);
-        if (rx !== 0 && ry !== 0) {
+        if (rx === 0 || ry === 0) {
+          // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
+          // in such case distance need to be calculated as a distance between line and current point
+          dist = point.calculateDistanceToLine([pos[0], pos[1]]);
+        } else {
           dist = Math.abs(
             1 -
               (pointToCenter.x * pointToCenter.x) / (rx * rx) -
               (pointToCenter.y * pointToCenter.y) / (ry * ry),
           );
-        } else {
-          // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
-          // in such case distance need to be calculated as a distance between line and current point
-          dist = point.calculateDistanceToLine([pos[0], pos[1]]);
         }
         break;
       }

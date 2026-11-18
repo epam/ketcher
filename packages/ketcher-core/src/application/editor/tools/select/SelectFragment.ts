@@ -25,11 +25,16 @@ export class SelectFragment extends SelectBase {
 
   protected mousedownEntity(
     renderer: BaseRenderer,
-    shiftKey = false,
-    modKey = false,
-    altKey = false,
+    isShiftKeyPressed = false,
+    isModKeyPressed = false,
+    isAltKeyPressed = false,
   ): void {
-    super.mousedownEntity(renderer, shiftKey, modKey, altKey);
+    super.mousedownEntity(
+      renderer,
+      isShiftKeyPressed,
+      isModKeyPressed,
+      isAltKeyPressed,
+    );
     const command =
       this.editor.drawingEntitiesManager.selectAllConnectedEntities(
         renderer.drawingEntity,

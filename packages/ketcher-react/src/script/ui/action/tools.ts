@@ -445,6 +445,7 @@ const bondTypeTitleKeys: Record<string, string> = {
   singlearomatic: 'toolbar:tools.bondTypeTitles.singlearomatic',
   doublearomatic: 'toolbar:tools.bondTypeTitles.doublearomatic',
   dative: 'toolbar:tools.bondTypeTitles.dative',
+  haptic: 'toolbar:tools.bondTypeTitles.haptic',
 };
 
 const monomerWizardDisallowedBondTypes: Set<string> = new Set(
@@ -458,7 +459,7 @@ export default bondTypes.reduce<Record<string, ToolActionEntry>>(
       // which is never rendered in any toolbar group (see Bond/options.ts) -
       // fall back to a real key so it still satisfies the "every tool has a
       // title" invariant without affecting anything user-visible.
-      title: bondTypeTitleKeys[type] ?? bondTypeTitleKeys.single,
+      title: bondTypeTitleKeys[type] ?? '',
       titleParams: { type: bondTypeNames[i] },
       shortcut: bondCuts[type],
       action: {

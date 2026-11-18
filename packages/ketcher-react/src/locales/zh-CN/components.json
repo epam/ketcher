@@ -113,6 +113,8 @@
       "invalidPhosphatePositionAttachmentPoints": "3′ 位置需要磷酸 R1 和糖 R2，5′ 位置需要磷酸 R2 和糖 R1。",
       "phosphatePositionNotSelected": "您必须选择磷酸的位置（5' 或 3'）。",
       "usedAttachmentPointsWarning": "删除连接点 {points} 将导致保存后删除使用这些连接点的键。",
+      "editAllPresetWarning": "由于该单体参与预设，编辑后的版本必须保持相同的单体类型，并且必须具有连接点 {points}。",
+      "editAllPresetError": "对单体所做的更改使其无法参与预设。该单体必须是 {type}，并且必须包含 {points} 连接点。",
       "aminoAcidLeavingGroupWarning": "氨基酸单体通常以氢作为 R1 的离去基团，以羟基作为 R2 的离去基团。是否要继续使用当前的连接点？",
       "sugarLeavingGroupWarning": "糖单体通常以氢作为 R1 和 R2 的离去基团，以羟基作为 R3 的离去基团。是否要继续使用当前的连接点？",
       "baseLeavingGroupWarning": "碱基单体通常以氢作为 R1 的离去基团。是否要继续使用当前的连接点？",

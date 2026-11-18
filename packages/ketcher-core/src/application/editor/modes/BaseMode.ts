@@ -43,14 +43,6 @@ export abstract class BaseMode {
     public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
 
-  public get isAntisenseEditMode(): boolean {
-    return false;
-  }
-
-  public get isSyncEditMode(): boolean {
-    return false;
-  }
-
   private changeMode(
     editor: CoreEditor,
     modeName: LayoutMode,
@@ -60,14 +52,81 @@ export abstract class BaseMode {
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo, false);
+    editor.mode.initialize(true, isUndo, false, false, true);
+  }
+
+  private async copyCanvasAsImage(): Promise<void> {
+    const editor = provideEditorInstance();
+    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
+
+    if (!svg) {
+      throw new Error('Cannot get drawn structures!');
+    }
+
+    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ [image.type]: image }),
+    ]);
+  }
+
+  private async convertKetToMol(ket: string): Promise<string> {
+    const editor = provideEditorInstance();
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const result = await ketcher.structService.convert(
+      { struct: ket, output_format: ChemicalMimeType.Mol },
+      { 'molfile-saving-mode': '3000' },
+      {
+        skipMonomerLibraryTransfer: !editor.drawingEntitiesManager.hasMonomers,
+      },
+    );
+
+    return result.struct;
+  }
+
+  private updateEntitiesPosition(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): void {
+    const newNodePosition = this.getNewNodePosition();
+    const firstEntityPosition =
+      drawingEntitiesManager.allEntities[0]?.[1].position;
+    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+
+    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
+      drawingEntitiesManager.moveDrawingEntityModelChange(
+        drawindEntity,
+        offset,
+      );
+    });
+  }
+
+  private checkIfTargetIsInput(event: Event): boolean {
+    return (
+      event.target instanceof HTMLElement &&
+      (event.target?.nodeName === 'INPUT' ||
+        event.target?.nodeName === 'TEXTAREA' ||
+        event.target.contentEditable === 'true')
+    );
+  }
+
+  private isSelectionOutsideCanvas(): boolean {
+    return isSelectionOutsideElement(provideEditorInstance().canvas);
+  }
+
+  public get isAntisenseEditMode(): boolean {
+    return false;
+  }
+
+  public get isSyncEditMode(): boolean {
+    return false;
   }
 
   public initialize(
-    needRemoveSelection = true,
+    shouldRemoveSelection = true,
     _isUndo = false,
-    _needReArrangeChains = false,
-    _forceRecalculateAntisense = false,
+    _shouldReArrangeChains = false,
+    _shouldForceRecalculateAntisense = false,
+    _isHistoryReplay = false,
   ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
@@ -78,10 +137,19 @@ export abstract class BaseMode {
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
+        () => {
+          const currentEditor = provideEditorInstance();
+          if (
+            currentEditor.mode.modeName === 'snake-layout-mode' &&
+            currentEditor.drawingEntitiesManager.hasMonomers
+          ) {
+            currentEditor.scrollToTopLeftCorner();
+          }
+        },
       ),
     );
 
-    if (needRemoveSelection) {
+    if (shouldRemoveSelection) {
       editor.events.selectSelectionTool.dispatch();
     }
 
@@ -217,39 +285,6 @@ export abstract class BaseMode {
         errorMessage: normalizeError(error).message,
       });
     }
-  }
-
-  /**
-   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
-   * exports it (monomers are drawn as they look on the canvas).
-   */
-  private async copyCanvasAsImage(): Promise<void> {
-    const editor = provideEditorInstance();
-    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
-
-    if (!svg) {
-      throw new Error('Cannot get drawn structures!');
-    }
-
-    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
-
-    await navigator.clipboard.write([
-      new ClipboardItem({ [image.type]: image }),
-    ]);
-  }
-
-  private async convertKetToMol(ket: string): Promise<string> {
-    const editor = provideEditorInstance();
-    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
-    const result = await ketcher.structService.convert(
-      { struct: ket, output_format: ChemicalMimeType.Mol },
-      { 'molfile-saving-mode': '3000' },
-      {
-        skipMonomerLibraryTransfer: !editor.drawingEntitiesManager.hasMonomers,
-      },
-    );
-
-    return result.struct;
   }
 
   /**
@@ -431,41 +466,12 @@ export abstract class BaseMode {
     }
   }
 
-  private updateEntitiesPosition(
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ): void {
-    const newNodePosition = this.getNewNodePosition();
-    const firstEntityPosition =
-      drawingEntitiesManager.allEntities[0]?.[1].position;
-    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
-
-    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
-      drawingEntitiesManager.moveDrawingEntityModelChange(
-        drawindEntity,
-        offset,
-      );
-    });
-  }
-
   unsupportedSymbolsError(errorMessage: string): void {
     const editor = provideEditorInstance();
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
       errorMessage,
     });
-  }
-
-  private checkIfTargetIsInput(event: Event): boolean {
-    return (
-      event.target instanceof HTMLElement &&
-      (event.target?.nodeName === 'INPUT' ||
-        event.target?.nodeName === 'TEXTAREA' ||
-        event.target.contentEditable === 'true')
-    );
-  }
-
-  private isSelectionOutsideCanvas(): boolean {
-    return isSelectionOutsideElement(provideEditorInstance().canvas);
   }
 
   public destroy(): void {

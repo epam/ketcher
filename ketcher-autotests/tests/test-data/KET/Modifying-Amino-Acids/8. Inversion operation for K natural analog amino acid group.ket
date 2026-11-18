@@ -540,8 +540,7 @@
             "y": -1.25
         },
         "alias": "dK",
-        "templateId": "dK___D-Lysine",
-        "seqid": 5
+        "templateId": "dK___D-Lysine"
     },
     "monomer5": {
         "type": "monomer",

@@ -8,6 +8,8 @@ export type { DeepPartial } from 'types';
 
 export type CssLengthUnit = 'px' | 'pt' | 'cm' | 'inch';
 
+export type ValenceMode = 'biovia-2009' | 'biovia-2017' | 'default';
+
 /**
  * Complete settings structure in flat format
  */
@@ -73,7 +75,7 @@ export interface Settings {
   readonly 'aromatize-skip-superatoms': boolean;
   readonly 'dearomatize-on-load': boolean;
   readonly 'gross-formula-add-isotopes': boolean;
-  readonly 'valence-mode': 'biovia-2009' | 'biovia-2017' | 'default';
+  readonly 'valence-mode': ValenceMode;
 
   // Debug/developer settings
   readonly showAtomIds: boolean;

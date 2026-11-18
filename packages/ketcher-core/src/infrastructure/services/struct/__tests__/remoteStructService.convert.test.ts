@@ -1,29 +1,32 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
+import type { Mock } from 'vitest';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { RemoteStructService } from '../remoteStructService';
 
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
 
 describe('RemoteStructService.convert monomer library', () => {
   const originalFetch = global.fetch;
-  const fetchMock = jest.fn();
+  const fetchMock = vi.fn();
+  const ensureDefaultMonomersLibraryLoaded = vi.fn();
 
   beforeEach(() => {
     fetchMock.mockResolvedValue({
       ok: true,
-      json: jest.fn().mockResolvedValue({ struct: 'converted' }),
+      json: vi.fn().mockResolvedValue({ struct: 'converted' }),
     });
     global.fetch = fetchMock as unknown as typeof fetch;
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    (provideEditorInstance as Mock).mockReturnValue({
       monomersLibraryParsedJson: { monomers: ['library entry'] },
+      ensureDefaultMonomersLibraryLoaded,
     });
   });
 
   afterEach(() => {
     global.fetch = originalFetch;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('skips library transfer only when the caller explicitly requests it', async () => {
@@ -38,6 +41,7 @@ describe('RemoteStructService.convert monomer library', () => {
     const [, requestOptions] = fetchMock.mock.calls[0];
     const requestBody = JSON.parse(requestOptions.body);
     expect(requestBody.options).not.toHaveProperty('monomerLibrary');
+    expect(ensureDefaultMonomersLibraryLoaded).not.toHaveBeenCalled();
   });
 
   it('preserves library transfer by default for other conversions', async () => {
@@ -50,6 +54,7 @@ describe('RemoteStructService.convert monomer library', () => {
 
     const [, requestOptions] = fetchMock.mock.calls[0];
     const requestBody = JSON.parse(requestOptions.body);
+    expect(ensureDefaultMonomersLibraryLoaded).toHaveBeenCalledOnce();
     expect(requestBody.options.monomerLibrary).toBe(
       JSON.stringify({ monomers: ['library entry'] }),
     );
@@ -68,6 +73,28 @@ describe('RemoteStructService.convert monomer library', () => {
     const requestBody = JSON.parse(requestOptions.body);
     expect(requestBody.options.monomerLibrary).toBe(
       JSON.stringify({ monomers: ['library entry'] }),
+    );
+  });
+
+  it('waits for the default library before serializing it', async () => {
+    const editor = {
+      monomersLibraryParsedJson: undefined as
+        { monomers: string[] } | undefined,
+      ensureDefaultMonomersLibraryLoaded: vi.fn(async () => {
+        await Promise.resolve();
+        editor.monomersLibraryParsedJson = { monomers: ['loaded entry'] };
+      }),
+    };
+    (provideEditorInstance as Mock).mockReturnValue(editor);
+
+    await new RemoteStructService('http://localhost/v2/', {}).convert({
+      struct: 'external input',
+      output_format: ChemicalMimeType.KET,
+    });
+
+    const [, requestOptions] = fetchMock.mock.calls[0];
+    expect(JSON.parse(requestOptions.body).options.monomerLibrary).toBe(
+      JSON.stringify({ monomers: ['loaded entry'] }),
     );
   });
 });

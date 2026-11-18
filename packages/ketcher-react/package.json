@@ -105,7 +105,7 @@
     "@typescript-eslint/parser": "^8.66.0",
     "autoprefixer": "^10.5.4",
     "cross-env": "^7.0.3",
-    "dpdm": "^4.2.0",
+    "dpdm": "^4.3.0",
     "dotenv": "^10.0.0",
     "eslint": "10.9.0",
     "eslint-plugin-jsx-a11y": "^6.7.1",

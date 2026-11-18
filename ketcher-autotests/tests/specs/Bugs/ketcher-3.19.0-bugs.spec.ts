@@ -6,6 +6,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
+  resetZoomLevelToDefault,
 } from '@utils';
 
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -126,7 +127,7 @@ test.describe('Ketcher bugs in 3.19.0', () => {
     await expect(getAtomLocator(page, { atomLabel: 'P' })).toHaveCount(1);
   });
 
-  test('Case 3: "Remove Grouping" expands a collapsed monomer before removing its group', async ({
+  test('Case 3: "Remove Grouping" on a collapsed monomer keeps the layout and valence correct', async ({
     FlexCanvas: _,
   }) => {
     /*
@@ -151,6 +152,7 @@ test.describe('Ketcher bugs in 3.19.0', () => {
       'PEPTIDE1{A.A.A}$$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
 
     const remainingAbbreviations = getAbbreviationLocator(page, { name: 'A' });
 

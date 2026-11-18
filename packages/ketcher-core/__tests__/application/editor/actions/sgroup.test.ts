@@ -441,88 +441,117 @@ describe('setExpandMonomerSGroup', () => {
 });
 
 describe('fromSgroupDeletion', () => {
-  const buildCollapsedMonomerWithLeavingAtom = () => {
+  /**
+   * A two-atom monomer C0-C1 whose attachment atom C0 is bonded to a plain
+   * outside atom N. The monomer's label sits between its atoms, at (1, 0), so
+   * while it is collapsed N is drawn next to the label.
+   */
+  const buildMonomerWithOutsideNeighbor = ({
+    expanded,
+  }: {
+    expanded: boolean;
+  }) => {
     const struct = new Struct();
     const attachmentAtomId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),
     );
-    const leaveAtomId = struct.atoms.add(
-      new Atom({ label: 'Cl', pp: new Vec2(1, 0) }),
+    const innerAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
     );
-    const bondId = struct.bonds.add(
-      new Bond({
-        begin: attachmentAtomId,
-        end: leaveAtomId,
-        type: Bond.PATTERN.TYPE.SINGLE,
-      }),
+    const outsideAtomId = struct.atoms.add(
+      new Atom({ label: 'N', pp: new Vec2(-1, 0) }),
     );
-    struct.bondInitHalfBonds(bondId);
+    [
+      [attachmentAtomId, innerAtomId],
+      [attachmentAtomId, outsideAtomId],
+    ].forEach(([begin, end]) => {
+      const bond = new Bond({ begin, end, type: Bond.PATTERN.TYPE.SINGLE });
+      const bondId = struct.bonds.add(bond);
+      struct.bondInitHalfBonds(bondId, bond);
+    });
     struct.initNeighbors();
 
     const sgroupId = createMonomerSGroup(struct, attachmentAtomId);
+    struct.atomAddToSGroup(sgroupId, innerAtomId);
+    addAttachmentPoint(struct, sgroupId, attachmentAtomId, 1);
     const sgroup = struct.sgroups.get(sgroupId);
-    if (sgroup instanceof MonomerMicromolecule) {
-      sgroup.data.expanded = false;
-      sgroup.addAttachmentPoint(
-        new SGroupAttachmentPoint(attachmentAtomId, leaveAtomId, undefined, 1),
-      );
+    if (sgroup) {
+      sgroup.data.expanded = expanded;
+      sgroup.pp = new Vec2(1, 0);
     }
 
-    const options = {
-      scale: 40,
-      width: 100,
-      height: 100,
-    } as unknown as RenderOptions;
-    const render = new Render(document as unknown as HTMLElement, options);
-    const restruct = new ReStruct(struct, render);
+    const restruct = createRestruct(struct);
 
-    return { struct, restruct, sgroupId, attachmentAtomId, leaveAtomId };
+    return {
+      struct,
+      restruct,
+      sgroupId,
+      attachmentAtomId,
+      innerAtomId,
+      outsideAtomId,
+    };
   };
 
-  it('expands a still-collapsed monomer before removing its S-group, so the leaving atom keeps its real label instead of a generic cap (#11312)', () => {
-    const { struct, restruct, sgroupId, leaveAtomId } =
-      buildCollapsedMonomerWithLeavingAtom();
+  it('moves the neighbors of a collapsed monomer the same way "Expand monomer" does (#11312)', () => {
+    const { struct, restruct, sgroupId, attachmentAtomId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
 
     fromSgroupDeletion(restruct, sgroupId);
 
-    // Before the fix, a still-collapsed monomer's leaving atom was relabeled
-    // with a generic MonomerCaps fallback ('H'), discarding its real
-    // chemistry and layout. The fix expands the monomer first (mirroring
-    // "Expand monomer"), so the exposed leaving atom keeps its real label and
-    // only its rglabel is cleared.
-    expect(struct.atoms.get(leaveAtomId)?.label).toBe('Cl');
-    expect(struct.atoms.get(leaveAtomId)?.rglabel).toBeNull();
+    expect(struct.sgroups.has(sgroupId)).toBe(false);
+    expect(struct.atoms.get(attachmentAtomId)?.pp).toEqual(new Vec2(0, 0));
+    // Shifted by attachment atom - contracted label = (0, 0) - (1, 0), which
+    // keeps the C0-N bond at its original length.
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-2, 0));
   });
 
-  it('recomputes implicit hydrogens/valence on the exposed attachment atom after removing a collapsed monomer grouping (#11314)', () => {
-    const { struct, restruct, sgroupId, attachmentAtomId } =
-      buildCollapsedMonomerWithLeavingAtom();
+  it('does not move the neighbors of an already expanded monomer', () => {
+    const { struct, restruct, sgroupId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: true });
 
-    // Seed a stale/incorrect implicitH value, as if it had been computed
-    // while the monomer was still collapsed and never recalculated.
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-1, 0));
+  });
+
+  it('moves nothing before the caller performs the action (shouldPerform = false)', () => {
+    const { struct, restruct, sgroupId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+
+    const action = fromSgroupDeletion(restruct, sgroupId, false);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-1, 0));
+    expect(struct.sgroups.has(sgroupId)).toBe(true);
+
+    action.perform(restruct);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-2, 0));
+  });
+
+  it('undoes the neighbor move together with the grouping removal (#11311)', () => {
+    const { struct, restruct, sgroupId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+
+    const inverted = fromSgroupDeletion(restruct, sgroupId);
+    inverted.perform(restruct);
+
+    expect(struct.sgroups.has(sgroupId)).toBe(true);
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-1, 0));
+  });
+
+  it('recalculates hydrogens of the group atoms (#11314)', () => {
+    const { struct, restruct, sgroupId, attachmentAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+    // Stale values, as if computed while the atoms were hidden by the grouping.
     const attachmentAtom = struct.atoms.get(attachmentAtomId);
     if (attachmentAtom) {
       attachmentAtom.implicitH = 99;
+      attachmentAtom.badConn = true;
     }
 
     fromSgroupDeletion(restruct, sgroupId);
 
-    expect(struct.atoms.get(attachmentAtomId)?.implicitH).not.toBe(99);
+    expect(struct.atoms.get(attachmentAtomId)?.implicitH).toBe(2);
     expect(struct.atoms.get(attachmentAtomId)?.badConn).toBe(false);
-  });
-
-  it('does not expand a monomer whose props are unresolved before removing its S-group', () => {
-    const { struct, restruct, sgroupId, leaveAtomId } =
-      buildCollapsedMonomerWithLeavingAtom();
-    const sgroup = struct.sgroups.get(sgroupId);
-    if (sgroup instanceof MonomerMicromolecule) {
-      sgroup.monomer.monomerItem.props.unresolved = true;
-    }
-
-    fromSgroupDeletion(restruct, sgroupId);
-
-    // Expansion is skipped for an unresolved monomer, so the leaving atom
-    // still goes through the generic MonomerCaps fallback ('H').
-    expect(struct.atoms.get(leaveAtomId)?.label).toBe('H');
   });
 });

@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
 
@@ -5,7 +7,7 @@ describe('PresetPhosphateFilterPopup', () => {
   it('toggles false and true flag values in both directions', () => {
     render(
       withThemeAndStoreProvider(
-        <PresetPhosphateFilterPopup onClose={jest.fn()} />,
+        <PresetPhosphateFilterPopup onClose={vi.fn()} />,
         {
           rnaBuilder: {
             presetPhosphateFilter: {

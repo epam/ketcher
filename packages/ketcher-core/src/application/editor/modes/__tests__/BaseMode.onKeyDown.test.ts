@@ -1,24 +1,25 @@
+import { vi } from 'vitest';
 import { FlexMode } from 'application/editor/modes/FlexMode';
 import { provideEditorInstance } from '../../editorSingleton';
 
-jest.mock('../../editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('../../editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
 
 describe('BaseMode.onKeyDown', () => {
   it('stops propagation for a registered shortcut and invokes its handler', async () => {
-    const handler = jest.fn();
-    const dispatch = jest.fn();
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    const handler = vi.fn();
+    const dispatch = vi.fn();
+    vi.mocked(provideEditorInstance).mockReturnValue({
       events: { mouseLeaveSequenceItem: { dispatch } },
-    });
+    } as unknown as ReturnType<typeof provideEditorInstance>);
     class TestMode extends FlexMode {
       get keyboardEventHandlers() {
         return { 'test-shortcut': { shortcut: 'a', handler } };
       }
     }
     const event = new KeyboardEvent('keydown', { key: 'a', code: 'KeyA' });
-    const stopPropagation = jest.spyOn(event, 'stopImmediatePropagation');
+    const stopPropagation = vi.spyOn(event, 'stopImmediatePropagation');
 
     const completion = new TestMode().onKeyDown(event);
 

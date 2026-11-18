@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName } from 'domain/types';
@@ -20,7 +21,7 @@ describe('BaseMonomer attachment points', () => {
   it('does not treat free attachment points as bonds', () => {
     const monomer = new Peptide(peptideMonomerItem);
     monomer.attachmentPointsToBonds = { R1: null, R2: undefined };
-    const callback = jest.fn();
+    const callback = vi.fn();
 
     monomer.forEachBond(callback);
 
@@ -33,7 +34,7 @@ describe('BaseMonomer attachment points', () => {
     const otherMonomer = new Peptide(peptideMonomerItem);
     const bond = new PolymerBond(monomer, otherMonomer);
     monomer.attachmentPointsToBonds = { R1: null, R2: bond };
-    const callback = jest.fn();
+    const callback = vi.fn();
 
     monomer.forEachBond(callback);
 

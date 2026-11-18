@@ -15,20 +15,19 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { ServerFormatter } from 'application/formatters/serverFormatter';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import { ChemicalMimeType, type StructService } from 'domain/services';
-import { mock } from 'jest-mock-extended';
 import { coreEditorTheme, polymerEditorTheme } from '../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../helpers/dom';
 
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -36,7 +35,7 @@ describe('imported sequence IDs', () => {
   let editor: CoreEditor;
   const serializer = new KetSerializer();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const theme = {
       ...polymerEditorTheme,
       monomer: {
@@ -53,6 +52,7 @@ describe('imported sequence IDs', () => {
       renderersContainer: createRenderersManager(theme),
       mode: new FlexMode(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {
@@ -113,8 +113,9 @@ describe('imported sequence IDs', () => {
 
   it('sends active IDs to Indigo for Molfile export and omits them after a reset', async () => {
     loadPeptides();
-    const service = mock<StructService>();
-    service.convert.mockResolvedValue({
+    const convert = vi.fn<(params: { struct: string }) => Promise<unknown>>();
+    const service = { convert } as unknown as StructService;
+    convert.mockResolvedValue({
       struct: 'molfile',
       format: ChemicalMimeType.Mol,
     });
@@ -125,7 +126,7 @@ describe('imported sequence IDs', () => {
     );
     const manager = editor.drawingEntitiesManager;
     await formatter.getStringFromStructureAsync(new Struct(), manager);
-    expect(JSON.parse(service.convert.mock.calls[0][0].struct)).toMatchObject({
+    expect(JSON.parse(convert.mock.calls[0][0].struct)).toMatchObject({
       monomer0: { seqid: 7 },
       monomer1: { seqid: 12 },
     });
@@ -135,7 +136,7 @@ describe('imported sequence IDs', () => {
     EditorHistory.getInstance(editor).update(command);
     editor.renderersContainer.update(command);
     await formatter.getStringFromStructureAsync(new Struct(), manager);
-    const resetKet = JSON.parse(service.convert.mock.calls[1][0].struct);
+    const resetKet = JSON.parse(convert.mock.calls[1][0].struct);
     expect(resetKet.monomer0).not.toHaveProperty('seqid');
     expect(resetKet.monomer1).not.toHaveProperty('seqid');
   });

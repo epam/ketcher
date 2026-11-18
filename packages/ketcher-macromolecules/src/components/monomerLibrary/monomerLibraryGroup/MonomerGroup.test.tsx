@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { KetMonomerClass, Struct } from 'ketcher-core';
 
@@ -76,7 +79,7 @@ describe('Monomer Group', () => {
     ],
     groupTitle: 'Mock title',
   };
-  const onItemClick = jest.fn();
+  const onItemClick = vi.fn();
 
   it.each([
     { caps: { R1: '' }, selectable: true },
@@ -92,7 +95,7 @@ describe('Monomer Group', () => {
           MonomerCaps: caps,
         },
       };
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(
         withThemeAndStoreProvider(
           <MonomerGroup items={[monomer]} onItemClick={handleClick} />,

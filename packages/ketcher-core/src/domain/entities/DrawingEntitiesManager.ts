@@ -2115,7 +2115,6 @@ export class DrawingEntitiesManager {
 
     const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
-    let chainsCollection: ChainsCollection;
 
     command.merge(
       this.recalculateAntisenseChains(shouldRecalculateOldAntisense),
@@ -2147,7 +2146,7 @@ export class DrawingEntitiesManager {
         y: MONOMER_START_Y_POSITION,
       });
 
-      chainsCollection = ChainsCollection.fromMonomers([
+      const chainsCollection = ChainsCollection.fromMonomers([
         ...this.monomers.values(),
       ]);
       chainsCollection.rearrange();

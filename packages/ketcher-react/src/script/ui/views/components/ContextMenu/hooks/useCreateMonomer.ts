@@ -8,7 +8,7 @@ const useCreateMonomer = () => {
 
   const handler = useCallback(async () => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    editor.openMonomerCreationWizard();
+    await editor.openMonomerCreationWizardWhenLibraryLoaded();
   }, [ketcherId]);
 
   const disabled = useCallback(() => {

@@ -3,6 +3,7 @@
  * Tests migration from namespaced format back to flat format
  */
 
+import { vi } from 'vitest';
 import { SettingsMigration } from '../SettingsMigration';
 
 describe('SettingsMigration', () => {
@@ -333,11 +334,11 @@ describe('SettingsMigration', () => {
 
       Object.defineProperty(globalThis, 'localStorage', {
         value: {
-          getItem: jest.fn((key: string) => mockLocalStorage[key] || null),
-          setItem: jest.fn((key: string, value: string) => {
+          getItem: vi.fn((key: string) => mockLocalStorage[key] || null),
+          setItem: vi.fn((key: string, value: string) => {
             mockLocalStorage[key] = value;
           }),
-          removeItem: jest.fn((key: string) => {
+          removeItem: vi.fn((key: string) => {
             delete mockLocalStorage[key];
           }),
         },

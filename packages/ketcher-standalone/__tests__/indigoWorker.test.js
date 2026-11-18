@@ -7,24 +7,27 @@ describe('Indigo worker embind ownership', () => {
   const originalOnmessage = globalThis.onmessage;
   const originalPostMessage = globalThis.postMessage;
 
-  beforeEach(() => {
-    options = { set: jest.fn(), delete: jest.fn() };
-    vector = { push_back: jest.fn(), delete: jest.fn() };
+  beforeEach(async () => {
+    options = { set: vi.fn(), delete: vi.fn() };
+    vector = { push_back: vi.fn(), delete: vi.fn() };
     indigo = {
-      MapStringString: jest.fn(() => options),
-      VectorInt: jest.fn(() => vector),
-      convert: jest.fn(() => 'converted'),
-      calculate: jest.fn(() => '{"mass":42}'),
-      clean2d: jest.fn(() => 'cleaned'),
+      MapStringString: vi.fn(function () {
+        return options;
+      }),
+      VectorInt: vi.fn(function () {
+        return vector;
+      }),
+      convert: vi.fn(() => 'converted'),
+      calculate: vi.fn(() => '{"mass":42}'),
+      clean2d: vi.fn(() => 'cleaned'),
     };
-    globalThis.postMessage = jest.fn();
-    jest.resetModules();
-    jest.doMock(
-      '_indigo-ketcher-import-alias_',
-      () => ({ __esModule: true, default: () => Promise.resolve(indigo) }),
-      { virtual: true },
-    );
-    require('../src/infrastructure/services/struct/indigoWorker');
+    globalThis.postMessage = vi.fn();
+    vi.resetModules();
+    vi.doMock('_indigo-ketcher-import-alias_', () => ({
+      __esModule: true,
+      default: () => Promise.resolve(indigo),
+    }));
+    await import('../src/infrastructure/services/struct/indigoWorker');
   });
 
   afterEach(() => {

@@ -1,4 +1,5 @@
 import { Command } from '../../../../src/infrastructure/services/struct/indigoWorker.types';
+import { vi } from 'vitest';
 import type StandaloneStructServiceClass from '../../../../src/infrastructure/services/struct/standaloneStructService';
 
 // Paper.js needs a canvas, which the test environment does not provide.

@@ -176,9 +176,9 @@ redoing that work by hand (or re-running the cleaner over the full public
 diff) is exactly the duplicated effort this skill exists to avoid.
 
 Drive this from the cycle's **git tags**, not from the releases list — a
-candidate can be tagged without anyone creating its draft release (in 3.19,
-rc.3 and rc.4 were tagged but had no drafts, so their fixes were missing
-from every draft). Walk the rc tags in order and save each draft body that
+candidate can be tagged without anyone creating its draft release (in
+3.21, rc.1 was tagged but had no draft), and its fixes would then be
+missing from every draft. Walk the rc tags in order and save each draft body that
 exists; for a tag with no draft, generate that candidate's notes from the
 previous tag instead (a raw body — `combine` cleans it):
 
@@ -283,7 +283,7 @@ release actually shipped with. Build the two links from it:
   ```
 
   Exactly one → the digest-less `/images` URL is unambiguous, use it as-is
-  (e.g. 1.47.0 lists `linux/amd64` plus one `unknown/unknown`
+  (e.g. 1.49.0 lists `linux/amd64` plus one `unknown/unknown`
   attestation — that's one image). More than one real image (e.g. several
   architectures) → pick the correct one and append its digest to the URL,
   as `/images/sha256-<hex>`.)
@@ -298,90 +298,54 @@ notes:` block as shown above, after the category sections.
 Public releases ship the built binaries as 6 zip attachments.
 
 **Start from a clean slate — delete every package's previous build output
-and build caches first**, whatever the branch builds with. A `dist/` or
-cache left over from building another branch can leak into the new build:
-in 3.20, a stale `ketcher-macromolecules/dist` got bundled into
-`ketcher-react` and the example build failed with `Attempted import error:
-'i18n' is not exported from 'ketcher-react'` (a stale copy that happens to
-compile is worse — it silently ships the wrong code). Clearing only the
+and build caches first.** A `dist/` or cache left over from building
+another branch can leak into the new build: the example bundles are built
+from the packages' `dist/` folders, so a stale one either breaks the build
+(`Attempted import error: 'X' is not exported from 'ketcher-react'`) or,
+worse, compiles and silently ships the wrong code. Clearing only the
 caches is not enough; remove the `dist/` folders too.
 
-Run the `rm` through `bash -c`: in zsh (the macOS default shell) a glob
-that matches nothing — e.g. `packages/*/node_modules/.vite` on a rollup
-branch — is a fatal `no matches found` error, so nothing is deleted and an
-`&&`-chained build silently runs against the stale `dist/` folders. Check
-that they're really gone before building:
+Run the cleanup and its check through `bash -c`: in zsh (the macOS default
+shell) a glob that matches nothing — e.g. `packages/*/node_modules/.vite`
+when no package has one — is a fatal `no matches found` error, so nothing
+is deleted and an `&&`-chained build silently runs against the stale
+`dist/` folders.
 
 ```bash
 bash -c 'rm -rf packages/*/dist packages/*/node_modules/.cache packages/*/node_modules/.vite \
-  example/node_modules/.cache example/dist'
-ls -d packages/*/dist example/dist 2>/dev/null   # must print nothing
+  example/node_modules/.cache example/dist
+  for d in packages/*/dist example/dist; do [ -e "$d" ] && { echo "still there: $d"; exit 1; }; done; true'
+# silent with exit 0 when clean; names any leftover dist/ and exits 1
 npm install     # local node_modules can drift from the lockfile after branch switches; this syncs it without changing tracked files
 ```
 
-How to build next depends on how the release branch builds its packages —
-check, don't assume from the version number:
-
-```bash
-ls packages/ketcher-react/vite.config.mjs packages/ketcher-react/rollup.config.mjs 2>/dev/null
-```
-
-**Vite (`vite.config.mjs`; branches cut from `master` after #11988, i.e.
-3.22 onward unless that migration was backported):** `ketcher-macromolecules`
-is a declared dependency of `ketcher-react`, Vite keeps it external, and
-`build:packages` builds macromolecules *before* react. A single build is
-what ships:
+Then build everything in one go — the same for rollup (`release/3.21`) and
+Vite (3.22 onward) branches. `ketcher-macromolecules` is a declared
+dependency of `ketcher-react` on both, so it stays an external
+`import('ketcher-macromolecules')` rather than being bundled, and the
+build order between the two doesn't matter:
 
 ```bash
 npm run build            # = build:packages + build:example
 git status --short       # must still be clean
 ```
 
-**Rollup (`rollup.config.mjs`; 3.21 and earlier):** `build:packages` builds
-`ketcher-react` *before* `ketcher-macromolecules`. What `ketcher-react`
-does with macromolecules depends on whether `ketcher-react/package.json`
-declares it as a dependency:
-
-- **Not declared (3.20 and earlier):** `ketcher-react` bundles whatever
-  macromolecules `dist/` is on disk as an `index.modern-<hash>.js` chunk —
-  that chunk is what the npm package CodeBuild publishes contains. From a
-  clean slate there is nothing to bundle yet (rollup prints `(!)
-  Unresolved dependencies` and leaves `import('ketcher-macromolecules')`
-  external), so a single pass does *not* match npm; the second
-  `build:react` pass below bundles the fresh macromolecules `dist/`.
-- **Declared (3.21, since #11796):** `rollup-plugin-peer-deps-external`
-  keeps `import('ketcher-macromolecules')` external, so `ketcher-react/dist`
-  has only `index.js` (plus `cjs/`) and no chunk, matching npm. Its zip is
-  ~0.75 MB smaller than 3.20's for that reason — expected, not a broken
-  build. The second pass is a no-op here but harmless.
-
-Run the same sequence for both:
-
-```bash
-npm run build:packages   # core, standalone + react, macromolecules
-npm run build:react      # second pass: bundles the fresh macromolecules dist where react bundles it (3.20 and earlier)
-npm run build:example    # remote, standalone
-git status --short       # must still be clean
-```
-
-Either way, **cross-check `ketcher-react` against the published npm
-package before zipping.** The JS file list must match; contents should
-differ only in the embedded `buildDate` and any chunk's hash/sourcemap
-name. If the file lists differ (e.g. npm has an `index.modern-<hash>.js`
-chunk and yours doesn't, or the reverse), the build sequence above doesn't
-match what CodeBuild did — stop and figure out why rather than attaching
-zips that differ from npm:
+**Cross-check `ketcher-react` against the published npm package before
+zipping.** The file lists must match; JS contents should differ only in
+the embedded `buildDate`. If they don't, the build doesn't match what
+CodeBuild did — stop and figure out why rather than attaching zips that
+differ from npm:
 
 ```bash
 mkdir -p /tmp/npm-react && (cd /tmp/npm-react && npm pack ketcher-react@X.Y.Z --silent && tar -xzf ketcher-react-X.Y.Z.tgz)
-ls packages/ketcher-react/dist/*.js /tmp/npm-react/package/dist/*.js
+diff <(cd packages/ketcher-react/dist && find . -type f | sort) \
+     <(cd /tmp/npm-react/package/dist && find . -type f | sort)
 ```
 
-(The rollup sequence was verified against npm on `release/3.20` (bundled
-chunk) and `release/3.21` (external macromolecules, no chunk). The Vite
-sequence follows from `ketcher-react`'s `vite.config.mjs` and the
-`build:packages` order on `master`, but hasn't been through a release yet
-— the cross-check above is what confirms it the first time.)
+(Verified against npm on `release/3.21`: a single clean-slate build gave
+the same 1220 files, identical JS apart from `buildDate` and an identical
+`index.css`. The Vite build on `master` hasn't been through a release yet
+— the cross-check is what confirms it the first time.)
 
 If it still fails with an "is not exported from" error after starting
 clean, that's a real regression on the branch — don't chase it as another

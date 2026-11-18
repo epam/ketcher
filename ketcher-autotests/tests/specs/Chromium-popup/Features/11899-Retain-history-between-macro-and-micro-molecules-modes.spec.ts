@@ -1,17 +1,17 @@
 import { test, expect, Page } from '@fixtures';
-import { getCanvasByMode, getVisibleCanvas } from '@utils';
+import { Locator } from '@playwright/test';
+import { getCanvasByMode } from '@utils';
 import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getAtomLocator as getPageAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getMonomerLocator as getPageMonomerLocator } from '@utils/macromolecules/monomer';
+import { getBondLocator as getPageBondLocator } from '@utils/macromolecules/polymerBond';
 import { Mode } from '@tests/pages/constants/commonTopRightToolbar/Constants';
 import {
   openFileAndAddToCanvasMacro,
@@ -22,12 +22,28 @@ import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constant
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
-  getArrowLocator,
-  getPlusLocator,
+  getArrowLocator as getPageArrowLocator,
+  getPlusLocator as getPagePlusLocator,
 } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 
 let page: Page;
+
+const getCanvasEntityLocator = (page: Page, locator: Locator) =>
+  page
+    .locator('[data-testid="ketcher-canvas"]:visible')
+    .first()
+    .locator(locator);
+const getAtomLocator = (...args: Parameters<typeof getPageAtomLocator>) =>
+  getCanvasEntityLocator(args[0], getPageAtomLocator(...args));
+const getBondLocator = (...args: Parameters<typeof getPageBondLocator>) =>
+  getCanvasEntityLocator(args[0], getPageBondLocator(...args));
+const getMonomerLocator = (...args: Parameters<typeof getPageMonomerLocator>) =>
+  getCanvasEntityLocator(args[0], getPageMonomerLocator(...args));
+const getArrowLocator = (...args: Parameters<typeof getPageArrowLocator>) =>
+  getCanvasEntityLocator(args[0], getPageArrowLocator(...args));
+const getPlusLocator = (...args: Parameters<typeof getPagePlusLocator>) =>
+  getCanvasEntityLocator(args[0], getPagePlusLocator(...args));
 
 test.describe('Retain history between macro and micro molecules modes', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -53,19 +69,19 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
     await clickInTheMiddleOfTheCanvas(page);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
   });
 
@@ -84,35 +100,37 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
     await clickInTheMiddleOfTheCanvas(page);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
     await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
 
     // the switch was the last entry: an extra Redo changes nothing
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
   });
 
-  test('Case 3 - Monomer added in Macro is undoable after switching to Micro', async () => {
+  test('Case 3 - Monomer added in Macro is undoable after switching to Micro', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: A monomer added in Macromolecules mode can still be removed
@@ -125,8 +143,6 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -139,7 +155,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
   });
 
-  test('Case 4 - Undoing the monomer addition keeps the mode switch as its own history entry', async () => {
+  test('Case 4 - Undoing the monomer addition keeps the mode switch as its own history entry', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: After the monomer addition is undone, Redo re-applies the
@@ -153,8 +171,6 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopLeftToolbar(page).undo();
@@ -169,7 +185,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
-  test('Case 5 - Atoms added in Micro are undone in reverse order after a switch', async () => {
+  test('Case 5 - Atoms added in Micro are undone in reverse order after a switch', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: Atoms added before a mode switch are removed one per Undo,
@@ -183,25 +201,21 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
     await addAtoms(page, Atom.Nitrogen, [{ x: 400, y: 300 }]);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(
-      canvas.locator(getAtomLocator(page, { atomLabel: 'N' })),
-    ).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getAtomLocator(page, { atomLabel: 'N' })).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(1);
-    await expect(
-      canvas.locator(getAtomLocator(page, { atomLabel: 'C' })),
-    ).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(1);
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
   });
 
   test('Case 6 - Bond added before a switch is undone as a separate step', async () => {
@@ -218,24 +232,24 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 400, y: 300 }]);
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
-    await canvas.locator(getAtomLocator(page, { atomLabel: 'C' })).click();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await getAtomLocator(page, { atomLabel: 'C' }).click();
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(1);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(1);
+    await expect(getBondLocator(page, {})).toHaveCount(0);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
   });
 
   test('Case 7 - Reaction added in Macro is undoable after switching to Micro', async () => {
@@ -254,32 +268,32 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasMacro(
       page,
       'KET/reaction-with-arrow-and-plus.ket',
     );
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(1);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(16);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(16);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(1);
+    await expect(getArrowLocator(page)).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(0);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
-    await expect(canvas.locator(getPlusLocator(page))).toHaveCount(0);
+    await expect(getArrowLocator(page)).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
+    await expect(getPlusLocator(page)).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).redo();
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(1);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(16);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(16);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(1);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(16);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(16);
   });
 
   test('Case 8 - One molecule edited in both modes keeps every edit in history', async () => {
@@ -296,59 +310,56 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
     await clickInTheMiddleOfTheCanvas(page);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await CommonLeftToolbar(page).erase();
     // micro bonds in Macro mode accept the Erase click only when forced
-    await canvas
-      .locator(getBondLocator(page, {}))
-      .first()
-      .click({ force: true });
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(5);
+    await getBondLocator(page, {}).first().click({ force: true });
+    await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await addAtoms(page, Atom.Nitrogen, [{ x: 300, y: 450 }]);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(7);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(5);
+    await expect(getAtomLocator(page, {})).toHaveCount(7);
+    await expect(getBondLocator(page, {})).toHaveCount(5);
 
     // undo: nitrogen, switch, erased bond, switch, benzene
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(5);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(5);
+    await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(5);
+    await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(5);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopLeftToolbar(page).redo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(7);
+    await expect(getAtomLocator(page, {})).toHaveCount(7);
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
@@ -365,14 +376,14 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 400, y: 300 }]);
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
-    await canvas.locator(getAtomLocator(page, { atomLabel: 'C' })).click();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await getAtomLocator(page, { atomLabel: 'C' }).click();
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 150, y: 300 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
@@ -381,8 +392,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     );
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
@@ -395,20 +406,20 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(1);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(1);
+    await expect(getBondLocator(page, {})).toHaveCount(0);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
 
     await CommonTopLeftToolbar(page).redo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(1);
     await CommonTopLeftToolbar(page).redo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
@@ -420,8 +431,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(2);
+    await expect(getBondLocator(page, {})).toHaveCount(1);
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
@@ -439,10 +450,10 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await addAtoms(page, Atom.Nitrogen, [{ x: 400, y: 300 }]);
@@ -453,7 +464,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
       await CommonTopLeftToolbar(page).undo();
     }
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
 
     for (let step = 0; step < 5; step++) {
@@ -479,10 +490,10 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 450, y: 450 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
@@ -494,7 +505,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(1);
 
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
@@ -521,17 +532,13 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     for (let pair = 0; pair < 3; pair++) {
       await addAtoms(page, Atom.Carbon, [
         { x: 300 + pair * 100, y: 250 },
         { x: 300 + pair * 100, y: 350 },
       ]);
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        (pair + 1) * 2,
-      );
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await expect(getAtomLocator(page, {})).toHaveCount((pair + 1) * 2);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -542,36 +549,24 @@ test.describe('Retain history between macro and micro molecules modes', () => {
       await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
       await CommonTopLeftToolbar(page).undo();
       await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        pair * 2,
-      );
+      await expect(getAtomLocator(page, {})).toHaveCount(pair * 2);
       await CommonTopLeftToolbar(page).undo();
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        pair * 2 - 1,
-      );
+      await expect(getAtomLocator(page, {})).toHaveCount(pair * 2 - 1);
       await CommonTopLeftToolbar(page).undo();
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        pair * 2 - 2,
-      );
+      await expect(getAtomLocator(page, {})).toHaveCount(pair * 2 - 2);
     }
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
 
     for (let pair = 0; pair < 3; pair++) {
       await CommonTopLeftToolbar(page).redo();
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        pair * 2 + 1,
-      );
+      await expect(getAtomLocator(page, {})).toHaveCount(pair * 2 + 1);
       await CommonTopLeftToolbar(page).redo();
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        pair * 2 + 2,
-      );
+      await expect(getAtomLocator(page, {})).toHaveCount(pair * 2 + 2);
       await CommonTopLeftToolbar(page).redo();
       await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
       await CommonTopLeftToolbar(page).redo();
       await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-      await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
-        pair * 2 + 2,
-      );
+      await expect(getAtomLocator(page, {})).toHaveCount(pair * 2 + 2);
     }
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
@@ -591,13 +586,13 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
     await clickInTheMiddleOfTheCanvas(page);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 150, y: 450 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
     await openFileAndAddToCanvasMacro(
@@ -609,21 +604,21 @@ test.describe('Retain history between macro and micro molecules modes', () => {
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(1);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(22);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(22);
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getArrowLocator(page))).toHaveCount(0);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
+    await expect(getArrowLocator(page)).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
 
     for (let step = 0; step < 6; step++) {
@@ -648,16 +643,16 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     await pasteFromClipboardAndAddToCanvas(page, 'C1=CC=CC=C1');
     await clickInTheMiddleOfTheCanvas(page);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
-    await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(getBondLocator(page, {})).toHaveCount(6);
     const initialKet = await getKet(page);
     await CommonTopRightToolbar(page).selectModeOption(Mode.Molecules);
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -665,7 +660,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
 
     await CommonTopLeftToolbar(page).undo();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
   });
 
@@ -684,33 +679,31 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    const canvas = await getVisibleCanvas(page);
     for (let round = 0; round < 8; round++) {
       await addAtoms(page, Atom.Carbon, [
         { x: 150 + round * 60, y: 200 },
         { x: 150 + round * 60, y: 300 },
       ]);
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     }
     await addAtoms(page, Atom.Carbon, [{ x: 150, y: 400 }]);
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(17);
+    await expect(getAtomLocator(page, {})).toHaveCount(17);
 
     for (let step = 0; step < 32; step++) {
       await CommonTopLeftToolbar(page).undo();
     }
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(1);
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
 
     for (let step = 0; step < 32; step++) {
       await CommonTopLeftToolbar(page).redo();
     }
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(17);
+    await expect(getAtomLocator(page, {})).toHaveCount(17);
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 });

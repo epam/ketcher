@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { Command } from 'domain/entities/Command';
 import { Vec2 } from 'domain/entities';
@@ -5,18 +6,18 @@ import { provideEditorInstance } from '../../editorSingleton';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { LayoutMode } from 'application/editor/modes/types';
 
-jest.mock('../../editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('../../editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
 
-jest.mock('application/ketcherProvider', () => ({
-  ketcherProvider: { getKetcher: jest.fn() },
+vi.mock('application/ketcherProvider', () => ({
+  ketcherProvider: { getKetcher: vi.fn() },
 }));
 
-jest.mock('domain/serializers/ket/ketSerializer', () => ({
-  KetSerializer: jest.fn().mockImplementation(() => ({
-    serialize: jest.fn(() => 'KET_STRING'),
-  })),
+vi.mock('domain/serializers/ket/ketSerializer', () => ({
+  KetSerializer: class {
+    serialize = vi.fn(() => 'KET_STRING');
+  },
 }));
 
 class TestMode extends BaseMode {
@@ -46,28 +47,28 @@ class TestMode extends BaseMode {
 }
 
 describe('BaseMode.onCopy', () => {
-  const write = jest.fn();
-  const writeText = jest.fn();
-  const read = jest.fn();
-  const convert = jest.fn();
+  const write = vi.fn();
+  const writeText = vi.fn();
+  const read = vi.fn();
+  const convert = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     write.mockResolvedValue(undefined);
     writeText.mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', {
       value: { write, writeText, read },
       configurable: true,
     });
-    (ketcherProvider.getKetcher as jest.Mock).mockReturnValue({
+    (ketcherProvider.getKetcher as Mock).mockReturnValue({
       indigo: { convert },
     });
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    (provideEditorInstance as Mock).mockReturnValue({
       ketcherId: 'ketcher-id',
       drawingEntitiesManager: {
-        filterSelection: jest.fn(() => ({
+        filterSelection: vi.fn(() => ({
           monomers: new Map([[0, {}]]),
-          validateIfApplicableForFasta: jest.fn(() => true),
+          validateIfApplicableForFasta: vi.fn(() => true),
         })),
       },
     });

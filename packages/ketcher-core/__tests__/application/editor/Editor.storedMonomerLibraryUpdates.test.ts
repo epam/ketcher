@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { CoreEditor } from 'application/editor';
 import {
   createPolymerEditorCanvas,
@@ -31,7 +32,7 @@ describe('CoreEditor stored monomer library updates', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should not crash on an invalid stored update and should still apply the remaining ones', async () => {
@@ -44,14 +45,14 @@ describe('CoreEditor stored monomer library updates', () => {
     const emptyModificationTypesUpdate = JSON.stringify(
       createChemTemplate('STOREDEMPTY', []),
     );
-    jest
-      .spyOn(SettingsManager, 'monomerLibraryUpdates', 'get')
-      .mockReturnValue([
-        invalidStoredUpdate,
-        validStoredUpdate,
-        emptyModificationTypesUpdate,
-      ]);
-    const errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
+    vi.spyOn(SettingsManager, 'monomerLibraryUpdates', 'get').mockReturnValue([
+      invalidStoredUpdate,
+      validStoredUpdate,
+      emptyModificationTypesUpdate,
+    ]);
+    const errorSpy = vi
+      .spyOn(KetcherLogger, 'error')
+      .mockImplementation(() => undefined);
 
     let editor: CoreEditor | undefined;
     expect(() => {

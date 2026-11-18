@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
@@ -32,11 +34,11 @@ const initialState = {
 export function renderWithMockContext(component: React.ReactNode) {
   const store = {
     ...createStore((state = initialState) => state),
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   };
   return render(
     <Provider store={store}>
-      <ErrorsContext.Provider value={{ errorHandler: jest.fn() }}>
+      <ErrorsContext.Provider value={{ errorHandler: vi.fn() }}>
         {component}
       </ErrorsContext.Provider>
     </Provider>,

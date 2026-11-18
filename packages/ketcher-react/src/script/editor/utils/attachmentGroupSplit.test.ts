@@ -107,9 +107,9 @@ describe('attachmentGroupSplit', () => {
   describe('didDeleteWithAttachmentGroupSplitConfirm', () => {
     it('applies the deletion without a warning when the attachment group stays connected', async () => {
       const { struct } = createRing();
-      const confirm = jest.fn();
-      const update = jest.fn();
-      const applyDeletion = jest.fn(() => new Action());
+      const confirm = vi.fn();
+      const update = vi.fn();
+      const applyDeletion = vi.fn(() => new Action());
       const editor = {
         struct: () => struct,
         update,
@@ -132,9 +132,9 @@ describe('attachmentGroupSplit', () => {
 
     it('shows a warning and aborts when the user cancels', async () => {
       const { struct, firstBondId } = createChain();
-      const confirm = jest.fn().mockRejectedValue(new Error('cancelled'));
-      const update = jest.fn();
-      const applyDeletion = jest.fn(() => new Action());
+      const confirm = vi.fn().mockRejectedValue(new Error('cancelled'));
+      const update = vi.fn();
+      const applyDeletion = vi.fn(() => new Action());
       const editor = {
         struct: () => struct,
         update,
@@ -162,11 +162,11 @@ describe('attachmentGroupSplit', () => {
   describe('runDeleteWithAttachmentGroupSplitConfirm', () => {
     it('runs onDeleted only after a successful delete', async () => {
       const { struct } = createRing();
-      const onDeleted = jest.fn();
+      const onDeleted = vi.fn();
       const editor = {
         struct: () => struct,
-        update: jest.fn(),
-        event: { confirm: { dispatch: jest.fn() } },
+        update: vi.fn(),
+        event: { confirm: { dispatch: vi.fn() } },
         render: { ctab: {} },
       } as unknown as Editor;
 
@@ -183,13 +183,13 @@ describe('attachmentGroupSplit', () => {
 
     it('does not run onDeleted when the user cancels', async () => {
       const { struct, firstBondId } = createChain();
-      const onDeleted = jest.fn();
+      const onDeleted = vi.fn();
       const editor = {
         struct: () => struct,
-        update: jest.fn(),
+        update: vi.fn(),
         event: {
           confirm: {
-            dispatch: jest.fn().mockRejectedValue(new Error('cancelled')),
+            dispatch: vi.fn().mockRejectedValue(new Error('cancelled')),
           },
         },
         render: { ctab: {} },

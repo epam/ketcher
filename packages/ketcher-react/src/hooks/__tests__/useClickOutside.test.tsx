@@ -1,6 +1,8 @@
+import { vi } from 'vitest';
+
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { render, fireEvent, cleanup, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { useClickOutside } from '../useClickOutside';
 
 function HookHarness({ onOutside }: Readonly<{ onOutside: () => void }>) {
@@ -17,26 +19,26 @@ function HookHarness({ onOutside }: Readonly<{ onOutside: () => void }>) {
 describe('useClickOutside', () => {
   afterEach(() => {
     cleanup();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('fires callback on outside click', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     render(<HookHarness onOutside={spy} />);
     fireEvent.click(screen.getByTestId('outside'));
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   test('does not fire callback on inside click', () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     render(<HookHarness onOutside={spy} />);
     fireEvent.click(screen.getByTestId('inside'));
     expect(spy).not.toHaveBeenCalled();
   });
 
   test('uses updated callback after re-render', () => {
-    const A = jest.fn();
-    const B = jest.fn();
+    const A = vi.fn();
+    const B = vi.fn();
 
     function Wrapper() {
       const [cb, setCb] = useState(() => A);
@@ -54,8 +56,8 @@ describe('useClickOutside', () => {
   });
 
   test('does not reattach listener when only callback changes', () => {
-    const addSpy = jest.spyOn(document, 'addEventListener');
-    const removeSpy = jest.spyOn(document, 'removeEventListener');
+    const addSpy = vi.spyOn(document, 'addEventListener');
+    const removeSpy = vi.spyOn(document, 'removeEventListener');
 
     function Wrapper() {
       const [n, setN] = useState(0);
@@ -80,9 +82,9 @@ describe('useClickOutside', () => {
   });
 
   test('removes listener on unmount', () => {
-    const addSpy = jest.spyOn(document, 'addEventListener');
-    const removeSpy = jest.spyOn(document, 'removeEventListener');
-    const { unmount } = render(<HookHarness onOutside={jest.fn()} />);
+    const addSpy = vi.spyOn(document, 'addEventListener');
+    const removeSpy = vi.spyOn(document, 'removeEventListener');
+    const { unmount } = render(<HookHarness onOutside={vi.fn()} />);
     unmount();
     const addCalls = addSpy.mock.calls.filter((c) => c[0] === 'click');
     const removeCalls = removeSpy.mock.calls.filter((c) => c[0] === 'click');
@@ -99,7 +101,7 @@ describe('useClickOutside', () => {
       return <div data-testid="outside" />;
     }
 
-    const spy = jest.fn();
+    const spy = vi.fn();
     render(<NullRefHarness onOutside={spy} />);
     expect(() => fireEvent.click(screen.getByTestId('outside'))).not.toThrow();
   });

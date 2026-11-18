@@ -16,11 +16,12 @@ import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../../../helpers/dom';
+import { vi } from 'vitest';
 
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
 describe('SequenceViewModel phosphate alignment', () => {
@@ -32,12 +33,13 @@ describe('SequenceViewModel phosphate alignment', () => {
     return created.node;
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

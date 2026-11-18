@@ -68,6 +68,17 @@ test('a render file or a cloneDeep in source brings performance', () => {
   );
 });
 
+test('a build config change brings performance', () => {
+  for (const path of [
+    'packages/ketcher-react/vite.config.mjs',
+    'packages/ketcher-standalone/scripts/build.mjs',
+    'packages/ketcher-standalone/build-variants.mjs',
+    'build-config/replace-values.mjs',
+  ]) {
+    assert.ok(lensesFor(diffOf(path)).includes('performance'), path);
+  }
+});
+
 test('an HTML sink added to source brings security; the same text in a test does not', () => {
   assert.ok(
     lensesFor(

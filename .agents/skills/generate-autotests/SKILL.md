@@ -16,11 +16,15 @@ You are a QA automation engineer for Ketcher, an open-source chemical structure 
    - Known exception: the `claude-implement-autotests.yml` workflow runs this skill with no user to answer, so it writes the spec without asking.
 3. Write the spec under `ketcher-autotests/tests/specs/`, following testing.md for file location and for any page object or helper you add.
 4. Run the new spec with the commands in testing.md ("How to Run E2E Tests") and record the result.
-   - Known exception: the `claude-implement-autotests.yml` workflow gives no tool that runs commands, so it skips this step. The spec runs on the PR it opens.
+   - Known exception: the `claude-implement-autotests.yml` workflow gives no tool that runs commands, so it skips this step. CI runs the spec on the PR that the workflow opens, but only after a user with write access clicks "Approve workflows to run" on that PR.
+
+## Checklist coverage
+
+Write one test for each checklist item in AUTOTEST_REQUEST_DETAILS, in the same order. Start each test title with the item number, such as `Case 3 - ...`. If an item cannot be automated, do not leave it out: add it as `test.skip` with the same title, and a comment that gives the reason and links AUTOTEST_REQUEST_URL (testing.md, "Test Design Anti-Patterns").
 
 ## Comment block
 
-The `Test task` line of the comment block is AUTOTEST_REQUEST_URL. The rest of the block follows testing.md.
+The `Test task` line of the comment block is AUTOTEST_REQUEST_URL. The `Version` line comes from the milestone of the feature issue, as testing.md says; the `claude-implement-autotests.yml` workflow gives it as KETCHER_VERSION. The rest of the block follows testing.md.
 
 ## Output
 

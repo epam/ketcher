@@ -1,4 +1,6 @@
 import React from 'react';
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 
 import Input from './Input';
@@ -16,7 +18,7 @@ describe('Input component should be rendered correctly', () => {
         description: 'slider',
         default: true,
       },
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...sliderProps} />);
@@ -29,7 +31,7 @@ describe('Input component should be rendered correctly', () => {
       name: 'Name',
       value: true,
       type: 'checkbox',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...checkboxProps} />);
@@ -51,7 +53,7 @@ describe('Input component should be rendered correctly', () => {
       name: 'Name',
       value: 'value',
       type: 'textarea',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...textareaProps} />);
@@ -63,7 +65,7 @@ describe('Input component should be rendered correctly', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
       autoFocus: true,
     };
 
@@ -77,7 +79,7 @@ describe('Input component should be rendered correctly', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const ref = React.createRef<HTMLInputElement>();
@@ -96,10 +98,10 @@ describe('Input component should be rendered correctly', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
-    const callbackRef = jest.fn();
+    const callbackRef = vi.fn();
     render(<Input {...inputProps} ref={callbackRef} />);
 
     expect(callbackRef).toHaveBeenCalledWith(expect.any(HTMLInputElement));
@@ -109,7 +111,7 @@ describe('Input component should be rendered correctly', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
       isFocused: true,
     };
 
@@ -124,7 +126,7 @@ describe('Input component should be rendered correctly', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
       isFocused: true,
     };
 
@@ -140,7 +142,7 @@ describe('Input component should be rendered correctly', () => {
     const inputProps = {
       name: 'test',
       value: 'test value',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
       isFocused: false,
     };
 

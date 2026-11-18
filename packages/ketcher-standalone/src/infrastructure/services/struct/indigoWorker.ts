@@ -55,7 +55,7 @@ type HandlerType = (
   indigoOptions: IndigoOptions,
 ) => string;
 
-const module = indigoModuleFn();
+const indigoModulePromise = indigoModuleFn();
 
 function handle(
   handler: HandlerType,
@@ -64,7 +64,7 @@ function handle(
   inputData?: string,
 ) {
   void (async () => {
-    const indigo = await module;
+    const indigo = await indigoModulePromise;
     const indigoOptions = new indigo.MapStringString();
     let msg: OutputMessage<string>;
     try {

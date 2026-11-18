@@ -15,6 +15,7 @@ export type RenderStructOptions = Partial<RenderOptions> & {
   cachePrefix?: string;
   needCache?: boolean;
   wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
+  expandSgroups?: boolean;
 };
 
 const renderCache = new Map<string, string>();
@@ -24,12 +25,16 @@ const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
-   * for S-Groups we want to show expanded structure
-   * without brackets
+   * Preview structures expand S-Groups by default, but selected previews can
+   * keep their labeled group representation.
    */
-  static prepareStruct(struct: Struct) {
+  static prepareStruct(struct: Struct, expandSgroups = true) {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
+      if (!expandSgroups) {
+        return newStruct;
+      }
+
       convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct);
       if (!newStruct.sgroups.get(0)?.isSuperatomWithoutLabel) {
         newStruct.sgroups.delete(0);
@@ -77,6 +82,7 @@ export class RenderStruct {
         cachePrefix = '',
         needCache: shouldCache = true,
         wrapperDimensions,
+        expandSgroups = true,
         ...renderOptions
       } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
@@ -93,7 +99,7 @@ export class RenderStruct {
         return;
       }
 
-      const preparedStruct = this.prepareStruct(struct.clone());
+      const preparedStruct = this.prepareStruct(struct.clone(), expandSgroups);
       preparedStruct.initHalfBonds();
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();

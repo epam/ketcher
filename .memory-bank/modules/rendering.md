@@ -65,7 +65,9 @@ A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode re
 
 - The Flex renderer draws a straight line/path.
 - The Snake renderer draws orthogonal "snake" paths and also renders hydrogen bonds (dashed). There is **no standalone hydrogen-bond renderer**.
-- Vertical side connections between matching attachment points at the starts of separate backbone chains use left-edge anchors. R2–R2 and hydrogen bonds between the last monomers of separate backbone chains use right-edge anchors. These outer routes share rounded bends and are positioned relative to the snake backbone return. Overlapping route spans on the same side receive separate lanes; non-overlapping spans can reuse lanes.
+- Vertical side connections between matching attachment points at the starts of separate backbone chains use left-edge anchors. R2–R2 and hydrogen bonds between the last monomers of separate backbone chains use right-edge anchors for outer routes. These routes share rounded bends and are positioned relative to the snake backbone return. Overlapping route spans on the same side receive separate lanes; non-overlapping spans can reuse lanes. The paired single-nucleotide exception uses facing phosphate anchors, as specified in [Macromolecules](../../openspec/specs/macromolecules/spec.md#requirement-closed-chain-connections-in-snake-mode).
+
+The canvas matrix stores the monomer-to-chain map once for its layout snapshot. Snake bond routing reuses that map for endpoint angles, paths, and lane planning. The renderers manager computes the leftmost monomer edge lazily and reuses it until view-model reinitialization starts the next render phase. Monomer addition, deletion, and movement also invalidate the edge before immediate operation rendering, including undo/redo.
 
 ### Sequence rendering
 

@@ -12,7 +12,10 @@ import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 import { getFinishedPolymerBond } from '../../../mock-data';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
@@ -42,6 +45,7 @@ const renderSnakeSideConnectionPath = (
   createPolymerEditorCanvas();
   setEditorInstance({
     mode: new SnakeMode(),
+    renderersContainer: createRenderersManager(),
     drawingEntitiesManager: {
       canvasMatrix: undefined,
       monomers: new Map(),
@@ -126,10 +130,17 @@ const renderSnakeSideConnectionPath = (
 
   setEditorInstance({
     mode: new SnakeMode(),
+    renderersContainer: createRenderersManager(),
     drawingEntitiesManager: {
       canvasMatrix: {
         polymerBondToCells,
-        chainsCollection: { monomerToChain },
+        polymerBondToConnections: new Map(
+          [...polymerBondToCells].map(([bond, route]) => [
+            bond,
+            route.flatMap((cell) => cell.connections),
+          ]),
+        ),
+        monomerToChain,
       },
       monomers: new Map([
         [polymerBond.firstMonomer.id, polymerBond.firstMonomer],
@@ -138,10 +149,10 @@ const renderSnakeSideConnectionPath = (
     },
   } as unknown as CoreEditor);
 
-  globalThis.SVGElement.prototype.getBBox = jest.fn();
-  jest
-    .spyOn(globalThis.SVGElement.prototype, 'getBBox')
-    .mockImplementation(() => ({ width: 30, height: 20 }) as DOMRect);
+  globalThis.SVGElement.prototype.getBBox = vi.fn();
+  vi.spyOn(globalThis.SVGElement.prototype, 'getBBox').mockImplementation(
+    () => ({ width: 30, height: 20 }) as DOMRect,
+  );
 
   const polymerBondRenderer =
     polymerBond.renderer as SnakeModePolymerBondRenderer;

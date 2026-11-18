@@ -171,13 +171,19 @@ The system SHALL ensure that monomers and small molecules on the canvas are auto
 
 ### Requirement: Closed-chain connections in Snake mode
 
-In Snake mode, the system SHALL route R2–R2 bonds and hydrogen bonds between the last monomers of separate backbone chains to the right of both endpoints. Overlapping routes on the same side SHALL use separate lanes.
+In Snake mode, the system SHALL route R2–R2 bonds and hydrogen bonds between the last monomers of separate backbone chains to the right of both endpoints, except for the phosphate link in the paired single-nucleotide scenario below. Overlapping routes on the same side SHALL use separate lanes.
 
 #### Scenario: Terminal R2–R2 and hydrogen bonds between separate backbone chains
 
-- **WHEN** an R2–R2 bond or a hydrogen bond connects the last monomers of separate backbone chains in Snake mode
+- **WHEN** an R2–R2 bond or a hydrogen bond connects the last monomers of separate backbone chains in Snake mode and the paired single-nucleotide scenario does not apply
 - **THEN** both endpoints exit to the right with rounded bends, including when the endpoints are in different columns
 - **AND** overlapping routes on the same side use separate lanes while disjoint routes may reuse a lane
+
+#### Scenario: Two single-nucleotide strands paired at both bases and phosphates
+
+- **WHEN** a sense strand and an antisense strand each contain one nucleotide and both their bases and their phosphates are paired by hydrogen bonds
+- **THEN** Snake layout staggers the antisense strand to the right and routes the phosphate link through the gap between the facing edges of the two phosphates with rounded bends
+- **AND** the base link follows the regular cell-based route
 
 #### Scenario: Hydrogen bond with a nonterminal endpoint
 

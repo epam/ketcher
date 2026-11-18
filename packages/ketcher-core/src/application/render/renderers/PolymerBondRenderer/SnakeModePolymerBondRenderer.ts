@@ -231,6 +231,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   private appendSideConnectionBond(rootElement, cells: Cell[]) {
+    // The turn point is shared only between the segments of a single draw.
+    // Reusing the value from a previous draw (e.g. after dragging monomers)
+    // makes the path follow stale geometry and breaks the rounded corners.
+    this.sideConnectionBondTurnPoint = undefined;
+
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find(
       (connection: Connection): boolean => {

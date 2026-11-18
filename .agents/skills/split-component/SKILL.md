@@ -96,10 +96,10 @@ export { default } from './ComponentName';
 
 ### 5. Check for errors
 
-Run `npm run test:types` and eslint (`npx eslint <component folder>`) on the component folder, and fix any issues found.
+Run `npm run test:types` and oxlint (`npx oxlint -c .oxlintrc.json <component folder>`) on the component folder, and fix any issues found.
 Pay special attention to:
 
-- `import type` instead of `import` for type-only imports (`@typescript-eslint/consistent-type-imports` enforces it)
+- `import type` instead of `import` for type-only imports (`typescript/consistent-type-imports` enforces it)
 
 ## What NOT to do
 

@@ -1,19 +1,29 @@
+import { vi } from 'vitest';
+
 import { renderHook } from '@testing-library/react';
 import { MonomerGroups, MonomerItemType, Struct } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useAppSelector } from 'hooks';
+import { isRnaBaseModificationBlocked } from 'state/rna-builder';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
+vi.mock('react-redux', () => ({
+  useSelector: vi.fn(),
 }));
 
-jest.mock('hooks', () => ({
-  useAppSelector: jest.fn(),
+vi.mock('hooks', () => ({
+  useAppSelector: vi.fn(),
 }));
 
-const mockUseSelector = jest.mocked(useSelector);
-const mockUseAppSelector = jest.mocked(useAppSelector);
+const mockUseSelector = vi.mocked(useSelector);
+const mockUseAppSelector = vi.mocked(useAppSelector);
+
+// isSequenceEditInRNABuilderMode: true, isBaseModificationBlocked: false
+const mockAppSelectorsUnblocked = () => {
+  mockUseAppSelector.mockImplementation((selector) =>
+    selector === isRnaBaseModificationBlocked ? false : true,
+  );
+};
 
 const monomer: MonomerItemType = {
   label: 'for test',
@@ -37,7 +47,7 @@ describe('useDisabledForSequenceMode hook', () => {
 
   describe('for Bases', () => {
     it('should return false if there is R1', () => {
-      mockUseAppSelector.mockReturnValue(true);
+      mockAppSelectorsUnblocked();
       monomer.props.MonomerCaps = { R1: 'H' };
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
@@ -61,6 +71,15 @@ describe('useDisabledForSequenceMode hook', () => {
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
       );
       expect(result.current).toBe(false);
+    });
+
+    it('should return true if base modification is blocked even if there is R1', () => {
+      mockUseAppSelector.mockReturnValue(true);
+      monomer.props.MonomerCaps = { R1: 'H' };
+      const { result } = renderHook(() =>
+        useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
+      );
+      expect(result.current).toBe(true);
     });
   });
 

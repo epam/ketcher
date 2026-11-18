@@ -1894,7 +1894,7 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
   });
 });
 
-const excludeNonUniqueFirstSymbolPairsIds = [
+const excludeNonUniqueFirstSymbolPairsIds = new Set([
   2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
   23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42, 43, 44, 47,
   51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 70, 74, 75, 76,
@@ -1907,9 +1907,9 @@ const excludeNonUniqueFirstSymbolPairsIds = [
   193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 210,
   211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 227,
   228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
-];
+]);
 const uniqueFirstSymbolPairs = sequences.filter(
-  (sequence) => !excludeNonUniqueFirstSymbolPairsIds.includes(sequence.Id),
+  (sequence) => !excludeNonUniqueFirstSymbolPairsIds.has(sequence.Id),
 );
 
 for (const monomer of monomersToAdd) {

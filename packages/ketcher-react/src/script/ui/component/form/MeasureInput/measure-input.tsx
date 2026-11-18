@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type HTMLAttributes, useState, useEffect, useMemo } from 'react';
+import { type HTMLAttributes, useMemo, useState } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -75,7 +74,7 @@ const getNewFloat = (value: string): GetNewFloatResult => {
 
   return {
     isNewFloat,
-    ...(isNewFloat && { float: `${int}.${float[float.length - 1]}` }),
+    ...(isNewFloat && { float: `${int}.${float.at(-1) ?? ''}` }),
   };
 };
 
@@ -132,32 +131,28 @@ const MeasureInput = ({
     setInternalValue(stringifiedValue);
   }
 
-  // Input binds onChange once in its constructor, so handleChange is stuck with
-  // the first render's closure and cannot call the current onChange. This effect
-  // is re-created every render, so it always holds the latest onChange/value —
-  // hence the deliberate single-dep list.
-  useEffect(() => {
-    if (internalValue !== stringifiedValue) {
-      onChange(Number.parseFloat(internalValue));
-    }
-  }, [internalValue, stringifiedValue, onChange]);
-
   const handleChange = (value: unknown) => {
-    const stringifiedValue = String(value);
-    const startsWithZero =
-      stringifiedValue !== '0' && stringifiedValue.startsWith('0');
-    const zeroWithDot = startsWithZero && stringifiedValue.includes('.');
+    const newStringifiedValue = String(value);
+    const hasLeadingZero =
+      newStringifiedValue !== '0' && newStringifiedValue.startsWith('0');
+    const hasLeadingZeroWithDot =
+      hasLeadingZero && newStringifiedValue.includes('.');
 
     const endorcedValue =
-      startsWithZero && !zeroWithDot
-        ? stringifiedValue.replace(/^0/, '')
-        : stringifiedValue || '0';
+      hasLeadingZero && !hasLeadingZeroWithDot
+        ? newStringifiedValue.replace(/^0/, '')
+        : newStringifiedValue || '0';
     const isNumber = !Number.isNaN(Number(endorcedValue));
 
-    if (isNumber) {
-      setInternalValue((prevValue) =>
-        getNewInternalValue(prevValue, endorcedValue),
-      );
+    if (!isNumber) {
+      return;
+    }
+
+    const newInternalValue = getNewInternalValue(internalValue, endorcedValue);
+    setInternalValue(newInternalValue);
+
+    if (newInternalValue !== stringifiedValue) {
+      onChange(Number.parseFloat(newInternalValue));
     }
   };
 

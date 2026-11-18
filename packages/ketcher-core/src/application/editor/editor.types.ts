@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +21,38 @@ import type {
   RenderOptions,
 } from 'application/render';
 import type { Struct } from 'domain/entities/struct';
+import type { AtomAttributes } from 'domain/entities/atom';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
-import type { MonomerOrAmbiguousType, AttachmentPointName } from 'domain/types';
+import type {
+  MonomerOrAmbiguousType,
+  AttachmentPointName,
+  MonomerItemType,
+} from 'domain/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { LayoutMode } from 'application/editor/modes/types';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+
+export type MonomerCreationWizardRequest = {
+  mode: 'create' | 'instance' | 'all' | 'library' | 'duplicate';
+  monomer?: BaseMonomer;
+  libraryItem?: MonomerItemType;
+};
+
+export type CreateBondViaModalPayload = {
+  firstMonomer: BaseMonomer;
+  secondMonomer: BaseMonomer;
+  firstSelectedAttachmentPoint: AttachmentPointName;
+  secondSelectedAttachmentPoint: AttachmentPointName;
+  polymerBond?: PolymerBond;
+  isReconnection?: boolean;
+  initialFirstMonomerAttachmentPoint?: AttachmentPointName;
+  initialSecondMonomerAttachmentPoint?: AttachmentPointName;
+};
+
+export type SelectLayoutModePayload =
+  LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
 export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
 
@@ -56,18 +82,36 @@ export enum EditorType {
   Macromolecules = 1,
 }
 
+export type EditorSubscriber<T = unknown> = {
+  handler: (data?: T) => void;
+};
+
+export interface RotateController {
+  isRotating: boolean;
+  rerender: () => void;
+  revert: () => void;
+  clean: () => void;
+  updateFloatingToolsPosition: () => void;
+}
+
 export interface Editor {
   isDitrty: () => boolean;
   setOrigin: () => void;
   struct: (
     struct?: Struct,
-    needToCenterStruct?: boolean,
+    shouldCenterStruct?: boolean,
     x?: number,
     y?: number,
   ) => Struct;
   structToAddFragment: (struct: Struct, x?: number, y?: number) => Struct;
-  subscribe: (eventName: string, handler: (data?: any) => any) => any;
-  unsubscribe: (eventName: string, subscriber: any) => void;
+  subscribe: <T = unknown>(
+    eventName: string,
+    handler: (data?: T) => void,
+  ) => EditorSubscriber<T>;
+  unsubscribe: <T = unknown>(
+    eventName: string,
+    subscriber: EditorSubscriber<T>,
+  ) => void;
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
@@ -79,7 +123,7 @@ export interface Editor {
   options(): RenderOptions;
   options(value: EditorOptions): void;
   setOptions: (opts: string) => void;
-  zoom: (value?: any) => any;
+  zoom: (value?: number) => number | undefined;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
@@ -88,7 +132,10 @@ export interface Editor {
   event: {
     message: Subscription;
     tooltip: Subscription;
-    elementEdit: PipelineSubscription;
+    elementEdit: PipelineSubscription<
+      unknown,
+      Promise<Partial<AtomAttributes>>
+    >;
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
@@ -109,21 +156,25 @@ export interface Editor {
     apiSettings: PipelineSubscription;
     cursor: Subscription;
     updateFloatingTools: Subscription<FloatingToolsParams>;
+    monomerWizardStateChange: Subscription<boolean>;
   };
   update: (
     action: Action | true,
-    ignoreHistory?: boolean,
+    shouldIgnoreHistory?: boolean,
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
-  // supposed to be RotateController from 'ketcher-react' package
-  rotateController: any;
+  rotateController: RotateController;
   macromoleculeConvertionError: string | null | undefined;
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
   focusCliparea: () => void;
   closeMonomerCreationWizard: () => void;
+  openMonomerCreationWizardFromMacro: (
+    request: MonomerCreationWizardRequest,
+    onFinish: (isCanvasSaved: boolean) => void,
+  ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;
   monomerCreationState: MonomerCreationState;

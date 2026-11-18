@@ -12,6 +12,32 @@ import type { BaseRenderer } from 'application/render';
 import type { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 
 export class MultitailArrow extends DrawingEntity {
+  static fromKet(
+    multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+  ) {
+    const {
+      spineTopX,
+      spineTopY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailsLength,
+      tailsYOffset,
+    } = MicromoleculeMultitailArrow.getConstructorParamsFromKetNode(
+      multitailArrowKetNode,
+    );
+
+    return new MultitailArrow(
+      spineTopX,
+      spineTopY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailsLength,
+      tailsYOffset,
+    );
+  }
+
   public renderer?: MultitailArrowRenderer = undefined;
   public arrowId?: number;
 
@@ -61,32 +87,6 @@ export class MultitailArrow extends DrawingEntity {
     );
 
     this.moveRelative(delta);
-  }
-
-  static fromKet(
-    multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
-  ) {
-    const {
-      spineTopX,
-      spineTopY,
-      height,
-      headOffsetX,
-      headOffsetY,
-      tailsLength,
-      tailsYOffset,
-    } = MicromoleculeMultitailArrow.getConstructorParamsFromKetNode(
-      multitailArrowKetNode,
-    );
-
-    return new MultitailArrow(
-      spineTopX,
-      spineTopY,
-      height,
-      headOffsetX,
-      headOffsetY,
-      tailsLength,
-      tailsYOffset,
-    );
   }
 
   toKetNode(): KetFileNode<KetFileMultitailArrowNode> {

@@ -383,6 +383,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
       page,
       'KET/Chromium-popup/Bugs/ketcher-3.10.0-bugs/benzene-ring.ket',
     );
+    await clickInTheMiddleOfTheCanvas(page);
     await deselectAtomAndBonds(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
@@ -410,8 +411,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
       ConnectionPointOption.MarkAsConnectionPoint,
     );
     await createMonomerDialog.submit();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomerOnCanvas = getMonomerLocator(page, {
       monomerAlias: 'CHEM1',
     });
@@ -645,8 +647,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
       code: 'LongName',
       name: monomerName,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomerOnCanvas = getMonomerLocator(page, {
       monomerAlias: 'LongName',
     });

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
@@ -25,8 +28,8 @@ import { rnaBuilderReducer } from 'state/rna-builder';
 import { EditorEvents } from '../../EditorEvents';
 import { SequenceSyncEditModeButton } from '.';
 
-jest.mock('hooks', () => ({
-  ...jest.requireActual('hooks'),
+vi.mock('hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('hooks')>()),
   useLayoutMode: () => 'sequence-layout-mode',
 }));
 
@@ -144,7 +147,7 @@ describe('SequenceSyncEditModeButton', () => {
     hasAntisenseChains = true;
     renderComponents();
 
-    const dispatchSpy = jest.spyOn(
+    const dispatchSpy = vi.spyOn(
       fakeEditor.events.toggleIsSequenceSyncEditMode,
       'dispatch',
     );
@@ -165,7 +168,7 @@ describe('SequenceSyncEditModeButton', () => {
       fireEvent.click(screen.getByTestId('sync_sequence_edit_mode'));
     });
 
-    const dispatchSpy = jest.spyOn(
+    const dispatchSpy = vi.spyOn(
       fakeEditor.events.toggleIsSequenceSyncEditMode,
       'dispatch',
     );

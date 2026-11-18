@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,50 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
 class EnhancedStereoTool implements Tool {
+  static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
+    const struct = editor.struct();
+    const restruct = editor.render.ctab;
+    const stereoLabels = stereoAtoms.map((stereoAtom) => {
+      const atom = struct.atoms.get(stereoAtom);
+      return atom?.stereoLabel;
+    });
+    const hasAnotherLabel = stereoLabels.some(
+      (stereoLabel) => stereoLabel !== stereoLabels[0],
+    );
+    const res = editor.event.enhancedStereoEdit.dispatch({
+      stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
+    });
+
+    return res.then((stereoLabel) => {
+      if (!stereoLabel) {
+        return null;
+      }
+
+      const action = stereoAtoms.reduce(
+        (acc, stereoAtom) => {
+          const frid = struct.atoms.get(stereoAtom)?.fragment;
+          const frag =
+            frid === undefined ? null : restruct.molecule.frags.get(frid);
+
+          if (frag?.stereoAtoms) {
+            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
+          }
+          return acc;
+        },
+        fromAtomsAttrs(
+          restruct,
+          stereoAtoms,
+          {
+            stereoLabel,
+          },
+          false,
+        ),
+      );
+      action.operations.reverse();
+      return action;
+    });
+  }
+
   private readonly editor: Editor;
   private readonly stereoAtoms: Array<number>;
   isNotActiveTool: true;
@@ -48,50 +92,6 @@ class EnhancedStereoTool implements Tool {
       this.editor,
       this.stereoAtoms,
     ).then((action) => action && editor.update(action));
-  }
-
-  static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
-    const struct = editor.struct();
-    const restruct = editor.render.ctab;
-    const stereoLabels = stereoAtoms.map((stereoAtom) => {
-      const atom = struct.atoms.get(stereoAtom);
-      return atom?.stereoLabel;
-    });
-    const hasAnotherLabel = stereoLabels.some(
-      (stereoLabel) => stereoLabel !== stereoLabels[0],
-    );
-    const res = editor.event.enhancedStereoEdit.dispatch({
-      stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
-    });
-
-    return res.then((stereoLabel) => {
-      if (!stereoLabel) {
-        return null;
-      }
-
-      const action = stereoAtoms.reduce(
-        (acc, stereoAtom) => {
-          const frid = struct.atoms.get(stereoAtom)?.fragment;
-          const frag =
-            frid !== undefined ? restruct.molecule.frags.get(frid) : null;
-
-          if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
-          }
-          return acc;
-        },
-        fromAtomsAttrs(
-          restruct,
-          stereoAtoms,
-          {
-            stereoLabel,
-          },
-          false,
-        ),
-      );
-      action.operations.reverse();
-      return action;
-    });
   }
 }
 

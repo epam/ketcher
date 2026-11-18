@@ -1,8 +1,11 @@
 import {
   type ReMultitailArrow,
   FunctionalGroup,
+  getAttachmentGroupIdForHapticBondHalf,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
+  type Struct,
+  type Vec2,
 } from 'ketcher-core';
 import type { Editor, ClosestItemWithMap } from 'src/script/editor';
 import {
@@ -11,7 +14,7 @@ import {
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
 import type { Selection } from '../../../../editor/Editor';
-import { onlyHasProperty } from './utils';
+import { getRemovableAttachmentGroupId, onlyHasProperty } from './utils';
 
 /**
  * Count how many MonomerMicromolecule SGroups on the canvas share the same
@@ -64,7 +67,7 @@ function computeSelectedMatchingMonomerCount(
  * Returns true when the selection contains atoms or bonds that do NOT belong
  * to any monomer functional group (i.e. plain chemical structure elements).
  */
-function computeHasNonMonomerStructure(
+function hasSelectedNonMonomerStructure(
   editor: Editor,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
 ): boolean {
@@ -95,7 +98,31 @@ function computeHasNonMonomerStructure(
   return false;
 }
 
-export const getIsItemInSelection = ({
+export function getAttachmentGroupTargetForBondHalf(
+  struct: Struct,
+  closestItem: ClosestItemWithMap,
+  pointer: Vec2,
+): ClosestItemWithMap | null {
+  if (closestItem.map !== 'bonds') {
+    return null;
+  }
+
+  const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+    struct,
+    struct.bonds.get(closestItem.id),
+    pointer,
+  );
+
+  return attachmentGroupId === null
+    ? null
+    : {
+        ...closestItem,
+        map: 'attachmentGroups',
+        id: attachmentGroupId,
+      };
+}
+
+export const isItemInSelection = ({
   item,
   selection,
   selectedSGroupsIds,
@@ -110,7 +137,7 @@ export const getIsItemInSelection = ({
       return selectedSGroupsIds.has(item.id);
 
     case 'functionalGroups':
-      return Array.from(selectedFunctionalGroups.keys()).includes(item.id);
+      return [...selectedFunctionalGroups.keys()].includes(item.id);
 
     default:
       return (
@@ -137,13 +164,13 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      const noFunctionalGroup =
+      const hasNoLabeledFunctionalGroup =
         functionalGroup === null ||
         functionalGroup?.relatedSGroup.isSuperatomWithoutLabel;
       const isMonomer =
         functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
 
-      if (noFunctionalGroup) {
+      if (hasNoLabeledFunctionalGroup) {
         return {
           id: CONTEXT_MENU_ID.FOR_BONDS + ketcherId,
           bondIds: [closestItem.id],
@@ -170,13 +197,13 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      const noFunctionalGroup =
+      const hasNoLabeledFunctionalGroup =
         functionalGroup === null ||
         functionalGroup?.relatedSGroup.isSuperatomWithoutLabel;
       const isMonomer =
         functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
 
-      if (noFunctionalGroup) {
+      if (hasNoLabeledFunctionalGroup) {
         return {
           id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
           atomIds: [closestItem.id],
@@ -195,6 +222,12 @@ export function getMenuPropsForClosestItem(
         };
       }
     }
+
+    case 'attachmentGroups':
+      return {
+        id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
+        attachmentGroupIds: [closestItem.id],
+      };
 
     case 'sgroups':
     case 'functionalGroups': {
@@ -265,9 +298,21 @@ export function getMenuPropsForSelection(
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
+  const removableAttachmentGroupId = editor
+    ? getRemovableAttachmentGroupId(editor.struct(), selection)
+    : null;
+  const attachmentGroupIds =
+    removableAttachmentGroupId === null
+      ? undefined
+      : [removableAttachmentGroupId];
+  const isAtomOnlySelection = onlyHasProperty(
+    selection,
+    'atoms',
+    IGNORED_MAPS_LIST,
+  );
 
   if (selectedFunctionalGroups.size > 0) {
-    const functionalGroups = Array.from(selectedFunctionalGroups.values());
+    const functionalGroups = [...selectedFunctionalGroups.values()];
     if (
       functionalGroups.some(
         (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
@@ -289,7 +334,7 @@ export function getMenuPropsForSelection(
             : computeTotalMonomerCount(editor, primaryMonomerFG)
           : undefined,
         hasNonMonomerStructure: editor
-          ? computeHasNonMonomerStructure(editor, selectedFunctionalGroups)
+          ? hasSelectedNonMonomerStructure(editor, selectedFunctionalGroups)
           : undefined,
       };
     }
@@ -308,10 +353,16 @@ export function getMenuPropsForSelection(
         IGNORED_MAPS_LIST,
       ),
     };
-  } else if (atoms && !bonds && !rgroupAttachmentPoints) {
+  } else if (
+    atoms &&
+    !bonds &&
+    !rgroupAttachmentPoints &&
+    isAtomOnlySelection
+  ) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
       atomIds: atoms,
+      ...(attachmentGroupIds ? { attachmentGroupIds } : {}),
       extraItemsSelected: !onlyHasProperty(
         selection,
         'atoms',
@@ -333,6 +384,7 @@ export function getMenuPropsForSelection(
       id: CONTEXT_MENU_ID.FOR_SELECTION + ketcherId,
       bondIds: bonds,
       atomIds: atoms,
+      ...(attachmentGroupIds ? { attachmentGroupIds } : {}),
       rgroupAttachmentPoints,
     };
   }

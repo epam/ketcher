@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -7,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import './index.less';
+import * as editorStyles from './index.less';
 
 import init, { type Config } from './script';
-import { type RefObject, useEffect, useRef } from 'react';
+import { type RefObject, useCallback, useEffect, useRef } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
-import type { Ketcher, StructService } from 'ketcher-core';
+import type { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
+import type { Api } from './script/api';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
 import type { KetcherBuilder } from './script/builders';
+
+// Bind the Less import so it stays in JS but is erased from declarations.
+void editorStyles;
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -47,8 +49,9 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
+  const ketcherRef = useRef<Ketcher | null>(null);
 
-  const setServerRef = useRef<(structService: StructService) => void>(() => {});
+  const setServerRef = useRef<(structService: Api) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
 
   const rootElRef = useRef<HTMLDivElement>(null);
@@ -58,21 +61,28 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    if (!props.ketcherId) {
+    const ketcherId = ketcherRef.current?.id;
+
+    if (!ketcherId) {
       return;
     }
+
     ketcherBuilderRef.current?.reinitializeApi(
-      props.ketcherId,
-      props.structServiceProvider,
+      ketcherId,
+      structServiceProvider,
       setServerRef.current,
     );
   }, [structServiceProvider]);
 
-  const initKetcher = async () => {
+  // Editor is initialized once on mount with the props of the first render
+  const initialPropsRef = useRef(props);
+
+  const initKetcher = useCallback(async () => {
+    const initialProps = initialPropsRef.current;
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
 
     initPromiseRef.current = init({
-      ...props,
+      ...initialProps,
       element: rootElRef.current,
       appRoot: appRootRef.current,
     });
@@ -80,16 +90,18 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
       cleanupRef.current = cleanup;
       ketcherBuilderRef.current = builder;
+      ketcherRef.current = ketcher;
       setServerRef.current = setServer;
-      props.onSetKetcherId?.(ketcher.id);
+      initialProps.onSetKetcherId?.(ketcher.id);
 
-      if (typeof props.onInit === 'function' && ketcher) {
-        props.onInit(ketcher);
+      if (ketcher && typeof initialProps.onInit === 'function') {
+        initialProps.onInit(ketcher);
         const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
-        window.dispatchEvent(ketcherInitEvent);
+        globalThis.dispatchEvent(ketcherInitEvent);
       }
     });
-  };
+  }, []);
+
   useEffect(() => {
     if (initPromiseRef.current === null) {
       initKetcher();
@@ -103,10 +115,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       initPromiseRef.current?.then(() => {
         cleanupRef.current?.();
         appRootRef.current?.unmount();
+        ketcherBuilderRef.current?.destroy();
       });
     };
-    // TODO: provide the list of dependencies after implementing unsubscribe function
-  }, []);
+  }, [initKetcher]);
 
   return (
     <div

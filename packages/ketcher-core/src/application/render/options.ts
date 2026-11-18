@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -80,7 +80,9 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
 
     radiusScaleFactor: 0.38,
 
-    /* styles */
+    /*
+    styles
+    */
     lineattr: {
       stroke: '#000',
       'stroke-width': options.bondThicknessInPx || scaleFactorMicro / 20,
@@ -180,7 +182,7 @@ export function getOptionsWithConvertedUnits(
   > = {};
   const defaultUnit = 'px';
 
-  if (typeof options.fontsz !== 'undefined') {
+  if (options.fontsz !== undefined) {
     convertedOptions.fontszInPx = convertValue(
       options.fontsz,
       options.fontszUnit || defaultUnit,
@@ -188,7 +190,7 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
-  if (typeof options.fontszsub !== 'undefined') {
+  if (options.fontszsub !== undefined) {
     convertedOptions.fontszsubInPx = convertValue(
       options.fontszsub,
       options.fontszsubUnit || defaultUnit,
@@ -196,10 +198,7 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
-  if (
-    typeof options.bondSpacing !== 'undefined' &&
-    typeof options.bondLength !== 'undefined'
-  ) {
+  if (options.bondSpacing !== undefined && options.bondLength !== undefined) {
     const convertedBondLength = convertValue(
       options.bondLength,
       options.bondLengthUnit || defaultUnit,
@@ -211,7 +210,7 @@ export function getOptionsWithConvertedUnits(
       (options.bondSpacing / 100) * convertedBondLength;
   }
 
-  if (typeof options.bondThickness !== 'undefined') {
+  if (options.bondThickness !== undefined) {
     convertedOptions.bondThicknessInPx = convertValue(
       options.bondThickness,
       options.bondThicknessUnit || defaultUnit,
@@ -219,7 +218,7 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
-  if (typeof options.stereoBondWidth !== 'undefined') {
+  if (options.stereoBondWidth !== undefined) {
     convertedOptions.stereoBondWidthInPx = convertValue(
       options.stereoBondWidth,
       options.stereoBondWidthUnit || defaultUnit,
@@ -228,8 +227,8 @@ export function getOptionsWithConvertedUnits(
   }
 
   if (
-    typeof options.bondLength !== 'undefined' &&
-    typeof options.bondLengthUnit !== 'undefined'
+    options.bondLength !== undefined &&
+    options.bondLengthUnit !== undefined
   ) {
     convertedOptions.microModeScale = convertValue(
       options.bondLength,
@@ -238,7 +237,7 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
-  if (typeof options.hashSpacing !== 'undefined') {
+  if (options.hashSpacing !== undefined) {
     convertedOptions.hashSpacingInPx = convertHashSpacingToPx(
       options.hashSpacing,
       options.hashSpacingUnit || defaultUnit,

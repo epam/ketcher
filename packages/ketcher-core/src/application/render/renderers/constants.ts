@@ -5,6 +5,8 @@ export const UNRESOLVED_MONOMER_COLOR = '#585858';
 export const BAD_VALENCE_WARNING_COLOR = '#F00';
 export const BAD_VALENCE_LINE_OFFSET = 2;
 
+export const CANVAS_BACKGROUND_COLOR = '#FCFCFC';
+
 export const SELECTION_COLOR = '#57FF8F';
 export const SELECTION_HOVERED_COLOR = '#CCFFDD';
 // Outline of the rectangle/lasso area while a selection is being dragged,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,7 @@ import {
   AtomAttr,
   ImageUpsert,
   MultitailArrowUpsert,
+  AttachmentGroupAdd,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -49,6 +50,7 @@ import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
   rxnArrows: number[];
   rxnPluses: number[];
@@ -60,6 +62,7 @@ export type CreatedItems = {
 
 type PasteItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
 };
 
@@ -69,9 +72,9 @@ export function fromPaste(
   point: Vec2,
   angle = 0,
   isPreview = false,
-  needMoveFromTopLeftPoint = false,
+  shouldMoveFromTopLeftPoint = false,
 ): [Action, PasteItems, CreatedItems] {
-  const xy0 = needMoveFromTopLeftPoint
+  const xy0 = shouldMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -84,11 +87,13 @@ export function fromPaste(
   const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
   };
 
   const items: CreatedItems = {
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
     rxnArrows: [],
     rxnPluses: [],
@@ -105,8 +110,8 @@ export function fromPaste(
     if (
       fragmentId !== undefined &&
       fragmentId !== null &&
-      !fridMap.has(fragmentId) &&
-      !isMacromoleculeAtom
+      !isMacromoleculeAtom &&
+      !fridMap.has(fragmentId)
     ) {
       const fragment = pstruct.frags.get(fragmentId);
 
@@ -157,6 +162,22 @@ export function fromPaste(
         operation.data.aid as number,
       ),
     );
+  });
+
+  pstruct.attachmentGroups.forEach((attachmentGroup, id) => {
+    const atomIds = attachmentGroup.atomIds
+      .map((atomId) => aidMap.get(atomId))
+      .filter((atomId): atomId is number => atomId !== undefined);
+    const operation = new AttachmentGroupAdd({ atomIds }).perform(
+      restruct,
+    ) as AttachmentGroupAdd;
+    action.addOp(operation);
+
+    const pastedId = operation.data.id;
+    if (pastedId === null) return;
+    aidMap.set(id, pastedId);
+    pasteItems.attachmentGroups.push(pastedId);
+    items.attachmentGroups.push(pastedId);
   });
 
   pstruct.frags.forEach((frag, frid) => {

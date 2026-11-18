@@ -20,8 +20,8 @@ export const defaultNS = 'common';
 // smallest bundle. Read once as a plain boolean so every branch below folds
 // to a literal after @rollup/plugin-replace substitutes the env var at
 // build time.
-const MULTI_LANGUAGE_BUILD =
-  process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
+const IS_MULTI_LANGUAGE_BUILD =
+  import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
 
 type LocaleResources = typeof BASE_RESOURCES;
 
@@ -32,7 +32,7 @@ type LocaleResources = typeof BASE_RESOURCES;
 // build variants.
 export const resources: {
   en: LocaleResources;
-} & typeof EXTRA_LOCALE_RESOURCES = MULTI_LANGUAGE_BUILD
+} & typeof EXTRA_LOCALE_RESOURCES = IS_MULTI_LANGUAGE_BUILD
   ? { en: BASE_RESOURCES, ...EXTRA_LOCALE_RESOURCES }
   : ({ en: BASE_RESOURCES } as {
       en: LocaleResources;
@@ -51,7 +51,7 @@ export interface SupportedLanguage {
 // "简体中文" this UI has always shown — never add a new language here just
 // to give it a label; let the computed default handle it. It's passed in
 // rather than module-scope so the override string itself stays confined to
-// the MULTI_LANGUAGE_BUILD branch below (module-scope would make it a live
+// the IS_MULTI_LANGUAGE_BUILD branch below (module-scope would make it a live
 // reference Rollup can't tree-shake out of the English-only default build,
 // even though the override is only ever read for a non-English code).
 function languageLabel(
@@ -74,7 +74,7 @@ function languageLabel(
 // reference to the non-English JSON modules (and non-English label text) to
 // be confined to the now-unreachable branch to drop them from the
 // English-only default build.
-export const SUPPORTED_LANGUAGES: SupportedLanguage[] = MULTI_LANGUAGE_BUILD
+export const SUPPORTED_LANGUAGES: SupportedLanguage[] = IS_MULTI_LANGUAGE_BUILD
   ? [
       { code: 'en', label: languageLabel('en') },
       ...(
@@ -96,10 +96,10 @@ function isSupportedLanguage(value: unknown): value is keyof typeof resources {
 }
 
 function getStoredLanguage(): keyof typeof resources {
-  if (typeof window === 'undefined') {
+  if (typeof globalThis.window === 'undefined') {
     return DEFAULT_LANGUAGE;
   }
-  const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  const stored = globalThis.localStorage.getItem(LANGUAGE_STORAGE_KEY);
   return isSupportedLanguage(stored) ? stored : DEFAULT_LANGUAGE;
 }
 
@@ -117,18 +117,18 @@ if (!i18n.isInitialized) {
         escapeValue: false,
       },
       returnEmptyString: false,
-      saveMissing: process.env.NODE_ENV === 'development',
+      saveMissing: import.meta.env.NODE_ENV === 'development',
       missingKeyHandler:
-        process.env.NODE_ENV === 'development'
+        import.meta.env.NODE_ENV === 'development'
           ? (_lngs, ns, key) => {
               console.warn(`[i18n] Missing key "${key}" in namespace "${ns}"`);
             }
           : undefined,
     });
 
-  if (typeof window !== 'undefined') {
+  if (typeof globalThis.window !== 'undefined') {
     i18n.on('languageChanged', (lng) => {
-      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+      globalThis.localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
     });
   }
 }

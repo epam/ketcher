@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -64,7 +64,10 @@ type Props = AnalyseDialogProps & AnalyseDialogCallProps;
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
-  return value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
+  return value
+    .split(/(\d*\.\d+)/)
+    .map((part, index) => (index % 2 === 1 ? (+part).toFixed(round) : part))
+    .join('');
 }
 
 const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(
@@ -104,13 +107,13 @@ const analyseItems: AnalyseItem[] = [
 function renderInputComponent(
   item: AnalyseItem,
   values: AnalyseValues | null,
-  loading: boolean,
+  isLoading: boolean,
   round: RoundSettings,
 ): ReactElement {
   if (item.key === 'gross') {
     return (
       <FormulaInput
-        value={values && !loading ? (values[item.key] as string) || '' : ''}
+        value={values && !isLoading ? (values[item.key] as string) || '' : ''}
         contentEditable={false}
       />
     );
@@ -121,7 +124,7 @@ function renderInputComponent(
       <textarea
         readOnly
         value={
-          values && !loading && item.round
+          values && !isLoading && item.round
             ? roundOff(
                 values[item.key] as string | number,
                 Number(round[item.round]),
@@ -137,7 +140,7 @@ function renderInputComponent(
     <FrozenInput
       data-testid={item.name + '-input'}
       value={
-        values && !loading && item.round
+        values && !isLoading && item.round
           ? roundOff(
               values[item.key] as string | number,
               Number(round[item.round]),

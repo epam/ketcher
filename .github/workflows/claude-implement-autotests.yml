@@ -181,4 +181,3 @@ jobs:
         run: |
           gh issue comment "${ISSUE_NUMBER}" \
             --body "Generated Playwright test: ${PR_URL}"
- 

@@ -58,12 +58,81 @@ let keydownListener: ((event: KeyboardEvent) => void) | null = null;
 const affectedTools = new Set(['paste', 'template']);
 const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
+type LostFocusListeners = {
+  keydown: (event: KeyboardEvent) => void;
+  mouseover: () => void;
+  mouseleave: () => void;
+};
+
+const lostFocusListeners = new WeakMap<
+  HTMLElement | Document,
+  LostFocusListeners
+>();
+
+/**
+ * Hotkeys listen on the Ketcher root. When the focused control inside it is
+ * removed (a context menu item, a dialog button), the browser moves focus to
+ * <body>, outside the root, and hotkeys stopped working until the user
+ * clicked the canvas (#2524). While the mouse is over this editor, a key
+ * pressed on <body> is handled as a hotkey and focus returns to the editor.
+ * Keys pressed while the mouse is elsewhere on the host page are left alone.
+ */
+function addLostFocusListeners(
+  element: HTMLElement | Document,
+  handleKeydown: (event: KeyboardEvent) => void,
+) {
+  let isPointerOverEditor = false;
+  const listeners: LostFocusListeners = {
+    mouseover: () => {
+      isPointerOverEditor = true;
+    },
+    mouseleave: () => {
+      isPointerOverEditor = false;
+    },
+    keydown: (event: KeyboardEvent) => {
+      const isFocusLost = event.target === document.body;
+      // A listener on an element that already contains <body> (such as
+      // document) has handled this key itself.
+      if (
+        !isFocusLost ||
+        !isPointerOverEditor ||
+        element.contains(document.body)
+      ) {
+        return;
+      }
+
+      handleKeydown(event);
+      element
+        .querySelector<HTMLElement>(`.${clipArea.CLIP_AREA_BASE_CLASS}`)
+        ?.focus();
+    },
+  };
+
+  element.addEventListener('mouseover', listeners.mouseover);
+  element.addEventListener('mouseleave', listeners.mouseleave);
+  document.addEventListener('keydown', listeners.keydown);
+  lostFocusListeners.set(element, listeners);
+}
+
+function removeLostFocusListeners(element: HTMLElement | Document) {
+  const listeners = lostFocusListeners.get(element);
+  if (!listeners) {
+    return;
+  }
+
+  element.removeEventListener('mouseover', listeners.mouseover);
+  element.removeEventListener('mouseleave', listeners.mouseleave);
+  document.removeEventListener('keydown', listeners.keydown);
+  lostFocusListeners.delete(element);
+}
+
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys(actions);
 
     keydownListener = (event) => keyHandle(dispatch, getState, hotKeys, event);
     element.addEventListener('keydown', keydownListener);
+    addLostFocusListeners(element, keydownListener);
   };
 }
 
@@ -72,6 +141,7 @@ export function removeKeydownListener(element) {
     if (keydownListener) {
       element.removeEventListener('keydown', keydownListener);
     }
+    removeLostFocusListeners(element);
   };
 }
 

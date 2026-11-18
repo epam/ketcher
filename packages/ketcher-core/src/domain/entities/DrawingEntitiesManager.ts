@@ -2106,6 +2106,25 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private getSnakeAntisensePosition(
+    sensePosition: Vec2,
+    senseChain: Chain,
+    antisenseChain: Chain | undefined,
+  ): Vec2 {
+    // Shift the whole antisense strand to leave room for the phosphate bond's side exits.
+    const offset = areSingleNucleotidesPairedAtBaseAndPhosphate(
+      senseChain,
+      antisenseChain,
+    )
+      ? SnakeLayoutCellWidth * 0.7
+      : 0;
+
+    return new Vec2(
+      sensePosition.x + offset,
+      sensePosition.y + SnakeLayoutCellWidth * 3,
+    );
+  }
+
   public applySnakeLayout(
     isSnakeMode: boolean,
     shouldRedrawBonds = true,
@@ -2257,19 +2276,10 @@ export class DrawingEntitiesManager {
               }
 
               if (antisenseNode) {
-                const antisenseChain = monomerToChain.get(
-                  antisenseNode.monomers[0],
-                );
-                // Shift the whole antisense strand to leave room for the phosphate bond's side exits.
-                const offset = areSingleNucleotidesPairedAtBaseAndPhosphate(
+                const antisensePosition = this.getSnakeAntisensePosition(
+                  newSenseNodePosition,
                   twoStrandedSnakeLayoutNode.chain,
-                  antisenseChain,
-                )
-                  ? SnakeLayoutCellWidth * 0.7
-                  : 0;
-                const antisensePosition = new Vec2(
-                  newSenseNodePosition.x + offset,
-                  newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
+                  monomerToChain.get(antisenseNode.monomers[0]),
                 );
                 if (antisenseNode instanceof SugarWithBaseSnakeLayoutNode) {
                   command.merge(

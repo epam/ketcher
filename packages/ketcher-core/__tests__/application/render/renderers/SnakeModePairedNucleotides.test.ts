@@ -193,7 +193,7 @@ describe('Snake mode paired single nucleotides', () => {
       );
       const renderer = phosphateBond?.renderer;
       if (!(renderer instanceof SnakeModePolymerBondRenderer)) {
-        throw new Error('Missing Snake phosphate bond renderer');
+        throw new TypeError('Missing Snake phosphate bond renderer');
       }
       const path = renderer.bodyElement?.attr('d');
       expect(path).toBeDefined();

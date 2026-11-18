@@ -190,6 +190,25 @@ describe('SRU S-Group defaults', () => {
   });
 });
 
+describe('Remove S-Group button', () => {
+  it('should remove an existing S-group', () => {
+    const onOk = jest.fn();
+    renderWithMockStore(<SGroup type="MUL" canRemove onOk={onOk} />);
+
+    fireEvent.click(screen.getByTestId('remove-sgroup-button'));
+
+    expect(onOk).toHaveBeenCalledWith({ remove: true });
+  });
+
+  it('should not be shown for a new S-group', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+
+    expect(
+      screen.queryByTestId('remove-sgroup-button'),
+    ).not.toBeInTheDocument();
+  });
+});
+
 const reducer = combineReducers({
   modal: modalReducer,
 });

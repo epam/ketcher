@@ -8,6 +8,7 @@ import MenuSeparator from '../MenuSeparator';
 import useBondEdit from '../hooks/useBondEdit';
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
 import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
+import useBondSGroupRemove from '../hooks/useBondSGroupRemove';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import {
@@ -39,6 +40,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
+  const [handleSGroupRemove, sGroupRemoveDisabled, sGroupRemoveHidden] =
+    useBondSGroupRemove();
   const handleDelete = useDelete();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
   const struct = editor.struct();
@@ -183,6 +186,15 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         onClick={handleSGroupEdit}
       >
         {t('components:contextMenu.editSGroupEllipsis')}
+      </Item>
+      <Item
+        {...props}
+        data-testid="Remove S-Group-option"
+        hidden={sGroupRemoveHidden}
+        disabled={sGroupRemoveDisabled}
+        onClick={handleSGroupRemove}
+      >
+        {t('components:contextMenu.removeSGroup')}
       </Item>
       <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>

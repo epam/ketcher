@@ -11,6 +11,7 @@
     "bondTypeMenu": "Bond type",
     "attachSGroupEllipsis": "Attach S-Group...",
     "editSGroupEllipsis": "Edit S-Group...",
+    "removeSGroup": "Remove S-Group",
     "unsaturated": "Unsaturated",
     "saturated": "Saturated",
     "createMonomerAction": "Create a monomer",

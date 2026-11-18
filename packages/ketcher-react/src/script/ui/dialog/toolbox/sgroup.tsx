@@ -42,6 +42,7 @@ interface SgroupFormState {
 interface SgroupOwnProps extends DialogParams {
   type?: string;
   selectedSruCount?: number;
+  canRemove?: boolean;
   [key: string]: unknown;
 }
 
@@ -49,7 +50,7 @@ interface SgroupProps extends SgroupOwnProps {
   formState: SgroupFormState;
 }
 
-function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
+function Sgroup({ formState, canRemove, ...props }: Readonly<SgroupProps>) {
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 
@@ -77,7 +78,22 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
-      buttons={['Cancel', 'OK']}
+      buttons={[
+        ...(canRemove
+          ? [
+              <input
+                key="remove"
+                type="button"
+                className={classes.remove}
+                value={t('dialogs:toolbox.sgroupDialog.removeButton')}
+                onClick={() => props.onOk?.({ remove: true })}
+                data-testid="remove-sgroup-button"
+              />,
+            ]
+          : []),
+        'Cancel',
+        'OK',
+      ]}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       withDivider={true}
       params={props}

@@ -218,7 +218,8 @@
     },
     "sgroupDialog": {
       "dialogTitle": "S-基团属性",
-      "typeLabel": "类型"
+      "typeLabel": "类型",
+      "removeButton": "移除"
     },
     "labelEditDialog": {
       "dialogTitle": "标签编辑"

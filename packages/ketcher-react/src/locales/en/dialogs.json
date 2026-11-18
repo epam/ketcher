@@ -218,7 +218,8 @@
     },
     "sgroupDialog": {
       "dialogTitle": "S-Group Properties",
-      "typeLabel": "Type"
+      "typeLabel": "Type",
+      "removeButton": "Remove"
     },
     "labelEditDialog": {
       "dialogTitle": "Label Edit"

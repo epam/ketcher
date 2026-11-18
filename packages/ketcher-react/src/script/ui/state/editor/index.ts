@@ -237,9 +237,14 @@ export default function initEditor(
           openDialog(dispatch, 'sgroup', {
             ...fromSgroup(sgroup),
             selectedSruCount: getSelectedSruCount(sgroup.type),
+            canRemove: sgroup.canRemove,
           }),
         )
-        .then((res) => toSgroup(res as SGroupFormData)),
+        .then((res) =>
+          (res as { remove?: boolean }).remove
+            ? res
+            : toSgroup(res as SGroupFormData),
+        ),
     onRemoveFG: (result: Record<string, unknown>) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
     onEditMonomer: (payload: EditMonomerPayload) =>

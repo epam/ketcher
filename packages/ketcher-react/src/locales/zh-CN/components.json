@@ -11,6 +11,7 @@
     "bondTypeMenu": "键类型",
     "attachSGroupEllipsis": "附加 S-基团…",
     "editSGroupEllipsis": "编辑 S-基团…",
+    "removeSGroup": "移除 S-基团",
     "unsaturated": "不饱和",
     "saturated": "饱和",
     "createMonomerAction": "创建单体",

@@ -11,6 +11,7 @@
     "bondTypeMenu": "Tipo de enlace",
     "attachSGroupEllipsis": "Adjuntar grupo S...",
     "editSGroupEllipsis": "Editar grupo S...",
+    "removeSGroup": "Quitar grupo S",
     "unsaturated": "Insaturado",
     "saturated": "Saturado",
     "createMonomerAction": "Crear un monómero",

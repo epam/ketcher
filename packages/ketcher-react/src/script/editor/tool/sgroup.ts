@@ -42,6 +42,7 @@ import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 interface SGroupDialogResult {
   type?: string;
+  remove?: boolean;
   attrs: { context?: string; expanded?: boolean; [key: string]: unknown };
 }
 
@@ -793,10 +794,19 @@ class SGroupTool implements Tool {
     const res = editor.event.sgroupEdit.dispatch({
       type: sg?.type,
       attrs,
+      canRemove: Boolean(sg),
     });
 
     return Promise.resolve(res)
       .then((newSg: SGroupDialogResult) => {
+        if (newSg.remove) {
+          if (id !== null) {
+            editor.update(fromSgroupDeletion(restruct, id));
+            editor.selection(null);
+          }
+          return;
+        }
+
         // TODO: check before signal
         const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
         const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);

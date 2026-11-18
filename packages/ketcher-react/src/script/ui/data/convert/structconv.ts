@@ -84,6 +84,7 @@ S-group data as it comes from the editor (pre-dialog).
 */
 export interface SGroupInput {
   type?: string;
+  canRemove?: boolean;
   attrs: {
     context: string;
     fieldName: string;

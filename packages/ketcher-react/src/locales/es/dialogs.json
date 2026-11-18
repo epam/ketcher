@@ -218,7 +218,8 @@
     },
     "sgroupDialog": {
       "dialogTitle": "Propiedades del grupo S",
-      "typeLabel": "Tipo"
+      "typeLabel": "Tipo",
+      "removeButton": "Quitar"
     },
     "labelEditDialog": {
       "dialogTitle": "Editar etiqueta"

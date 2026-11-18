@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import {
   Entities,
   MonomerItemType,
@@ -13,23 +16,28 @@ import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEdito
 import { EmptyFunction } from 'helpers';
 import { configureAppStore } from 'state';
 import {
+  setActivePreset,
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
+  setIsEditMode,
+  startPresetDuplication,
   RnaBuilderPresetsItem,
 } from 'state/rna-builder';
 import { MonomerGroups } from 'src/constants';
 import { defaultTheme } from 'theming/defaultTheme';
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
 
-const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
-const useIsCompactViewMock = jest.fn(() => true);
+const { useLayoutModeMock, useIsCompactViewMock } = vi.hoisted(() => ({
+  useLayoutModeMock: vi.fn(() => 'sequence-layout-mode'),
+  useIsCompactViewMock: vi.fn(() => true),
+}));
 const mockEditorEvents = {
   keyDown: { add: () => true, remove: () => true },
   cancelSequenceEditInRNABuilderMode: { add: () => true, remove: () => true },
 };
 
-jest.mock('hooks', () => ({
-  ...jest.requireActual('hooks'),
+vi.mock('hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('hooks')>()),
   useLayoutMode: () => useLayoutModeMock(),
   useIsCompactView: () => useIsCompactViewMock(),
 }));
@@ -37,6 +45,27 @@ jest.mock('hooks', () => ({
 describe('Test Rna Editor Expanded component', () => {
   afterEach(() => {
     useIsCompactViewMock.mockReturnValue(true);
+  });
+
+  it('brings back the duplicated preset when Duplicate and Edit is cancelled (#4447)', () => {
+    const store = configureAppStore({});
+    const original = { name: 'A', nameInList: 'A' };
+    store.dispatch(setActivePreset(original));
+    store.dispatch(startPresetDuplication({ ...original, name: 'A_Copy' }));
+    store.dispatch(setIsEditMode(true));
+
+    render(
+      <ThemeProvider theme={testTheme}>
+        <StoreProvider store={store}>
+          <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+        </StoreProvider>
+      </ThemeProvider>,
+    );
+
+    fireEvent.click(screen.getByTestId('cancel-btn'));
+
+    expect(store.getState().rnaBuilder.activePreset.name).toBe('A');
+    expect(store.getState().rnaBuilder.presetBeforeDuplicate).toBeNull();
   });
 
   it('should render correctly in edit mode', async () => {
@@ -167,7 +196,7 @@ describe('Test Rna Editor Expanded component', () => {
   });
 
   it('should render correctly in view mode', async () => {
-    const onDuplicateHandler = jest.fn();
+    const onDuplicateHandler = vi.fn();
 
     render(
       withThemeAndStoreProvider(

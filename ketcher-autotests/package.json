@@ -26,9 +26,10 @@
   "author": "Nitvex",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^20.19.43",
     "cross-env": "^7.0.3",
-    "glob": "^14.0.2",
+    "glob": "^14.0.6",
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3"

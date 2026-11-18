@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { KetcherLogger, SequenceType } from 'ketcher-core';
 import { SEQUENCE_TYPE_STORAGE_KEY } from 'src/constants';
 import {
@@ -31,7 +33,7 @@ describe('sequenceTypeStorage', () => {
   });
 
   it('falls back to RNA when the stored value is malformed JSON', () => {
-    const loggerSpy = jest
+    const loggerSpy = vi
       .spyOn(KetcherLogger, 'error')
       .mockImplementation(() => undefined);
     // Raw, non-JSON string (bypassing JSON.stringify) simulates a corrupted or

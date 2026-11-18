@@ -435,29 +435,29 @@ function structNormalization(struct: Struct): Struct {
   const normStruct = struct.clone();
   const cbb = normStruct.getCoordBoundingBox();
 
-  normStruct.atoms.forEach((atom) => {
+  for (const atom of normStruct.atoms.values()) {
     atom.pp = atom.pp.sub(cbb.min);
-  });
+  }
 
-  normStruct.sgroups.forEach((sg) => {
+  for (const sg of normStruct.sgroups.values()) {
     sg.pp = sg.pp ? sg.pp.sub(cbb.min) : cbb.min;
-  });
+  }
 
-  normStruct.rxnArrows.forEach((rxnArrow) => {
+  for (const rxnArrow of normStruct.rxnArrows.values()) {
     rxnArrow.pos = rxnArrow.pos.map((p) => p.sub(cbb.min));
-  });
+  }
 
-  normStruct.rxnPluses.forEach((rxnPlus) => {
+  for (const rxnPlus of normStruct.rxnPluses.values()) {
     rxnPlus.pp = rxnPlus.pp.sub(cbb.min);
-  });
+  }
 
-  normStruct.simpleObjects.forEach((simpleObject) => {
+  for (const simpleObject of normStruct.simpleObjects.values()) {
     simpleObject.pos = simpleObject.pos.map((p) => p.sub(cbb.min));
-  });
+  }
 
-  normStruct.texts.forEach((text) => {
+  for (const text of normStruct.texts.values()) {
     text.position = text.position.sub(cbb.min);
-  });
+  }
 
   return normStruct;
 }

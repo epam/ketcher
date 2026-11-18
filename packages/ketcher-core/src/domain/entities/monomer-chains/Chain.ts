@@ -72,9 +72,9 @@ export class Chain {
       this.bondsCache = this.subChains.flatMap((subChain) => subChain.bonds);
 
       this.nodesChanged = false;
-      this.subChains.forEach((subChain) => {
+      for (const subChain of this.subChains) {
         subChain.modified = false;
-      });
+      }
     }
   }
 
@@ -236,9 +236,9 @@ export class Chain {
 
   public get length() {
     let length = 0;
-    this.subChains.forEach((subChain) => {
+    for (const subChain of this.subChains) {
       length += subChain.length;
-    });
+    }
 
     return length;
   }
@@ -267,12 +267,12 @@ export class Chain {
   ) {
     let nodeIndex = 0;
 
-    this.subChains.forEach((subChain) => {
-      subChain.nodes.forEach((node) => {
+    for (const subChain of this.subChains) {
+      for (const node of subChain.nodes) {
         callback({ node, subChain, nodeIndex });
         nodeIndex++;
-      });
-    });
+      }
+    }
   }
 
   public forEachNodeReversed(

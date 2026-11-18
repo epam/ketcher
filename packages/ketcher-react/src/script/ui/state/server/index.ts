@@ -92,11 +92,11 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
 
   if (checkParams.includes('valence')) {
     let badVal = 0;
-    struct.atoms.forEach((atom) => {
+    for (const atom of struct.atoms.values()) {
       if (atom.badConn) {
         badVal++;
       }
-    });
+    }
     if (badVal > 0) {
       errors.valence = `Structure contains ${badVal} atom${
         badVal === 1 ? '' : 's'
@@ -210,11 +210,11 @@ export function serverTransform(
   That results in structure being aligned and moved, but flags left as is.
 */
 function resetStereoFlagsPosition(struct: Struct): void {
-  struct.frags.forEach((fragment) => {
+  for (const fragment of struct.frags.values()) {
     if (fragment) {
       fragment.stereoFlagPosition = undefined;
     }
-  });
+  }
 }
 
 // TODO: serverCall function should not be exported

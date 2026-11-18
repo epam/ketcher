@@ -49,7 +49,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
     const selectedFunctionalGroups = new Map<number, FunctionalGroup>();
     const selectedSGroupsIds: Set<number> = new Set();
 
-    selectedAtomIds?.forEach((atomId) => {
+    for (const atomId of selectedAtomIds ?? []) {
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         atomId,
@@ -77,7 +77,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       if (sGroupId !== null) {
         selectedSGroupsIds.add(sGroupId);
       }
-    });
+    }
 
     return {
       selectedFunctionalGroups,

@@ -182,9 +182,9 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
           try {
-            data.selectedAtoms.forEach((atomId) =>
-              selectedAtoms.push_back(atomId),
-            );
+            for (const atomId of data.selectedAtoms) {
+              selectedAtoms.push_back(atomId);
+            }
             return indigo.calculate(data.struct, indigoOptions, selectedAtoms);
           } finally {
             selectedAtoms.delete();
@@ -224,9 +224,9 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
           try {
-            data.selectedAtoms.forEach((atomId) =>
-              selectedAtoms.push_back(atomId),
-            );
+            for (const atomId of data.selectedAtoms) {
+              selectedAtoms.push_back(atomId);
+            }
             return indigo.clean2d(
               data.struct,
               data.format,

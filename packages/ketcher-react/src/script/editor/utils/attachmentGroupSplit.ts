@@ -20,27 +20,30 @@ export function getAttachmentGroupIdsSplitByDeletion(
   const deletedAtomIds = new Set(deletion.atoms ?? []);
   const deletedBondIds = new Set(deletion.bonds ?? []);
 
-  struct.bonds.forEach((bond, bondId) => {
+  for (const [bondId, bond] of struct.bonds.entries()) {
     if (deletedAtomIds.has(bond.begin) || deletedAtomIds.has(bond.end)) {
       deletedBondIds.add(bondId);
     }
-  });
+  }
 
   const splitIds: number[] = [];
 
-  struct.attachmentGroups.forEach((attachmentGroup, attachmentGroupId) => {
+  for (const [
+    attachmentGroupId,
+    attachmentGroup,
+  ] of struct.attachmentGroups.entries()) {
     const remainingAtomIds = attachmentGroup.atomIds.filter(
       (atomId) => !deletedAtomIds.has(atomId),
     );
     if (remainingAtomIds.length < 2) {
-      return;
+      continue;
     }
 
     const remainingAtomIdSet = new Set(remainingAtomIds);
     const remainingBondIds: number[] = [];
-    struct.bonds.forEach((bond, bondId) => {
+    for (const [bondId, bond] of struct.bonds.entries()) {
       if (deletedBondIds.has(bondId)) {
-        return;
+        continue;
       }
       if (
         remainingAtomIdSet.has(bond.begin) &&
@@ -48,7 +51,7 @@ export function getAttachmentGroupIdsSplitByDeletion(
       ) {
         remainingBondIds.push(bondId);
       }
-    });
+    }
 
     if (
       !isStructureContinuous(struct, {
@@ -58,7 +61,7 @@ export function getAttachmentGroupIdsSplitByDeletion(
     ) {
       splitIds.push(attachmentGroupId);
     }
-  });
+  }
 
   return splitIds;
 }

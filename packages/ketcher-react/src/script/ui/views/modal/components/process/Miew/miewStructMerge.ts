@@ -99,9 +99,9 @@ function getAtomCentroid(struct: Struct): Vec2 {
   }
 
   let sum = new Vec2(0, 0);
-  struct.atoms.forEach((atom) => {
+  for (const atom of struct.atoms.values()) {
     sum = sum.add(atom.pp);
-  });
+  }
 
   return sum.scaled(1 / struct.atoms.size);
 }
@@ -113,19 +113,19 @@ export function alignToCentroid(result: Struct, original: Struct): void {
     return;
   }
 
-  result.atoms.forEach((atom) => {
+  for (const atom of result.atoms.values()) {
     atom.pp.add_(offset);
-  });
+  }
 
-  result.sgroups.forEach((sgroup) => {
+  for (const sgroup of result.sgroups.values()) {
     sgroup.pp?.add_(offset);
-  });
+  }
 }
 
 export function collapseExpandedSuperatoms(struct: Struct): void {
-  struct.sgroups.forEach((sgroup) => {
+  for (const sgroup of struct.sgroups.values()) {
     if (sgroup.type !== SGroup.TYPES.SUP) {
-      return;
+      continue;
     }
 
     if (sgroup instanceof MonomerMicromolecule) {
@@ -133,7 +133,7 @@ export function collapseExpandedSuperatoms(struct: Struct): void {
     }
 
     sgroup.data.expanded = false;
-  });
+  }
 }
 
 export function mergeMetaObjects(result: Struct, original: Struct): void {
@@ -141,14 +141,22 @@ export function mergeMetaObjects(result: Struct, original: Struct): void {
     result.isReaction = true;
   }
 
-  original.rxnArrows.forEach((item) => result.addRxnArrow(cloneMeta(item)));
-  original.rxnPluses.forEach((item) => result.rxnPluses.add(cloneMeta(item)));
-  original.texts.forEach((item) => result.texts.add(cloneMeta(item)));
-  original.simpleObjects.forEach((item) =>
-    result.simpleObjects.add(cloneMeta(item)),
-  );
-  original.images.forEach((item) => result.images.add(cloneMeta(item)));
-  original.multitailArrows.forEach((item) =>
-    result.addMultitailArrow(cloneMeta(item)),
-  );
+  for (const item of original.rxnArrows.values()) {
+    result.addRxnArrow(cloneMeta(item));
+  }
+  for (const item of original.rxnPluses.values()) {
+    result.rxnPluses.add(cloneMeta(item));
+  }
+  for (const item of original.texts.values()) {
+    result.texts.add(cloneMeta(item));
+  }
+  for (const item of original.simpleObjects.values()) {
+    result.simpleObjects.add(cloneMeta(item));
+  }
+  for (const item of original.images.values()) {
+    result.images.add(cloneMeta(item));
+  }
+  for (const item of original.multitailArrows.values()) {
+    result.addMultitailArrow(cloneMeta(item));
+  }
 }

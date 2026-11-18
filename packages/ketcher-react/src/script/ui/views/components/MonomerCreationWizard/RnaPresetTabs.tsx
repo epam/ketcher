@@ -181,10 +181,10 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       editor.highlights.clear();
 
       // Apply highlights for all components based on whether they're active or not
-      RNA_COMPONENT_KEYS.forEach((componentKey, index) => {
+      for (const [index, componentKey] of RNA_COMPONENT_KEYS.entries()) {
         const componentState = wizardState[componentKey];
         if (!componentState?.structure) {
-          return;
+          continue;
         }
 
         const isActiveTab = index + 1 === activeTabIndex;
@@ -200,7 +200,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           // Active tab → filled shading; other tabs → stroked outline.
           outline: !isActiveTab,
         });
-      });
+      }
     },
     [editor, wizardState],
   );

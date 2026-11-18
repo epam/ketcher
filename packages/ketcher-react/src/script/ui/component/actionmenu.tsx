@@ -329,7 +329,7 @@ function toolMargin(
   // Second level: check nested menus
   if (index === -1) {
     const tools: string[] = [];
-    menu.forEach((item) => {
+    for (const item of menu) {
       if (isMenuItemWithMenu(item)) {
         // Recursively flatten nested menu items
         const nestedStrings = item.menu.filter(
@@ -337,7 +337,7 @@ function toolMargin(
         );
         tools.push(...nestedStrings);
       }
-    });
+    }
 
     index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
   }

@@ -43,11 +43,11 @@ const addComponentAttachmentPoint = (
 const getAtomToComponentMap = (wizardState: RnaPresetWizardState) => {
   const atomToComponentMap = new Map<number, RnaPresetComponentKey>();
 
-  RNA_COMPONENT_KEYS.forEach((componentKey) => {
-    wizardState[componentKey].structure?.atoms?.forEach((atomId) => {
+  for (const componentKey of RNA_COMPONENT_KEYS) {
+    for (const atomId of wizardState[componentKey].structure?.atoms ?? []) {
       atomToComponentMap.set(atomId, componentKey);
-    });
-  });
+    }
+  }
 
   return atomToComponentMap;
 };

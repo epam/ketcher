@@ -10,19 +10,17 @@ function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
 
   const groupsIds = new Set<number>();
   if (items?.atoms) {
-    items.atoms
-      .filter((atomId) => {
-        return !Atom.isSuperatomLeavingGroupAtom(struct, atomId);
-      })
-      .forEach((atomId) => {
-        const groupId = struct.getGroupIdFromAtomId(atomId);
-        if (groupId !== null) groupsIds.add(groupId);
-      });
+    for (const atomId of items.atoms.filter((atomId) => {
+      return !Atom.isSuperatomLeavingGroupAtom(struct, atomId);
+    })) {
+      const groupId = struct.getGroupIdFromAtomId(atomId);
+      if (groupId !== null) groupsIds.add(groupId);
+    }
   }
-  items?.bonds?.forEach((bondId) => {
+  for (const bondId of items?.bonds ?? []) {
     const groupId = struct.getGroupIdFromBondId(bondId);
     if (groupId !== null) groupsIds.add(groupId);
-  });
+  }
 
   return [...groupsIds];
 }

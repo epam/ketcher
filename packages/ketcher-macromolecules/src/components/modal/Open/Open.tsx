@@ -168,9 +168,9 @@ const positionStructureOnNextSequenceLine = (
 
   const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
 
-  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
+  for (const [, drawingEntity] of drawingEntitiesManager.allEntities) {
     drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
-  });
+  }
 };
 
 const hasAddedStructureToCanvas = ({

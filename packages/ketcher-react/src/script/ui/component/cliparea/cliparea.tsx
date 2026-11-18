@@ -251,7 +251,7 @@ class ClipArea extends Component<ClipAreaProps> {
       },
     };
 
-    Object.keys(this.listeners).forEach((en) => {
+    for (const en of Object.keys(this.listeners)) {
       const eventName = en as keyof ClipAreaListeners;
       if (this.target && this.listeners) {
         this.target.addEventListener(
@@ -259,7 +259,7 @@ class ClipArea extends Component<ClipAreaProps> {
           this.listeners[eventName] as DomEventListener,
         );
       }
-    });
+    }
   }
 
   shouldComponentUpdate(): boolean {
@@ -269,7 +269,7 @@ class ClipArea extends Component<ClipAreaProps> {
   componentWillUnmount(): void {
     if (!this.listeners || !this.target) return;
 
-    Object.keys(this.listeners).forEach((en) => {
+    for (const en of Object.keys(this.listeners)) {
       const eventName = en as keyof ClipAreaListeners;
       if (this.target && this.listeners) {
         this.target.removeEventListener(
@@ -277,7 +277,7 @@ class ClipArea extends Component<ClipAreaProps> {
           this.listeners[eventName] as DomEventListener,
         );
       }
-    });
+    }
   }
 
   render(): JSX.Element {
@@ -312,7 +312,7 @@ function autoselect(cliparea: HTMLTextAreaElement): void {
 async function copy(data: ClipboardData): Promise<void> {
   try {
     const clipboardItemData: Record<string, Promise<Blob>> = {};
-    Object.keys(data).forEach((mimeType) => {
+    for (const mimeType of Object.keys(data)) {
       // https://developer.chrome.com/blog/web-custom-formats-for-the-async-clipboard-api/#writing-web-custom-formats-to-the-clipboard
       const mimeTypeToSet =
         mimeType === 'text/plain' ? mimeType : `web ${mimeType}`;
@@ -321,7 +321,7 @@ async function copy(data: ClipboardData): Promise<void> {
           type: mimeTypeToSet,
         }),
       );
-    });
+    }
 
     let clipboardItem: ClipboardItem | undefined;
 
@@ -375,12 +375,12 @@ function legacyCopy(clipboardData: DataTransfer, data: ClipboardData): void {
     let curFmt: string | null = null;
     clipboardData.setData('text/plain', data['text/plain']);
     try {
-      Object.keys(data).forEach((fmt) => {
+      for (const fmt of Object.keys(data)) {
         curFmt = fmt;
         clipboardData.setData(fmt, data[fmt]);
-      });
-    } catch (error) {
-      console.error('cliparea.tsx::legacyCopy', error);
+      }
+    } catch (e) {
+      console.error('cliparea.tsx::legacyCopy', e);
       console.info(`Could not write exact type ${curFmt}`);
     }
   }

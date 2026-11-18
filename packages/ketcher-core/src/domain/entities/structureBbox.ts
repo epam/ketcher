@@ -18,14 +18,14 @@ export function getStructureBbox(
   let top = 0;
   let bottom = 0;
 
-  drawingEntities.forEach((drawingEntity) => {
+  for (const drawingEntity of drawingEntities) {
     const monomerPosition = drawingEntity.position;
 
     left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
     right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
     top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
     bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
-  });
+  }
 
   return {
     left,

@@ -51,9 +51,9 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     bottomLeftPosition,
   ];
 
-  restruct.visibleBonds.forEach((bond, bid) => {
+  for (const [bid, bond] of restruct.visibleBonds.entries()) {
     const isSkippedBond = bond.b.isPreview;
-    if (isSkippedBond) return;
+    if (isSkippedBond) continue;
 
     let center: Vec2;
     if (bond.b.isExternalBondBetweenMonomers(struct)) {
@@ -74,9 +74,9 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     if (center.x > x0 && center.x < x1 && center.y > y0 && center.y < y1) {
       bondList.push(bid);
     }
-  });
+  }
 
-  restruct.visibleAtoms.forEach((atom, aid) => {
+  for (const [aid, atom] of restruct.visibleAtoms.entries()) {
     const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
       aid,
@@ -102,9 +102,12 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     ) {
       atomList.push(aid);
     }
-  });
+  }
 
-  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+  for (const [
+    id,
+    attachmentGroup,
+  ] of restruct.visibleAttachmentGroups.entries()) {
     const position = attachmentGroup.a.pp;
     if (
       position.x > x0 &&
@@ -114,13 +117,13 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     ) {
       attachmentGroupList.push(id);
     }
-  });
+  }
 
   const rxnArrowsList: Array<number> = [];
   const rxnPlusesList: Array<number> = [];
   const simpleObjectsList: Array<number> = [];
 
-  restruct.rxnArrows.forEach((_item, id) => {
+  for (const [id] of restruct.rxnArrows.entries()) {
     const center = struct.rxnArrows.get(id)?.center();
     if (
       center &&
@@ -131,9 +134,9 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     ) {
       rxnArrowsList.push(id);
     }
-  });
+  }
 
-  restruct.rxnPluses.forEach((item, id) => {
+  for (const [id, item] of restruct.rxnPluses.entries()) {
     if (
       item.item.pp.x > x0 &&
       item.item.pp.x < x1 &&
@@ -142,9 +145,9 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     ) {
       rxnPlusesList.push(id);
     }
-  });
+  }
 
-  restruct.simpleObjects.forEach((item, id) => {
+  for (const [id, item] of restruct.simpleObjects.entries()) {
     const referencePoints = item.getReferencePointsOnObject();
     const referencePointInRectangle = referencePoints.find(
       (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1,
@@ -152,26 +155,28 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     if (referencePointInRectangle) {
       simpleObjectsList.push(id);
     }
-  });
+  }
 
   const enhancedFlagList: Array<number> = [];
-  restruct.enhancedFlags.forEach((item: ReEnhancedFlagWithPosition, id) => {
-    if (!item.pp) return;
+  for (const [id, item] of restruct.enhancedFlags.entries() as Iterable<
+    [number, ReEnhancedFlagWithPosition]
+  >) {
+    if (!item.pp) continue;
     if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1) {
       enhancedFlagList.push(id);
     }
-  });
+  }
 
   const sgroupDataList: Array<number> = [];
-  restruct.sgroupData.forEach((item, id) => {
+  for (const [id, item] of restruct.sgroupData.entries()) {
     const pp = item.sgroup.pp;
     if (pp && pp.x > x0 && pp.x < x1 && pp.y > y0 && pp.y < y1) {
       sgroupDataList.push(id);
     }
-  });
+  }
 
   const textsList: Array<number> = [];
-  restruct.texts.forEach((item, id) => {
+  for (const [id, item] of restruct.texts.entries()) {
     const referencePoints = item.getReferencePoints();
     const referencePointInRectangle = referencePoints.find((point) => {
       return point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1;
@@ -180,10 +185,10 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     if (referencePointInRectangle) {
       textsList.push(id);
     }
-  });
+  }
 
   const rgroupAttachmentPointList: number[] = [];
-  restruct.visibleRGroupAttachmentPoints.forEach((item, id) => {
+  for (const [id, item] of restruct.visibleRGroupAttachmentPoints.entries()) {
     if (
       item.middlePoint.x > x0 &&
       item.middlePoint.x < x1 &&
@@ -192,7 +197,7 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
     ) {
       rgroupAttachmentPointList.push(id);
     }
-  });
+  }
 
   const reImages = [...restruct.images.entries()].reduce(
     (acc: Array<number>, [id, item]): Array<number> => {
@@ -238,7 +243,7 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
 
-  restruct.bonds.forEach((bond, bid) => {
+  for (const [bid, bond] of restruct.bonds.entries()) {
     if (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
@@ -246,7 +251,7 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
         functionalGroups,
       )
     ) {
-      return;
+      continue;
     }
 
     let center: Vec2;
@@ -268,9 +273,9 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
     if (isPointInPolygon(r, center)) {
       bondList.push(bid);
     }
-  });
+  }
 
-  restruct.atoms.forEach((atom, aid) => {
+  for (const [aid, atom] of restruct.atoms.entries()) {
     const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
       aid,
@@ -292,20 +297,23 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
     ) {
       atomList.push(aid);
     }
-  });
+  }
 
-  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+  for (const [
+    id,
+    attachmentGroup,
+  ] of restruct.visibleAttachmentGroups.entries()) {
     if (isPointInPolygon(r, attachmentGroup.a.pp)) {
       attachmentGroupList.push(id);
     }
-  });
+  }
 
   const rxnArrowsList: Array<number> = [];
   const rxnPlusesList: Array<number> = [];
   const simpleObjectsList: Array<number> = [];
   const textsList: Array<number> = [];
 
-  restruct.rxnArrows.forEach((item, id) => {
+  for (const [id, item] of restruct.rxnArrows.entries()) {
     const referencePoints = item.getReferencePoints();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
@@ -313,15 +321,15 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
     if (referencePointInPolygon) {
       rxnArrowsList.push(id);
     }
-  });
+  }
 
-  restruct.rxnPluses.forEach((item, id) => {
+  for (const [id, item] of restruct.rxnPluses.entries()) {
     if (isPointInPolygon(r, item.item.pp)) {
       rxnPlusesList.push(id);
     }
-  });
+  }
 
-  restruct.simpleObjects.forEach((item, id) => {
+  for (const [id, item] of restruct.simpleObjects.entries()) {
     const referencePoints = item.getReferencePointsOnObject();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
@@ -329,9 +337,9 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
     if (referencePointInPolygon) {
       simpleObjectsList.push(id);
     }
-  });
+  }
 
-  restruct.texts.forEach((item, id) => {
+  for (const [id, item] of restruct.texts.entries()) {
     const referencePoints = item.getReferencePoints();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
@@ -340,28 +348,30 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
     if (referencePointInPolygon) {
       textsList.push(id);
     }
-  });
+  }
 
   const enhancedFlagList: Array<number> = [];
-  restruct.enhancedFlags.forEach((item: ReEnhancedFlagWithPosition, id) => {
+  for (const [id, item] of restruct.enhancedFlags.entries() as Iterable<
+    [number, ReEnhancedFlagWithPosition]
+  >) {
     if (item.pp && isPointInPolygon(r, item.pp)) {
       enhancedFlagList.push(id);
     }
-  });
+  }
 
   const sgroupDataList: Array<number> = [];
-  restruct.sgroupData.forEach((item, id) => {
+  for (const [id, item] of restruct.sgroupData.entries()) {
     if (item.sgroup.pp && isPointInPolygon(r, item.sgroup.pp)) {
       sgroupDataList.push(id);
     }
-  });
+  }
 
   const rgroupAttachmentPointList: number[] = [];
-  restruct.visibleRGroupAttachmentPoints.forEach((item, id) => {
+  for (const [id, item] of restruct.visibleRGroupAttachmentPoints.entries()) {
     if (isPointInPolygon(r, item.middlePoint)) {
       rgroupAttachmentPointList.push(id);
     }
-  });
+  }
 
   const reImages = [...restruct.images.entries()].reduce(
     (acc: Array<number>, [id, item]) => {

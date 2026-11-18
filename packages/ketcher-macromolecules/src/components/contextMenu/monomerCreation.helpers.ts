@@ -51,15 +51,17 @@ export const canCreateMonomer = (
       neighbours.get(second)?.add(first);
     }
   };
-  manager.bonds.forEach((bond) => connect(bond.firstAtom, bond.secondAtom));
-  manager.polymerBonds.forEach((bond) => {
+  for (const bond of manager.bonds.values()) {
+    connect(bond.firstAtom, bond.secondAtom);
+  }
+  for (const bond of manager.polymerBonds.values()) {
     if (!(bond instanceof HydrogenBond)) {
       connect(bond.firstMonomer, bond.secondMonomer);
     }
-  });
-  manager.monomerToAtomBonds.forEach((bond) =>
-    connect(bond.monomer, bond.atom),
-  );
+  }
+  for (const bond of manager.monomerToAtomBonds.values()) {
+    connect(bond.monomer, bond.atom);
+  }
 
   const pending = [[...nodes][0]];
   const visited = new Set<BaseMonomer | CoreAtom>();
@@ -114,7 +116,7 @@ export const highlightMonomers = (monomers: BaseMonomer[]) => {
   const previouslyHovered = new Map(
     monomers.map((monomer) => [monomer, monomer.hovered]),
   );
-  monomers.forEach((monomer) => {
+  for (const monomer of monomers) {
     monomer.turnOnHover();
     const renderer = monomer.renderer;
     if (renderer instanceof BaseSequenceItemRenderer) {
@@ -122,11 +124,11 @@ export const highlightMonomers = (monomers: BaseMonomer[]) => {
     } else {
       renderer?.redrawHover();
     }
-  });
+  }
 
   return () => {
-    monomers.forEach((monomer) => {
-      if (previouslyHovered.get(monomer)) return;
+    for (const monomer of monomers) {
+      if (previouslyHovered.get(monomer)) continue;
       monomer.turnOffHover();
       const renderer = monomer.renderer;
       if (renderer instanceof BaseSequenceItemRenderer) {
@@ -134,6 +136,6 @@ export const highlightMonomers = (monomers: BaseMonomer[]) => {
       } else {
         renderer?.redrawHover();
       }
-    });
+    }
   };
 };

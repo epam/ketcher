@@ -65,69 +65,65 @@ const assembleMenuItems = (
   let isMouseOverThrottling = false;
   const items: ReactElement[] = [];
 
-  menuItems.forEach(
-    ({
-      name,
-      title,
-      icon,
-      hidden,
-      disabled,
-      isMenuTitle,
-      itemClassName,
-      separator,
-      subMenuItems,
-      onMouseOver,
-      onMouseOut,
-    }) => {
-      const item = subMenuItems?.length ? (
-        <Submenu label={title} data-testid={name} key={name}>
-          {assembleMenuItems(subMenuItems, handleMenuChange) as never}
-        </Submenu>
-      ) : (
-        <Item
-          id={name}
-          onClick={(params) => {
-            isMouseOverThrottling = true;
-            setTimeout(() => {
-              isMouseOverThrottling = false;
-            }, MENU_CLOSING_TIME);
-            handleMenuChange(params);
-          }}
-          key={name}
-          data-testid={name}
-          hidden={hidden}
-          disabled={disabled}
-          className={[isMenuTitle ? 'contexify_item-title' : '', itemClassName]
-            .filter(Boolean)
-            .join(' ')}
-          onMouseOver={() => {
-            if (isMouseOverThrottling) {
-              return;
-            }
-            onMouseOver?.(name);
-          }}
-          onMouseOut={() => onMouseOut?.(name)}
+  for (const {
+    name,
+    title,
+    icon,
+    hidden,
+    disabled,
+    isMenuTitle,
+    itemClassName,
+    separator,
+    subMenuItems,
+    onMouseOver,
+    onMouseOut,
+  } of menuItems) {
+    const item = subMenuItems?.length ? (
+      <Submenu label={title} data-testid={name} key={name}>
+        {assembleMenuItems(subMenuItems, handleMenuChange) as never}
+      </Submenu>
+    ) : (
+      <Item
+        id={name}
+        onClick={(params) => {
+          isMouseOverThrottling = true;
+          setTimeout(() => {
+            isMouseOverThrottling = false;
+          }, MENU_CLOSING_TIME);
+          handleMenuChange(params);
+        }}
+        key={name}
+        data-testid={name}
+        hidden={hidden}
+        disabled={disabled}
+        className={[isMenuTitle ? 'contexify_item-title' : '', itemClassName]
+          .filter(Boolean)
+          .join(' ')}
+        onMouseOver={() => {
+          if (isMouseOverThrottling) {
+            return;
+          }
+          onMouseOver?.(name);
+        }}
+        onMouseOut={() => onMouseOut?.(name)}
+      >
+        {icon && (
+          <span className="context_menu-icon">{icon as React.ReactNode}</span>
+        )}
+        <span
+          className={
+            name === 'delete' ? 'context_menu-delete-text' : 'context_menu-text'
+          }
         >
-          {icon && (
-            <span className="context_menu-icon">{icon as React.ReactNode}</span>
-          )}
-          <span
-            className={
-              name === 'delete'
-                ? 'context_menu-delete-text'
-                : 'context_menu-text'
-            }
-          >
-            {title}
-          </span>
-        </Item>
-      );
-      items.push(item);
-      if (separator) {
-        items.push(<Separator key={`separator-${name}`} />);
-      }
-    },
-  );
+          {title}
+        </span>
+      </Item>
+    );
+    items.push(item);
+    if (separator) {
+      items.push(<Separator key={`separator-${name}`} />);
+    }
+  }
   return items;
 };
 

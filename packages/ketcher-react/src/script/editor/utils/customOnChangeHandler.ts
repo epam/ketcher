@@ -55,7 +55,7 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
   }
 
   // Use slice to avoid mutating the original array with reverse()
-  [...action.operations].reverse().forEach((operation) => {
+  for (const operation of [...action.operations].reverse()) {
     const op = operation._inverted;
     switch (op.type) {
       case OperationType.ATOM_ADD:
@@ -200,7 +200,7 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           operation: op.type,
         });
     }
-  });
+  }
 
   return handler(data);
 }

@@ -21,14 +21,14 @@ const useFunctionalGroupRemove = () => {
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
 
-      selectedFunctionalGroups?.forEach((functionalGroup) => {
+      for (const functionalGroup of selectedFunctionalGroups ?? []) {
         action.mergeWith(
           fromSgroupDeletion(
             editor.render.ctab,
             functionalGroup.relatedSGroupId,
           ),
         );
-      });
+      }
 
       editor.update(action);
       highlightFG(dispatch, { group: null, id: null });

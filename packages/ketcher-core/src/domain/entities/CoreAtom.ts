@@ -21,6 +21,7 @@ export interface AtomProperties {
   charge?: number | null;
   explicitValence?: number;
   isotope?: number | null;
+  aam?: number;
   radical?: AtomRadical;
   alias?: string | null;
   cip?: AtomCIP | null;

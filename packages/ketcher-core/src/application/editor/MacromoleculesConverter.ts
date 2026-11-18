@@ -670,6 +670,7 @@ export class MacromoleculesConverter {
               charge: atom.charge,
               explicitValence: atom.explicitValence,
               isotope: atom.isotope,
+              aam: atom.aam,
               radical: atom.radical,
               alias: atom.alias,
               cip: atom.cip,

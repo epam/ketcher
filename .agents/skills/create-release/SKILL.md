@@ -2,7 +2,7 @@
 name: create-release
 description: Tag a Ketcher release and create its GitHub release (draft candidate, or published public release combining candidate drafts) after a prepare-release PR merges
 disable-model-invocation: true
-argument-hint: <mode: draft-candidate|publish-public> <X.Y>
+argument-hint: '<mode: draft-candidate|publish-public> <X.Y>'
 ---
 
 # Create a Ketcher GitHub release

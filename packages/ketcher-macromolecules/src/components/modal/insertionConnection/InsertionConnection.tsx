@@ -45,7 +45,9 @@ const ThreeMonomerRow = styled.div({
   display: 'grid',
   gridAutoFlow: 'column',
   gridTemplateRows: 'auto 1fr auto',
-  gridTemplateColumns: '1fr 10px 1fr 10px 1fr',
+  // minmax(0, 1fr), not 1fr: an AP row with many buttons must wrap within
+  // its column instead of growing the column (and the whole modal) to fit.
+  gridTemplateColumns: 'minmax(0, 1fr) 10px minmax(0, 1fr) 10px minmax(0, 1fr)',
   justifyContent: 'center',
   alignItems: 'flex-start',
   padding: '12px',
@@ -72,26 +74,42 @@ const LargeStructRender = styled(StyledStructRender)<ILargeStructRenderProps>(
 
 interface ApButtonProps {
   selected: boolean;
+  disabled?: boolean;
 }
 
-const ApButton = styled.button<ApButtonProps>(({ theme, selected }) => ({
-  width: '28px',
-  height: '28px',
-  padding: 0,
-  borderRadius: '4px',
-  border: 'none',
-  cursor: 'pointer',
-  backgroundColor: selected
-    ? theme.ketcher.color.button.primary.active
-    : '#E1E5EA',
-  color: selected ? '#fff' : '#333333',
-  fontSize: theme.ketcher.font.size.small,
-  fontWeight: selected ? 'bold' : 'normal',
-  '&:disabled': {
-    opacity: 0.4,
-    cursor: 'default',
-  },
-}));
+const ApButton = styled.button<ApButtonProps>(
+  ({ theme, selected, disabled }) => ({
+    width: '28px',
+    height: '28px',
+    padding: 0,
+    borderRadius: '4px',
+    // A selectable-but-unselected AP (the swap target) gets an outline so it
+    // reads as clickable, not as a disabled/fixed value like the read-only rows.
+    border:
+      !selected && !disabled
+        ? `1px solid ${theme.ketcher.color.border.secondary}`
+        : 'none',
+    cursor: 'pointer',
+    backgroundColor: selected
+      ? theme.ketcher.color.button.primary.active
+      : disabled
+        ? '#E1E5EA'
+        : '#fff',
+    color: selected ? '#fff' : '#333333',
+    fontSize: theme.ketcher.font.size.small,
+    fontWeight: selected ? 'bold' : 'normal',
+    '&:hover': {
+      borderColor:
+        !selected && !disabled
+          ? theme.ketcher.color.button.primary.active
+          : undefined,
+    },
+    '&:disabled': {
+      opacity: 0.4,
+      cursor: 'default',
+    },
+  }),
+);
 
 const ApName = styled.span(({ theme }) => ({
   textAlign: 'center',
@@ -121,13 +139,31 @@ const ApRow = styled.div<{ align?: ApRowAlign }>(({ align = 'center' }) => ({
   ...(align === 'center' && { margin: '0 auto' }),
 }));
 
-const TwoApRows = styled.div({
+interface ITwoApRowsProps {
+  isExpanded?: boolean;
+}
+
+// A fixed max-width (matching the collapsed struct picture) keeps a monomer
+// with many APs wrapping onto extra lines instead of widening the modal.
+const TwoApRows = styled.div<ITwoApRowsProps>(({ isExpanded }) => ({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'flex-start',
   width: '100%',
-  '& > *': {
-    flex: '0 0 50%',
-  },
+  maxWidth: isExpanded ? 'none' : '200px',
+}));
+
+const ApRowGroup = styled.div({
+  flex: '1 1 0',
+  minWidth: 0,
+});
+
+const ApRowSeparator = styled.div({
+  flex: '0 0 auto',
+  width: '1px',
+  height: '50px',
+  margin: '0 6px',
+  backgroundColor: '#B4B9D6',
 });
 
 function getLeavingGroup(monomer: BaseMonomer, ap: string): string | null {
@@ -140,7 +176,6 @@ interface ApButtonSetProps {
   monomer: BaseMonomer;
   selectedAp: string | null;
   onSelect?: (ap: string) => void;
-  disabledAps?: string[];
   readOnly?: boolean;
   align?: ApRowAlign;
   testIdPrefix?: string;
@@ -150,7 +185,6 @@ function ApButtonSet({
   monomer,
   selectedAp,
   onSelect,
-  disabledAps = [],
   readOnly = false,
   align = 'center',
   testIdPrefix = 'ap',
@@ -161,7 +195,7 @@ function ApButtonSet({
         <ApItem key={ap}>
           <ApButton
             selected={ap === selectedAp}
-            disabled={readOnly || disabledAps.includes(ap)}
+            disabled={readOnly}
             onClick={() => !readOnly && onSelect?.(ap)}
             data-testid={`${testIdPrefix}-${ap}`}
           >
@@ -199,6 +233,23 @@ const InsertionConnection = ({
     freeAps[1] ?? null,
   );
   const [isModalExpanded, setIsModalExpanded] = useState(false);
+
+  // Picking the AP already assigned to the other side swaps the two
+  // selections instead of being blocked, so the user can flip a choice
+  // without first clearing it.
+  const selectLeftNewAp = (ap: string) => {
+    if (ap === rightNewAp) {
+      setRightNewAp(leftNewAp);
+    }
+    setLeftNewAp(ap);
+  };
+
+  const selectRightNewAp = (ap: string) => {
+    if (ap === leftNewAp) {
+      setLeftNewAp(rightNewAp);
+    }
+    setRightNewAp(ap);
+  };
 
   const cancel = () => {
     editor?.events.cancelBondCreationViaModal.dispatch(newMonomer);
@@ -250,7 +301,7 @@ const InsertionConnection = ({
                   .map(([ap]) => ap),
                 currentlySelectedMonomerAttachmentPoint: leftAp,
                 usageInMacromolecule:
-                  UsageInMacromolecule.MonomerConnectionsModal,
+                  UsageInMacromolecule.InsertionConnectionsModal,
                 labelInMonomerConnectionsModal: true,
                 needCache: false,
               }}
@@ -284,7 +335,7 @@ const InsertionConnection = ({
                 connectedMonomerAttachmentPoints: [],
                 currentlySelectedMonomerAttachmentPoint: leftNewAp ?? undefined,
                 usageInMacromolecule:
-                  UsageInMacromolecule.MonomerConnectionsModal,
+                  UsageInMacromolecule.InsertionConnectionsModal,
                 labelInMonomerConnectionsModal: true,
                 needCache: false,
               }}
@@ -293,23 +344,26 @@ const InsertionConnection = ({
               testId="new-monomer-preview"
             />
             <AttachmentPointList>
-              <TwoApRows>
-                <ApButtonSet
-                  monomer={newMonomer}
-                  selectedAp={leftNewAp}
-                  onSelect={setLeftNewAp}
-                  disabledAps={rightNewAp ? [rightNewAp] : []}
-                  align="left"
-                  testIdPrefix="left-new-ap"
-                />
-                <ApButtonSet
-                  monomer={newMonomer}
-                  selectedAp={rightNewAp}
-                  onSelect={setRightNewAp}
-                  disabledAps={leftNewAp ? [leftNewAp] : []}
-                  align="right"
-                  testIdPrefix="right-new-ap"
-                />
+              <TwoApRows isExpanded={isModalExpanded}>
+                <ApRowGroup>
+                  <ApButtonSet
+                    monomer={newMonomer}
+                    selectedAp={leftNewAp}
+                    onSelect={selectLeftNewAp}
+                    align="left"
+                    testIdPrefix="left-new-ap"
+                  />
+                </ApRowGroup>
+                <ApRowSeparator />
+                <ApRowGroup>
+                  <ApButtonSet
+                    monomer={newMonomer}
+                    selectedAp={rightNewAp}
+                    onSelect={selectRightNewAp}
+                    align="right"
+                    testIdPrefix="right-new-ap"
+                  />
+                </ApRowGroup>
               </TwoApRows>
             </AttachmentPointList>
 
@@ -333,7 +387,7 @@ const InsertionConnection = ({
                   .map(([ap]) => ap),
                 currentlySelectedMonomerAttachmentPoint: rightAp,
                 usageInMacromolecule:
-                  UsageInMacromolecule.MonomerConnectionsModal,
+                  UsageInMacromolecule.InsertionConnectionsModal,
                 labelInMonomerConnectionsModal: true,
                 needCache: false,
               }}

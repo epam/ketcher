@@ -46,7 +46,7 @@ The circle is a transient SVG element attached to the bond renderer, with two si
 
 ### Decision 7 — Error modals reuse the existing modal infrastructure
 
-Two Close-only modals with strings in `macromoleculesDialogs.json`. The AP dialog redesign is scoped to presentation (orange LGA outline, drop-down) and keeps the existing data flow.
+Two Close-only modals with strings in `macromoleculesDialogs.json`. The new `InsertionConnection` dialog is its own component with its own `UsageInMacromolecule` value, styled to match the existing `MonomerConnections` (*Select Attachment Points* / *Edit Attachment Points*) dialog's filled-blue-pill presentation; the separate enum value keeps the two dialogs' styling independently editable without the other one, but today they render identically.
 
 ## Risks / Trade-offs
 

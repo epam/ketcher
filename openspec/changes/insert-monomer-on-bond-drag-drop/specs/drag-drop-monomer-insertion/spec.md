@@ -70,7 +70,7 @@ The new monomer's APs SHALL be chosen so both new bonds are default bonds: R1–
 
 ### Requirement: Select Attachment Points dialog when no default connection exists
 
-If no default connection exists and the dropped monomer has two or more APs, the system SHALL open a single *Select Attachment Points* dialog showing all three monomers (left original, new, right original). The new monomer SHALL show two AP drop-downs — one for each new bond. After the user picks both APs and clicks **Connect**, the monomer SHALL be inserted in one step.
+If no default connection exists and the dropped monomer has two or more APs, the system SHALL open a single *Select Attachment Points* dialog showing all three monomers (left original, new, right original). The new monomer SHALL show two AP drop-downs — one for each new bond. The two drop-downs SHALL never hold the same AP: picking an AP already assigned to the other drop-down SHALL move that drop-down's previous AP into the drop-down being changed, instead of being blocked. After the user picks both APs and clicks **Connect**, the monomer SHALL be inserted in one step.
 
 #### Scenario: Dialog opens
 
@@ -82,11 +82,31 @@ If no default connection exists and the dropped monomer has two or more APs, the
 - **WHEN** the dialog is open
 - **THEN** the left and right original monomers show their bond APs as fixed labels (not selectable)
 - **AND** the new monomer shows two drop-downs for choosing its left-side and right-side APs
+- **AND** a 50px-tall `#B4B9D6` separator line sits between the left-side and right-side drop-downs
+
+#### Scenario: AP presentation matches the existing dialogs
+
+- **WHEN** this dialog is open
+- **THEN** a selected attachment point on any of the three structure previews shows the same filled blue pill as the bond-establishment and *Edit Attachment Points* dialogs
+- **AND** opening this dialog does not change the presentation of the bond-establishment or *Edit Attachment Points* dialogs
+
+#### Scenario: Swapping the new monomer's APs
+
+- **WHEN** the new monomer's left-side drop-down holds AP X and the right-side drop-down holds AP Y
+- **AND** the user picks AP Y in the left-side drop-down
+- **THEN** the left-side drop-down holds AP Y
+- **AND** the right-side drop-down holds AP X
 
 #### Scenario: Connect inserts the monomer
 
 - **WHEN** the user selects both APs on the new monomer and clicks **Connect**
 - **THEN** the monomer is inserted between the original monomers using the selected APs in a single step
+
+#### Scenario: Many APs stay within the dialog's width
+
+- **WHEN** the dropped monomer has more APs than fit on one line
+- **THEN** its AP options wrap onto additional lines
+- **AND** the dialog keeps its normal width instead of growing to fit them on one line
 
 ---
 
@@ -171,23 +191,3 @@ A phosphateless preset SHALL be inserted like a monomer with the sugar at the mi
 - **WHEN** the original bond is R2(C)–R1(D)
 - **THEN** the mirrored arrangement is used
 
----
-
-## MODIFIED Requirements
-
-### Requirement: Dialog when no default bond can be resolved
-
-The system SHALL ensure that the _Select Attachment Points_ dialog opens pre-populated with the target AP. In both the bond-establishment and bond-insertion flows the dialog, and the *Edit Attachment Points* dialog, SHALL show attachment points as leaving groups with an orange outline and SHALL select APs through a drop-down instead of buttons.
-
-#### Scenario: Dialog when no default bond can be resolved
-
-- **WHEN** the user releases a dragged monomer over a highlighted AP
-- **AND** no default bond can be resolved
-- **AND** the dropped monomer has two or more free APs
-- **THEN** the _Select Attachment Points_ dialog opens pre-populated with the target AP
-
-#### Scenario: New AP presentation
-
-- **WHEN** either attachment-point dialog is open
-- **THEN** leaving groups of attachment points are outlined in orange
-- **AND** the AP is chosen from a drop-down

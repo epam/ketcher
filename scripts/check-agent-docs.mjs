@@ -171,33 +171,51 @@ const ruleNames = (rule) => [
   ),
 ];
 
+// Index just past the closing quote of the string literal that starts at
+// `start`. A backslash escapes the next character, so `\"` does not close it.
+const endOfStringLiteral = (text, start) => {
+  let index = start + 1;
+  while (index < text.length) {
+    if (text[index] === '\\') {
+      index += 2;
+    } else if (text[index] === '"') {
+      return index + 1;
+    } else {
+      index += 1;
+    }
+  }
+  return text.length;
+};
+
+// Index just past the comment (`//` or `/*`) that starts at `start`.
+const endOfComment = (text, start) => {
+  if (text[start + 1] === '/') {
+    const lineEnd = text.indexOf('\n', start);
+    return lineEnd === -1 ? text.length : lineEnd + 1;
+  }
+  const blockEnd = text.indexOf('*/', start + 2);
+  return blockEnd === -1 ? text.length : blockEnd + 2;
+};
+
 // `.oxlintrc.json` may hold comments, which JSON.parse rejects. A `//` or `/*`
 // inside a string (a glob such as "**/*.ts") is not a comment.
 const stripJsonComments = (text) => {
   let out = '';
-  let inString = false;
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const next = text[i + 1];
-    if (inString) {
-      out += char;
-      if (char === '\\') {
-        out += next ?? '';
-        i++;
-      } else if (char === '"') {
-        inString = false;
-      }
-    } else if (char === '"') {
-      inString = true;
-      out += char;
-    } else if (char === '/' && next === '/') {
-      while (i < text.length && text[i] !== '\n') i++;
-      out += '\n';
-    } else if (char === '/' && next === '*') {
-      i = text.indexOf('*/', i + 2);
-      i = i === -1 ? text.length : i + 1;
+  let index = 0;
+  while (index < text.length) {
+    const char = text[index];
+    const isCommentStart =
+      char === '/' && (text[index + 1] === '/' || text[index + 1] === '*');
+    if (char === '"') {
+      const end = endOfStringLiteral(text, index);
+      out += text.slice(index, end);
+      index = end;
+    } else if (isCommentStart) {
+      out += text[index + 1] === '/' ? '\n' : '';
+      index = endOfComment(text, index);
     } else {
       out += char;
+      index += 1;
     }
   }
   return out;

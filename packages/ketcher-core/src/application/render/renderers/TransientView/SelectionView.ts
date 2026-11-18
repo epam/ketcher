@@ -19,6 +19,8 @@ export type SelectionViewParams =
   | SelectionLassoViewParams;
 
 export class SelectionView {
+  public static readonly viewName = 'SelectionView';
+
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: SelectionViewParams,
@@ -59,6 +61,4 @@ export class SelectionView {
         .attr('style', 'pointer-events: none');
     }
   }
-
-  public static readonly viewName = 'SelectionView';
 }

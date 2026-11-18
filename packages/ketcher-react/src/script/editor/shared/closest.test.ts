@@ -122,14 +122,12 @@ describe('closest.item', () => {
       options,
     );
     const bond = restruct.visibleBonds.get(hapticBondId)!;
-    jest
-      .spyOn(bond, 'getSelectionPoints')
-      .mockReturnValue([
-        markerCanvasPosition.add(new Vec2(-1, -1)),
-        markerCanvasPosition.add(new Vec2(-1, 1)),
-        markerCanvasPosition.add(new Vec2(1, 1)),
-        markerCanvasPosition.add(new Vec2(1, -1)),
-      ]);
+    vi.spyOn(bond, 'getSelectionPoints').mockReturnValue([
+      markerCanvasPosition.add(new Vec2(-1, -1)),
+      markerCanvasPosition.add(new Vec2(-1, 1)),
+      markerCanvasPosition.add(new Vec2(1, 1)),
+      markerCanvasPosition.add(new Vec2(1, -1)),
+    ]);
 
     expect(
       closest.item(restruct, attachmentGroup.pp, null, null, options),

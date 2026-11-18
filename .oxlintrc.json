@@ -105,7 +105,6 @@
         "object-shorthand": "error",
         "no-duplicate-imports": "error",
         "no-alert": "error",
-        "jest/expect-expect": "off",
         "testing-library/no-container": "off",
         "testing-library/no-node-access": "off",
         "testing-library/no-unnecessary-act": "off",
@@ -127,7 +126,7 @@
         "no-undef": "error",
         "no-useless-assignment": "error"
       },
-      "plugins": ["typescript", "react", "jest"],
+      "plugins": ["typescript", "react"],
       "jsPlugins": [
         "eslint-plugin-testing-library",
         "eslint-plugin-react-you-might-not-need-an-effect"
@@ -135,7 +134,6 @@
       "env": {
         "browser": true,
         "node": true,
-        "jest": true,
         "es2024": true,
         "commonjs": true
       },
@@ -379,9 +377,10 @@
     },
     // Oxlint's react/immutability reports a variable that is local to an
     // effect and reassigned in a callback inside it. React Compiler allows
-    // that, and the ESLint rule did not report these two files.
+    // that, and the ESLint rule did not report these files.
     {
       "files": [
+        "packages/ketcher-react/src/Editor.tsx",
         "packages/ketcher-react/src/hooks/useRequestAnimationFrame.ts",
         "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx"
       ],

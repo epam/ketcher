@@ -109,6 +109,9 @@ interface IRnaBuilderState {
   invalidPresetNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
   presetPhosphateFilter: PresetPhosphateFilter;
+  // The preset that was active when "Duplicate and Edit" started, so Cancel
+  // can bring it back
+  presetBeforeDuplicate: IRnaPreset | null;
 }
 
 const initialState: IRnaBuilderState = {
@@ -132,12 +135,18 @@ const initialState: IRnaBuilderState = {
   invalidPresetNameError: '',
   activePresetForContextMenu: null,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
+  presetBeforeDuplicate: null,
 };
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
   [MonomerGroups.SUGARS]: 'sugar',
   [MonomerGroups.PHOSPHATES]: 'phosphate',
 };
+
+const toActivePreset = (preset: IRnaPreset): IRnaPreset => ({
+  ...preset,
+  nameInList: preset.name,
+});
 
 export const rnaBuilderSlice = createSlice({
   name: 'rna-builder',
@@ -151,12 +160,15 @@ export const rnaBuilderSlice = createSlice({
         name: '',
         nameInList: '',
       };
+      state.presetBeforeDuplicate = null;
     },
     setActivePreset: (state, action: PayloadAction<IRnaPreset>) => {
-      state.activePreset = {
-        ...action.payload,
-        nameInList: action.payload.name,
-      };
+      state.activePreset = toActivePreset(action.payload);
+      state.presetBeforeDuplicate = null;
+    },
+    startPresetDuplication: (state, action: PayloadAction<IRnaPreset>) => {
+      state.presetBeforeDuplicate = state.activePreset;
+      state.activePreset = toActivePreset(action.payload);
     },
     setSequenceSelection: (
       state: RootState,
@@ -409,6 +421,10 @@ export const selectGroupItemValidations = (state: RootState): RnaBuilderItem =>
 
 export const selectActivePreset = (state: RootState): IRnaPreset =>
   state.rnaBuilder.activePreset;
+
+export const selectPresetBeforeDuplicate = (
+  state: RootState,
+): IRnaPreset | null => state.rnaBuilder.presetBeforeDuplicate;
 
 export const selectSequenceSelection = (
   state: RootState,
@@ -664,6 +680,7 @@ export const {
   savePreset,
   deletePreset,
   createNewPreset,
+  startPresetDuplication,
   setIsEditMode,
   setUniqueNameError,
   setInvalidPresetError,

@@ -1,4 +1,8 @@
 {
-  "*.{js,jsx,ts,tsx,json}": ["oxfmt --no-error-on-unmatched-pattern"],
+  "*.{js,jsx,ts,tsx,mjs,cjs}": [
+    "oxfmt --no-error-on-unmatched-pattern",
+    "oxlint --quiet"
+  ],
+  "*.json": ["oxfmt --no-error-on-unmatched-pattern"],
   "*.{css,less}": ["stylelint --formatter verbose --fix --allow-empty-input"]
 }

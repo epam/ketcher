@@ -50,7 +50,6 @@ export async function resetClipboard(page: Page) {
   await page.evaluate(async () => {
     try {
       globalThis.window.ketcher.editor.clearHistory();
-      // await navigator.clipboard.writeText('');
     } catch {
       // No clipboard permission in this context - nothing to reset.
     }

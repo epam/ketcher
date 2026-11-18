@@ -52,7 +52,8 @@ export type CreateBondViaModalPayload = {
 };
 
 export type SelectLayoutModePayload =
-  LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
+  | LayoutMode
+  | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
 export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
 

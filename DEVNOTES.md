@@ -177,13 +177,15 @@ npm run test:unit
 npm run test:watch
 ```
 
-### Start prettier
+### Start oxfmt
 
 ```sh
-prettier
+npm run test:oxfmt
   or
-prettier:write
+npm run oxfmt:write
 ```
+
+Both run in one package and read `.oxfmtrc.json` from the repository root.
 
 ### Start oxlint
 
@@ -211,7 +213,7 @@ npm test
 
 `npm install` sets up the hooks with husky. They check only the files you change:
 
-- `pre-commit` runs lint-staged on the staged files: Prettier, Oxlint, and stylelint (`.lintstagedrc.json`).
+- `pre-commit` runs lint-staged on the staged files: Oxfmt, Oxlint, and stylelint (`.lintstagedrc.json`).
 - `pre-push` runs the Vitest tests related to the files your branch changes against `origin/master`, one run per package (`lint-staged.pre-push.mjs`).
 
 A new git worktree gets the hooks when you run `npm install` or `npx husky` in it.

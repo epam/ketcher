@@ -257,7 +257,8 @@ export class KetSerializer implements Serializer<Struct> {
       const node = nodes[i];
       const nodeReference = '$ref' in node ? node.$ref : undefined;
       const nodeDefinition = (nodeReference ? ket[nodeReference] : node) as
-        KetMicromoleculeDefinition | undefined;
+        | KetMicromoleculeDefinition
+        | undefined;
 
       if (nodeDefinition?.type === 'molecule') {
         parseMoleculeNode(
@@ -278,7 +279,8 @@ export class KetSerializer implements Serializer<Struct> {
 
       getHapticConnectionMoleculeIds(connection).forEach((moleculeId) => {
         const nodeDefinition = ket[moleculeId] as
-          KetMicromoleculeDefinition | undefined;
+          | KetMicromoleculeDefinition
+          | undefined;
         if (nodeDefinition?.type === 'molecule') {
           parseMoleculeNode(
             nodeDefinition,
@@ -536,7 +538,8 @@ export class KetSerializer implements Serializer<Struct> {
     if (!library) return;
 
     const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as
-      IKetMonomerTemplate | undefined;
+      | IKetMonomerTemplate
+      | undefined;
 
     if (!libraryTemplate) return;
 

@@ -29,4 +29,6 @@ export enum WarningMessage {
 }
 
 export type NotificationMessageType =
-  ErrorMessage | InfoMessage | WarningMessage;
+  | ErrorMessage
+  | InfoMessage
+  | WarningMessage;

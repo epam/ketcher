@@ -17,7 +17,7 @@
 import { existsSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { format, resolveConfig } from 'prettier';
+import { formatGeneratedSource } from '../../../build-config/format-generated-source.mjs';
 
 const NAMESPACES = ['macromolecules', 'macromoleculesDialogs'];
 
@@ -111,11 +111,7 @@ for (const locale of extraLocales) {
 lines.push('} as const satisfies Record<string, typeof BASE_RESOURCES>;');
 lines.push('');
 
-const prettierConfig = await resolveConfig(outFile, { editorconfig: true });
-const formattedSource = await format(lines.join('\n'), {
-  ...prettierConfig,
-  filepath: outFile,
-});
+const formattedSource = await formatGeneratedSource(outFile, lines.join('\n'));
 writeFileSync(outFile, formattedSource);
 console.log(
   `generate-locale-resources: wrote ${path.relative(process.cwd(), outFile)} — base "en" + extra [${extraLocales.join(', ') || 'none'}]`,

@@ -140,7 +140,7 @@ function propsDialog(
     type: 'text',
   });
 
-  res
+  void res
     .then(({ content }) => {
       if (!id && id !== 0 && content && position && pos) {
         editor.update(

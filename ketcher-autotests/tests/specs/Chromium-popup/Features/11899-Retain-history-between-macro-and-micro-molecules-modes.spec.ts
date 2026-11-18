@@ -3,6 +3,8 @@ import { getCanvasByMode, getVisibleCanvas } from '@utils';
 import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -60,9 +62,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
     await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -92,9 +93,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
     await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -129,9 +129,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -158,9 +157,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopLeftToolbar(page).undo();
@@ -192,9 +190,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
     await addAtoms(page, Atom.Nitrogen, [{ x: 400, y: 300 }]);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -231,9 +228,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await canvas.locator(getAtomLocator(page, { atomLabel: 'C' })).click();
     await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
     await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -263,9 +259,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      * Version 3.21.0
      */
     const canvas = await getVisibleCanvas(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/reaction-with-arrow-and-plus.ket',
@@ -310,9 +305,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
     await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonLeftToolbar(page).erase();
     // micro bonds in Macro mode accept the Erase click only when forced
     await canvas
@@ -381,9 +375,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await canvas.locator(getAtomLocator(page, { atomLabel: 'C' })).click();
     await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(2);
     await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(1);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 150, y: 300 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
@@ -452,9 +445,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      */
     const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await addAtoms(page, Atom.Nitrogen, [{ x: 400, y: 300 }]);
@@ -493,9 +485,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      */
     const canvas = await getVisibleCanvas(page);
     await addAtoms(page, Atom.Carbon, [{ x: 300, y: 300 }]);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 450, y: 450 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
@@ -543,9 +534,10 @@ test.describe('Retain history between macro and micro molecules modes', () => {
       await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(
         (pair + 1) * 2,
       );
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-        enableFlexMode: true,
-      });
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     }
 
@@ -608,9 +600,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await expect(canvas.locator(getAtomLocator(page, {}))).toHaveCount(6);
     await expect(canvas.locator(getBondLocator(page, {}))).toHaveCount(6);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 150, y: 450 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 450 });
     await openFileAndAddToCanvasMacro(
@@ -669,9 +660,8 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     const initialKet = await getKet(page);
     await CommonTopRightToolbar(page).selectModeOption(Mode.Molecules);
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -704,9 +694,10 @@ test.describe('Retain history between macro and micro molecules modes', () => {
         { x: 150 + round * 60, y: 200 },
         { x: 150 + round * 60, y: 300 },
       ]);
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-        enableFlexMode: true,
-      });
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     }
     await addAtoms(page, Atom.Carbon, [{ x: 150, y: 400 }]);

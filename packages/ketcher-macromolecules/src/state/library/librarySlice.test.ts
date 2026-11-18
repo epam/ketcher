@@ -23,7 +23,7 @@ import {
 } from 'ketcher-core';
 import { AMINO_ACID_ONE_TO_THREE_LETTER_CODE } from 'src/constants';
 import { RootState } from 'state';
-import { selectFilteredMonomers } from './librarySlice';
+import { selectFilteredMonomers, selectMonomerGroups } from './librarySlice';
 
 const sortLabels = (labels: string[]) =>
   labels.sort((firstLabel, secondLabel) =>
@@ -358,5 +358,24 @@ describe('selectFilteredMonomers — hyphen and underscore (isShortNameOnlySearc
     expect(
       selectFilteredMonomers(buildState(char, monomers)).map((m) => m.label),
     ).toEqual([`label${char}match`, `amb${char}match`]);
+  });
+});
+
+describe('selectMonomerGroups', () => {
+  it('groups a monomer with no natural analogue under X', () => {
+    const monomer = createNonAminoAcid(
+      'Y88',
+      'Y88',
+      KetMonomerClass.Base,
+      'RNA',
+    );
+    monomer.props.MonomerNaturalAnalogCode = '';
+
+    const groups = selectMonomerGroups([monomer]);
+
+    expect(groups.map(({ groupTitle }) => groupTitle)).toEqual(['X']);
+    expect(groups[0].groupItems.map(({ props }) => props.MonomerName)).toEqual([
+      'Y88',
+    ]);
   });
 });

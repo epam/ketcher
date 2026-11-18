@@ -240,6 +240,15 @@ The system SHALL ensure that its position is constrained to keep it visible with
 - **AND** positioning works both at the page origin and in an offset popup
 - **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
 
+### Requirement: Grouping monomers without a natural analogue
+
+The system SHALL group monomers with no defined natural analogue under `X` in the monomer library.
+
+#### Scenario: Monomer without a natural analogue appears in the X group
+
+- **WHEN** a monomer without a defined natural analogue is added to the library
+- **THEN** it appears under the `X` group instead of the "No natural analogue" group
+
 ## User interaction
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.

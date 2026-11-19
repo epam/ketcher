@@ -156,7 +156,10 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         return;
       }
 
-      const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
+      const layoutOption = page.getByTestId(layoutMode);
+      const switchLayoutModeDropdown = page
+        .getByTestId('multi-tool-dropdown')
+        .filter({ has: layoutOption });
       const layoutModeButton = switchLayoutModeDropdown.getByTestId(layoutMode);
       if (!(await layoutModeButton.isVisible())) {
         await this.expandSwitchLayoutModeDropdown();
@@ -176,7 +179,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         layoutMode,
         ketcherId,
       );
-      await switchLayoutModeDropdown.waitFor({ state: 'hidden' });
+      await switchLayoutModeDropdown.waitFor({ state: 'detached' });
     },
 
     async getActiveLayoutMode(): Promise<LayoutMode | null> {

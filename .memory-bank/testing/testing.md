@@ -383,8 +383,10 @@ await page.getByTestId('context-menu').getByText('Copy').click();
 Canvas and layout switch helpers resolve on their dedicated completion events,
 without a fixed render delay. They fail after 30 seconds if no matching event
 arrives, and remove their listener when the action fails or the wait finishes.
-`selectLayoutModeTool` waits for layout completion internally; callers should not
-add an outer `waitForRender` for that same switch.
+The toolbar methods also wait for their dropdown to close after the switch.
+Canvas mode completion alone does not mean the mode menu's backdrop has stopped
+intercepting pointer events. Callers should not add a fixed delay or an outer
+`waitForRender` for those switches.
 
 ### Canvas Screenshots
 

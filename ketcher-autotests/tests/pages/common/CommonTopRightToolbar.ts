@@ -54,6 +54,13 @@ export const CommonTopRightToolbar = (page: Page) => {
     zoomDefaultButton: page.getByTestId('zoom-default'),
   };
 
+  const waitForModeMenuToClose = (option: Locator) =>
+    // The invisible backdrop can still intercept clicks during the exit animation.
+    page
+      .locator('.MuiPopover-root')
+      .filter({ has: option })
+      .waitFor({ state: 'hidden' });
+
   return {
     ...locators,
     ...zoomLocators,
@@ -146,6 +153,7 @@ export const CommonTopRightToolbar = (page: Page) => {
           'macromolecules',
           ketcherId,
         );
+        await waitForModeMenuToClose(macroOption);
       }
 
       await MacromoleculesTopToolbar(
@@ -190,6 +198,7 @@ export const CommonTopRightToolbar = (page: Page) => {
           'molecules',
           ketcherId,
         );
+        await waitForModeMenuToClose(microOption);
       }
     },
   };

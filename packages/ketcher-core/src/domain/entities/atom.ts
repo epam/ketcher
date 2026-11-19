@@ -348,6 +348,12 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     });
   }
 
+  /** Number of R-group attachment points encoded by the attachmentPoints flag. */
+  get attachmentPointCount(): number {
+    if (!this.attachmentPoints) return 0;
+    return this.attachmentPoints === AttachmentPoints.BothSides ? 2 : 1;
+  }
+
   get isRGroupAttachmentPointEditDisabled() {
     return this.label === 'R#' && this.rglabel !== null;
   }
@@ -443,10 +449,14 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   calcValence(connectionCount: number): boolean {
     const label = this.label;
     const charge = this.charge ?? 0;
-    if (this.isQuery() || this.attachmentPoints) {
+    if (
+      this.isQuery() ||
+      (this.attachmentPoints && this.neighbors.length > 0)
+    ) {
       this.implicitH = 0;
       return true;
     }
+    connectionCount += this.attachmentPointCount;
     const element = Elements.get(label);
 
     // Per the 2017 BIOVIA Chemical Representation specification, metal

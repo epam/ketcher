@@ -1739,6 +1739,7 @@ function rgroupAttachmentPointLabel(
   labelText: string,
   options: RenderOptions,
   fill: string,
+  outline?: { end: Vec2; direction: Vec2 },
 ) {
   const labelPath = paper
     .text(labelPosition.x, labelPosition.y, labelText)
@@ -1747,7 +1748,24 @@ function rgroupAttachmentPointLabel(
       'font-size': options.fontszInPx * 0.9,
       fill,
     });
-  return labelPath;
+  if (!outline) return labelPath;
+
+  const labelBox = labelPath.getBBox();
+  const radius =
+    Math.max(labelBox.width, labelBox.height) / 2 + options.lineWidth / 2;
+  const waveExtent =
+    (AP_WAVE_FAR_ALONG / AP_PATH_SCALE) * options.microModeScale;
+  const center = outline.end.addScaled(
+    outline.direction,
+    waveExtent + radius + options.lineWidth,
+  );
+  labelPath.attr({ x: center.x, y: center.y });
+  const ring = paper.circle(center.x, center.y, radius).attr({
+    fill: 'none',
+    stroke: fill,
+    'stroke-width': options.lineWidth / 2,
+  });
+  return paper.set([ring, labelPath]);
 }
 
 export default {

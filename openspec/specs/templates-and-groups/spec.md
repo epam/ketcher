@@ -63,6 +63,18 @@ The system SHALL ensure that the fragment becomes an R-Group member linked to th
 - **WHEN** the user assigns a fragment to an R-Group label and defines its attachment point(s)
 - **THEN** the fragment becomes an R-Group member linked to the corresponding R-Group position(s)
 
+### Requirement: R-Group attachment points on an isolated atom
+
+The system SHALL account for R-Group attachment points when calculating implicit hydrogens on an isolated non-query atom. When both points are present, the primary and secondary markers SHALL point up and down, with circled numbers beyond their wavy endpoints.
+
+#### Scenario: Opening an isolated germanium atom with two attachment points
+
+- **WHEN** the user opens a KET file containing an isolated germanium atom with both R-Group attachment points and default valence
+- **THEN** the atom is displayed as GeH₂
+- **AND** the circled primary number 1 is above the upper wavy endpoint
+- **AND** the circled secondary number 2 is below the lower wavy endpoint
+- **AND** both marker stems use the standard single-color attachment-point style
+
 ## User interaction
 
 - **Templates** — the _Templates_ toolbar and the _Structure Library_ (`Shift+t`) provide rings and predefined structures. Click canvas to place, click an atom for a fused structure, or click/drag on a bond for bond-to-bond fusion. Users can save custom templates (name + default attachment atom/bond) into _User Templates_.

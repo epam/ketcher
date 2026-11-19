@@ -389,6 +389,26 @@ describe('Atom', () => {
   });
 
   describe('calcValence', () => {
+    it.each([
+      [AttachmentPoints.None, 4],
+      [AttachmentPoints.FirstSideOnly, 3],
+      [AttachmentPoints.SecondSideOnly, 3],
+      [AttachmentPoints.BothSides, 2],
+    ])(
+      'accounts for attachment-point flag %i in isolated germanium valence (#3997)',
+      (attachmentPoints, implicitH) => {
+        const atom = new Atom({
+          ...hydrogenParams,
+          label: 'Ge',
+          attachmentPoints,
+        });
+
+        expect(atom.calcValence(0)).toBe(true);
+        expect(atom.implicitH).toBe(implicitH);
+        expect(atom.valence).toBe(4);
+      },
+    );
+
     it('should return true and set inplicitH = 0 if atom is query', () => {
       const queryAtomParams = {
         ...hydrogenParams,

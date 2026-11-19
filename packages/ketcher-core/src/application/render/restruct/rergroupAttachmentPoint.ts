@@ -205,13 +205,25 @@ class ReRGroupAttachmentPoint extends ReObject {
     if (shouldShowLabel) {
       // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
       const labelText = this.item.type === 'primary' ? '1' : '2';
-      showAttachmentPointLabel(
-        restruct.render,
-        geometry,
-        restruct.addReObjectPath.bind(restruct),
+      const labelOutline =
+        this.reAtom.a.neighbors.length === 0 &&
+        this.isTrisectionAttachmentPoint()
+          ? { end: geometry.attachmentPointEnd, direction: directionVector }
+          : undefined;
+      const label = draw.rgroupAttachmentPointLabel(
+        restruct.render.paper,
+        geometry.labelPosition,
         labelText,
+        restruct.render.options,
         this.reAtom.color,
+        labelOutline,
+      );
+      restruct.addReObjectPath(
+        LayerMap.indices,
         this.visel,
+        label,
+        geometry.atomPositionVector,
+        true,
       );
     }
     const highlights = restruct.molecule.highlights;
@@ -356,6 +368,10 @@ function trisectionLargestSector(
   struct: Struct,
   attachmentPointType: RGroupAttachmentPointType,
 ) {
+  if (atom.a.neighbors.length === 0) {
+    return new Vec2(0, attachmentPointType === 'primary' ? -1 : 1);
+  }
+
   const { largestAngle, neighborAngle } =
     atom.getLargestSectorFromNeighbors(struct);
   const firstTrisectorAngle = neighborAngle + largestAngle / 3;
@@ -401,30 +417,6 @@ function getAttachmentDirectionForOnlyOneBond(
     angle +
     (isTripleBond ? DEGREE_180_FOR_TRIPLE_BOND : DEGREE_120_FOR_ONE_BOND);
   return newVectorFromAngle(finalAngle);
-}
-
-function showAttachmentPointLabel(
-  { options, paper }: Render,
-  geometry: AttachmentPointGeometry,
-  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
-  labelText: string,
-  atomColor: string,
-  visel: Visel,
-): void {
-  const labelPath = draw.rgroupAttachmentPointLabel(
-    paper,
-    geometry.labelPosition,
-    labelText,
-    options,
-    atomColor,
-  );
-  addReObjectPath(
-    LayerMap.indices,
-    visel,
-    labelPath,
-    geometry.atomPositionVector,
-    true,
-  );
 }
 
 function getLabelPositionForAttachmentPoint(

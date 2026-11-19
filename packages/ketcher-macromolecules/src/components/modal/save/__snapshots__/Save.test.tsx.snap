@@ -123,7 +123,7 @@ exports[`Save modal > renders correctly 1`] = `
                       value="ket"
                     />
                     <svg
-                      class="MuiSelect-icon MuiSelect-iconOutlined css-1n1kuoo-ChevronStyled-MuiSelect-icon e1yj17lv1"
+                      class="MuiSelect-icon MuiSelect-iconOutlined css-1n1kuoo-ChevronStyled-MuiSelect-icon e1wbtwn51"
                       name="chevron"
                     />
                     <fieldset

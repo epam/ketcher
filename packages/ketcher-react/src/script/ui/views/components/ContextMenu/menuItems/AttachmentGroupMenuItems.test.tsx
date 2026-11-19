@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import AttachmentGroupMenuItems from './AttachmentGroupMenuItems';
 
-jest.mock('react-contexify', () => ({
+vi.mock('react-contexify', () => ({
   Item: ({
     children,
     ...props
@@ -11,9 +11,9 @@ jest.mock('react-contexify', () => ({
   ),
 }));
 
-jest.mock('../hooks/useAttachmentGroupDelete', () => ({
+vi.mock('../hooks/useAttachmentGroupDelete', () => ({
   __esModule: true,
-  default: () => jest.fn(),
+  default: () => vi.fn(),
 }));
 
 describe('AttachmentGroupMenuItems', () => {

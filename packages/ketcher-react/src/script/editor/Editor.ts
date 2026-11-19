@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -1021,6 +1020,10 @@ class Editor implements KetcherEditor {
       return false;
     }
 
+    if (!provideEditorInstance()) {
+      return false;
+    }
+
     const currentStruct = this.struct();
     const selection = this.selection();
 
@@ -1179,7 +1182,7 @@ class Editor implements KetcherEditor {
         nonLeavingAtoms.has(bond.begin) && nonLeavingAtoms.has(bond.end),
     );
 
-    if (nonLeavingAtomBonds.size < 1) {
+    if (nonLeavingAtomBonds.size === 0) {
       return false;
     }
 
@@ -1187,7 +1190,7 @@ class Editor implements KetcherEditor {
       this.isBondSuitableForAttachmentPoint(bond),
     );
 
-    return suitableBonds.size >= 1;
+    return suitableBonds.size > 0;
   }
 
   static isStructureImpure(struct: Struct) {
@@ -1286,7 +1289,7 @@ class Editor implements KetcherEditor {
           atomIds.add(atomId);
         });
       }
-      if (!atomIds.size) {
+      if (atomIds.size === 0) {
         throw new Error('Select a structure to create or edit a monomer.');
       }
       const bonds = [...struct.bonds.entries()]
@@ -1510,7 +1513,10 @@ class Editor implements KetcherEditor {
       );
     const initialValues =
       mode === 'library'
-        ? getLibraryEditInitialValues(libraryItem)
+        ? getLibraryEditInitialValues(
+            libraryItem,
+            provideEditorInstance()?.monomersLibraryParsedJson,
+          )
         : { ...getEditInstanceInitialValues(libraryItem), libraryOnly: true };
     this.struct(structure, false);
     this.openMonomerCreationWizard(
@@ -1530,11 +1536,32 @@ class Editor implements KetcherEditor {
     }
   }
 
+  /**
+   * The wizard's uniqueness checks read the default monomers library, which
+   * loads lazily. The selection can change, another request can open the
+   * wizard, or the user can switch to macromolecules mode while it loads, so
+   * the wizard is checked again before it opens.
+   */
+  async openMonomerCreationWizardWhenLibraryLoaded() {
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
+    if (
+      !window.isPolymerEditorTurnedOn &&
+      this.isMonomerCreationWizardEnabled
+    ) {
+      this.openMonomerCreationWizard();
+    }
+  }
+
   openMonomerCreationWizard(
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
   ) {
+    if (!provideEditorInstance()) {
+      return;
+    }
+
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
       this.selection() ?? {
@@ -3925,14 +3952,14 @@ class Editor implements KetcherEditor {
           res[key] = [...resolvedCi[key]];
       });
 
-      if (Object.keys(res).length !== 0) {
+      if (Object.keys(res).length > 0) {
         this._selection = res;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
         this.explicitSelected().atoms ?? [],
       );
-      if (stereoFlags.length !== 0) {
+      if (stereoFlags.length > 0) {
         if (this._selection?.enhancedFlags) {
           this._selection.enhancedFlags = [
             ...new Set([...this._selection.enhancedFlags, ...stereoFlags]),
@@ -4550,7 +4577,7 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
 
       // Generate Paper.js paths from all SVG elements
-      let combinedPath: paper.PathItem | null = null;
+      let combinedPath: InstanceType<typeof paperjs.PathItem> | null = null;
       const options = render.options;
       const hoverVisel = new Visel('mergedHover');
       const elements: SVGElement[] = [];
@@ -4563,8 +4590,7 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       });
 
       for (const element of elements) {
-        const paperPath = paperPathFromSVGElement(element) as
-          paper.Path | paper.CompoundPath | undefined;
+        const paperPath = paperPathFromSVGElement(element);
 
         if (!paperPath) {
           continue;

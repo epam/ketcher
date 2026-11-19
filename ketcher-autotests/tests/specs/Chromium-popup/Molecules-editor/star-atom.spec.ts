@@ -586,8 +586,7 @@ test('22. Verify the star atom remains visible and functional after switching be
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await pasteFromClipboardAndOpenAsNewProject(page, '* |$star_e$|');
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
     LayoutMode.Sequence,
   );
   await takeEditorScreenshot(page);

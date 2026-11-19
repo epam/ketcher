@@ -1,0 +1,483 @@
+{
+  "shared": {
+    "addToCanvas": "Añadir al lienzo",
+    "addToCanvasTooltip": "La estructura se cargará como fragmento y se añadirá al portapapeles",
+    "addButton": "Añadir",
+    "disabledSuffix": "{label} está deshabilitado"
+  },
+  "confirm": {
+    "warning": "¡Advertencia!",
+    "unsupportedSgroupQuestion": "Se encontró un tipo de grupo S no compatible. ¿Deseas importar la estructura sin él?"
+  },
+  "infoModal": {
+    "errorMessage": "Mensaje de error",
+    "pasteErrorText": "Tu navegador no permite pegar el contenido del portapapeles con el botón. Usa el atajo de teclado.",
+    "shortcutForPaste": "para pegar",
+    "defaultCutCopyMessage": "Esta acción no está disponible en el menú. Usa el atajo para {command}."
+  },
+  "extendedTable": {
+    "dialogTitle": "Tabla extendida"
+  },
+  "periodTable": {
+    "headerTitle": "Tabla periódica",
+    "typeSingle": "Simple",
+    "typeList": "Lista",
+    "typeNotList": "No lista",
+    "tableSummary": "Tabla periódica de los elementos químicos"
+  },
+  "text": {
+    "dialogTitle": "Editor de texto",
+    "toolbarAriaLabel": "Barra de herramientas de formato de texto",
+    "fontSizeLabel": "Tamaño de fuente",
+    "textLabel": "Texto:",
+    "specialSymbolsTitle": "símbolos"
+  },
+  "document": {
+    "save": {
+      "schemaTitle": "Guardar",
+      "filenameLabel": "Nombre de archivo:",
+      "formatLabel": "Formato de archivo:",
+      "filenameEmptyError": "El nombre del archivo debe contener al menos un carácter",
+      "filenameTooLongError": "El nombre del archivo es demasiado largo",
+      "filenameInvalidCharsError": "Un nombre de archivo no puede contener los caracteres: \\ / : * ? \" < > | ni empezar por '.'",
+      "copyToClipboard": "Copiar al portapapeles",
+      "dialogTitle": "Guardar estructura",
+      "saveToTemplates": "Guardar en plantillas",
+      "previewTab": "Vista previa",
+      "warningsTab": "Advertencias",
+      "structureContainsErrorsWarning": "La estructura contiene errores; revisa los datos, de lo contrario puedes perder algunas propiedades o toda la estructura al guardarla en este formato."
+    },
+    "open": {
+      "dialogTitle": "Abrir estructura",
+      "openAsNewProject": "Abrir como nuevo proyecto",
+      "passwordProtectedError": "Informar de que no podemos abrirlo: puede estar protegido con contraseña",
+      "errorProcessingFile": "Error al procesar el archivo"
+    },
+    "openOptions": {
+      "pasteFromClipboard": "Pegar desde el portapapeles",
+      "openFromFile": "Abrir desde archivo",
+      "dragFileHere": "o arrastra el archivo aquí",
+      "imageRecognitionUnavailable": "El servicio de reconocimiento de imágenes no está disponible",
+      "unableToAcceptImage": "No se pueden aceptar archivos. Asegúrate de subir 1 imagen.",
+      "unableToAcceptFile": "No se pueden aceptar archivos. {error}",
+      "openFromImage": "Abrir desde imagen"
+    },
+    "cdxViewer": {
+      "noEmbeddedStructures": "No se encontraron estructuras incrustadas en el archivo",
+      "selectStructure": "Seleccionar estructura",
+      "structureN": "Estructura {number}",
+      "fileLabel": "Archivo:",
+      "errorLabel": "Error:"
+    }
+  },
+  "meta": {
+    "settings": {
+      "headerTitle": "Configuración",
+      "openFromFile": "Abrir desde archivo",
+      "saveToFile": "Guardar en archivo",
+      "reset": "Restablecer",
+      "generalTab": "General",
+      "atomsTab": "Átomos",
+      "bondsTab": "Enlaces",
+      "stereochemistryTab": "Estereoquímica",
+      "reactionsTab": "Reacciones y componentes",
+      "validationTab": "Validación y cálculo",
+      "debuggingTab": "Depuración",
+      "setAcsSettings": "Establecer configuración ACS",
+      "applyLayoutNotice": "Para aplicar estos cambios por completo, debes aplicar la disposición.",
+      "hashSpacingTooltip": "Espaciado entre los trazos del enlace estéreo 'hacia abajo'",
+      "imageResolutionTooltip": "Calidad de salida de las imágenes PNG (Baja = 72 DPI, Alta = 600 DPI)",
+      "showStereoFlagsTooltip": "Etiquetas de estereoquímica (ABS, AND, OR, Mixto) para toda la molécula",
+      "stereoLabelStyleTooltip": "Qué etiquetas de estéreo aparecen: Activado (todas), Clásico (solo OR/Mixto), Estilo IUPAC (solo Mixto), Desactivado (ninguna)",
+      "colorOfAbsoluteCentersTooltip": "Color de la etiqueta ABS (centros con configuración absoluta definida)",
+      "colorOfAndCentersTooltip": "Color de la etiqueta AND (cualquiera de los isómeros es válido en los centros marcados)",
+      "colorOfOrCentersTooltip": "Color de la etiqueta OR (un isómero es válido en el centro marcado)",
+      "autoFadeOfStereoLabelsTooltip": "Atenuación automática de las etiquetas AND/OR en moléculas con muchos centros quirales",
+      "ignoreChiralFlagTooltip": "Los centros quirales se muestran individualmente en lugar de como un único grupo absoluto al cargar el archivo",
+      "reactionComponentMarginSizeTooltip": "Espaciado entre reactivos, productos, flechas y catalizadores",
+      "rotationStepTooltip": "Incremento de ángulo para la herramienta de rotación (mantén CTRL para rotar libremente)",
+      "showValenceWarningsTooltip": "Subrayado rojo en átomos con valencia excedida",
+      "ignoreStereochemistryErrorsTooltip": "Permitir la conversión de formato para estructuras con estereoquímica no válida",
+      "smartLayoutTooltip": "Polígonos regulares para los anillos cuando está activado; irregulares cuando está desactivado",
+      "showAtomIdsTooltip": "Números de índice internos de los átomos, para solucionar problemas en archivos de estructura",
+      "showBondIdsTooltip": "Números de índice internos de los enlaces, para solucionar problemas en archivos de estructura",
+      "showHalfBondIdsTooltip": "Números de índice internos de las mitades de enlace direccional, rara vez necesarios fuera de la depuración",
+      "showLoopIdsTooltip": "Números de índice internos de los anillos (bucles), para solucionar problemas en archivos de estructura",
+      "manageSettings": "Gestionar",
+      "resetTo": "Restablecer a...",
+      "resetToDefault": "Predeterminado",
+      "resetToACS": "ACS",
+      "saveSettings": "Guardar configuración",
+      "loadSettings": "Cargar configuración"
+    },
+    "about": {
+      "ok": "Aceptar",
+      "version": "Versión {value}",
+      "build": "Compilación {value}",
+      "buildAt": "Compilado el",
+      "feedback": "Comentarios",
+      "epamLifeSciences": "EPAM Life Sciences",
+      "indigoToolkit": "Indigo Toolkit",
+      "standalone": "Independiente"
+    }
+  },
+  "process": {
+    "recognize": {
+      "changeImage": "Cambiar imagen",
+      "openAsNewProject": "Abrir como nuevo proyecto",
+      "dialogTitle": "Importar estructura desde imagen",
+      "imagoVersionLabel": "Versión de Imago",
+      "imagoVersionOption": "Versión {number}",
+      "originalImage": "Imagen original",
+      "recognizedStructurePreview": "Vista previa de la estructura reconocida",
+      "previewNotSupported": "La vista previa del tipo MIME '{type}' no es compatible con el navegador actual",
+      "pleaseChooseImage": "Elige una imagen"
+    },
+    "miew": {
+      "dialogTitle": "Miew",
+      "changingWarning": "Los estereocentros pueden cambiar tras una rotación 3D brusca",
+      "exportFailedError": "No se pudo exportar la estructura desde el visor 3D. Inténtalo de nuevo.",
+      "processFailedError": "No se pudo procesar la estructura 3D. La estructura puede estar dañada.",
+      "mergeCoordinatesFailedError": "No se pudieron fusionar las coordenadas 3D con la estructura original.",
+      "mergeMetaFailedError": "No se pudieron conservar los metadatos al aplicar la estructura 3D."
+    },
+    "analyse": {
+      "dialogTitle": "Valores calculados",
+      "chemicalFormula": "Fórmula química",
+      "molecularWeight": "Peso molecular",
+      "exactMass": "Masa exacta",
+      "elementalAnalysis": "Análisis elemental",
+      "decimalPlaces": "Decimales"
+    },
+    "check": {
+      "schemaTitle": "Comprobar",
+      "dialogTitle": "Comprobación de estructura",
+      "checkButton": "Comprobar",
+      "lastCheck": "Última comprobación:",
+      "warningSuffix": "{name}: advertencia",
+      "noErrorsDetected": "No se detectaron errores",
+      "options": {
+        "valence": "Valencia",
+        "radical": "Radical",
+        "isotopes": "Isótopos",
+        "pseudoatom": "Pseudoátomo",
+        "stereochemistry": "Estereoquímica",
+        "chirality": "Quiralidad",
+        "chiralFlag": "Indicador quiral",
+        "query": "Consulta",
+        "overlappingAtoms": "Átomos superpuestos",
+        "overlappingBonds": "Enlaces superpuestos",
+        "rGroups": "Grupos R",
+        "structure3d": "Estructura 3D"
+      }
+    }
+  },
+  "toolbox": {
+    "automap": {
+      "dialogTitle": "Automapeo de reacciones",
+      "modeLabel": "Modo",
+      "discard": "Descartar",
+      "keep": "Mantener",
+      "alter": "Modificar",
+      "clear": "Borrar"
+    },
+    "atom": {
+      "dialogTitle": "Propiedades del átomo",
+      "generalGroup": "General",
+      "querySpecificGroup": "Específico de consulta",
+      "reactionFlagsGroup": "Indicadores de reacción",
+      "numberLabel": "Número"
+    },
+    "bond": {
+      "dialogTitle": "Propiedades del enlace"
+    },
+    "rgroupLogic": {
+      "dialogTitle": "Condición lógica de grupo R",
+      "always": "Siempre",
+      "ifThenOption": "SI R{ifLabel} ENTONCES R{thenLabel}"
+    },
+    "attach": {
+      "dialogTitle": "Puntos de unión"
+    },
+    "editMonomer": {
+      "dialogTitle": "Editar monómero",
+      "editMonomer": "Editar monómero",
+      "editAllMonomers": "Editar todos los monómeros",
+      "removeGrouping": "Quitar agrupación",
+      "bodyTextSingle": "\"Editar monómero\" abrirá el asistente de creación de monómeros y permitirá editar esta instancia del monómero. \"Quitar agrupación\" convertirá el monómero en una estructura puramente química. ¿Cómo deseas continuar?",
+      "bodyTextIdentical": "\"Editar todos los monómeros\" abrirá el asistente de creación de monómeros y permitirá editar todas las instancias seleccionadas del monómero. \"Quitar agrupación\" convertirá los monómeros en una estructura puramente química. ¿Cómo deseas continuar?",
+      "bodyTextNonIdentical": "\"Quitar agrupación\" convertirá los monómeros en estructuras puramente químicas. ¿Cómo deseas continuar?"
+    },
+    "removeFG": {
+      "header": "Editar abreviatura",
+      "question": "Se detectó un cambio en la abreviatura. ¿Quieres quitar la información de la abreviatura de la estructura y continuar trabajando con átomos y enlaces separados?",
+      "removeAbbreviation": "Quitar abreviatura"
+    },
+    "rgroup": {
+      "dialogTitle": "Grupo R"
+    },
+    "sgroupDialog": {
+      "dialogTitle": "Propiedades del grupo S",
+      "typeLabel": "Tipo"
+    },
+    "labelEditDialog": {
+      "dialogTitle": "Editar etiqueta"
+    },
+    "enhancedStereo": {
+      "dialogTitle": "Estereoquímica mejorada",
+      "addToAnd": "Añadir a AND",
+      "addToOr": "Añadir a OR",
+      "group": "Grupo",
+      "createNewAndGroup": "Crear nuevo grupo AND",
+      "createNewOrGroup": "Crear nuevo grupo OR"
+    },
+    "structSchema": {
+      "atom": {
+        "atomType": {
+          "title": "Tipo de átomo",
+          "enumSingle": "Simple",
+          "enumList": "Lista",
+          "enumSpecial": "Especial"
+        },
+        "label": {
+          "title": "Etiqueta",
+          "invalidMessage": "Etiqueta incorrecta"
+        },
+        "atomList": {
+          "title": "Lista",
+          "invalidMessage": "Lista de átomos no válida"
+        },
+        "notList": {
+          "title": "No lista"
+        },
+        "pseudo": {
+          "title": "Especial",
+          "invalidMessage": "Átomo especial no válido"
+        },
+        "alias": {
+          "title": "Alias",
+          "invalidMessage": "No se permiten espacios al principio ni al final"
+        },
+        "charge": {
+          "title": "Carga",
+          "invalidMessage": "Valor de carga no válido"
+        },
+        "explicitValence": {
+          "title": "Valencia"
+        },
+        "isotope": {
+          "title": "Isótopo (masa atómica)",
+          "invalidMessage": "Valor de isótopo no válido"
+        },
+        "radical": {
+          "title": "Radical",
+          "enumMonoradical": "Monorradical",
+          "enumDiradicalSinglet": "Dirradical (singlete)",
+          "enumDiradicalTriplet": "Dirradical (triplete)"
+        },
+        "ringBondCount": {
+          "title": "Número de enlaces de anillo",
+          "enumAsDrawn": "Dibujado"
+        },
+        "hCount": {
+          "title": "Número de H"
+        },
+        "substitutionCount": {
+          "title": "Número de sustituciones",
+          "enumAsDrawn": "Dibujado"
+        },
+        "unsaturatedAtom": {
+          "title": "Insaturado"
+        },
+        "aromaticity": {
+          "title": "Aromaticidad",
+          "enumAromatic": "aromático",
+          "enumAliphatic": "alifático"
+        },
+        "implicitHCount": {
+          "title": "Número de H implícitos"
+        },
+        "ringMembership": {
+          "title": "Pertenencia a anillos"
+        },
+        "ringSize": {
+          "title": "Tamaño del anillo"
+        },
+        "connectivity": {
+          "title": "Conectividad"
+        },
+        "chirality": {
+          "title": "Quiralidad",
+          "enumAnticlockwise": "en sentido antihorario",
+          "enumClockwise": "en sentido horario"
+        },
+        "invRet": {
+          "title": "Inversión",
+          "enumInverts": "Invierte",
+          "enumRetains": "Conserva"
+        },
+        "exactChangeFlag": {
+          "title": "Cambio exacto"
+        }
+      },
+      "cip": {
+        "title": "CIP"
+      },
+      "customQuery": {
+        "title": "Consulta personalizada",
+        "invalidMessageTooLong": "La consulta personalizada no debe superar {maxLength} caracteres",
+        "invalidMessageInvalid": "Consulta personalizada no válida"
+      },
+      "labelEditField": {
+        "title": "Átomo",
+        "invalidMessage": "Símbolo de átomo incorrecto"
+      },
+      "attachmentPoints": {
+        "primary": {
+          "title": "Punto de unión primario"
+        },
+        "secondary": {
+          "title": "Punto de unión secundario"
+        }
+      },
+      "bond": {
+        "type": {
+          "title": "Tipo",
+          "enumSingle": "Simple",
+          "enumSingleUp": "Simple hacia arriba",
+          "enumSingleDown": "Simple hacia abajo",
+          "enumSingleUpDown": "Simple arriba/abajo",
+          "enumDouble": "Doble",
+          "enumDoubleCisTrans": "Doble cis/trans",
+          "enumTriple": "Triple",
+          "enumAromatic": "Aromático",
+          "enumAny": "Cualquiera",
+          "enumHydrogen": "Hidrógeno",
+          "enumSingleDouble": "Simple/doble",
+          "enumSingleAromatic": "Simple/aromático",
+          "enumDoubleAromatic": "Doble/aromático",
+          "enumDative": "Dativo",
+          "enumHaptic": "Háptico"
+        },
+        "topology": {
+          "title": "Topología",
+          "enumEither": "Cualquiera",
+          "enumRing": "Anillo",
+          "enumChain": "Cadena"
+        },
+        "center": {
+          "title": "Centro de reacción",
+          "enumUnmarked": "Sin marcar",
+          "enumNotCenter": "No es centro",
+          "enumCenter": "Centro",
+          "enumNoChange": "Sin cambio",
+          "enumMadeBroken": "Creado/roto",
+          "enumOrderChanges": "Cambios de orden",
+          "enumMadeBrokenAndChanges": "Creado/roto y cambios"
+        }
+      },
+      "sgroup": {
+        "variantData": "Datos",
+        "variantMultipleGroup": "Grupo múltiple",
+        "mulCount": {
+          "title": "Número de repeticiones"
+        },
+        "variantSruPolymer": "Polímero SRU",
+        "subscript": {
+          "title": "Etiqueta del polímero",
+          "invalidMessage": "El subíndice SRU no debe estar vacío ni contener comillas dobles"
+        },
+        "repeatPattern": {
+          "title": "Patrón de repetición",
+          "enumHeadToTail": "Cabeza-cola",
+          "enumHeadToHead": "Cabeza-cabeza",
+          "enumEitherUnknown": "Cualquiera desconocido"
+        },
+        "variantCopolymer": "Copolímero",
+        "subtype": {
+          "title": "Subtipo",
+          "enumBlank": "<En blanco>",
+          "enumRandom": "Aleatorio",
+          "enumBlock": "Bloque",
+          "enumAlternating": "Alternante"
+        },
+        "variantSuperatom": "Superátomo",
+        "name": {
+          "title": "Nombre",
+          "invalidMessage": "Proporciona un nombre para el superátomo"
+        },
+        "variantQueryComponent": "Componente de consulta",
+        "variantNucleotideComponent": "Componente de nucleótido",
+        "component": {
+          "title": "Componente",
+          "enumSugar": "Azúcar",
+          "enumBase": "Base",
+          "enumPhosphate": "Fosfato"
+        }
+      },
+      "rgroupLogicFields": {
+        "occurrence": {
+          "title": "Ocurrencia",
+          "invalidMessage": "Valor incorrecto"
+        },
+        "resth": {
+          "title": "RestH"
+        },
+        "condition": {
+          "title": "Condición"
+        }
+      },
+      "attachSchema": {
+        "name": {
+          "title": "Nombre de la molécula",
+          "invalidMessage": "La plantilla debe tener un nombre único no vacío y no superar los 128 símbolos"
+        }
+      }
+    },
+    "sdata": {
+      "context": {
+        "title": "Contexto"
+      },
+      "fieldName": {
+        "title": "Nombre del campo",
+        "invalidMessage": "Especifica el nombre del campo"
+      },
+      "fieldValue": {
+        "title": "Valor del campo",
+        "invalidMessage": "Especifica el valor del campo"
+      },
+      "fieldNamePlaceholder": "Introduce el nombre",
+      "fieldValuePlaceholder": "Introduce el valor"
+    },
+    "abbreviationLookup": {
+      "noMatchingResults": "No hay resultados coincidentes",
+      "startTypingPrompt": "Empieza a escribir el nombre de un átomo o de una estructura de plantilla"
+    },
+    "templateLibrary": {
+      "title": "Biblioteca de estructuras",
+      "clickToAddToCanvas": "Haz clic para añadir al lienzo",
+      "saveToSdf": "Guardar en SDF",
+      "exportPartialFailure": "Algunas plantillas no se pudieron exportar.",
+      "searchPlaceholder": "Buscar por elementos...",
+      "tabTemplateLibrary": "Plantillas",
+      "tabFunctionalGroups": "Grupos funcionales",
+      "tabSaltsAndSolvents": "Sales y disolventes",
+      "noItemsFound": "No se encontraron elementos"
+    },
+    "templateAttach": {
+      "saveDialogTitle": "Guardar en plantillas",
+      "editDialogTitle": "Editar plantilla",
+      "savedLocallyWarning": "{name} se guardan localmente y no se puede acceder a ellas desde otros navegadores u ordenadores.",
+      "sharedComputerWarning": "Ten en cuenta que otros usuarios del mismo ordenador y navegador también pueden acceder a ellas.",
+      "templatesName": "Plantillas",
+      "editedTemplatesName": "Plantillas editadas",
+      "namePlaceholder": "plantilla",
+      "selectedAttachmentPoints": "Puntos de unión seleccionados",
+      "atomIdLabel": "ID del átomo:",
+      "bondIdLabel": "ID del enlace:",
+      "cancelButton": "Cancelar",
+      "saveButton": "Guardar",
+      "editButton": "Editar"
+    }
+  }
+}

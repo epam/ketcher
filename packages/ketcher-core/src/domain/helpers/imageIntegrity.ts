@@ -33,11 +33,8 @@ function crc32(bytes: Uint8Array): number {
 function decodeBase64(data: string): Uint8Array | null {
   try {
     const binary = globalThis.atob(data);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes;
+    // atob yields one char (0-255) per byte, so every code point is defined
+    return Uint8Array.from(binary, (char) => char.codePointAt(0) as number);
   } catch {
     return null;
   }
@@ -63,7 +60,7 @@ function isPngCorrupted(bytes: Uint8Array): boolean {
     }
 
     const typeAndData = bytes.subarray(offset + 4, chunkEnd - 4);
-    const type = String.fromCharCode(...typeAndData.subarray(0, 4));
+    const type = String.fromCodePoint(...typeAndData.subarray(0, 4));
     if (isFirstChunk && type !== 'IHDR') {
       return true;
     }
@@ -84,7 +81,7 @@ function isPngCorrupted(bytes: Uint8Array): boolean {
 
 function isSvgCorrupted(markup: string): boolean {
   // No DOM (e.g. headless): leave it to the renderer
-  if (typeof globalThis.DOMParser === 'undefined') {
+  if (globalThis.DOMParser === undefined) {
     return false;
   }
   const document = new globalThis.DOMParser().parseFromString(
@@ -93,8 +90,7 @@ function isSvgCorrupted(markup: string): boolean {
   );
   const root = document.documentElement;
   return (
-    !root ||
-    root.localName !== 'svg' ||
+    root?.localName !== 'svg' ||
     root.namespaceURI !== SVG_NAMESPACE ||
     document.getElementsByTagName('parsererror').length > 0
   );

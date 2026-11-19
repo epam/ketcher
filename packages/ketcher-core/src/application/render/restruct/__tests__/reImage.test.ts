@@ -15,7 +15,7 @@ const JPEG = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==';
 
 // jsdom never fires load/error for images: tests settle the probe by hand
 class ProbeImage {
-  static instances: ProbeImage[] = [];
+  static readonly instances: ProbeImage[] = [];
   onload: (() => void) | null = null;
   onerror: (() => void) | null = null;
   src = '';
@@ -85,7 +85,7 @@ function lastImageSource(paper: { image: jest.Mock }) {
 
 describe('ReImage.show', () => {
   beforeEach(() => {
-    ProbeImage.instances = [];
+    ProbeImage.instances.length = 0;
     globalThis.Image = ProbeImage as unknown as typeof globalThis.Image;
     document.body.innerHTML = '';
   });

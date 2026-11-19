@@ -51,7 +51,7 @@ function getBitmapDecodeResult(image: Image): BitmapDecodeResult {
   }
 
   // No DOM (e.g. headless rendering): leave the bitmap as is
-  if (typeof globalThis.Image === 'undefined') {
+  if (globalThis.Image === undefined) {
     result.status = 'decoded';
     return result;
   }

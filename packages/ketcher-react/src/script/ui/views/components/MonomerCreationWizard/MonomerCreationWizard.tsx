@@ -239,14 +239,18 @@ const initialRnaPresetWizardState: RnaPresetWizardState = {
 
 const getComponentSuffix = (componentType: KetMonomerClass): string => {
   switch (componentType) {
-    case KetMonomerClass.Base:
+    case KetMonomerClass.Base: {
       return 'B';
-    case KetMonomerClass.Sugar:
+    }
+    case KetMonomerClass.Sugar: {
       return 'S';
-    case KetMonomerClass.Phosphate:
+    }
+    case KetMonomerClass.Phosphate: {
       return 'P';
-    default:
+    }
+    default: {
       return '';
+    }
   }
 };
 
@@ -349,8 +353,9 @@ const wizardReducer = (
       };
     }
 
-    default:
+    default: {
       return state;
+    }
   }
 };
 
@@ -853,7 +858,7 @@ const validateModificationTypes = (
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const errors: Record<string, boolean> = {};
   const existingModificationTypes = getOtherLibraryMonomers(
-    editor.monomersLibrary,
+    editor?.monomersLibrary,
     originalMonomerItem,
   )
     .filter(
@@ -1703,7 +1708,7 @@ const MonomerCreationWizardInternal = ({
       if (presetCodeRegex.test(presetCode)) {
         // Validate preset code uniqueness (only if format is valid)
         const coreEditor = provideEditorInstance();
-        if (coreEditor.checkIfPresetCodeExists(presetCode)) {
+        if (coreEditor?.checkIfPresetCodeExists(presetCode)) {
           canSaveMonomers = false;
           rnaPresetWizardStateDispatch({
             type: 'SetErrors',
@@ -1884,6 +1889,7 @@ const MonomerCreationWizardInternal = ({
     if (isSaving) {
       return;
     }
+
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
     wizardStateDispatch({ type: 'ResetValidationNotifications' });
@@ -2437,7 +2443,7 @@ const MonomerCreationWizardInternal = ({
 const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
-  if (!monomerCreationState) {
+  if (!provideEditorInstance() || !monomerCreationState) {
     return null;
   }
 

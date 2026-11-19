@@ -22,10 +22,10 @@ import {
   createRenderersManager,
 } from '../../../helpers/dom';
 
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
 describe.each([
@@ -46,15 +46,15 @@ describe.each([
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new Mode(),
     });
-    jest
-      .spyOn(editor.renderersContainer, 'update')
-      .mockImplementation((command) => {
+    vi.spyOn(editor.renderersContainer, 'update').mockImplementation(
+      (command) => {
         command?.operations.forEach((operation) => {
           if (operation.polymerBond && !operation.polymerBond.renderer) {
             PolymerBondRendererFactory.createInstance(operation.polymerBond);
           }
         });
-      });
+      },
+    );
     monomer = new Peptide(peptideMonomerItem);
     monomer.setChosenFirstAttachmentPoint(AttachmentPointName.R2);
     new PeptideRenderer(monomer);
@@ -64,11 +64,9 @@ describe.each([
       0,
     );
     bondRenderer = new BondRenderer(bond);
-    jest
-      .spyOn(bondRenderer, 'getSelectionPoints')
-      .mockReturnValue(
-        Array.from({ length: 8 }, (_, index) => new Vec2(index, 0)),
-      );
+    vi.spyOn(bondRenderer, 'getSelectionPoints').mockReturnValue(
+      Array.from({ length: 8 }, (_, index) => new Vec2(index, 0)),
+    );
     editor.drawingEntitiesManager.bonds.set(bond.id, bond);
     editor.selectTool(ToolName.bondSingle, { toolName: ToolName.bondSingle });
     tool = editor.selectedTool as PolymerBond;
@@ -77,7 +75,7 @@ describe.each([
   afterEach(() => {
     editor.destroy();
     document.body.innerHTML = '';
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
 
     if (originalGetBBox) {
       Object.defineProperty(SVGElement.prototype, 'getBBox', {
@@ -100,7 +98,7 @@ describe.each([
     bond.turnOnHover();
     bondRenderer.redrawHover();
     expect(editor.canvas.querySelector('.dynamic-element')).not.toBeNull();
-    const clearHover = jest.spyOn(bond, 'turnOffHover');
+    const clearHover = vi.spyOn(bond, 'turnOffHover');
 
     startDrawing();
 
@@ -113,7 +111,7 @@ describe.each([
     'restores atomic bond interaction after %s',
     (action) => {
       startDrawing();
-      const clearHover = jest.spyOn(bond, 'turnOffHover');
+      const clearHover = vi.spyOn(bond, 'turnOffHover');
       if (action === 'switch') {
         editor.selectTool(ToolName.selectRectangle);
       } else if (action === 'editor destroy') {
@@ -134,10 +132,11 @@ describe.each([
 
   it('restores atomic bond interaction after atom connection completion', () => {
     startDrawing();
-    const clearHover = jest.spyOn(bond, 'turnOffHover');
-    jest
-      .spyOn(editor.drawingEntitiesManager, 'addMonomerToAtomBond')
-      .mockReturnValue(new Command());
+    const clearHover = vi.spyOn(bond, 'turnOffHover');
+    vi.spyOn(
+      editor.drawingEntitiesManager,
+      'addMonomerToAtomBond',
+    ).mockReturnValue(new Command());
     const target = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     Object.assign(target, { __data__: { atom: bond.firstAtom } });
 
@@ -156,11 +155,11 @@ describe.each([
       editor.canvas.setAttribute('data-drawing-connection', '');
       bond.turnOnHover();
       bondRenderer.redrawHover();
-      const cancel = jest.spyOn(
+      const cancel = vi.spyOn(
         editor.drawingEntitiesManager,
         'cancelPolymerBondCreation',
       );
-      const clearHover = jest.spyOn(bond, 'turnOffHover');
+      const clearHover = vi.spyOn(bond, 'turnOffHover');
 
       tool[action]();
 
@@ -174,7 +173,7 @@ describe.each([
 
   it('can clean up the tool and then destroy the editor without cancelling twice', () => {
     startDrawing();
-    const cancel = jest.spyOn(
+    const cancel = vi.spyOn(
       editor.drawingEntitiesManager,
       'cancelPolymerBondCreation',
     );
@@ -190,7 +189,7 @@ describe.each([
   });
 
   it('keeps carbon atom highlighting and atom connection events functional', () => {
-    SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+    SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
       x: 0,
       y: 0,
       width: 10,
@@ -200,8 +199,8 @@ describe.each([
     atomRenderer.show();
     const atomElement = editor.canvas.querySelector('[data-testid="atom"]');
     expect(atomElement).not.toBeNull();
-    const showHover = jest.spyOn(atomRenderer, 'showHover');
-    const mouseUpAtom = jest.spyOn(tool, 'mouseUpAtom');
+    const showHover = vi.spyOn(atomRenderer, 'showHover');
+    const mouseUpAtom = vi.spyOn(tool, 'mouseUpAtom');
 
     startDrawing();
     atomElement?.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));

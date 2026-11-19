@@ -3,7 +3,10 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import {
+  type ResolvedMonomerClass,
+  resolveMonomerClass,
+} from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
@@ -35,6 +38,46 @@ export const MONOMER_CLASS_TO_CONSTRUCTOR = {
 };
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
+  public static getMonomerClass(monomers: BaseMonomer[]): ResolvedMonomerClass {
+    const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
+
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
+      const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
+
+      return monomerClass !== monomerClassToCompare;
+    });
+
+    if (hasDifferentMonomerTypes) {
+      return KetMonomerClass.CHEM;
+    }
+
+    return monomerClass;
+  }
+
+  private static getAttachmentPoints(monomers: BaseMonomer[]) {
+    const monomersAttachmentPoints = monomers.map(
+      (monomer) => monomer.listOfAttachmentPoints,
+    );
+    const possibleAttachmentPoints = monomersAttachmentPoints.flat();
+    const attachmentPoints = possibleAttachmentPoints.filter(
+      (attachmentPointName) => {
+        return monomersAttachmentPoints.every((monomerAttachmentPoints) =>
+          monomerAttachmentPoints.includes(attachmentPointName),
+        );
+      },
+    );
+
+    return attachmentPoints.map((attachmentPointName) => {
+      return {
+        label: attachmentPointName,
+        leavingGroup: {
+          atoms: [],
+        },
+        attachmentAtom: -1,
+      };
+    });
+  }
+
   public monomers: BaseMonomer[];
   public monomerClass: KetMonomerClass;
   public subtype: KetAmbiguousMonomerTemplateSubType;
@@ -73,46 +116,6 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
       variantMonomerItem.monomers,
     );
     this.subtype = variantMonomerItem.subtype;
-  }
-
-  public static getMonomerClass(monomers: BaseMonomer[]) {
-    const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
-
-    const hasDifferentMonomerTypes = monomers.some((monomer) => {
-      const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
-
-      return monomerClass !== monomerClassToCompare;
-    });
-
-    if (hasDifferentMonomerTypes) {
-      return KetMonomerClass.CHEM;
-    }
-
-    return monomerClass;
-  }
-
-  private static getAttachmentPoints(monomers: BaseMonomer[]) {
-    const monomersAttachmentPoints = monomers.map(
-      (monomer) => monomer.listOfAttachmentPoints,
-    );
-    const possibleAttachmentPoints = monomersAttachmentPoints.flat();
-    const attachmentPoints = possibleAttachmentPoints.filter(
-      (attachmentPointName) => {
-        return monomersAttachmentPoints.every((monomerAttachmentPoints) =>
-          monomerAttachmentPoints.includes(attachmentPointName),
-        );
-      },
-    );
-
-    return attachmentPoints.map((attachmentPointName) => {
-      return {
-        label: attachmentPointName,
-        leavingGroup: {
-          atoms: [],
-        },
-        attachmentAtom: -1,
-      };
-    });
   }
 
   public get monomerCaps() {

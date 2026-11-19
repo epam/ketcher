@@ -20,7 +20,7 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
 2. **Gate.** Show the user `target.md` and the roles table from [ROLES.md](../roles/ROLES.md), and ask about worktrees: each implementer in its own worktree (the default, per _Worktrees_ in [LOCATIONS.md](../shared/LOCATIONS.md)), or the shared branch. Then **stop**. On the user's reply, save the _Checks_ baseline in the task worktree. Done when `<run dir>/baseline/` holds every check's output.
 
-3. **Pin.** Dispatch an **implementer** with [IMPLEMENT.md](../roles/IMPLEMENT.md) and a ticket `<run dir>/tickets/pin.md`: Jest tests through the interface for every behavior `target.md` touches, per _Tests_ in QUALITY.md, passing on today's code. Where the behavior shows only in the editor, record a `verify-ketcher` run on `<base>` as the pin's app half, in `<run dir>/verify/before/`. Done when the pin is one commit and green.
+3. **Pin.** Dispatch an **implementer** with [IMPLEMENT.md](../roles/IMPLEMENT.md) and a ticket `<run dir>/tickets/pin.md`: Vitest tests through the interface for every behavior `target.md` touches, per _Tests_ in QUALITY.md, passing on today's code. Where the behavior shows only in the editor, record a `verify-ketcher` run on `<base>` as the pin's app half, in `<run dir>/verify/before/`. Done when the pin is one commit and green.
 
 4. **Subtract.** Dispatch an **implementer** with a ticket `<run dir>/tickets/subtract.md`: delete the dead code, one-caller wrappers, redundant checks, and orphan references in scope, with the pin green. Done when the subtraction is one commit, or there was nothing to delete.
 

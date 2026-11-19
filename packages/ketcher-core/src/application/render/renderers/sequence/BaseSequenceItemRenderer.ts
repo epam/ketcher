@@ -31,10 +31,10 @@ const CARET_X_OFFSET_BEFORE_NODE = -17;
 const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   private positionalEnumeration: number | null = null;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
-  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
   public caretElement?:
@@ -536,7 +536,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get hasOnlyIgnoredNodesBeforeNodeInSubChain() {
-    return !!this.ignoredNodesBeforeFirstNodeInSubChain.length;
+    return this.ignoredNodesBeforeFirstNodeInSubChain.length > 0;
   }
 
   // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
@@ -557,7 +557,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get hasOnlyIgnoredNodesAfterNodeInChain() {
-    return !!this.ignoredNodesAfterLastNodeInSubChain.length;
+    return this.ignoredNodesAfterLastNodeInSubChain.length > 0;
   }
 
   // returns true if node is not in ignore list and is first node in chain

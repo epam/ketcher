@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import {
   Entities,
   MonomerItemType,
@@ -24,15 +27,17 @@ import { MonomerGroups } from 'src/constants';
 import { defaultTheme } from 'theming/defaultTheme';
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
 
-const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
-const useIsCompactViewMock = jest.fn(() => true);
+const { useLayoutModeMock, useIsCompactViewMock } = vi.hoisted(() => ({
+  useLayoutModeMock: vi.fn(() => 'sequence-layout-mode'),
+  useIsCompactViewMock: vi.fn(() => true),
+}));
 const mockEditorEvents = {
   keyDown: { add: () => true, remove: () => true },
   cancelSequenceEditInRNABuilderMode: { add: () => true, remove: () => true },
 };
 
-jest.mock('hooks', () => ({
-  ...jest.requireActual('hooks'),
+vi.mock('hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('hooks')>()),
   useLayoutMode: () => useLayoutModeMock(),
   useIsCompactView: () => useIsCompactViewMock(),
 }));
@@ -191,7 +196,7 @@ describe('Test Rna Editor Expanded component', () => {
   });
 
   it('should render correctly in view mode', async () => {
-    const onDuplicateHandler = jest.fn();
+    const onDuplicateHandler = vi.fn();
 
     render(
       withThemeAndStoreProvider(
@@ -389,5 +394,52 @@ describe('Test Rna Editor Expanded component', () => {
     // Re-entering edit mode must start a fresh session: Update stays
     // disabled until a monomer is actually picked again.
     expect(screen.getByTestId('save-btn')).toBeDisabled();
+  });
+
+  it('merges a picked monomer into the preset name in preset edit mode', () => {
+    const sugar = { label: 'R' } as MonomerOrAmbiguousType;
+
+    const store = configureAppStore({
+      rnaBuilder: {
+        activePreset: {},
+        presetsDefault: [],
+        presetsCustom: [],
+        activeRnaBuilderItem: MonomerGroups.SUGARS,
+      },
+    });
+
+    const tree = (
+      <ThemeProvider theme={testTheme}>
+        <StoreProvider store={store}>
+          <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+        </StoreProvider>
+      </ThemeProvider>
+    );
+
+    const { rerender } = render(tree);
+
+    const nameInput = screen.getByTestId(
+      'name-your-structure-editbox',
+    ) as HTMLInputElement;
+    // No monomer picked yet: the preset name is still empty.
+    expect(nameInput.value).toBe('');
+
+    // Picking a sugar in preset edit mode must fold it into the local preset
+    // copy and recompute the full name during render (previously done via an
+    // effect reacting to the redux monomer selection).
+    act(() => {
+      store.dispatch(
+        setActivePresetMonomerGroup({
+          groupName: MonomerGroups.SUGARS,
+          groupItem: sugar,
+        }),
+      );
+    });
+    rerender(tree);
+
+    expect(
+      (screen.getByTestId('name-your-structure-editbox') as HTMLInputElement)
+        .value,
+    ).toBe('R');
   });
 });

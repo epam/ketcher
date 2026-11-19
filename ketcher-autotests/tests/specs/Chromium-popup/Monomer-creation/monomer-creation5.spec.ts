@@ -32,7 +32,6 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
   MicroAtomOption,
@@ -111,8 +110,7 @@ test(`1. Check that the user can set one modification type for amino acids by cl
     ],
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -167,8 +165,7 @@ test(`2. Check that the user can set few modification types for amino acids by c
     ],
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide2);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -361,8 +358,7 @@ test(`6. Check that if the user changes the monomer type after they've entered a
 
   await createMonomerDialog.submit({ ignoreWarning: true });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Base.Base);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -496,8 +492,7 @@ test(`9. Check that if a monomer with a new modification type is saved, that new
       },
     ],
   });
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await CommonTopLeftToolbar(page).clearCanvas();
   await Library(page).clickMonomerAutochain(Peptide.A);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.A);
@@ -547,8 +542,7 @@ test(`10. Check that the user can set a HELM alias for amino acids by clicking o
     HELMAlias: 'CustomHELMAliasPeptide',
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide3);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -592,8 +586,7 @@ test(`11. Check that the user can set a HELM alias for sugars by clicking on + A
     HELMAlias: 'CustomHELMAliasSugar',
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Sugar.Sugar);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -638,8 +631,7 @@ test(`12. Check that the user can set a HELM alias for bases by clicking on + Ad
     HELMAlias: 'CustomHELMAliasBase',
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Base.Base);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -683,8 +675,7 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
     HELMAlias: 'CustomHELMAliasPhosphate',
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Phosphate.Phosphate);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -766,8 +757,7 @@ test(`15. Check that the HELM symbol must be a string of uppercase and lowercase
     HELMAlias: 'ABCdef-123_*',
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Phosphate.Phosphate2);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -909,8 +899,7 @@ test(`18. Check when the HELM alias string NOT unique for one HELM class (peptid
     HELMAlias: '1Nal',
   });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Base.Base);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -971,8 +960,7 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await createMonomerDialog.submit({ ignoreWarning: true });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Nucleotide.Nucleotide);
   await expect(monomerOnCanvas).toBeVisible();
 
@@ -1025,8 +1013,7 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
   await createMonomerDialog.clearHELMAlias();
   await createMonomerDialog.submit({ ignoreWarning: true });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide);
   await expect(monomerOnCanvas).toBeVisible();
 

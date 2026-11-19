@@ -97,9 +97,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
-    ).toHaveCount(6);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
 
     // the switch was the last entry: an extra Redo changes nothing
     await CommonTopLeftToolbar(page).redo();
@@ -272,35 +270,19 @@ test.describe('Retain history between macro and micro molecules modes', () => {
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
-    ).toHaveCount(1);
+    await expect(getArrowLocator(page)).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
-    ).toHaveCount(0);
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
-    ).toHaveCount(0);
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getPlusLocator(page)),
-    ).toHaveCount(0);
+    await expect(getArrowLocator(page)).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(0);
+    await expect(getPlusLocator(page)).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).redo();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
-    ).toHaveCount(1);
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
-    ).toHaveCount(16);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(16);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'molecules').locator(getArrowLocator(page)),
-    ).toHaveCount(1);
-    await expect(
-      getCanvasByMode(page, 'molecules').locator(getAtomLocator(page, {})),
-    ).toHaveCount(16);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(16);
   });
 
   test('Case 8 - One molecule edited in both modes keeps every edit in history', async ({
@@ -342,14 +324,10 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
-    ).toHaveCount(5);
+    expect(JSON.parse(await getKet(page)).mol0.bonds).toHaveLength(5);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
-    ).toHaveCount(6);
+    expect(JSON.parse(await getKet(page)).mol0.bonds).toHaveLength(6);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
     await expect(getAtomLocator(page, {})).toHaveCount(6);
@@ -363,14 +341,10 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getBondLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
-    ).toHaveCount(6);
+    expect(JSON.parse(await getKet(page)).mol0.bonds).toHaveLength(6);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
-    ).toHaveCount(5);
+    expect(JSON.parse(await getKet(page)).mol0.bonds).toHaveLength(5);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
     await expect(getAtomLocator(page, {})).toHaveCount(6);
@@ -631,20 +605,12 @@ test.describe('Retain history between macro and micro molecules modes', () => {
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
-    ).toHaveCount(1);
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
-    ).toHaveCount(22);
+    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(getAtomLocator(page, {})).toHaveCount(22);
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
     await CommonTopLeftToolbar(page).undo();
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
-    ).toHaveCount(0);
-    await expect(
-      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
-    ).toHaveCount(6);
+    await expect(getArrowLocator(page)).toHaveCount(0);
+    await expect(getAtomLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();

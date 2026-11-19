@@ -236,6 +236,10 @@ function resetStereoFlagsPosition(struct: Struct): void {
   });
 }
 
+export const hasOnlyBondsSelected = (
+  selection?: { atoms?: number[]; bonds?: number[] } | null,
+) => Boolean(selection?.bonds?.length) && !selection?.atoms?.length;
+
 // TODO: serverCall function should not be exported
 export async function serverCall<T>(
   editor: Editor,
@@ -244,7 +248,16 @@ export async function serverCall<T>(
   options: ServerSettings,
   struct?: Struct,
 ): Promise<T> {
-  const selection = editor.selection();
+  // Clean Up and Calculated Values work on the selected part of the structure,
+  // so when only bonds are selected, their atoms are sent along with them.
+  // Other methods get the selection as it is: hydrogens, for example, are
+  // toggled for selected atoms only.
+  const currentSelection = editor.selection();
+  const isSelectedPartUsed = method === 'clean' || method === 'calculate';
+  const selection =
+    isSelectedPartUsed && hasOnlyBondsSelected(currentSelection)
+      ? editor.explicitSelected()
+      : currentSelection;
 
   let selectedAtoms: number[] = [];
   let selectedBonds: number[] = [];
@@ -265,14 +278,12 @@ export async function serverCall<T>(
     bidMap,
   );
 
-  const expSel = editor.explicitSelected();
-
   if (selection) {
-    selectedAtoms = (selection.atoms ?? expSel.atoms ?? [])
+    selectedAtoms = (selection.atoms ?? [])
       .map((aid) => aidMap.get(aid))
       .filter((aid): aid is number => aid !== undefined);
 
-    selectedBonds = (selection.bonds ?? expSel.bonds ?? [])
+    selectedBonds = (selection.bonds ?? [])
       .map((bid) => bidMap.get(bid))
       .filter((bid): bid is number => bid !== undefined);
   }

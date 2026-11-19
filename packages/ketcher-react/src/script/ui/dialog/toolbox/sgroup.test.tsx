@@ -80,19 +80,19 @@ describe('Copolymer S-Group type availability', () => {
 
   it('should show Copolymer option when fewer than two SRUs are selected', () => {
     renderAndOpenTypeSelect(1);
-    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Copolymer (co)-option')).toBeInTheDocument();
   });
 
   it('should show Copolymer option when at least two SRUs are selected', () => {
     renderAndOpenTypeSelect(2);
-    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Copolymer (co)-option')).toBeInTheDocument();
   });
 
   it('should show Copolymer option when selected SRU count is not provided', () => {
     renderWithMockStore(<SGroup type="MUL" />);
     const typeSelect = screen.getByRole('combobox');
     fireEvent.mouseDown(typeSelect);
-    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Copolymer (co)-option')).toBeInTheDocument();
   });
 
   it('should show Copolymer option when editing existing Copolymer S-Group', () => {
@@ -111,7 +111,7 @@ describe('Copolymer S-Group type availability', () => {
     });
     const typeSelect = screen.getAllByRole('combobox')[0];
     fireEvent.mouseDown(typeSelect);
-    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Copolymer (co)-option')).toBeInTheDocument();
   });
 });
 
@@ -144,9 +144,9 @@ describe('Copolymer S-Group Subtype dropdown', () => {
   it('should include a blank option alongside Random, Block and Alternating', () => {
     openSubtypeSelect();
     expect(screen.getByTestId('<Blank>-option')).toBeInTheDocument();
-    expect(screen.getByTestId('Random-option')).toBeInTheDocument();
-    expect(screen.getByTestId('Block-option')).toBeInTheDocument();
-    expect(screen.getByTestId('Alternating-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Random (ran)-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Block (blk)-option')).toBeInTheDocument();
+    expect(screen.getByTestId('Alternating (alt)-option')).toBeInTheDocument();
   });
 
   it('should clear a previously selected subtype when the blank option is chosen', () => {
@@ -184,7 +184,7 @@ describe('SRU S-Group defaults', () => {
 
     const typeSelect = screen.getByRole('combobox');
     fireEvent.mouseDown(typeSelect);
-    fireEvent.click(screen.getByRole('option', { name: 'SRU polymer' }));
+    fireEvent.click(screen.getByRole('option', { name: 'SRU polymer (n)' }));
 
     expect(screen.getByLabelText('Polymer label')).toHaveValue('n');
   });

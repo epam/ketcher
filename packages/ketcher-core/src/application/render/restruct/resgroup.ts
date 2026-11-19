@@ -38,6 +38,23 @@ import type {
 import type { RenderOptions } from '../render.types';
 import { uniteHoverPaths } from './hoverPath';
 export { paperPathFromSVGElement } from './hoverPath';
+
+// Standard copolymer labels; `blo` is the value stored in files, `blk` the
+// abbreviation shown to users (#10457)
+const COPOLYMER_SUBTYPE_LABELS: Record<string, string> = {
+  ran: 'ran',
+  blo: 'blk',
+  alt: 'alt',
+};
+
+export function getCopolymerLabel(subtype?: string | null): string {
+  if (!subtype) {
+    return 'co';
+  }
+
+  return COPOLYMER_SUBTYPE_LABELS[subtype] ?? subtype;
+}
+
 interface SGroupdrawBracketsOptions {
   set: RaphaelSet;
   render: Render;
@@ -106,10 +123,9 @@ class ReSGroup extends ReObject {
         case 'COP': {
           const connectivity: string = sgroup.data.connectivity || 'eu';
           SGroupdrawBracketsOptions.upperIndexText = connectivity;
-          const subtype = sgroup.data.subtype;
-          if (sgroup.data.subtype) {
-            SGroupdrawBracketsOptions.lowerIndexText = subtype;
-          }
+          SGroupdrawBracketsOptions.lowerIndexText = getCopolymerLabel(
+            sgroup.data.subtype,
+          );
           break;
         }
         case 'SUP': {

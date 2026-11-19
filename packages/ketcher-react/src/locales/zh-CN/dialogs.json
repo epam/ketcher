@@ -378,11 +378,11 @@
       },
       "sgroup": {
         "variantData": "数据",
-        "variantMultipleGroup": "重复组",
+        "variantMultipleGroup": "重复组 (#)",
         "mulCount": {
           "title": "重复次数"
         },
-        "variantSruPolymer": "SRU 聚合物",
+        "variantSruPolymer": "SRU 聚合物 (n)",
         "subscript": {
           "title": "聚合物标签",
           "invalidMessage": "SRU 下标不能为空且不能包含双引号"
@@ -393,13 +393,13 @@
           "enumHeadToHead": "头对头",
           "enumEitherUnknown": "任意（未知）"
         },
-        "variantCopolymer": "共聚物",
+        "variantCopolymer": "共聚物 (co)",
         "subtype": {
           "title": "子类型",
           "enumBlank": "<空白>",
-          "enumRandom": "随机",
-          "enumBlock": "嵌段",
-          "enumAlternating": "交替"
+          "enumRandom": "随机 (ran)",
+          "enumBlock": "嵌段 (blk)",
+          "enumAlternating": "交替 (alt)"
         },
         "variantSuperatom": "超原子",
         "name": {

@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { UiAction, UiActionAction } from '../../../../../action';
+import type { UiActionAction } from '../../../../../action';
 
-import type { ToolbarItem } from '../../../toolbar.types';
+import type { ToolbarItem, ToolbarStatus } from '../../../toolbar.types';
 
 type GroupDescriptor = {
   start: number;
@@ -26,9 +26,7 @@ type GroupDescriptor = {
 interface MultiToolProps {
   options: ToolbarItem[];
   groups?: GroupDescriptor[];
-  status: {
-    [key in string]?: UiAction;
-  };
+  status: ToolbarStatus;
   disableableButtons: string[];
   indigoVerification: boolean;
 }

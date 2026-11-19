@@ -8184,7 +8184,6 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0,
         "transformation": {
             "flip": "vertical",
             "rotate": -0.7853981633974483

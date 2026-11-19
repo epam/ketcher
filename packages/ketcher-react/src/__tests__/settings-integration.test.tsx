@@ -20,6 +20,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import {
   type UnknownAction,
@@ -259,7 +260,7 @@ describe('Settings Integration Tests', () => {
       attachSettingsService(settingsService);
 
       // Spy on updateSettings to count calls
-      const updateSpy = jest.spyOn(settingsService, 'updateSettings');
+      const updateSpy = vi.spyOn(settingsService, 'updateSettings');
 
       const store = createIntegrationStore(settingsService);
 
@@ -450,9 +451,9 @@ describe('Settings Integration Tests', () => {
       // Mock updateSettings to fail
       const originalUpdate =
         settingsService.updateSettings.bind(settingsService);
-      jest
-        .spyOn(settingsService, 'updateSettings')
-        .mockRejectedValueOnce(new Error('Update failed'));
+      vi.spyOn(settingsService, 'updateSettings').mockRejectedValueOnce(
+        new Error('Update failed'),
+      );
 
       const store = createIntegrationStore(settingsService);
 

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
   updateFormState,
@@ -47,7 +47,7 @@ import {
   KETCHER_ROOT_NODE_CSS_SELECTOR,
 } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
-import i18n from 'src/i18n/i18n';
+import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 import { saveAs } from 'file-saver';
 
 interface SettingsProps extends BaseProps {
@@ -90,6 +90,11 @@ const SettingsDialog = (props: Props) => {
       `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${appClasses.canvas}`,
     ),
   );
+
+  const languageOptions = SUPPORTED_LANGUAGES.map(({ code, label }) => ({
+    value: code,
+    label,
+  }));
 
   const atomsTab = {
     key: 'atoms',
@@ -249,6 +254,18 @@ const SettingsDialog = (props: Props) => {
     label: t('dialogs:meta.settings.generalTab'),
     content: (
       <fieldset>
+        {SUPPORTED_LANGUAGES.length > 1 && (
+          <Label title={t('settings:language.title')} data-testid="language">
+            <span>
+              <Select
+                value={i18n.language}
+                onChange={(lng) => i18n.changeLanguage(lng)}
+                options={languageOptions}
+                data-testid="language-select"
+              />
+            </span>
+          </Label>
+        )}
         <Field
           name="resetToSelect"
           component={Select}

@@ -63,7 +63,7 @@ export const canCreateMonomer = (
 
   const pending = [[...nodes][0]];
   const visited = new Set<BaseMonomer | CoreAtom>();
-  while (pending.length) {
+  while (pending.length > 0) {
     const node = pending.pop();
     if (!node || visited.has(node)) continue;
     visited.add(node);

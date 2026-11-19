@@ -6,11 +6,11 @@ import {
 } from './AttachmentPoints.styles';
 import { PreparedAttachmentPointData } from '../../hooks/useAttachmentPoints';
 
-type Properties = {
+type Props = {
   preparedAttachmentPointsData: PreparedAttachmentPointData[];
 };
 
-const AttachmentPoints = ({ preparedAttachmentPointsData }: Properties) => {
+const AttachmentPoints = ({ preparedAttachmentPointsData }: Props) => {
   if (preparedAttachmentPointsData.length === 0) {
     return null;
   }

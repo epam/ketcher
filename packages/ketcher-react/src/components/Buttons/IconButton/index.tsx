@@ -16,4 +16,4 @@
 
 export { IconButton } from './IconButton';
 export { IconButtonCustomIcon } from './IconButtonCustomIcon';
-export type { IIconButtonProps } from './types';
+export type { IIconButtonProperties } from './types';

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Tab, Tabs } from '@mui/material';
 
 export const StyledTabs = styled(Tabs, {
-  shouldForwardProp: (propName) => propName !== 'isLayoutToRight',
+  shouldForwardProp: (propertyName) => propertyName !== 'isLayoutToRight',
 })<{ isLayoutToRight?: boolean }>`
   height: 32px;
   min-height: 32px;
@@ -33,7 +33,7 @@ export const StyledTabs = styled(Tabs, {
 `;
 
 export const StyledTab = styled(Tab, {
-  shouldForwardProp: (propName) => propName !== 'isLayoutToRight',
+  shouldForwardProp: (propertyName) => propertyName !== 'isLayoutToRight',
 })<{
   isLayoutToRight?: boolean;
 }>`

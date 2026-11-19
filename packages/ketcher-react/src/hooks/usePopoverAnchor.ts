@@ -1,13 +1,13 @@
 import { type MouseEvent, useCallback, useState } from 'react';
 
 export const usePopoverAnchor = () => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
   const handleOpen = useCallback((event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorElement(event.currentTarget);
   }, []);
   const handleClose = useCallback(() => {
-    setAnchorEl(null);
+    setAnchorElement(null);
   }, []);
 
-  return { anchorEl, handleOpen, handleClose };
+  return { anchorEl: anchorElement, handleOpen, handleClose };
 };

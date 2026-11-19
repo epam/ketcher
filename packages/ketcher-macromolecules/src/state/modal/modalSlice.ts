@@ -113,7 +113,7 @@ export const selectModalName = (state: RootState): string | null =>
 export const isModalOpened = (state: RootState): boolean => state.modal.isOpen;
 export const selectIsSettingsPanelOpen = (state: RootState): boolean =>
   state.modal.isOpen && state.modal.name === 'settings';
-export const selectAdditionalProps = (
+export const selectAdditionalProperties = (
   state: RootState,
 ): AdditionalModalProps | null => state.modal.additionalProps;
 export const selectErrorTooltips = (state: RootState): string[] =>

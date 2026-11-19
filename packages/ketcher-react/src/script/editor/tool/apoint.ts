@@ -17,7 +17,7 @@
 import { Atom, FunctionalGroup, assert } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
-import { editRGroupAttachmentPoint } from './apoint.utils';
+import { editRGroupAttachmentPoint } from './apoint.utilities';
 
 class APointTool implements Tool {
   private readonly editor: Editor;

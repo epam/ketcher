@@ -15,18 +15,18 @@ import { createExternalPredicate } from '../../build-config/external-predicate.m
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
 import { createConsoleStripPlugin } from '../../build-config/console-strip-plugin.mjs';
 
-const pkg = JSON.parse(
+const package_ = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
-const rootDir = fileURLToPath(new URL('.', import.meta.url));
+const rootDirection = fileURLToPath(new URL('.', import.meta.url));
 
 // `ketcher-macromolecules` is listed in `dependencies`, so the predicate
 // externalizes it. It is reached through the dynamic
 // `import('ketcher-macromolecules')` in `src/Editor.tsx`, which stays a plain
 // dynamic import (see `build.lib` below).
-const { external } = createExternalPredicate({ pkg });
+const { external } = createExternalPredicate({ pkg: package_ });
 
 const sdfRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-react-sdf-raw-text',
@@ -34,7 +34,7 @@ const sdfRawTextPlugin = createRawTextPlugin({
 });
 
 const valuesToReplace = createReplaceValues({
-  version: pkg.version,
+  version: package_.version,
   isProduction,
 });
 
@@ -77,7 +77,7 @@ export default defineConfig({
   plugins: [
     svgr({ include: '**/*.svg' }),
     sdfRawTextPlugin,
-    ...createConsoleStripPlugin({ root: rootDir, isProduction }),
+    ...createConsoleStripPlugin({ root: rootDirection, isProduction }),
   ],
   build: {
     target: BROWSER_BUILD_TARGET,
@@ -98,7 +98,7 @@ export default defineConfig({
     // `ketcher-macromolecules`, and Rollup never injected this wrapper, so
     // that import must stay a plain dynamic import.
     lib: {
-      entry: resolve(rootDir, pkg.source),
+      entry: resolve(rootDirection, package_.source),
       formats: ['cjs', 'es'],
       // Single-file bundled output (no preserveModules here, matching the
       // Rollup baseline) - the CSS extracted alongside it must land at the
@@ -108,7 +108,7 @@ export default defineConfig({
     },
     modulePreload: false,
     rolldownOptions: {
-      input: resolve(rootDir, pkg.source),
+      input: resolve(rootDirection, package_.source),
       external,
       // Tree-shaking is left at Rolldown's default - it was measured and
       // rejected for ketcher-core, and this package is not preserveModules

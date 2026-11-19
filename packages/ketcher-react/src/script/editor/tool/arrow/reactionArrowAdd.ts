@@ -126,28 +126,28 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       }
       const arrowId = firstOp.data.id;
       assert(arrowId != null);
-      const dragCtx: DragContextInProgress = {
+      const dragContext: DragContextInProgress = {
         ...this.dragCtx,
         itemId: arrowId,
         action,
       };
-      this.dragCtx = dragCtx;
-      this.editor.update(dragCtx.action, true);
+      this.dragCtx = dragContext;
+      this.editor.update(dragContext.action, true);
     }
 
-    const dragCtx = this.dragCtx;
-    assert(dragCtx?.action != null);
-    this.updateResizingState(dragCtx.itemId, true);
+    const dragContext = this.dragCtx;
+    assert(dragContext?.action != null);
+    this.updateResizingState(dragContext.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
-    dragCtx.action = fromArrowResizing(
+    dragContext.action = fromArrowResizing(
       this.reStruct,
-      dragCtx.itemId,
+      dragContext.itemId,
       diff,
       current,
       null,
       isSnappingEnabled,
     );
-    this.editor.update(dragCtx.action, true);
+    this.editor.update(dragContext.action, true);
   }
 
   mouseup(event: MouseEvent) {

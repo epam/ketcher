@@ -24,7 +24,7 @@ import { scrollbarThin } from 'theming/mixins';
 import { EmptyFunction } from 'helpers/emptyFunction';
 import styles from './Modal.module.less';
 
-interface ModalProps {
+interface ModalProperties {
   children: JSX.Element | Array<JSX.Element>;
   title: React.ReactNode;
   isOpen: boolean;
@@ -87,11 +87,11 @@ const Content = styled(DialogContent)`
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-interface FooterProps {
+interface FooterProperties {
   withborder?: string;
 }
 
-const Footer = styled(DialogActions)<FooterProps>`
+const Footer = styled(DialogActions)<FooterProperties>`
   height: 52px;
   margin: 0;
   padding: 0 12px;
@@ -123,7 +123,7 @@ export const Modal = ({
   isDraggable = false,
   isResizable = true,
   repositionKey,
-}: ModalProps) => {
+}: ModalProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const theme = useTheme();
 
@@ -135,7 +135,7 @@ export const Modal = ({
   );
 
   // Ref attached to the MUI Paper so useSettingsPanelDrag can measure/move it.
-  const paperRef = useRef<HTMLElement | null>(null);
+  const paperReference = useRef<HTMLElement | null>(null);
 
   const {
     rect,
@@ -146,25 +146,31 @@ export const Modal = ({
     getBounds,
     setPreferredHeight,
   } = useSettingsPanelDrag({
-    panelRef: paperRef,
+    panelRef: paperReference,
     boundsElement: isDraggable ? containerElement : null,
     gutter: 0,
   });
 
   // Centre the paper within the container on first open.
-  const hasInitializedRef = useRef(false);
+  const hasInitializedReference = useRef(false);
   const [repositionTrigger, setRepositionTrigger] = useState(0);
   // The key that was current when the dialog was last positioned.
-  const lastInitKeyRef = useRef<string | number | undefined>(repositionKey);
+  const lastInitKeyReference = useRef<string | number | undefined>(
+    repositionKey,
+  );
 
   // When repositionKey changes mid-open, reset rect so Paper returns to its
   // natural CSS height before we re-measure.  The increment of repositionTrigger
   // defers the measurement to the next commit (after rect==null is painted).
   useLayoutEffect(() => {
-    if (!isDraggable || !isOpen || lastInitKeyRef.current === repositionKey)
+    if (
+      !isDraggable ||
+      !isOpen ||
+      lastInitKeyReference.current === repositionKey
+    )
       return;
-    lastInitKeyRef.current = repositionKey;
-    hasInitializedRef.current = false;
+    lastInitKeyReference.current = repositionKey;
+    hasInitializedReference.current = false;
     setRect(null);
     setRepositionTrigger((n) => n + 1);
   }, [isDraggable, isOpen, repositionKey, setRect]);
@@ -172,8 +178,8 @@ export const Modal = ({
   // MUI Dialog only mounts the Paper when open=true, so we must include isOpen
   // in the deps — the effect fires on mount when the Paper doesn't exist yet.
   useLayoutEffect(() => {
-    if (!isDraggable || !isOpen || hasInitializedRef.current) return;
-    const paper = paperRef.current;
+    if (!isDraggable || !isOpen || hasInitializedReference.current) return;
+    const paper = paperReference.current;
     if (!paper) return;
 
     // getBounds() may return null if containerElement wasn't found; fall back
@@ -185,7 +191,7 @@ export const Modal = ({
       bottom: window.innerHeight,
     };
 
-    hasInitializedRef.current = true;
+    hasInitializedReference.current = true;
 
     const width = paper.offsetWidth;
     const naturalHeight = paper.scrollHeight;
@@ -212,18 +218,20 @@ export const Modal = ({
   // an extra repositionKey-change cycle.
   useLayoutEffect(() => {
     if (!isOpen) {
-      hasInitializedRef.current = false;
-      lastInitKeyRef.current = repositionKey;
+      hasInitializedReference.current = false;
+      lastInitKeyReference.current = repositionKey;
     }
   }, [isOpen, repositionKey]);
 
   const handleHeaderPointerDown = useCallback(
-    (e: React.PointerEvent<HTMLElement>) => {
+    (event: React.PointerEvent<HTMLElement>) => {
       if (
-        (e.target as Element).closest('button,input,select,a,[role="button"]')
+        (event.target as Element).closest(
+          'button,input,select,a,[role="button"]',
+        )
       )
         return;
-      startDrag(e);
+      startDrag(event);
     },
     [startDrag],
   );
@@ -231,15 +239,15 @@ export const Modal = ({
   // Stable ref callback so paperProps doesn't recreate on every rect change
   // (a new callback causes React to call old(null) then new(paper), briefly
   // setting paperRef.current = null mid-commit which confuses the drag hook).
-  const setPaperRef = useCallback((node: HTMLElement | null) => {
-    paperRef.current = node;
+  const setPaperReference = useCallback((node: HTMLElement | null) => {
+    paperReference.current = node;
   }, []);
 
-  const paperProps = useMemo(
+  const paperProperties = useMemo(
     () => ({
       ...(testId ? { testid: testId } : {}),
       'data-testid': testId,
-      ref: setPaperRef,
+      ref: setPaperReference,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -279,11 +287,11 @@ export const Modal = ({
       isDraggable,
       isResizable,
       rect,
-      setPaperRef,
+      setPaperReference,
     ],
   );
 
-  const backdropProps = useMemo(
+  const backdropProperties = useMemo(
     () => ({
       style: {
         background: theme.ketcher.color.background.overlay,
@@ -308,8 +316,8 @@ export const Modal = ({
 
   return (
     <StyledDialog
-      BackdropProps={backdropProps}
-      PaperProps={paperProps}
+      BackdropProps={backdropProperties}
+      PaperProps={paperProperties}
       open={isOpen}
       onClose={onClose}
       container={document.querySelector(

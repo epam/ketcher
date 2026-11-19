@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { MonomerListContainer } from './styles';
-import { IMonomerListProps } from './types';
+import { IMonomerListProperties } from './types';
 import {
   selectFilteredMonomers,
   selectMonomerGroups,
@@ -55,7 +55,7 @@ const MonomerList = ({
   libraryName,
   duplicatePreset,
   editPreset,
-}: IMonomerListProps) => {
+}: IMonomerListProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);

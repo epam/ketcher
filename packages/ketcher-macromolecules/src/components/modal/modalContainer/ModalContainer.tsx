@@ -15,7 +15,7 @@
  ***************************************************************************/
 import {
   closeModal,
-  selectAdditionalProps,
+  selectAdditionalProperties,
   isModalOpened,
   selectModalName,
 } from 'state/modal';
@@ -27,7 +27,7 @@ import { modalComponentList } from './modalComponentList';
 export const ModalContainer = () => {
   const isOpen = useAppSelector(isModalOpened);
   const modalName = useAppSelector(selectModalName);
-  const additionalProps = useAppSelector(selectAdditionalProps);
+  const additionalProps = useAppSelector(selectAdditionalProperties);
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
 

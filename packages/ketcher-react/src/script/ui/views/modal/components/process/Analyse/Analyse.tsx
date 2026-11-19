@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { range } from 'lodash/fp';
 import { Dialog } from '../../../../components';
-import type { DialogParams } from '../../../../../../../components/Dialog/Dialog';
+import type { DialogParameters } from '../../../../../../../components/Dialog/Dialog';
 import { analyse } from '../../../../../state/server';
 import { changeRound } from '../../../../../state/options';
 import Select from '../../../../../component/form/Select';
@@ -49,7 +49,7 @@ interface AnalyseItem {
   withSelector: boolean;
 }
 
-interface AnalyseDialogProps extends DialogParams {
+interface AnalyseDialogProps extends DialogParameters {
   values: AnalyseValues | null;
   round: RoundSettings;
   loading: boolean;

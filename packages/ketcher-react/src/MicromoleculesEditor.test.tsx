@@ -2,7 +2,10 @@ import { type Mock } from 'vitest';
 import { StrictMode } from 'react';
 import { act, render, waitFor } from '@testing-library/react';
 import type { Ketcher, StructServiceProvider } from 'ketcher-core';
-import { MicromoleculesEditor, type EditorProps } from './MicromoleculesEditor';
+import {
+  MicromoleculesEditor,
+  type EditorProperties,
+} from './MicromoleculesEditor';
 
 // initApp renders the whole editor UI and is not what these tests are about.
 // Replacing it keeps everything else real: the init function, KetcherBuilder,
@@ -73,7 +76,7 @@ const renderEditor = async (wrapper?: typeof StrictMode) => {
           structServiceProvider,
           errorHandler: vi.fn(),
           onInit,
-        } as EditorProps)}
+        } as EditorProperties)}
       />,
       { wrapper },
     );

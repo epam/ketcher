@@ -16,7 +16,7 @@
 
 import type { Action, AtomAttributes, Bond, Vec2 } from 'ketcher-core';
 
-export type BondItemRef = { map: string; id: number };
+export type BondItemReference = { map: string; id: number };
 
 export interface BondToolDragContext {
   xy0: Vec2;
@@ -25,12 +25,12 @@ export interface BondToolDragContext {
   hasStartedDragging: boolean;
   hapticValidationFailed: boolean;
   attachmentGroupValidationFailed: boolean;
-  item?: BondItemRef;
+  item?: BondItemReference;
   action?: Action;
   existedBond?: Bond;
 }
 
-export interface BondActionParams {
+export interface BondActionParameters {
   beginAtom: number | AtomAttributes;
   endAtom: number | AtomAttributes;
   beginPos?: Vec2;

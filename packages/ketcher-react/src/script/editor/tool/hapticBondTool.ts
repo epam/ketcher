@@ -56,9 +56,9 @@ export class HapticBondToolHelper {
   private readonly editor: Editor;
   private readonly bondProps: Partial<BondAttributes>;
 
-  constructor(editor: Editor, bondProps: Partial<BondAttributes>) {
+  constructor(editor: Editor, bondProperties: Partial<BondAttributes>) {
     this.editor = editor;
-    this.bondProps = bondProps;
+    this.bondProps = bondProperties;
   }
 
   isHapticBondType() {
@@ -69,51 +69,67 @@ export class HapticBondToolHelper {
     return this.isHapticBondType() ? getHapticBondEndPosition(start, end) : end;
   }
 
-  getAtomForValidation(molecule: Struct, atomOrProps: AtomValidationInput) {
-    return typeof atomOrProps === 'number'
-      ? molecule.getBondEndpoint(atomOrProps)
-      : atomOrProps;
+  getAtomForValidation(
+    molecule: Struct,
+    atomOrProperties: AtomValidationInput,
+  ) {
+    return typeof atomOrProperties === 'number'
+      ? molecule.getBondEndpoint(atomOrProperties)
+      : atomOrProperties;
   }
 
   isAttachmentGroupInvolved(
     molecule: Struct,
-    beginAtomOrProps: AtomValidationInput,
-    endAtomOrProps: AtomValidationInput,
+    beginAtomOrProperties: AtomValidationInput,
+    endAtomOrProperties: AtomValidationInput,
   ) {
-    const beginAtom = this.getAtomForValidation(molecule, beginAtomOrProps);
-    const endAtom = this.getAtomForValidation(molecule, endAtomOrProps);
+    const beginAtom = this.getAtomForValidation(
+      molecule,
+      beginAtomOrProperties,
+    );
+    const endAtom = this.getAtomForValidation(molecule, endAtomOrProperties);
 
     return isAttachmentGroup(beginAtom) || isAttachmentGroup(endAtom);
   }
 
   isValidHapticBond(
     molecule: Struct,
-    beginAtomOrProps: AtomValidationInput,
-    endAtomOrProps: AtomValidationInput,
+    beginAtomOrProperties: AtomValidationInput,
+    endAtomOrProperties: AtomValidationInput,
   ) {
     if (!this.isHapticBondType()) {
       return true;
     }
 
     return isHapticBondPairAllowed(
-      this.getAtomForValidation(molecule, beginAtomOrProps),
-      this.getAtomForValidation(molecule, endAtomOrProps),
+      this.getAtomForValidation(molecule, beginAtomOrProperties),
+      this.getAtomForValidation(molecule, endAtomOrProperties),
     );
   }
 
   getBondPairValidationFailure(
     molecule: Struct,
-    beginAtomOrProps: AtomValidationInput,
-    endAtomOrProps: AtomValidationInput,
+    beginAtomOrProperties: AtomValidationInput,
+    endAtomOrProperties: AtomValidationInput,
   ): BondValidationFailure | null {
     if (
       !this.isHapticBondType() &&
-      this.isAttachmentGroupInvolved(molecule, beginAtomOrProps, endAtomOrProps)
+      this.isAttachmentGroupInvolved(
+        molecule,
+        beginAtomOrProperties,
+        endAtomOrProperties,
+      )
     ) {
       return 'attachmentGroup';
     }
 
-    if (!this.isValidHapticBond(molecule, beginAtomOrProps, endAtomOrProps)) {
+    if (
+      !this.isValidHapticBond(
+        molecule,
+        beginAtomOrProperties,
+        endAtomOrProperties,
+      )
+    ) {
       return 'haptic';
     }
 
@@ -159,10 +175,10 @@ export class HapticBondToolHelper {
   cancelBondDragWithValidationError(
     event: PointerEvent,
     failure: BondValidationFailure,
-    clearDragCtx: () => void,
+    clearDragContext: () => void,
   ) {
     this.showValidationError(failure);
-    clearDragCtx();
+    clearDragContext();
     this.editor.event.message.dispatch({
       info: false,
     });

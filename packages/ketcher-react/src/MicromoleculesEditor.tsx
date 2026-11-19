@@ -39,66 +39,68 @@ const mediaSizes = {
   smallHeight: 600,
 };
 
-export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
+export interface EditorProperties extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
   onSetKetcherId?: (ketcherId: string) => void;
 }
 
-function MicromoleculesEditor(props: Readonly<EditorProps>) {
-  const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
-  const appRootRef = useRef<Root | null>(null);
-  const cleanupRef = useRef<(() => unknown) | null>(null);
-  const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
-  const ketcherRef = useRef<Ketcher | null>(null);
+function MicromoleculesEditor(properties: Readonly<EditorProperties>) {
+  const initPromiseReference = useRef<ReturnType<typeof init> | null>(null);
+  const appRootReference = useRef<Root | null>(null);
+  const cleanupReference = useRef<(() => unknown) | null>(null);
+  const ketcherBuilderReference = useRef<KetcherBuilder | null>(null);
+  const ketcherReference = useRef<Ketcher | null>(null);
 
-  const setServerRef = useRef<(structService: Api) => void>(() => {});
-  const structServiceProvider = props.structServiceProvider;
+  const setServerReference = useRef<(structService: Api) => void>(() => {});
+  const structServiceProvider = properties.structServiceProvider;
 
-  const rootElRef = useRef<HTMLDivElement>(null);
+  const rootElementReference = useRef<HTMLDivElement>(null);
 
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: rootElRef as RefObject<HTMLDivElement>,
+    ref: rootElementReference as RefObject<HTMLDivElement>,
   });
 
   useEffect(() => {
-    const ketcherId = ketcherRef.current?.id;
+    const ketcherId = ketcherReference.current?.id;
 
     if (!ketcherId) {
       return;
     }
 
-    ketcherBuilderRef.current?.reinitializeApi(
+    ketcherBuilderReference.current?.reinitializeApi(
       ketcherId,
       structServiceProvider,
-      setServerRef.current,
+      setServerReference.current,
     );
   }, [structServiceProvider]);
 
   // Editor is initialized once on mount with the props of the first render
-  const initialPropsRef = useRef(props);
+  const initialPropertiesReference = useRef(properties);
 
   const initKetcher = useCallback(async () => {
-    const initialProps = initialPropsRef.current;
-    appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
+    const initialProperties = initialPropertiesReference.current;
+    appRootReference.current = createRoot(
+      rootElementReference.current as HTMLDivElement,
+    );
 
-    initPromiseRef.current = init({
-      ...initialProps,
-      element: rootElRef.current,
-      appRoot: appRootRef.current,
+    initPromiseReference.current = init({
+      ...initialProperties,
+      element: rootElementReference.current,
+      appRoot: appRootReference.current,
     });
 
-    const initPromise = initPromiseRef.current;
+    const initPromise = initPromiseReference.current;
     if (initPromise) {
       void (async () => {
         const { ketcher, cleanup, builder, setServer } = await initPromise;
-        cleanupRef.current = cleanup;
-        ketcherBuilderRef.current = builder;
-        ketcherRef.current = ketcher;
-        setServerRef.current = setServer;
-        initialProps.onSetKetcherId?.(ketcher.id);
+        cleanupReference.current = cleanup;
+        ketcherBuilderReference.current = builder;
+        ketcherReference.current = ketcher;
+        setServerReference.current = setServer;
+        initialProperties.onSetKetcherId?.(ketcher.id);
 
-        if (ketcher && typeof initialProps.onInit === 'function') {
-          initialProps.onInit(ketcher);
+        if (ketcher && typeof initialProperties.onInit === 'function') {
+          initialProperties.onInit(ketcher);
           const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
           globalThis.dispatchEvent(ketcherInitEvent);
         }
@@ -107,10 +109,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   }, []);
 
   useEffect(() => {
-    if (initPromiseRef.current === null) {
+    if (initPromiseReference.current === null) {
       initKetcher();
     } else {
-      const initPromise = initPromiseRef.current;
+      const initPromise = initPromiseReference.current;
       void (async () => {
         try {
           await initPromise;
@@ -121,13 +123,13 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     }
 
     return () => {
-      const initPromise = initPromiseRef.current;
+      const initPromise = initPromiseReference.current;
       if (initPromise) {
         void (async () => {
           await initPromise;
-          cleanupRef.current?.();
-          appRootRef.current?.unmount();
-          ketcherBuilderRef.current?.destroy();
+          cleanupReference.current?.();
+          appRootReference.current?.unmount();
+          ketcherBuilderReference.current?.destroy();
         })();
       }
     };
@@ -135,7 +137,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
 
   return (
     <div
-      ref={rootElRef}
+      ref={rootElementReference}
       className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
         [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||

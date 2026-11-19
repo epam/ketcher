@@ -19,16 +19,16 @@ import { useEffect, useRef } from 'react';
 
 import styles from './InfoModal.module.less';
 
-interface InfoModalProps {
+interface InfoModalProperties {
   message: string;
   close: () => void;
 }
 
-const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+const InfoModal = ({ message, close }: InfoModalProperties): JSX.Element => {
+  const dialogReference = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const dialog = dialogRef.current;
+    const dialog = dialogReference.current;
     if (dialog && !dialog.open) {
       dialog.showModal();
     }
@@ -43,7 +43,7 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
   return (
     <div className={styles.infoModalOverlay}>
       <dialog
-        ref={dialogRef}
+        ref={dialogReference}
         className={styles.infoModalWindow}
         aria-labelledby="dialog-label"
         aria-describedby="dialog-content"

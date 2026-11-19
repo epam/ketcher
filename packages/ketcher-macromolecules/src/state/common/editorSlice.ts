@@ -142,7 +142,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
         monomersLibraryUpdate?: string | JSON;
         monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
-        onLibraryError?: (err: unknown) => void;
+        onLibraryError?: (error: unknown) => void;
       }>,
     ) => {
       state.monomerLibraryLoadError = null;

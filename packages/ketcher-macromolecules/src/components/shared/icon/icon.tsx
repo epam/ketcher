@@ -102,12 +102,12 @@ const iconMap = {
 
 type IconNameType = keyof typeof iconMap;
 
-type IconPropsType = {
+type IconPropertiesType = {
   name: IconNameType;
   className?: string;
 };
 
-const Icon = ({ name, className }: IconPropsType) => {
+const Icon = ({ name, className }: IconPropertiesType) => {
   const theme = useTheme();
   const Component = iconMap[name];
 

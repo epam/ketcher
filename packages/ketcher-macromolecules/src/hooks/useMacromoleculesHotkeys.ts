@@ -6,10 +6,10 @@ export function useMacromoleculesHotkeys() {
     const HELP_LINK = (import.meta.env.HELP_LINK as string) || 'master';
     const helpUrl = `https://github.com/epam/ketcher/blob/${HELP_LINK}/documentation/help.md#ketcher-macromolecules-mode`;
 
-    const handler = guardForMacromoleculesEditor((e: KeyboardEvent) => {
-      if (e.defaultPrevented) return;
+    const handler = guardForMacromoleculesEditor((event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
 
-      const target = e.target as HTMLElement | null;
+      const target = event.target as HTMLElement | null;
       const isEditableTarget = !!(
         target &&
         (target.tagName === 'INPUT' ||
@@ -20,9 +20,10 @@ export function useMacromoleculesHotkeys() {
 
       if (isEditableTarget) return;
 
-      const isQuestionHotkey = e.key === '?' || (e.key === '/' && e.shiftKey);
-      if (isQuestionHotkey && !e.repeat) {
-        e.preventDefault();
+      const isQuestionHotkey =
+        event.key === '?' || (event.key === '/' && event.shiftKey);
+      if (isQuestionHotkey && !event.repeat) {
+        event.preventDefault();
         window.open(helpUrl, '_blank')?.focus?.();
       }
     });

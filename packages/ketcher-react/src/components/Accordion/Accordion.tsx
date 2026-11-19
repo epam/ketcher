@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Container, DetailsContainer, SummaryContainer } from './styles';
-import type { IAccordionProps } from './types';
+import type { IAccordionProperties } from './types';
 
 export const Accordion = ({
   summary,
@@ -23,7 +23,7 @@ export const Accordion = ({
   className,
   onSummaryClick,
   dataTestIdDetails,
-}: IAccordionProps) => {
+}: IAccordionProperties) => {
   return (
     <Container className={className}>
       <SummaryContainer onClick={onSummaryClick}>{summary}</SummaryContainer>

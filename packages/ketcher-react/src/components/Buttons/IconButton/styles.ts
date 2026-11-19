@@ -17,12 +17,12 @@
 import styled from '@emotion/styled';
 import Icon from '../../Icon/Icon';
 import { style } from 'src/components/styles';
-import type { IStyledButtonProps } from './types';
+import type { IStyledButtonProperties } from './types';
 import { css } from '@emotion/react';
 
 export const StyledButton = styled('button', {
-  shouldForwardProp: (prop) => prop !== 'isActive',
-})<IStyledButtonProps>((props) => ({
+  shouldForwardProp: (property) => property !== 'isActive',
+})<IStyledButtonProperties>((properties) => ({
   boxShadow: 'none',
   transition: 'none',
   background: 'none',
@@ -35,14 +35,18 @@ export const StyledButton = styled('button', {
   minHeight: '28px',
   minWidth: '28px',
   cursor: 'pointer',
-  color: props.isActive ? style.text.color.secondary : style.text.color.primary,
-  backgroundColor: props.isActive
+  color: properties.isActive
+    ? style.text.color.secondary
+    : style.text.color.primary,
+  backgroundColor: properties.isActive
     ? style.background.color.secondary
     : undefined,
 
   ':hover': {
-    color: props.isActive ? undefined : style.text.color.hover,
-    backgroundColor: props.isActive ? style.background.color.hover : undefined,
+    color: properties.isActive ? undefined : style.text.color.hover,
+    backgroundColor: properties.isActive
+      ? style.background.color.hover
+      : undefined,
   },
 
   ':active': {

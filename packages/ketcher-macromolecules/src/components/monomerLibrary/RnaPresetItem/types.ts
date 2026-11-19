@@ -17,7 +17,7 @@
 import React from 'react';
 import { IRnaPreset } from '../RnaBuilder/types';
 
-export interface IRNAPresetItemProps {
+export interface IRNAPresetItemProperties {
   readonly isSelected: boolean;
   readonly onClick: VoidFunction;
   readonly onContextMenu: React.MouseEventHandler;

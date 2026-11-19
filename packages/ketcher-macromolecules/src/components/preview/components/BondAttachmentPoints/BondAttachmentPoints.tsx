@@ -5,7 +5,7 @@ import {
   LeavingGroup,
 } from './BondAttachmentPoints.styles';
 
-interface Props {
+interface Properties {
   attachmentPoints: PreparedAttachmentPointData[];
   attachmentPointInBond: string | undefined;
 }
@@ -13,7 +13,7 @@ interface Props {
 const BondAttachmentPoints = ({
   attachmentPoints,
   attachmentPointInBond,
-}: Props) => {
+}: Properties) => {
   return (
     <>
       {attachmentPoints.map((attachmentPoint) => {

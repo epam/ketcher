@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { StyledButton } from './styles';
-import type { IIconButtonBaseProps } from './types';
+import type { IIconButtonBaseProperties } from './types';
 
 export const IconButtonBase = ({
   onClick,
@@ -27,7 +27,7 @@ export const IconButtonBase = ({
   disabled = false,
   testId,
   children,
-}: IIconButtonBaseProps) => {
+}: IIconButtonBaseProperties) => {
   const combinedTitle = shortcut ? `${title} (${shortcut})` : title;
 
   if (isHidden) {

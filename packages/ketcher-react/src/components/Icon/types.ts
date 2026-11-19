@@ -25,13 +25,13 @@ export type SvgComponent = React.FunctionComponent<
 
 export type IconName = keyof typeof iconNameToIcon;
 
-export interface IIconProps {
+export interface IIconProperties {
   name: IconName;
   className?: string;
   title?: string;
-  onClick?: (e: MouseEvent) => void;
-  onMouseOver?: (e: MouseEvent) => void;
-  onMouseOut?: (e: MouseEvent) => void;
-  onDoubleClick?: (e: MouseEvent) => void;
+  onClick?: (event: MouseEvent) => void;
+  onMouseOver?: (event: MouseEvent) => void;
+  onMouseOut?: (event: MouseEvent) => void;
+  onDoubleClick?: (event: MouseEvent) => void;
   dataTestId?: string;
 }

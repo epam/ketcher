@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import {
-  type EditorProps,
+  type EditorProperties,
   MicromoleculesEditor as MicromoleculesEditorComponent,
 } from './MicromoleculesEditor';
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
@@ -24,15 +24,15 @@ import {
   type MonomerCreationWizardRequest,
 } from 'ketcher-core';
 
-type Props = Omit<EditorProps, 'ketcherId'> &
+type Properties = Omit<EditorProperties, 'ketcherId'> &
   Pick<
-    MacromoleculesEditorProps,
+    MacromoleculesEditorProperties,
     'monomersLibraryUpdate' | 'monomersLibraryReplace'
   > & {
     disableMacromoleculesEditor?: boolean;
   };
 
-interface MacromoleculesEditorProps {
+interface MacromoleculesEditorProperties {
   ketcherId: string;
   togglerComponent?: JSX.Element;
   isMacromoleculesEditorTurnedOn?: boolean;
@@ -56,17 +56,17 @@ interface MacromoleculesEditorProps {
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
 ) as unknown as React.LazyExoticComponent<
-  React.ComponentType<MacromoleculesEditorProps>
+  React.ComponentType<MacromoleculesEditorProperties>
 >;
 
-export const Editor = (props: Props) => {
+export const Editor = (properties: Properties) => {
   const {
     onInit,
     disableMacromoleculesEditor,
     monomersLibraryUpdate,
     monomersLibraryReplace,
-    ...restProps
-  } = props;
+    ...restProperties
+  } = properties;
   // Subscribes this component to react-i18next's languageChanged event so
   // `dir` below is re-evaluated on a live language switch, not just on next
   // full page load. The hook's `t`/`i18n` return values aren't used here.
@@ -75,7 +75,7 @@ export const Editor = (props: Props) => {
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
-  const initializedKetcherRef = useRef<Ketcher | null>(null);
+  const initializedKetcherReference = useRef<Ketcher | null>(null);
 
   const [ketcherId, setKetcherId] = useState<string>('');
   const isMacromoleculesEditorEnabled = !disableMacromoleculesEditor;
@@ -88,9 +88,13 @@ export const Editor = (props: Props) => {
   } | null>(null);
   // Refs (not state) so both init callbacks always see the latest instances,
   // regardless of which render they were created in.
-  const ketcherRef = useRef<Ketcher | undefined>(undefined);
-  const moleculesEditorRef = useRef<MoleculesEditor | undefined>(undefined);
-  const macromoleculesEditorRef = useRef<CoreEditor | undefined>(undefined);
+  const ketcherReference = useRef<Ketcher | undefined>(undefined);
+  const moleculesEditorReference = useRef<MoleculesEditor | undefined>(
+    undefined,
+  );
+  const macromoleculesEditorReference = useRef<CoreEditor | undefined>(
+    undefined,
+  );
 
   const [isMonomerWizardOpen, setIsMonomerWizardOpen] = useState(false);
   const pendingWizard = useRef<MonomerCreationWizardRequest | undefined>(
@@ -216,7 +220,7 @@ export const Editor = (props: Props) => {
       // Preserve the structure before the child's passive cleanup destroys its
       // imperative editor. Drop that instance before it can be enabled again.
       macromoleculesEditor.switchToMicromolecules();
-      macromoleculesEditorRef.current = undefined;
+      macromoleculesEditorReference.current = undefined;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMacromoleculesEditor(undefined);
     }
@@ -353,11 +357,11 @@ export const Editor = (props: Props) => {
   // no guaranteed order, so onInit fires on whichever call finds both ready
   // (or only the molecules editor, if macromolecules is disabled).
   const notifyInitIfReady = () => {
-    const ketcher = ketcherRef.current;
+    const ketcher = ketcherReference.current;
     if (
       !ketcher ||
-      !moleculesEditorRef.current ||
-      !(disableMacromoleculesEditor || macromoleculesEditorRef.current)
+      !moleculesEditorReference.current ||
+      !(disableMacromoleculesEditor || macromoleculesEditorReference.current)
     ) {
       return;
     }
@@ -369,22 +373,22 @@ export const Editor = (props: Props) => {
     if (
       onInit &&
       ketcherProvider.getIndexById(ketcher.id) !== -1 &&
-      initializedKetcherRef.current !== ketcher
+      initializedKetcherReference.current !== ketcher
     ) {
-      initializedKetcherRef.current = ketcher;
+      initializedKetcherReference.current = ketcher;
       onInit?.(ketcher);
     }
   };
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
-    ketcherRef.current = ketcher;
-    moleculesEditorRef.current = ketcher.editor;
+    ketcherReference.current = ketcher;
+    moleculesEditorReference.current = ketcher.editor;
     setMoleculesEditor(ketcher.editor);
     notifyInitIfReady();
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
-    macromoleculesEditorRef.current = macromoleculesEditor;
+    macromoleculesEditorReference.current = macromoleculesEditor;
     setMacromoleculesEditor(macromoleculesEditor);
     notifyInitIfReady();
   };
@@ -426,7 +430,7 @@ export const Editor = (props: Props) => {
           }}
         >
           <MicromoleculesEditorComponent
-            {...restProps}
+            {...restProperties}
             ketcherId={ketcherId}
             onSetKetcherId={setKetcherId}
             togglerComponent={togglerComponent}

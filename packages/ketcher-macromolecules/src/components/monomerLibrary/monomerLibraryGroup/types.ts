@@ -16,7 +16,7 @@
 import { LibraryNameType } from '../../../constants';
 import { MonomerGroups, MonomerOrAmbiguousType } from 'ketcher-core';
 
-export interface IMonomerGroupProps {
+export interface IMonomerGroupProperties {
   items: MonomerOrAmbiguousType[];
   onItemClick?: (item: MonomerOrAmbiguousType) => void;
   title?: string;

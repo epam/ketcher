@@ -19,7 +19,7 @@ import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { DropDown, DropDownProps } from './dropDown';
+import { DropDown, DropDownProperties } from './dropDown';
 
 const mockSelectionHandler = vi.fn();
 const MOCK_OPTIONS = [
@@ -29,7 +29,7 @@ const MOCK_OPTIONS = [
 ];
 const INITIAL_SELECTION = MOCK_OPTIONS[0];
 
-const mockProps: DropDownProps = {
+const mockProps: DropDownProperties = {
   options: MOCK_OPTIONS,
   currentSelection: INITIAL_SELECTION.id,
   selectionHandler: mockSelectionHandler,

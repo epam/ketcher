@@ -15,6 +15,8 @@
  ***************************************************************************/
 import { StyledInput } from './styles';
 
-export const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => {
-  return <StyledInput {...props} />;
+export const Input = (
+  properties: React.InputHTMLAttributes<HTMLInputElement>,
+) => {
+  return <StyledInput {...properties} />;
 };

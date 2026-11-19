@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { removeSlashesFromIdtAlias } from 'helpers';
 
-type Props = {
+type Properties = {
   idtAliases: IKetIdtAliases | undefined;
   attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
 };
@@ -11,7 +11,7 @@ type Props = {
 const useIDTAliasesTextForMonomer = ({
   idtAliases,
   attachmentPointsToBonds,
-}: Props) => {
+}: Properties) => {
   return useMemo(() => {
     if (!idtAliases) {
       return null;

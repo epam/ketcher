@@ -167,30 +167,30 @@ class ChainTool implements Tool {
   mousemove(event: PointerEvent) {
     const editor = this.editor;
     const restruct = editor.render.ctab;
-    const dragCtx = this.dragCtx;
+    const dragContext = this.dragCtx;
 
     editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
       null,
       event,
     );
-    if (dragCtx) {
-      if (dragCtx?.stopTapping) {
-        dragCtx.stopTapping();
+    if (dragContext) {
+      if (dragContext?.stopTapping) {
+        dragContext.stopTapping();
       }
 
       editor.selection(null);
 
-      if (!dragCtx.item || dragCtx.item.map === 'atoms') {
-        if (dragCtx.action) {
-          dragCtx.action.perform(restruct);
+      if (!dragContext.item || dragContext.item.map === 'atoms') {
+        if (dragContext.action) {
+          dragContext.action.perform(restruct);
         }
 
         const atoms = restruct.molecule.atoms;
 
-        const pos0 = dragCtx.item
-          ? (atoms.get(dragCtx.item.id)?.pp ?? dragCtx.xy0)
-          : dragCtx.xy0;
+        const pos0 = dragContext.item
+          ? (atoms.get(dragContext.item.id)?.pp ?? dragContext.xy0)
+          : dragContext.xy0;
 
         const pos1 = CoordinateTransformation.pageToModel(event, editor.render);
         const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
@@ -204,18 +204,18 @@ class ChainTool implements Tool {
           pos0,
           angle,
           sectCount,
-          dragCtx.item ? dragCtx.item.id : null,
+          dragContext.item ? dragContext.item.id : null,
         ) as [Action, { atoms: number[]; bonds: number[] }];
 
         editor.event.message.dispatch({
           info: sectCount + ' sectors',
         });
 
-        dragCtx.action = action;
+        dragContext.action = action;
         editor.update(action, true);
 
-        dragCtx.mergeItems = getItemsToFuse(editor, newItems);
-        editor.hover(getHoverToFuse(dragCtx.mergeItems));
+        dragContext.mergeItems = getItemsToFuse(editor, newItems);
+        editor.hover(getHoverToFuse(dragContext.mergeItems));
       }
     }
 
@@ -261,35 +261,42 @@ class ChainTool implements Tool {
       this.editor.event.removeFG.dispatch({ fgIds: result });
       return;
     }
-    const dragCtx = this.dragCtx;
+    const dragContext = this.dragCtx;
 
-    if (dragCtx) {
+    if (dragContext) {
       delete this.dragCtx;
 
       const editor = this.editor;
 
-      if (dragCtx.stopTapping) {
-        dragCtx.stopTapping();
+      if (dragContext.stopTapping) {
+        dragContext.stopTapping();
       }
 
-      if (!dragCtx.action && dragCtx.item?.map === 'bonds') {
-        const bond = molecule.bonds.get(dragCtx.item.id) as Bond;
+      if (!dragContext.action && dragContext.item?.map === 'bonds') {
+        const bond = molecule.bonds.get(dragContext.item.id) as Bond;
 
-        dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {
-          type: Bond.PATTERN.TYPE.SINGLE,
-          stereo: Bond.PATTERN.STEREO.NONE,
-        });
+        dragContext.action = bondChangingAction(
+          struct,
+          dragContext.item.id,
+          bond,
+          {
+            type: Bond.PATTERN.TYPE.SINGLE,
+            stereo: Bond.PATTERN.STEREO.NONE,
+          },
+        );
       } else {
-        dragCtx.action = dragCtx.action
-          ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-          : fromItemsFuse(struct, dragCtx.mergeItems);
+        dragContext.action = dragContext.action
+          ? fromItemsFuse(struct, dragContext.mergeItems).mergeWith(
+              dragContext.action,
+            )
+          : fromItemsFuse(struct, dragContext.mergeItems);
       }
 
       editor.selection(null);
       editor.hover(null);
 
-      if (dragCtx.action) {
-        editor.update(dragCtx.action);
+      if (dragContext.action) {
+        editor.update(dragContext.action);
       }
 
       editor.event.message.dispatch({

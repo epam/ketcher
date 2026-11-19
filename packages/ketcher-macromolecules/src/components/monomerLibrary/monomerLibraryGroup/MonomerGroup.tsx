@@ -16,7 +16,7 @@
 import { EmptyFunction } from 'helpers';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
-import { IMonomerGroupProps } from './types';
+import { IMonomerGroupProperties } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import {
   MonomerItemType,
@@ -45,7 +45,7 @@ const MonomerGroup = ({
   libraryName,
   disabled,
   onItemClick = EmptyFunction,
-}: IMonomerGroupProps) => {
+}: IMonomerGroupProperties) => {
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -85,15 +85,15 @@ const MonomerGroup = ({
 
   const handleItemMouseMove = (
     monomer: MonomerOrAmbiguousType,
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     closeLibraryPreview();
 
-    if (shouldSkipPreviewForElement(e.target as HTMLElement)) {
+    if (shouldSkipPreviewForElement(event.target as HTMLElement)) {
       return;
     }
 
-    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    const cardCoordinates = event.currentTarget.getBoundingClientRect();
 
     if (isAmbiguousMonomerLibraryItem(monomer)) {
       const top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
@@ -143,7 +143,7 @@ const MonomerGroup = ({
               groupName={groupName}
               isSelected={isMonomerSelected(monomer)}
               onMouseLeave={closeLibraryPreview}
-              onMouseMove={(e) => handleItemMouseMove(monomer, e)}
+              onMouseMove={(event) => handleItemMouseMove(monomer, event)}
               onClick={() => selectMonomer(monomer)}
               onStarClick={closeLibraryPreview}
             />

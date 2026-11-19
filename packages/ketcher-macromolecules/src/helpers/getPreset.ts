@@ -50,10 +50,13 @@ export const getPresets = (
   );
   return rnaPresetsTemplates
     .filter((rnaPresetsTemplate) => {
-      return rnaPresetsTemplate.templates.every((rnaPartsMonomerTemplateRef) =>
-        Boolean(
-          monomerLibraryItemByMonomerIDMap.get(rnaPartsMonomerTemplateRef.$ref),
-        ),
+      return rnaPresetsTemplate.templates.every(
+        (rnaPartsMonomerTemplateReference) =>
+          Boolean(
+            monomerLibraryItemByMonomerIDMap.get(
+              rnaPartsMonomerTemplateReference.$ref,
+            ),
+          ),
       );
     })
     .map((rnaPresetsTemplate: RnaPresetsTemplatesType): IRnaPreset => {
@@ -61,9 +64,9 @@ export const getPresets = (
         KetMonomerClass,
         MonomerItemType
       >(
-        rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateRef) => {
+        rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateReference) => {
           const monomer = monomerLibraryItemByMonomerIDMap.get(
-            rnaPartsMonomerTemplateRef.$ref,
+            rnaPartsMonomerTemplateReference.$ref,
           ) as MonomerItemType;
 
           const [, , monomerClass] = monomerFactory(monomer);

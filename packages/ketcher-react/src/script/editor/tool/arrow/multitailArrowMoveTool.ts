@@ -35,20 +35,20 @@ export class MultitailArrowMoveTool
     const { closestItem, originalPosition } = dragContext;
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const offset = current.sub(originalPosition);
-    const ref = closestItem.ref;
-    if (ref && ref.name !== MultitailArrowRefName.SPINE) {
-      if (ref.isLine) {
+    const reference = closestItem.ref;
+    if (reference && reference.name !== MultitailArrowRefName.SPINE) {
+      if (reference.isLine) {
         return fromMultitailArrowHeadTailMove(
           this.reStruct,
           closestItem.id,
-          ref,
+          reference,
           offset.y,
         );
       } else {
         return fromMultitailArrowHeadTailsResize(
           this.reStruct,
           dragContext.closestItem.id,
-          ref,
+          reference,
           offset.x,
         );
       }

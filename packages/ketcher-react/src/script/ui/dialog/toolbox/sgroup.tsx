@@ -18,7 +18,7 @@ import Form, { SelectOneOf } from '../../component/form/form/form';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
-import { Dialog, type DialogParams } from '../../views/components';
+import { Dialog, type DialogParameters } from '../../views/components';
 import SDataFieldset from './SDataFieldset';
 import classes from './sgroup.module.less';
 import SGroupFieldset from './SGroupFieldset';
@@ -39,7 +39,7 @@ interface SgroupFormState {
   result: SgroupFormResult;
 }
 
-interface SgroupOwnProps extends DialogParams {
+interface SgroupOwnProps extends DialogParameters {
   type?: string;
   selectedSruCount?: number;
   [key: string]: unknown;

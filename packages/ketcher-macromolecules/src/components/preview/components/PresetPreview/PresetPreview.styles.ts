@@ -23,10 +23,10 @@ export const PresetContainer = styled.div`
   align-items: center;
   gap: 8px;
   padding: 8px;
-  background: ${(props) => props.theme.ketcher.color.background.primary};
-  border: ${(props) => props.theme.ketcher.border.regular};
-  border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
-  box-shadow: ${(props) => props.theme.ketcher.shadow.regular};
+  background: ${(properties) => properties.theme.ketcher.color.background.primary};
+  border: ${(properties) => properties.theme.ketcher.border.regular};
+  border-radius: ${(properties) => properties.theme.ketcher.border.radius.regular};
+  box-shadow: ${(properties) => properties.theme.ketcher.shadow.regular};
 `;
 
 export const PresetMonomerRow = styled.div`
@@ -35,22 +35,22 @@ export const PresetMonomerRow = styled.div`
 `;
 
 export const PresetMonomerLabel = styled.div`
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
-  line-height: ${(props) => props.theme.ketcher.font.size.regular};
+  font-size: ${(properties) => properties.theme.ketcher.font.size.regular};
+  line-height: ${(properties) => properties.theme.ketcher.font.size.regular};
   font-weight: 600;
   padding-inline-end: 2px;
 `;
 
 export const PresetMonomerName = styled.div`
-  color: ${(props) => props.theme.ketcher.color.text.lightgrey};
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  color: ${(properties) => properties.theme.ketcher.color.text.lightgrey};
+  font-size: ${(properties) => properties.theme.ketcher.font.size.regular};
   font-weight: 400;
   white-space: nowrap;
 `;
 
 export const PresetName = styled.p`
-  color: ${(props) => props.theme.ketcher.color.text.primary};
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  color: ${(properties) => properties.theme.ketcher.color.text.primary};
+  font-size: ${(properties) => properties.theme.ketcher.font.size.regular};
   font-weight: 700;
   word-break: break-all;
   text-align: center;

@@ -5,7 +5,7 @@ import type {
   ItemEventParams,
   RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
-import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utils';
+import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utilities';
 import { type Ketcher, ketcherProvider, assert } from 'ketcher-core';
 
 type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;

@@ -365,8 +365,7 @@
             "y": -10.25
         },
         "alias": "meP",
-        "templateId": "meP___N-Methyl-Proline",
-        "seqid": 7
+        "templateId": "meP___N-Methyl-Proline"
     },
     "monomer7": {
         "type": "monomer",

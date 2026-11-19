@@ -14,26 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type {
-  MultiToolCallProperties,
-  MultiToolProperties,
-} from '../variants.types';
+import type { MultiToolCallProps, MultiToolProps } from '../variants.types';
 
-import {
-  type ActionButtonProperties,
-  ActionButton,
-} from '../../../ActionButton';
+import { type ActionButtonProps, ActionButton } from '../../../ActionButton';
 import action from '../../../../../../action';
 import { getIconName } from 'components';
 
-type DefaultMultiToolProperties = MultiToolProperties;
-type DefaultMultiToolCallProperties = MultiToolCallProperties;
+type DefaultMultiToolProps = MultiToolProps;
+type DefaultMultiToolCallProps = MultiToolCallProps;
 
-type Properties = DefaultMultiToolProperties & DefaultMultiToolCallProperties;
+type Props = DefaultMultiToolProps & DefaultMultiToolCallProps;
 
-const DefaultMultiTool = (properties: Properties) => {
+const DefaultMultiTool = (props: Props) => {
   const { options, status, disableableButtons, indigoVerification, onAction } =
-    properties;
+    props;
 
   return (
     <>
@@ -46,7 +40,7 @@ const DefaultMultiTool = (properties: Properties) => {
               key={toolbarItem.id}
               name={iconName}
               action={action[toolbarItem.id]}
-              status={currentStatus as ActionButtonProperties['status']}
+              status={currentStatus as ActionButtonProps['status']}
               selected={!!currentStatus?.selected}
               disableableButtons={disableableButtons}
               indigoVerification={indigoVerification}
@@ -59,5 +53,5 @@ const DefaultMultiTool = (properties: Properties) => {
   );
 };
 
-export type { DefaultMultiToolProperties, DefaultMultiToolCallProperties };
+export type { DefaultMultiToolProps, DefaultMultiToolCallProps };
 export { DefaultMultiTool };

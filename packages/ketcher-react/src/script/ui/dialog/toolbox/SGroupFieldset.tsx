@@ -22,7 +22,7 @@ import Select from '../../component/form/Select';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 import { getSelectOptionsFromSchema } from '../../utils';
 import classes from './sgroup.module.less';
-import type { BaseProperties } from '../../views/modal/modal.types';
+import type { BaseProps } from '../../views/modal/modal.types';
 
 type PropMappingValue = {
   maxLength?: number;
@@ -70,7 +70,7 @@ const content = (type: string, t: TFunction): JSX.Element[] =>
     });
 
 interface SGroupFieldsetProps {
-  formState: BaseProperties<{ type: string }>['formState'];
+  formState: BaseProps<{ type: string }>['formState'];
 }
 
 function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {

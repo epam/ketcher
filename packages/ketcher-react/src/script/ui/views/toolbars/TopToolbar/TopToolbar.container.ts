@@ -77,7 +77,7 @@ const disableableButtons = [
 
 const shortcuts = generateMenuShortcuts<typeof action>(action);
 
-const mapStateToProperties = (state: State) => {
+const mapStateToProps = (state: State) => {
   return {
     currentZoom: Math.round((state.editor?.zoom() ?? 1) * 100),
     disabledButtons: disabledButtonsSelector(state),
@@ -94,7 +94,7 @@ const mapStateToProperties = (state: State) => {
   };
 };
 
-const mapDispatchToProperties = (dispatch: Dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   const dispatchAction = (actionName: string) => {
     if (['zoom-in', 'zoom-out'].includes(actionName)) {
       dispatch(onAction(action[actionName].action()));
@@ -147,8 +147,8 @@ const mapDispatchToProperties = (dispatch: Dispatch) => {
 };
 
 const TopToolbarContainer = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
+  mapStateToProps,
+  mapDispatchToProps,
 )(TopToolbar);
 
 export { TopToolbarContainer };

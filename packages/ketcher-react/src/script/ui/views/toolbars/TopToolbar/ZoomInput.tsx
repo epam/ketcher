@@ -64,7 +64,7 @@ export const updateInputString = (
   inputElement.value = `${zoom}%`;
 };
 
-export interface ZoomInputProperties {
+export interface ZoomInputProps {
   onZoomSubmit: () => void;
   currentZoom: number;
   inputRef: RefObject<HTMLInputElement>;
@@ -76,7 +76,7 @@ export const ZoomInput = ({
   currentZoom,
   inputRef,
   shortcuts,
-}: ZoomInputProperties) => {
+}: ZoomInputProps) => {
   useEffect(() => {
     const inputElement = inputRef.current;
     updateInputString(currentZoom, inputElement);

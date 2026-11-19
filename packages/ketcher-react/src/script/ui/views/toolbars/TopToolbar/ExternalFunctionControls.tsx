@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { ElementWithDropdown } from './ElementWithDropdown';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface ExternalFunctionProperties {
+interface ExternalFunctionProps {
   isCollapsed: boolean;
   onLayout: () => void;
   onClean: () => void;
@@ -50,7 +50,7 @@ export const ExternalFunctionControls = ({
   indigoVerification,
   hiddenButtons,
   shortcuts,
-}: ExternalFunctionProperties) => {
+}: ExternalFunctionProps) => {
   const { t } = useTranslation('toolbar');
   const externalFunctionButtons = [
     {

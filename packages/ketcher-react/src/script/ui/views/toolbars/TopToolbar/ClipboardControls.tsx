@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { ElementWithDropdown } from './ElementWithDropdown';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface ClipboardControlsProperties {
+interface ClipboardControlsProps {
   onCopy: () => void;
   onCopyMol: () => void;
   onCopyKet: () => void;
@@ -40,7 +40,7 @@ export const ClipboardControls = ({
   shortcuts,
   disabledButtons,
   hiddenButtons,
-}: ClipboardControlsProperties) => {
+}: ClipboardControlsProps) => {
   const { t } = useTranslation('toolbar');
   const copyButtons = [
     {

@@ -23,7 +23,7 @@ type GroupDescriptor = {
   end: number;
 };
 
-interface MultiToolProperties {
+interface MultiToolProps {
   options: ToolbarItem[];
   groups?: GroupDescriptor[];
   status: ToolbarStatus;
@@ -31,7 +31,7 @@ interface MultiToolProperties {
   indigoVerification: boolean;
 }
 
-interface MultiToolCallProperties {
+interface MultiToolCallProps {
   onAction: (action: UiActionAction) => void;
 }
 
@@ -39,7 +39,7 @@ type MultiToolVariant = 'default' | 'grouped';
 
 export type {
   GroupDescriptor,
-  MultiToolProperties,
-  MultiToolCallProperties,
+  MultiToolProps,
+  MultiToolCallProps,
   MultiToolVariant,
 };

@@ -31,8 +31,16 @@ function getPanelPositionRelativeToRect(
   }
 
   const hoveringWithAttrs = sGroup.hovering as {
-    attrs?: { path?: Array<Array<number>> };
+    removed?: boolean;
+    attrs?: { path?: Array<Array<number>> } | null;
   };
+
+  // A selected s-group keeps the outline of an earlier hover, which Raphael
+  // has already removed. Its points are gone, so there is nothing to place
+  // the panel against.
+  if (hoveringWithAttrs.removed) {
+    return null;
+  }
 
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
   const rectCoords: Array<Array<number>> =

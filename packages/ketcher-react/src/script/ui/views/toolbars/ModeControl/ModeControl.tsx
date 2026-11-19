@@ -19,7 +19,7 @@ import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
-interface IStyledIconProperties {
+interface IStyledIconProps {
   expanded?: boolean;
   hidden?: boolean;
   disabled?: boolean;
@@ -56,16 +56,14 @@ const DropDownButton = styled(Button)(() => ({
   },
 }));
 
-const StyledIcon = styled(Icon)<IStyledIconProperties>`
+const StyledIcon = styled(Icon)<IStyledIconProps>`
   width: 16px;
   height: 16px;
   transform: ${({ expanded }) => (expanded ? 'rotate(180deg)' : 'none')};
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const StyledIconForMacromoleculesToggler = styled(
-  StyledIcon,
-)<IStyledIconProperties>`
+const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
@@ -74,7 +72,7 @@ const StyledIconForMacromoleculesToggler = styled(
   }
 `;
 
-const ModeIconWrapper = styled('div')<IStyledIconProperties>`
+const ModeIconWrapper = styled('div')<IStyledIconProps>`
   display: inline-flex;
   align-items: center;
   opacity: ${({ disabled }) => (disabled ? '0.38' : '1')};
@@ -147,7 +145,7 @@ const DropDownContent = styled('div')`
   cursor: pointer;
 `;
 
-interface ModeProperties {
+interface ModeProps {
   toggle: (isEnabled: boolean) => void;
   isPolymerEditor: boolean;
   disabled?: boolean;
@@ -157,7 +155,7 @@ export const ModeControl = ({
   toggle,
   isPolymerEditor,
   disabled = false,
-}: ModeProperties) => {
+}: ModeProps) => {
   const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [buttonElement, setButtonElement] = useState<HTMLButtonElement | null>(

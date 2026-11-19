@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import {
-  type BottomToolbarCallProperties,
-  type BottomToolbarProperties,
+  type BottomToolbarCallProps,
+  type BottomToolbarProps,
   BottomToolbar,
 } from './BottomToolbar';
 
@@ -25,11 +25,11 @@ import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 
-type StateProperties = Omit<BottomToolbarProperties, 'className'>;
-type OwnProperties = Pick<BottomToolbarProperties, 'className'>;
+type StateProps = Omit<BottomToolbarProps, 'className'>;
+type OwnProps = Pick<BottomToolbarProps, 'className'>;
 const disableableButtons = [];
 
-const mapStateToProperties = (state): StateProperties => ({
+const mapStateToProps = (state): StateProps => ({
   active: state.actionState?.activeTool,
   status: state.actionState ?? {},
   opened: state.toolbar.opened,
@@ -37,9 +37,7 @@ const mapStateToProperties = (state): StateProperties => ({
   disableableButtons,
 });
 
-const mapDispatchToProperties = (
-  dispatch: Dispatch,
-): BottomToolbarCallProperties => ({
+const mapDispatchToProps = (dispatch: Dispatch): BottomToolbarCallProps => ({
   onAction: (action) => dispatch(onAction(action)),
   onOpen: (menuName, isSelected) =>
     dispatch({
@@ -48,9 +46,9 @@ const mapDispatchToProperties = (
     }),
 });
 
-const BottomToolbarContainer: ComponentType<OwnProperties> = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
+const BottomToolbarContainer: ComponentType<OwnProps> = connect(
+  mapStateToProps,
+  mapDispatchToProps,
 )(BottomToolbar);
 
 export { BottomToolbarContainer };

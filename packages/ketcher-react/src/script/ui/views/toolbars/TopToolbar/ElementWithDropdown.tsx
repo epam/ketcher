@@ -79,7 +79,7 @@ const DropDownArrow = styled(Icon)`
   }
 `;
 
-interface ElementWithDropdownProperties {
+interface ElementWithDropdownProps {
   topElement?: JSX.Element;
   dropDownElements: JSX.Element[];
   onToolOpen: () => void;
@@ -89,7 +89,7 @@ const MenuItemWithDropdown = ({
   topElement,
   dropDownElements,
   onToolOpen,
-}: ElementWithDropdownProperties) => {
+}: ElementWithDropdownProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const collapse = () => {
@@ -125,7 +125,7 @@ const MenuItemWithDropdown = ({
 };
 
 // TODO: refactor, workaround to fix top toolbar dropdowns and left toolbar dropdowns overlapping
-const mapDispatchToProperties = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   onToolOpen: () =>
     dispatch({
       type: 'OPENED',
@@ -135,5 +135,5 @@ const mapDispatchToProperties = (dispatch) => ({
 
 export const ElementWithDropdown = connect(
   null,
-  mapDispatchToProperties,
+  mapDispatchToProps,
 )(MenuItemWithDropdown);

@@ -15,28 +15,23 @@
  ***************************************************************************/
 
 import {
-  type ToolbarGroupItemCallProperties,
-  type ToolbarGroupItemProperties,
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
 } from '../../ToolbarGroupItem';
 
 import { rGroupOptions } from '../leftToolbarOptions';
 
-interface RGroupProperties extends Omit<
-  ToolbarGroupItemProperties,
-  'id' | 'options'
-> {
+interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number;
 }
-type RGroupCallProperties = ToolbarGroupItemCallProperties;
+type RGroupCallProps = ToolbarGroupItemCallProps;
 
-type Properties = RGroupProperties & RGroupCallProperties;
+type Props = RGroupProps & RGroupCallProps;
 
-const RGroup = (properties: Properties) => {
-  return (
-    <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...properties} />
-  );
+const RGroup = (props: Props) => {
+  return <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />;
 };
 
-export type { RGroupProperties, RGroupCallProperties };
+export type { RGroupProps, RGroupCallProps };
 export { RGroup };

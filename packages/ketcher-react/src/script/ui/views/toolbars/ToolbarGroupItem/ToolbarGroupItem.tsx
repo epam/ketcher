@@ -16,12 +16,12 @@
 
 import action, { type UiActionAction } from '../../../action';
 
-import { type ActionButtonProperties, ActionButton } from './ActionButton';
+import { type ActionButtonProps, ActionButton } from './ActionButton';
 import type { ToolbarItem, ToolbarStatus } from '../toolbar.types';
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem';
 import { getIconName } from 'components';
 
-interface ToolbarGroupItemProperties extends ToolbarItem {
+interface ToolbarGroupItemProps extends ToolbarItem {
   status: ToolbarStatus;
   opened: string | null;
   disableableButtons: string[];
@@ -31,14 +31,14 @@ interface ToolbarGroupItemProperties extends ToolbarItem {
   dataTestId?: string;
 }
 
-interface ToolbarGroupItemCallProperties {
+interface ToolbarGroupItemCallProps {
   onAction: (action: UiActionAction) => void;
   onOpen: (menuName: string, isSelected: boolean) => void;
 }
 
-type Properties = ToolbarGroupItemProperties & ToolbarGroupItemCallProperties;
+type Props = ToolbarGroupItemProps & ToolbarGroupItemCallProps;
 
-const ToolbarGroupItem = (properties: Properties) => {
+const ToolbarGroupItem = (props: Props) => {
   const {
     id,
     options,
@@ -51,7 +51,7 @@ const ToolbarGroupItem = (properties: Properties) => {
     onAction,
     onOpen,
     dataTestId,
-  } = properties;
+  } = props;
   if (!options?.length) {
     const iconName = getIconName(id);
     return (
@@ -60,7 +60,7 @@ const ToolbarGroupItem = (properties: Properties) => {
           className={className}
           name={iconName}
           action={action[id]}
-          status={status[id] as ActionButtonProperties['status']}
+          status={status[id] as ActionButtonProps['status']}
           selected={!!status[id]?.selected}
           indigoVerification={indigoVerification}
           disableableButtons={disableableButtons}
@@ -88,5 +88,5 @@ const ToolbarGroupItem = (properties: Properties) => {
   );
 };
 
-export type { ToolbarGroupItemProperties, ToolbarGroupItemCallProperties };
+export type { ToolbarGroupItemProps, ToolbarGroupItemCallProps };
 export { ToolbarGroupItem };

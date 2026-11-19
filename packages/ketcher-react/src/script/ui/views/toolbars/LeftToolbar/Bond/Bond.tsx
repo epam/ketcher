@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import type {
-  ToolbarGroupItemCallProperties,
-  ToolbarGroupItemProperties,
+  ToolbarGroupItemCallProps,
+  ToolbarGroupItemProps,
 } from '../../ToolbarGroupItem';
 import {
   bondCommon,
@@ -30,18 +30,15 @@ import {
 import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem';
 import { mediaSizes } from '../../mediaSizes';
 
-interface BondProperties extends Omit<
-  ToolbarGroupItemProperties,
-  'id' | 'options'
-> {
+interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number;
 }
-type BondCallProperties = ToolbarGroupItemCallProperties;
+type BondCallProps = ToolbarGroupItemCallProps;
 
-type Properties = BondProperties & BondCallProperties;
+type Props = BondProps & BondCallProps;
 
-const Bond = (properties: Properties) => {
-  const { height, ...rest } = properties;
+const Bond = (props: Props) => {
+  const { height, ...rest } = props;
 
   if (height && height <= mediaSizes.bondCollapsableHeight) {
     return (
@@ -65,5 +62,5 @@ const Bond = (properties: Properties) => {
   );
 };
 
-export type { BondProperties, BondCallProperties };
+export type { BondProps, BondCallProps };
 export { Bond };

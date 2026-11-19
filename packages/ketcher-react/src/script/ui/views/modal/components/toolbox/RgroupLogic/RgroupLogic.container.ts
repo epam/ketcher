@@ -14,18 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseProperties } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
 import type { StoreState } from '../../../../../state/store.types';
 import RgroupLogic from './RgroupLogic';
 import { connect } from 'react-redux';
 
-type StateProperties = Pick<BaseProperties, 'formState'>;
+type StateProps = Pick<BaseProps, 'formState'>;
 
-const mapStateToProperties = (
-  state: Pick<StoreState, 'modal'>,
-): StateProperties => ({
+const mapStateToProps = (state: Pick<StoreState, 'modal'>): StateProps => ({
   formState: state.modal.form,
 });
 
-const RgroupLogicContainer = connect(mapStateToProperties)(RgroupLogic);
+const RgroupLogicContainer = connect(mapStateToProps)(RgroupLogic);
 export default RgroupLogicContainer;

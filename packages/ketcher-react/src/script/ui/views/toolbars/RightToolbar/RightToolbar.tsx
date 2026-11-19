@@ -16,13 +16,13 @@
 
 import { type FC, type PropsWithChildren } from 'react';
 import {
-  type ToolbarGroupItemCallProperties,
-  type ToolbarGroupItemProperties,
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 
 import { ArrowScroll } from '../ArrowScroll';
-import { type AtomsListProperties, AtomsList } from './AtomsList';
+import { type AtomsListProps, AtomsList } from './AtomsList';
 import { basicAtoms } from '../../../action/atoms';
 import classes from './RightToolbar.module.less';
 import clsx from 'clsx';
@@ -35,21 +35,21 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface RightToolbarProperties extends Omit<
-  ToolbarGroupItemProperties,
+interface RightToolbarProps extends Omit<
+  ToolbarGroupItemProps,
   'id' | 'options'
 > {
   className?: string;
-  active?: AtomsListProperties['active'];
+  active?: AtomsListProps['active'];
   freqAtoms: string[];
 }
 
-type RightToolbarCallProperties = ToolbarGroupItemCallProperties;
+type RightToolbarCallProps = ToolbarGroupItemCallProps;
 
-type Properties = RightToolbarProperties & RightToolbarCallProperties;
+type Props = RightToolbarProps & RightToolbarCallProps;
 
-const RightToolbar = (properties: Properties) => {
-  const { className, ...rest } = properties;
+const RightToolbar = (props: Props) => {
+  const { className, ...rest } = props;
   const { active, onAction, freqAtoms, status } = rest;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const {
@@ -132,5 +132,5 @@ const RightToolbar = (properties: Properties) => {
   );
 };
 
-export type { RightToolbarProperties, RightToolbarCallProperties };
+export type { RightToolbarProps, RightToolbarCallProps };
 export { RightToolbar };

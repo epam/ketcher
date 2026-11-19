@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 
 import Automap from './Automap';
 import { automap } from '../../../../../state/server';
@@ -25,28 +25,25 @@ import type {
 import type { AppDispatch } from '../../../../../state/hooks';
 import { connect } from 'react-redux';
 
-type StateProperties = Pick<BaseProperties<AutomapRequest>, 'formState'>;
-type DispatchProperties = Pick<BaseCallProperties<AutomapRequest>, 'onOk'>;
-type OwnProperties = Pick<BaseCallProperties, 'onOk'>;
+type StateProps = Pick<BaseProps<AutomapRequest>, 'formState'>;
+type DispatchProps = Pick<BaseCallProps<AutomapRequest>, 'onOk'>;
+type OwnProps = Pick<BaseCallProps, 'onOk'>;
 type State = Pick<StoreState, 'modal'>;
 
-const mapStateToProperties = (state: State): StateProperties => ({
+const mapStateToProps = (state: State): StateProps => ({
   // The modal store keeps a generic form result for every dialog
-  formState: state.modal.form as StateProperties['formState'],
+  formState: state.modal.form as StateProps['formState'],
 });
 
-const mapDispatchToProperties = (
+const mapDispatchToProps = (
   dispatch: AppDispatch,
-  ownProperties: OwnProperties,
-): DispatchProperties => ({
+  ownProps: OwnProps,
+): DispatchProps => ({
   onOk: (result: AutomapRequest) => {
     dispatch(automap(result));
-    ownProperties.onOk(result);
+    ownProps.onOk(result);
   },
 });
 
-const AutomapContainer = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
-)(Automap);
+const AutomapContainer = connect(mapStateToProps, mapDispatchToProps)(Automap);
 export default AutomapContainer;

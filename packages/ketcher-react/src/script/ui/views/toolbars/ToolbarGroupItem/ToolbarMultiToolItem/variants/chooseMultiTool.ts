@@ -19,8 +19,8 @@ import {
   classes as defaultClasses,
 } from './DefaultMultiTool';
 import type {
-  MultiToolCallProperties,
-  MultiToolProperties,
+  MultiToolCallProps,
+  MultiToolProps,
   MultiToolVariant,
 } from './variants.types';
 
@@ -29,18 +29,21 @@ import { GroupedMultiTool } from './GroupedMultiTool';
 
 export function chooseMultiTool(
   variant: MultiToolVariant = 'default',
-): [ComponentType<MultiToolProperties & MultiToolCallProperties>, string?] {
+): [ComponentType<MultiToolProps & MultiToolCallProps>, string?] {
   switch (variant) {
-    case 'default':
+    case 'default': {
       return [
         DefaultMultiTool,
         `${defaultClasses.default} default-multitool-dropdown`,
       ];
+    }
 
-    case 'grouped':
+    case 'grouped': {
       return [GroupedMultiTool, 'grouped-multitool-dropdown'];
+    }
 
-    default:
+    default: {
       throw new Error(`Unsupported variant ${variant}`);
+    }
   }
 }

@@ -80,7 +80,7 @@ const SaveButton = (props: SaveButtonProps) => {
   const saveImage = () => {
     const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
     if (typeof data === 'string' && options?.outputFormat) {
-      ketcherInstance
+      void ketcherInstance
         .generateImage(data, options)
         .then((blob) => {
           saveAs(blob, `${filename}.${options.outputFormat}`);
@@ -96,12 +96,14 @@ const SaveButton = (props: SaveButtonProps) => {
   const save = (event: KeyboardEvent | MouseEvent) => {
     event.preventDefault();
     switch (mode) {
-      case 'saveImage':
+      case 'saveImage': {
         saveImage();
         break;
+      }
       case 'saveFile':
-      default:
+      default: {
         saveFile();
+      }
     }
   };
 

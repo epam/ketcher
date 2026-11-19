@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,23 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
+import type Editor from 'src/script/editor';
+import type { RemoveFGParams } from 'src/script/editor/Editor.types';
 
-interface RemoveFGProperties extends BaseProperties {
-  fgIds: any;
-}
+interface RemoveFGProps extends BaseProps, RemoveFGParams {}
 
-type Properties = RemoveFGProperties & BaseCallProperties;
+type Props = RemoveFGProps & BaseCallProps;
 
-const RemoveFG = (properties: Properties) => {
+const RemoveFG = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const { ketcherId } = useAppContext();
-  const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
-  const { fgIds } = properties;
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+  const { fgIds } = props;
 
   const remove = function () {
     if (fgIds.length > 0)
@@ -39,10 +38,6 @@ const RemoveFG = (properties: Properties) => {
         editor.update(fromSgroupDeletion(editor.render.ctab, id));
       }
     return true;
-  };
-
-  const exit = (key, result) => {
-    properties[key](result);
   };
 
   return (
@@ -63,7 +58,7 @@ const RemoveFG = (properties: Properties) => {
           type="button"
           value={t('common:button.cancel')}
           className={classes.buttonCancel}
-          onClick={() => exit('onOk', false)}
+          onClick={() => props.onOk(false)}
           data-testid="Cancel"
         />
         <input
@@ -71,12 +66,12 @@ const RemoveFG = (properties: Properties) => {
           value={t('dialogs:toolbox.removeFG.removeAbbreviation')}
           data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
-          onClick={() => exit('onOk', remove())}
+          onClick={() => props.onOk(remove())}
         />
       </footer>
     </div>
   );
 };
 
-export type { RemoveFGProperties };
+export type { RemoveFGProps };
 export { RemoveFG };

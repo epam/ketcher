@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import {
-  type ActionButtonCallProperties,
-  type ActionButtonProperties,
+  type ActionButtonCallProps,
+  type ActionButtonProps,
   ActionButton,
 } from '../ActionButton';
 import type {
@@ -40,7 +40,7 @@ import { usePortalStyle } from './usePortalStyle';
 import { getIconName, Icon } from 'components';
 import { SettingsManager } from 'ketcher-core';
 
-interface ToolbarMultiToolItemProperties {
+interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant;
   options: ToolbarItem[];
   groups?: GroupDescriptor[];
@@ -54,15 +54,14 @@ interface ToolbarMultiToolItemProperties {
   dataTestId?: string;
 }
 
-interface ToolbarMultiToolItemCallProperties {
+interface ToolbarMultiToolItemCallProps {
   onAction: (action: UiActionAction) => void;
   onOpen: (menuName: string, isSelected: boolean) => void;
 }
 
-type Properties = ToolbarMultiToolItemProperties &
-  ToolbarMultiToolItemCallProperties;
+type Props = ToolbarMultiToolItemProps & ToolbarMultiToolItemCallProps;
 
-const ToolbarMultiToolItem = (properties: Properties) => {
+const ToolbarMultiToolItem = (props: Props) => {
   const {
     id,
     options,
@@ -77,7 +76,7 @@ const ToolbarMultiToolItem = (properties: Properties) => {
     onAction,
     onOpen,
     dataTestId,
-  } = properties;
+  } = props;
 
   const reference = useRef<HTMLDivElement>(null);
   const [isOpen] = usePortalOpening([id, opened, options]);
@@ -107,7 +106,7 @@ const ToolbarMultiToolItem = (properties: Properties) => {
     areAllInnerItemsHidden || currentStatus?.hidden
   );
 
-  if (!currentStatus && options.length) {
+  if (!currentStatus && options.length > 0) {
     const savedSelectionTool = SettingsManager.getSelectionTool('micro');
     const savedSelectionToolId = savedSelectionTool
       ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
@@ -129,8 +128,8 @@ const ToolbarMultiToolItem = (properties: Properties) => {
     onOpen(id, Boolean(currentStatus?.selected));
   };
 
-  const actionButtonProperties: Omit<
-    ActionButtonProperties & ActionButtonCallProperties,
+  const actionButtonProps: Omit<
+    ActionButtonProps & ActionButtonCallProps,
     'name' | 'status' | 'action'
   > = {
     disableableButtons,
@@ -149,11 +148,11 @@ const ToolbarMultiToolItem = (properties: Properties) => {
       data-is-selected={isSelected ? 'true' : 'false'}
     >
       <ActionButton
-        {...actionButtonProperties}
+        {...actionButtonProps}
         className={className}
         name={iconName}
         action={action[currentId]}
-        status={currentStatus as ActionButtonProperties['status']}
+        status={currentStatus as ActionButtonProps['status']}
         selected={isSelected}
         dataTestId={dataTestId ?? iconName}
       />
@@ -193,8 +192,5 @@ const ToolbarMultiToolItem = (properties: Properties) => {
   ) : null;
 };
 
-export type {
-  ToolbarMultiToolItemProperties,
-  ToolbarMultiToolItemCallProperties,
-};
+export type { ToolbarMultiToolItemProps, ToolbarMultiToolItemCallProps };
 export { ToolbarMultiToolItem };

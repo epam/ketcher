@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
 import dialogClasses from '../../../../../../../components/Dialog/Dialog.module.less';
@@ -24,18 +24,19 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
+  provideEditorInstance,
   type EditMonomerVariant,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 
-interface EditMonomerDialogProperties extends BaseProperties {
+interface EditMonomerDialogProps extends BaseProps {
   fgIds: number[];
   variant: EditMonomerVariant;
 }
 
-type Properties = EditMonomerDialogProperties & BaseCallProperties;
+type Props = EditMonomerDialogProps & BaseCallProps;
 
-const EditMonomer = (properties: Properties) => {
+const EditMonomer = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const BODY_TEXT: Record<EditMonomerVariant, string> = {
     single: t('dialogs:toolbox.editMonomer.bodyTextSingle'),
@@ -44,7 +45,7 @@ const EditMonomer = (properties: Properties) => {
   };
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-  const { fgIds, variant, onOk } = properties;
+  const { fgIds, variant, onOk } = props;
 
   const handleCancel = () => {
     onOk(false);
@@ -60,7 +61,10 @@ const EditMonomer = (properties: Properties) => {
     onOk(true);
   };
 
-  const handleEditMonomer = (shouldEditAllInstances = false) => {
+  const handleEditMonomer = async (shouldEditAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     if (editor.openEditMonomerWizard(fgIds, shouldEditAllInstances)) {
       onOk(true);
     }
@@ -121,5 +125,5 @@ const EditMonomer = (properties: Properties) => {
   );
 };
 
-export type { EditMonomerDialogProperties };
+export type { EditMonomerDialogProps };
 export { EditMonomer };

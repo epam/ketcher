@@ -15,21 +15,18 @@
  ***************************************************************************/
 
 import { Field } from '../../../../../../../component/form/form/form';
-import type { RgroupLogicProperties } from '../../RgroupLogic';
+import type { RgroupLogicProps } from '../../RgroupLogic';
 import classes from './IfThenSelect.module.less';
 import { useFormContext } from '../../../../../../../../../hooks';
 import Select from '../../../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../../../utils';
 import { useTranslation } from 'react-i18next';
 
-type Properties = Pick<
-  RgroupLogicProperties,
-  'label' | 'rgroupLabels' | 'name'
->;
+type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>;
 
-const IfThenSelect = (properties: Properties) => {
+const IfThenSelect = (props: Props) => {
   const { t } = useTranslation('dialogs');
-  const { rgroupLabels, label, name } = properties;
+  const { rgroupLabels, label, name } = props;
   const { schema } = useFormContext();
   const desc = {
     title: schema.properties?.[name ?? '']?.title,
@@ -53,7 +50,7 @@ const IfThenSelect = (properties: Properties) => {
     <Field
       schema={desc}
       className={classes.field}
-      {...properties}
+      {...props}
       component={Select}
       options={getSelectOptionsFromSchema(desc, t)}
     />

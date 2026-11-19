@@ -337,8 +337,7 @@
             "y": -2.75
         },
         "alias": "dI",
-        "templateId": "dI___D-Isoleucine",
-        "seqid": 4
+        "templateId": "dI___D-Isoleucine"
     },
     "monomer4": {
         "type": "monomer",

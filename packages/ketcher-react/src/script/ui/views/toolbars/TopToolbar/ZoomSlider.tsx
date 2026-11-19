@@ -20,7 +20,7 @@ import styled from '@emotion/styled';
 import { ScaleTransformer } from './ScaleTransformer';
 import { zoomList } from '../../../action/zoom';
 
-interface SliderProperties {
+interface SliderProps {
   zoom: number;
   setZoom: (argument) => void;
 }
@@ -63,7 +63,7 @@ const sliderMarks = zoomList.map((zoomValue) => {
   };
 });
 
-export const ZoomSlider = ({ zoom, setZoom }: SliderProperties) => {
+export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
   const handleChange = (event) => {
     const parsedValue = Number.parseFloat(event.target.value);
     const zoomValue = scaleTransformer.getZoomValue(parsedValue);

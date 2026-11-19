@@ -24,11 +24,11 @@ import i18n from 'src/i18n/i18n';
 import { getDefaultOptions } from 'src/script/ui/data/schema/options-schema';
 import Settings from '../Settings';
 
-jest.mock('src/i18n/i18n', () => ({
+vi.mock('src/i18n/i18n', () => ({
   __esModule: true,
   default: {
     language: 'en',
-    changeLanguage: jest.fn(),
+    changeLanguage: vi.fn(),
     t: (key: string) => key,
   },
   SUPPORTED_LANGUAGES: [
@@ -67,7 +67,7 @@ const createTestStore = () =>
         result: initState,
         valid: true,
         errors: {},
-        onUpdate: jest.fn(),
+        onUpdate: vi.fn(),
       },
     },
     server: null,
@@ -80,8 +80,8 @@ const renderSettings = () =>
         <Settings
           className=""
           ketcherId="settings-language-test"
-          onOk={jest.fn()}
-          onCancel={jest.fn()}
+          onOk={vi.fn()}
+          onCancel={vi.fn()}
         />
       </Provider>
     </I18nextProvider>,
@@ -89,7 +89,7 @@ const renderSettings = () =>
 
 describe('Settings language selector', () => {
   beforeEach(() => {
-    (i18n.changeLanguage as jest.Mock).mockClear();
+    (i18n.changeLanguage as Mock).mockClear();
   });
 
   it('renders the language selector when more than one language is available', () => {

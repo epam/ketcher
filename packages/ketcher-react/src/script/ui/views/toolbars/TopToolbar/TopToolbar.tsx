@@ -34,7 +34,7 @@ import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
 
-export interface PanelProperties {
+export interface PanelProps {
   className: string;
   disabledButtons: string[];
   indigoVerification: boolean;
@@ -159,7 +159,7 @@ export const TopToolbar = ({
   togglerComponent,
   isModeSwitcherDisabled,
   customButtons,
-}: PanelProperties) => {
+}: PanelProps) => {
   const { ref: resizeReference, width = 50 } =
     useResizeObserver<HTMLDivElement>();
   const { t } = useTranslation('toolbar');

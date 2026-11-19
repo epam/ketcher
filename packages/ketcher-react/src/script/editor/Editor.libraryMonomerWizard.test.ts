@@ -38,12 +38,12 @@ describe('opening library monomers in the wizard', () => {
         ctab: { molecule: originalStruct },
         monomerCreationState: null,
       },
-      event: { monomerWizardStateChange: { dispatch: jest.fn() } },
-      struct: jest.fn((value?: Struct) => {
+      event: { monomerWizardStateChange: { dispatch: vi.fn() } },
+      struct: vi.fn((value?: Struct) => {
         if (value) editor.render.ctab.molecule = value;
         return editor.render.ctab.molecule;
       }),
-      openMonomerCreationWizard: jest.fn(() => {
+      openMonomerCreationWizard: vi.fn(() => {
         editor.render.monomerCreationState = {
           assignedAttachmentPoints: new Map(),
           problematicAttachmentPoints: new Set(),

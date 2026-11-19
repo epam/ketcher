@@ -10,7 +10,7 @@ import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
-import type { BaseProperties } from '../../../../modal.types';
+import type { BaseProps } from '../../../../modal.types';
 import type { AtomType } from 'ketcher-core';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
@@ -27,7 +27,7 @@ export type AtomFormResult = {
 
 const AtomElement = ({
   formState,
-}: Pick<BaseProperties<AtomFormResult>, 'formState'>) => {
+}: Pick<BaseProps<AtomFormResult>, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -37,7 +37,10 @@ const AtomElement = ({
     props: object,
     onChange: ChangeFunction,
   ) => {
-    openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
+    void openDialog(dispatch, modalName, {
+      ...props,
+      isNestedModal: true,
+    }).then(
       (result) => {
         const el = result as { values?: string[]; label: string };
         onChange(el.values?.join(',') || el.label);

@@ -16,12 +16,12 @@
 
 import type { FC, PropsWithChildren } from 'react';
 import {
-  type ToolbarGroupItemCallProperties,
-  type ToolbarGroupItemProperties,
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 
-import { type TemplatesListProperties, TemplatesList } from './TemplatesList';
+import { type TemplatesListProps, TemplatesList } from './TemplatesList';
 import classes from './BottomToolbar.module.less';
 import clsx from 'clsx';
 
@@ -30,20 +30,20 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface BottomToolbarProperties extends Omit<
-  ToolbarGroupItemProperties,
+interface BottomToolbarProps extends Omit<
+  ToolbarGroupItemProps,
   'id' | 'options'
 > {
   className?: string;
-  active?: TemplatesListProperties['active'];
+  active?: TemplatesListProps['active'];
 }
 
-type BottomToolbarCallProperties = ToolbarGroupItemCallProperties;
+type BottomToolbarCallProps = ToolbarGroupItemCallProps;
 
-type Properties = BottomToolbarProperties & BottomToolbarCallProperties;
+type Props = BottomToolbarProps & BottomToolbarCallProps;
 
-const BottomToolbar = (properties: Properties) => {
-  const { className, ...rest } = properties;
+const BottomToolbar = (props: Props) => {
+  const { className, ...rest } = props;
 
   return (
     <div data-testid="bottom-toolbar" className={clsx(classes.root, className)}>
@@ -55,5 +55,5 @@ const BottomToolbar = (properties: Properties) => {
   );
 };
 
-export type { BottomToolbarProperties, BottomToolbarCallProperties };
+export type { BottomToolbarProps, BottomToolbarCallProps };
 export { BottomToolbar };

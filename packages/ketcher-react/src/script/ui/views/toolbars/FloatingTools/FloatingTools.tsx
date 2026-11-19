@@ -1,6 +1,6 @@
 import action, { type UiActionAction } from '../../../action';
 import {
-  type ActionButtonProperties,
+  type ActionButtonProps,
   ActionButton,
 } from '../ToolbarGroupItem/ActionButton';
 import { type ToolbarItemVariant } from '../toolbar.types';
@@ -9,7 +9,7 @@ import { getIconName } from 'components';
 
 const FLOATING_ERASE_TEST_ID = 'float-delete';
 
-export type FloatingToolsProperties = {
+export type FloatingToolsProps = {
   visible: boolean;
   rotateHandlePosition: { x: number; y: number };
   status: {
@@ -18,10 +18,10 @@ export type FloatingToolsProperties = {
   };
   indigoVerification: boolean;
 };
-export type FloatingToolsCallProperties = {
+export type FloatingToolsCallProps = {
   onAction: (action: UiActionAction) => void;
 };
-type Properties = FloatingToolsProperties & FloatingToolsCallProperties;
+type Props = FloatingToolsProps & FloatingToolsCallProps;
 
 const FLOATING_TOOLS: readonly ToolbarItemVariant[] = [
   'transform-flip-h',
@@ -29,7 +29,7 @@ const FLOATING_TOOLS: readonly ToolbarItemVariant[] = [
   'erase',
 ] as const;
 
-export const FloatingTools: React.FC<Properties> = ({
+export const FloatingTools: React.FC<Props> = ({
   visible,
   rotateHandlePosition,
   status,
@@ -53,7 +53,7 @@ export const FloatingTools: React.FC<Properties> = ({
               // Note: erase button's icon is 'delete'
               name={iconName}
               action={action[name]}
-              status={status[name] as ActionButtonProperties['status']}
+              status={status[name] as ActionButtonProps['status']}
               selected={false}
               indigoVerification={indigoVerification}
               onAction={onAction}

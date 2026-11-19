@@ -55,11 +55,13 @@
     border-radius: 4px;
   }
 
-  // MUI Select used for unit dropdowns in molecules mode
+  // MUI Select used for unit dropdowns in molecules mode. Select.module.less
+  // sets the same properties with equal specificity, and the example build
+  // can load its CSS after this file, so each override here is !important.
   :global(.MuiOutlinedInput-root .MuiSelect-select) {
     height: 32px !important;
     min-height: 32px !important;
-    line-height: 30px;
+    line-height: 30px !important;
     border-color: @settings-control-border !important;
   }
 }

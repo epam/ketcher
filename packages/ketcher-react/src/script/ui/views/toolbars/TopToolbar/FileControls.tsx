@@ -16,7 +16,7 @@
 import { useTranslation } from 'react-i18next';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface FileControlsProperties {
+interface FileControlsProps {
   onFileOpen: () => void;
   onSave: () => void;
   shortcuts: { [key in string]: string };
@@ -30,7 +30,7 @@ export const FileControls = ({
   shortcuts,
   hiddenButtons,
   disabledButtons,
-}: FileControlsProperties) => {
+}: FileControlsProps) => {
   const { t } = useTranslation('toolbar');
 
   return (

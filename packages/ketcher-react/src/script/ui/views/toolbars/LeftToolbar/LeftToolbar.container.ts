@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import {
-  type LeftToolbarCallProperties,
-  type LeftToolbarProperties,
+  type LeftToolbarCallProps,
+  type LeftToolbarProps,
   LeftToolbar,
 } from './LeftToolbar';
 
@@ -25,19 +25,17 @@ import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import type { StoreState } from '../../../state/store.types';
 
-type StateProperties = Omit<LeftToolbarProperties, 'className'>;
+type StateProps = Omit<LeftToolbarProps, 'className'>;
 type State = Pick<StoreState, 'actionState' | 'toolbar' | 'requestsStatuses'>;
 const disableableButtons: string[] = [];
-const mapStateToProperties = (state: State): StateProperties => ({
+const mapStateToProps = (state: State): StateProps => ({
   status: state.actionState ?? {},
   opened: state.toolbar.opened ?? null,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,
 });
 
-const mapDispatchToProperties = (
-  dispatch: Dispatch,
-): LeftToolbarCallProperties => ({
+const mapDispatchToProps = (dispatch: Dispatch): LeftToolbarCallProps => ({
   onAction: (action) => dispatch(onAction(action)),
   onOpen: (menuName, isSelected) =>
     dispatch({
@@ -47,8 +45,8 @@ const mapDispatchToProperties = (
 });
 
 const LeftToolbarContainer = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
+  mapStateToProps,
+  mapDispatchToProps,
 )(LeftToolbar);
 
 export { LeftToolbarContainer };

@@ -21,12 +21,12 @@ function toPercent(value: number): string {
   return (value * percentLimit).toFixed();
 }
 
-interface ZoomListProperties {
+interface ZoomListProps {
   zoom: number;
   setZoom: (zoom: number) => void;
 }
 
-const ZoomList = ({ zoom, setZoom }: ZoomListProperties) => {
+const ZoomList = ({ zoom, setZoom }: ZoomListProps) => {
   const handleChange = (event) => {
     const parsedValue = Number.parseFloat(event.target.value);
     setZoom(parsedValue);
@@ -43,5 +43,5 @@ const ZoomList = ({ zoom, setZoom }: ZoomListProperties) => {
   );
 };
 
-export type { ZoomListProperties };
+export type { ZoomListProps };
 export { ZoomList };

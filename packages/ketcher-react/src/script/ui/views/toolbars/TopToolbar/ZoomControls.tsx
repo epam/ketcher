@@ -107,7 +107,7 @@ const getValidZoom = (zoom: number, currentZoom: number): number => {
   return zoom;
 };
 
-interface ZoomProperties {
+interface ZoomProps {
   currentZoom: number;
   onZoom: (argument: number) => void;
   onZoomIn: VoidFunction;
@@ -125,7 +125,7 @@ export const ZoomControls = ({
   disabledButtons,
   hiddenButtons,
   shortcuts,
-}: ZoomProperties) => {
+}: ZoomProps) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);

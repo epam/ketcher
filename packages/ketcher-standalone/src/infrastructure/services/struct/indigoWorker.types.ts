@@ -17,10 +17,12 @@ import { IKetMacromoleculesContent } from 'ketcher-core';
 
 export interface IndigoVectorInt {
   push_back(value: number): void;
+  delete(): void;
 }
 
 export interface IndigoOptions {
   set(key: string, value: string): void;
+  delete(): void;
 }
 
 export interface IndigoModule {
@@ -169,7 +171,7 @@ export interface DearomatizeCommandData
 export interface CalculateCipCommandData
   extends CommandData, WithStruct, WithFormat {}
 
-export type CalculateProperties =
+export type CalculateProps =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'

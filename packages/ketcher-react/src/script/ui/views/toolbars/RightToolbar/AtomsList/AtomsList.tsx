@@ -24,7 +24,7 @@ import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
 
-interface AtomsListProperties {
+interface AtomsListProps {
   atoms: string[];
   status: ToolbarStatus;
   active?: {
@@ -35,16 +35,14 @@ interface AtomsListProperties {
   };
 }
 
-interface AtomsListCallProperties {
+interface AtomsListCallProps {
   onAction: (action: UiActionAction) => void;
 }
 
-type Properties = AtomsListProperties & AtomsListCallProperties;
+type Props = AtomsListProps & AtomsListCallProps;
 
-const StyledAtom = styled(Atom)((properties) => {
-  const atomColor = properties?.el?.label
-    ? ElementColor[properties.el.label]
-    : '#000';
+const StyledAtom = styled(Atom)((props) => {
+  const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000';
   return `
        color: ${atomColor};
        border: 1px solid transparent;
@@ -75,9 +73,9 @@ const StyledAtom = styled(Atom)((properties) => {
    `;
 });
 
-const AtomsList = forwardRef<HTMLDivElement, Properties>(
-  (properties: Properties, reference) => {
-    const { atoms, active, status, onAction } = properties;
+const AtomsList = forwardRef<HTMLDivElement, Props>(
+  (props: Props, reference) => {
+    const { atoms, active, status, onAction } = props;
     const isAtom = active?.tool === 'atom';
 
     return (
@@ -107,5 +105,5 @@ const AtomsList = forwardRef<HTMLDivElement, Properties>(
   },
 );
 
-export type { AtomsListProperties, AtomsListCallProperties };
+export type { AtomsListProps, AtomsListCallProps };
 export { AtomsList };

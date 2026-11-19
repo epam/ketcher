@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
 
@@ -22,12 +22,12 @@ import { Dialog } from '../../../../components';
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Attach.module.less';
 
-interface AttachPointsProps extends BaseProperties {
+interface AttachPointsProps extends BaseProps {
   primary: boolean;
   secondary: boolean;
 }
 
-type Props = AttachPointsProps & BaseCallProperties;
+type Props = AttachPointsProps & BaseCallProps;
 
 const AttachPoints = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);

@@ -16,8 +16,8 @@
 
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
-  type ToolbarGroupItemCallProperties,
-  type ToolbarGroupItemProperties,
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 import type { ToolbarItem, ToolbarItemVariant } from '../toolbar.types';
@@ -42,34 +42,34 @@ import clsx from 'clsx';
 import { useResizeObserver } from '../../../../../hooks';
 import { useVerticalToolbarScroll } from '../useVerticalToolbarScroll';
 
-interface LeftToolbarProperties extends Omit<
-  ToolbarGroupItemProperties,
+interface LeftToolbarProps extends Omit<
+  ToolbarGroupItemProps,
   'id' | 'options'
 > {
   className?: string;
 }
 
-type LeftToolbarCallProperties = ToolbarGroupItemCallProperties;
+type LeftToolbarCallProps = ToolbarGroupItemCallProps;
 
-type Properties = LeftToolbarProperties & LeftToolbarCallProperties;
+type Props = LeftToolbarProps & LeftToolbarCallProps;
 
-type ItemProperties = {
+type ItemProps = {
   id: ToolbarItemVariant;
   options?: ToolbarItem[];
   dataTestId?: string;
 };
 
-interface GroupProperties {
-  items?: ItemProperties[];
+interface GroupProps {
+  items?: ItemProps[];
   className?: string;
   height?: number;
-  rest: Omit<Properties, 'className'>;
+  rest: Omit<Props, 'className'>;
 }
 
-const Group = ({ items, className, height, rest }: GroupProperties) => {
+const Group = ({ items, className, height, rest }: GroupProps) => {
   const { status } = rest;
   const visibleItems =
-    items?.reduce<ItemProperties[]>(
+    items?.reduce<ItemProps[]>(
       (accumulator, item) =>
         status[item.id]?.hidden ||
         item.options?.every((option) => status[option.id]?.hidden)
@@ -78,17 +78,20 @@ const Group = ({ items, className, height, rest }: GroupProperties) => {
       [],
     ) ?? [];
 
-  return visibleItems.length ? (
+  return visibleItems.length > 0 ? (
     <div className={clsx(classes.group, className)}>
       {visibleItems.map((item) => {
         switch (item.id) {
-          case 'bond-common':
+          case 'bond-common': {
             return <Bond {...rest} height={height} key={item.id} />;
-          case 'rgroup':
+          }
+          case 'rgroup': {
             return <RGroup {...rest} key={item.id} />;
-          case 'shapes':
+          }
+          case 'shapes': {
             return <Shape {...rest} key={item.id} />;
-          case 'bonds':
+          }
+          case 'bonds': {
             return (
               <ToolbarGroupItem
                 id={item.id}
@@ -98,7 +101,8 @@ const Group = ({ items, className, height, rest }: GroupProperties) => {
                 {...rest}
               />
             );
-          default:
+          }
+          default: {
             return (
               <ToolbarGroupItem
                 id={item.id}
@@ -107,14 +111,15 @@ const Group = ({ items, className, height, rest }: GroupProperties) => {
                 {...rest}
               />
             );
+          }
         }
       })}
     </div>
   ) : null;
 };
 
-const LeftToolbar = (properties: Properties) => {
-  const { className, ...rest } = properties;
+const LeftToolbar = (props: Props) => {
+  const { className, ...rest } = props;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const {
     scrollContainerRef,
@@ -224,5 +229,5 @@ const LeftToolbar = (properties: Properties) => {
   );
 };
 
-export type { LeftToolbarProperties, LeftToolbarCallProperties };
+export type { LeftToolbarProps, LeftToolbarCallProps };
 export { LeftToolbar };

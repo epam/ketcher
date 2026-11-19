@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import {
   Bond,
   ketcherProvider,
@@ -138,12 +140,12 @@ const createMockEditorForRGroupBond = (
 
 describe('Editor.isMonomerCreationWizardEnabled', () => {
   beforeEach(() => {
-    jest.spyOn(globalThis, 'dispatchEvent').mockImplementation(() => true);
+    vi.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
     setEditorInstance({} as unknown as CoreEditor);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     resetEditorInstance();
   });
 
@@ -255,7 +257,7 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
         resolveLoad = resolve;
       });
       const coreEditor = {
-        ensureDefaultMonomersLibraryLoaded: jest.fn(() => libraryLoad),
+        ensureDefaultMonomersLibraryLoaded: vi.fn(() => libraryLoad),
       };
       setEditorInstance(coreEditor as unknown as CoreEditor);
       const editor = Object.create(Editor.prototype) as Editor;
@@ -263,7 +265,7 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
       Object.defineProperty(editor, 'isMonomerCreationWizardEnabled', {
         get: () => !isWizardActive,
       });
-      const openMonomerCreationWizard = jest.fn(() => {
+      const openMonomerCreationWizard = vi.fn(() => {
         isWizardActive = true;
       });
       editor.openMonomerCreationWizard = openMonomerCreationWizard;
@@ -320,7 +322,7 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
 describe('Editor.hover', () => {
   it('forwards Attachment Group hover to its renderer', () => {
     const attachmentGroupRenderer = {
-      setHover: jest.fn(),
+      setHover: vi.fn(),
     };
     const tool = {};
     const render = {
@@ -346,8 +348,8 @@ describe('Editor.hover', () => {
 describe('Editor.options', () => {
   const ketcherId = 'editor-options-test';
 
-  // Raphael cannot create a paper on a jsdom element, so the editor is given the
-  // document itself as its client area, like in rotate-controller.test.ts.
+  // The editor is given the document itself as its client area, like in
+  // rotate-controller.test.ts.
   const createEditor = () =>
     new Editor(ketcherId, document as unknown as HTMLElement, {
       bondThickness: 2,

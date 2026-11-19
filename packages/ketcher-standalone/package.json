@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "3.22.0-rc.1",
+  "version": "3.23.0-dev.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "https://lifescience.opensource.epam.com/ketcher/",
@@ -38,7 +38,8 @@
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
-    "test:unit": "jest --passWithNoTests",
+    "test:unit": "vitest run",
+    "test:related": "vitest related --passWithNoTests",
     "test:prettier": "prettier --check \"./**/*.{js,ts,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,ts,json}\""
   },
@@ -50,16 +51,14 @@
   },
   "devDependencies": {
     "@rollup/plugin-strip": "^2.0.0",
-    "@types/jest": "^29.5.14",
     "@types/node": "^16.11.12",
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
-    "eslint-plugin-jest": "^29.16.0",
-    "jest": "^29.7.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1"
+    "vite": "^8.3.8",
+    "vitest": "^5.0.3"
   },
   "files": [
     "dist"

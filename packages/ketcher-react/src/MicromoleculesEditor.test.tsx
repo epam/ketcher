@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import { StrictMode } from 'react';
 import { act, render, waitFor } from '@testing-library/react';
 import type { Ketcher, StructServiceProvider } from 'ketcher-core';
@@ -7,9 +8,9 @@ import { MicromoleculesEditor, type EditorProps } from './MicromoleculesEditor';
 // Replacing it keeps everything else real: the init function, KetcherBuilder,
 // createApi, and Ketcher. It reports the editor as ready, like the real one
 // does once its store has an editor, and returns its cleanup function.
-jest.mock('./script/ui', () => ({
-  ...jest.requireActual('./script/ui'),
-  initApp: jest.fn(
+vi.mock('./script/ui', async () => ({
+  ...(await vi.importActual<typeof import('./script/ui')>('./script/ui')),
+  initApp: vi.fn(
     (
       _prevKetcherId: string,
       _ketcherId: string,
@@ -20,35 +21,35 @@ jest.mock('./script/ui', () => ({
       _server: unknown,
       resolve: (args: { editor: object; setServer: () => void }) => void,
     ) => {
-      resolve({ editor: {}, setServer: jest.fn() });
-      return jest.fn();
+      resolve({ editor: {}, setServer: vi.fn() });
+      return vi.fn();
     },
   ),
 }));
 
 // The StructService boundary: every method the editor binds in createApi.
 const createFakeStructService = () => ({
-  addKetcherId: jest.fn(),
-  info: jest.fn().mockResolvedValue({ indigoVersion: '1', imagoVersions: [] }),
-  convert: jest.fn(),
-  layout: jest.fn(),
-  clean: jest.fn(),
-  aromatize: jest.fn(),
-  dearomatize: jest.fn(),
-  calculateCip: jest.fn(),
-  automap: jest.fn(),
-  check: jest.fn(),
-  calculate: jest.fn(),
-  recognize: jest.fn(),
-  generateImageAsBase64: jest.fn(),
-  getInChIKey: jest.fn(),
-  toggleExplicitHydrogens: jest.fn(),
-  calculateMacromoleculeProperties: jest.fn(),
-  destroy: jest.fn(),
+  addKetcherId: vi.fn(),
+  info: vi.fn().mockResolvedValue({ indigoVersion: '1', imagoVersions: [] }),
+  convert: vi.fn(),
+  layout: vi.fn(),
+  clean: vi.fn(),
+  aromatize: vi.fn(),
+  dearomatize: vi.fn(),
+  calculateCip: vi.fn(),
+  automap: vi.fn(),
+  check: vi.fn(),
+  calculate: vi.fn(),
+  recognize: vi.fn(),
+  generateImageAsBase64: vi.fn(),
+  getInChIKey: vi.fn(),
+  toggleExplicitHydrogens: vi.fn(),
+  calculateMacromoleculeProperties: vi.fn(),
+  destroy: vi.fn(),
 });
 
 let services: Array<ReturnType<typeof createFakeStructService>>;
-let onInit: jest.Mock<void, [Ketcher]>;
+let onInit: Mock<void, [Ketcher]>;
 
 const structServiceProvider = {
   mode: 'standalone',
@@ -70,7 +71,7 @@ const renderEditor = async (wrapper?: typeof StrictMode) => {
           ketcherId: '',
           staticResourcesUrl: '',
           structServiceProvider,
-          errorHandler: jest.fn(),
+          errorHandler: vi.fn(),
           onInit,
         } as EditorProps)}
       />,
@@ -91,7 +92,7 @@ const renderEditor = async (wrapper?: typeof StrictMode) => {
 describe('MicromoleculesEditor struct service lifetime', () => {
   beforeEach(() => {
     services = [];
-    onInit = jest.fn();
+    onInit = vi.fn();
   });
 
   it('destroys the struct service when the editor unmounts', async () => {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import createStore, { setServer } from './index';
 
 describe('state store global access', () => {
@@ -7,7 +8,7 @@ describe('state store global access', () => {
 
   it('should expose the latest store state on globalThis.currentState', () => {
     const server = Promise.resolve();
-    const setEditor = jest.fn();
+    const setEditor = vi.fn();
     const store = createStore({}, server, setEditor);
     const nextServer = Promise.resolve();
 

@@ -90,6 +90,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.65.0",
+    "intl-messageformat": "^10.7.18",
     "minimatch": "^11.0.1",
     "playwright": "^1.65.0",
     "playwright-core": "^1.65.0",

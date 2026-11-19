@@ -15,12 +15,14 @@
  ***************************************************************************/
 
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import type { ReactNode } from 'react';
+import { type Mock, vi } from 'vitest';
 import type { Editor } from '../../../../editor';
+import styles from './RnaPresetTabs.module.less';
 
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
@@ -34,26 +36,26 @@ type HighlightObject = {
 };
 
 // Mock the Icon component to avoid module resolution issues
-jest.mock('components', () => ({
+vi.mock('components', () => ({
   Icon: ({ name }: { name: string }) => <div data-testid={`icon-${name}`} />,
 }));
 
 // Mock the selectors
-jest.mock('../../../state/editor/selectors', () => ({
+vi.mock('../../../state/editor/selectors', () => ({
   selectionSelector: (state) => state.editor?.selection,
   editorMonomerCreationStateSelector: (state) =>
     state.editor?.monomerCreationState,
 }));
 
 // Mock useAppContext
-jest.mock('../../../../../hooks', () => ({
+vi.mock('../../../../../hooks', () => ({
   useAppContext: () => ({
     ketcherId: 'test-ketcher-id',
   }),
 }));
 
 // Mock MonomerCreationWizardFields to avoid additional dependencies
-jest.mock('./MonomerCreationWizardFields', () => ({
+vi.mock('./MonomerCreationWizardFields', () => ({
   __esModule: true,
   default: ({
     assignedAttachmentPoints,
@@ -77,7 +79,7 @@ jest.mock('./MonomerCreationWizardFields', () => ({
   ),
 }));
 
-jest.mock('./components/AttachmentPoint/AttachmentPoint', () => ({
+vi.mock('./components/AttachmentPoint/AttachmentPoint', () => ({
   __esModule: true,
   default: ({ name }: { name: string }) => <div>{name}</div>,
 }));
@@ -114,22 +116,22 @@ const createMockStore = (
 // Mock Editor with highlights API
 const createMockEditor = () => {
   const highlightsMock = {
-    clear: jest.fn(),
-    create: jest.fn(),
-    getAll: jest.fn(() => []),
+    clear: vi.fn(),
+    create: vi.fn(),
+    getAll: vi.fn(() => []),
   };
 
   return {
     highlights: highlightsMock,
-    selection: jest.fn(),
-    struct: jest.fn(() => ({
+    selection: vi.fn(),
+    struct: vi.fn(() => ({
       atoms: new Map(),
       bonds: new Map(),
       halfBonds: new Map(),
     })),
-    reassignAttachmentPoint: jest.fn(),
-    changeLeavingAtomLabel: jest.fn(),
-    removeAttachmentPoint: jest.fn(),
+    reassignAttachmentPoint: vi.fn(),
+    changeLeavingAtomLabel: vi.fn(),
+    removeAttachmentPoint: vi.fn(),
     render: {
       ctab: {
         molecule: {
@@ -137,16 +139,16 @@ const createMockEditor = () => {
         },
       },
     },
-    update: jest.fn(),
-    setVisibleAssignedAttachmentPoints: jest.fn(),
-    setConnectionAttachmentPoints: jest.fn(),
+    update: vi.fn(),
+    setVisibleAssignedAttachmentPoints: vi.fn(),
+    setConnectionAttachmentPoints: vi.fn(),
   } as unknown as Editor & {
     highlights: {
-      clear: jest.Mock;
-      create: jest.Mock;
-      getAll: jest.Mock;
+      clear: Mock;
+      create: Mock;
+      getAll: Mock;
     };
-    struct: jest.Mock;
+    struct: Mock;
   };
 };
 
@@ -209,17 +211,17 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
 describe('RnaPresetTabs - applyHighlights function', () => {
   let mockEditor: ReturnType<typeof createMockEditor>;
   let mockStore: ReturnType<typeof createMockStore>;
-  let mockDispatch: jest.Mock;
-  let mockOnPhosphatePositionChange: jest.Mock;
+  let mockDispatch: Mock;
+  let mockOnPhosphatePositionChange: Mock;
   let wizardState: RnaPresetWizardState;
 
   beforeEach(() => {
     mockEditor = createMockEditor();
     mockStore = createMockStore();
-    mockDispatch = jest.fn();
-    mockOnPhosphatePositionChange = jest.fn();
+    mockDispatch = vi.fn();
+    mockOnPhosphatePositionChange = vi.fn();
     wizardState = createInitialWizardState();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should clear existing highlights when structure exists and tab is clicked', () => {
@@ -909,17 +911,17 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
   let mockEditor: ReturnType<typeof createMockEditor>;
   let mockStore: ReturnType<typeof createMockStore>;
-  let mockDispatch: jest.Mock;
-  let mockOnPhosphatePositionChange: jest.Mock;
+  let mockDispatch: Mock;
+  let mockOnPhosphatePositionChange: Mock;
   let wizardState: RnaPresetWizardState;
 
   beforeEach(() => {
     mockEditor = createMockEditor();
     mockStore = createMockStore();
-    mockDispatch = jest.fn();
-    mockOnPhosphatePositionChange = jest.fn();
+    mockDispatch = vi.fn();
+    mockOnPhosphatePositionChange = vi.fn();
     wizardState = createInitialWizardState();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const renderTabs = () =>
@@ -940,16 +942,16 @@ describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
   const tabErrors = () => ({
     preset: screen
       .getByTestId('nucleotide-preset-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
     base: screen
       .getByTestId('nucleotide-base-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
     sugar: screen
       .getByTestId('nucleotide-sugar-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
     phosphate: screen
       .getByTestId('nucleotide-phosphate-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
   });
 
   it('highlights only the missing components when only a base is defined', () => {
@@ -1002,6 +1004,8 @@ describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
 
     renderTabs();
 
-    expect(screen.getByTestId('nucleotide-preset-tab')).toHaveClass('errorTab');
+    expect(screen.getByTestId('nucleotide-preset-tab')).toHaveClass(
+      styles.errorTab,
+    );
   });
 });

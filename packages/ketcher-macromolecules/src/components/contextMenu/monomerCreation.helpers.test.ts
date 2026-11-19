@@ -163,9 +163,9 @@ describe('macromolecule monomer creation menu', () => {
   it('marks the monomers with the Modify amino acids indicator (#12191)', () => {
     const monomer = createMonomer();
     const transientDrawingView = {
-      showModifyAminoAcidsView: jest.fn(),
-      hideModifyAminoAcidsView: jest.fn(),
-      update: jest.fn(),
+      showModifyAminoAcidsView: vi.fn(),
+      hideModifyAminoAcidsView: vi.fn(),
+      update: vi.fn(),
     };
     const editor = { transientDrawingView } as unknown as CoreEditor;
 

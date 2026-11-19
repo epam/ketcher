@@ -482,8 +482,9 @@ test.describe('Allow modifying amino acids on canvas', () => {
     await takeElementScreenshot(page, sequenceItemLocator, {
       padding: 150,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeElementScreenshot(
       page,
       getMonomerLocator(page, { monomerAlias: 'Cit' }),
@@ -530,8 +531,9 @@ test.describe('Allow modifying amino acids on canvas', () => {
     await takeElementScreenshot(page, sequenceItemLocator, {
       padding: 150,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeElementScreenshot(page, getMonomerLocator(page, Peptide.dA), {
       padding: 180,
     });
@@ -575,8 +577,9 @@ test.describe('Allow modifying amino acids on canvas', () => {
     await takeElementScreenshot(page, sequenceItemLocator, {
       padding: 150,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeElementScreenshot(page, getMonomerLocator(page, Peptide.dA), {
       padding: 180,
     });

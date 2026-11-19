@@ -48,12 +48,14 @@ const commonFonts: string[] = [
 ];
 
 function checkInSystem(): Promise<(string | null)[]> {
-  const availableFontsPromises = commonFonts.map((fontName) => {
+  const availableFontsPromises = commonFonts.map(async (fontName) => {
     const observer = new FontFaceObserver(fontName);
-    return observer.check().then(
-      () => fontName,
-      () => null,
-    );
+    try {
+      await observer.check();
+      return fontName;
+    } catch {
+      return null;
+    }
   });
 
   return Promise.all(availableFontsPromises);
@@ -75,7 +77,8 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
 
   useEffect(() => {
     let isMounted = true;
-    checkInSystem().then((results) => {
+    void (async () => {
+      const results = await checkInSystem();
       const fonts = results
         .filter((i): i is string => i !== null)
         .map((font) => {
@@ -85,7 +88,7 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
       if (isMounted) {
         setAvailableFonts(fonts);
       }
-    });
+    })();
 
     return () => {
       isMounted = false;

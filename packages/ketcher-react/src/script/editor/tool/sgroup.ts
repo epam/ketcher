@@ -102,7 +102,7 @@ class SGroupTool implements Tool {
         isEqual(sgroup.atoms, selectedAtoms),
       );
 
-      if (selectedAtoms && functionalGroups.size) {
+      if (selectedAtoms && functionalGroups.size > 0) {
         for (const atom of selectedAtoms) {
           const atomId = FunctionalGroup.atomsInFunctionalGroup(
             functionalGroups,
@@ -166,7 +166,7 @@ class SGroupTool implements Tool {
         }
       }
 
-      if (result.length) {
+      if (result.length > 0) {
         this.editor.selection(null);
         dispatchMonomerOrGroupDialog(this.editor, result);
         return;
@@ -187,7 +187,7 @@ class SGroupTool implements Tool {
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci?.map === 'atoms' && functionalGroups.size) {
+    if (ci?.map === 'atoms' && functionalGroups.size > 0) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -210,7 +210,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci?.map === 'bonds' && functionalGroups.size) {
+    if (ci?.map === 'bonds' && functionalGroups.size > 0) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
@@ -234,7 +234,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci?.map === 'functionalGroups' && functionalGroups.size) {
+    if (ci?.map === 'functionalGroups' && functionalGroups.size > 0) {
       const sgroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
@@ -316,7 +316,7 @@ class SGroupTool implements Tool {
     const atomsResult: Array<number> = [];
     let hasExtraAtoms = false;
 
-    if (!selected || !functionalGroups.size || !selected.atoms) {
+    if (!selected || functionalGroups.size === 0 || !selected.atoms) {
       return { atomsResult, extraAtoms: hasExtraAtoms };
     }
 
@@ -415,7 +415,7 @@ class SGroupTool implements Tool {
     const bondsResult: Array<number> = [];
     let hasExtraBonds = false;
 
-    if (!selected || !functionalGroups.size || !selected.bonds) {
+    if (!selected || functionalGroups.size === 0 || !selected.bonds) {
       return { bondsResult, extraBonds: hasExtraBonds };
     }
 
@@ -471,7 +471,7 @@ class SGroupTool implements Tool {
     struct: ReStruct,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
-    if (!atomsResult.length) {
+    if (atomsResult.length === 0) {
       return;
     }
 
@@ -500,7 +500,7 @@ class SGroupTool implements Tool {
     struct: ReStruct,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
-    if (!bondsResult.length) {
+    if (bondsResult.length === 0) {
       return;
     }
 
@@ -754,7 +754,7 @@ class SGroupTool implements Tool {
     this.editor.selection(null);
   }
 
-  static sgroupDialog(editor: Editor, id: number | null) {
+  static async sgroupDialog(editor: Editor, id: number | null) {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() ?? {};
@@ -763,7 +763,7 @@ class SGroupTool implements Tool {
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
     if (id !== null && sg?.isMonomer) {
       editor.event.editMonomer.dispatch({ fgIds: [id], variant: 'single' });
-      return Promise.resolve();
+      return;
     }
 
     if (sg?.isMonomer) {
@@ -795,57 +795,55 @@ class SGroupTool implements Tool {
       attrs,
     });
 
-    return Promise.resolve(res)
-      .then((newSg: SGroupDialogResult) => {
-        // TODO: check before signal
-        const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
-        const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
+    try {
+      const newSg = (await Promise.resolve(res)) as SGroupDialogResult;
+      // TODO: check before signal
+      const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
+      const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
+      if (
+        !isDataSGroup && // when data s-group separates
+        !isQuerySGroup &&
+        checkOverlapping(struct, 'common', selection.atoms)
+      ) {
+        editor.event.message.dispatch({
+          error: 'Partial S-group overlapping is not allowed.',
+        });
+      } else {
         if (
-          !isDataSGroup && // when data s-group separates
+          !sg &&
+          !isDataSGroup &&
           !isQuerySGroup &&
-          checkOverlapping(struct, 'common', selection.atoms)
+          (!selection.atoms || selection.atoms.length === 0)
         ) {
-          editor.event.message.dispatch({
-            error: 'Partial S-group overlapping is not allowed.',
-          });
-        } else {
-          if (
-            !sg &&
-            !isDataSGroup &&
-            !isQuerySGroup &&
-            (!selection.atoms || selection.atoms.length === 0)
-          ) {
-            return;
-          }
-
-          const canReplaceExistingDataSg =
-            sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
-
-          if (sg && canReplaceExistingDataSg) {
-            const action = fromSeveralSgroupAddition(
-              restruct,
-              newSg.type,
-              sg.atoms,
-              newSg.attrs,
-            ).mergeWith(fromSgroupDeletion(restruct, id));
-
-            editor.update(action);
-            editor.selection(selection);
-            return;
-          }
-          const result = isQuerySGroup
-            ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
-            : fromContextType(id, editor, newSg, selection);
-
-          if (result) {
-            editor.update(result.action);
-          }
-          editor.selection(null);
+          return;
         }
-      })
-      .catch((error) => {
-        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
-      });
+        const canReplaceExistingDataSg =
+          sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
+
+        if (sg && canReplaceExistingDataSg) {
+          const action = fromSeveralSgroupAddition(
+            restruct,
+            newSg.type,
+            sg.atoms,
+            newSg.attrs,
+          ).mergeWith(fromSgroupDeletion(restruct, id));
+
+          editor.update(action);
+          editor.selection(selection);
+          return;
+        }
+        const result = isQuerySGroup
+          ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
+          : fromContextType(id, editor, newSg, selection);
+
+        if (result) {
+          editor.update(result.action);
+        }
+        editor.selection(null);
+      }
+    } catch (e) {
+      KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+    }
   }
 }
 

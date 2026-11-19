@@ -413,6 +413,23 @@ const plainBondTypes = [
   Bond.PATTERN.TYPE.TRIPLE,
 ];
 
+/**
+ * A stereo (wedge/hash) or dative bond is chosen again with its own type:
+ * the request is to reverse its direction
+ */
+export function isBondFlipRequested(
+  bond: Bond,
+  bondProps: Partial<BondAttributes>,
+): boolean {
+  return (
+    ((bondProps.stereo !== Bond.PATTERN.STEREO.NONE &&
+      bondProps.type === Bond.PATTERN.TYPE.SINGLE) ||
+      bond.type === Bond.PATTERN.TYPE.DATIVE) &&
+    bond.type === bondProps.type &&
+    bond.stereo === bondProps.stereo
+  );
+}
+
 export function bondChangingAction(
   restruct: ReStruct,
   itemID: number,
@@ -421,13 +438,7 @@ export function bondChangingAction(
 ): Action {
   const action = new Action();
   let newItemId = itemID;
-  if (
-    ((bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
-      bondProps.type === Bond.PATTERN.TYPE.SINGLE) ||
-      bond.type === Bond.PATTERN.TYPE.DATIVE) &&
-    bond.type === bondProps.type &&
-    bond.stereo === bondProps.stereo
-  ) {
+  if (isBondFlipRequested(bond, bondProps)) {
     action.mergeWith(fromBondFlipping(restruct, itemID));
     newItemId = (action.operations[1] as BondAdd).data.bid as number;
   }

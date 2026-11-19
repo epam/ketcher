@@ -3,6 +3,7 @@ import {
   fromBondsAttrs,
   ketcherProvider,
   bondChangingAction,
+  isBondFlipRequested,
 } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
@@ -39,22 +40,21 @@ const useBondTypeChange = () => {
         bondProps.reactingCenterStatus = 0;
       }
 
-      // If only one bond is selected, use bondChangingAction to support direction flipping
-      if (bondIds.length === 1) {
-        const bond = molecule.bonds.get(bondIds[0]);
-        if (bond) {
-          const action = bondChangingAction(
-            molecule,
-            bondIds[0],
-            bond.b,
-            bondProps,
-          );
-          editor.update(action);
-          return;
-        }
+      // Choosing the type a single stereo or dative bond already has reverses
+      // its direction (#4188). Any other choice sets exactly the chosen type:
+      // the bond tool's cycling (Single -> Double -> Triple) does not apply here
+      const bond = molecule.bonds.get(bondIds[0])?.b;
+      if (
+        bondIds.length === 1 &&
+        bond &&
+        isBondFlipRequested(bond, bondProps)
+      ) {
+        editor.update(
+          bondChangingAction(molecule, bondIds[0], bond, bondProps),
+        );
+        return;
       }
 
-      // For multiple bonds, use fromBondsAttrs
       editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
     },
     [ketcherId],

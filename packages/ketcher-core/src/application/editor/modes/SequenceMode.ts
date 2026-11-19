@@ -992,7 +992,8 @@ export class SequenceMode extends BaseMode {
       ((secondNodeToConnect instanceof Nucleotide &&
         !secondNodeToConnect.isFiveEndPhosphate) ||
         secondNodeToConnect instanceof Nucleoside ||
-        (secondNodeToConnect instanceof MonomerSequenceNode &&
+        (this.isSyncEditMode &&
+          secondNodeToConnect instanceof MonomerSequenceNode &&
           secondNodeToConnect.monomer instanceof Phosphate &&
           secondNodeToConnect.monomer.hydrogenBonds.length > 0))
     ) {

@@ -83,5 +83,6 @@ Neither editor is a global singleton so multiple independent Ketcher instances �
 - Only one input pipeline is live at a time; a global flag selects which editor receives DOM events. The global flag is a known bad pattern, can affect multiple ketcher instances on the same page and is planned for removal.
 - Neither editor is a global singleton — both are scoped to a `ketcherId`.
 - All model changes must go through Action/Command — never mutate `Struct` or `DrawingEntitiesManager` directly from tools or UI. See [operations-history](./operations-history.md).
+- `SequenceMode.connectNodes` infers a phosphate before a paired standalone phosphate only in SYNC mode. Non-SYNC keyboard insertion keeps the nucleoside created by `handleRnaDnaNodeAddition`; library presets supply their own phosphate. The normal nucleotide insertion between an initial phosphate and the following RNA node uses the RNA node creation path instead.
 - Renderers only read the model; the editor triggers re-render after every mutation. See [rendering](./rendering.md).
 - The Monomer Creation Wizard related logic currently lives in the micromolecules editor; there is a plan to move it to a dedicated module.

@@ -121,5 +121,25 @@
       "phosphateLeavingGroupWarning": "Los monómeros de fosfato suelen tener un hidroxilo como grupo saliente para R1 y R2. ¿Deseas continuar con los puntos de unión actuales?",
       "nucleotideLeavingGroupWarning": "Los monómeros de nucleótido suelen tener un hidrógeno como grupo saliente para R1 y un hidroxilo como grupo saliente para R2. ¿Deseas continuar con los puntos de unión actuales?"
     }
+  },
+  "ambiguousMonomerPreview": {
+    "alternatives": "Alternativas",
+    "mixed": "Mezcla",
+    "anyAminoAcid": "Cualquier aminoácido",
+    "anyBase": "Cualquier base"
+  },
+  "colorPicker": {
+    "customColors": "Colores personalizados",
+    "closeCustomColors": "Cerrar colores personalizados",
+    "openCustomColors": "Abrir colores personalizados",
+    "hue": "Tono",
+    "lightness": "Luminosidad",
+    "colorPreview": "Vista previa del color",
+    "deleteCustomColor": "Eliminar color personalizado"
+  },
+  "rgroup": {
+    "removeAttachmentGroup": "Eliminar grupo de unión",
+    "createAttachmentGroup": "Crear grupo de unión",
+    "createAttachmentGroupDisabled": "La selección debe contener solo átomos continuos sin elementos ni enlaces adicionales"
   }
 }

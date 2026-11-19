@@ -29,6 +29,7 @@ import {
   BondDelete,
   BondAttr,
   BondAdd,
+  CalcImplicitH,
   FragmentAdd,
 } from '../operations';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -594,10 +595,19 @@ export function fromSgroupDeletion(
 
   if (sG?.type === 'SRU') {
     struct.sGroupsRecalcCrossBonds();
+    const endsOfOtherPolymers = new Set(
+      [...struct.sgroups.values()]
+        .filter((sgroup) => sgroup !== sG && sgroup.type === 'SRU')
+        .flatMap((sgroup) => sgroup.neiAtoms),
+    );
 
     sG.neiAtoms.forEach((aid) => {
-      if (atomGetAttr(restruct, aid, 'label') === '*') {
+      if (
+        atomGetAttr(restruct, aid, 'label') === '*' &&
+        !endsOfOtherPolymers.has(aid)
+      ) {
         action.addOp(new AtomAttr(aid, 'label', 'C'));
+        action.addOp(new CalcImplicitH([aid]));
       }
     });
   }
@@ -766,6 +776,7 @@ export function fromSgroupAddition(
 
       if (plainCarbon && atomGetDegree(restruct, aid) === 1) {
         asteriskAction.addOp(new AtomAttr(aid, 'label', '*'));
+        asteriskAction.addOp(new CalcImplicitH([aid]));
       }
     });
 

@@ -84,4 +84,5 @@ selection, not undo/redo replay or canvas (Molecules/Macromolecules) switches.
 - The `CoreEditor` instance is created inside this package (in `Editor.tsx`) and stored both in the Redux slice and via `setEditorInstance()` singleton.
 - All canvas event handling is delegated through `CoreEditor.events` (an `IEditorEvents` object), not through React synthetic events.
 - The monomer library panel interacts with `CoreEditor.monomersLibrary` directly (not through Redux).
+- `RnaEditorExpanded` owns its deferred library scroll timers and cancels all pending scrolls on unmount.
 - SVG avatars (SVG icons for monomers on the canvas) are rendered as inline SVG components: `PeptideAvatar`, `ChemAvatar`, `SugarAvatar`, `PhosphateAvatar`, `RNABaseAvatar`, etc.

@@ -16,6 +16,7 @@
 
 import { type Mock, vi } from 'vitest';
 import {
+  fromSgroupAddition,
   fromSgroupDeletion,
   setExpandMonomerSGroup,
 } from 'application/editor/actions/sgroup';
@@ -437,5 +438,61 @@ describe('setExpandMonomerSGroup', () => {
       MonomerMicromolecule,
     );
     expect(struct.frags.has(-1)).toBe(false);
+  });
+});
+
+describe('star atoms at the ends of an SRU polymer', () => {
+  const createPolymer = () => {
+    const struct = new Struct();
+    const atomIds = createZigZagChain(struct, 7);
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+    const restruct = createRestruct(struct);
+    const endAtom = struct.atoms.get(atomIds[6]);
+    const sgroupId = struct.sgroups.newId();
+
+    fromSgroupAddition(
+      restruct,
+      SGroup.TYPES.SRU,
+      atomIds.slice(0, 6),
+      {},
+      sgroupId,
+      [],
+    );
+
+    return { struct, restruct, atomIds, endAtom, sgroupId };
+  };
+
+  it('has no implicit hydrogens on the star atom', () => {
+    const { endAtom } = createPolymer();
+
+    expect(endAtom?.label).toBe('*');
+    expect(endAtom?.implicitH).toBe(0);
+  });
+
+  it('gets the hydrogens of the carbon back when the polymer is removed', () => {
+    const { restruct, endAtom, sgroupId } = createPolymer();
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(endAtom?.label).toBe('C');
+    expect(endAtom?.implicitH).toBe(3);
+  });
+
+  it('keeps the star atom when the polymer is edited', () => {
+    const { struct, restruct, atomIds, endAtom, sgroupId } = createPolymer();
+
+    fromSgroupAddition(
+      restruct,
+      SGroup.TYPES.SRU,
+      atomIds.slice(0, 6),
+      { subscript: 'm' },
+      struct.sgroups.newId(),
+      [],
+    );
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(endAtom?.label).toBe('*');
+    expect(endAtom?.implicitH).toBe(0);
   });
 });

@@ -18,6 +18,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { getStructure, macromoleculesFilesInputFormats } from 'ketcher-core';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   createRNAAntisenseChain,
@@ -27,6 +28,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { expandMonomer } from '@utils/sgroup/helpers';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -41,11 +43,11 @@ test.afterAll(async ({ closePage }) => {
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-test('Case 1: Copy/paste action with large structions shouldnt cause expections', async () => {
+test('Case 1: Copy/Paste action causes exception in log if done reasonably fast on canvas with reasonbly large number of molecules', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/3848
-   * Description: When part of the large structure is copied using Ctrl+C/Ctrl+V hotkeys it shoudn't throw and error
+   * Description: Copy/Paste action causes exception in log if done reasonably fast on canvas with reasonbly large number of molecules
    * Scenario:
    * 1. Load molecule from file: AllPossibleQueryFeatures.zip (unzip first)
    * 2. Select few rings
@@ -74,11 +76,11 @@ test('Case 1: Copy/paste action with large structions shouldnt cause expections'
   expect(clipboardErrors.length).toBe(0);
 });
 
-test('Case 2: Aromatize action on clean canvas shouldnt add NULL in the beginning of exported molfile', async () => {
+test('Case 2: Aromatizing causes NULL in export to MDL Molfile V2000 format file', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/3951
-   * Description: NULL in MOLFILE appears after Aromatize is applied to empty canvas
+   * Description: Aromatizing causes NULL in export to MDL Molfile V2000 format file
    * Scenario:
    * 1. Open the app
    * 2. Click Aromatize button
@@ -94,11 +96,11 @@ test('Case 2: Aromatize action on clean canvas shouldnt add NULL in the beginnin
   expect(saveMolfilePreview).not.toMatch(/^null\b/i);
 });
 
-test('Case 3: S-Group brackets should be drawn correctly for simple aromatic molecule', async () => {
+test('Case 3: Micro: S-Group brackets are drawn incorrectly for simple aromatic molecule', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/3976
-   * Description: S-Group brackets should be drawn correctly for simple aromatic molecule
+   * Description: Micro: S-Group brackets are drawn incorrectly for simple aromatic molecule
    * Scenario:
    * 1. Open the app
    * 2. Open KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/BrokenBrackets.ket file
@@ -113,11 +115,11 @@ test('Case 3: S-Group brackets should be drawn correctly for simple aromatic mol
   await takeEditorScreenshot(page);
 });
 
-test('Case 4: S-Group labels should be positioned correctly after adding explicit hydrogens', async () => {
+test('Case 4: Adding hydrogens causes S-Group label positions far away from their original position expecially for aromatic bonds (Ketcher part)', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/3977
-   * Description: S-Group labels should be positioned correctly after adding explicit hydrogens
+   * Description: Adding hydrogens causes S-Group label positions far away from their original position expecially for aromatic bonds (Ketcher part)
    * Scenario:
    * 1. Open the app
    * 2. Open KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/All types of bond - Either topology - Unmarked - S-Group - Data - Bond.ket file
@@ -133,7 +135,7 @@ test('Case 4: S-Group labels should be positioned correctly after adding explici
   await takeEditorScreenshot(page);
 });
 
-test('Case 5: ', async () => {
+test('Case 5: Establishing connection between ambiguous phosphate and sugar works wrong', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/5470
@@ -168,7 +170,7 @@ test('Case 5: ', async () => {
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
-test('Case 6: ', async () => {
+test('Case 6: Copy/Cut/Paste operations works inconsistently with S-Groups (abbreviations) - paste from clipboard in collapsed state', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/5831
@@ -196,7 +198,9 @@ test('Case 6: ', async () => {
   await takeEditorScreenshot(page);
 });
 
-test('Case 7: ', async ({ SnakeCanvas: _ }) => {
+test("Case 7: Antisense creating doesn't work if ambiguous phosphate present in the chain selection", async ({
+  SnakeCanvas: _,
+}) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/6090
@@ -232,7 +236,9 @@ test('Case 7: ', async ({ SnakeCanvas: _ }) => {
   await takeEditorScreenshot(page);
 });
 
-test('Case 8: ', async ({ SnakeCanvas: _ }) => {
+test("Case 8: Antisense creating doesn't work if ambiguous sugar present in the chain selection", async ({
+  SnakeCanvas: _,
+}) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/6091
@@ -260,7 +266,9 @@ test('Case 8: ', async ({ SnakeCanvas: _ }) => {
   await takeEditorScreenshot(page);
 });
 
-test('Case 9: ', async ({ SnakeCanvas: _ }) => {
+test("Case 9: Antisense creating doesn't work if ambiguous peptide present in the chain selection", async ({
+  SnakeCanvas: _,
+}) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/6092
@@ -296,7 +304,9 @@ test('Case 9: ', async ({ SnakeCanvas: _ }) => {
   await takeEditorScreenshot(page);
 });
 
-test('Case 10: ', async ({ SnakeCanvas: _ }) => {
+test('Case 10: Phosphate in antisense chain converted wrong', async ({
+  SnakeCanvas: _,
+}) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/6093
@@ -324,7 +334,9 @@ test('Case 10: ', async ({ SnakeCanvas: _ }) => {
   await expect(getMonomerLocator(page, { monomerAlias: 'P' })).toHaveCount(1);
 });
 
-test('Case 11: ', async ({ SnakeCanvas: _ }) => {
+test('Case 11: It is possible to create antisense even if it is not allowed (when base has extra bond out of r1-r3 to sugar)', async ({
+  SnakeCanvas: _,
+}) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/6094
@@ -355,4 +367,33 @@ test('Case 11: ', async ({ SnakeCanvas: _ }) => {
   await expect(
     menu.getOptionLocator(MonomerOption.CreateAntisenseDNAStrand),
   ).toBeDisabled();
+});
+
+test("Case 12: Export to Sequence (3-letter code) and export to IDT doesn't throws an error if user tries to save micromolecule structures", async ({
+  FlexCanvas: _,
+}) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6314
+   * Description: Export to Sequence (3-letter code) and export to IDT doesn't throws an error if user tries to save micromolecule structures
+   * Scenario:
+   * 1. Go to Macro - Flex mode
+   * 2. Load from file: All 16 types of bonds.zip
+   * 3. Save canvas to Sequence (3-letter code) or IDT
+
+   * Actual result: System shows empty export result
+   * Expected result: System shown error message: Convert error! Error during sequence type recognition(RNA, DNA or Peptide)
+   */
+  await openFileAndAddToCanvas(
+    page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
+  );
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.Sequence3LetterCode,
+  );
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    `Convert error! Sequence saver: Can't save micro-molecules to sequence format`,
+  );
 });

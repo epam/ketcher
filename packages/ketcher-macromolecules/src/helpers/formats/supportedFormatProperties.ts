@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@ export enum ChemicalMimeType {
 
 interface SupportedFormatPropertiesOptions {
   'molfile-saving-mode'?: '3000';
+  [key: string]: string | number | boolean | undefined;
 }
 
 // TODO this is a duplicated class from packages/ketcher-core/src/application/formatters/supportedFormatProperties.ts
@@ -42,13 +43,13 @@ export class SupportedFormatProperties {
     name: string,
     mime: ChemicalMimeType,
     extensions: string[],
-    supportsCoords?: boolean,
+    hasCoordsSupport?: boolean,
     options?: SupportedFormatPropertiesOptions,
   ) {
     this.name = name;
     this.mime = mime;
     this.extensions = extensions;
-    this.supportsCoords = supportsCoords ?? false;
+    this.supportsCoords = hasCoordsSupport ?? false;
     this.options = options ?? {};
   }
 }

@@ -201,8 +201,7 @@
             "y": -1.25
         },
         "alias": "R",
-        "templateId": "R___Arginine",
-        "seqid": 1
+        "templateId": "R___Arginine"
     },
     "monomerTemplate-R___Arginine": {
         "type": "monomerTemplate",

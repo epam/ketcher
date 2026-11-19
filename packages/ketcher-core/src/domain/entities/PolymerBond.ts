@@ -20,6 +20,10 @@ export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | SnakeModePolymerBondRenderer;
 
 export class PolymerBond extends BaseBond {
+  public static get backBoneChainAttachmentPoints() {
+    return [AttachmentPointName.R1, AttachmentPointName.R2];
+  }
+
   public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
   // Move to renderer
@@ -27,7 +31,10 @@ export class PolymerBond extends BaseBond {
   // Move to renderer
   public nextRowPositionX?: number;
 
-  constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
+  constructor(
+    public firstMonomer: BaseMonomer,
+    secondMonomer?: BaseMonomer,
+  ) {
     super();
     this.firstMonomer = firstMonomer;
     this.secondMonomer = secondMonomer;
@@ -46,10 +53,6 @@ export class PolymerBond extends BaseBond {
   ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
-  }
-
-  public static get backBoneChainAttachmentPoints() {
-    return [AttachmentPointName.R1, AttachmentPointName.R2];
   }
 
   public get isBackBoneChainConnection() {

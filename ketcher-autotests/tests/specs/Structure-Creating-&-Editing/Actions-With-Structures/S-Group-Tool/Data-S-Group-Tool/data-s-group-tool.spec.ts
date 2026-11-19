@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -315,9 +313,13 @@ test.describe('Data S-Group tool', () => {
       PropertyLabelType: PropertyLabelType.Attached,
     });
     await moveMouseAway(page);
-    await waitForRender(page, async () => {
-      await moveMouseToTheMiddleOfTheScreen(page);
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await moveMouseToTheMiddleOfTheScreen(page);
+      },
+      200,
+    );
     await takeEditorScreenshot(page);
   });
 

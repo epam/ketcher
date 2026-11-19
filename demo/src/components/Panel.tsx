@@ -32,21 +32,20 @@ export const Panel = ({
   hiddenButtons,
   buttonsHideHandler,
 }: Props) => {
-  const exportHandler = () => {
-    KetcherFunctions.exportCtab().then((str) => {
-      let message = 'Export content:' + str;
-      console.log(message);
-      printToTerminal(message);
-    });
+  const exportHandler = async () => {
+    const str = await KetcherFunctions.exportCtab();
+    const message = 'Export content:' + str;
+    console.log(message);
+    printToTerminal(message);
   };
 
   const showAtomIds = () => {
     const atoms = KetcherFunctions.getSelectedAtomId();
 
-    if (!atoms) {
-      printToTerminal('No atoms selected');
-    } else {
+    if (atoms) {
       printToTerminal('Selected atoms: ' + atoms);
+    } else {
+      printToTerminal('No atoms selected');
     }
   };
 

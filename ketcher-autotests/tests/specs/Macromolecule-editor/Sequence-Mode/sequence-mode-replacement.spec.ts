@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
@@ -1731,6 +1730,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1776,6 +1776,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1864,6 +1865,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1906,6 +1908,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1948,6 +1951,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -2203,8 +2207,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(

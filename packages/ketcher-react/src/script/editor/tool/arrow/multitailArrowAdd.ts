@@ -10,7 +10,6 @@ export class MultitailArrowAddTool implements ArrowAddTool {
   static readonly MIN_HEIGHT = 2.5;
   static readonly MIN_WIDTH = 1.2;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(private readonly editor: Editor) {}
 
   private get render() {
@@ -19,6 +18,13 @@ export class MultitailArrowAddTool implements ArrowAddTool {
 
   private get reStruct() {
     return this.render.ctab;
+  }
+
+  private getArrowWithMinimalSizeEnd(start: Vec2): Vec2 {
+    return new Vec2(
+      start.x + MultitailArrowAddTool.MIN_WIDTH,
+      start.y + MultitailArrowAddTool.MIN_HEIGHT,
+    );
   }
 
   mousedown() {
@@ -35,12 +41,5 @@ export class MultitailArrowAddTool implements ArrowAddTool {
     const end = this.getArrowWithMinimalSizeEnd(start);
 
     this.editor.update(fromMultitailArrowCreation(this.reStruct, start, end));
-  }
-
-  private getArrowWithMinimalSizeEnd(start: Vec2): Vec2 {
-    return new Vec2(
-      start.x + MultitailArrowAddTool.MIN_WIDTH,
-      start.y + MultitailArrowAddTool.MIN_HEIGHT,
-    );
   }
 }

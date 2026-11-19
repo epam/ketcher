@@ -40,11 +40,17 @@ import {
 } from './replacementHelpers';
 import { KetcherLogger } from 'utilities';
 
-/** AP bond-target ring threshold in canvas pixels. */
+/**
+AP bond-target ring threshold in canvas pixels.
+*/
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
-/** AP snap-circle hover threshold in canvas pixels. */
+/**
+AP snap-circle hover threshold in canvas pixels.
+*/
 const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 20;
-/** AP replace proximity threshold in canvas pixels. */
+/**
+AP replace proximity threshold in canvas pixels.
+*/
 const DRAG_REPLACE_PROXIMITY_THRESHOLD_PX = 20;
 
 export interface IAutochainMonomerAddResult {
@@ -92,7 +98,9 @@ export interface LibraryItemDragDropHandlerDeps {
 export type ReplacementTargetKind = 'same-geometry-preset' | 'monomer';
 
 export type ReplacementTarget = {
-  /** The canvas monomer nearest to the cursor (center of the hit zone) */
+  /**
+  The canvas monomer nearest to the cursor (center of the hit zone)
+  */
   monomer: BaseMonomer;
   kind: ReplacementTargetKind;
   /**
@@ -127,7 +135,9 @@ export class LibraryItemDragDropHandler {
   private dragCircleHoverTarget: AttachmentPointTarget | null = null;
   private isDragDropBondModalOpen = false;
   private dragDropModalContext: DragDropModalContext | null = null;
-  /** Tracks whether a library-item drag is currently in progress. */
+  /**
+  Tracks whether a library-item drag is currently in progress.
+  */
   private currentDragState: LibraryItemDragState = null;
   /**
    * The current replacement target if the cursor is within
@@ -232,16 +242,6 @@ export class LibraryItemDragDropHandler {
   handleMonomerConnectionCancel(): void {
     this.isDragDropBondModalOpen = false;
     this.dragDropModalContext = null;
-  }
-
-  /** Whether a drag-drop connection modal is currently open. */
-  get isModalOpen(): boolean {
-    return this.isDragDropBondModalOpen;
-  }
-
-  /** Whether a library item is currently being dragged. */
-  get isDragging(): boolean {
-    return this.currentDragState !== null;
   }
 
   // ---------------------------------------------------------------------------
@@ -441,8 +441,9 @@ export class LibraryItemDragDropHandler {
       // renderer.center is already in canvas-space pixels — compare directly.
       const center = renderer.center;
 
-      const dist = Math.sqrt(
-        (cursorCanvas.x - center.x) ** 2 + (cursorCanvas.y - center.y) ** 2,
+      const dist = Math.hypot(
+        cursorCanvas.x - center.x,
+        cursorCanvas.y - center.y,
       );
 
       if (dist < minDist) {
@@ -482,7 +483,7 @@ export class LibraryItemDragDropHandler {
         // The hit monomer must itself be one of the matched components,
         // otherwise the user is hovering a part that the dragged preset does
         // not provide (e.g. a phosphate while dragging a sugar+base preset).
-        if (presetComponents && presetComponents.includes(nearestMonomer)) {
+        if (presetComponents?.includes(nearestMonomer)) {
           return {
             monomer: nearestMonomer,
             kind: 'same-geometry-preset',
@@ -607,7 +608,7 @@ export class LibraryItemDragDropHandler {
         ? this.findPresetMonomerForBonding(addedMonomers, targetAP)
         : monomersAddResult.firstMonomer;
 
-      if (droppedMonomer && droppedMonomer.hasFreeAttachmentPoint) {
+      if (droppedMonomer?.hasFreeAttachmentPoint) {
         targetMonomer.setPotentialSecondAttachmentPoint(targetAP);
         const sourceAP = droppedMonomer.getValidSourcePoint(targetMonomer);
         targetMonomer.setPotentialSecondAttachmentPoint(null);
@@ -1118,9 +1119,9 @@ export class LibraryItemDragDropHandler {
           apName,
         );
 
-        const dist = Math.sqrt(
-          (cursorCanvas.x - apCanvasPos.x) ** 2 +
-            (cursorCanvas.y - apCanvasPos.y) ** 2,
+        const dist = Math.hypot(
+          cursorCanvas.x - apCanvasPos.x,
+          cursorCanvas.y - apCanvasPos.y,
         );
 
         if (dist < minDist) {
@@ -1192,5 +1193,15 @@ export class LibraryItemDragDropHandler {
     targetAP: AttachmentPointName,
   ): BaseMonomer | undefined {
     return findPresetMonomerForBondingHelper(addedMonomers, targetAP);
+  }
+
+  /** Whether a drag-drop connection modal is currently open. */
+  get isModalOpen(): boolean {
+    return this.isDragDropBondModalOpen;
+  }
+
+  /** Whether a library item is currently being dragged. */
+  get isDragging(): boolean {
+    return this.currentDragState !== null;
   }
 }

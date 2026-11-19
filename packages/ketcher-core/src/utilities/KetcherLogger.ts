@@ -13,17 +13,17 @@ export interface LogSettings {
 
 export class KetcherLogger {
   static get settings(): LogSettings {
-    if (typeof window === 'undefined') {
+    if (typeof globalThis.window === 'undefined') {
       return {};
     }
 
-    if (!window?.ketcher) {
+    if (!globalThis?.ketcher) {
       console.warn(
         'Ketcher needs to be initialized before KetcherLogger is used',
       );
     }
 
-    return window.ketcher?.logging ?? {};
+    return globalThis.logging ?? {};
   }
 
   static set settings(newSettings: LogSettings) {
@@ -40,9 +40,9 @@ export class KetcherLogger {
     const { showTrace } = this.settings;
 
     if (showTrace) {
-      window.console.trace(messages);
+      globalThis.console.trace(messages);
     } else {
-      window.console.log(messages);
+      globalThis.console.log(messages);
     }
   }
 
@@ -54,9 +54,9 @@ export class KetcherLogger {
     const { showTrace } = this.settings;
 
     if (showTrace) {
-      window.console.trace(messages);
+      globalThis.console.trace(messages);
     } else {
-      window.console.info(messages);
+      globalThis.console.info(messages);
     }
   }
 
@@ -65,7 +65,7 @@ export class KetcherLogger {
       return;
     }
 
-    window.console.warn(warnings);
+    globalThis.console.warn(warnings);
   }
 
   static error(...errors: unknown[]): void {
@@ -73,7 +73,7 @@ export class KetcherLogger {
       return;
     }
 
-    window.console.error(errors);
+    globalThis.console.error(errors);
   }
 
   private static isMinimumLogLevel(minimumLevel: LogLevel): boolean {

@@ -9,7 +9,24 @@ Ketcher is a web-based chemical structure editor built as a TypeScript/React mon
 - **Micromolecules mode** — classic 2D small-molecule/reaction editor (atoms, bonds, SGroups, R-Groups, etc.)
 - **Macromolecules mode** — polymer/sequence editor for peptides, RNA, DNA, and CHEM monomers
 
-The two modes coexist in the same browser tab. Switching between them is controlled via the `ModeControl` toggle component or ketcher api. Each mode has its own editor instance, renderer, and state management, but they share a single `Ketcher` facade and the `ketcher-core` domain/application layer.
+When macromolecules editing is enabled, the two modes coexist in the same browser tab. Switching
+between them is controlled via the `ModeControl` toggle component or Ketcher API. Each mode has its
+own editor instance, renderer, and state management, but they share a single `Ketcher` facade and
+the `ketcher-core` domain/application layer. Integrators may opt out; then the macromolecules
+package is not requested, no macromolecules core editor is created, and APIs or UI that require it
+handle its absence safely.
+
+The macromolecules package is a separate chunk, but "lazy" here means code-split, not loaded on
+demand. When macromolecules stay enabled, `ketcher-react` imports the package as soon as the
+molecules editor reports its Ketcher id, in molecules mode too, and mounts the editor hidden. It
+must: `onInit` waits for the macromolecules core editor. The default monomer library is a second
+chunk: `ketcher-react` starts its load when the browser is idle after that editor exists, so the
+library is usually ready before the first switch
+([modules/monomer-library.md](./modules/monomer-library.md)).
+
+A host app embeds Ketcher as the React `Editor` component. A host page may hold several editors, and it may mount and unmount an editor many times, so each editor owns its resources ([A8](invariants.md)). `example/` has one host page per case; [example-app](modules/example-app.md) lists them.
+
+A host app embeds Ketcher as the React `Editor` component. A host page may hold several editors, and it may mount and unmount an editor many times, so each editor owns its resources ([A8](invariants.md)). `example/` has one host page per case; [example-app](modules/example-app.md) lists them.
 
 ---
 
@@ -53,6 +70,7 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `MicromoleculesEditor.tsx` — mounts the Raphael canvas and Redux store
 - `script/editor/Editor.ts` — editor instance (wraps Raphael render + tool system)
 - `script/ui/` — all React UI: toolbars, dialogs, state (Redux), hotkeys
+- `src/i18n/` — `react-i18next` UI-text localization (English + Simplified Chinese today); see [modules/i18n.md](./modules/i18n.md). The shared `i18next` instance lives here and also serves `ketcher-macromolecules` (see below) — both packages' UI translate together as one unit.
 
 ### 3. `ketcher-macromolecules`
 
@@ -60,6 +78,8 @@ The shared foundation that both UI packages build on. It owns the entire domain 
 - `Editor.tsx` — creates `CoreEditor`, owns the D3/SVG canvas, mounts Redux store
 - `state/common/editorSlice.ts` — primary Redux slice (editor instance, layout mode, tools, preview, line-length)
 - `components/` — MonomerLibrary, ContextMenu, TopMenu, LeftMenu, ZoomControls, Ruler, Modals, etc.
+- Own translation namespaces (`macromolecules`, `macromoleculesDialogs`) registered into `ketcher-react`'s shared `i18next` instance at runtime — see [modules/i18n.md](./modules/i18n.md).
+- **Dependency on `ketcher-react`:** `ketcher-react/src/Editor.tsx` imports this package with `import('ketcher-macromolecules')` inside `React.lazy`; the import runs at startup, not on the first mode switch (see the overview above). `ketcher-macromolecules` is declared as a regular dependency in `ketcher-react/package.json`, so `build-config/external-predicate.mjs` externalizes the import (it marks every `dependencies` and `peerDependencies` entry of the package's `package.json` as external, including deep imports) — `ketcher-react`'s build never inlines a snapshot of this package, it leaves the dynamic import for the final consumer to resolve. Because of this, `build:packages`' build order between the two is no longer load-bearing for staleness (`core → (standalone ‖ react) → macromolecules`). Checked in the Vite build: `ketcher-react`'s `dist/index.js` and `dist/cjs/index.js` keep `import("ketcher-macromolecules")` as written, and no file under `dist/` contains the `macromoleculesDialogs` namespace string.
 
 ### 4. `ketcher-standalone`
 
@@ -109,7 +129,7 @@ flowchart TD
 - **EditorHistory** — pushes Command to undo/redo stack
 - **RenderersManager** — executes Command, updates SVG canvas
 
-**Format conversion flow** — see [serialization deep-dive](./modules/serialization.md) for full details.
+**Format conversion flow** — see [serialization deep-dive](./modules/serialization.md) for full details, and [formats/ket-1.0-specification.md](./formats/ket-1.0-specification.md) / [formats/ket-2.0-specification.md](./formats/ket-2.0-specification.md) for the full KET JSON schema.
 
 When the user exports or imports a structure, the formatter factory picks the right strategy based on the requested format. KET and MOL V2000 are handled by Ketcher itself. Every other format (SMILES, InChI, HELM, FASTA, and so on) is routed through Indigo — either a remote server or the embedded WASM build. In that case the model is first serialized to KET (the universal interchange format), sent to Indigo for conversion, and the result is returned. Import is the mirror: non-local formats are sent to Indigo, which returns KET, and KET is then deserialized into the internal model.
 
@@ -132,3 +152,9 @@ flowchart LR
         KD --> MDL
     end
 ```
+
+---
+
+## Build & Toolchain
+
+The repository is an npm-workspaces monorepo built with Vite 8 (Rolldown). Targets, build order, per-package pipelines, output rules, and verification checks are in [build.md](./build.md).

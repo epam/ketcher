@@ -2,7 +2,7 @@
  * Helpers for the monomer-replacement drag-drop feature.
  *
  * These pure functions handle:
- *  - Preset geometry equality comparison (presetsHaveSameGeometry)
+ *  - Preset geometry equality comparison (hasSamePresetGeometry)
  *  - Bond collection from an existing monomer (collectMonomerBonds)
  *  - Re-establishment plan computation (computeReestablishableBonds)
  *  - Preset-level bond mapping (mapPresetBonds)
@@ -33,10 +33,14 @@ export type PresetGeometry = Pick<
 >;
 
 export type BondRecord = {
-  /** The attachment point name on the original monomer */
+  /**
+  The attachment point name on the original monomer
+  */
   attachmentPointName: AttachmentPointName;
   bond: PolymerBond | HydrogenBond | MonomerToAtomBond;
-  /** The other entity involved in the bond */
+  /**
+  The other entity involved in the bond
+  */
   otherEntity: BaseMonomer;
   /**
    * For polymer bonds: the AP name on the *other* monomer that the bond
@@ -46,9 +50,13 @@ export type BondRecord = {
 };
 
 export type BondReestablishmentPlan = {
-  /** Bonds that can be re-established on the new monomer */
+  /**
+  Bonds that can be re-established on the new monomer
+  */
   reestablishable: BondRecord[];
-  /** Bonds that cannot be re-established (AP absent on new monomer) */
+  /**
+  Bonds that cannot be re-established (AP absent on new monomer)
+  */
   lost: BondRecord[];
 };
 
@@ -63,7 +71,7 @@ export type BondReestablishmentPlan = {
  * It only compares which structural slots are filled and the phosphate
  * orientation.
  */
-export function presetsHaveSameGeometry(
+export function hasSamePresetGeometry(
   presetA: IRnaPreset,
   presetB: IRnaPreset,
 ): boolean {
@@ -91,6 +99,8 @@ export function presetsHaveSameGeometry(
   return true;
 }
 
+export { hasSamePresetGeometry as presetsHaveSameGeometry };
+
 /**
  * Returns all bonds attached to `monomer`, keyed by attachment-point name.
  *
@@ -113,12 +123,12 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
     if (bond instanceof PolymerBond) {
       otherEntity =
         bond.firstMonomer === monomer
-          ? bond.secondMonomer ?? null
+          ? (bond.secondMonomer ?? null)
           : bond.firstMonomer;
       otherAttachmentPoint =
         bond.firstMonomer === monomer
-          ? bond.secondMonomerAttachmentPoint ?? null
-          : bond.firstMonomerAttachmentPoint ?? null;
+          ? (bond.secondMonomerAttachmentPoint ?? null)
+          : (bond.firstMonomerAttachmentPoint ?? null);
     } else if (bond instanceof MonomerToAtomBond) {
       // MonomerToAtomBond connects a monomer to an atom; we treat the atom
       // side as the "other entity" placeholder — but MonomerToAtomBond

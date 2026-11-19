@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,18 +53,22 @@ import type {
 } from './template.types';
 import type { ClosestItemWithMap } from '../shared/closest.types';
 
-export { getAngleFromEvent, getBondFlipSign, getSign };
+export {
+  getAngleFromEvent,
+  getBondFlipSign,
+  getSign,
+} from './template.helpers';
 
 class TemplateTool implements Tool {
   private readonly editor: Editor;
   private readonly mode: string | null;
   private readonly template: InternalTemplate;
   private readonly findItems: Array<string>;
-  public templatePreview: TemplatePreview | null;
   private dragCtx: DragContext | undefined;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
+  public templatePreview: TemplatePreview | null;
 
   constructor(editor: Editor, tmpl: TemplateToolInput) {
     this.editor = editor;
@@ -72,20 +76,37 @@ class TemplateTool implements Tool {
     this.editor.selection(null);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
     const sGroup = tmpl.struct.sgroups.values().next().value as
-      | SGroup
-      | undefined;
+      SGroup | undefined;
+
+    const frag = tmpl.struct;
+    frag.rescale();
+
+    const xy0 = new Vec2();
+    frag.atoms.forEach((atom) => {
+      xy0.add_(atom.pp);
+    });
+
+    const xy0Center = xy0.scaled(1 / (frag.atoms.size || 1));
+    // Number() is used instead of parseInt() because tmpl.aid/bid are typed
+    // as string | number | undefined, and TypeScript's parseInt() only accepts
+    // string. Number() coerces all three variants: Number(undefined) → NaN,
+    // Number(n: number) → n, Number(s: string) → parsed value or NaN.
+    // NaN is falsy so the || operator falls through to the fallback, giving
+    // identical runtime behaviour to the original parseInt() call.
+    // Note: Number("") returns 0, but aid/bid values come from numeric SDF
+    // fields and will never be an empty string in practice.
+    const aid = (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0;
+    const templateAtom = frag.atoms.get(aid);
+
     this.template = {
-      // Number() is used instead of parseInt() because tmpl.aid/bid are typed
-      // as string | number | undefined, and TypeScript's parseInt() only accepts
-      // string. Number() coerces all three variants: Number(undefined) → NaN,
-      // Number(n: number) → n, Number(s: string) → parsed value or NaN.
-      // NaN is falsy so the || operator falls through to the fallback, giving
-      // identical runtime behaviour to the original parseInt() call.
-      // Note: Number("") returns 0, but aid/bid values come from numeric SDF
-      // fields and will never be an empty string in practice.
-      aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
+      aid,
       bid: Number(tmpl.bid) || 0,
       sign: 0,
+      molecule: frag,
+      xy0: xy0Center,
+      angle0: templateAtom
+        ? vectorUtils.calcAngle(templateAtom.pp, xy0Center)
+        : 0,
     };
 
     this.templatePreview = new TemplatePreview(
@@ -94,28 +115,16 @@ class TemplateTool implements Tool {
       this.mode,
     );
 
-    const frag = tmpl.struct;
-    frag.rescale();
-
-    const xy0 = new Vec2();
-    frag.atoms.forEach((atom) => {
-      xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
-    });
-
-    this.template.molecule = frag; // preloaded struct
     this.findItems = [];
-    this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)); // template center
 
-    const atom = frag.atoms.get(this.template.aid);
-    if (atom) {
-      this.template.angle0 = vectorUtils.calcAngle(atom.pp, this.template.xy0); // center tilt
+    if (templateAtom) {
       this.findItems.push('atoms');
     }
 
     const bond = frag.bonds.get(this.template.bid);
     if (bond && !this.isModeFunctionalGroup) {
       // template location sign against attachment bond
-      this.template.sign = getSign(frag, bond, this.template.xy0);
+      this.template.sign = getSign(frag, bond, xy0Center);
       this.findItems.push('bonds');
     }
 
@@ -161,7 +170,7 @@ class TemplateTool implements Tool {
 
     const isTargetExpanded = functionalGroup?.isExpanded;
     const isTargetAtomOrBond =
-      this.targetGroupsIds.length && !this.isModeFunctionalGroup;
+      this.targetGroupsIds.length > 0 && !this.isModeFunctionalGroup;
 
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
@@ -188,14 +197,10 @@ class TemplateTool implements Tool {
     return targetId;
   }
 
-  private showRemoveAbbreviationPopup(): Promise<void> {
-    return this.editor.event.removeFG
-      .dispatch({ fgIds: this.targetGroupsIds })
-      .then(() => {
-        // case when we remove abbreviation group, click on benzene ring and try to add it
-        this.targetGroupsIds.length = 0;
-        return Promise.resolve();
-      });
+  private async showRemoveAbbreviationPopup(): Promise<void> {
+    await this.editor.event.removeFG.dispatch({ fgIds: this.targetGroupsIds });
+    // case when we remove abbreviation group, click on benzene ring and try to add it
+    this.targetGroupsIds.length = 0;
   }
 
   async mousedown(event: MouseEvent) {
@@ -206,7 +211,7 @@ class TemplateTool implements Tool {
 
     this.templatePreview?.hidePreview();
 
-    if (this.functionalGroups.size) {
+    if (this.functionalGroups.size > 0) {
       this.targetGroupsIds = getGroupIdsFromItemArrays(this.struct, {
         ...(this.closestItem?.map === 'atoms' && {
           atoms: [this.closestItem.id],
@@ -302,8 +307,10 @@ class TemplateTool implements Tool {
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
-    /* moving when attached to bond */
-    if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+    /*
+    moving when attached to bond
+    */
+    if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
       if (!bond) {
         return;
@@ -328,7 +335,7 @@ class TemplateTool implements Tool {
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           false,
-        ) as [Action, { atoms: number[]; bonds: number[] }];
+        );
 
         dragCtx.action = action;
         this.editor.update(dragCtx.action, true);
@@ -338,9 +345,11 @@ class TemplateTool implements Tool {
       }
       return;
     }
-    /* end */
+    /*
+    end
+    */
 
-    let extraBond: boolean | null = null;
+    let hasExtraBond = false;
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -353,7 +362,7 @@ class TemplateTool implements Tool {
         targetPos = atom?.pp ?? null;
 
         if (targetPos) {
-          extraBond = this.isModeFunctionalGroup
+          hasExtraBond = this.isModeFunctionalGroup
             ? true
             : Vec2.dist(targetPos, eventPosition) > 1;
         }
@@ -381,7 +390,7 @@ class TemplateTool implements Tool {
       dragCtx.angle === degrees &&
       // eslint-disable-next-line no-prototype-builtins
       (!dragCtx.hasOwnProperty('extra_bond') ||
-        dragCtx.extra_bond === extraBond)
+        dragCtx.extra_bond === hasExtraBond)
     ) {
       return;
     }
@@ -409,14 +418,15 @@ class TemplateTool implements Tool {
       );
     } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
       const atomId = getTargetAtomId(this.struct, ci);
+      if (atomId === undefined) return;
       [action] = fromTemplateOnAtom(
         this.editor.render.ctab,
         this.template,
         atomId,
         angle,
-        extraBond,
+        hasExtraBond,
       );
-      dragCtx.extra_bond = extraBond;
+      dragCtx.extra_bond = hasExtraBond;
     }
     dragCtx.action = action;
 
@@ -425,7 +435,7 @@ class TemplateTool implements Tool {
     }
 
     // TODO: refactor after #2195 comes into effect
-    if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0;
+    if (this.targetGroupsIds.length > 0) this.targetGroupsIds.length = 0;
   }
 
   mouseup(event?: Event) {
@@ -441,32 +451,29 @@ class TemplateTool implements Tool {
     const restruct = this.editor.render.ctab;
     let ci = dragCtx.item;
 
-    /* after moving around bond */
-    if (
-      dragCtx.action &&
-      ci &&
-      ci.map === 'bonds' &&
-      !this.isModeFunctionalGroup
-    ) {
+    /*
+    after moving around bond
+    */
+    if (dragCtx.action && ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       dragCtx.action.perform(restruct); // revert drag action
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
         true,
-      ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+      );
 
-      promise.then(([action, pasteItems]) => {
-        const mergeItems = getItemsToFuse(this.editor, pasteItems);
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-        this.editor.update(action);
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+      this.editor.update(action);
       return;
     }
-    /* end */
+    /*
+    end
+    */
 
     let action, functionalGroupRemoveAction;
 
@@ -477,7 +484,7 @@ class TemplateTool implements Tool {
         this.functionalGroups,
       ) &&
       this.isModeFunctionalGroup &&
-      this.targetGroupsIds.length
+      this.targetGroupsIds.length > 0
     ) {
       const restruct = this.editor.render.ctab;
       const functionalGroupToReplace = this.struct.sgroups.get(ci.id);
@@ -560,22 +567,18 @@ class TemplateTool implements Tool {
         }
         dragCtx.action = action;
       } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-        const promise = fromTemplateOnBondAction(
+        let [action, pasteItems] = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           true,
-        ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+        );
 
-        promise.then(([action, pasteItems]) => {
-          if (!this.isModeFunctionalGroup) {
-            const mergeItems = getItemsToFuse(this.editor, pasteItems);
-            action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-            this.editor.update(action);
-          }
-        });
+        const mergeItems = getItemsToFuse(this.editor, pasteItems);
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+        this.editor.update(action);
 
         return;
       }

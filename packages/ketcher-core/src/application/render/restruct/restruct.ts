@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ import type { Vec2 } from 'domain/entities/vec2';
 import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
+import { ReAttachmentGroup } from './reattachmentGroup';
 import ReBond from './rebond';
 import ReDataSGroupData from './redatasgroupdata';
 import ReEnhancedFlag from './reenhancedFlag';
@@ -50,6 +51,7 @@ import { ReMultitailArrow } from './remultitailArrow';
 class ReStruct {
   public static readonly maps = {
     atoms: ReAtom,
+    attachmentGroups: ReAttachmentGroup,
     bonds: ReBond,
     rxnPluses: ReRxnPlus,
     rxnArrows: ReRxnArrow,
@@ -66,11 +68,40 @@ class ReStruct {
     [MULTITAIL_ARROW_KEY]: ReMultitailArrow,
   } as const;
 
+  private initialized = false;
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+  private readonly ccFragmentType: Pool<number> = new Pool();
+  private structChanged = false;
+
+  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
+  private readonly atomsChanged: Map<number, 1> = new Map();
+  private readonly attachmentGroupsChanged: Map<number, 1> = new Map();
+  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
+    new Map();
+  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
+  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
+  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
+    new Map();
+  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
+  private readonly textsChanged: Map<number, ReText> = new Map();
+  private readonly imagesChanged = new Map<number, ReImage>();
+  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
+  private snappingBonds: number[] = [];
+
+  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
+  // are not visel-bound; we track them here to clear and rebuild each render.
+  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
+
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
+  public attachmentGroups: Map<number, ReAttachmentGroup> = new Map();
   public bonds: Map<number, ReBond> = new Map();
   public visibleAtoms: Map<number, ReAtom> = new Map();
+  public visibleAttachmentGroups: Map<number, ReAttachmentGroup> = new Map();
   public visibleBonds: Map<number, ReBond> = new Map();
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
@@ -87,42 +118,13 @@ class ReStruct {
   public images = new Map<number, ReImage>();
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
-  private initialized = false;
-  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
-    LayerMap,
-    RaphaelPath
-  >;
-
-  public connectedComponents: Pool<Pile> = new Pool();
-  private readonly ccFragmentType: Pool<number> = new Pool();
-  private structChanged = false;
+  public connectedComponents: Pool<Pile<number>> = new Pool();
   public needRecalculateVisibleAtomsAndBonds = false;
-
-  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
-  private readonly atomsChanged: Map<number, 1> = new Map();
-  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
-    new Map();
-
-  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
-  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
-  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
-    new Map();
-
-  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private readonly textsChanged: Map<number, ReText> = new Map();
-  private readonly imagesChanged = new Map<number, ReImage>();
-  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
-  private snappingBonds: number[] = [];
-
-  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
-  // are not visel-bound; we track them here to clear and rebuild each render.
-  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
 
   constructor(
     molecule,
     render: Render | { skipRaphaelInitialization: boolean; theme },
   ) {
-    // eslint-disable-line max-statements
     this.render = render as Render;
     this.molecule = molecule || new Struct();
     this.initLayers();
@@ -131,6 +133,10 @@ class ReStruct {
 
     molecule.atoms.forEach((atom, aid) => {
       this.atoms.set(aid, new ReAtom(atom));
+    });
+
+    molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+      this.attachmentGroups.set(id, new ReAttachmentGroup(attachmentGroup));
     });
 
     molecule.bonds.forEach((bond, bid) => {
@@ -213,9 +219,13 @@ class ReStruct {
     if (!cc) return;
 
     cc.delete(aid);
-    if (cc.size < 1) this.connectedComponents.delete(atom.component);
+    if (cc.size === 0) this.connectedComponents.delete(atom.component);
 
     atom.component = -1;
+  }
+
+  getBondEndpoint(id: number): ReAtom | ReAttachmentGroup | undefined {
+    return this.atoms.get(id) ?? this.attachmentGroups.get(id);
   }
 
   clearConnectedComponents(): void {
@@ -227,24 +237,42 @@ class ReStruct {
 
   getConnectedComponent(
     aid: Array<number> | number,
-    adjacentComponents: Pile,
-  ): Pile {
-    const list = Array.isArray(aid) ? Array.from(aid) : [aid];
-    const ids = new Pile();
+    adjacentComponents: Pile<number>,
+  ): Pile<number> {
+    const list = Array.isArray(aid) ? [...aid] : [aid];
+    const ids = new Pile<number>();
+    const visitedEndpoints = new Set<number>();
 
     while (list.length > 0) {
       const aid = list.pop();
       if (aid === undefined) break;
-      ids.add(aid);
+      if (visitedEndpoints.has(aid)) continue;
+      visitedEndpoints.add(aid);
+
+      const attachmentGroup = this.attachmentGroups.get(aid);
+      if (attachmentGroup) {
+        list.push(...attachmentGroup.a.atomIds);
+        attachmentGroup.a.neighbors.forEach((neighbor) => {
+          const halfBond = this.molecule.halfBonds.get(neighbor);
+          if (halfBond) list.push(halfBond.end);
+        });
+        continue;
+      }
+
       const atom = this.atoms.get(aid);
       if (!atom) continue;
+      ids.add(aid);
       if (atom.component >= 0) adjacentComponents.add(atom.component);
+
+      this.attachmentGroups.forEach((group, groupId) => {
+        if (group.a.atomIds.includes(aid)) list.push(groupId);
+      });
 
       atom.a.neighbors.forEach((neighbor) => {
         const halfBond = this.molecule.halfBonds.get(neighbor);
         if (!halfBond) return;
         const neiId = halfBond.end;
-        if (!ids.has(neiId)) list.push(neiId);
+        if (!visitedEndpoints.has(neiId)) list.push(neiId);
       });
     }
 
@@ -253,11 +281,8 @@ class ReStruct {
 
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
-    const adjacentComponents = new Pile();
-    const aidSet = this.getConnectedComponent(
-      Array.from(idSet),
-      adjacentComponents,
-    );
+    const adjacentComponents = new Pile<number>();
+    const aidSet = this.getConnectedComponent([...idSet], adjacentComponents);
 
     adjacentComponents.delete(compId);
 
@@ -274,7 +299,12 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid)?.forEach((aid) => {
+    const connectedComponent = this.connectedComponents.get(ccid);
+    if (!connectedComponent) {
+      return false;
+    }
+
+    connectedComponent.forEach((aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.component = -1;
     });
@@ -286,7 +316,7 @@ class ReStruct {
     this.atoms.forEach((atom, aid) => {
       if (atom.component >= 0) return;
 
-      const adjacentComponents = new Pile();
+      const adjacentComponents = new Pile<number>();
       const idSet = this.getConnectedComponent(aid, adjacentComponents);
       adjacentComponents.forEach((ccid) => {
         this.removeConnectedComponent(ccid);
@@ -314,15 +344,16 @@ class ReStruct {
     visel: Visel,
     path,
     pos: Vec2 | null = null,
-    visible = false,
+    isVisible = false,
   ): void {
-    // eslint-disable-line max-params
     if (!path || !this.layers[group].node.parentNode) return;
     const paths = Array.isArray(path) ? path : [path];
 
     paths.forEach((path) => {
       const offset = this.render.options.offset;
-      let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
+      let bb = isVisible
+        ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
+        : null;
       const ext = pos && bb ? bb.translate(pos.negated()) : null;
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y);
@@ -375,6 +406,10 @@ class ReStruct {
     this.markItem('atoms', aid, mark);
   }
 
+  markAttachmentGroup(id: number, mark: number): void {
+    this.markItem('attachmentGroups', id, mark);
+  }
+
   markRgroupAttachmentPoint(rgAPid: number, mark: number): void {
     this.markItem('rgroupAttachmentPoints', rgAPid, mark);
   }
@@ -411,7 +446,7 @@ class ReStruct {
    * because of atom's vBox contain text label with is not constant after flip/rotate
    * and this lead to unstable flip tool work
    */
-  // eslint-disable-next-line no-use-before-define
+
   getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
     let boundingBox: Box2Abs | null = null;
 
@@ -437,7 +472,6 @@ class ReStruct {
     return boundingBox?.centre();
   }
 
-  // eslint-disable-next-line no-use-before-define
   getVBoxObj(selection?: SelectionMap): Box2Abs {
     if (isSelectionEmpty(selection)) {
       selection = this.getAllElementsAsSelectionMap();
@@ -449,17 +483,14 @@ class ReStruct {
     return boundingBox;
   }
 
-  // eslint-disable-next-line no-use-before-define
   private getAllElementsAsSelectionMap(): SelectionMap {
-    // eslint-disable-next-line no-use-before-define
     const selection: SelectionMap = {};
     Object.keys(ReStruct.maps).forEach((map) => {
-      selection[map] = Array.from(this[map].keys());
+      selection[map] = [...this[map].keys()];
     });
     return selection;
   }
 
-  // eslint-disable-next-line no-use-before-define
   private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
     let boundingBox: Box2Abs | null = null;
     Object.keys(ReStruct.maps).forEach((elementKey) => {
@@ -487,13 +518,16 @@ class ReStruct {
     this.eachItem((item) => scaleVisel(item.visel, s));
   }
 
-  /** Visel is a shorthand for VISual ELement */
+  /**
+  Visel is a shorthand for VISual ELement
+  */
   clearVisels(): void {
     this.eachItem((item) => this.clearVisel(item.visel));
   }
 
   recalculateVisibleAtomsAndBonds() {
     this.visibleAtoms = new Map();
+    this.visibleAttachmentGroups = new Map(this.attachmentGroups);
     this.visibleBonds = new Map();
 
     this.atoms.forEach((atom, aid) => {
@@ -527,11 +561,10 @@ class ReStruct {
     });
   }
 
-  update(force: boolean): boolean {
-    // eslint-disable-line max-statements
-    force = force || !this.initialized;
+  update(shouldForce: boolean): boolean {
+    shouldForce = shouldForce || !this.initialized;
 
-    if (force || this.needRecalculateVisibleAtomsAndBonds) {
+    if (shouldForce || this.needRecalculateVisibleAtomsAndBonds) {
       this.recalculateVisibleAtomsAndBonds();
       this.needRecalculateVisibleAtomsAndBonds = false;
     }
@@ -539,12 +572,26 @@ class ReStruct {
     // check items to update
     Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed'];
-      if (force) {
+      if (shouldForce) {
         this[map].forEach((_item, id) => mapChanged.set(id, 1));
       } else {
         // check if some of the items marked are already gone
         mapChanged.forEach((_value, id) => {
           if (!this[map].has(id)) mapChanged.delete(id);
+        });
+      }
+    });
+
+    this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+      if (
+        shouldForce ||
+        attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
+      ) {
+        attachmentGroup.recalculatePosition(this.molecule.atoms);
+        this.attachmentGroupsChanged.set(id, 1);
+        attachmentGroup.neighbors.forEach((halfBondId) => {
+          const halfBond = this.molecule.halfBonds.get(halfBondId);
+          if (halfBond) this.markBond(halfBond.bid, 1);
         });
       }
     });
@@ -591,7 +638,7 @@ class ReStruct {
       this.clearVisel(rgroup.visel);
     });
 
-    if (force) {
+    if (shouldForce) {
       // clear and recreate all half-bonds
       this.clearConnectedComponents();
       this.molecule.initHalfBonds();
@@ -599,20 +646,24 @@ class ReStruct {
     }
 
     // only update half-bonds adjacent to atoms that have moved
-    const atomsChangedArray = Array.from(this.atomsChanged.keys());
-    this.molecule.updateHalfBonds(atomsChangedArray);
-    this.molecule.sortNeighbors(atomsChangedArray);
+    const endpointIdsChanged = [
+      ...this.atomsChanged.keys(),
+      ...this.attachmentGroupsChanged.keys(),
+    ];
+    this.molecule.updateHalfBonds(endpointIdsChanged);
+    this.molecule.sortNeighbors(endpointIdsChanged);
 
     this.assignConnectedComponents();
     this.initialized = true;
 
     this.verifyLoops();
-    const updLoops = force || this.structChanged;
-    if (updLoops) this.updateLoops();
+    const shouldUpdateLoops = shouldForce || this.structChanged;
+    if (shouldUpdateLoops) this.updateLoops();
     this.showAtoms();
+    this.showAttachmentGroups();
     this.showBonds();
     this.showRgroupAttachmentPoints();
-    if (updLoops) this.showLoops();
+    if (shouldUpdateLoops) this.showLoops();
     this.showReactionSymbols();
     this.showSGroups();
 
@@ -913,11 +964,18 @@ class ReStruct {
   }
 
   private showAtoms(): void {
-    // eslint-disable-line max-statements
     const options = this.render.options;
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
+    });
+  }
+
+  private showAttachmentGroups(): void {
+    const options = this.render.options;
+    this.attachmentGroupsChanged.forEach((_value, id) => {
+      const attachmentGroup = this.attachmentGroups.get(id);
+      if (attachmentGroup) attachmentGroup.show(this, id, options);
     });
   }
 
@@ -931,7 +989,6 @@ class ReStruct {
   }
 
   showBonds(): void {
-    // eslint-disable-line max-statements
     const options = this.render.options;
 
     this.bondsChanged.forEach((_value, bid) => {
@@ -993,27 +1050,32 @@ class ReStruct {
               sGroupAtoms.some((atom) => atom.selected);
           }
 
-          let selected = selection?.[map]
-            ? selection[map].indexOf(id) > -1
-            : item.selected;
+          // No argument means "redraw the current selection", so what each
+          // item already holds is kept. Any explicit selection - `null`
+          // included - describes the complete new state, so a map absent from
+          // it no longer has anything selected.
+          const isSelected =
+            selection === undefined
+              ? item.selected
+              : (selection?.[map]?.includes(id) ?? false);
 
-          if (selection === null) {
-            selected = false;
-          }
-
-          this.showItemSelection(item, selected);
+          this.showItemSelection(item, isSelected);
         });
       }
     });
   }
 
   showItemSelection(item, selected) {
-    const exists = isSelectionSvgObjectExists(item);
     // TODO: simplify me, who sets `removed`?
-    item.selected = selected;
+    if (item instanceof ReAttachmentGroup) {
+      item.setSelected(selected, this);
+    } else {
+      item.selected = selected;
+    }
+    const hasSelectionSvgObject = isSelectionSvgObjectExists(item);
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;
     if (selected) {
-      if (!exists) {
+      if (!hasSelectionSvgObject) {
         const render = this.render;
         const options = render.options;
         const paper = render.paper;
@@ -1043,7 +1105,7 @@ class ReStruct {
         });
         item.showPoints?.();
       }
-    } else if (exists && item.selectionPlate) {
+    } else if (hasSelectionSvgObject && item.selectionPlate) {
       item.selectionPlate.hide();
       item.hidePoints?.();
       item.additionalInfo?.hide();
@@ -1067,15 +1129,14 @@ class ReStruct {
   }
 }
 
-// eslint-disable-next-line no-use-before-define
 function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
   if (!selection) return true;
 
-  const anySelection = Object.keys(ReStruct.maps).some(
+  const hasAnySelection = Object.keys(ReStruct.maps).some(
     (map) => selection[map] && selection[map].length > 0,
   );
 
-  return !anySelection;
+  return !hasAnySelection;
 }
 
 function scaleRPath(path, scaleFactor: number): void {
@@ -1089,7 +1150,7 @@ function scaleRPath(path, scaleFactor: number): void {
       scaleRPath(pathItem, scaleFactor);
     }
   } else {
-    if (typeof path.attrs !== 'undefined') {
+    if (path.attrs !== undefined) {
       if ('font-size' in path.attrs) {
         path.attr('font-size', path.attrs['font-size'] * scaleFactor);
       } else if ('stroke-width' in path.attrs) {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,7 +46,7 @@ class LassoHelper {
       return locate.inRectangle(rnd.ctab, this.points[0], this.points[1]);
     }
 
-    throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
+    throw new Error('Selector mode unknown');
   }
 
   begin(event: MouseEvent) {

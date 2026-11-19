@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { mapOf } from './schema-helper';
+import i18n from 'src/i18n/i18n';
 
 const radioButtonsSchema = {
   enum: ['Absolute', 'Relative', 'Attached'],
@@ -303,28 +304,30 @@ const sData = {
 
 export const sdataCustomSchema = {
   key: 'Custom',
-  title: 'Data',
+  title: 'dialogs:toolbox.structSchema.sgroup.variantData',
   type: 'object',
   properties: {
     type: { enum: ['DAT'] },
     context: {
-      title: 'Context',
+      title: 'dialogs:toolbox.sdata.context.title',
       enum: ['Atom', 'Bond', 'Fragment', 'Group', 'Multifragment'],
       default: 'Fragment',
     },
     fieldName: {
-      title: 'Field name',
+      title: 'dialogs:toolbox.sdata.fieldName.title',
       type: 'string',
       default: '',
       minLength: 1,
-      invalidMessage: 'Please, specify field name',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.sdata.fieldName.invalidMessage'),
     },
     fieldValue: {
-      title: 'Field value',
+      title: 'dialogs:toolbox.sdata.fieldValue.title',
       type: 'string',
       default: '',
       minLength: 1,
-      invalidMessage: 'Please, specify field value',
+      invalidMessage: () =>
+        i18n.t('dialogs:toolbox.sdata.fieldValue.invalidMessage'),
     },
     radiobuttons: {
       enum: ['Absolute', 'Relative', 'Attached'],

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,7 +56,7 @@ import { KetMonomerClass } from 'application/formatters';
 export function shouldInvokeConnectionModal(
   firstMonomer: BaseMonomer,
   secondMonomer: BaseMonomer,
-  checkForPotentialBonds = true,
+  shouldCheckForPotentialBonds = true,
   isHydrogenBond = false,
 ): boolean | undefined {
   if (isHydrogenBond) {
@@ -78,7 +78,7 @@ export function shouldInvokeConnectionModal(
 
   // Modal: either of the monomers doesn't have any potential APs
   if (
-    checkForPotentialBonds &&
+    shouldCheckForPotentialBonds &&
     (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
   ) {
     return true;
@@ -210,8 +210,8 @@ export function findPresetMonomerForBonding(
     targetAP === AttachmentPointName.R1
       ? AttachmentPointName.R2
       : targetAP === AttachmentPointName.R2
-      ? AttachmentPointName.R1
-      : null;
+        ? AttachmentPointName.R1
+        : null;
 
   if (oppositeAP) {
     const match = addedMonomers.find((m) =>

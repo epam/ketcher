@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -589,8 +586,7 @@ test('22. Verify the star atom remains visible and functional after switching be
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await pasteFromClipboardAndOpenAsNewProject(page, '* |$star_e$|');
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
     LayoutMode.Sequence,
   );
   await takeEditorScreenshot(page);

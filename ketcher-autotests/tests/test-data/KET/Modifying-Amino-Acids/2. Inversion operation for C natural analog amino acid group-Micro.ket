@@ -361,8 +361,7 @@
             "y": -2.75
         },
         "alias": "dC",
-        "templateId": "dC___D-Cysteine",
-        "seqid": 5
+        "templateId": "dC___D-Cysteine"
     },
     "monomer5": {
         "type": "monomer",

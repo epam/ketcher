@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Locator, Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -350,7 +348,7 @@ test.describe('Connection rules for peptides: ', () => {
     await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
-    for await (const peptideAttachmentPoint of Object.values(
+    for (const peptideAttachmentPoint of Object.values(
       peptide.attachmentPoints,
     )) {
       const tmpPeptide =
@@ -402,9 +400,7 @@ test.describe('Connection rules for peptides: ', () => {
     await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
-    for await (const CHEMAttachmentPoint of Object.values(
-      CHEM.attachmentPoints,
-    )) {
+    for (const CHEMAttachmentPoint of Object.values(CHEM.attachmentPoints)) {
       const tmpCHEM = tmpPeptideMonomers[`Test-6-P-${CHEMAttachmentPoint[1]}`];
       await bondTwoMonomersByPointToPoint(
         page,

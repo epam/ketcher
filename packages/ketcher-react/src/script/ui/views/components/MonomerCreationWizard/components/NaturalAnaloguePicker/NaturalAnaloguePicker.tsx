@@ -7,6 +7,10 @@ import styles from './NaturalAnaloguePicker.module.less';
 import NaturalAnalogueChip from '../NaturalAnalogueChip/NaturalAnalogueChip';
 import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
+import { isNaturalAnalogueRequired } from '../../MonomerCreationWizardFields.utils';
+
+export { isNaturalAnalogueRequired };
 
 interface ChipGridSelectProps {
   monomerType: KetMonomerClass | 'rnaPreset' | undefined;
@@ -55,16 +59,6 @@ const rnaOptions = [
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
 
-export const isNaturalAnalogueRequired = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) => {
-  return (
-    monomerType === KetMonomerClass.AminoAcid ||
-    monomerType === KetMonomerClass.Base ||
-    monomerType === KetMonomerClass.RNA
-  );
-};
-
 const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   monomerType,
   value,
@@ -72,7 +66,8 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   className,
   error,
 }) => {
-  const disabled = !isNaturalAnalogueRequired(monomerType);
+  const { t } = useTranslation('components');
+  const isDisabled = !isNaturalAnalogueRequired(monomerType);
 
   const options =
     monomerType === KetMonomerClass.AminoAcid ? aminoAcidOptions : rnaOptions;
@@ -81,7 +76,11 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
     (selected: unknown) => {
       const selectedOption = options.find((o) => o.value === selected);
       if (!selectedOption) {
-        return <span className={styles.placeholder}>Select an analogue</span>;
+        return (
+          <span className={styles.placeholder}>
+            {t('monomerCreationWizard.selectAnalogue')}
+          </span>
+        );
       }
 
       return (
@@ -93,7 +92,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
         />
       );
     },
-    [options],
+    [options, t],
   );
 
   const menuProps: Partial<MenuProps> = useMemo(
@@ -123,7 +122,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
       MenuProps={menuProps}
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
-      disabled={disabled}
+      disabled={isDisabled}
       error={error}
     >
       {options.map((option) => (

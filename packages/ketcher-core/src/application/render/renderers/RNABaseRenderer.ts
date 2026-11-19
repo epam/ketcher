@@ -20,7 +20,10 @@ const RNABASE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].autochainPreview;
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: RNABase, scale?: number) {
+  constructor(
+    public monomer: RNABase,
+    scale?: number,
+  ) {
     super(
       monomer,
       RNABASE_HOVERED_ELEMENT_ID,

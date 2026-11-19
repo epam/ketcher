@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import {
   MolecularMassUnit,
@@ -96,10 +95,9 @@ export const CalculateVariablesPanel = (page: Page) => {
     },
 
     async getMolecularFormula() {
-      return (await locators.molecularFormula.innerText()).replace(
-        /(\r\n|\n|\r)/gm,
-        '',
-      );
+      return (await locators.molecularFormula.innerText())
+        .replaceAll('\r', '')
+        .replaceAll('\n', '');
     },
 
     async getMolecularMassValue() {
@@ -174,7 +172,9 @@ export const CalculateVariablesPanel = (page: Page) => {
       const naturalAnalog = page.getByTestId(countValue);
       await naturalAnalog.waitFor({ state: 'visible', timeout: 5000 });
       expect(await naturalAnalog.count()).toBeGreaterThan(0);
-      return (await naturalAnalog.innerText()).replace(/(\r\n|\n|\r)/gm, '');
+      return (await naturalAnalog.innerText())
+        .replaceAll('\r', '')
+        .replaceAll('\n', '');
     },
 
     async getPeptideNaturalAnalogCountList() {

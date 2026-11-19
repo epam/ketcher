@@ -1,8 +1,8 @@
+import { type MockInstance, type Mock, vi } from 'vitest';
 import {
   CoreEditor,
   EditorClassName,
   MonomerLibraryConvertError,
-  MonomerLibraryUpdateError,
   ToolName,
 } from 'application/editor';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -25,6 +25,13 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
 
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import { EditorHistory } from 'application/editor/EditorHistory';
+import { FlexMode } from 'application/editor/modes/FlexMode';
+import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
     render: {
@@ -36,8 +43,8 @@ type RescaleStructForModeTransitionContext = {
 };
 
 type RescaleStructForModeTransitionStruct = {
-  scale: jest.Mock;
-  scaleMonomerMicromoleculeSgroups: jest.Mock;
+  scale: Mock;
+  scaleMonomerMicromoleculeSgroups: Mock;
 };
 
 type RescaleStructForModeTransitionMethod = (
@@ -60,6 +67,82 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  it('uses the current canvas for library drag/drop after manager swaps', () => {
+    const canvas = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      canvas,
+      theme: coreEditorTheme,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const { deps } = (
+      editor as unknown as {
+        dragDropHandler: { deps: LibraryItemDragDropHandlerDeps };
+      }
+    ).dragDropHandler;
+    const originalManager = editor.drawingEntitiesManager;
+    const replacementManager = new DrawingEntitiesManager();
+
+    try {
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+      editor.drawingEntitiesManager = replacementManager;
+      expect(deps.drawingEntitiesManager).toBe(replacementManager);
+      editor.drawingEntitiesManager = originalManager;
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+    } finally {
+      editor.destroy();
+      canvas.remove();
+    }
+  });
+
+  describe('switchToMacromolecules', () => {
+    const originalGetBBox = SVGElement.prototype.getBBox;
+
+    beforeEach(() => {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: vi.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+
+      if (originalGetBBox) {
+        Object.defineProperty(SVGElement.prototype, 'getBBox', {
+          configurable: true,
+          value: originalGetBBox,
+        });
+      } else {
+        Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+      }
+    });
+
+    it('refreshes canvas offsets after a history-restored mode becomes visible', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      editor.switchToMacromolecules();
+      const bounds = {
+        x: 75,
+        y: 120,
+        left: 75,
+        top: 120,
+        width: 500,
+        height: 500,
+      } as DOMRect;
+      vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(bounds);
+
+      editor.switchToMacromolecules();
+
+      expect(editor.canvasOffset).toBe(bounds);
+      expect(EditorHistory.getInstance(editor).historyPointer).toBe(0);
+      editor.destroy();
+    });
+  });
+
   it('should create MonomerLibraryConvertError with a cause', () => {
     const cause = new Error('convert failed');
     const error = new MonomerLibraryConvertError(
@@ -82,8 +165,8 @@ describe('CoreEditor', () => {
 
     it('should be a no-op when micro and macro scales are equal', () => {
       const struct = {
-        scale: jest.fn(),
-        scaleMonomerMicromoleculeSgroups: jest.fn(),
+        scale: vi.fn(),
+        scaleMonomerMicromoleculeSgroups: vi.fn(),
       };
       const editor = {
         micromoleculesEditor: {
@@ -110,8 +193,8 @@ describe('CoreEditor', () => {
 
     it('should convert macro coordinates into micro coordinates using source-to-target scales', () => {
       const struct = {
-        scale: jest.fn(),
-        scaleMonomerMicromoleculeSgroups: jest.fn(),
+        scale: vi.fn(),
+        scaleMonomerMicromoleculeSgroups: vi.fn(),
       };
       const editor = {
         micromoleculesEditor: {
@@ -138,8 +221,8 @@ describe('CoreEditor', () => {
 
     it('should convert micro coordinates into macro coordinates and rescale monomer sgroups', () => {
       const struct = {
-        scale: jest.fn(),
-        scaleMonomerMicromoleculeSgroups: jest.fn(),
+        scale: vi.fn(),
+        scaleMonomerMicromoleculeSgroups: vi.fn(),
       };
       const editor = {
         micromoleculesEditor: {
@@ -172,10 +255,10 @@ describe('CoreEditor', () => {
       theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
-    const onMousemove = jest.fn();
-    jest
-      .spyOn(MonomerTool.prototype, 'mousemove')
-      .mockImplementation(onMousemove);
+    const onMousemove = vi.fn();
+    vi.spyOn(MonomerTool.prototype, 'mousemove').mockImplementation(
+      onMousemove,
+    );
     editor.selectTool(ToolName.monomer);
     canvas.dispatchEvent(new Event('mousemove', { bubbles: true }));
     expect(onMousemove).toHaveBeenCalled();
@@ -184,7 +267,7 @@ describe('CoreEditor', () => {
   describe('updateMonomersLibrary', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
-    let errorSpy: jest.SpyInstance;
+    let errorSpy: MockInstance;
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
@@ -193,7 +276,7 @@ describe('CoreEditor', () => {
         theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
-      errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
+      errorSpy = vi.spyOn(KetcherLogger, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -235,23 +318,14 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'CHEM1',
-          reason: expect.stringContaining(
-            'Base IDT alias is required when idtAliases is defined',
-          ),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('CHEM1: '),
+      );
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -396,7 +470,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
@@ -463,27 +537,20 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(
           JSON.stringify(payloadWithDuplicateAliases),
         );
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(true);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'PHOS2',
-          reason: expect.stringContaining('Alias collision detected'),
-        },
-        {
-          name: 'PHOS3',
-          reason: expect.stringContaining('Alias collision detected'),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('PHOS2: '),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('PHOS3: '),
+      );
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
@@ -538,23 +605,14 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(true);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'SUGAR3',
-          reason: expect.stringContaining(
-            'The HELM alias must consist only of',
-          ),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('SUGAR3: '),
+      );
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -601,17 +659,12 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(
           JSON.stringify(monomerWithInvalidBilnAlias),
         );
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('The BILN alias must consist only of'),
@@ -677,7 +730,7 @@ describe('CoreEditor', () => {
         editor.updateMonomersLibrary(
           JSON.stringify(monomerWithBilnAliasCollision),
         ),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -747,7 +800,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -804,7 +857,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerB)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -861,7 +914,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerB)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -918,7 +971,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerB)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -951,15 +1004,10 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining(
@@ -969,7 +1017,7 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
 
-    it('should throw MonomerLibraryUpdateError on BILN alias collision across peptide and CHEM monomers', () => {
+    it('should log and skip on BILN alias collision across peptide and CHEM monomers', () => {
       const peptideWithBilnAlias = {
         root: {
           templates: [
@@ -1025,7 +1073,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(chemWithBilnCollision)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('BILN alias "BilnAlias1"'),
@@ -1089,21 +1137,14 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'monomerGroupTemplate-',
-          reason: expect.stringContaining('cannot be empty or whitespace'),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('monomerGroupTemplate-: '),
+      );
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -1220,7 +1261,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(nucleotide2)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1267,7 +1308,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(nucleotidesInOneBatch)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1330,7 +1371,7 @@ describe('CoreEditor', () => {
         editor.updateMonomersLibrary(
           JSON.stringify(nucleotideWithCollidingAlias),
         ),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1369,9 +1410,13 @@ describe('CoreEditor', () => {
       const initialLibrarySize = editor.monomersLibrary.length;
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(() => {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+      }).not.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
         ),
@@ -1410,9 +1455,13 @@ describe('CoreEditor', () => {
       const initialLibrarySize = editor.monomersLibrary.length;
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(() => {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+      }).not.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Offending modification type(s): Micromolecule',
         ),
@@ -1468,7 +1517,10 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
+
+      expect(() => {
+        editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
+      }).not.toThrow();
 
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -1548,7 +1600,7 @@ describe('CoreEditor', () => {
       // The replace path passes the data through
       // ketcher.ensureMonomersLibraryDataInKetFormat; stub it to return the
       // already-KET-format data unchanged.
-      const getKetcherSpy = jest
+      const getKetcherSpy = vi
         .spyOn(ketcherProvider, 'getKetcher')
         .mockReturnValue({
           ensureMonomersLibraryDataInKetFormat: async (data: string | JSON) =>
@@ -1562,6 +1614,7 @@ describe('CoreEditor', () => {
         );
 
         expect(errorSpy).toHaveBeenCalledWith(
+          'Editor::updateMonomersLibrary',
           expect.stringContaining(
             'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
           ),
@@ -1598,20 +1651,20 @@ describe('CoreEditor', () => {
 
     it('should not stop selection tool when it is already in standby mode', () => {
       const selectTool = editor.selectedTool as SelectBase;
-      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      const stopMovementSpy = vi.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'standby';
 
-      window.dispatchEvent(new Event('blur'));
+      globalThis.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).not.toHaveBeenCalled();
     });
 
     it('should stop selection tool when blur happens during active movement', () => {
       const selectTool = editor.selectedTool as SelectBase;
-      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      const stopMovementSpy = vi.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'moving';
 
-      window.dispatchEvent(new Event('blur'));
+      globalThis.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).toHaveBeenCalledTimes(1);
     });
@@ -1645,9 +1698,9 @@ describe('CoreEditor', () => {
       const outsideElement = document.createElement('div');
       document.body.appendChild(outsideElement);
 
-      const preventDefaultSpy = jest.fn();
-      const rightClickSelectedMonomersHandler = jest.fn();
-      const rightClickCanvasHandler = jest.fn();
+      const preventDefaultSpy = vi.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1678,7 +1731,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1688,7 +1741,7 @@ describe('CoreEditor', () => {
       editor.renderersContainer.update(modelChanges);
 
       const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
-      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1718,6 +1771,237 @@ describe('CoreEditor', () => {
         Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
       }
     });
+
+    it('should clear selection and dispatch rightClickCanvas in flex mode on right-click on empty canvas', () => {
+      editor.setMode(new FlexMode());
+      const unselectSpy = vi.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickCanvasHandler = vi.fn();
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const canvasElement = document.createElement('div');
+      rootElement.appendChild(canvasElement);
+      canvasElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).toHaveBeenCalledTimes(1);
+      expect(rightClickCanvasHandler).toHaveBeenCalledWith([
+        expect.anything(),
+        [],
+      ]);
+
+      canvasElement.remove();
+    });
+
+    it('should clear selection and dispatch rightClickCanvas in snake mode on right-click on empty canvas', () => {
+      editor.setMode(new SnakeMode());
+      const unselectSpy = vi.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickCanvasHandler = vi.fn();
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const canvasElement = document.createElement('div');
+      rootElement.appendChild(canvasElement);
+      canvasElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).toHaveBeenCalledTimes(1);
+      expect(rightClickCanvasHandler).toHaveBeenCalledWith([
+        expect.anything(),
+        [],
+      ]);
+
+      canvasElement.remove();
+    });
+
+    it('should clear selection and dispatch rightClickCanvasSequence in sequence mode on right-click on empty canvas', () => {
+      // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
+      const unselectSpy = vi.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const unselectSequenceSpy = vi.spyOn(
+        SequenceRenderer,
+        'unselectEmptyAndBackboneSequenceNodes',
+      );
+      const rightClickCanvasSequenceHandler = vi.fn();
+      editor.events.rightClickCanvasSequence.add(
+        rightClickCanvasSequenceHandler,
+      );
+
+      const canvasElement = document.createElement('div');
+      rootElement.appendChild(canvasElement);
+      canvasElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).toHaveBeenCalledTimes(1);
+      expect(unselectSequenceSpy).toHaveBeenCalledTimes(1);
+      expect(rightClickCanvasSequenceHandler).toHaveBeenCalledWith([
+        expect.anything(),
+        [],
+      ]);
+
+      unselectSequenceSpy.mockRestore();
+      canvasElement.remove();
+    });
+
+    it('should not clear selection when right-clicking a canvas-level element with __data__ set to a selected monomer renderer', () => {
+      editor.setMode(new FlexMode());
+
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
+
+      const addChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(addChanges);
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      const selectChanges =
+        editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+      editor.renderersContainer.update(selectChanges);
+
+      const unselectSpy = vi.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      // Simulate the selection circle: a canvas-level element with __data__ = renderer
+      const selectionIndicator = document.createElement('circle');
+      (selectionIndicator as unknown as { __data__: unknown }).__data__ =
+        monomer.renderer;
+      rootElement.appendChild(selectionIndicator);
+
+      selectionIndicator.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(unselectSpy).not.toHaveBeenCalled();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+      expect(rightClickSelectedMonomersHandler).toHaveBeenCalled();
+
+      selectionIndicator.remove();
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
+
+    it('should dispatch rightClickSelectedMonomers via elementsFromPoint fallback when event.target has no __data__', () => {
+      editor.setMode(new FlexMode());
+
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
+
+      const addChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(addChanges);
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      const selectChanges =
+        editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+      editor.renderersContainer.update(selectChanges);
+
+      const unselectSpy = vi.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
+      const rightClickCanvasSequenceHandler = vi.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+      editor.events.rightClickCanvasSequence.add(
+        rightClickCanvasSequenceHandler,
+      );
+
+      const rendererEl = document.createElement('div');
+      (rendererEl as unknown as { __data__: unknown }).__data__ =
+        monomer.renderer;
+
+      const hasEFP = 'elementsFromPoint' in document;
+      const savedEFP = hasEFP ? document.elementsFromPoint : undefined;
+      (document as unknown as Record<string, unknown>).elementsFromPoint = vi
+        .fn()
+        .mockReturnValue([rendererEl]);
+
+      const noDataTarget = document.createElement('div');
+      rootElement.appendChild(noDataTarget);
+
+      try {
+        noDataTarget.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            clientX: 0,
+            clientY: 0,
+          }),
+        );
+
+        expect(rightClickSelectedMonomersHandler).toHaveBeenCalledTimes(1);
+        expect(rightClickSelectedMonomersHandler.mock.calls[0][0][1]).toEqual([
+          monomer,
+        ]);
+        expect(unselectSpy).not.toHaveBeenCalled();
+        expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+        expect(rightClickCanvasSequenceHandler).not.toHaveBeenCalled();
+      } finally {
+        noDataTarget.remove();
+        if (savedEFP !== undefined) {
+          (document as unknown as Record<string, unknown>).elementsFromPoint =
+            savedEFP;
+        } else {
+          delete (document as unknown as Record<string, unknown>)
+            .elementsFromPoint;
+        }
+        unselectSpy.mockRestore();
+        if (initialGetBBox) {
+          svgElementWithBBox.getBBox = initialGetBBox;
+        } else {
+          Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+        }
+      }
+    });
   });
 
   describe('remove autochain preview handling', () => {
@@ -1739,12 +2023,12 @@ describe('CoreEditor', () => {
     });
 
     it('should hide only autochain preview without clearing all transient views', () => {
-      const clearSpy = jest.spyOn(editor.transientDrawingView, 'clear');
-      const hideAutochainPreviewSpy = jest.spyOn(
+      const clearSpy = vi.spyOn(editor.transientDrawingView, 'clear');
+      const hideAutochainPreviewSpy = vi.spyOn(
         editor.transientDrawingView,
         'hideAutochainPreview',
       );
-      const updateSpy = jest.spyOn(editor.transientDrawingView, 'update');
+      const updateSpy = vi.spyOn(editor.transientDrawingView, 'update');
 
       editor.events.removeAutochainPreview.dispatch();
 
@@ -1773,7 +2057,7 @@ describe('CoreEditor', () => {
     });
 
     it('should register cut event listener on document', () => {
-      const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
 
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
@@ -1793,10 +2077,7 @@ describe('CoreEditor', () => {
     });
 
     it('should remove cut event listener on destroy', () => {
-      const removeEventListenerSpy = jest.spyOn(
-        document,
-        'removeEventListener',
-      );
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
 
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
@@ -1822,7 +2103,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1839,8 +2120,8 @@ describe('CoreEditor', () => {
       expect(editor.drawingEntitiesManager.monomers.size).toBe(1);
 
       // Mock clipboard API (need both writeText AND read for isClipboardAPIAvailable)
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -1851,7 +2132,7 @@ describe('CoreEditor', () => {
       });
 
       // Spy on deleteSelectedStructure event
-      const deleteEventSpy = jest.fn();
+      const deleteEventSpy = vi.fn();
       editor.events.deleteSelectedStructure.add(deleteEventSpy);
 
       // Call onCut directly (simulates cut event)
@@ -1871,8 +2152,8 @@ describe('CoreEditor', () => {
     });
 
     it('should do nothing when cutting with no selection', () => {
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -1899,7 +2180,7 @@ describe('CoreEditor', () => {
       // Mock event with input as target
       const cutEvent = {
         target: input,
-        preventDefault: jest.fn(),
+        preventDefault: vi.fn(),
       } as unknown as ClipboardEvent;
 
       // Add a monomer and select it
@@ -1908,7 +2189,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
         peptideMonomerItem,
@@ -1940,7 +2221,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add a monomer
       const modelChanges = editor.drawingEntitiesManager.addMonomer(
@@ -1954,8 +2235,8 @@ describe('CoreEditor', () => {
       editor.drawingEntitiesManager.selectDrawingEntity(monomer);
 
       // Mock clipboard API
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -1966,8 +2247,8 @@ describe('CoreEditor', () => {
       });
 
       // Spy on methods to verify order
-      const onCopySpy = jest.spyOn(editor.mode, 'onCopy');
-      const deleteEventSpy = jest.fn();
+      const onCopySpy = vi.spyOn(editor.mode, 'onCopy');
+      const deleteEventSpy = vi.fn();
       editor.events.deleteSelectedStructure.add(deleteEventSpy);
 
       // Perform cut
@@ -1993,7 +2274,7 @@ describe('CoreEditor', () => {
       };
       const initialGetBBox = svgElementWithBBox.getBBox;
       svgElementWithBBox.getBBox = () =>
-        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+        ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
 
       // Add multiple monomers
       const modelChanges1 = editor.drawingEntitiesManager.addMonomer(
@@ -2018,8 +2299,8 @@ describe('CoreEditor', () => {
       expect(editor.drawingEntitiesManager.monomers.size).toBe(2);
 
       // Mock clipboard API (need both writeText AND read for isClipboardAPIAvailable)
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -2030,7 +2311,7 @@ describe('CoreEditor', () => {
       });
 
       // Spy on delete event
-      const deleteEventSpy = jest.fn();
+      const deleteEventSpy = vi.fn();
       editor.events.deleteSelectedStructure.add(deleteEventSpy);
 
       // Call onCut

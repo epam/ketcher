@@ -12,7 +12,7 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   // The cliparea is a hidden textarea used to capture copy/paste events,
   // so hotkeys must still fire when it is focused.
-  if (target.hasAttribute('data-cliparea')) return false;
+  if (target.dataset.cliparea !== undefined) return false;
   return (
     target.nodeName === 'INPUT' ||
     target.nodeName === 'TEXTAREA' ||
@@ -34,16 +34,15 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function guardForMacromoleculesEditor<T extends (...args: any[]) => any>(
-  handler: T,
-): T {
-  return ((...args: Parameters<T>) => {
-    if (window.isPolymerEditorTurnedOn) {
+export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
+  handler: (...args: TArgs) => TResult,
+): (...args: TArgs) => TResult | undefined {
+  return (...args: TArgs) => {
+    if (globalThis.isPolymerEditorTurnedOn) {
       return handler(...args);
     }
     return undefined;
-  }) as unknown as T;
+  };
 }
 
 /**
@@ -60,14 +59,31 @@ export function guardForMacromoleculesEditor<T extends (...args: any[]) => any>(
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function guardForMicromoleculesEditor<T extends (...args: any[]) => any>(
-  handler: T,
-): T {
-  return ((...args: Parameters<T>) => {
-    if (!window.isPolymerEditorTurnedOn) {
+export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
+  handler: (...args: TArgs) => TResult,
+): (...args: TArgs) => TResult | undefined {
+  return (...args: TArgs) => {
+    if (!globalThis.isPolymerEditorTurnedOn) {
       return handler(...args);
     }
     return undefined;
-  }) as unknown as T;
+  };
+}
+
+// Copy/cut listeners are registered outside the editor's own input element
+// (on `document` in macromolecules mode, on the cliparea's container in
+// micromolecules mode), so they also fire when the user selects unrelated
+// page text (e.g. an error toast) and presses Ctrl+C. Only treat it as a
+// structure copy if the live selection is actually inside the given element.
+export function isSelectionOutsideElement(
+  containerEl: Element | null,
+): boolean {
+  if (!containerEl) {
+    return false;
+  }
+  const selection = document.getSelection();
+  if (!selection || selection.isCollapsed || !selection.anchorNode) {
+    return false;
+  }
+  return !containerEl.contains(selection.anchorNode);
 }

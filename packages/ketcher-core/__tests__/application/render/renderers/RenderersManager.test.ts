@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
@@ -16,6 +17,8 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { isValidRnaEnumerationStartMonomer } from 'domain/helpers/monomers';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types/ket';
@@ -31,6 +34,7 @@ type RenderersManagerInternals = {
     subChain: RnaSubChain,
     isChainCyclic: boolean,
   ): void;
+  resetSubChainEnumeration(subChain: BaseSubChain): void;
 };
 
 const attachmentPoint = (label: AttachmentPointName) => ({
@@ -123,6 +127,14 @@ const recalculateRnaChainEnumeration = (
   }) as unknown as RenderersManagerInternals;
 
   renderersManager.recalculateRnaChainEnumeration(subChain, isChainCyclic);
+};
+
+const resetSubChainEnumeration = (subChain: BaseSubChain) => {
+  const renderersManager = new RenderersManager({
+    theme: {},
+  }) as unknown as RenderersManagerInternals;
+
+  renderersManager.resetSubChainEnumeration(subChain);
 };
 
 const createSugarLabeled = (label: string) =>
@@ -347,12 +359,12 @@ describe('RenderersManager', () => {
     let canvas: SVGSVGElement;
 
     beforeAll(() => {
-      global.ResizeObserver = jest.fn().mockImplementation(() => ({
-        observe: jest.fn(),
-        unobserve: jest.fn(),
-        disconnect: jest.fn(),
+      global.ResizeObserver = vi.fn().mockImplementation(() => ({
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
       }));
-      SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+      SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
         x: 0,
         y: 0,
         width: 12,
@@ -370,7 +382,7 @@ describe('RenderersManager', () => {
         configurable: true,
         value: { baseVal: { value: 500 } },
       });
-      // eslint-disable-next-line no-new
+
       new CoreEditor({
         canvas,
         theme: {},
@@ -462,7 +474,7 @@ describe('RenderersManager', () => {
 
       // Exactly one antisense sugar renders a terminal indicator.
       const antisenseTerminalIndices = antisenseLabels
-        .map((label, index) => (label !== null ? index : -1))
+        .map((label, index) => (label === null ? -1 : index))
         .filter((index) => index !== -1);
 
       expect(antisenseTerminalIndices).toHaveLength(1);
@@ -496,7 +508,7 @@ describe('RenderersManager', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      // eslint-disable-next-line no-new
+
       new CoreEditor({
         canvas,
         theme: {},
@@ -594,6 +606,22 @@ describe('RenderersManager', () => {
 
     expect(firstBaseRenderer.enumerations).toEqual([null]);
     expect(secondBaseRenderer.enumerations).toEqual([null]);
+  });
+
+  it('resets enumeration for a lone RNA base left in a ChemSubChain after its sugar and phosphate are deleted', () => {
+    const base = new RNABase(
+      monomerItem('A', KetMonomerClass.Base, [AttachmentPointName.R1]),
+    );
+    const baseRenderer = mockRenderer(base);
+    baseRenderer.enumerations.push(1);
+
+    const subChain = new ChemSubChain();
+    subChain.add(new LinkerSequenceNode(base));
+
+    resetSubChainEnumeration(subChain);
+
+    expect(baseRenderer.enumerations).toEqual([1, null]);
+    expect(baseRenderer.terminalMarkers).toEqual([false]);
   });
 });
 

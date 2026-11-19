@@ -402,8 +402,7 @@
             "y": -2.75
         },
         "alias": "dT",
-        "templateId": "dT___D-Threonine",
-        "seqid": 5
+        "templateId": "dT___D-Threonine"
     },
     "monomer5": {
         "type": "monomer",

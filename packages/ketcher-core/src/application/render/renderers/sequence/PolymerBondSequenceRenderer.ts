@@ -10,8 +10,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(
     public polymerBond: PolymerBond,
@@ -41,6 +40,43 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
       this.firstMonomer.renderer?.scaledMonomerPositionForSequence.y ===
       this.secondMonomer?.renderer?.scaledMonomerPositionForSequence.y
     );
+  }
+
+  private get mainLineY() {
+    const mainLineY1 =
+      this.scaledPosition.startPosition.y -
+      (this.scaledPosition.startPosition.y > this.scaledPosition.endPosition.y
+        ? 15
+        : -3) +
+      (this.areMonomersOnSameRow ? -25 : 0);
+
+    const mainLineY2 =
+      this.scaledPosition.endPosition.y -
+      (this.scaledPosition.endPosition.y > this.scaledPosition.startPosition.y
+        ? 15
+        : -3) +
+      (this.areMonomersOnSameRow ? -25 : 0);
+    return { mainLineY1, mainLineY2 };
+  }
+
+  private getBondPath() {
+    let path: string;
+    if (this.areMonomersOnSameRow) {
+      path = `M ${this.scaledPosition.startPosition.x + 6},
+      ${this.mainLineY.mainLineY1 + 5}
+      L ${this.scaledPosition.startPosition.x + 6}, ${this.mainLineY.mainLineY1}
+      L ${this.scaledPosition.endPosition.x + 6}, ${this.mainLineY.mainLineY2}
+      L ${this.scaledPosition.endPosition.x + 6}, ${
+        this.mainLineY.mainLineY2 + 5
+      }`;
+    } else {
+      path = `M ${this.scaledPosition.startPosition.x + 6}, ${
+        this.mainLineY.mainLineY1
+      } L ${this.scaledPosition.endPosition.x + 6}, ${
+        this.mainLineY.mainLineY2
+      }`;
+    }
+    return path;
   }
 
   public get scaledPosition() {
@@ -74,23 +110,6 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     );
   }
 
-  private get mainLineY() {
-    const mainLineY1 =
-      this.scaledPosition.startPosition.y -
-      (this.scaledPosition.startPosition.y > this.scaledPosition.endPosition.y
-        ? 15
-        : -3) +
-      (this.areMonomersOnSameRow ? -25 : 0);
-
-    const mainLineY2 =
-      this.scaledPosition.endPosition.y -
-      (this.scaledPosition.endPosition.y > this.scaledPosition.startPosition.y
-        ? 15
-        : -3) +
-      (this.areMonomersOnSameRow ? -25 : 0);
-    return { mainLineY1, mainLineY2 };
-  }
-
   public show() {
     this.rootElement = this.canvas
       .insert('g', `:first-child`)
@@ -118,28 +137,6 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     } else {
       this.selectionElement?.remove();
     }
-  }
-
-  private getBondPath() {
-    let path = '';
-    if (this.areMonomersOnSameRow) {
-      path = `M ${this.scaledPosition.startPosition.x + 6},
-      ${this.mainLineY.mainLineY1 + 5} 
-      L ${this.scaledPosition.startPosition.x + 6}, ${
-        this.mainLineY.mainLineY1
-      } 
-      L ${this.scaledPosition.endPosition.x + 6}, ${this.mainLineY.mainLineY2}
-      L ${this.scaledPosition.endPosition.x + 6}, ${
-        this.mainLineY.mainLineY2 + 5
-      }`;
-    } else {
-      path = `M ${this.scaledPosition.startPosition.x + 6}, ${
-        this.mainLineY.mainLineY1
-      } L ${this.scaledPosition.endPosition.x + 6}, ${
-        this.mainLineY.mainLineY2
-      }`;
-    }
-    return path;
   }
 
   public moveStart(): void {

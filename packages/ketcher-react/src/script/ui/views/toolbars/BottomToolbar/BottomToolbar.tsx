@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import {
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 
-import { TemplatesList } from './TemplatesList';
+import { type TemplatesListProps, TemplatesList } from './TemplatesList';
 import classes from './BottomToolbar.module.less';
 import clsx from 'clsx';
 
@@ -30,13 +30,12 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface BottomToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface BottomToolbarProps extends Omit<
+  ToolbarGroupItemProps,
+  'id' | 'options'
+> {
   className?: string;
-  active?: {
-    opts: any;
-    tool: string;
-  };
+  active?: TemplatesListProps['active'];
 }
 
 type BottomToolbarCallProps = ToolbarGroupItemCallProps;

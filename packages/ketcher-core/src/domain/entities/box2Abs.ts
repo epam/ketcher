@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,94 +17,20 @@
 import { Vec2 } from './vec2';
 import { assert } from 'utilities';
 
+interface RelativeBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface AbsoluteBox {
+  min: Vec2;
+  max: Vec2;
+}
+
 export class Box2Abs {
-  readonly p0: Vec2;
-  readonly p1: Vec2;
-
-  constructor();
-  constructor(p: Vec2);
-  constructor(p0: Vec2, p1: Vec2);
-  constructor(x0: number, y0: number, x1: number, y1: number);
-  constructor(...args: Array<any>) {
-    if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
-      this.p0 = args[0].min;
-      this.p1 = args[0].max;
-    }
-
-    if (args.length === 2) {
-      this.p0 = args[0];
-      this.p1 = args[1];
-    } else if (args.length === 4) {
-      this.p0 = new Vec2(args[0], args[1]);
-      this.p1 = new Vec2(args[2], args[3]);
-    } else if (args.length === 0) {
-      this.p0 = new Vec2();
-      this.p1 = new Vec2();
-    } else {
-      throw new Error(
-        'Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!',
-      );
-    }
-  }
-
-  toString(): string {
-    return this.p0.toString() + ' ' + this.p1.toString();
-  }
-
-  clone(): Box2Abs {
-    return new Box2Abs(this.p0, this.p1);
-  }
-
-  extend(lp: Vec2, rb: Vec2): Box2Abs {
-    rb = rb || lp;
-    return new Box2Abs(this.p0.sub(lp), this.p1.add(rb));
-  }
-
-  include(p: Vec2): Box2Abs {
-    assert(p != null);
-
-    return new Box2Abs(this.p0.min(p), this.p1.max(p));
-  }
-
-  contains(p: Vec2, ext = 0.0): boolean {
-    assert(p != null);
-
-    return (
-      p.x >= this.p0.x - ext &&
-      p.x <= this.p1.x + ext &&
-      p.y >= this.p0.y - ext &&
-      p.y <= this.p1.y + ext
-    );
-  }
-
-  translate(d: Vec2): Box2Abs {
-    return new Box2Abs(this.p0.add(d), this.p1.add(d));
-  }
-
-  transform(f: (p: Vec2, options: any) => Vec2, options: any): Box2Abs {
-    assert(typeof f === 'function');
-
-    return new Box2Abs(f(this.p0, options), f(this.p1, options));
-  }
-
-  sz(): Vec2 {
-    return this.p1.sub(this.p0);
-  }
-
-  centre(): Vec2 {
-    return Vec2.centre(this.p0, this.p1);
-  }
-
-  pos() {
-    return this.p0;
-  }
-
-  hasZeroArea() {
-    const size = this.sz();
-    return size.x === 0 && size.y === 0;
-  }
-
-  static fromRelBox(relBox: any): Box2Abs {
+  static fromRelBox(relBox: RelativeBox): Box2Abs {
     return new Box2Abs(
       relBox.x,
       relBox.y,
@@ -148,5 +74,101 @@ export class Box2Abs {
     return (
       point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
     );
+  }
+
+  readonly p0: Vec2;
+  readonly p1: Vec2;
+
+  constructor();
+  constructor(p: Vec2);
+  constructor(box: AbsoluteBox);
+  constructor(p0: Vec2, p1: Vec2);
+  constructor(x0: number, y0: number, x1: number, y1: number);
+  constructor(
+    ...args:
+      | []
+      | [Vec2]
+      | [Vec2, Vec2]
+      | [number, number, number, number]
+      | [AbsoluteBox]
+  ) {
+    if (args.length === 1 && args[0] instanceof Vec2) {
+      this.p0 = args[0];
+      this.p1 = args[0];
+    } else if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
+      const boxArg = args[0] as AbsoluteBox;
+      this.p0 = boxArg.min;
+      this.p1 = boxArg.max;
+    } else if (args.length === 2) {
+      this.p0 = args[0];
+      this.p1 = args[1];
+    } else if (args.length === 4) {
+      this.p0 = new Vec2(args[0], args[1]);
+      this.p1 = new Vec2(args[2], args[3]);
+    } else if (args.length === 0) {
+      this.p0 = new Vec2();
+      this.p1 = new Vec2();
+    } else {
+      throw new Error(
+        'Box2Abs constructor only accepts a point, box bounds, 2 vectors, 4 numbers, or no args!',
+      );
+    }
+  }
+
+  toString(): string {
+    return this.p0.toString() + ' ' + this.p1.toString();
+  }
+
+  clone(): Box2Abs {
+    return new Box2Abs(this.p0, this.p1);
+  }
+
+  extend(lp: Vec2, rb: Vec2): Box2Abs {
+    rb = rb || lp;
+    return new Box2Abs(this.p0.sub(lp), this.p1.add(rb));
+  }
+
+  include(p: Vec2): Box2Abs {
+    assert(p != null);
+
+    return new Box2Abs(this.p0.min(p), this.p1.max(p));
+  }
+
+  contains(p: Vec2, ext = 0): boolean {
+    assert(p != null);
+
+    return (
+      p.x >= this.p0.x - ext &&
+      p.x <= this.p1.x + ext &&
+      p.y >= this.p0.y - ext &&
+      p.y <= this.p1.y + ext
+    );
+  }
+
+  translate(d: Vec2): Box2Abs {
+    return new Box2Abs(this.p0.add(d), this.p1.add(d));
+  }
+
+  transform<T>(f: (p: Vec2, options: T) => Vec2, options: T): Box2Abs {
+    assert(typeof f === 'function');
+
+    return new Box2Abs(f(this.p0, options), f(this.p1, options));
+  }
+
+  sz(): Vec2 {
+    return this.p1.sub(this.p0);
+  }
+
+  centre(): Vec2 {
+    return Vec2.centre(this.p0, this.p1);
+  }
+
+  pos() {
+    return this.p0;
+  }
+
+  hasZeroArea() {
+    const size = this.sz();
+    return size.x === 0 && size.y === 0;
   }
 }

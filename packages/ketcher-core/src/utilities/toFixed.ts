@@ -3,7 +3,7 @@ export function toFixed<TValue extends number | string>(value: TValue): string {
   if (typeof value === 'number') {
     parsedValue = value;
   } else {
-    parsedValue = parseFloat(value);
+    parsedValue = Number.parseFloat(value);
   }
   return parsedValue.toFixed(8);
 }

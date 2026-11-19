@@ -1,4 +1,3 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +36,9 @@ import {
   type ExplicitHydrogensData,
   type ExplicitHydrogensResult,
   type GenerateImageOptions,
+  type ImagoStatusResponse,
+  type ImagoUploadResponse,
+  type IndigoInfoResponse,
   type InfoResult,
   type LayoutData,
   type LayoutResult,
@@ -49,84 +51,134 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/ketcherProvider';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 
-function pollDeferred(process, complete, timeGap, startTimeGap) {
-  return new Promise((resolve, reject) => {
-    function iterate() {
-      process().then(
-        (val) => {
-          try {
-            if (complete(val)) resolve(val);
-            else setTimeout(iterate, timeGap);
-          } catch (error) {
-            KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(normalizeError(error));
-          }
-        },
-        (err) => reject(normalizeError(err)),
-      );
+async function pollDeferred<T>(
+  process: () => Promise<T>,
+  isComplete: (val: T) => boolean,
+  timeGap: number,
+  startTimeGap?: number,
+): Promise<T> {
+  await new Promise<void>((resolve) => setTimeout(resolve, startTimeGap ?? 0));
+
+  while (true) {
+    let value: T;
+    try {
+      value = await process();
+    } catch (error) {
+      throw normalizeError(error);
     }
-    setTimeout(iterate, startTimeGap ?? 0);
-  });
+
+    try {
+      if (isComplete(value)) return value;
+    } catch (error) {
+      KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
+      throw normalizeError(error);
+    }
+
+    await new Promise<void>((resolve) => setTimeout(resolve, timeGap));
+  }
 }
 
-function parametrizeUrl(url, params) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+function parametrizeUrl(url: string, params: Record<string, string>) {
+  return url
+    .split(/(:[A-Za-z_]\w*)/)
+    .map((segment, index) => {
+      if (index % 2 === 0) {
+        return segment;
+      }
+
+      const key = segment.slice(1);
+      if (
+        Object.prototype.hasOwnProperty.call(params, key) &&
+        params[key] !== undefined &&
+        params[key] !== null
+      ) {
+        return String(params[key]);
+      }
+      return segment;
+    })
+    .join('');
 }
 
-function request(
+async function request<T = unknown>(
   method: string,
   url: string,
-  data?: any,
-  headers?: any,
-  responseHandler?: (promise: Promise<any>) => Promise<any>,
-) {
+  data?: string | Blob | Record<string, string>,
+  headers?: Record<string, string>,
+  responseHandler?: (promise: Promise<Response>) => Promise<T>,
+): Promise<T> {
   let requestUrl = url;
-  if (data && method === 'GET') requestUrl = parametrizeUrl(url, data);
-  let response: any = fetch(requestUrl, {
-    method,
-    headers: {
-      Accept: 'application/json',
-      ...(headers ?? {}),
-    },
-    body: method !== 'GET' ? data : undefined,
-    credentials: 'same-origin',
-  });
+  if (data && method === 'GET')
+    requestUrl = parametrizeUrl(url, data as Record<string, string>);
 
-  if (responseHandler) {
-    response = responseHandler(response);
-  } else {
-    response = response.then((response) =>
-      response
-        .json()
-        .then((res) =>
-          response.ok ? res : Promise.reject(new Error(res.error)),
-        ),
+  const mergedHeaders = {
+    Accept: 'application/json',
+    ...headers,
+  };
+
+  let fetchResponse: Promise<Response>;
+  try {
+    fetchResponse = fetch(requestUrl, {
+      method,
+      headers: mergedHeaders,
+      body: method === 'GET' ? undefined : (data as string | Blob),
+      credentials: 'same-origin',
+    });
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    return Promise.reject(
+      new Error(
+        `Invalid custom headers passed to RemoteStructServiceProvider: ${details}`,
+      ),
     );
   }
 
-  return response;
+  if (responseHandler) {
+    return responseHandler(fetchResponse);
+  }
+
+  const res = await fetchResponse;
+  let json: unknown;
+  try {
+    // Error responses (e.g. a 413 from a reverse proxy rejecting an
+    // oversized body) are not guaranteed to have a JSON body, so parsing
+    // must not be the thing that decides whether the request succeeded.
+    json = await res.json();
+  } catch {
+    json = null;
+  }
+
+  if (res.ok) return json as T;
+
+  const message =
+    (json as { error?: string } | null)?.error ||
+    res.statusText ||
+    `Request failed with status ${res.status}`;
+  throw new Error(message);
 }
 
-function indigoCall(
+function indigoCall<TData extends object, TResult>(
   method: string,
   url: string,
   baseUrl: string,
-  defaultOptions: any,
+  defaultOptions: StructServiceOptions,
   customHeaders?: Record<string, string>,
 ) {
   return function (
-    data,
-    options,
-    responseHandler?: (promise: Promise<any>) => Promise<any>,
-  ) {
-    const body = { ...(data ?? {}) };
+    data: TData,
+    options: Record<string, unknown>,
+    responseHandler?: (promise: Promise<Response>) => Promise<TResult>,
+  ): Promise<TResult> {
+    const body: Record<string, unknown> = {
+      ...(data as unknown as Record<string, unknown>),
+    };
     body.options = {
-      ...(body.options ?? {}),
+      ...((body.options as Record<string, unknown>) ?? {}),
       ...(defaultOptions ?? {}),
       ...(options ?? {}),
     };
-    return request(
+    return request<TResult>(
       method,
       baseUrl + url,
       JSON.stringify(body),
@@ -154,6 +206,7 @@ export function pickStandardServerOptions(
       options?.['mass-skip-error-on-pseudoatoms'],
     'gross-formula-add-rsites': options?.['gross-formula-add-rsites'],
     'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
+    'smiles-saving-format': options?.['smiles-saving-format'],
     'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
     'aromatize-skip-superatoms': true,
     'valence-mode': options?.['valence-mode'],
@@ -177,12 +230,26 @@ export class RemoteStructService implements StructService {
     this.ketcherId = null;
   }
 
+  private getStandardServerOptions(options?: StructServiceOptions) {
+    if (!options) {
+      return this.defaultOptions;
+    }
+    if (!this.ketcherId) {
+      throw new Error('ketcherId is missed when options getting');
+    }
+
+    return pickStandardServerOptions(this.ketcherId, options);
+  }
+
   addKetcherId(ketcherId: string) {
     this.ketcherId = ketcherId;
   }
 
   getInChIKey(struct: string): Promise<string> {
-    return indigoCall(
+    return indigoCall<
+      { struct: string; output_format: ChemicalMimeType },
+      string
+    >(
       'POST',
       'indigo/convert',
       this.apiPath,
@@ -197,24 +264,13 @@ export class RemoteStructService implements StructService {
     );
   }
 
-  private getStandardServerOptions(options?: StructServiceOptions) {
-    if (!options) {
-      return this.defaultOptions;
-    }
-    if (!this.ketcherId) {
-      throw new Error('ketcherId is missed when options getting');
-    }
-
-    return pickStandardServerOptions(this.ketcherId, options);
-  }
-
   async info(): Promise<InfoResult> {
     let indigoVersion: string;
     let imagoVersions: Array<string>;
-    let isAvailable = false;
+    let isAvailable: boolean;
 
     try {
-      const response = await request(
+      const response = await request<IndigoInfoResponse>(
         'GET',
         this.apiPath + 'info',
         undefined,
@@ -223,10 +279,10 @@ export class RemoteStructService implements StructService {
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'remoteStructService.ts::RemoteStructService::info',
-        e,
+        error,
       );
       indigoVersion = '';
       imagoVersions = [];
@@ -240,10 +296,13 @@ export class RemoteStructService implements StructService {
     };
   }
 
-  convert(
+  async convert(
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
+    // Without this, the server gets no monomer library if macromolecules mode was never opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     const monomerLibrary = JSON.stringify(
       provideEditorInstance()?.monomersLibraryParsedJson,
     );
@@ -264,7 +323,7 @@ export class RemoteStructService implements StructService {
       'sequence-type': options?.['sequence-type'],
     };
 
-    return indigoCall(
+    return indigoCall<ConvertData, ConvertResult>(
       'POST',
       'indigo/convert',
       this.apiPath,
@@ -297,7 +356,7 @@ export class RemoteStructService implements StructService {
       'image-resolution': options?.['image-resolution'],
     };
 
-    return indigoCall(
+    return indigoCall<LayoutData, LayoutResult>(
       'POST',
       'indigo/layout',
       this.apiPath,
@@ -307,7 +366,7 @@ export class RemoteStructService implements StructService {
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
-    return indigoCall(
+    return indigoCall<CleanData, CleanResult>(
       'POST',
       'indigo/clean',
       this.apiPath,
@@ -320,7 +379,7 @@ export class RemoteStructService implements StructService {
     data: AromatizeData,
     options?: StructServiceOptions,
   ): Promise<AromatizeResult> {
-    return indigoCall(
+    return indigoCall<AromatizeData, AromatizeResult>(
       'POST',
       'indigo/aromatize',
       this.apiPath,
@@ -333,7 +392,7 @@ export class RemoteStructService implements StructService {
     data: DearomatizeData,
     options?: StructServiceOptions,
   ): Promise<DearomatizeResult> {
-    return indigoCall(
+    return indigoCall<DearomatizeData, DearomatizeResult>(
       'POST',
       'indigo/dearomatize',
       this.apiPath,
@@ -346,7 +405,7 @@ export class RemoteStructService implements StructService {
     data: CalculateCipData,
     options?: StructServiceOptions,
   ): Promise<CalculateCipResult> {
-    return indigoCall(
+    return indigoCall<CalculateCipData, CalculateCipResult>(
       'POST',
       'indigo/calculate_cip',
       this.apiPath,
@@ -359,7 +418,7 @@ export class RemoteStructService implements StructService {
     data: AutomapData,
     options?: StructServiceOptions,
   ): Promise<AutomapResult> {
-    return indigoCall(
+    return indigoCall<AutomapData, AutomapResult>(
       'POST',
       'indigo/automap',
       this.apiPath,
@@ -369,7 +428,7 @@ export class RemoteStructService implements StructService {
   }
 
   check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
-    return indigoCall(
+    return indigoCall<CheckData, CheckResult>(
       'POST',
       'indigo/check',
       this.apiPath,
@@ -382,7 +441,7 @@ export class RemoteStructService implements StructService {
     data: CalculateData,
     options?: StructServiceOptions,
   ): Promise<CalculateResult> {
-    return indigoCall(
+    return indigoCall<CalculateData, CalculateResult>(
       'POST',
       'indigo/calculate',
       this.apiPath,
@@ -391,9 +450,9 @@ export class RemoteStructService implements StructService {
     )(data, this.getStandardServerOptions(options));
   }
 
-  recognize(blob: Blob, version: string): Promise<RecognizeResult> {
+  async recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : '';
-    const req = request(
+    const req = request<ImagoUploadResponse>(
       'POST',
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
@@ -405,21 +464,26 @@ export class RemoteStructService implements StructService {
     const statusUrl = this.apiPath + 'imago/uploads/:id';
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
-      request('GET', statusUrl, data, customHeaders);
-    return req
-      .then((data) =>
-        pollDeferred(
-          status.bind(null, { id: data.upload_id }),
-          (response: any) => {
-            if (response.state === 'FAILURE')
-              throw new Error(JSON.stringify(response));
-            return response.state === 'SUCCESS';
-          },
-          500,
-          300,
-        ),
-      )
-      .then((response: any) => ({ struct: response.metadata.mol_str }));
+      request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
+    const data = await req;
+    const response = await pollDeferred(
+      status.bind(null, { id: data.upload_id }),
+      (statusResponse: ImagoStatusResponse) => {
+        if (statusResponse.state === 'FAILURE')
+          throw new Error(JSON.stringify(statusResponse));
+        return statusResponse.state === 'SUCCESS';
+      },
+      500,
+      300,
+    );
+
+    if (!response.metadata?.mol_str) {
+      throw new Error('Image recognition succeeded but mol_str is missing');
+    }
+    return {
+      struct: response.metadata.mol_str,
+      output_format: ChemicalMimeType.Mol,
+    };
   }
 
   generateImageAsBase64(
@@ -428,7 +492,7 @@ export class RemoteStructService implements StructService {
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat ?? 'png';
 
-    return indigoCall(
+    return indigoCall<{ struct: string }, string>(
       'POST',
       'indigo/render',
       this.apiPath,
@@ -462,7 +526,7 @@ export class RemoteStructService implements StructService {
           ? getLabelRenderModeForIndigo(this.ketcherId)
           : undefined,
       },
-      (response) => response.then((resp) => resp.text()),
+      async (response) => (await response).text(),
     );
   }
 
@@ -470,7 +534,7 @@ export class RemoteStructService implements StructService {
     data: ExplicitHydrogensData,
     options?: StructServiceOptions,
   ): Promise<ExplicitHydrogensResult> {
-    return indigoCall(
+    return indigoCall<ExplicitHydrogensData, ExplicitHydrogensResult>(
       'POST',
       'indigo/convert_explicit_hydrogens',
       this.apiPath,
@@ -483,7 +547,10 @@ export class RemoteStructService implements StructService {
     data: CalculateMacromoleculePropertiesData,
     options?: StructServiceOptions,
   ): Promise<CalculateMacromoleculePropertiesResult> {
-    return indigoCall(
+    return indigoCall<
+      CalculateMacromoleculePropertiesData,
+      CalculateMacromoleculePropertiesResult
+    >(
       'POST',
       'indigo/calculateMacroProperties',
       this.apiPath,

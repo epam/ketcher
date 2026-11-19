@@ -7,14 +7,14 @@ export function updateSelectedBonds({
   editor,
 }: {
   bonds: number[];
-  changeBondPromise: Promise<Bond>;
+  changeBondPromise: Bond | PromiseLike<Bond>;
   editor;
 }) {
   const action = new Action();
   const struct = editor.render.ctab;
   const { molecule } = struct;
   if (bonds) {
-    Promise.resolve(changeBondPromise)
+    void Promise.resolve(changeBondPromise)
       .then((userChangedBond) => {
         bonds.forEach((bondId) => {
           const unchangedBond = molecule.bonds.get(bondId);
@@ -33,8 +33,8 @@ export function updateSelectedBonds({
         });
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('bonds.ts::updateSelectedBonds', e);
+      .catch((error) => {
+        KetcherLogger.error('bonds.ts::updateSelectedBonds', error);
       });
   }
 }

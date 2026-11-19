@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import { Bond, type BondAttributes } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import { getHapticBondEndPosition } from 'domain/helpers/hapticBond';
 import { KetcherLogger } from 'utilities';
 
 import closest from '../shared/closest';
@@ -36,7 +37,10 @@ export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
 export type AtomAllAttributeValue =
   | AtomAttributes[AtomAttributeName]
   | AtomQueryProperties[AtomQueryPropertiesName];
-type NormalizedEditorSelection = Record<typeof selectionKeys[number], number[]>;
+type NormalizedEditorSelection = Record<
+  (typeof selectionKeys)[number],
+  number[]
+>;
 type ClosestAtom = {
   id: number;
   dist: number;
@@ -55,7 +59,9 @@ type AtomForNewBondResult = {
   atom: number | AtomAttributes;
   pos: Vec2;
 };
-/** Default bond type used when no previous bond type is available as a reference. */
+/**
+Default bond type used when no previous bond type is available as a reference.
+*/
 const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
 const findClosestAtom: FindClosestAtom = closest.atom;
 
@@ -68,15 +74,6 @@ function getReAtom(restruct: ReStruct, atomId: number) {
   const atom = restruct.atoms.get(atomId);
   if (!atom) {
     throwLoggedError(`Atom ${atomId} not found in restruct`);
-  }
-
-  return atom;
-}
-
-function getAtom(restruct: ReStruct, atomId: number): Atom {
-  const atom = restruct.molecule.atoms.get(atomId);
-  if (!atom) {
-    throwLoggedError(`Atom ${atomId} not found in struct`);
   }
 
   return atom;
@@ -127,11 +124,13 @@ export function atomGetDegree(restruct: ReStruct, aid: number): number {
 }
 
 export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
-  return Array.from(getReAtom(restruct, atomId).a.sgs);
+  return [...getReAtom(restruct, atomId).a.sgs];
 }
 
 export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
-  return getAtom(restruct, id).pp;
+  const endpoint = restruct.molecule.getBondEndpoint(id);
+  if (!endpoint) throwLoggedError(`Bond endpoint ${id} not found in struct`);
+  return endpoint.pp;
 }
 
 export function findStereoAtoms(
@@ -166,7 +165,7 @@ export function findStereoAtoms(
 
 export function structSelection(struct: Struct): EditorSelection {
   return selectionKeys.reduce<EditorSelection>((res, key) => {
-    res[key] = Array.from(struct[key].keys());
+    res[key] = [...struct[key].keys()];
     return res;
   }, {});
 }
@@ -209,15 +208,15 @@ export function atomForNewBond(
   atom: number | AtomAttributes,
   bond?: Partial<BondAttributes>,
 ): AtomForNewBondResult {
-  // eslint-disable-line max-statements
   const id = ensureAtomId(atom);
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = getAtomNeighbors(restruct.molecule, id);
 
-  const prevBondId = atomNeighbours.length
-    ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
-    : null;
+  const prevBondId =
+    atomNeighbours.length > 0
+      ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
+      : null;
   const prevBond =
     prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
   let prevBondType = DEFAULT_BOND_TYPE;
@@ -290,17 +289,19 @@ export function atomForNewBond(
           neiNeighborAngles.push(ang);
         });
         neiNeighborAngles.sort((nei1, nei2) => nei1 - nei2);
+        const lastNeiNeighborAngle = neiNeighborAngles.at(-1);
 
         if (
+          lastNeiNeighborAngle !== undefined &&
           neiNeighborAngles[0] <= Math.PI * 1.01 &&
-          neiNeighborAngles[neiNeighborAngles.length - 1] <= 1.01 * Math.PI
+          lastNeiNeighborAngle <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
         }
       }
     }
 
-    const shallBe180DegToPrevBond =
+    const shouldBe180DegToPrevBond =
       neighbours.length === 1 &&
       ((prevBondType === bond?.type &&
         (bond?.type === Bond.PATTERN.TYPE.DOUBLE ||
@@ -310,7 +311,7 @@ export function atomForNewBond(
         (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
           bond?.type === Bond.PATTERN.TYPE.SINGLE));
 
-    if (shallBe180DegToPrevBond) {
+    if (shouldBe180DegToPrevBond) {
       const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
         angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
@@ -325,7 +326,10 @@ export function atomForNewBond(
     v = v.rotate(angle);
   }
 
-  v.add_(pos); // eslint-disable-line no-underscore-dangle
+  v.add_(pos);
+  if (bond?.type === Bond.PATTERN.TYPE.HAPTIC) {
+    v = getHapticBondEndPosition(pos, v);
+  }
 
   const closestAtom = findClosestAtom(restruct, v, null, 0.1);
   const a = closestAtom === null ? { label: 'C' } : closestAtom.id;
@@ -355,13 +359,16 @@ export function isAttachmentBond(
   { begin, end }: Bond,
   selection: EditorSelection,
 ) {
-  if (!selection.atoms) {
+  if (!selection.atoms && !selection.attachmentGroups) {
     return false;
   }
+  const isEndpointSelected = (endpointId: number) =>
+    selection.atoms?.includes(endpointId) === true ||
+    selection.attachmentGroups?.includes(endpointId) === true;
   const isBondStartsInSelectionAndEndsOutside =
-    selection.atoms.includes(begin) && !selection.atoms.includes(end);
+    isEndpointSelected(begin) && !isEndpointSelected(end);
   const isBondEndsInSelectionAndStartsOutside =
-    selection.atoms.includes(end) && !selection.atoms.includes(begin);
+    isEndpointSelected(end) && !isEndpointSelected(begin);
   return (
     isBondStartsInSelectionAndEndsOutside ||
     isBondEndsInSelectionAndStartsOutside

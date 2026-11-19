@@ -1,6 +1,7 @@
 import styles from './Notification.module.less';
 import { type IconName, Icon } from 'components';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import type {
   WizardNotificationId,
   WizardNotificationType,
@@ -19,11 +20,20 @@ const iconMap: Record<WizardNotificationType, IconName> = {
   warning: 'warningFilled',
 };
 
+// Preset-participation notifications are the only non-info messages the ticket
+// specifies as dismissible via OK.
+const okDismissibleNotificationIds: ReadonlySet<WizardNotificationId> = new Set(
+  ['editAllPresetWarning', 'editAllPresetError'],
+);
+
 const Notification = ({ id, type, message, onDismiss }: Props) => {
+  const { t } = useTranslation('common');
   const handleButtonClick = () => {
     onDismiss?.(id);
   };
-  const isDismissible = type === 'info' && onDismiss;
+  const isDismissible =
+    Boolean(onDismiss) &&
+    (type === 'info' || okDismissibleNotificationIds.has(id));
 
   return (
     <div
@@ -49,7 +59,7 @@ const Notification = ({ id, type, message, onDismiss }: Props) => {
           onClick={handleButtonClick}
           data-testid="notification-message-ok-button"
         >
-          OK
+          {t('button.ok')}
         </button>
       )}
     </div>

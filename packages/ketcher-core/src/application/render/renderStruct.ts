@@ -3,6 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
+import type { RenderOptions } from './render.types';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
@@ -10,8 +11,14 @@ import { Coordinates } from 'application/editor/shared/coordinates';
  * Is used to improve search and opening tab performance in Template Dialog
  * Rendering a lot of structures causes great delay
  */
-const renderCache = new Map();
-let previousOptions: any;
+export type RenderStructOptions = Partial<RenderOptions> & {
+  cachePrefix?: string;
+  needCache?: boolean;
+  wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
+};
+
+const renderCache = new Map<string, string>();
+let previousOptions: RenderStructOptions | undefined;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
@@ -34,7 +41,7 @@ export class RenderStruct {
 
   static removeSmallAttachmentPointLabelsInModal(
     render: Render,
-    options: any = {},
+    options: RenderStructOptions = {},
   ) {
     if (!options.labelInMonomerConnectionsModal) {
       return;
@@ -63,10 +70,15 @@ export class RenderStruct {
   static render(
     wrapperElement: HTMLElement | null,
     struct: Struct | null,
-    options: any = {},
+    options: RenderStructOptions = {},
   ) {
     if (wrapperElement && struct) {
-      const { cachePrefix = '', needCache = true, wrapperDimensions } = options;
+      const {
+        cachePrefix = '',
+        needCache: shouldCache = true,
+        wrapperDimensions,
+        ...renderOptions
+      } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
       if (!isEqual(previousOptions, options)) {
@@ -74,8 +86,10 @@ export class RenderStruct {
         previousOptions = options;
       }
 
-      if (renderCache.has(cacheKey) && needCache) {
-        wrapperElement.innerHTML = renderCache.get(cacheKey);
+      const cachedSvg = renderCache.get(cacheKey);
+
+      if (shouldCache && cachedSvg !== undefined) {
+        wrapperElement.innerHTML = cachedSvg;
         return;
       }
 
@@ -114,12 +128,12 @@ export class RenderStruct {
             wrapperElementBoundingRect.height,
           )
         : undefined;
-      const extendedOptions = {
+      const extendedOptions: Partial<RenderOptions> = {
         autoScale: true,
-        ...options,
+        ...renderOptions,
       };
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         extendedOptions.fontsz = 30;
         extendedOptions.fontszsub = 20;
         extendedOptions.width = svgSize;
@@ -128,13 +142,13 @@ export class RenderStruct {
 
       const rnd = new Render(wrapperElement, extendedOptions);
 
-      if (!window.isPolymerEditorTurnedOn) {
+      if (!globalThis.isPolymerEditorTurnedOn) {
         preparedStruct.rescale();
       }
 
       rnd.setMolecule(preparedStruct);
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         // Raphael sets overflow:hidden as an inline style on the SVG element,
         // which clips bond strokes at the bounding-box edge and makes them
         // appear thinner than bonds in the interior. Override it so strokes
@@ -144,7 +158,7 @@ export class RenderStruct {
 
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
-      if (needCache) {
+      if (shouldCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);
       }
     }

@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
 import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
@@ -1112,18 +1110,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
 
     if (
-      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
-      const monomersOnCanvas = getMonomerLocator(page, monomer);
-      const resultedBond = await bondTwoMonomers(
-        page,
-        monomersOnCanvas.nth(0),
-        monomersOnCanvas.nth(1),
-        AttachmentPoint.R2,
-        AttachmentPoint.R1,
-      );
-      await expect(resultedBond).toHaveCount(1);
-    } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
       }).first();
@@ -1134,6 +1122,16 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
+      );
+      await expect(resultedBond).toHaveCount(1);
+    } else {
+      const monomersOnCanvas = getMonomerLocator(page, monomer);
+      const resultedBond = await bondTwoMonomers(
+        page,
+        monomersOnCanvas.nth(0),
+        monomersOnCanvas.nth(1),
         AttachmentPoint.R2,
         AttachmentPoint.R1,
       );
@@ -1165,17 +1163,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
 
     if (
-      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
-      const monomersOnCanvas = getMonomerLocator(page, monomer);
-      await bondTwoMonomers(
-        page,
-        monomersOnCanvas.nth(0),
-        monomersOnCanvas.nth(1),
-        AttachmentPoint.R2,
-        AttachmentPoint.R1,
-      );
-    } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
       }).first();
@@ -1186,6 +1175,15 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
+      );
+    } else {
+      const monomersOnCanvas = getMonomerLocator(page, monomer);
+      await bondTwoMonomers(
+        page,
+        monomersOnCanvas.nth(0),
+        monomersOnCanvas.nth(1),
         AttachmentPoint.R2,
         AttachmentPoint.R1,
       );

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   AtomPropertiesSettings,
@@ -265,8 +264,8 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.generalSection.listReadonlyInput.textContent();
     },
 
-    async setNotListCheckbox(checked: boolean) {
-      await locators.generalSection.notListCheckbox.setChecked(checked);
+    async setNotListCheckbox(isChecked: boolean) {
+      await locators.generalSection.notListCheckbox.setChecked(isChecked);
     },
 
     async fillSpecial(value: string) {
@@ -328,9 +327,9 @@ export const AtomPropertiesDialog = (page: Page) => {
       );
     },
 
-    async setUnsaturatedCheckbox(checked: boolean) {
+    async setUnsaturatedCheckbox(isChecked: boolean) {
       await locators.querySpecificSection.unsaturatedCheckbox.setChecked(
-        checked,
+        isChecked,
       );
     },
 
@@ -383,14 +382,14 @@ export const AtomPropertiesDialog = (page: Page) => {
       );
     },
 
-    async setExactChangeCheckbox(checked: boolean) {
+    async setExactChangeCheckbox(isChecked: boolean) {
       await locators.reactionFlagsSection.exactChangeCheckbox.setChecked(
-        checked,
+        isChecked,
       );
     },
 
-    async setCustomQueryCheckbox(checked: boolean) {
-      await locators.customQueryCheckbox.setChecked(checked);
+    async setCustomQueryCheckbox(isChecked: boolean) {
+      await locators.customQueryCheckbox.setChecked(isChecked);
     },
 
     async fillCustomQueryText(customQuery: string) {

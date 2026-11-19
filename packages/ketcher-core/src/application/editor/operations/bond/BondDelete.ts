@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,7 +46,6 @@ class BondDelete extends BaseOperation {
     const { bid } = this.data;
     if (bid === null) return;
 
-    // eslint-disable-line max-statements
     const struct = restruct.molecule;
     if (!this.data.bond) {
       const bondFromStruct = struct.bonds.get(bid);
@@ -67,7 +66,7 @@ class BondDelete extends BaseOperation {
       if (halfBond && halfBond.loop >= 0) {
         restruct.loopRemove(halfBond.loop);
       }
-    }, restruct);
+    });
     restruct.clearVisel(rebond.visel);
     restruct.bonds.delete(bid);
     restruct.markItemRemoved();
@@ -81,7 +80,7 @@ class BondDelete extends BaseOperation {
         return;
       }
 
-      const atom = struct.atoms.get(halfBond.begin);
+      const atom = struct.getBondEndpoint(halfBond.begin);
       if (!atom) return;
       const pos = atom.neighbors.indexOf(hbid);
       const prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;

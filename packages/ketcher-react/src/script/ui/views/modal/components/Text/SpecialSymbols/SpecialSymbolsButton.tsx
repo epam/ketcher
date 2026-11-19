@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,9 +19,11 @@ import { type LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList';
 import classes from './SpecialSymbolsButton.module.less';
 import { useId, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
 
 const SpecialSymbolsButton = ({ editor }: { editor: LexicalEditor }) => {
+  const { t } = useTranslation('dialogs');
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false);
   const pickerId = 'special-symbols-picker-' + useId();
 
@@ -51,7 +53,7 @@ const SpecialSymbolsButton = ({ editor }: { editor: LexicalEditor }) => {
   return (
     <div onBlur={closeSymbolsList} role="none">
       <button
-        title="symbols"
+        title={t('text.specialSymbolsTitle')}
         data-testid="special-symbols-button"
         onMouseDown={(e) => {
           e.preventDefault();

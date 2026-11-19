@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -333,7 +329,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       page,
       'KET/Bugs/reaction-file-with-substituent.ket',
     );
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await CommonTopRightToolbar(page).setZoomInputValue('80');
     await clickOnCanvas(page, 400, 310, { from: 'pageTopLeft' });
     await MacromoleculesTopToolbar(page).calculateProperties();

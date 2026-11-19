@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,16 +47,16 @@ interface MinDistanceWithReferencePoint {
 }
 
 class ReRxnArrow extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   item: Arrow;
   isResizing = false;
 
   constructor(/* chem.RxnArrow */ arrow: Arrow) {
     super('rxnArrow');
     this.item = arrow;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {
@@ -94,8 +94,9 @@ class ReRxnArrow extends ReObject {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce((acc, current) =>
-      acc.minDist < current.minDist ? acc : current,
+    const minDist: MinDistanceWithReferencePoint = dist.reduce(
+      (acc, current) => (acc.minDist < current.minDist ? acc : current),
+      { minDist: Infinity, refPoint: null },
     );
 
     return minDist;
@@ -118,10 +119,9 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const [a, b] = item.pos;
     const height = item.height;
-    refPoints.push(new Vec2(a.x, a.y));
-    refPoints.push(new Vec2(b.x, b.y));
+    refPoints.push(new Vec2(a.x, a.y), new Vec2(b.x, b.y));
 
-    if (RxnArrow.isElliptical(item) && height !== undefined) {
+    if (height !== undefined && RxnArrow.isElliptical(item)) {
       const middlePoint = findMiddlePoint(height, a, b);
       refPoints.push(middlePoint);
     }
@@ -180,7 +180,7 @@ class ReRxnArrow extends ReObject {
     );
 
     switch (type) {
-      case 'selection':
+      case 'selection': {
         path = draw.rectangleArrowHighlightAndSelection(
           render.paper,
           { pos, height },
@@ -188,7 +188,8 @@ class ReRxnArrow extends ReObject {
           angle,
         );
         break;
-      case 'arrow':
+      }
+      case 'arrow': {
         path = draw.arrow(
           render.paper,
           { ...item, pos, height },
@@ -198,6 +199,7 @@ class ReRxnArrow extends ReObject {
           this.isResizing,
         );
         break;
+      }
     }
 
     return path;

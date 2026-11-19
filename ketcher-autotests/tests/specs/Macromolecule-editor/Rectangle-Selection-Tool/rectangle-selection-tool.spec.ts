@@ -21,7 +21,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { selectMonomersAndBonds } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
-/* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
   page: Page,

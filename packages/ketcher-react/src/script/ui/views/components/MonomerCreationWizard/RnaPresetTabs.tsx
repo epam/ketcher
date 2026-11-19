@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
@@ -41,13 +42,15 @@ import {
   MonomerCreationMarkAsComponentAction,
 } from './MonomerCreationWizard.constants';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import { useTranslation } from 'react-i18next';
+import i18n from 'src/i18n/i18n';
 import {
   type PhosphatePosition,
   getLeavingAtomForAttachmentPoint,
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
-  getConnectionAttachmentPointAtomIdsForComponent,
+  getConnectionAttachmentPointAtomIdsForRnaPreset,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
@@ -82,12 +85,13 @@ const RNA_COMPONENT_KEYS = [
   'phosphate',
 ] as const satisfies readonly RnaPresetComponentKey[];
 const RNA_COMPONENT_HINTS = {
-  base: 'Select all atoms that form the base.',
-  sugar: 'Select all atoms that form the sugar.',
-  phosphate: 'Select all atoms that form the phosphate.',
+  base: i18n.t('components:monomerCreationWizard.selectBaseAtoms'),
+  sugar: i18n.t('components:monomerCreationWizard.selectSugarAtoms'),
+  phosphate: i18n.t('components:monomerCreationWizard.selectPhosphateAtoms'),
 } satisfies Record<RnaPresetComponentKey, string>;
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
+  const { t } = useTranslation(['components', 'common']);
   const [selectedTab, setSelectedTab] = useState(0);
   // Latest selectedTab, readable inside effects/callbacks without making
   // selectedTab itself a reactive trigger for them (the tab-click handler
@@ -208,28 +212,16 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     [editor, wizardState],
   );
 
-  // Syncs connection (readonly) attachment points with the canvas for the
-  // given active tab. All assigned APs (R-labels) stay visible on every tab
-  // so users can see the full attachment-point picture while editing a
-  // single component.
-  const syncConnectionAttachmentPoints = useCallback(
-    (activeTabIndex: number) => {
+  // Keep all inter-component connection points visible while editing any tab.
+  const syncConnectionAttachmentPoints = useCallback(() => {
       editor.setVisibleAssignedAttachmentPoints(undefined);
-
-      const activeComponentKey = RNA_COMPONENT_KEYS[activeTabIndex - 1];
-
-      if (!activeComponentKey) {
-        editor.setConnectionAttachmentPoints(new Map());
-        return;
-      }
-
-      const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
-        wizardState,
-        struct,
-        activeComponentKey,
-        phosphatePosition,
+      editor.setConnectionAttachmentPoints(
+        getConnectionAttachmentPointAtomIdsForRnaPreset(
+          wizardState,
+          struct,
+          phosphatePosition,
+        ),
       );
-      editor.setConnectionAttachmentPoints(connectionAtomIds);
     },
     [editor, struct, wizardState, phosphatePosition],
   );
@@ -237,7 +229,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
     applyHighlights(newValue);
-    syncConnectionAttachmentPoints(newValue);
+    syncConnectionAttachmentPoints();
 
     // Clearing the canvas selection when switching to a tab whose component
     // already has a structure is part of the tab-switch action itself, so it
@@ -319,7 +311,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   // component structure or the phosphate position updating asynchronously).
   // Tab switching itself is handled directly in handleChange above.
   useEffect(() => {
-    syncConnectionAttachmentPoints(selectedTabRef.current);
+    syncConnectionAttachmentPoints();
   }, [syncConnectionAttachmentPoints]);
 
   useEffect(() => {
@@ -342,13 +334,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       applyHighlights(selectedTab);
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationMarkAsComponentAction,
       handleMarkAsComponent,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationMarkAsComponentAction,
         handleMarkAsComponent,
       );
@@ -358,9 +350,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
   ) => {
-    return Object.values(wizardState.errors).some((errorValue) =>
-      Boolean(errorValue),
-    );
+    return Object.values(wizardState.errors).some(Boolean);
   };
   // A "missing components" error must colour only the tabs of the components
   // that are actually missing — not every component tab, and not the Preset
@@ -392,7 +382,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             hasPresetOwnError && styles.errorTab,
           )}
           data-testid="nucleotide-preset-tab"
-          label={<div className={styles.tabLabel}>Preset</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('components:monomerCreationWizard.presetTab')}
+            </div>
+          }
           icon={<Icon name="preset" />}
         />
         <Tab
@@ -403,7 +397,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               styles.errorTab,
           )}
           data-testid="nucleotide-base-tab"
-          label={<div className={styles.tabLabel}>Base</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('common:monomerType.base')}
+            </div>
+          }
           icon={<Icon name="base" />}
         />
         <Tab
@@ -414,7 +412,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               styles.errorTab,
           )}
           data-testid="nucleotide-sugar-tab"
-          label={<div className={styles.tabLabel}>Sugar</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('common:monomerType.sugar')}
+            </div>
+          }
           icon={<Icon name="sugar" />}
         />
         <Tab
@@ -425,7 +427,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               styles.errorTab,
           )}
           data-testid="nucleotide-phosphate-tab"
-          label={<div className={styles.tabLabel}>Phosphate</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('common:monomerType.phosphate')}
+            </div>
+          }
           icon={<Icon name="phosphate" />}
         />
       </Tabs>
@@ -433,7 +439,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {selectedTab === 0 && (
           <>
             <AttributeField
-              title="Code"
+              title={t('components:monomerCreationWizard.codeFieldLabel')}
+              titleTestId="code-label"
               control={
                 <input
                   type="text"
@@ -442,7 +449,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                     wizardState.preset.errors.name &&
                       monomerCreationWizardStyles.inputError,
                   )}
-                  placeholder="e.g. Diethylene Glycol"
+                  placeholder={t(
+                    'components:monomerCreationWizard.nameFieldPlaceholder',
+                  )}
                   value={wizardState.preset.name}
                   data-testid="code-input"
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -465,13 +474,15 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 <p
                   className={monomerCreationWizardStyles.attachmentPointsTitle}
                 >
-                  Attachment points
+                  {t('components:monomerCreationWizard.attachmentPointsTitle')}
                 </p>
                 <span
                   className={
                     monomerCreationWizardStyles.attachmentPointInfoIcon
                   }
-                  title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                  title={t(
+                    'components:monomerCreationWizard.attachmentPointInfoText',
+                  )}
                   data-testid="attachment-point-info-icon"
                 >
                   <Icon name="about" />
@@ -479,7 +490,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               </div>
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>
-                  {Array.from(presetAttachmentPoints.entries()).map(
+                  {[...presetAttachmentPoints.entries()].map(
                     ([name, atomPair]) => (
                       <AttachmentPoint
                         name={name}
@@ -511,7 +522,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                     disabled={!hasSelectedAtoms || !isSelectionContinuous}
                     onClick={() => handleClickCreateComponent(rnaComponentKey)}
                   >
-                    Mark as {rnaComponentKey}
+                    {t('components:monomerCreationWizard.markAsComponent', {
+                      component: rnaComponentKey,
+                    })}
                   </button>
                 </div>
                 <MonomerCreationWizardFields
@@ -525,7 +538,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   attachmentPointsExtra={
                     rnaComponentKey === 'phosphate' ? (
                       <AttributeField
-                        title="Position"
+                        title={t(
+                          'components:monomerCreationWizard.positionFieldLabel',
+                        )}
                         required
                         control={
                           <div
@@ -554,7 +569,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                               <span
                                 className={styles.phosphatePositionButtonLabel}
                               >
-                                5&apos;-left
+                                {t(
+                                  'components:monomerCreationWizard.phosphatePositionLeft',
+                                )}
                               </span>
                             </button>
                             <button
@@ -575,7 +592,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                               <span
                                 className={styles.phosphatePositionButtonLabel}
                               >
-                                3&apos;-right
+                                {t(
+                                  'components:monomerCreationWizard.phosphatePositionRight',
+                                )}
                               </span>
                             </button>
                           </div>

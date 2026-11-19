@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor } from 'state/common';
 import styled from '@emotion/styled';
@@ -28,7 +28,7 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
     backgroundColor: isActive
       ? theme.ketcher.color.button.group.active
       : 'white',
-    marginRight: '8px',
+    marginInlineEnd: '8px',
     border: isActive
       ? theme.ketcher.outline.selected.color
       : theme.ketcher.outline.small,
@@ -55,9 +55,12 @@ export const SequenceSyncEditModeButton = () => {
     Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
   );
 
+  const isSequenceSyncEditModeRef = useRef(isSequenceSyncEditMode);
+
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
+    isSequenceSyncEditModeRef.current = isSequenceSyncEditModeNewState;
     setIsSequenceSyncEditMode(isSequenceSyncEditModeNewState);
     editor?.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,
@@ -67,25 +70,26 @@ export const SequenceSyncEditModeButton = () => {
 
   useEffect(() => {
     const updateHasAntisenseChains = () => {
-      setHasAtLeastOneAntisense(
-        Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
+      const hasAntisenseChains = Boolean(
+        editor?.drawingEntitiesManager?.hasAntisenseChains,
       );
+
+      setHasAtLeastOneAntisense(hasAntisenseChains);
+
+      if (isSequenceMode && hasAntisenseChains) {
+        editor?.events.toggleIsSequenceSyncEditMode.dispatch(
+          isSequenceSyncEditModeRef.current,
+        );
+      }
     };
 
+    updateHasAntisenseChains();
     editor?.events.modelChange.add(updateHasAntisenseChains);
 
     return () => {
       editor?.events.modelChange.remove(updateHasAntisenseChains);
     };
-  }, [editor]);
-
-  useEffect(() => {
-    if (isSequenceMode && hasAtLeastOneAntisense) {
-      editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-        isSequenceSyncEditMode,
-      );
-    }
-  }, [isSequenceMode, hasAtLeastOneAntisense]);
+  }, [editor, isSequenceMode]);
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <StyledButton

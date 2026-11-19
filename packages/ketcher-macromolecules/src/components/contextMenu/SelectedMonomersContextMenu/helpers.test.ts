@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@ const createUnsplit = (
   cloneDeep(
     Object.assign(Object.create(UnsplitNucleotide.prototype), {
       hydrogenBonds,
+      attachmentPointsToBonds: {},
       monomerItem: {
         props: {
           MonomerNaturalAnalogCode: naturalAnalogCode,
@@ -74,9 +75,18 @@ describe('SelectedMonomersContextMenu helpers — unsplit nucleotides', () => {
     expect(isAntisenseCreationDisabled([createUnsplit('A')])).toBe(false);
   });
 
-  it('poisons the whole selection when one unsplit is ineligible', () => {
+  it('keeps antisense available when another selected chain is ineligible', () => {
     expect(
       isAntisenseCreationDisabled([createUnsplit('A'), createUnsplit('X')]),
+    ).toBe(false);
+  });
+
+  it('disables antisense when every selected chain is ineligible', () => {
+    expect(
+      isAntisenseCreationDisabled([
+        createUnsplit('X'),
+        createUnsplit('A', [{ id: 1 }]),
+      ]),
     ).toBe(true);
   });
 

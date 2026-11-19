@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -1230,8 +1228,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'KET/one-attachment-point-added-in-micro-mode.ket',
       );
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Snake,
       );
       await Library(page).dragMonomerOnCanvas(data.monomer, {
@@ -1261,8 +1258,9 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
       x: 750,
       y: 370,
@@ -1706,10 +1704,10 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test('Check that Undo-Redo invalidation if we change mode from micro to macro and back', async () => {
+  test('Undo-Redo should work if we change mode from micro to macro and back', async () => {
     /*
     Test case: #4530
-    Description: Undo-Redo invalidation if we change mode from micro to macro and back.
+    Description: Undo-Redo should work if we change mode from micro to macro and back.
     */
     await openFileAndAddToCanvas(
       page,
@@ -1864,7 +1862,6 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData5 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData5) {
-    // eslint-disable-next-line max-len
     test.skip(
       `Add to micro structure with free attachment point ${data.type} in sequence mode and ensure that a connection was formed when switching to flex or snake mode`,
       { tag: ['@NeedToBeUpdated'] },
@@ -1877,8 +1874,7 @@ test.describe('Macro-Micro-Switcher', () => {
           page,
           'KET/two-attachment-points-added-in-micro-mode.ket',
         );
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Sequence,
         );
 
@@ -1915,7 +1911,6 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData6 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData6) {
-    // eslint-disable-next-line max-len
     test.skip(
       `Add to micro structure with NO free attachment point ${data.type} in sequence mode and ensure that a connection was NOt formed when switching to snake mode`,
       { tag: ['@NeedToBeUpdated'] },
@@ -1925,8 +1920,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: R2-R1 connection was formed when switching to flex or snake mode
       */
         await drawBenzeneRing(page);
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Sequence,
         );
 

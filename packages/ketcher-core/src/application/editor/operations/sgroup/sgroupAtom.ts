@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,20 +21,24 @@ import { SGroup } from 'domain/entities/sgroup';
 import { assert } from 'utilities';
 
 type Data = {
-  sgid: any;
-  aid: any;
+  sgid?: number;
+  aid?: number;
 };
 
 class SGroupAtomAdd extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
+  constructor(sgroupId?: number, aid?: number) {
     super(OperationType.S_GROUP_ATOM_ADD, OperationPriority.S_GROUP_ATOM_ADD);
     this.data = { sgid: sgroupId, aid };
   }
 
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
+
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
 
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid);
@@ -43,7 +47,7 @@ class SGroupAtomAdd extends BaseOperation {
     assert(atom, `OpSGroupAtomAdd: Atom ${aid} not found`);
     assert(sgroup, `OpSGroupAtomAdd: S-Group ${sgid} not found`);
 
-    if (sgroup.atoms.indexOf(aid) >= 0) {
+    if (sgroup.atoms.includes(aid)) {
       return;
     }
 
@@ -55,13 +59,20 @@ class SGroupAtomAdd extends BaseOperation {
 class SGroupAtomRemove extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_REMOVE, 4);
+  constructor(sgroupId?: number, aid?: number) {
+    super(
+      OperationType.S_GROUP_ATOM_REMOVE,
+      OperationPriority.S_GROUP_ATOM_REMOVE,
+    );
     this.data = { sgid: sgroupId, aid };
   }
 
   execute(restruct: ReStruct) {
     const { aid, sgid } = this.data;
+
+    if (aid === undefined || sgid === undefined) {
+      return;
+    }
 
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid);

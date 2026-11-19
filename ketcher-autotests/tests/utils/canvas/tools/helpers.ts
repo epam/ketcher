@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { takeEditorScreenshot } from '../helpers';
 import { waitForRender } from '../../common/loaders/waitForRender';
@@ -99,7 +98,7 @@ export async function selectByAtomAndBondIds(
   await waitForRender(page, async () => {
     await page.evaluate(
       ({ atoms, bonds, clearBefore }) => {
-        const editor = window.ketcher?.editor;
+        const editor = globalThis.window.ketcher?.editor;
         if (!editor) {
           throw new Error('Ketcher editor is not initialized');
         }

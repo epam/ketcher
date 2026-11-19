@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,7 @@ class SGroupCreate extends BaseOperation {
     sgroupId?: number,
     type?: string,
     pp?: Vec2,
-    expanded?: boolean,
+    isExpanded?: boolean,
     name?: string,
     oldSgroup?: SGroup,
     private readonly monomer?: BaseMonomer,
@@ -54,7 +54,7 @@ class SGroupCreate extends BaseOperation {
       sgid: sgroupId,
       type,
       pp,
-      expanded,
+      expanded: isExpanded,
       name,
       oldSgroup,
     };
@@ -62,7 +62,7 @@ class SGroupCreate extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const { sgid, type, pp, expanded, name, oldSgroup } = this.data;
+    const { sgid, type, pp, expanded: isExpanded, name, oldSgroup } = this.data;
 
     if (sgid === undefined || type === undefined) {
       return;
@@ -85,13 +85,10 @@ class SGroupCreate extends BaseOperation {
       sgroup.pp = new Vec2(pp);
     }
 
-    if (expanded !== undefined) {
-      sgroup.data.expanded = expanded;
+    if (isExpanded !== undefined) {
+      sgroup.data.expanded = isExpanded;
       if (sgroup instanceof MonomerMicromolecule) {
-        if (Object.isFrozen(sgroup.monomer.monomerItem)) {
-          sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
-        }
-        sgroup.monomer.monomerItem.expanded = expanded;
+        sgroup.setExpanded(isExpanded);
       }
     }
 
@@ -137,7 +134,7 @@ class SGroupDelete extends BaseOperation {
     this.data.pp = sgroup?.item?.pp;
     this.data.oldSgroup = sgroup.item;
 
-    if (sgroup?.item?.type === 'DAT' && sgroupData) {
+    if (sgroupData && sgroup?.item?.type === 'DAT') {
       restruct.clearVisel(sgroupData.visel);
       restruct.sgroupData.delete(sgid);
     }

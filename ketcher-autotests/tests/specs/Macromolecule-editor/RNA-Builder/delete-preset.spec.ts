@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { waitForKetcherInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';

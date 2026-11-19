@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,9 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import { removeFirstLineVerticalShift } from './retext.utils';
 import { Scale } from 'domain/helpers';
-import type { RaphaelBaseElement } from 'raphael';
+import type { Element, RaphaelBaseElement, RaphaelPaper } from 'raphael';
+import type { Render } from '../raphaelRender';
+import type { RenderOptionStyles, RenderOptions } from '../render.types';
 
 export interface SerializedTextNode {
   detail?: number;
@@ -34,6 +36,7 @@ export interface SerializedTextNode {
   text: string;
   type: string;
   version?: number;
+  font?: string;
 }
 
 export interface SerializedParagraphNode {
@@ -43,6 +46,8 @@ export interface SerializedParagraphNode {
   indent?: number;
   type: string;
   version?: number;
+  textFormat?: number;
+  textStyle?: string;
 }
 
 export interface SerializedRootNode {
@@ -58,14 +63,29 @@ export interface SerializedEditorState {
   root: SerializedRootNode;
 }
 
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
+type TextStyles = RenderOptionStyles & { shiftY?: number };
+
+const BOLD_FLAG = 1;
+const ITALIC_FLAG = 2;
+const SUBSCRIPT_FLAG = 32;
+const SUPERSCRIPT_FLAG = 64;
 
 const SCALE = 40; // from ketcher-core
 
+function normalizeTextWhitespace(text: string): string {
+  return text
+    .split(/([^\S\r\n]+)/)
+    .map((part, index) =>
+      index % 2 === 1 ? '\u00a0'.repeat(part.length) : part,
+    )
+    .join('');
+}
+
 class ReText extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
@@ -74,12 +94,8 @@ class ReText extends ReObject {
     this.item = text;
   }
 
-  static isSelectable() {
-    return true;
-  }
-
   getReferencePoints(): Array<Vec2> {
-    if (!this.paths.length) return [];
+    if (this.paths.length === 0) return [];
 
     const { p0, p1 } = this.getRelBox(this.paths);
 
@@ -104,7 +120,7 @@ class ReText extends ReObject {
     return new Box2Abs(leftTopPoint, rightBottomPoint);
   }
 
-  hoverPath(render: any): any {
+  hoverPath(render: Render): Element {
     const { p0, p1 } = this.getRelBox(this.paths);
     const topLeft = p0.sub(render.options.offset);
     const { x: width, y: height } = p1.sub(p0);
@@ -128,12 +144,16 @@ class ReText extends ReObject {
           : widestRow,
       paths[0],
     );
-    const lastElOfWidestRow: RaphaelBaseElement =
-      widestRow[widestRow.length - 1];
+    const lastElOfWidestRow = widestRow.at(-1);
+    const lastRow = paths.at(-1);
+
+    if (!lastElOfWidestRow || !lastRow) {
+      throw new Error('Cannot get the bounds of empty selection paths');
+    }
+
     const rightEdge: number =
       lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width;
 
-    const lastRow: Array<RaphaelBaseElement> = paths[paths.length - 1];
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
     );
@@ -151,19 +171,23 @@ class ReText extends ReObject {
     }, 0);
   }
 
-  drawHover(render: any): any {
-    if (!this.paths.length) return null;
+  drawHover(render: Render): Element | null {
+    if (this.paths.length === 0) return null;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
 
-  makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
-    if (!this.paths.length || !paper) return null;
+  makeSelectionPlate(
+    restruct: ReStruct,
+    paper: RaphaelPaper,
+    options: RenderOptions,
+  ): Element | null {
+    if (this.paths.length === 0 || !paper) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
-  show(restruct: ReStruct, _id: number, options: any): void {
+  show(restruct: ReStruct, _id: number, options: RenderOptions): void {
     const render = restruct.render;
     const paper = render.paper;
     const paperScale = Scale.modelToCanvas(this.item.position, options);
@@ -213,9 +237,8 @@ class ReText extends ReObject {
           'text-anchor': 'start',
           fill: '#000000',
         });
-        path.node.setAttribute('data-testid', 'text-label');
-        path.node.setAttribute(
-          'data-text-id',
+        path.node.dataset.testid = 'text-label';
+        path.node.dataset.textId = String(
           restruct.molecule.texts.keyOf(this.item),
         );
         path.translateAbs(0, shiftY);
@@ -223,8 +246,7 @@ class ReText extends ReObject {
       } else {
         textNodes.forEach((textNode: SerializedTextNode) => {
           const styles = this.getStylesFromTextNode(textNode, options);
-          const text =
-            textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
+          const text = normalizeTextWhitespace(textNode.text) || '\u00a0';
 
           const path = paper.text(paperScale.x, paperScale.y, text).attr({
             font: options.font,
@@ -233,9 +255,8 @@ class ReText extends ReObject {
             fill: '#000000',
             ...styles,
           });
-          path.node.setAttribute('data-testid', 'text-label');
-          path.node.setAttribute(
-            'data-text-id',
+          path.node.dataset.testid = 'text-label';
+          path.node.dataset.textId = String(
             restruct.molecule.texts.keyOf(this.item),
           );
           path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
@@ -264,9 +285,9 @@ class ReText extends ReObject {
 
   getStylesFromTextNode(
     textNode: SerializedTextNode,
-    options: any,
-  ): Record<string, any> {
-    const styles: Record<string, any> = {};
+    options: RenderOptions,
+  ): TextStyles {
+    const styles: TextStyles = {};
     const format = textNode.format || 0;
 
     // Parse font-size from style string
@@ -276,28 +297,28 @@ class ReText extends ReObject {
         textNode.style,
       );
       if (fontSizeMatch) {
-        customFontSize = parseFloat(fontSizeMatch[1]);
+        customFontSize = Number.parseFloat(fontSizeMatch[1]);
         styles['font-size'] = customFontSize + 'px';
       }
     }
 
-    if (format & IS_BOLD) {
+    if (format & BOLD_FLAG) {
       styles['font-weight'] = 'bold';
     }
 
-    if (format & IS_ITALIC) {
+    if (format & ITALIC_FLAG) {
       styles['font-style'] = 'italic';
     }
 
     const fontsz = customFontSize ?? options.fontszInPx;
     const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
 
-    if (format & IS_SUBSCRIPT) {
+    if (format & SUBSCRIPT_FLAG) {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = fontsz / 4;
     }
 
-    if (format & IS_SUPERSCRIPT) {
+    if (format & SUPERSCRIPT_FLAG) {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = -fontsz / 3;
     }

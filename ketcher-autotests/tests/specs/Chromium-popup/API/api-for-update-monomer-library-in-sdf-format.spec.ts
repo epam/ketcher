@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable camelcase */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { RNASection } from '@tests/pages/constants/library/Constants';

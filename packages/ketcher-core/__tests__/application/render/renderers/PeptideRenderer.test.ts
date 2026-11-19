@@ -6,17 +6,14 @@
 // import { peptideMonomerItem, polymerEditorTheme } from '../../../mock-data';
 //
 
-// eslint-disable-next-line jest/no-export
-export {};
-
 describe('PeptideRenderer', () => {
   // skipped until cyclic reference is resolved
   it.skip('should render peptide', () => {
     // const canvas = createPolymerEditorCanvas();
     // const peptide = new Peptide(peptideMonomerItem);
     // const peptideRenderer = new PeptideRenderer(peptide);
-    // global.SVGElement.prototype.getBBox = jest.fn();
-    // jest
+    // global.SVGElement.prototype.getBBox = vi.fn();
+    // vi
     //   .spyOn(global.SVGElement.prototype, 'getBBox')
     //   .mockImplementation(() => ({ width: 30, height: 20 }));
     // peptideRenderer.show(polymerEditorTheme);

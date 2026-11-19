@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +23,13 @@ import Form, {
 import { Dialog } from '../../../../components';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
-import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
+import {
+  bond as bondSchema,
+  CUSTOM_QUERY_MAX_LENGTH,
+} from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
 import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utils';
 
@@ -43,6 +47,7 @@ type Props = BondProps &
   };
 
 const Bond = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const { formState, isMonomerCreationWizardActive = false, ...rest } = props;
   const bondProps = bondSchema.properties;
   const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
@@ -54,13 +59,15 @@ const Bond = (props: Props) => {
   });
   const bondTypeOptions = useMemo(
     () =>
-      getSelectOptionsFromSchema(bondProps.type).map((option) => ({
-        ...option,
-        disabled:
-          isMonomerCreationWizardActive &&
-          MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
-      })),
-    [bondProps.type, isMonomerCreationWizardActive],
+      getSelectOptionsFromSchema(bondProps.type, t)
+        .filter((option) => option.value !== 'haptic')
+        .map((option) => ({
+          ...option,
+          disabled:
+            isMonomerCreationWizardActive &&
+            MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
+        })),
+    [bondProps.type, isMonomerCreationWizardActive, t],
   );
   const customValid = useMemo(
     () => ({
@@ -70,7 +77,7 @@ const Bond = (props: Props) => {
     [isCustomQuery],
   );
   const handleCustomQueryCheckBoxChange = (
-    value: boolean,
+    isCustomQueryEnabled: boolean,
     formState: Record<string, unknown>,
     _: (value: unknown) => void,
     updateFormState: (settings: Record<string, unknown>) => void,
@@ -79,8 +86,8 @@ const Bond = (props: Props) => {
       return;
     }
 
-    setIsCustomQuery(value);
-    if (value) {
+    setIsCustomQuery(isCustomQueryEnabled);
+    if (isCustomQueryEnabled) {
       const bondFormState = formState as unknown as BondSettings;
       const { type, topology, center, customQuery } = bondFormState;
       previousSettings.current = {
@@ -91,7 +98,7 @@ const Bond = (props: Props) => {
       };
     }
     updateFormState(
-      value
+      isCustomQueryEnabled
         ? {
             type: '',
             topology: null,
@@ -106,12 +113,12 @@ const Bond = (props: Props) => {
 
   return (
     <Dialog
-      title="Bond Properties"
+      title={t('dialogs:toolbox.bond.dialogTitle')}
       className={classes.bond}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >
@@ -132,7 +139,7 @@ const Bond = (props: Props) => {
         <Field
           name="topology"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.topology)}
+          options={getSelectOptionsFromSchema(bondProps.topology, t)}
           disabled={isCustomQuery || isMonomerCreationWizardActive}
           formName="bond-properties"
           data-testid="topology"
@@ -140,7 +147,7 @@ const Bond = (props: Props) => {
         <Field
           name="center"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.center)}
+          options={getSelectOptionsFromSchema(bondProps.center, t)}
           disabled={isCustomQuery || isMonomerCreationWizardActive}
           formName="bond-properties"
           data-testid="reacting-center"
@@ -157,6 +164,7 @@ const Bond = (props: Props) => {
               disabled={!isCustomQuery || isMonomerCreationWizardActive}
               checkboxValue={isCustomQuery}
               onCheckboxChange={handleCustomQueryCheckBoxChange}
+              maxLength={CUSTOM_QUERY_MAX_LENGTH}
               data-testid="bond-custom-query"
             />
           </div>
@@ -169,6 +177,9 @@ const Bond = (props: Props) => {
 function customQueryValid(customQuery: string, isCustomQuery: boolean) {
   if (!isCustomQuery) {
     return true;
+  }
+  if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
+    return false;
   }
   const regex = new RegExp(bondSchema.properties.customQuery.pattern as string);
   const isValid = regex.test(customQuery);

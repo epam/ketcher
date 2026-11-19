@@ -1,12 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import {
-  MonomerType,
-  selectAllStructuresOnCanvas,
-  shiftCanvas,
-} from '@utils/index';
+import { MonomerType, selectAllStructuresOnCanvas } from '@utils/index';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
@@ -24,7 +18,6 @@ import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -64,7 +57,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(presetName);
     await presetSection.setupSugar({
@@ -89,9 +81,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
@@ -127,7 +118,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     );
 
     // Should be on the molecules canvas now with the preset wizard open
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(presetName);
     await presetSection.setupSugar({
@@ -152,9 +142,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
@@ -181,7 +170,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('CanceledPreset');
     await presetSection.setupSugar({
@@ -212,8 +200,9 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await expect(NotificationBannerOnMicro(page).message).not.toBeVisible();
 
     // Verify the preset was not created by switching to macro mode and checking library
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const canceledPreset = {
       alias: 'CanceledPreset',
       testId: 'CanceledPreset_CncB_CncS_CncP',
@@ -260,7 +249,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     // Leave preset name empty (validation error)
@@ -306,9 +294,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await dialog.submit();
 
     // Verify success message appears
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
@@ -337,7 +324,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     );
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
 
     // Create a regular nucleotide monomer (not preset)
     await dialog.selectType(MonomerTypeInDropdown.NucleotideMonomer);
@@ -347,9 +333,8 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    const notificationText = await NotificationBannerOnMicro(
-      page,
-    ).getNotificationText();
+    const notificationText =
+      await NotificationBannerOnMicro(page).getNotificationText();
     expect(notificationText).toContain(
       'The monomer was successfully added to the library',
     );
@@ -375,7 +360,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('SingleMessagePreset');
     await presetSection.setupSugar({

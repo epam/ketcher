@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type ComponentType,
-  lazy,
-  Suspense,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+import { useTranslation } from 'react-i18next';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   type Struct,
@@ -38,28 +31,28 @@ import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
 import classes from './Miew.module.less';
 import { connect } from 'react-redux';
 import { load, parseStruct } from '../../../../../state/shared';
+import { showSnackbarNotification } from '../../../../../state/notifications';
 import { pick } from 'lodash/fp';
 import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
 import {
   alignToCentroid,
+  collapseExpandedSuperatoms,
+  didMergeCoordinatesFromResult,
   mergeMetaObjects,
-  needsMetaPreservation,
+  shouldPreserveMeta as hasMetaToPreserve,
+  shouldPreserveStructure as hasStructureToPreserve,
 } from './miewStructMerge';
 
-const Viewer = lazy(() =>
-  import('miew-react').then((module) => ({
-    default: module.default as unknown as ComponentType<any>,
-  })),
-);
+const Viewer = lazy(() => import('miew-react'));
 
 type MiewDialogProps = {
-  miewOpts: any;
+  miewOpts: ReturnType<typeof createMiewOptions>;
   server: StructService;
   struct: Struct;
   onCancel: () => void;
-  onOk: (result: any) => void;
+  onOk: (result: unknown) => void;
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProps = {
@@ -68,7 +61,9 @@ type MiewDialogCallProps = {
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
-/* OPTIONS for MIEW */
+/*
+OPTIONS for MIEW
+*/
 const BACKGROUND_COLOR = {
   dark: '0x202020',
   light: '0xcccccc',
@@ -125,13 +120,15 @@ function createMiewOptions(userOpts) {
 
   return options;
 }
-/* ---------------- */
-const CHANGING_WARNING =
-  'Stereocenters can be changed after the strong 3D rotation';
-
-const FooterContent = () => (
-  <div className={classes.warning}>{CHANGING_WARNING}</div>
-);
+/*
+----------------
+*/
+const FooterContent = () => {
+  const { t } = useTranslation('dialogs');
+  return (
+    <div className={classes.warning}>{t('process.miew.changingWarning')}</div>
+  );
+};
 
 const MiewDialog = ({
   miewOpts,
@@ -142,6 +139,7 @@ const MiewDialog = ({
   miewTheme = 'light',
   ...prop
 }: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const miewRef = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
@@ -163,47 +161,124 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
       const moleculeOnlyStruct = struct.clone(null, null, true);
 
-      service
-        .getStringFromStructureAsync(moleculeOnlyStruct)
-        .then((res) =>
-          miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
-        )
-        .then(() => {
+      void (async () => {
+        try {
+          const res =
+            await service.getStringFromStructureAsync(moleculeOnlyStruct);
+          await miew.load(res, { sourceType: 'immediate', fileType: 'cml' });
           miew.setOptions(miewOpts);
           setIsInitialized(true);
-        })
-        .catch((e) => {
+        } catch (e) {
           KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
-        });
+        }
+      })();
     },
     [miewOpts, server, struct],
   );
 
   const exportCML = useCallback(async () => {
     const cmlStruct = miewRef.current?.exportCML();
+
     if (!cmlStruct) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML',
+        'Failed to export structure from 3D viewer',
+      );
+      dispatch(
+        showSnackbarNotification(t('dialogs:process.miew.exportFailedError')),
+      );
       return;
     }
 
-    if (!needsMetaPreservation(struct)) {
+    const shouldPreserveStructure = hasStructureToPreserve(struct);
+    const shouldPreserveMeta = hasMetaToPreserve(struct);
+
+    if (!shouldPreserveStructure && !shouldPreserveMeta) {
       dispatch(load(cmlStruct));
       return;
     }
 
+    let result: Struct;
+
     try {
-      const result = await parseStruct(cmlStruct, server, serverSettings);
+      result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
+    } catch (error) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
+        error,
+      );
+      dispatch(
+        showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
+      );
+      return;
+    }
+
+    if (shouldPreserveStructure) {
+      try {
+        const preserved = struct.clone();
+        preserved.enableInitiallySelected();
+
+        if (!didMergeCoordinatesFromResult(result, preserved)) {
+          KetcherLogger.error(
+            'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+            'Coordinate merge validation failed',
+          );
+          dispatch(
+            showSnackbarNotification(
+              t('dialogs:process.miew.mergeCoordinatesFailedError'),
+            ),
+          );
+          return;
+        }
+
+        collapseExpandedSuperatoms(preserved);
+        preserved.findConnectedComponents();
+        preserved.setImplicitHydrogen();
+        preserved.setStereoLabelsToAtoms();
+        preserved.markFragments();
+
+        dispatch(
+          load(preserved, {
+            preserveViewport: true,
+            skipCenter: true,
+          }),
+        );
+        return;
+      } catch (error) {
+        KetcherLogger.error(
+          'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
+          error,
+        );
+        dispatch(
+          showSnackbarNotification(
+            t('dialogs:process.miew.mergeCoordinatesFailedError'),
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
-    } catch (e) {
-      KetcherLogger.error('Miew.tsx::MiewDialog::exportCML', e);
+    } catch (error) {
+      KetcherLogger.error(
+        'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
+        error,
+      );
+      dispatch(
+        showSnackbarNotification(
+          t('dialogs:process.miew.mergeMetaFailedError'),
+        ),
+      );
     }
-  }, [dispatch, server, serverSettings, struct]);
+  }, [dispatch, server, serverSettings, struct, t]);
 
   return (
     <Dialog
-      title="Miew"
+      title={t('dialogs:process.miew.dialogTitle')}
       needMargin={false}
       params={prop}
       buttons={[
@@ -215,7 +290,7 @@ const MiewDialog = ({
           disabled={isDisabled}
           data-testid="miew-modal-button"
         >
-          Apply
+          {t('common:button.apply')}
         </button>,
       ]}
       footerContent={<FooterContent />}

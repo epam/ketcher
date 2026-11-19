@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -14,15 +13,16 @@ export const test = mergeTests(utils, pageObjects).extend<
       ketcher,
       CommonTopRightToolbar,
       CommonTopLeftToolbar,
-      MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
     },
     use,
   ) => {
     const page = ketcher.page as Page;
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await use();
     await CommonTopLeftToolbar(page).clearCanvas();
     await page.keyboard.press('Escape');
@@ -32,16 +32,13 @@ export const test = mergeTests(utils, pageObjects).extend<
     }
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
   },
   initFlexCanvas: [
-    async (
-      { createPage, CommonTopRightToolbar, MacromoleculesTopToolbar },
-      use,
-    ) => {
+    async ({ createPage, CommonTopRightToolbar }, use) => {
       await use(async () => {
         const page = await createPage();
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Flex,
         );
         return page;

@@ -19,7 +19,7 @@ const makeRestruct = (molecule: Record<string, unknown> = {}): ReStruct =>
       rgroups: new Map(),
       ...molecule,
     },
-  } as unknown as ReStruct);
+  }) as unknown as ReStruct;
 
 describe('BaseOperation.isDummy()', () => {
   it('returns false by default (operation is treated as a real change)', () => {

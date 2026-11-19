@@ -1,8 +1,8 @@
 # Undo / Redo
 
-## Problem
-
 Editing is iterative and error-prone. Users must be able to reliably reverse a mistaken action and re-apply it, restoring both the chemical model and its on-screen rendering.
+
+Spec: [openspec/specs/undo-redo/spec.md](../../openspec/specs/undo-redo/spec.md)
 
 ## User interaction
 
@@ -29,23 +29,38 @@ Every user action that changes the canvas is recorded as one atomic history entr
 - **WHEN** the user undoes one or more actions and then performs a new edit
 - **THEN** the previously undone actions can no longer be redone
 
+#### Scenario: Undo monomer creation
+
+- **WHEN** the user creates a monomer from a molecule, assigns a leaving group, submits the wizard, and presses Undo
+- **THEN** the original molecule and its coordinates are restored in one step
+- **AND** Redo restores the created monomer
+- **AND** edits made before opening the wizard remain undoable
+- This also applies when only part of a molecule is converted; bonds to the rest of the molecule are preserved.
+- Unselected attachment groups and their haptic bonds remain intact after saving, undoing, and redoing monomer creation.
+
 #### Scenario: History depth limit
 
 - **WHEN** the user performs more than 32 undoable actions
 - **THEN** only the most recent 32 actions remain reversible and older actions are dropped from history
 
+#### Scenario: Undo and redo across editor modes
+
+- **WHEN** the user switches between molecules and macromolecules
+- **THEN** the switch is recorded as one history entry without discarding earlier edits
+- **AND** undoing or redoing that entry restores the corresponding mode and its original structure
+- **AND** further undo/redo continues through edits in either mode in chronological order
+- Selecting the already active mode does not add an entry. A new edit or mode switch after undo discards the shared redo branch.
+
 ## Guarantees
 
-- The undo/redo history is bounded to **32 steps** in both the molecules and macromolecules editors.
+- The editors share one undo/redo history bounded to **32 steps**, including mode switches.
 - Each user action is exactly one atomic history entry, implemented via the command pattern.
 - Undo/redo restores both the domain model and its rendered view together.
 
 ## Limitations
 
 - History is capped at 32 steps; actions older than the cap cannot be undone.
-- The two editors keep **separate** histories; switching modes does not merge them.
 
 ## Related
 
 - Engine: [operations-history](../modules/operations-history.md), [editor-engine](../modules/editor-engine.md)
-- Implementation: `HISTORY_SIZE = 32` in the molecules editor and the macromolecules `EditorHistory`.

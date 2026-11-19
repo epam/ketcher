@@ -42,29 +42,6 @@ export class Atom extends DrawingEntity {
     super(position);
   }
 
-  public get center() {
-    return this.position;
-  }
-
-  public addBond(bond: Bond | MonomerToAtomBond) {
-    if (!this.bonds.includes(bond)) {
-      this.bonds.push(bond);
-    }
-  }
-
-  public deleteBond(bondId: number) {
-    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
-  }
-
-  public setRenderer(renderer: AtomRenderer) {
-    this.renderer = renderer;
-    super.setBaseRenderer(renderer as BaseRenderer);
-  }
-
-  public get isCarbon() {
-    return this.label === AtomLabel.C;
-  }
-
   private calculateConnections() {
     let connectionsAmount = 0;
 
@@ -73,25 +50,31 @@ export class Atom extends DrawingEntity {
         connectionsAmount += 1;
       } else {
         switch (bond.type) {
-          case BondType.Single:
+          case BondType.Single: {
             connectionsAmount += 1;
             break;
-          case BondType.Double:
+          }
+          case BondType.Double: {
             connectionsAmount += 2;
             break;
-          case BondType.Triple:
+          }
+          case BondType.Triple: {
             connectionsAmount += 3;
             break;
+          }
           case BondType.Dative:
-          case BondType.Hydrogen:
+          case BondType.Hydrogen: {
             break;
-          case BondType.Aromatic:
+          }
+          case BondType.Aromatic: {
             if (this.bonds.length === 1) {
               return -1;
             }
             return this.bonds.length;
-          default:
+          }
+          default: {
             return -1;
+          }
         }
       }
     }
@@ -99,47 +82,18 @@ export class Atom extends DrawingEntity {
     return connectionsAmount;
   }
 
-  public get hasAlias() {
-    return Boolean(this.properties.alias);
-  }
-
-  public get hasRadical() {
-    return isNumber(this.properties.radical) && this.properties.radical !== 0;
-  }
-
-  public get hasCharge() {
-    return isNumber(this.properties.charge) && this.properties.charge !== 0;
-  }
-
-  public get hasExplicitValence() {
-    return (
-      isNumber(this.properties.explicitValence) &&
-      this.properties.explicitValence !== -1
-    );
-  }
-
-  public get hasExplicitIsotope() {
-    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
-  }
-
-  public get hasBadValence() {
-    const { hydrogenAmount } = this.calculateValence();
-    return hydrogenAmount < 0;
-  }
-
-  public get hasStereoLabel() {
-    return Boolean(this.properties.stereoLabel);
-  }
-
   private get radicalAmount() {
     switch (this.properties.radical) {
       case AtomRadical.Single:
-      case AtomRadical.Triplet:
+      case AtomRadical.Triplet: {
         return 2;
-      case AtomRadical.Doublet:
+      }
+      case AtomRadical.Doublet: {
         return 1;
-      default:
+      }
+      default: {
         return 0;
+      }
     }
   }
 
@@ -206,6 +160,61 @@ export class Atom extends DrawingEntity {
     }
 
     return radicalAmount + connectionAmount + absoluteCharge;
+  }
+
+  public get center() {
+    return this.position;
+  }
+
+  public addBond(bond: Bond | MonomerToAtomBond) {
+    if (!this.bonds.includes(bond)) {
+      this.bonds.push(bond);
+    }
+  }
+
+  public deleteBond(bondId: number) {
+    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
+  }
+
+  public setRenderer(renderer: AtomRenderer) {
+    this.renderer = renderer;
+    super.setBaseRenderer(renderer as BaseRenderer);
+  }
+
+  public get isCarbon() {
+    return this.label === AtomLabel.C;
+  }
+
+  public get hasAlias() {
+    return Boolean(this.properties.alias);
+  }
+
+  public get hasRadical() {
+    return isNumber(this.properties.radical) && this.properties.radical !== 0;
+  }
+
+  public get hasCharge() {
+    return isNumber(this.properties.charge) && this.properties.charge !== 0;
+  }
+
+  public get hasExplicitValence() {
+    return (
+      isNumber(this.properties.explicitValence) &&
+      this.properties.explicitValence !== -1
+    );
+  }
+
+  public get hasExplicitIsotope() {
+    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
+  }
+
+  public get hasBadValence() {
+    const { hydrogenAmount } = this.calculateValence();
+    return hydrogenAmount < 0;
+  }
+
+  public get hasStereoLabel() {
+    return Boolean(this.properties.stereoLabel);
   }
 
   calculateValence() {

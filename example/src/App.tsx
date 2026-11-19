@@ -8,19 +8,23 @@ import { getStructServiceProvider } from './utils';
 import {
   getHiddenButtonsConfig,
   isMacromoleculesEditorDisabled,
+  getDisabledFunctionalityConfig,
 } from './utils/editorUrlConfig';
 import { safePostMessage } from './utils/safePostMessage';
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const disableMacromoleculesEditor = isMacromoleculesEditorDisabled();
+  const disabledFunctionalityConfig = getDisabledFunctionalityConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const [structServiceProvider, setStructServiceProvider] =
     useState<StructServiceProvider | null>(null);
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider);
+    void (async () => {
+      setStructServiceProvider(await getStructServiceProvider());
+    })();
   }, []);
 
   if (!structServiceProvider) {
@@ -36,14 +40,15 @@ const App = () => {
         }}
         buttons={hiddenButtonsConfig}
         disableMacromoleculesEditor={disableMacromoleculesEditor}
+        disabledFunctionality={disabledFunctionalityConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
+          globalThis.window.ketcher = ketcher;
           safePostMessage({
             eventType: 'init',
           });
-          window.scrollTo(0, 0);
+          globalThis.scrollTo(0, 0);
         }}
       />
       {hasError && (

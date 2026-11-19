@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,7 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
-import { Scale } from 'domain/helpers';
+import { isAtomPartOfAttachmentGroup, Scale } from 'domain/helpers';
 import type { Vec2 } from 'domain/entities';
 
 type Data = {
@@ -29,12 +29,12 @@ type Data = {
 export class AtomMove extends BaseOperation {
   data: Data;
 
-  constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(atomId?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
     this.data = {
       aid: atomId ?? null,
       d: d ?? null,
-      noinvalidate: noinvalidate ?? false,
+      noinvalidate: shouldSkipInvalidation ?? false,
     };
   }
 
@@ -44,7 +44,7 @@ export class AtomMove extends BaseOperation {
     if (aid === null || !d) return;
     const atom = struct.atoms.get(aid);
     if (!atom) return;
-    atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    atom.pp.add_(d);
     const reatom = restruct.atoms.get(aid);
     if (reatom) {
       const scaled = Scale.modelToCanvas(d, restruct.render.options);
@@ -55,6 +55,10 @@ export class AtomMove extends BaseOperation {
 
     if (!this.data.noinvalidate) {
       BaseOperation.invalidateAtom(restruct, aid, 1);
+    } else if (isAtomPartOfAttachmentGroup(struct, aid)) {
+      // Attachment Group positions are derived from their member atoms.
+      // Mark the moved member so ReStruct also redraws the group and its bonds.
+      restruct.markAtom(aid, 0);
     }
   }
 

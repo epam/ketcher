@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -160,8 +157,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      */
     await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     const newSequenceButton = page.getByTestId('NewSequencePlusButton');
@@ -465,7 +461,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8351
-     * Bug: https://github.com/epam/ketcher/issues/7359
+     * Bug: https://github.com/epam/ketcher/issues/7572
      * Description:  "Create a monomer" option is missing in right-click menu when selection meets conditions
      *
      * Scenario:
@@ -487,8 +483,8 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     if (atomBoundingBox) {
       await selectCanvasArea(
         page,
-        { x: atomBoundingBox.x - 40, y: atomBoundingBox.y - 40 },
-        { x: atomBoundingBox.x + 40, y: atomBoundingBox.y + 40 },
+        { x: atomBoundingBox.x - 50, y: atomBoundingBox.y - 50 },
+        { x: atomBoundingBox.x + 50, y: atomBoundingBox.y + 50 },
       );
     }
     expect(
@@ -1076,9 +1072,8 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.MDLMolfileV3000,
     );
-    const MolfileV3000ExportResult = await SaveStructureDialog(
-      page,
-    ).getTextAreaValue();
+    const MolfileV3000ExportResult =
+      await SaveStructureDialog(page).getTextAreaValue();
     await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(

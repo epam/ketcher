@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,9 +20,9 @@
   .toolbar();
   .vertical-toolbar();
 
-  margin-right: 6px;
+  margin-inline-end: 6px;
   margin-top: 10px;
-  padding-left: 5px;
+  padding-inline-start: 5px;
   width: 41px;
 
   // TODO: change group style, if will decide to get rid of delimiter everywhere
@@ -40,6 +40,14 @@
 
 .groupItem {
   padding: 2px 0;
+}
+
+.buttons .scrollStart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
 }
 
 .buttons {
@@ -65,10 +73,7 @@
     border-radius: 4px;
 
     svg {
-      top: 1px;
-      bottom: 1px;
-      left: 1px;
-      right: 1px;
+      inset: 1px;
       margin: auto;
     }
   }

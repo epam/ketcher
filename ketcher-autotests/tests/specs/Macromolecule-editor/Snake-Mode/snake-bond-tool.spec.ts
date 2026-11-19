@@ -33,7 +33,6 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
-/* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
   await Library(page).dragMonomerOnCanvas(Peptide.dU, {
@@ -125,12 +124,15 @@ test.describe('Snake Bond Tool', () => {
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
     */
-    await Library(page).switchToPeptidesTab();
-
     await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 50, 25, 18);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
+
+    const banner = NotificationBannerOnMacro(page);
+    if (await banner.isVisible()) {
+      await banner.close();
+    }
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -277,6 +279,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate8, sugar9);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -495,6 +498,7 @@ test.describe('Snake Bond Tool', () => {
     });
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -712,6 +716,7 @@ test.describe('Snake Bond Tool', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -910,9 +915,10 @@ test.describe('Snake Bond Tool', () => {
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     // ---
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-4000.ket`);
     await moveMouseAway(page);
 
@@ -921,6 +927,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(0, -400);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -942,6 +949,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -955,9 +963,10 @@ test.describe('Snake Bond Tool', () => {
     */
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     // ---
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -969,6 +978,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
@@ -103,7 +101,9 @@ test.describe('Templates - Functional Group Tools', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
       force: true,
     });

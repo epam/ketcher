@@ -1,6 +1,6 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/index';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 import {
   AntisenseStrandType,
   LayoutMode,
@@ -151,14 +151,33 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     },
 
     async selectLayoutModeTool(layoutMode: LayoutMode) {
+      if ((await this.getActiveLayoutMode()) === layoutMode) {
+        return;
+      }
+
       const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
-      const layoutModeButton = page.getByTestId(layoutMode).first();
+      const layoutModeButton = switchLayoutModeDropdown.getByTestId(layoutMode);
       if (!(await layoutModeButton.isVisible())) {
         await this.expandSwitchLayoutModeDropdown();
-        await layoutModeButton.click();
-        await switchLayoutModeDropdown.waitFor({
-          state: 'hidden',
-        });
+      }
+      await layoutModeButton.click();
+      await switchLayoutModeDropdown.waitFor({ state: 'hidden' });
+    },
+
+    async getActiveLayoutMode(): Promise<LayoutMode | null> {
+      const layout = await getCanvasByMode(page, 'macromolecules').getAttribute(
+        'data-canvaslayout',
+      );
+
+      switch (layout) {
+        case 'flex':
+          return LayoutMode.Flex;
+        case 'snake':
+          return LayoutMode.Snake;
+        case 'sequence':
+          return LayoutMode.Sequence;
+        default:
+          return null;
       }
     },
 

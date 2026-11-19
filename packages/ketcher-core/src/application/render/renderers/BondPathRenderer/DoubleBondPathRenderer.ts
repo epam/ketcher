@@ -85,7 +85,7 @@ class DoubleBondPathRenderer {
     }
 
     const strokeDasharray =
-      type !== undefined ? BondDashArrayMap[type] : 'none';
+      type === undefined ? 'none' : BondDashArrayMap[type];
     if (type === BondType.Double || type === BondType.DoubleAromatic) {
       const svgPath: SVGPathAttributes = {
         d: `

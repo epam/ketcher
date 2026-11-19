@@ -1,9 +1,7 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type ClipboardTransferData =
-  | Pick<DataTransfer, 'getData' | 'setData'>
-  | null
-  | undefined;
+  Pick<DataTransfer, 'getData' | 'setData'> | null | undefined;
 
 export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
 
@@ -15,7 +13,7 @@ const clipboardDataTypes = [
   PLAIN_TEXT_MIME_TYPE,
 ] as const;
 
-type ClipboardDataType = typeof clipboardDataTypes[number];
+type ClipboardDataType = (typeof clipboardDataTypes)[number];
 
 export type ModernClipboardData = ClipboardItem[];
 export type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
@@ -51,8 +49,8 @@ export function legacyCopy(
         clipboardData.setData(fmt, value);
       }
     });
-  } catch (e) {
-    console.error('clipboardUtils.ts::legacyCopy', e);
+  } catch (error) {
+    console.error('clipboardUtils.ts::legacyCopy', error);
     console.info(`Could not write exact type ${curFmt}`);
   }
 }
@@ -77,7 +75,7 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
 }
 
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {
@@ -122,7 +120,9 @@ export async function getStructStringFromClipboardData(
  * Checks whether the system clipboard currently holds any content that can be
  * pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
  */
-export async function isPasteContentAvailable(): Promise<boolean> {
+export async function isPasteContentAvailable(
+  isContentValid: (content: string) => Promise<boolean>,
+): Promise<boolean> {
   if (!isClipboardAPIAvailable()) {
     return true;
   }
@@ -130,7 +130,7 @@ export async function isPasteContentAvailable(): Promise<boolean> {
   try {
     const clipboardData = await navigator.clipboard.read();
     const structStr = await getStructStringFromClipboardData(clipboardData);
-    return Boolean(structStr?.trim());
+    return structStr?.trim() ? isContentValid(structStr) : false;
   } catch (error) {
     return error instanceof DOMException && error.name === 'NotAllowedError';
   }

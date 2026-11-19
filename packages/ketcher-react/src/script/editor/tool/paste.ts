@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type Struct,
-  expandSGroupWithMultipleAttachmentPoint,
+  type EditorTemplate,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
@@ -35,34 +36,42 @@ import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup
 import type { Tool } from './Tool';
 import { debounce } from 'lodash';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
+import type { MergeItems } from './template.types';
+import type { SelectionMoveDragContext } from './select/select.types';
+
+/**
+ * Drag context stored while a single contracted group is dragged onto another group.
+ */
+type PasteDragContext = SelectionMoveDragContext & {
+  angle?: number;
+};
 
 let isMovePreviewCalculationInProgress = false;
 
 const debouncedSetAndHoverMergeItems = debounce(function (
-  editor,
-  pasteItems,
-  pasteToolInstance,
-  needResetTool = false,
+  editor: Editor,
+  pasteItems: { atoms: number[]; bonds: number[] },
+  pasteToolInstance: PasteTool,
+  shouldResetTool = false,
 ) {
   const mergeItems = getItemsToFuse(editor, pasteItems);
   editor.hover(
     getHoverToFuse(mergeItems),
-    needResetTool ? pasteToolInstance : undefined,
+    shouldResetTool ? pasteToolInstance : undefined,
   );
   pasteToolInstance.setMergeItems(mergeItems);
   notifyItemsToMergeInitializationComplete();
-},
-50);
+}, 50);
 
 class PasteTool implements Tool {
   private readonly editor: Editor;
   private readonly struct: Struct;
-  private action: any;
-  private dragCtx: any;
-  private mergeItems: any;
+  private action?: Action | null;
+  private dragCtx?: PasteDragContext;
+  private mergeItems?: MergeItems;
   private readonly isSingleContractedGroup: boolean;
 
-  constructor(editor, struct) {
+  constructor(editor: Editor, struct: Struct) {
     this.editor = editor;
     this.editor.selection(null);
     this.struct = struct;
@@ -73,39 +82,36 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
-    const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(
-          this.editor.lastEvent as MouseEvent,
-          rnd,
-        )
-      : CoordinateTransformation.pageToModel(
-          {
-            clientX: clientAreaRect.left + clientWidth / 2,
-            clientY: clientAreaRect.top + clientHeight / 2,
-          },
-          rnd,
-        );
+    // Always center the pasted element initially. The mousemove handler will
+    // update the position as the user moves the mouse. Using lastEvent here
+    // would place the element at the position of a previous mouse event,
+    // which could be over an existing element and cause unwanted movement.
+    const point = CoordinateTransformation.pageToModel(
+      {
+        clientX: clientAreaRect.left + clientWidth / 2,
+        clientY: clientAreaRect.top + clientHeight / 2,
+      },
+      rnd,
+    );
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
     this.editor.update(this.action, true);
-
-    action.mergeWith(expandSGroupWithMultipleAttachmentPoint(this.restruct));
 
     this.editor.update(this.action, true);
 
     debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
   }
 
-  public setMergeItems(mergeItems) {
-    this.mergeItems = mergeItems;
-  }
-
   private get restruct() {
     return this.editor.render.ctab;
   }
 
-  mousedown(event) {
+  public setMergeItems(mergeItems: MergeItems) {
+    this.mergeItems = mergeItems;
+  }
+
+  mousedown(event: PointerEvent) {
     if (
       !this.isSingleContractedGroup ||
       SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
@@ -147,7 +153,7 @@ class PasteTool implements Tool {
     };
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     this.mergeItems = null;
     this.editor.hover(null);
     if (isMovePreviewCalculationInProgress) {
@@ -166,7 +172,7 @@ class PasteTool implements Tool {
         this.editor.render,
       );
 
-      const extraBond = true;
+      const hasExtraBond = true;
 
       const struct = this.editor.struct();
       const targetGroup = struct.sgroups.get(this.dragCtx.item.id);
@@ -177,7 +183,7 @@ class PasteTool implements Tool {
         pos0 = atom?.pp;
       }
 
-      if (!pos0) {
+      if (!pos0 || atomId === undefined) {
         // Invariant: dragCtx.item always refers to a functional group with a
         // resolvable attachment atom (validated in mousedown). Reaching here
         // with no position indicates a programming error, not a runtime case.
@@ -219,7 +225,7 @@ class PasteTool implements Tool {
         prepareTemplateFromSingleGroup(this.struct),
         atomId,
         angle,
-        extraBond,
+        hasExtraBond,
       );
 
       this.dragCtx.action = action;
@@ -247,21 +253,23 @@ class PasteTool implements Tool {
   }
 
   mouseup() {
-    const idsOfItemsMerged = this.mergeItems && {
-      ...(this.mergeItems.atoms && {
-        atoms: Array.from(this.mergeItems.atoms.values()),
-      }),
-      ...(this.mergeItems.bonds && {
-        bonds: Array.from(this.mergeItems.bonds.values()),
-      }),
-    };
+    const idsOfItemsMerged = this.mergeItems
+      ? {
+          ...(this.mergeItems.atoms && {
+            atoms: [...this.mergeItems.atoms.values()],
+          }),
+          ...(this.mergeItems.bonds && {
+            bonds: [...this.mergeItems.bonds.values()],
+          }),
+        }
+      : undefined;
 
     const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(
       this.editor.struct(),
       idsOfItemsMerged,
     );
 
-    if (groupsIdsInvolvedInMerge.length) {
+    if (groupsIdsInvolvedInMerge.length > 0) {
       dispatchMonomerOrGroupDialog(this.editor, groupsIdsInvolvedInMerge);
       return;
     }
@@ -310,33 +318,27 @@ class PasteTool implements Tool {
   }
 }
 
-type Template = {
-  aid?: number;
-  molecule?: Struct;
-  xy0?: Vec2;
-  angle0?: number;
-};
-
-/** Adds position and angle info to the molecule, similar to Template tool native behavior */
-function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
-  const template: Template = {};
+/**
+Adds position and angle info to the molecule, similar to Template tool native behavior
+*/
+function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();
 
   molecule.atoms.forEach((atom) => {
-    xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
+    xy0.add_(atom.pp);
   });
 
-  template.aid = sgroup?.getAttachmentAtomId() ?? 0;
-  template.molecule = molecule;
-  template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
+  const aid = sgroup?.getAttachmentAtomId() ?? 0;
+  const atom = molecule.atoms.get(aid);
 
-  const atom = molecule.atoms.get(template.aid);
-  if (atom) {
-    template.angle0 = vectorUtils.calcAngle(atom.pp, template.xy0); // center tilt
-  }
-
-  return template;
+  return {
+    aid,
+    bid: 0,
+    molecule,
+    angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
+  };
 }
 
 export default PasteTool;

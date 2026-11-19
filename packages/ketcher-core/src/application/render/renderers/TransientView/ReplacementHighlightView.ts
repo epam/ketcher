@@ -9,8 +9,16 @@ import {
 } from 'application/render/renderers/monomerHighlightShapes';
 import paperjs from 'paper';
 
+type UnitedPaperPath = {
+  unite(path: InstanceType<typeof paperjs.CompoundPath>): UnitedPaperPath;
+  remove(): void;
+  pathData: string;
+};
+
 export type ReplacementHighlightViewParams = {
-  /** The canvas monomers that will be replaced on drop. */
+  /**
+  The canvas monomers that will be replaced on drop.
+  */
   monomers: BaseMonomer[];
 };
 
@@ -20,11 +28,17 @@ export type ReplacementHighlightViewParams = {
  * system.
  */
 const OUTLINE_COLOR = '#167782';
-/** Thickness (px, canvas space) of the outline stroke. */
+/**
+Thickness (px, canvas space) of the outline stroke.
+*/
 const OUTLINE_THICKNESS = 1;
-/** Distance (px, canvas space) the outline sits outside the monomer shapes. */
+/**
+Distance (px, canvas space) the outline sits outside the monomer shapes.
+*/
 const OUTLINE_GAP = 6;
-/** Half-width (px, canvas space) of the neck drawn along intra-preset bonds. */
+/**
+Half-width (px, canvas space) of the neck drawn along intra-preset bonds.
+*/
 const NECK_HALF_WIDTH = 0.6;
 /**
  * Draws a single smooth path that outlines the whole group of monomers that
@@ -37,7 +51,6 @@ const NECK_HALF_WIDTH = 0.6;
  * union to produce one continuous path that hugs each shape and flows smoothly
  * across the necks — without SVG filters or sampled SDF contouring.
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class ReplacementHighlightView extends TransientView {
   public static readonly viewName = 'ReplacementHighlightView';
@@ -82,7 +95,7 @@ export class ReplacementHighlightView extends TransientView {
   ): HighlightPathData | undefined {
     paperjs.setup(document.createElement('canvas'));
 
-    let combinedPath: paper.PathItem | undefined;
+    let combinedPath: UnitedPaperPath | undefined;
 
     pathsData.forEach((pathData) => {
       const path = new paperjs.CompoundPath(pathData);
@@ -118,8 +131,8 @@ export class ReplacementHighlightView extends TransientView {
       return;
     }
 
-    const pathsData = ReplacementHighlightView.collectPathData(monomers);
-    const pathData = ReplacementHighlightView.getUnitedPathData(pathsData);
+    const pathsData = this.collectPathData(monomers);
+    const pathData = this.getUnitedPathData(pathsData);
 
     if (!pathData) {
       return;
@@ -127,6 +140,7 @@ export class ReplacementHighlightView extends TransientView {
 
     transientLayer
       .append('path')
+      .attr('data-testid', 'replacement-highlight')
       .attr('d', pathData)
       .attr('fill', '#fff')
       .attr('opacity', '0.65')

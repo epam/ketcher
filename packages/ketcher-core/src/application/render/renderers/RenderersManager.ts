@@ -1,8 +1,4 @@
-import {
-  provideEditorInstance,
-  setEditorRenderingContext,
-} from 'application/editor/editorSingleton';
-import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -29,11 +25,13 @@ import { AmbiguousMonomerRenderer } from 'application/render/renderers/Ambiguous
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
+import { BondWidth } from 'application/render/renderers/BondPathRenderer/constants';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
@@ -55,15 +53,14 @@ import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 
 export class RenderersManager {
   private readonly theme: ThemeType;
-  public zoomTool?: ZoomTool;
-  public editor?: CoreEditor;
+  private needRecalculateMonomersEnumeration = false;
+
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -77,8 +74,6 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   public sgroups = new Map<number, SGroupRenderer>();
-
-  private needRecalculateMonomersEnumeration = false;
 
   constructor({ theme }: { theme: ThemeType }) {
     this.theme = theme;
@@ -115,7 +110,7 @@ export class RenderersManager {
     drawingEntity.baseRenderer.drawSelection();
   }
 
-  private markForReEnumeration() {
+  public markForReEnumeration() {
     this.needRecalculateMonomersEnumeration = true;
   }
 
@@ -147,12 +142,12 @@ export class RenderersManager {
 
   public redrawDrawingEntity(
     drawingEntity: DrawingEntity,
-    force = false,
-    recalculateEnumeration = false,
+    shouldForce = false,
+    shouldRecalculateEnumeration = false,
   ) {
     drawingEntity.baseRenderer?.remove();
-    drawingEntity.baseRenderer?.show(this.theme, force);
-    if (recalculateEnumeration) {
+    drawingEntity.baseRenderer?.show(this.theme, shouldForce);
+    if (shouldRecalculateEnumeration) {
       this.markForReEnumeration();
     }
   }
@@ -177,13 +172,13 @@ export class RenderersManager {
 
   public addPolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
-    redrawAttachmentPoints = true,
+    shouldRedrawAttachmentPoints = true,
   ): void {
     const polymerBondRenderer =
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
-    if (redrawAttachmentPoints) {
+    if (shouldRedrawAttachmentPoints) {
       polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     }
     this.markForReEnumeration();
@@ -209,16 +204,16 @@ export class RenderersManager {
 
   public deletePolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
-    recalculateEnumeration = true,
-    redrawAttachmentPoints = true,
+    shouldRecalculateEnumeration = true,
+    shouldRedrawAttachmentPoints = true,
   ) {
     polymerBond.renderer?.remove();
-    if (redrawAttachmentPoints) {
+    if (shouldRedrawAttachmentPoints) {
       polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
       polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
     }
     this.polymerBonds.delete(polymerBond.id);
-    if (recalculateEnumeration) {
+    if (shouldRecalculateEnumeration) {
       this.markForReEnumeration();
     }
   }
@@ -228,7 +223,7 @@ export class RenderersManager {
 
     subChain.nodes.forEach((node) => {
       const monomerRenderer = node.monomer.renderer;
-      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
+      const shouldDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? currentEnumeration === subChain.length
         : currentEnumeration === 1;
 
@@ -237,7 +232,7 @@ export class RenderersManager {
       }
 
       monomerRenderer.setEnumeration(currentEnumeration);
-      monomerRenderer.redrawEnumeration(needToDrawTerminalIndicator);
+      monomerRenderer.redrawEnumeration(shouldDrawTerminalIndicator);
       currentEnumeration++;
     });
   }
@@ -288,26 +283,26 @@ export class RenderersManager {
     let currentSegmentLength = 0;
 
     subChain.nodes.forEach((node, nodeIndex) => {
-      if (this.isRnaEnumerationNode(node) && currentSegmentLength === 0) {
+      if (currentSegmentLength === 0 && this.isRnaEnumerationNode(node)) {
         currentSegmentLength = this.getRnaEnumerationSegmentLength(
           subChain,
           nodeIndex,
         );
       }
 
-      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
+      const shouldDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? currentEnumeration === currentSegmentLength
         : currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
         node.rnaBase.renderer?.setEnumeration(currentEnumeration);
-        node.rnaBase.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
+        node.rnaBase.renderer?.redrawEnumeration(shouldDrawTerminalIndicator);
         node.sugar.renderer?.setEnumeration(currentEnumeration);
-        node.sugar.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
+        node.sugar.renderer?.redrawEnumeration(shouldDrawTerminalIndicator);
         currentEnumeration++;
       } else if (node.monomer instanceof UnsplitNucleotide) {
         node.monomer.renderer?.setEnumeration(currentEnumeration);
-        node.monomer.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
+        node.monomer.renderer?.redrawEnumeration(shouldDrawTerminalIndicator);
         currentEnumeration++;
       } else if (
         node instanceof MonomerSequenceNode ||
@@ -320,6 +315,15 @@ export class RenderersManager {
         currentEnumeration = 1;
         currentSegmentLength = 0;
       }
+    });
+  }
+
+  private resetSubChainEnumeration(subChain: BaseSubChain) {
+    subChain.nodes.forEach((node) => {
+      node.monomers.forEach((monomer) => {
+        monomer.renderer?.setEnumeration(null);
+        monomer.renderer?.redrawEnumeration(false);
+      });
     });
   }
 
@@ -338,6 +342,8 @@ export class RenderersManager {
           subChain instanceof PhosphateSubChain
         ) {
           this.recalculateRnaChainEnumeration(subChain, chain.isCyclic);
+        } else {
+          this.resetSubChainEnumeration(subChain);
         }
       });
     });
@@ -377,10 +383,10 @@ export class RenderersManager {
 
   public hoverMonomer(
     monomer: BaseMonomer,
-    needRedrawAttachmentPoints: boolean,
+    shouldRedrawAttachmentPoints: boolean,
   ) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
-    if (needRedrawAttachmentPoints) {
+    if (shouldRedrawAttachmentPoints) {
       monomer.renderer?.redrawAttachmentPoints();
     }
   }
@@ -395,23 +401,16 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = this.editor ?? provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
   public update(modelChanges?: Command) {
-    if (this.zoomTool) ZoomTool.setRenderingContext(this.zoomTool);
-    if (this.editor) setEditorRenderingContext(this.editor);
-    try {
-      this.reinitializeViewModel();
-      modelChanges?.execute(this);
-      this.runPostRenderMethods();
-      notifyRenderComplete();
-    } finally {
-      if (this.zoomTool) ZoomTool.setRenderingContext(undefined);
-      if (this.editor) setEditorRenderingContext(undefined);
-    }
+    this.reinitializeViewModel();
+    modelChanges?.execute(this);
+    this.runPostRenderMethods();
+    notifyRenderComplete();
   }
 
   public addAtom(atom: Atom) {
@@ -441,7 +440,7 @@ export class RenderersManager {
 
     // redraw connected atoms labels as their connections numbers can be updated after bond is added
     [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
-      if (bondAtom.bonds.indexOf(bond) !== -1) return;
+      if (bondAtom.bonds.includes(bond)) return;
 
       bondAtom.addBond(bond);
       this.atoms.forEach((atom) => {
@@ -633,7 +632,7 @@ export class RenderersManager {
           .attr('cy', center.y)
           .attr('r', radius)
           .attr('stroke', '#000')
-          .attr('stroke-width', 1)
+          .attr('stroke-width', BondWidth)
           .attr('fill', 'none');
       } else {
         // For non-convex loops, draw a dashed polygon
@@ -706,7 +705,7 @@ export class RenderersManager {
       );
       center = center.add(atomPos);
     });
-    center = center.scaled(1.0 / loop.halfEdges.length);
+    center = center.scaled(1 / loop.halfEdges.length);
 
     // Calculate the radius as the minimum distance from center to any bond
     let radius = -1;

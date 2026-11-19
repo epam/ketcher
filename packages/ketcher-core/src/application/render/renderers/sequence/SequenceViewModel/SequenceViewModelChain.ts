@@ -9,7 +9,13 @@ export class SequenceViewModelChain {
   private readonly rows: ISequenceViewModelRow[] = [];
 
   public get lastRow() {
-    return this.rows[this.rows.length - 1];
+    const lastRow = this.rows.at(-1);
+
+    if (!lastRow) {
+      throw new Error('Cannot get the last row of an empty sequence chain');
+    }
+
+    return lastRow;
   }
 
   public get lastNode() {
@@ -28,7 +34,7 @@ export class SequenceViewModelChain {
 
   public get nodes() {
     return this.rows.reduce(
-      (acc, row) => acc.concat(row.sequenceViewModelItems),
+      (acc, row) => [...acc, ...row.sequenceViewModelItems],
       [] as ITwoStrandedChainItem[],
     );
   }

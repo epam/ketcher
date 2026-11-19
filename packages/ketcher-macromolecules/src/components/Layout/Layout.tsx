@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,72 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { RefObject, useRef } from 'react';
+import React, {
+  createContext,
+  RefObject,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 import { MONOMER_HIDE_LIBRARY_BUTTON_WIDTH } from 'components/monomerLibrary/styles';
 import { useInView } from 'react-intersection-observer';
 import { ArrowScroll } from 'ketcher-react';
+
+interface LayoutBoundsContextValue {
+  /** The canvas area element — used as portal target for the CanvasCaptureLayer
+   *  and as the left/top boundary for floating panels. */
+  canvasElement: HTMLElement | null;
+  /** The full layout root (canvas + monomers library) — used as portal target
+   *  and right/bottom boundary for floating panels. */
+  layoutRootElement: HTMLElement | null;
+  setCanvasElement: (el: HTMLElement | null) => void;
+  setLayoutRootElement: (el: HTMLElement | null) => void;
+}
+
+const LayoutBoundsContext = createContext<LayoutBoundsContextValue>({
+  canvasElement: null,
+  layoutRootElement: null,
+  setCanvasElement: () => undefined,
+  setLayoutRootElement: () => undefined,
+});
+
+/** Wrap the editor root with this provider so both `Layout` and `ModalContainer`
+ *  (which is a sibling of `Layout`) share the same bounds context. */
+export const LayoutBoundsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [canvasElement, setCanvasElement] = useState<HTMLElement | null>(null);
+  const [layoutRootElement, setLayoutRootElement] =
+    useState<HTMLElement | null>(null);
+
+  const value = useMemo(
+    () => ({
+      canvasElement,
+      layoutRootElement,
+      setCanvasElement,
+      setLayoutRootElement,
+    }),
+    [canvasElement, layoutRootElement],
+  );
+
+  return (
+    <LayoutBoundsContext.Provider value={value}>
+      {children}
+    </LayoutBoundsContext.Provider>
+  );
+};
+
+export function useLayoutBounds(): Pick<
+  LayoutBoundsContextValue,
+  'canvasElement' | 'layoutRootElement'
+> {
+  return useContext(LayoutBoundsContext);
+}
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -30,7 +91,7 @@ const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    paddingRight: withPaddingRight ? '12px' : 0,
+    paddingInlineEnd: withPaddingRight ? '12px' : 0,
     overflow: fullWidth ? 'hidden' : 'initial',
   }),
 );
@@ -101,7 +162,7 @@ const StyledArrowScrollWrapper = styled.div`
   height: 36px;
   display: flex;
   position: relative;
-  right: 0;
+  inset-inline-end: 0;
   cursor: pointer;
   background: white;
   box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
@@ -113,6 +174,12 @@ const Bottom = styled.div`
     margin-bottom: 15px;
   }
 `;
+
+/** Used only as the `data-testid` attribute value on the canvas area for E2E tests. */
+export const MACROMOLECULES_MAIN_AREA_TEST_ID = 'macromolecules-main-area';
+
+/** Used only as the `data-testid` attribute value on the layout root for E2E tests. */
+const MACROMOLECULES_LAYOUT_ROOT_TEST_ID = 'macromolecules-layout-root';
 
 const Main = styled.div({
   height: '100%',
@@ -128,12 +195,7 @@ const DummyDiv = styled.div({
 });
 
 type LayoutSection =
-  | 'Left'
-  | 'Right'
-  | 'Main'
-  | 'Top'
-  | 'Bottom'
-  | 'InsideRoot';
+  'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
 
 const Top = (
   props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },
@@ -168,7 +230,7 @@ const Top = (
         </StyledTopInnerDiv>
         <span ref={endRef}></span>
       </StyledTop>
-      {!startInView || !endInView ? (
+      {startInView && endInView ? null : (
         <StyledArrowScrollWrapper>
           <ArrowScroll
             startInView={startInView}
@@ -178,12 +240,29 @@ const Top = (
             isLeftRight
           />
         </StyledArrowScrollWrapper>
-      ) : null}
+      )}
     </div>
   );
 };
 
 export const Layout = ({ children }: LayoutProps) => {
+  const { setCanvasElement, setLayoutRootElement } =
+    useContext(LayoutBoundsContext);
+
+  const layoutRootCallbackRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      setLayoutRootElement(el);
+    },
+    [setLayoutRootElement],
+  );
+
+  const canvasCallbackRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      setCanvasElement(el);
+    },
+    [setCanvasElement],
+  );
+
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
@@ -208,14 +287,26 @@ export const Layout = ({ children }: LayoutProps) => {
     }
   });
 
+  const mainWithRef = subcomponents.Main
+    ? React.cloneElement(
+        subcomponents.Main as React.ReactElement<
+          React.RefAttributes<HTMLDivElement>
+        >,
+        { ref: canvasCallbackRef },
+      )
+    : null;
+
   return (
-    <RowMain>
+    <RowMain
+      ref={layoutRootCallbackRef}
+      data-testid={MACROMOLECULES_LAYOUT_ROOT_TEST_ID}
+    >
       <Column fullWidth withPaddingRight>
         {subcomponents.Top}
         <Row>
           {subcomponents.Left}
           <DummyDiv />
-          {subcomponents.Main}
+          {mainWithRef}
         </Row>
         {subcomponents.Bottom}
       </Column>

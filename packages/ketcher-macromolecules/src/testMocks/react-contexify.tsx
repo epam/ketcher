@@ -1,7 +1,9 @@
+import { vi } from 'vitest';
+
 import React from 'react';
 
-export const contextMenu = {
-  hideAll: jest.fn(),
+export const contextMenu: { hideAll: () => void } = {
+  hideAll: vi.fn(),
 };
 
 export const Menu = React.forwardRef<
@@ -23,7 +25,7 @@ export const Item = ({
   <div
     {...props}
     data-disabled={disabled ? 'true' : undefined}
-    className={disabled ? 'disabled' : props.className ?? ''}
+    className={disabled ? 'disabled' : (props.className ?? '')}
   >
     {children}
   </div>
@@ -38,4 +40,10 @@ export const Submenu = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => <div {...props}>{children}</div>;
 
-export const useContextMenu = () => ({ show: jest.fn(), hideAll: jest.fn() });
+export const useContextMenu = (): {
+  show: () => void;
+  hideAll: () => void;
+} => ({
+  show: vi.fn(),
+  hideAll: vi.fn(),
+});

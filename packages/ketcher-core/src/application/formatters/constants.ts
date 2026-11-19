@@ -1,4 +1,5 @@
 import type { Struct } from 'domain/entities/struct';
+import { SupportedFormat } from './structFormatter.types';
 
 export const MOLFILE_V2000_ATOM_BOND_LIMIT = 999;
 
@@ -10,6 +11,15 @@ export function isMolfileV2000LimitExceeded(struct: Struct): boolean {
 }
 
 export { isMolfileV2000LimitExceeded as exceedsMolfileV2000Limit };
+
+// Ketcher's own V2000 parser cannot read query features (MRV lines),
+// so such molfiles are loaded by Indigo (#9905)
+export function isMolfileWithQueryFeatures(
+  format: SupportedFormat,
+  struct: string,
+): boolean {
+  return format === SupportedFormat.mol && struct.includes('MRV');
+}
 
 export const macromoleculesFilesInputFormats = {
   ket: 'chemical/x-indigo-ket',

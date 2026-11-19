@@ -178,6 +178,7 @@ export class Chain {
       monomer instanceof Phosphate &&
       (!this.lastNode ||
         this.lastNode instanceof Nucleoside ||
+        this.lastNode instanceof Nucleotide ||
         this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
       (!nextMonomer || isNextMonomerNucleotideLikeOrPeptide())
     ) {

@@ -76,14 +76,12 @@ test('Case 2: Check that last selection saves and the icon display the last sele
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
   await takeLeftToolbarMacromoleculeScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await takeLeftToolbarMacromoleculeScreenshot(page);
 });
 

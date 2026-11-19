@@ -5,13 +5,13 @@ import { closeModal, openModal } from 'state/modal';
 import { ModalContainer } from './ModalContainer';
 
 // The test is about the editor flag, not about what a dialog renders
-jest.mock('./modalComponentList', () => ({
+vi.mock('./modalComponentList', () => ({
   modalComponentList: { delete: () => null },
 }));
 
 describe('ModalContainer', () => {
   it('tells the editor whether a dialog is open, so it ignores pastes behind it', () => {
-    const editor = { setIsModalOpen: jest.fn() };
+    const editor = { setIsModalOpen: vi.fn() };
     const store = configureAppStore({ editor: { editor } });
 
     render(

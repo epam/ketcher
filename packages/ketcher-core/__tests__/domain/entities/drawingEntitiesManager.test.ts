@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { peptideMonomerItem } from '../../mock-data';
 import {
@@ -112,7 +113,7 @@ describe('Drawing Entities Manager', () => {
   beforeEach(() => {
     Object.defineProperty(SVGElement.prototype, 'getBBox', {
       configurable: true,
-      value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+      value: vi.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
     });
   });
 
@@ -247,7 +248,9 @@ describe('Drawing Entities Manager', () => {
   it('should move peptide', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const renderersManager = new RenderersManager({ theme: {} });
-    jest.spyOn(renderersManager, 'moveDrawingEntity').mockImplementation();
+    vi.spyOn(renderersManager, 'moveDrawingEntity').mockImplementation(
+      () => {},
+    );
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
     const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
     peptide.turnOnSelection();

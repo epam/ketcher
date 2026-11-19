@@ -4,10 +4,15 @@ import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class EmptySequenceNode {
+  // when iterating over large amount of nodes, this saves a lot of GC time
+  private readonly monomersCache: BaseMonomer[];
+
   public renderer?: BaseSequenceItemRenderer = undefined;
   public readonly monomer = new EmptyMonomer();
-  // when iterating over large amount of nodes, this saves a lot of GC time
-  private readonly monomersCache = [this.monomer];
+
+  constructor() {
+    this.monomersCache = [this.monomer];
+  }
 
   public get SubChainConstructor() {
     return EmptySubChain;

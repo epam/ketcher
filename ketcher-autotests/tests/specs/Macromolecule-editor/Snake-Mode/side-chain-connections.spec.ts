@@ -992,9 +992,10 @@ test.describe('Side chain connections', () => {
       Case 18: Check that display of side-chain connections does not visually change when switching between Micro and Macro modes
     */
     await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+        LayoutMode.Flex,
+      );
     });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await openFileAndAddToCanvasMacro(
       page,

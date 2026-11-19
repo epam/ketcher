@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import { RemoteStructService } from '../remoteStructService';
 
 describe('RemoteStructService', () => {
@@ -5,13 +6,13 @@ describe('RemoteStructService', () => {
 
   afterEach(() => {
     global.fetch = originalFetch;
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('recognize() polls imago/uploads using the raw id without replacing port with placeholder', async () => {
     const calls: string[] = [];
 
-    global.fetch = jest.fn((input: RequestInfo | URL) => {
+    global.fetch = vi.fn((input: RequestInfo | URL) => {
       const url = typeof input === 'string' ? input : input.toString();
       calls.push(url);
 
@@ -39,7 +40,7 @@ describe('RemoteStructService', () => {
         ok: true,
         json: () => Promise.resolve({}),
       } as Response);
-    }) as jest.Mock;
+    }) as Mock;
 
     const service = new RemoteStructService(
       'http://127.0.0.1:9321/v2/',

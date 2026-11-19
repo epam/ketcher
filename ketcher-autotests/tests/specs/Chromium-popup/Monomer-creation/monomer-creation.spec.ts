@@ -680,8 +680,7 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
   await CreateMonomerDialog(page).submit();
 
   // Verify monomer was created successfully by switching to macromolecules mode
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnMacro = getMonomerLocator(page, {
     monomerAlias: testSymbol,
   });
@@ -1057,8 +1056,9 @@ for (const [index, eligableName] of eligableNames.entries()) {
       code: `Test11-${index}`,
       name: eligableName.value,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomer = getMonomerLocator(page, {
       monomerAlias: `Test11-${index}`,
     });
@@ -1113,8 +1113,9 @@ for (const eligableCode of eligableCodes) {
       code: eligableCode.value,
       name: 'Temp',
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomer = getMonomerLocator(page, {
       monomerAlias: eligableCode.value,
     });
@@ -1564,8 +1565,9 @@ for (const monomerToCreate of monomersToCreate) {
       ...monomerToCreate,
     });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomer = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.code,
     });
@@ -4090,8 +4092,9 @@ for (const monomerToCreate of monomersToCreate56) {
     await getAtomLocator(page, { atomId: 0 }).click();
     await CommonLeftToolbar(page).erase();
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomerOnMacro = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.code,
     });
@@ -4176,8 +4179,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       const monomerOnMacro = getMonomerLocator(page, {
@@ -4238,8 +4240,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Snake,
       );
       const monomerOnMacro = getMonomerLocator(page, {
@@ -4300,8 +4301,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       const monomerOnMacro = getMonomerLocator(page, {
@@ -4368,8 +4368,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Snake,
       );
       const monomerOnMacro = getMonomerLocator(page, {

@@ -62,19 +62,23 @@ export const CDXStructuresViewer = ({
 
   const getImage = useCallback(
     (str, index) => {
-      parseStruct(str, server)
-        .then((struct) => {
+      void (async () => {
+        try {
+          const struct = await parseStruct(str, server);
           setItemsMap((state) => ({
             ...state,
             [index]: { base64struct: str, struct },
           }));
-        })
-        .catch((error) => {
+        } catch (error) {
           setItemsMap((state) => ({
             ...state,
-            [index]: { base64struct: str, error: error.message || error },
+            [index]: {
+              base64struct: str,
+              error: error instanceof Error ? error.message : String(error),
+            },
           }));
-        });
+        }
+      })();
     },
     [server],
   );

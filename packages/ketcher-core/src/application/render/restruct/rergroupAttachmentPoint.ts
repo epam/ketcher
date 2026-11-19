@@ -30,14 +30,18 @@ type AttachmentPointGeometry = {
 };
 
 class ReRGroupAttachmentPoint extends ReObject {
-  item: RGroupAttachmentPoint;
-  reAtom: ReAtom;
-  lineDirectionVector: Vec2 = new Vec2();
-
   static readonly LINE_OUTLINE_WIDTH = 0.36;
   static readonly OUTLINE_PADDING = 0.15;
   static readonly CURVE_OUTLINE_WIDTH = 1;
   static readonly CURVE_OUTLINE_HEIGHT = 0.42;
+
+  static isSelectable() {
+    return true;
+  }
+
+  item: RGroupAttachmentPoint;
+  reAtom: ReAtom;
+  lineDirectionVector: Vec2 = new Vec2();
 
   constructor(item: RGroupAttachmentPoint, reAtom: ReAtom) {
     super('rgroupAttachmentPoint');
@@ -76,10 +80,6 @@ class ReRGroupAttachmentPoint extends ReObject {
       this.normalizedLineDirectionVector,
       length,
     );
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   getOutlinePoints(isHighlight = false) {

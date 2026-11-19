@@ -9,7 +9,7 @@ import { Atom } from 'domain/entities/atom';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { ReStruct } from 'application/render';
-import type { FlipDirection } from '../../shared/utils.types';
+import type { FlipDirection } from '../../shared/utilities.types';
 
 /**
  * Regression tests for https://github.com/epam/ketcher/issues/6170

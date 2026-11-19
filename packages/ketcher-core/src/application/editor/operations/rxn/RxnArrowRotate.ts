@@ -1,4 +1,4 @@
-import utils from 'application/editor/shared/utils';
+import utils from 'application/editor/shared/utilities';
 import type { ReStruct } from 'application/render';
 import type { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from '../OperationType';

@@ -149,7 +149,7 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     file: 'packages/ketcher-core/src/domain/entities/struct.ts',
     imports: [
       'application/editor/actions/helpers',
-      'application/editor/shared/utils',
+      'application/editor/shared/utilities',
     ],
   },
   {

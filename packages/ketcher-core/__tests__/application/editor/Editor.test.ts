@@ -29,7 +29,7 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
-import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
+import type { LibraryItemDragDropHandlerDependencies } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type RescaleStructForModeTransitionContext = {
@@ -74,9 +74,11 @@ describe('CoreEditor', () => {
       theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
-    const { deps } = (
+    const { dependencies: deps } = (
       editor as unknown as {
-        dragDropHandler: { deps: LibraryItemDragDropHandlerDeps };
+        dragDropHandler: {
+          dependencies: LibraryItemDragDropHandlerDependencies;
+        };
       }
     ).dragDropHandler;
     const originalManager = editor.drawingEntitiesManager;

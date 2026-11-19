@@ -53,7 +53,7 @@ type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
   skip: ClosestSkip,
-  minDist: number,
+  minDistribution: number,
 ) => ClosestAtom | null;
 type AtomForNewBondResult = {
   atom: number | AtomAttributes;
@@ -109,7 +109,7 @@ function ensureAtomId(atom: number | AtomAttributes): number {
   return atom;
 }
 
-export function atomGetAttr(
+export function atomGetAttribute(
   restruct: ReStruct,
   aid: number,
   name: AtomAttributeName,
@@ -164,9 +164,9 @@ export function findStereoAtoms(
 }
 
 export function structSelection(struct: Struct): EditorSelection {
-  return selectionKeys.reduce<EditorSelection>((res, key) => {
-    res[key] = [...struct[key].keys()];
-    return res;
+  return selectionKeys.reduce<EditorSelection>((result, key) => {
+    result[key] = [...struct[key].keys()];
+    return result;
   }, {});
 }
 
@@ -195,10 +195,10 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
 export function formatSelection(
   selection: EditorSelection,
 ): NormalizedEditorSelection {
-  return selectionKeys.reduce<NormalizedEditorSelection>((res, key) => {
-    res[key] = selection[key] || [];
+  return selectionKeys.reduce<NormalizedEditorSelection>((result, key) => {
+    result[key] = selection[key] || [];
 
-    return res;
+    return result;
   }, {} as NormalizedEditorSelection);
 }
 
@@ -213,17 +213,19 @@ export function atomForNewBond(
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = getAtomNeighbors(restruct.molecule, id);
 
-  const prevBondId =
+  const previousBondId =
     atomNeighbours.length > 0
       ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
       : null;
-  const prevBond =
-    prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
-  let prevBondType = DEFAULT_BOND_TYPE;
-  if (prevBond) {
-    prevBondType = prevBond.type;
+  const previousBond =
+    previousBondId === null
+      ? undefined
+      : restruct.molecule.bonds.get(previousBondId);
+  let previousBondType = DEFAULT_BOND_TYPE;
+  if (previousBond) {
+    previousBondType = previousBond.type;
   } else if (bond) {
-    prevBondType = bond.type ?? DEFAULT_BOND_TYPE;
+    previousBondType = bond.type ?? DEFAULT_BOND_TYPE;
   }
 
   getAtomNeighbors(restruct.molecule, id).forEach((nei) => {
@@ -303,20 +305,24 @@ export function atomForNewBond(
 
     const shouldBe180DegToPrevBond =
       neighbours.length === 1 &&
-      ((prevBondType === bond?.type &&
+      ((previousBondType === bond?.type &&
         (bond?.type === Bond.PATTERN.TYPE.DOUBLE ||
           bond?.type === Bond.PATTERN.TYPE.TRIPLE)) ||
-        (prevBondType === Bond.PATTERN.TYPE.SINGLE &&
+        (previousBondType === Bond.PATTERN.TYPE.SINGLE &&
           bond?.type === Bond.PATTERN.TYPE.TRIPLE) ||
-        (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
+        (previousBondType === Bond.PATTERN.TYPE.TRIPLE &&
           bond?.type === Bond.PATTERN.TYPE.SINGLE));
 
     if (shouldBe180DegToPrevBond) {
-      const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
-      if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
-        angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
+      const previousBondAngle = getBondAngle(restruct.molecule, previousBondId);
+      if (
+        previousBondAngle > -90 &&
+        previousBondAngle < 90 &&
+        neighbours[0].v.x > 0
+      ) {
+        angle = (previousBondAngle * Math.PI) / 180 + Math.PI;
       } else {
-        angle = (prevBondAngle * Math.PI) / 180;
+        angle = (previousBondAngle * Math.PI) / 180;
       }
     } else {
       angle =
@@ -337,7 +343,7 @@ export function atomForNewBond(
   return { atom: a, pos: v };
 }
 
-export function getRelSGroupsBySelection(
+export function getRelatedSGroupsBySelection(
   struct: Struct,
   selectedAtoms: number[],
 ) {

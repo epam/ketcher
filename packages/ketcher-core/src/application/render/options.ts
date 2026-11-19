@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Vec2 } from 'domain/entities/vec2';
-import utils from '../editor/shared/utils';
+import utils from '../editor/shared/utilities';
 import { ShowHydrogenLabels } from './restruct/showHydrogenLabels';
 import type { RenderOptions } from './render.types';
 import {

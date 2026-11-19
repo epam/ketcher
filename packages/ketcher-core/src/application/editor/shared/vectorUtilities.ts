@@ -1,4 +1,4 @@
-import utils from './utils';
+import utils from './utilities';
 
 export const vectorUtils = {
   fracAngle: utils.fracAngle,

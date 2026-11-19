@@ -1,5 +1,5 @@
 import type { AttachmentPointName } from 'domain/types';
-import type { FlipDirection } from 'application/editor/shared/utils.types';
+import type { FlipDirection } from 'application/editor/shared/utilities.types';
 import type { KetMonomerClass } from 'domain/constants/monomers';
 
 // KetMonomerClass lives in the domain layer; re-exported here for backward

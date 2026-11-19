@@ -42,7 +42,7 @@ import ReText from './retext';
 import type { Render } from '../raphaelRender';
 import type Visel from './visel';
 import type { RaphaelPath } from './raphaelTypes';
-import util from '../util';
+import utility from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
@@ -352,7 +352,7 @@ class ReStruct {
     paths.forEach((path) => {
       const offset = this.render.options.offset;
       let bb = isVisible
-        ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
+        ? Box2Abs.fromRelBox(utility.relBox(path.getBBox()))
         : null;
       const ext = pos && bb ? bb.translate(pos.negated()) : null;
       if (offset !== null) {

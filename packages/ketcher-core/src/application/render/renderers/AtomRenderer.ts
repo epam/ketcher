@@ -49,6 +49,7 @@ export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
+  private elementLabelElement?: D3SvgElementSelection<SVGTSpanElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -488,7 +489,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     if (!shouldHydrogenBeOnLeft) {
-      textElement
+      this.elementLabelElement = textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
         .text(this.displayLabelText);
@@ -511,7 +512,7 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     if (shouldHydrogenBeOnLeft) {
-      textElement
+      this.elementLabelElement = textElement
         ?.append('tspan')
         .text(this.displayLabelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
@@ -544,6 +545,7 @@ export class AtomRenderer extends BaseRenderer {
 
     this.textElement.remove();
     this.textElement = undefined;
+    this.elementLabelElement = undefined;
   }
 
   public redrawLabel() {
@@ -678,6 +680,7 @@ export class AtomRenderer extends BaseRenderer {
   private appendExplicitIsotope() {
     if (this.atom.hasExplicitIsotope) {
       const explicitIsotope = this.atom.properties.isotope as number;
+      const elementLabelCenterBeforeIsotope = this.getElementLabelCenterX();
 
       this.textElement
         /*
@@ -691,7 +694,32 @@ export class AtomRenderer extends BaseRenderer {
         .attr('fill', this.labelColor)
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
+
+      // As in Molecules mode, the element letter stays on the atom point and
+      // the isotope goes to its left, so the label is moved back by as much as
+      // the isotope pushed the letter.
+      const elementLabelCenterAfterIsotope = this.getElementLabelCenterX();
+      if (
+        elementLabelCenterBeforeIsotope !== undefined &&
+        elementLabelCenterAfterIsotope !== undefined
+      ) {
+        const labelX = Number(this.textElement?.attr('x')) || 0;
+
+        this.textElement?.attr(
+          'x',
+          labelX -
+            (elementLabelCenterAfterIsotope - elementLabelCenterBeforeIsotope),
+        );
+      }
     }
+  }
+
+  private getElementLabelCenterX() {
+    const elementLabelBBox = this.elementLabelElement?.node()?.getBBox();
+
+    return elementLabelBBox
+      ? elementLabelBBox.x + elementLabelBBox.width / 2
+      : undefined;
   }
 
   private appendAtomProperties() {

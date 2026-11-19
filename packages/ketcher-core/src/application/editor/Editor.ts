@@ -220,18 +220,22 @@ const getHelmAliasUniquenessScope = (
   monomerClass: KetMonomerClass | undefined,
 ) => {
   switch (monomerClass) {
-    case KetMonomerClass.AminoAcid:
+    case KetMonomerClass.AminoAcid: {
       return 'peptide';
+    }
     case KetMonomerClass.Sugar:
     case KetMonomerClass.Base:
     case KetMonomerClass.Phosphate:
-    case KetMonomerClass.RNA:
+    case KetMonomerClass.RNA: {
       return 'rna';
-    case KetMonomerClass.CHEM:
+    }
+    case KetMonomerClass.CHEM: {
       return 'chem';
-    default:
+    }
+    default: {
       // Unrecognised classes keep their own namespace rather than losing the check.
       return monomerClass;
+    }
   }
 };
 
@@ -968,12 +972,13 @@ export class CoreEditor {
 
       if (!monomerNameValidationResult.isValid) {
         switch (monomerNameValidationResult.error) {
-          case MonomerNameValidationErrorType.Empty:
+          case MonomerNameValidationErrorType.Empty: {
             reportValidationError(
               templateRef.$ref,
               `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
             );
             return;
+          }
           case MonomerNameValidationErrorType.TooLong: {
             const truncatedTemplateName = `${templateDefinition.name.slice(
               0,
@@ -984,11 +989,12 @@ export class CoreEditor {
             );
             return;
           }
-          case MonomerNameValidationErrorType.InvalidCharacters:
+          case MonomerNameValidationErrorType.InvalidCharacters: {
             KetcherLogger.error(
               `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
             );
             return;
+          }
         }
       }
 
@@ -2739,8 +2745,7 @@ export class CoreEditor {
     } finally {
       this.monomerWizardMode = undefined;
       this._type = EditorType.Macromolecules;
-      this.micromoleculesEditor.clear();
-      this.micromoleculesEditor.clearHistory();
+      this.micromoleculesEditor.clear(true);
     }
 
     if (instanceReplacement) {

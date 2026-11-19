@@ -112,14 +112,16 @@ export function fromAtomsAttrs(
 
       switch (key) {
         case 'stereoLabel':
-        case 'stereoParity':
+        case 'stereoParity': {
           if (value && Object.hasOwn(atomAttrs, key)) {
             action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
           }
           break;
-        default:
+        }
+        default: {
           action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
           break;
+        }
       }
     });
 

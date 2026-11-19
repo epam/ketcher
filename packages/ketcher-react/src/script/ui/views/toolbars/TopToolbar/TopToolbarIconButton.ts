@@ -23,21 +23,7 @@ const TopToolbarIconStyles = css`
   padding: 2px;
   width: 28px;
   height: 28px;
-
-  @media only screen {
-    @container (min-width: 1024px) {
-      height: 32px;
-      width: 32px;
-      padding: 4px;
-    }
-  }
-  @media only screen {
-    @container (min-width: 1920px) {
-      height: 40px;
-      width: 40px;
-      padding: 5px;
-    }
-  }
+  margin: 2px;
 `;
 
 export const TopToolbarIconButton = styled(IconButton)`

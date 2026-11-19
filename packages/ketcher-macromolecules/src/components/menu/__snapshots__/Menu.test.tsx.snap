@@ -6,10 +6,10 @@ exports[`Menu component > should render menu component in a container 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-xkq6lt-MenuLayout ep95xq10"
+        class="css-19lbgox-MenuLayout eglxv8i0"
       >
         <div
-          class="css-1b6v09y-StyledGroup ep95xq13"
+          class="css-1b6v09y-StyledGroup eglxv8i3"
         >
           <button
             class="open css-vj04bl-StyledIconButton e1xyyw7t0"
@@ -18,7 +18,7 @@ exports[`Menu component > should render menu component in a container 1`] = `
           />
         </div>
         <div
-          class="css-1b6v09y-StyledGroup ep95xq13"
+          class="css-1b6v09y-StyledGroup eglxv8i3"
         >
           <button
             class="erase css-vj04bl-StyledIconButton e1xyyw7t0"
@@ -88,10 +88,10 @@ exports[`Menu component > should render menu component in a container 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-xkq6lt-MenuLayout ep95xq10"
+      class="css-19lbgox-MenuLayout eglxv8i0"
     >
       <div
-        class="css-1b6v09y-StyledGroup ep95xq13"
+        class="css-1b6v09y-StyledGroup eglxv8i3"
       >
         <button
           class="open css-vj04bl-StyledIconButton e1xyyw7t0"
@@ -100,7 +100,7 @@ exports[`Menu component > should render menu component in a container 1`] = `
         />
       </div>
       <div
-        class="css-1b6v09y-StyledGroup ep95xq13"
+        class="css-1b6v09y-StyledGroup eglxv8i3"
       >
         <button
           class="erase css-vj04bl-StyledIconButton e1xyyw7t0"

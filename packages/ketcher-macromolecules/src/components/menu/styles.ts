@@ -20,6 +20,7 @@ export const MenuLayout = styled.div<{ isHorizontal?: boolean }>(
   ({ theme, isHorizontal }) => ({
     backgroundColor: theme.ketcher.color.background.primary,
     borderRadius: '4px',
+    boxShadow: isHorizontal ? 'none' : theme.ketcher.shadow.mainLayoutBlocks,
     display: 'flex',
     flexDirection: isHorizontal ? 'row' : 'column',
     zIndex: theme.ketcher.zIndex.toolbar,

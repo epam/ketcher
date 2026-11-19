@@ -70,14 +70,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorScroll';
 import { getMonomerUniqueKey } from 'state/library';
 import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -724,7 +717,7 @@ export const RnaEditorExpanded = ({
         event.stopPropagation();
         // Prevent the global "exit" hotkey listener (registered separately on
         // document) from clearing the selection after cancel.
-        event.nativeEvent.stopImmediatePropagation();
+        event.stopImmediatePropagation();
       } else if (event.key === 'Enter') {
         if (isSequenceEditInRNABuilderMode) {
           onUpdateSequence();

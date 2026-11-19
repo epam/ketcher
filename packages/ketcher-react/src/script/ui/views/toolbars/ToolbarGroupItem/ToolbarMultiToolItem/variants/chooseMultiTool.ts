@@ -31,16 +31,19 @@ export function chooseMultiTool(
   variant: MultiToolVariant = 'default',
 ): [ComponentType<MultiToolProps & MultiToolCallProps>, string?] {
   switch (variant) {
-    case 'default':
+    case 'default': {
       return [
         DefaultMultiTool,
         `${defaultClasses.default} default-multitool-dropdown`,
       ];
+    }
 
-    case 'grouped':
+    case 'grouped': {
       return [GroupedMultiTool, 'grouped-multitool-dropdown'];
+    }
 
-    default:
+    default: {
       throw new Error(`Unsupported variant ${variant}`);
+    }
   }
 }

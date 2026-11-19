@@ -35,10 +35,8 @@ import { generateSequenceContextMenuProperties } from 'components/contextMenu/Se
 import macromoleculesDialogs from '../../../locales/en/macromoleculesDialogs.json';
 
 // Plain i18next interpolation configured with the same {var} delimiters as
-// the real app's i18next-icu plugin (not the plugin itself - its
-// intl-messageformat dependency ships ESM this package's Jest config can't
-// transform inside node_modules). Plain variable substitution is all these
-// keys need.
+// the real app's i18next-icu plugin (not the plugin itself: plain variable
+// substitution is all these keys need).
 const i18nTestInstance = i18next.createInstance();
 i18nTestInstance.init({
   lng: 'en',
@@ -48,7 +46,7 @@ i18nTestInstance.init({
 const t = i18nTestInstance.getFixedT('en', 'macromoleculesDialogs');
 
 const setSyncEditMode = (isSyncEditMode: boolean) => {
-  jest.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
+  vi.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
     mode: { isSyncEditMode },
   } as unknown as ketcherCore.CoreEditor);
 };
@@ -398,7 +396,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should return undefined if no entry data', () => {

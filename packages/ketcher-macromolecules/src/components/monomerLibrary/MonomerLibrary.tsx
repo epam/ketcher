@@ -28,6 +28,7 @@ import { IRnaPreset } from './RnaBuilder/types';
 import {
   selectAllPresets,
   setActivePreset,
+  startPresetDuplication,
   setIsEditMode,
   setUniqueNameError,
 } from 'state/rna-builder';
@@ -46,11 +47,11 @@ import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
 const COPY = '_Copy';
 
-type Properties = {
+type Props = {
   toggleLibraryVisibility: VoidFunction;
 };
 
-const MonomerLibrary = ({ toggleLibraryVisibility }: Properties) => {
+const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
@@ -91,7 +92,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Properties) => {
         default: false,
         favorite: false,
       };
-      dispatch(setActivePreset(duplicatedPreset));
+      dispatch(startPresetDuplication(duplicatedPreset));
       dispatch(setIsEditMode(true));
       scrollToSelectedPreset(preset?.name);
     },

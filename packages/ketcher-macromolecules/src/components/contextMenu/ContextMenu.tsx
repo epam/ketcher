@@ -50,7 +50,7 @@ export interface MenuItem {
   onMouseOut?: (itemId: string) => void;
 }
 
-interface MenuProperties {
+interface MenuProps {
   id: CONTEXT_MENU_ID;
   menuItems: MenuItem[];
   handleMenuChange: (parameters: ItemParams) => void;
@@ -136,27 +136,55 @@ export const ContextMenu = ({
   handleMenuChange,
   menuItems,
   onVisibilityChange,
-}: MenuProperties) => {
+}: MenuProps) => {
   const dispatch = useAppDispatch();
   const isContextMenuActive = useAppSelector(isContextMenuActivated);
 
   useEffect(() => {
-    const handleContextMenuClose = (event_) => {
+    // Prevent menu from closing when clicking inside it
+    // This runs in capture phase BEFORE react-contexify's listener
+    const preventCloseOnMenuClick = (event_: MouseEvent) => {
+      const clickedElement = event_.target;
+      // Type guard: ensure target is an Element
+      if (!(clickedElement instanceof Element)) return;
+
+      const isClickInsideMenu = clickedElement.closest('.contexify');
+      // Only stop propagation if NOT clicking on an actual menu item
+      // Allow clicks on contexify_item to work normally
+      const isClickOnMenuItem = clickedElement.closest('.contexify_item');
+
+      if (isClickInsideMenu && !isClickOnMenuItem) {
+        // Clicking on padding, separator, or menu container itself
+        event_.stopPropagation();
+      }
+    };
+
+    const handleContextMenuClose = (event_: MouseEvent) => {
+      const target = event_.target as
+        (Element & { __data__?: { node?: unknown; monomer?: unknown } }) | null;
       const isClickOnNucleotide =
-        event_.target?.__data__?.node || event_.target?.__data__?.monomer;
+        target?.__data__?.node || target?.__data__?.monomer;
       if (isClickOnNucleotide) {
         event_.stopPropagation();
         return;
       }
       dispatch(setContextMenuActive(false));
     };
+
+    // Add listener in capture phase (runs before react-contexify's listeners)
+    document.addEventListener('click', preventCloseOnMenuClick, true);
+    document.addEventListener('mousedown', preventCloseOnMenuClick, true);
+
     document.addEventListener('click', handleContextMenuClose);
     document.addEventListener('contextmenu', handleContextMenuClose);
+
     return () => {
+      document.removeEventListener('click', preventCloseOnMenuClick, true);
+      document.removeEventListener('mousedown', preventCloseOnMenuClick, true);
       document.removeEventListener('click', handleContextMenuClose);
       document.removeEventListener('contextmenu', handleContextMenuClose);
     };
-  }, [dispatch, id]);
+  }, [dispatch]);
 
   useEffect(() => {
     const handleEscapeKeyDown = (event: KeyboardEvent) => {

@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { renderHook } from '@testing-library/react';
 import useFunctionalGroupEoc from './useFunctionalGroupEoc';
 import { SGroup, type FunctionalGroup } from 'ketcher-core';
@@ -6,11 +8,11 @@ import type {
   FunctionalGroupsContextMenuProps,
 } from '../contextMenu.types';
 
-jest.mock('react-redux', () => ({
-  useDispatch: () => jest.fn(),
+vi.mock('react-redux', () => ({
+  useDispatch: () => vi.fn(),
 }));
 
-jest.mock('src/hooks', () => ({
+vi.mock('src/hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test-ketcher-id' }),
 }));
 

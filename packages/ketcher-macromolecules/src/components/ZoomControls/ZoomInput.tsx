@@ -25,7 +25,7 @@ import { isTouchDevice } from 'ketcher-react';
 import { StyledInput } from 'components/ZoomControls/styles';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
-interface ZoomInputProperties {
+interface ZoomInputProps {
   onZoomSubmit: () => void;
   currentZoom: number;
   inputRef: RefObject<HTMLInputElement>;
@@ -35,7 +35,7 @@ export const ZoomInput = ({
   onZoomSubmit,
   currentZoom,
   inputRef,
-}: ZoomInputProperties) => {
+}: ZoomInputProps) => {
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
       const inputElement = inputRef.current;

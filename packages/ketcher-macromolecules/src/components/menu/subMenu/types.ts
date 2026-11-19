@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface IStyledDropdownIconProperties {
+export interface IStyledDropdownIconProps {
   isActive: boolean;
 }
 
-export type OptionsContainerProperties = {
+export type OptionsContainerProps = {
   isVertical?: boolean;
   islayoutModeButton?: boolean;
   isAutoSize?: boolean;

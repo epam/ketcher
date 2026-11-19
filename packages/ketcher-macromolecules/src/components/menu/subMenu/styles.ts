@@ -18,14 +18,11 @@ import styled from '@emotion/styled';
 import { Collapse } from '@mui/material';
 import { Icon } from 'ketcher-react';
 
-import {
-  IStyledDropdownIconProperties,
-  OptionsContainerProperties,
-} from './types';
+import { IStyledDropdownIconProps, OptionsContainerProps } from './types';
 
 export const StyledDropdownIcon = styled(Icon, {
   shouldForwardProp: (property) => property !== 'isActive',
-})<IStyledDropdownIconProperties>`
+})<IStyledDropdownIconProps>`
   position: absolute;
   height: 7px;
   width: 7px;
@@ -50,7 +47,7 @@ export const RootContainer = styled.div`
   }
 `;
 
-export const OptionsContainer = styled.div<OptionsContainerProperties>`
+export const OptionsContainer = styled.div<OptionsContainerProps>`
   display: flex;
   border-radius: 4px;
   flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};

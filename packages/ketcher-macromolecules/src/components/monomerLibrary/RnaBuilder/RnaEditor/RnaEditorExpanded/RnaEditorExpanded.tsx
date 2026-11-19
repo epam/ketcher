@@ -35,7 +35,7 @@ import {
   RnaEditorExpandedContainer,
   StyledButton,
 } from './styles';
-import { IRnaEditorExpandedProperties } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
+import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
 import { useDispatch } from 'react-redux';
 import {
   monomerGroupToPresetGroup,
@@ -59,6 +59,7 @@ import {
   setSequenceSelection,
   setSequenceSelectionName,
   isActiveRnaPresetNewAndEmpty,
+  selectPresetBeforeDuplicate,
   recalculateRnaBuilderValidations,
   setActiveMonomerKey,
 } from 'state/rna-builder';
@@ -115,7 +116,7 @@ function useLatestReference<T>(value: T) {
 export const RnaEditorExpanded = ({
   isEditMode,
   onDuplicate,
-}: IRnaEditorExpandedProperties) => {
+}: IRnaEditorExpandedProps) => {
   const { t } = useTranslation(['macromoleculesDialogs', 'common']);
   const groupsData = [
     {
@@ -139,6 +140,7 @@ export const RnaEditorExpanded = ({
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const activePreset = useAppSelector(selectActivePreset);
   const isActivePresetEmpty = useAppSelector(isActiveRnaPresetNewAndEmpty);
+  const presetBeforeDuplicate = useAppSelector(selectPresetBeforeDuplicate);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const editor = useAppSelector(selectEditor);
   const presets = useAppSelector(selectAllPresets);
@@ -667,6 +669,11 @@ export const RnaEditorExpanded = ({
     if (isSequenceEditInRNABuilderMode) {
       // Keep the canvas selection in place when cancelling modification.
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor, false);
+    } else if (presetBeforeDuplicate) {
+      // Discard the unsaved copy and bring back the preset it was made from;
+      // the newPreset/phosphate effect follows the active preset
+      dispatch(setActivePreset(presetBeforeDuplicate));
+      resetRnaBuilder(dispatch);
     } else if (isActivePresetEmpty && presets.length > 0) {
       resetRnaBuilder(dispatch);
       dispatch(setActivePreset(presets[0]));
@@ -685,6 +692,7 @@ export const RnaEditorExpanded = ({
     editor,
     isActivePresetEmpty,
     isSequenceEditInRNABuilderMode,
+    presetBeforeDuplicate,
     presets,
   ]);
 

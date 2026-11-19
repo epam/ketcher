@@ -21,7 +21,7 @@ import {
   MonomerName,
   TextContainer,
 } from './styles';
-import { IGroupBlockProperties } from './types';
+import { IGroupBlockProps } from './types';
 import { groupNameToRnaEditorItemLabelKey } from './utilities';
 import { useAppSelector } from 'hooks';
 import { isRnaBuilderEditMode } from 'state/rna-builder';
@@ -36,7 +36,7 @@ export const GroupBlockWide = ({
   onClick,
   testid,
   children,
-}: IGroupBlockProperties & PropsWithChildren) => {
+}: IGroupBlockProps & PropsWithChildren) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const isEditMode = useAppSelector(isRnaBuilderEditMode);
 

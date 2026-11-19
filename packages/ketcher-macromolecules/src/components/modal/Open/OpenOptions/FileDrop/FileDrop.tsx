@@ -20,7 +20,7 @@ import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { OpenOptionText, DisabledText } from '../sharedStyles';
 
-export type FileDropProperties = {
+export type FileDropProps = {
   buttonLabel: string;
   textLabel: string;
   iconName: IconName;
@@ -37,11 +37,11 @@ const baseStyle = {
   justifyContent: 'space-between',
 };
 
-interface StyledIconProperties {
+interface StyledIconProps {
   disabled?: boolean;
 }
 
-const StyledIcon = styled(Icon)<StyledIconProperties>`
+const StyledIcon = styled(Icon)<StyledIconProps>`
   filter: ${({ disabled }) => (disabled ? 'grayscale(1)' : '')};
   opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
 `;
@@ -86,7 +86,7 @@ const FileDrop = ({
   disabled,
   disabledText,
   ...rest
-}: FileDropProperties) => {
+}: FileDropProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
@@ -102,10 +102,8 @@ const FileDrop = ({
     onFileDialogCancel: () => {
       const windowContext = globalThis as unknown as Record<string, unknown>;
       if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-        document.documentElement.requestFullscreen?.().catch(() => {
-          /*
-          Restore fullscreen silently if failed
-          */
+        void document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
         });
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }

@@ -34,7 +34,7 @@ import type { AtomMap, SGroupMap } from './mol.types';
 const shouldLoadRGroupFragments = true; // TODO: set to load the fragments
 
 /** M-property block: string keys (CHG, alias, …) map to per-atom pools */
-type MPropertyProperties = Map<string, Pool<string | number | AtomList>>;
+type MPropertyProps = Map<string, Pool<string | number | AtomList>>;
 
 function parseAtomLine(atomLine: string): Atom {
   /* reader */
@@ -137,7 +137,7 @@ function handleAliasProperty(
   line: string,
   ctabLines: string[],
   shift: number,
-  properties: MPropertyProperties,
+  properties: MPropertyProps,
 ): void {
   const propertyValue = ctabLines[shift];
   // TODO: Atom entity only have pseudo getter. Check during refactoring
@@ -162,7 +162,7 @@ function handleAliasProperty(
 function handleSimpleAtomProperty(
   propertyName: string,
   propertyData: string,
-  properties: MPropertyProperties,
+  properties: MPropertyProps,
 ): void {
   if (!properties.get(propertyName)) {
     properties.set(propertyName, sGroup.readKeyValuePairs(propertyData, false));
@@ -174,7 +174,7 @@ function handleSimpleAtomProperty(
  */
 function handleSubstitutionProperty(
   propertyData: string,
-  properties: MPropertyProperties,
+  properties: MPropertyProps,
 ): void {
   if (!properties.get('substitutionCount')) {
     properties.set('substitutionCount', new Pool());
@@ -195,7 +195,7 @@ function handleSubstitutionProperty(
  */
 function handleRGroupProperty(
   propertyData: string,
-  properties: MPropertyProperties,
+  properties: MPropertyProps,
 ): void {
   if (!properties.get('rglabel')) {
     properties.set('rglabel', new Pool());
@@ -243,7 +243,7 @@ function handleRGroupLogic(
  */
 function handleAtomListProperty(
   propertyData: string,
-  properties: MPropertyProperties,
+  properties: MPropertyProps,
 ): void {
   const pool = parsePropertyLineAtomList(
     utilities.partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
@@ -321,89 +321,115 @@ function handleSGroupAttachmentProperty(
 function shouldStopAfterProcessingMPropertyLine(
   type: string,
   propertyData: string,
-  properties: MPropertyProperties,
+  properties: MPropertyProps,
   sGroups: SGroupMap,
   rLogic: Record<number, RGroupAttributes>,
 ): boolean {
   switch (type) {
-    case 'END':
+    case 'END': {
       return true; // Signal to break loop
-    case 'CHG':
+    }
+    case 'CHG': {
       handleSimpleAtomProperty('charge', propertyData, properties);
       break;
-    case 'RAD':
+    }
+    case 'RAD': {
       handleSimpleAtomProperty('radical', propertyData, properties);
       break;
-    case 'ISO':
+    }
+    case 'ISO': {
       handleSimpleAtomProperty('isotope', propertyData, properties);
       break;
-    case 'RBC':
+    }
+    case 'RBC': {
       handleSimpleAtomProperty('ringBondCount', propertyData, properties);
       break;
-    case 'SUB':
+    }
+    case 'SUB': {
       handleSubstitutionProperty(propertyData, properties);
       break;
-    case 'UNS':
+    }
+    case 'UNS': {
       handleSimpleAtomProperty('unsaturatedAtom', propertyData, properties);
       break;
-    case 'RGP':
+    }
+    case 'RGP': {
       handleRGroupProperty(propertyData, properties);
       break;
-    case 'LOG':
+    }
+    case 'LOG': {
       handleRGroupLogic(propertyData, rLogic);
       break;
-    case 'APO':
+    }
+    case 'APO': {
       handleSimpleAtomProperty('attachmentPoints', propertyData, properties);
       break;
-    case 'ALS':
+    }
+    case 'ALS': {
       handleAtomListProperty(propertyData, properties);
       break;
-    case 'STY':
+    }
+    case 'STY': {
       sGroup.initSGroup(sGroups, propertyData);
       break;
-    case 'SST':
+    }
+    case 'SST': {
       sGroup.applySGroupProp(sGroups, 'subtype', propertyData);
       break;
-    case 'SLB':
+    }
+    case 'SLB': {
       sGroup.applySGroupProp(sGroups, 'label', propertyData, true);
       break;
-    case 'SPL':
+    }
+    case 'SPL': {
       sGroup.applySGroupProp(sGroups, 'parent', propertyData, true, true);
       break;
-    case 'SCN':
+    }
+    case 'SCN': {
       sGroup.applySGroupProp(sGroups, 'connectivity', propertyData);
       break;
-    case 'SAL':
+    }
+    case 'SAL': {
       sGroup.applySGroupArrayProp(sGroups, 'atoms', propertyData, -1);
       break;
-    case 'SBL':
+    }
+    case 'SBL': {
       sGroup.applySGroupArrayProp(sGroups, 'bonds', propertyData, -1);
       break;
-    case 'SPA':
+    }
+    case 'SPA': {
       sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
       break;
+    }
     case 'SMT':
-    case 'SCL':
+    case 'SCL': {
       handleSGroupDataProperty(type, propertyData, sGroups);
       break;
-    case 'SDT':
+    }
+    case 'SDT': {
       sGroup.applyDataSGroupDesc(sGroups, propertyData);
       break;
-    case 'SDD':
+    }
+    case 'SDD': {
       sGroup.applyDataSGroupInfoLine(sGroups, propertyData);
       break;
-    case 'SCD':
+    }
+    case 'SCD': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, false);
       break;
-    case 'SED':
+    }
+    case 'SED': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, true);
       break;
-    case 'SDS':
+    }
+    case 'SDS': {
       handleSGroupExpandedProperty(propertyData, sGroups);
       break;
-    case 'SAP':
+    }
+    case 'SAP': {
       handleSGroupAttachmentProperty(propertyData, sGroups);
       break;
+    }
   }
 
   return false; // Continue loop
@@ -425,7 +451,7 @@ function parsePropertyLines(
   end: number,
   sGroups: SGroupMap,
   rLogic: Record<number, RGroupAttributes>,
-): MPropertyProperties {
+): MPropertyProps {
   /* reader */
   const properties = new Map<string, Pool<string | number | AtomList>>();
 

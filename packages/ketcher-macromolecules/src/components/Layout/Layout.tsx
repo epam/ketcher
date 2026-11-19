@@ -81,7 +81,7 @@ export function useLayoutBounds(): Pick<
   return useContext(LayoutBoundsContext);
 }
 
-interface LayoutProperties {
+interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
 }
 
@@ -245,7 +245,7 @@ const Top = (
   );
 };
 
-export const Layout = ({ children }: LayoutProperties) => {
+export const Layout = ({ children }: LayoutProps) => {
   const { setCanvasElement, setLayoutRootElement } =
     useContext(LayoutBoundsContext);
 

@@ -34,11 +34,11 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
   };
 });
 
-interface Properties {
+interface Props {
   onClick: () => void;
 }
 
-const MonomerLibraryToggle = ({ onClick }: Properties) => {
+const MonomerLibraryToggle = ({ onClick }: Props) => {
   const { t } = useTranslation('macromoleculesDialogs');
   return (
     <StyledMonomerLibraryToggle

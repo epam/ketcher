@@ -68,7 +68,7 @@ const ToolButton = styled.button`
   }
 `;
 
-export interface FloatingToolsProperties {
+export interface FloatingToolsProps {
   visible: boolean;
   position: Vec2;
 }

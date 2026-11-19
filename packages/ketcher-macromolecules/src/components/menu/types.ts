@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface GroupProperties {
+export interface GroupProps {
   divider?: boolean;
   isHorizontal?: boolean;
 }
 
-export type MenuProperties = {
+export type MenuProps = {
   onItemClick: (itemKey: string) => void;
   activeMenuItems?: string[];
   testId?: string;

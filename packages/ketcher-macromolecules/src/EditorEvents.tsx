@@ -24,8 +24,8 @@ import {
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
-  ConfirmationDialogOnlyProperties,
-  MonomerConnectionOnlyProperties,
+  ConfirmationDialogOnlyProps,
+  MonomerConnectionOnlyProps,
 } from 'components/modal/modalContainer';
 import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
 
@@ -127,7 +127,7 @@ export const EditorEvents = () => {
       dispatch(openErrorModal(errorData));
     };
     const handleOpenMonomerConnectionModal = (
-      additionalProperties: MonomerConnectionOnlyProperties,
+      additionalProperties: MonomerConnectionOnlyProps,
     ) =>
       dispatch(
         openModal({
@@ -136,7 +136,7 @@ export const EditorEvents = () => {
         }),
       );
     const handleOpenConfirmationDialog = (
-      additionalProperties: ConfirmationDialogOnlyProperties,
+      additionalProperties: ConfirmationDialogOnlyProps,
     ) =>
       dispatch(
         openModal({

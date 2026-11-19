@@ -28,7 +28,7 @@ import {
   StyledCheckboxInput,
 } from './styles';
 
-type Properties = {
+type Props = {
   onClose: () => void;
 };
 
@@ -41,9 +41,7 @@ const DEFAULT_FILTER: PresetPhosphateFilter = {
   noPhosphate: false,
 };
 
-export const PresetPhosphateFilterPopup: React.FC<Properties> = ({
-  onClose,
-}) => {
+export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const currentFilter = useAppSelector(selectPresetPhosphateFilter);

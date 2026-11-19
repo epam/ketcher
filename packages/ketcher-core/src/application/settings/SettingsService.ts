@@ -60,14 +60,6 @@ const DEFAULT_STORAGE_KEY = 'ketcher-opts';
 export class SettingsService implements ISettingsService {
   private static instance: SettingsService | null = null;
 
-  private settings: Settings;
-  private readonly storage: ISettingsStorage;
-  private readonly validator: ISettingsValidator;
-  private readonly emitter: EventEmitter;
-  private readonly storageKey: string;
-  private readonly autoSave: boolean;
-  private initialized = false;
-
   /**
    * Get the singleton instance of SettingsService.
    * Creates a new instance if one doesn't exist.
@@ -95,6 +87,14 @@ export class SettingsService implements ISettingsService {
   static resetInstance(): void {
     SettingsService.instance = null;
   }
+
+  private settings: Settings;
+  private readonly storage: ISettingsStorage;
+  private readonly validator: ISettingsValidator;
+  private readonly emitter: EventEmitter;
+  private readonly storageKey: string;
+  private readonly autoSave: boolean;
+  private initialized = false;
 
   /**
    * Private constructor to enforce singleton pattern.

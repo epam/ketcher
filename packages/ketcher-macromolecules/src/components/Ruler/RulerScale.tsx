@@ -11,12 +11,12 @@ import {
   SnakeModeStartOffset,
 } from 'components/Ruler/RulerArea.constants';
 
-type Properties = {
+type Props = {
   transform: ZoomTransform;
   layoutMode: LayoutMode;
 };
 
-const RulerScale = ({ transform, layoutMode }: Properties) => {
+const RulerScale = ({ transform, layoutMode }: Props) => {
   const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 

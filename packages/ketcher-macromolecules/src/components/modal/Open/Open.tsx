@@ -35,7 +35,7 @@ import {
   Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
-import { RequiredModalProperties } from '../modalContainer';
+import { RequiredModalProps } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
 import {
   Loader,
@@ -50,7 +50,7 @@ import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
 import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
-export interface Properties {
+export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
@@ -342,7 +342,7 @@ const onOk = async ({
 const isAnalyzingFile = false;
 const errorHandler = (error: string) => console.log(error);
 
-const Open = ({ isModalOpen, onClose }: RequiredModalProperties) => {
+const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const [structString, setStructString] = useState<string>('');
@@ -360,9 +360,10 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProperties) => {
     useState(ONE_LETTER);
 
   useEffect(() => {
-    fileOpener().then((chosenOpener) => {
+    void (async () => {
+      const chosenOpener = await fileOpener();
       setOpener({ chosenOpener });
-    });
+    })();
   }, []);
 
   const onCloseCallback = useCallback(() => {
@@ -377,10 +378,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProperties) => {
     const windowContext = globalThis as unknown as Record<string, unknown>;
 
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-      document.documentElement.requestFullscreen?.().catch(() => {
-        /*
-        Fullscreen restoration failed or was denied by the browser
-        */
+      void document.documentElement.requestFullscreen?.().catch(() => {
+        /* Fullscreen restoration failed or was denied by the browser */
       });
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
@@ -402,7 +401,15 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProperties) => {
       setFormatSelection(id);
     }
 
-    opener?.chosenOpener(files[0]).then(onLoad, onError);
+    if (opener) {
+      void (async () => {
+        try {
+          onLoad(await opener.chosenOpener(files[0]));
+        } catch {
+          onError();
+        }
+      })();
+    }
   };
 
   const addToCanvasHandler = () => {

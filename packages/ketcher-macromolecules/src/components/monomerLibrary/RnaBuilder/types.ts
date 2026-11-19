@@ -15,6 +15,6 @@
  ***************************************************************************/
 export type { IRnaPreset } from 'ketcher-core';
 
-export interface IExpandIconProperties {
+export interface IExpandIconProps {
   expanded: boolean;
 }

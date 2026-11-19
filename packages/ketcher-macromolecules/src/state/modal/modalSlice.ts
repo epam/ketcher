@@ -15,13 +15,13 @@
  ***************************************************************************/
 import { castDraft } from 'immer';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AdditionalModalProperties } from 'components/modal/modalContainer/types';
+import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 
 interface ModalState {
   name: string | null;
   isOpen: boolean;
-  additionalProps: AdditionalModalProperties | null;
+  additionalProps: AdditionalModalProps | null;
   errorTooltips: string[];
   errorModalText: string;
   errorModalTitle: string;
@@ -52,8 +52,7 @@ export const modalSlice = createSlice({
     openModal: (
       state,
       action: PayloadAction<
-        | ModalName
-        | { name: ModalName; additionalProps: AdditionalModalProperties }
+        ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
       >,
     ) => {
       if (typeof action.payload === 'string') {
@@ -116,7 +115,7 @@ export const selectIsSettingsPanelOpen = (state: RootState): boolean =>
   state.modal.isOpen && state.modal.name === 'settings';
 export const selectAdditionalProps = (
   state: RootState,
-): AdditionalModalProperties | null => state.modal.additionalProps;
+): AdditionalModalProps | null => state.modal.additionalProps;
 export const selectErrorTooltips = (state: RootState): string[] =>
   state.modal.errorTooltips;
 export const selectErrorModalText = (state: RootState): string => {

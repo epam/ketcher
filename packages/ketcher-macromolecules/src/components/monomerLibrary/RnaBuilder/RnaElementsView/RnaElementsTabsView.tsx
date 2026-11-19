@@ -34,7 +34,7 @@ import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPres
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
-import { RnaElementsViewProperties } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/types';
+import { RnaElementsViewProps } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/types';
 
 const RnaElementsTabsView = ({
   activeRnaBuilderItem,
@@ -44,7 +44,7 @@ const RnaElementsTabsView = ({
   duplicatePreset,
   editPreset,
   libraryName,
-}: RnaElementsViewProperties) => {
+}: RnaElementsViewProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);

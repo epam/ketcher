@@ -5,19 +5,14 @@ import useTranslateAlongXAxis from './useTranslateAlongXAxis';
 
 import styles from './RulerArea.module.less';
 
-type Properties = {
+type Props = {
   offsetX: number;
   onDragStart: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
   onDrag: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
   onDragEnd: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
 };
 
-const RulerHandle = ({
-  offsetX,
-  onDragStart,
-  onDrag,
-  onDragEnd,
-}: Properties) => {
+const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
   const svgReference = useRef<SVGSVGElement>(null);
   const handleReference = useRef<SVGGElement>(null);
 

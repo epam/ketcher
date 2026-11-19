@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,18 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { withThemeProvider } from 'src/testUtils/themeProvider';
+
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IconName } from 'ketcher-react';
 
-import { FileDrop, FileDropProperties } from './FileDrop';
+import { FileDrop, FileDropProps } from './FileDrop';
 
 const mockProps = {
   buttonLabel: 'Open from file',
   textLabel: 'or drag file here',
   iconName: 'arrow-upward' as IconName,
-  onDropAccepted: jest.fn(),
-} as FileDropProperties;
+  onDropAccepted: vi.fn(),
+} as FileDropProps;
 
 const mockOptionalProps = {
   disabled: true,

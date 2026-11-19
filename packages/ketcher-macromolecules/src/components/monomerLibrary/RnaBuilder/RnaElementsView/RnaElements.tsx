@@ -26,7 +26,7 @@ import RnaElementsTabsView from './RnaElementsTabsView';
 import RnaElementsAccordionView from './RnaElementsAccordionView';
 import { getMonomerUniqueKey } from 'state/library';
 
-interface RnaUnifiedViewProperties {
+interface RnaUnifiedViewProps {
   view: 'tabs' | 'accordion';
   libraryName: LibraryNameType;
   duplicatePreset: (preset?: IRnaPreset) => void;
@@ -38,7 +38,7 @@ export const RnaElements = ({
   libraryName,
   duplicatePreset,
   editPreset,
-}: RnaUnifiedViewProperties) => {
+}: RnaUnifiedViewProps) => {
   const dispatch = useDispatch();
 
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);

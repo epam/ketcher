@@ -124,11 +124,14 @@ import { DragGhost } from 'components/DragGhost/DragGhost';
 import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 import { FloatingTools } from 'components/FloatingTools';
 
-import './theme.less';
+import * as themeStyles from './theme.less';
+
+// Keep the runtime stylesheet while excluding its Less import from declarations.
+void themeStyles;
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorProperties {
+interface EditorProps {
   ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
@@ -137,7 +140,7 @@ interface EditorProperties {
   onInit?: (editor: CoreEditor) => void;
 }
 
-interface EditorContainerProperties extends EditorProperties {
+interface EditorContainerProps extends EditorProps {
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 
@@ -149,7 +152,7 @@ function EditorContainer({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
-}: Readonly<EditorContainerProperties>) {
+}: Readonly<EditorContainerProps>) {
   const rootElementReference = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -193,7 +196,7 @@ function Editor({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   onInit,
-}: Readonly<EditorProperties>) {
+}: Readonly<EditorProps>) {
   const dispatch = useAppDispatch();
   const canvasReference = useRef<SVGSVGElement>(null);
   const errorTooltips = useAppSelector(selectErrorTooltips);
@@ -208,9 +211,13 @@ function Editor({
   const [isPasteAvailable, setIsPasteAvailable] = useState(true);
   const updatePasteAvailability = useCallback(() => {
     if (!editor) return;
-    isPasteContentAvailable((content) =>
-      editor.mode.isPasteContentValid(content),
-    ).then(setIsPasteAvailable);
+    void (async () => {
+      setIsPasteAvailable(
+        await isPasteContentAvailable((content) =>
+          editor.mode.isPasteContentValid(content),
+        ),
+      );
+    })();
   }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,

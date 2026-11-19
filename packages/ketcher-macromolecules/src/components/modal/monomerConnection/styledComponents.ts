@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-interface IStyledAttachmentPointNameProperties {
+interface IStyledAttachmentPointNameProps {
   disabled?: boolean;
 }
 
@@ -12,8 +12,8 @@ export const AttachmentPoint = styled.div({
   marginBottom: '5px',
 });
 
-export const AttachmentPointName =
-  styled.span<IStyledAttachmentPointNameProperties>((properties) => ({
+export const AttachmentPointName = styled.span<IStyledAttachmentPointNameProps>(
+  (properties) => ({
     margin: 0,
     padding: 0,
     textAlign: 'center',
@@ -24,6 +24,7 @@ export const AttachmentPointName =
     color: properties.disabled
       ? 'rgba(180, 185, 214, 1)'
       : properties.theme.ketcher.color.text.light,
-  }));
+  }),
+);
 
 export const ModalContent = styled.div(() => ({ height: '100%' }));

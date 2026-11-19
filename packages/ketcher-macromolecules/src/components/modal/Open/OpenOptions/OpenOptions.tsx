@@ -25,7 +25,7 @@ const ICON_NAMES: Record<string, IconName> = {
   IMAGE: 'image-frame',
 } as const;
 
-export type OpenOptionsProperties = {
+export type OpenOptionsProps = {
   selectClipboard: () => void;
   errorHandler: (error: string) => void;
   fileLoadHandler: (files: File[]) => void;
@@ -75,7 +75,7 @@ const OpenOptions = ({
   selectClipboard,
   fileLoadHandler,
   errorHandler,
-}: OpenOptionsProperties) => {
+}: OpenOptionsProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
   return (
     <RootContainer>

@@ -10,7 +10,7 @@ import {
   AttachmentPointName as AttachmentPointNameComponent,
   ModalContent,
 } from './styledComponents';
-import { MonomerConnectionProperties } from '../modalContainer/types';
+import { MonomerConnectionProps } from '../modalContainer/types';
 import {
   AmbiguousMonomer,
   BaseMonomer,
@@ -21,7 +21,7 @@ import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
 
-interface IStyledButtonProperties {
+interface IStyledButtonProps {
   disabled: boolean;
 }
 
@@ -39,7 +39,7 @@ export const ActionButtonLeft = styled(ActionButton)(() => ({
   width: '97px !important',
 }));
 
-export const ActionButtonRight = styled(ActionButton)<IStyledButtonProperties>(
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
   (properties) => ({
     width: '97px !important',
     color: properties.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
@@ -68,7 +68,7 @@ const MonomerConnection = ({
   secondMonomer,
   polymerBond,
   isReconnectionDialog,
-}: Readonly<MonomerConnectionProperties>): React.ReactElement => {
+}: Readonly<MonomerConnectionProps>): React.ReactElement => {
   const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   // Selecting an attachment point mutates the bond and monomers. Preserve the
@@ -218,7 +218,7 @@ const MonomerConnection = ({
   );
 };
 
-interface AttachmentPointSelectionPanelProperties {
+interface AttachmentPointSelectionPanelProps {
   monomer: BaseMonomer;
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
@@ -232,7 +232,7 @@ function AttachmentPointSelectionPanel({
   onSelectAttachmentPoint,
   expanded: isExpanded = false,
   position,
-}: Readonly<AttachmentPointSelectionPanelProperties>): React.ReactElement {
+}: Readonly<AttachmentPointSelectionPanelProps>): React.ReactElement {
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
     () => getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
   );

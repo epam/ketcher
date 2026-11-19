@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { AnalyzingFile, AnalyzingFileProperties } from '../AnalyzingFile';
-import { OpenOptions, OpenOptionsProperties } from '../OpenOptions';
-import { TextEditorProperties, TextArea } from '../../../shared/TextArea';
+import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile';
+import { OpenOptions, OpenOptionsProps } from '../OpenOptions';
+import { TextEditorProps, TextArea } from '../../../shared/TextArea';
 import styled from '@emotion/styled';
 
 type ViewStates = {
@@ -23,32 +23,35 @@ type ViewStates = {
   textEditor: string;
 };
 
-type SwitchProperties = {
+type SwitchProps = {
   currentState: string;
   states: ViewStates;
   isAnalyzingFile: boolean;
-} & OpenOptionsProperties &
-  TextEditorProperties &
-  AnalyzingFileProperties;
+} & OpenOptionsProps &
+  TextEditorProps &
+  AnalyzingFileProps;
 
 const StyledTextField = styled(TextArea)`
   width: 100%;
   height: 320px;
 `;
 
-export const ViewSwitcher = (properties: SwitchProperties) => {
+export const ViewSwitcher = (properties: SwitchProps) => {
   if (properties.isAnalyzingFile) {
     return <AnalyzingFile fileName={properties.fileName} />;
   } else {
     switch (properties.currentState) {
-      case properties.states.openOptions:
+      case properties.states.openOptions: {
         return <OpenOptions {...properties} />;
-      case properties.states.textEditor:
+      }
+      case properties.states.textEditor: {
         return (
           <StyledTextField testId="open-structure-textarea" {...properties} />
         );
-      default:
+      }
+      default: {
         return null;
+      }
     }
   }
 };

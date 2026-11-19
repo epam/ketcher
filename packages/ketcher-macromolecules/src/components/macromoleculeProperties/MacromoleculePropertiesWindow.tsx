@@ -333,7 +333,7 @@ const StyledMonomersCountPanelItemName = styled('div')(() => ({
   fontWeight: '700',
 }));
 
-interface BasicPropertyProperties {
+interface BasicPropertyProps {
   name: string;
   value?: string | number;
   hint?: string | ReactNode;
@@ -345,12 +345,12 @@ interface BasicPropertyProperties {
   onChangeValue?: (value: number) => void;
 }
 
-interface MonomersCountPanelProperties {
+interface MonomersCountPanelProps {
   monomerCount?: Record<string, number>;
   isPeptide?: boolean;
 }
 
-const MonomersCountPanel = (properties: MonomersCountPanelProperties) => {
+const MonomersCountPanel = (properties: MonomersCountPanelProps) => {
   const { t } = useTranslation('macromolecules');
   const naturalAnaloguesArray = properties.isPeptide
     ? peptideNaturalAnalogues
@@ -393,7 +393,7 @@ const MonomersCountPanel = (properties: MonomersCountPanelProperties) => {
   );
 };
 
-const BasicProperty = (properties: BasicPropertyProperties) => {
+const BasicProperty = (properties: BasicPropertyProps) => {
   return (
     <StyledBasicProperty
       data-testid={properties.testId}
@@ -470,7 +470,7 @@ interface PeptideProperties_ {
 
 type DnaRnaProperties = PeptideProperties_;
 
-interface HydrophobicityChartProperties {
+interface HydrophobicityChartProps {
   data: number[];
 }
 
@@ -571,7 +571,7 @@ const roundToMinNiceNumber = (number: number) => {
   return Math.floor(number / 100) * 100;
 };
 
-const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
+const HydrophobicityChart = (properties: HydrophobicityChartProps) => {
   const { data: initialData } = properties;
   const data = useMemo(
     () =>
@@ -663,7 +663,7 @@ const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
       finalDistanceBetweenTicks = 1;
     }
 
-    if (data.xs.length) {
+    if (data.xs.length > 0) {
       const xAxis = d3
         .axisBottom(xScale)
         .tickValues(tickValues)
@@ -706,7 +706,7 @@ const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
       })
       .call((g) => g.selectAll('text').attr('font-size', '8px'));
 
-    if (data.ys.length) {
+    if (data.ys.length > 0) {
       svgContainer
         .append('path')
         .datum(data.ys)

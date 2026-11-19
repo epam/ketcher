@@ -7,7 +7,7 @@ import useTranslateAlongXAxis from './useTranslateAlongXAxis';
 
 import styles from './RulerArea.module.less';
 
-type Properties = {
+type Props = {
   lineLengthValue: number;
   offsetX: number;
   isDragging: boolean;
@@ -21,7 +21,7 @@ const RulerInput = ({
   isDragging,
   layoutMode,
   onCommitValue,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('macromolecules');
   const reference = useRef<HTMLInputElement>(null);
 

@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
-import { IStyledIconProperties } from './types';
+import { IStyledIconProps } from './types';
 
 export const SummaryContainer = styled.div((properties) => ({
   minHeight: '32px',
@@ -34,7 +34,7 @@ export const SummaryText = styled.span((properties) => ({
 
 export const StyledIcon = styled(Icon, {
   shouldForwardProp: (property) => property !== 'expanded',
-})<IStyledIconProperties>((properties) => ({
+})<IStyledIconProps>((properties) => ({
   width: '16px',
   height: '16px',
   color: properties.theme.ketcher.color.icon.grey,

@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IGroupBlockProperties } from './types';
+import { IGroupBlockProps } from './types';
 import { useIsCompactView } from 'hooks';
 import { GroupBlockCompact } from './GroupBlockCompact';
 import { GroupBlockWide } from './GroupBlockWide';
 import { PropsWithChildren } from 'react';
 
 export const GroupBlock = (
-  properties: IGroupBlockProperties & PropsWithChildren,
+  properties: IGroupBlockProps & PropsWithChildren,
 ) => {
   const isCompactView = useIsCompactView();
 

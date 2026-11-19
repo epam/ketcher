@@ -120,7 +120,7 @@ export const SelectedMonomersContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
@@ -154,25 +154,31 @@ export const SelectedMonomersContextMenu = ({
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
     if (monomerCreationMenu.handleMenuChange(menuItemId)) return;
     switch (true) {
-      case menuItemId === 'layout_circular':
+      case menuItemId === 'layout_circular': {
         editor?.events.layoutCircular.dispatch();
         hideAll();
         break;
-      case menuItemId === 'copy':
+      }
+      case menuItemId === 'copy': {
         editor?.events.copySelectedStructure.dispatch();
         break;
-      case menuItemId === 'create_antisense_rna_chain':
+      }
+      case menuItemId === 'create_antisense_rna_chain': {
         editor?.events.createAntisenseChain.dispatch(false);
         break;
-      case menuItemId === 'create_antisense_dna_chain':
+      }
+      case menuItemId === 'create_antisense_dna_chain': {
         editor?.events.createAntisenseChain.dispatch(true);
         break;
-      case menuItemId === 'delete':
+      }
+      case menuItemId === 'delete': {
         editor?.events.deleteSelectedStructure.dispatch();
         break;
-      case menuItemId === 'paste':
+      }
+      case menuItemId === 'paste': {
         editor?.events.pasteFromClipboard.dispatch();
         break;
+      }
       case menuItemId === 'edit_attachment_points': {
         const polymerBond = props?.polymerBondRenderer?.polymerBond;
         if (!polymerBond) return;
@@ -196,8 +202,9 @@ export const SelectedMonomersContextMenu = ({
         });
         break;
       }
-      default:
+      default: {
         break;
+      }
     }
   };
 

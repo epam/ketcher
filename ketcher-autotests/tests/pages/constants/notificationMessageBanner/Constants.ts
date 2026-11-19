@@ -16,6 +16,7 @@ export enum ErrorMessage {
   invalidPresetCode = 'invalidPresetCode',
   notUniquePresetCode = 'notUniquePresetCode',
   rnaPresetInvalidSugarConnectionBonds = 'rnaPresetInvalidSugarConnectionBonds',
+  editAllPresetError = 'editAllPresetError',
 }
 
 export enum InfoMessage {
@@ -23,4 +24,9 @@ export enum InfoMessage {
   creationSuccessful = 'creationSuccessful',
 }
 
-export type NotificationMessageType = ErrorMessage | InfoMessage;
+export enum WarningMessage {
+  editAllPresetWarning = 'editAllPresetWarning',
+}
+
+export type NotificationMessageType =
+  ErrorMessage | InfoMessage | WarningMessage;

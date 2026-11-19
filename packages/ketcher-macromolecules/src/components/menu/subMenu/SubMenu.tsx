@@ -34,7 +34,7 @@ import { createPortal } from 'react-dom';
 import { selectSelectedMenuGroupItem } from 'state/common';
 import { useAppSelector } from 'hooks';
 
-type SubMenuProperties = {
+type SubMenuProps = {
   vertical?: boolean;
   autoSize?: boolean;
   disabled?: boolean;
@@ -61,7 +61,7 @@ const SubMenu = ({
   generalTitle,
   activeItem,
   subMenuId,
-}: React.PropsWithChildren<SubMenuProperties>) => {
+}: React.PropsWithChildren<SubMenuProps>) => {
   const reference = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();

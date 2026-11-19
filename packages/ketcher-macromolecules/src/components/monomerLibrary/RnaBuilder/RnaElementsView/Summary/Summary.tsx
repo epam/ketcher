@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { StyledIcon, SummaryContainer, SummaryText } from './styles';
-import { ISummaryProperties } from './types';
+import { ISummaryProps } from './types';
 
 export const Summary = ({
   groupName,
@@ -23,7 +23,7 @@ export const Summary = ({
   quantity,
   expanded,
   iconName,
-}: ISummaryProperties) => {
+}: ISummaryProps) => {
   return (
     <SummaryContainer data-testid={`summary-${groupName}`}>
       <StyledIcon name={iconName} />

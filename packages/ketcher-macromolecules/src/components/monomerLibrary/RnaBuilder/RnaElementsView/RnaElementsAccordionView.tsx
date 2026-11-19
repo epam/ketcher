@@ -33,10 +33,10 @@ import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
-import { RnaElementsViewProperties } from './types';
+import { RnaElementsViewProps } from './types';
 import { IRnaPreset } from 'ketcher-core';
 
-type Properties = RnaElementsViewProperties & {
+type Props = RnaElementsViewProps & {
   newPreset: IRnaPreset;
 };
 
@@ -49,7 +49,7 @@ const RnaElementsAccordionView = ({
   duplicatePreset,
   editPreset,
   libraryName,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);

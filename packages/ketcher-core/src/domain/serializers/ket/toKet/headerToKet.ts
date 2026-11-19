@@ -25,5 +25,5 @@ export function headerToKet(struct: Struct): KetHeader | null {
   ifDefined(header, 'creatorProgram', null, '');
   ifDefined(header, 'comment', null, '');
 
-  return Object.keys(header).length === 0 ? null : header;
+  return Object.keys(header).length > 0 ? header : null;
 }

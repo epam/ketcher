@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { IGroupBlockProperties } from './types';
+import { IGroupBlockProps } from './types';
 import { useAppSelector } from 'hooks';
 import { isRnaBuilderEditMode } from 'state/rna-builder';
 import {
@@ -19,7 +19,7 @@ export const GroupBlockCompact = ({
   onClick,
   testid,
   children,
-}: IGroupBlockProperties & PropsWithChildren) => {
+}: IGroupBlockProps & PropsWithChildren) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const isEditMode = useAppSelector(isRnaBuilderEditMode);
 

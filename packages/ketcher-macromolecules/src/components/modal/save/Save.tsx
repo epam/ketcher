@@ -35,7 +35,7 @@ import {
   provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
-import { RequiredModalProperties } from '../modalContainer';
+import { RequiredModalProps } from '../modalContainer';
 import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
 import {
   Form,
@@ -89,7 +89,7 @@ const StyledModal = styled(Modal)({
 export const Save = ({
   onClose,
   isModalOpen,
-}: RequiredModalProperties): JSX.Element => {
+}: RequiredModalProps): JSX.Element => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const indigo = IndigoProvider.getIndigo() as StructService;
@@ -218,7 +218,7 @@ export const Save = ({
       return;
     }
 
-    navigator.clipboard.writeText(struct).catch((error) => {
+    void navigator.clipboard.writeText(struct).catch((error) => {
       KetcherLogger.error('copyAs.js::copyAs', error);
       dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });

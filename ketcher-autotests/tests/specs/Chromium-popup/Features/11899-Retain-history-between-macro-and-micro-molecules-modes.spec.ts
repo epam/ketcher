@@ -1,17 +1,16 @@
-import { test, expect, Page } from '@fixtures';
-import { Locator } from '@playwright/test';
-import { getCanvasByMode } from '@utils';
+import { test, expect } from '@fixtures';
+import { getCanvasByMode, waitForPageInit } from '@utils';
 import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { getAtomLocator as getPageAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import { getMonomerLocator as getPageMonomerLocator } from '@utils/macromolecules/monomer';
-import { getBondLocator as getPageBondLocator } from '@utils/macromolecules/polymerBond';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { Mode } from '@tests/pages/constants/commonTopRightToolbar/Constants';
 import {
   openFileAndAddToCanvasMacro,
@@ -22,41 +21,19 @@ import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constant
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
-  getArrowLocator as getPageArrowLocator,
-  getPlusLocator as getPagePlusLocator,
+  getArrowLocator,
+  getPlusLocator,
 } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 
-let page: Page;
-
-const getCanvasEntityLocator = (page: Page, locator: Locator) =>
-  page
-    .locator('[data-testid="ketcher-canvas"]:visible')
-    .first()
-    .locator(locator);
-const getAtomLocator = (...args: Parameters<typeof getPageAtomLocator>) =>
-  getCanvasEntityLocator(args[0], getPageAtomLocator(...args));
-const getBondLocator = (...args: Parameters<typeof getPageBondLocator>) =>
-  getCanvasEntityLocator(args[0], getPageBondLocator(...args));
-const getMonomerLocator = (...args: Parameters<typeof getPageMonomerLocator>) =>
-  getCanvasEntityLocator(args[0], getPageMonomerLocator(...args));
-const getArrowLocator = (...args: Parameters<typeof getPageArrowLocator>) =>
-  getCanvasEntityLocator(args[0], getPageArrowLocator(...args));
-const getPlusLocator = (...args: Parameters<typeof getPagePlusLocator>) =>
-  getCanvasEntityLocator(args[0], getPagePlusLocator(...args));
-
 test.describe('Retain history between macro and micro molecules modes', () => {
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
   });
 
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
-
-  test('Case 1 - Molecule added in Micro is undoable after switching to Macro', async () => {
+  test('Case 1 - Molecule added in Micro is undoable after switching to Macro', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: A molecule added in Molecules mode can still be removed by
@@ -85,7 +62,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
   });
 
-  test('Case 2 - Undoing the molecule addition keeps the mode switch as its own history entry', async () => {
+  test('Case 2 - Undoing the molecule addition keeps the mode switch as its own history entry', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: After the molecule addition is undone, Redo re-applies the
@@ -118,7 +97,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
+    ).toHaveCount(6);
 
     // the switch was the last entry: an extra Redo changes nothing
     await CommonTopLeftToolbar(page).redo();
@@ -129,7 +110,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
   });
 
   test('Case 3 - Monomer added in Macro is undoable after switching to Micro', async ({
-    FlexCanvas: _,
+    page,
   }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
@@ -143,6 +124,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -156,7 +140,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
   });
 
   test('Case 4 - Undoing the monomer addition keeps the mode switch as its own history entry', async ({
-    FlexCanvas: _,
+    page,
   }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
@@ -171,6 +155,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
      *
      * Version 3.21.0
      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopLeftToolbar(page).undo();
@@ -186,7 +173,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
   });
 
   test('Case 5 - Atoms added in Micro are undone in reverse order after a switch', async ({
-    MoleculesCanvas: _,
+    page,
   }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
@@ -218,7 +205,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getAtomLocator(page, {})).toHaveCount(0);
   });
 
-  test('Case 6 - Bond added before a switch is undone as a separate step', async () => {
+  test('Case 6 - Bond added before a switch is undone as a separate step', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: A bond added in Molecules mode is its own history entry
@@ -252,7 +241,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getAtomLocator(page, {})).toHaveCount(0);
   });
 
-  test('Case 7 - Reaction added in Macro is undoable after switching to Micro', async () => {
+  test('Case 7 - Reaction added in Macro is undoable after switching to Micro', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: A reaction added in Macromolecules mode is one history entry
@@ -281,22 +272,40 @@ test.describe('Retain history between macro and micro molecules modes', () => {
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getArrowLocator(page)).toHaveCount(1);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
+    ).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
-    await expect(getArrowLocator(page)).toHaveCount(0);
-    await expect(getAtomLocator(page, {})).toHaveCount(0);
-    await expect(getPlusLocator(page)).toHaveCount(0);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
+    ).toHaveCount(0);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
+    ).toHaveCount(0);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getPlusLocator(page)),
+    ).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).redo();
-    await expect(getArrowLocator(page)).toHaveCount(1);
-    await expect(getAtomLocator(page, {})).toHaveCount(16);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
+    ).toHaveCount(1);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
+    ).toHaveCount(16);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
-    await expect(getArrowLocator(page)).toHaveCount(1);
-    await expect(getAtomLocator(page, {})).toHaveCount(16);
+    await expect(
+      getCanvasByMode(page, 'molecules').locator(getArrowLocator(page)),
+    ).toHaveCount(1);
+    await expect(
+      getCanvasByMode(page, 'molecules').locator(getAtomLocator(page, {})),
+    ).toHaveCount(16);
   });
 
-  test('Case 8 - One molecule edited in both modes keeps every edit in history', async () => {
+  test('Case 8 - One molecule edited in both modes keeps every edit in history', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: Edits of the same molecule made in Molecules and in
@@ -333,10 +342,14 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getBondLocator(page, {})).toHaveCount(5);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getBondLocator(page, {})).toHaveCount(5);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
+    ).toHaveCount(5);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getBondLocator(page, {})).toHaveCount(6);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
+    ).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
     await expect(getAtomLocator(page, {})).toHaveCount(6);
@@ -350,10 +363,14 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getBondLocator(page, {})).toHaveCount(6);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getBondLocator(page, {})).toHaveCount(6);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
+    ).toHaveCount(6);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getBondLocator(page, {})).toHaveCount(5);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getBondLocator(page, {})),
+    ).toHaveCount(5);
     await CommonTopLeftToolbar(page).redo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
     await expect(getAtomLocator(page, {})).toHaveCount(6);
@@ -363,7 +380,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
-  test('Case 9 - Monomer deletion and additions survive switches in a mixed history', async () => {
+  test('Case 9 - Monomer deletion and additions survive switches in a mixed history', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: Undo and redo replay micro edits, mode switches, and macro
@@ -436,7 +455,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
-  test('Case 10 - Undo and redo across multiple switches lose no history', async () => {
+  test('Case 10 - Undo and redo across multiple switches lose no history', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: Undoing everything and redoing everything across several
@@ -475,7 +496,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     expect(await getKet(page)).toEqual(finalKet);
   });
 
-  test('Case 11 - Undo to the switch point and redo keeps the sequence', async () => {
+  test('Case 11 - Undo to the switch point and redo keeps the sequence', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: After undoing back past a mode switch, Redo replays the
@@ -520,7 +543,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
   });
 
-  test('Case 12 - A longer history remains traversable across repeated mode switches', async () => {
+  test('Case 12 - A longer history remains traversable across repeated mode switches', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: Multiple edits and switches remain ordered throughout a
@@ -571,7 +596,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 
-  test('Case 13 - Complex sequence with molecules, monomers and a reaction is fully undoable', async () => {
+  test('Case 13 - Complex sequence with molecules, monomers and a reaction is fully undoable', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: A history mixing a molecule, monomers and a reaction across
@@ -604,12 +631,20 @@ test.describe('Retain history between macro and micro molecules modes', () => {
 
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
-    await expect(getArrowLocator(page)).toHaveCount(1);
-    await expect(getAtomLocator(page, {})).toHaveCount(22);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
+    ).toHaveCount(1);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
+    ).toHaveCount(22);
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
     await CommonTopLeftToolbar(page).undo();
-    await expect(getArrowLocator(page)).toHaveCount(0);
-    await expect(getAtomLocator(page, {})).toHaveCount(6);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getArrowLocator(page)),
+    ).toHaveCount(0);
+    await expect(
+      getCanvasByMode(page, 'macromolecules').locator(getAtomLocator(page, {})),
+    ).toHaveCount(6);
     await CommonTopLeftToolbar(page).undo();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
     await CommonTopLeftToolbar(page).undo();
@@ -629,7 +664,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     expect(await getKet(page)).toEqual(finalKet);
   });
 
-  test('Case 14 - Switching modes adds no state change and no extra history entry', async () => {
+  test('Case 14 - Switching modes adds no state change and no extra history entry', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: Re-selecting the active mode adds nothing to history, and
@@ -664,7 +701,9 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
   });
 
-  test('Case 15 - A full-length history across modes stays traversable', async () => {
+  test('Case 15 - A full-length history across modes stays traversable', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12672
      * Description: A history filled to its 32-step limit with edits and mode

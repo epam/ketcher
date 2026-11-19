@@ -47,18 +47,18 @@ export function checkServer() {
     const { editor, server } = getState();
 
     void (async () => {
-      let res;
+      let result;
       try {
-        res = await server;
-      } catch (e: unknown) {
-        editor?.errorHandler?.(String(e));
+        result = await server;
+      } catch (error: unknown) {
+        editor?.errorHandler?.(String(error));
         return;
       }
       return dispatch(
         appUpdate({
-          indigoVersion: res?.indigoVersion,
-          imagoVersions: res?.imagoVersions,
-          server: res?.isAvailable,
+          indigoVersion: result?.indigoVersion,
+          imagoVersions: result?.imagoVersions,
+          server: result?.isAvailable,
         }),
       );
     })();
@@ -71,40 +71,40 @@ export function recognize(file: File | null, version: string) {
     const rec = server.recognize;
 
     const process = (async () => {
-      let res;
+      let result;
       try {
-        res = await rec(file as Blob, version);
-      } catch (e) {
+        result = await rec(file as Blob, version);
+      } catch (error) {
         dispatch(setStruct(null));
-        editor?.errorHandler?.(String(e));
+        editor?.errorHandler?.(String(error));
         return;
       }
-      dispatch(setStruct(res.struct));
+      dispatch(setStruct(result.struct));
     })();
     dispatch(setStruct(process));
   };
 }
 
-function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
+function ketcherCheck(struct: Struct, checkParameters: CheckOption[]) {
   const errors: KetcherCheckErrors = {};
 
-  if (checkParams.includes('chiral_flag')) {
+  if (checkParameters.includes('chiral_flag')) {
     const isAbs = [...struct.frags.values()].some(
       (fr) => (fr?.enhancedStereoFlag as string | undefined) === 'abs',
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }
 
-  if (checkParams.includes('valence')) {
-    let badVal = 0;
+  if (checkParameters.includes('valence')) {
+    let badValue = 0;
     struct.atoms.forEach((atom) => {
       if (atom.badConn) {
-        badVal++;
+        badValue++;
       }
     });
-    if (badVal > 0) {
-      errors.valence = `Structure contains ${badVal} atom${
-        badVal === 1 ? '' : 's'
+    if (badValue > 0) {
+      errors.valence = `Structure contains ${badValue} atom${
+        badValue === 1 ? '' : 's'
       } with bad valence`;
     }
   }
@@ -112,7 +112,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
   return errors;
 }
 
-export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
+export function check(optionsTypes: CheckOption[]): AppThunk<Promise<void>> {
   return async (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
     const struct = editor.struct();
@@ -121,29 +121,29 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
     // because for atoms in collapsed sgroups it can be not calculated
     struct.setImplicitHydrogen(undefined, true);
 
-    const ketcherErrors = ketcherCheck(struct, optsTypes);
+    const ketcherErrors = ketcherCheck(struct, optionsTypes);
 
     const options = getState().options.getServerSettings();
-    options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
+    options.data = { types: without(['valence', 'chiral_flag'], optionsTypes) };
 
     try {
-      const res = await serverCall<CheckResult>(
+      const result = await serverCall<CheckResult>(
         editor,
         server,
         'check',
         options,
       );
-      Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
-      dispatch(checkErrors(res));
-    } catch (e) {
-      KetcherLogger.error('index.js::check', e);
-      editor?.errorHandler?.(String(e));
+      Object.assign(result, ketcherErrors); // merge Indigo check with Ketcher check
+      dispatch(checkErrors(result));
+    } catch (error) {
+      KetcherLogger.error('index.js::check', error);
+      editor?.errorHandler?.(String(error));
     }
   };
 }
 
-export function automap(res: AutomapRequest) {
-  return serverTransform('automap', res);
+export function automap(result: AutomapRequest) {
+  return serverTransform('automap', result);
 }
 
 export function analyse(): AppThunk {
@@ -175,9 +175,9 @@ export function analyse(): AppThunk {
         type: 'CHANGE_ANALYSE',
         data: { values },
       });
-    } catch (e) {
-      KetcherLogger.error('index.js::analyse', e);
-      editor?.errorHandler?.(String(e));
+    } catch (error) {
+      KetcherLogger.error('index.js::analyse', error);
+      editor?.errorHandler?.(String(error));
     }
   };
 }
@@ -189,21 +189,21 @@ export function serverTransform(
 ) {
   return (dispatch: AppDispatch, getState: () => StoreState): void => {
     const state = getState();
-    const opts = state.options.getServerSettings();
+    const options = state.options.getServerSettings();
 
-    opts.data = data;
+    options.data = data;
     dispatch(indigoVerification(true));
 
     void (async () => {
       try {
-        const res = await serverCall<LayoutResult>(
+        const result = await serverCall<LayoutResult>(
           state.editor,
           state.server,
           method,
-          opts,
+          options,
           struct,
         );
-        const loadedStruct = new KetSerializer().deserialize(res.struct);
+        const loadedStruct = new KetSerializer().deserialize(result.struct);
 
         await dispatch(
           load(loadedStruct, {
@@ -213,9 +213,9 @@ export function serverTransform(
             method,
           }),
         );
-      } catch (e) {
-        KetcherLogger.error('index.js::serverTransform', e);
-        state.editor?.errorHandler?.(String(e));
+      } catch (error) {
+        KetcherLogger.error('index.js::serverTransform', error);
+        state.editor?.errorHandler?.(String(error));
       } finally {
         dispatch(indigoVerification(false));
       }

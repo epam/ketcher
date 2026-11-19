@@ -24,7 +24,7 @@ import Form, {
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
 import { check } from '../../../../../state/server';
-import { checkOpts } from '../../../../../state/options';
+import { checkOptions } from '../../../../../state/options';
 import type {
   CheckOption,
   OptionsCheckState,
@@ -329,7 +329,7 @@ const mapDispatchToProps = (
     }
   },
   onApply: (res: CheckState) => {
-    dispatch(checkOpts(res));
+    dispatch(checkOptions(res));
     ownProps.onOk(res);
   },
 });

@@ -66,8 +66,8 @@ type SdataStateWithResult = Pick<SdataState, 'result'> &
 
 type SchemaMap = Record<string, Record<string, unknown>>;
 
-const getSdataDefaultValue = (...args: unknown[]): string =>
-  (getSdataDefault as (...params: unknown[]) => string)(...args);
+const getSdataDefaultValue = (...arguments_: unknown[]): string =>
+  (getSdataDefault as (...parameters: unknown[]) => string)(...arguments_);
 
 export const initSdata = (schema: SdataInitializerSchema): SdataState => {
   const isCustomShema = schema.key === 'Custom';

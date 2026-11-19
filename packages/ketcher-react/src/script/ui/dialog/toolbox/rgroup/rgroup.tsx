@@ -34,14 +34,14 @@ interface RGroupFormState {
   errors: Record<string, string>;
 }
 
-interface RGroupProps {
+interface RGroupProperties {
   disabledIds: number[];
   values: number[];
   formState: RGroupFormState;
   type: 'atom' | 'fragment';
 }
 
-interface RGroupCallProps {
+interface RGroupCallProperties {
   onCancel: () => void;
   onOk: (result: unknown) => void;
 }
@@ -52,15 +52,21 @@ interface RGroupStoreState {
   };
 }
 
-type Props = RGroupProps & RGroupCallProps;
+type Properties = RGroupProperties & RGroupCallProperties;
 
-function RGroup({ disabledIds, values, formState, type, ...props }: Props) {
+function RGroup({
+  disabledIds,
+  values,
+  formState,
+  type,
+  ...properties
+}: Properties) {
   const { t } = useTranslation(['common', 'dialogs']);
   return (
     <Dialog
       title={t('dialogs:toolbox.rgroup.dialogTitle')}
       className={classes.rgroup}
-      params={props}
+      params={properties}
       result={() => formState.result}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}

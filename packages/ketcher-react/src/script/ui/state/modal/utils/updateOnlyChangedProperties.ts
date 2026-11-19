@@ -1,4 +1,4 @@
-function castAtomPropToType(property, value) {
+function castAtomPropertyToType(property, value) {
   const typesMapping = {
     exactChangeFlag: Number,
     unsaturatedAtom: Number,
@@ -21,7 +21,7 @@ export function updateOnlyChangedProperties(
   return Object.getOwnPropertyNames(unchangedElement).reduce(
     (updatedElement, key) => {
       updatedElement[key] = updatedKeys.has(key)
-        ? castAtomPropToType(key, userChangedElement[key])
+        ? castAtomPropertyToType(key, userChangedElement[key])
         : unchangedElement[key];
       return updatedElement;
     },

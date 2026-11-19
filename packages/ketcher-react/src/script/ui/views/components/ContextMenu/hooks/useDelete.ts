@@ -4,17 +4,17 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import { didDeleteWithAttachmentGroupSplitConfirm } from 'src/script/editor/utils/attachmentGroupSplit';
 import type {
-  ItemEventParams,
-  SelectionContextMenuProps,
+  ItemEventParameters,
+  SelectionContextMenuProperties,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<SelectionContextMenuProps>;
+type Parameters_ = ItemEventParameters<SelectionContextMenuProperties>;
 
 const useDelete = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: Params) => {
+    async ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const itemsToDelete = editor.selection() || {

@@ -4,22 +4,23 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import SGroupTool from 'src/script/editor/tool/sgroup';
 import type {
-  BondsContextMenuProps,
-  ItemEventParams,
+  BondsContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
 
-const getFirstBondId = (props?: BondsContextMenuProps) => props?.bondIds?.[0];
+const getFirstBondId = (properties?: BondsContextMenuProperties) =>
+  properties?.bondIds?.[0];
 
 const useBondSGroupAttach = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    ({ props }: Params) => {
+    ({ props: properties }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
-      const bondId = getFirstBondId(props);
+      const bondId = getFirstBondId(properties);
       if (bondId === undefined) {
         return;
       }
@@ -41,10 +42,10 @@ const useBondSGroupAttach = () => {
   );
 
   const hidden = useCallback(
-    ({ props }: Params) => {
+    ({ props: properties }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
-      const bondIds = props?.bondIds;
+      const bondIds = properties?.bondIds;
 
       if (!bondIds || bondIds.length === 0) {
         return true;

@@ -51,7 +51,7 @@ import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 import { shouldResetToSelect } from './shouldResetToSelect';
 import type { AppDispatch } from '../hooks';
-import type { EditorInitState, RGroupEditParams } from './types';
+import type { EditorInitState, RGroupEditParameters } from './types';
 import type { InfoPanelData } from '../../../editor/utils/functionalGroupsTooltip';
 import type Editor from '../../../editor/Editor';
 
@@ -143,78 +143,80 @@ export default function initEditor(
           selem,
           fromAtom(selem[0]),
         );
-        const res = await openDialog(dispatch, 'atomProps', {
+        const result = await openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
           isMultipleAtoms: true,
         });
-        return toElement(res as ElementFormData);
+        return toElement(result as ElementFormData);
       }
       const fromResult = fromElement(selem);
       if (!fromResult) return;
-      const elem = fromResult as ElementFormData;
+      const element = fromResult as ElementFormData;
       let dlg: unknown;
-      if (Elements.get(elem.label ?? '')) {
-        dlg = await openDialog(dispatch, 'atomProps', elem);
-      } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
+      if (Elements.get(element.label ?? '')) {
+        dlg = await openDialog(dispatch, 'atomProps', element);
+      } else if (Object.keys(element).length === 1 && 'ap' in element) {
         dlg = {
-          ap: await openDialog(dispatch, 'attachmentPoints', elem.ap),
+          ap: await openDialog(dispatch, 'attachmentPoints', element.ap),
         };
-      } else if (elem.type === 'rlabel') {
+      } else if (element.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
-        const params = {
+        const parameters = {
           type: 'atom',
-          values: elem.values,
+          values: element.values,
           disabledIds: [...rgroups.entries()].reduce<number[]>(
-            (acc, [rgid, rg]) => {
-              if (elem.fragId !== undefined && rg.frags.has(elem.fragId))
-                acc.push(rgid);
-              return acc;
+            (accumulator, [rgid, rg]) => {
+              if (element.fragId !== undefined && rg.frags.has(element.fragId))
+                accumulator.push(rgid);
+              return accumulator;
             },
             [],
           ),
         };
-        const res = (await openDialog(dispatch, 'rgroup', params)) as {
+        const result = (await openDialog(dispatch, 'rgroup', parameters)) as {
           values: unknown[];
         };
         dlg = {
-          values: res.values,
+          values: result.values,
           type: 'rlabel',
         };
       } else {
         // list/not-list and all other pseudo elements share this dialog flow
         dlg = await openDialog(
           dispatch,
-          elem.pseudo ? 'extended-table' : 'period-table',
-          { ...elem, pseudo: elem.pseudo },
+          element.pseudo ? 'extended-table' : 'period-table',
+          { ...element, pseudo: element.pseudo },
         );
       }
       return toElement(dlg as ElementFormData);
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: async (params: { stereoLabel: string | null }) => {
+    onEnhancedStereoEdit: async (parameters: {
+      stereoLabel: string | null;
+    }) => {
       await sleep(0);
-      const init = fromStereoLabel(params.stereoLabel);
-      let res;
+      const init = fromStereoLabel(parameters.stereoLabel);
+      let result;
       try {
-        res = await openDialog(dispatch, 'enhancedStereo', { init });
+        result = await openDialog(dispatch, 'enhancedStereo', { init });
       } catch {
         return null;
       }
-      return toStereoLabel(res as ReturnType<typeof fromStereoLabel>);
+      return toStereoLabel(result as ReturnType<typeof fromStereoLabel>);
     },
 
     onQuickEdit: (atom: Atom) => openDialog(dispatch, 'labelEdit', atom),
     onBondEdit: async (bonds: Bond[]) => {
       const bondsAttributes = generateCommonProperties(bonds, bonds[0]);
-      const res = await openDialog(
+      const result = await openDialog(
         dispatch,
         'bondProps',
         fromBond(bondsAttributes as unknown as Bond),
       );
-      return toBond(res as ReturnType<typeof fromBond>);
+      return toBond(result as ReturnType<typeof fromBond>);
     },
-    onRgroupEdit: async (rgroup: RGroupEditParams) => {
+    onRgroupEdit: async (rgroup: RGroupEditParameters) => {
       const struct = getState().editor.struct();
 
       if (Object.keys(rgroup).length > 2) {
@@ -228,34 +230,34 @@ export default function initEditor(
       }
 
       const disabledIds = [...struct.atoms.values()].reduce<unknown[]>(
-        (acc, atom) => {
+        (accumulator, atom) => {
           if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
             return [
-              ...acc,
+              ...accumulator,
               ...((fromElement(atom) as { values?: (string | number)[] })
                 ?.values ?? []),
             ];
-          return acc;
+          return accumulator;
         },
         [],
       );
-      const params = {
+      const parameters = {
         type: 'fragment',
         values: [rgroup.label],
         disabledIds,
       };
-      const res = await openDialog(dispatch, 'rgroup', params);
+      const result = await openDialog(dispatch, 'rgroup', parameters);
       return {
-        label: (res as { values: unknown[] }).values[0],
+        label: (result as { values: unknown[] }).values[0],
       };
     },
     onSgroupEdit: async (sgroup: SGroupInput) => {
       await sleep(0); // hack to open dialog after dispatch sgroup tool action
-      const res = await openDialog(dispatch, 'sgroup', {
+      const result = await openDialog(dispatch, 'sgroup', {
         ...fromSgroup(sgroup),
         selectedSruCount: getSelectedSruCount(sgroup.type),
       });
-      return toSgroup(res as SGroupFormData);
+      return toSgroup(result as SGroupFormData);
     },
     onRemoveFG: async (result: Record<string, unknown>) => {
       await sleep(0);
@@ -265,41 +267,41 @@ export default function initEditor(
       await sleep(0);
       return openDialog(dispatch, 'editMonomer', payload);
     },
-    onMessage: (msg: { error?: unknown }) => {
-      if (msg.error) {
+    onMessage: (message: { error?: unknown }) => {
+      if (message.error) {
         // TODO: add error handler call
       }
     },
     onAromatizeStruct: async (struct: Struct) => {
       const state = getState();
-      const serverOpts = state.options.getServerSettings();
+      const serverOptions = state.options.getServerSettings();
       try {
         await serverCall(
           state.editor,
           state.server,
           'aromatize',
-          serverOpts,
+          serverOptions,
           struct,
         );
-      } catch (e: unknown) {
-        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', e);
-        state.editor.errorHandler?.(String(e));
+      } catch (error: unknown) {
+        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', error);
+        state.editor.errorHandler?.(String(error));
       }
     },
     onDearomatizeStruct: async (struct: Struct) => {
       const state = getState();
-      const serverOpts = state.options.getServerSettings();
+      const serverOptions = state.options.getServerSettings();
       try {
         await serverCall(
           state.editor,
           state.server,
           'dearomatize',
-          serverOpts,
+          serverOptions,
           struct,
         );
-      } catch (e: unknown) {
-        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', e);
-        state.editor.errorHandler?.(String(e));
+      } catch (error: unknown) {
+        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', error);
+        state.editor.errorHandler?.(String(error));
       }
     },
     onMouseDown: () => {

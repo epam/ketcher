@@ -9,17 +9,17 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import type {
-  BondsContextMenuProps,
-  ItemEventParams,
+  BondsContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 import { getEditableBondIds } from '../utils';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
 
 const useBondTypeChange = () => {
   const { ketcherId } = useAppContext();
   const handler = useCallback(
-    ({ id, props }: Params) => {
+    ({ id, props }: Parameters_) => {
       if (id == null) return;
       const toolAction = tools[id]?.action;
       if (!toolAction || typeof toolAction === 'function') return;
@@ -29,14 +29,14 @@ const useBondTypeChange = () => {
       const bondIds = getEditableBondIds(editor.struct(), props?.bondIds ?? []);
       if (bondIds.length === 0) return;
 
-      const bondProps: Partial<BondAttributes> = {
+      const bondProperties: Partial<BondAttributes> = {
         ...(toolAction.opts as Partial<BondAttributes>),
       };
       const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
       if (isCustomQuery) {
-        bondProps.customQuery = null;
-        bondProps.topology = 0;
-        bondProps.reactingCenterStatus = 0;
+        bondProperties.customQuery = null;
+        bondProperties.topology = 0;
+        bondProperties.reactingCenterStatus = 0;
       }
 
       // If only one bond is selected, use bondChangingAction to support direction flipping
@@ -47,7 +47,7 @@ const useBondTypeChange = () => {
             molecule,
             bondIds[0],
             bond.b,
-            bondProps,
+            bondProperties,
           );
           editor.update(action);
           return;
@@ -55,13 +55,13 @@ const useBondTypeChange = () => {
       }
 
       // For multiple bonds, use fromBondsAttrs
-      editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
+      editor.update(fromBondsAttrs(molecule, bondIds, bondProperties));
     },
     [ketcherId],
   );
 
   const disabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor;
       const selectedBondIds = getEditableBondIds(
         editor.struct(),

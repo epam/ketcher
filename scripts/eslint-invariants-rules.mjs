@@ -205,7 +205,7 @@ export const ALLOWED_HTML_SINKS = [
   'packages/ketcher-macromolecules/src/components/modal/save/Save.tsx',
   'packages/ketcher-react/src/script/ui/views/components/StructEditor/StructEditor.tsx',
   'packages/ketcher-react/src/script/ui/views/components/StructEditor/InfoTooltip.tsx',
-  'packages/ketcher-react/src/script/ui/state/templates/init-lib.ts',
+  'packages/ketcher-react/src/script/ui/state/templates/init-library.ts',
 ];
 
 const HTML_PROPERTIES = ['innerHTML', 'outerHTML'];

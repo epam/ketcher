@@ -1,5 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/index';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 import {
   AntisenseStrandType,
   LayoutMode,
@@ -150,33 +151,34 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     },
 
     async selectLayoutModeTool(layoutMode: LayoutMode) {
+      if ((await this.getActiveLayoutMode()) === layoutMode) {
+        return;
+      }
+
       const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
-      const layoutModeButton = page.getByTestId(layoutMode).first();
+      const layoutModeButton = switchLayoutModeDropdown.getByTestId(layoutMode);
       if (!(await layoutModeButton.isVisible())) {
         await this.expandSwitchLayoutModeDropdown();
-        await layoutModeButton.click();
-        await switchLayoutModeDropdown.waitFor({
-          state: 'hidden',
-        });
       }
+      await layoutModeButton.click();
+      await switchLayoutModeDropdown.waitFor({ state: 'hidden' });
     },
 
-    /** Returns the active layout mode by expanding the layout-mode dropdown. */
     async getActiveLayoutMode(): Promise<LayoutMode | null> {
-      await this.expandSwitchLayoutModeDropdown();
-      for (const mode of [
-        LayoutMode.Flex,
-        LayoutMode.Snake,
-        LayoutMode.Sequence,
-      ]) {
-        const item = page.getByTestId(mode).first();
-        if ((await item.getAttribute('class'))?.includes('active')) {
-          await page.keyboard.press('Escape');
-          return mode;
-        }
+      const layout = await getCanvasByMode(page, 'macromolecules').getAttribute(
+        'data-canvaslayout',
+      );
+
+      switch (layout) {
+        case 'flex':
+          return LayoutMode.Flex;
+        case 'snake':
+          return LayoutMode.Snake;
+        case 'sequence':
+          return LayoutMode.Sequence;
+        default:
+          return null;
       }
-      await page.keyboard.press('Escape');
-      return null;
     },
 
     async rna() {

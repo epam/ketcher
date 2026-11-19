@@ -35,6 +35,51 @@ const mockProps = {
   isModalOpen: true,
 };
 
+const mockSaveDependencies = (
+  convert: ReturnType<typeof vi.fn>,
+  drawingEntitiesManagerOverrides: Record<string, unknown> = {},
+) => {
+  vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
+    convert,
+  } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
+
+  const mockEditor = {
+    drawingEntitiesManager: {
+      micromoleculesHiddenEntities: {
+        clone: () => new Struct(),
+        mergeInto: vi.fn(),
+      },
+      setMicromoleculesHiddenEntities: vi.fn(),
+      detectBondsOverlappedByMonomers: vi.fn(),
+      validateIfApplicableForFasta: vi.fn().mockReturnValue(true),
+      molecules: [],
+      monomers: new Map(),
+      polymerBonds: [],
+      bonds: [],
+      monomerToAtomBonds: [],
+      atoms: [],
+      rxnArrows: [],
+      multitailArrows: [],
+      rxnPluses: [],
+      ...drawingEntitiesManagerOverrides,
+    },
+    monomersLibrary: {},
+    canvas: document.createElement('canvas'),
+    viewModel: {
+      initialize: vi.fn(),
+    },
+    events: {
+      error: {
+        dispatch: vi.fn(),
+      },
+    },
+  } as unknown as CoreEditor;
+
+  vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(
+    () => mockEditor,
+  );
+};
+
 describe('Save modal', () => {
   it('renders correctly', () => {
     vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
@@ -112,44 +157,7 @@ describe('Save modal', () => {
       struct: 'V3000 format result',
     });
 
-    vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
-      convert: mockConvert,
-    } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
-
-    const mockEditor = {
-      drawingEntitiesManager: {
-        micromoleculesHiddenEntities: {
-          clone: () => new Struct(),
-          mergeInto: vi.fn(),
-        },
-        setMicromoleculesHiddenEntities: vi.fn(),
-        detectBondsOverlappedByMonomers: vi.fn(),
-        validateIfApplicableForFasta: vi.fn().mockReturnValue(true),
-        molecules: [],
-        monomers: new Map(),
-        polymerBonds: [],
-        bonds: [],
-        monomerToAtomBonds: [],
-        atoms: [],
-        rxnArrows: [],
-        multitailArrows: [],
-        rxnPluses: [],
-      },
-      monomersLibrary: {},
-      canvas: document.createElement('canvas'),
-      viewModel: {
-        initialize: vi.fn(),
-      },
-      events: {
-        error: {
-          dispatch: vi.fn(),
-        },
-      },
-    } as unknown as CoreEditor;
-
-    vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(
-      () => mockEditor,
-    );
+    mockSaveDependencies(mockConvert);
 
     render(withThemeAndStoreProvider(<Save {...mockProps} />));
 
@@ -170,46 +178,10 @@ describe('Save modal', () => {
   it('refuses to export a branched structure to FASTA', async () => {
     const mockConvert = vi.fn();
 
-    vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
-      convert: mockConvert,
-    } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
-
-    const mockEditor = {
-      drawingEntitiesManager: {
-        micromoleculesHiddenEntities: {
-          clone: () => new Struct(),
-          mergeInto: vi.fn(),
-        },
-        setMicromoleculesHiddenEntities: vi.fn(),
-        detectBondsOverlappedByMonomers: vi.fn(),
-        validateIfApplicableForFasta: vi.fn().mockReturnValue(true),
-        hasRnaAndDnaMix: vi.fn().mockReturnValue(false),
-        hasBranchesBetweenChains: vi.fn().mockReturnValue(true),
-        molecules: [],
-        monomers: new Map(),
-        polymerBonds: [],
-        bonds: [],
-        monomerToAtomBonds: [],
-        atoms: [],
-        rxnArrows: [],
-        multitailArrows: [],
-        rxnPluses: [],
-      },
-      monomersLibrary: {},
-      canvas: document.createElement('canvas'),
-      viewModel: {
-        initialize: vi.fn(),
-      },
-      events: {
-        error: {
-          dispatch: vi.fn(),
-        },
-      },
-    } as unknown as CoreEditor;
-
-    vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(
-      () => mockEditor,
-    );
+    mockSaveDependencies(mockConvert, {
+      hasRnaAndDnaMix: vi.fn().mockReturnValue(false),
+      hasBranchesBetweenChains: vi.fn().mockReturnValue(true),
+    });
 
     const store = configureAppStore();
 

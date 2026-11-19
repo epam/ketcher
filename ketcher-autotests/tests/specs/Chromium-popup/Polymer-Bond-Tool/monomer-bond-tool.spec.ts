@@ -1,4 +1,4 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -8,7 +8,10 @@ import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { takeElementScreenshot } from '@utils/canvas';
 import { openFileAndAddToCanvasMacro } from '@utils/index';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomers,
   getBondLocator,
@@ -94,5 +97,42 @@ test.describe('Monomer bond tool', () => {
     );
     await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
     await AttachmentPointsDialog(page).cancel();
+  });
+
+  test('Case 4: Attachment point labels are shown in the small previews of the Select Attachment Points dialog for a large CHEM', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/3737
+     * Description: Attachment point labels of a large CHEM are shown in the small preview
+     * of the Select Attachment Points dialog, not only in the expanded one
+     * Scenario:
+     * 1. Go to Macro mode - Flex
+     * 2. Add Test-6-Ch and A6OH to the canvas
+     * 3. Connect Test-6-Ch to A6OH from center to center
+     * 4. Verify that R1-R6 labels are visible in the Test-6-Ch preview and R1-R2 in the A6OH preview
+     *
+     * Version 3.23
+     */
+    await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await bondTwoMonomers(
+      page,
+      getMonomerLocator(page, Chem.Test_6_Ch),
+      getMonomerLocator(page, Chem.A6OH),
+    );
+    const dialog = AttachmentPointsDialog(page);
+    for (const label of [
+      AttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
+      AttachmentPoint.R5,
+      AttachmentPoint.R6,
+    ]) {
+      await expect(dialog.attachmentPointLabel('left', label)).toBeVisible();
+    }
+    for (const label of [AttachmentPoint.R1, AttachmentPoint.R2]) {
+      await expect(dialog.attachmentPointLabel('right', label)).toBeVisible();
+    }
+    await dialog.cancel();
   });
 });

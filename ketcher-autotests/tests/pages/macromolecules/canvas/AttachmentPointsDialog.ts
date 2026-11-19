@@ -32,6 +32,16 @@ export const AttachmentPointsDialog = (page: Page) => {
   return {
     ...locators,
 
+    attachmentPointLabel(side: 'left' | 'right', label: AttachmentPoint) {
+      const overview =
+        side === 'left'
+          ? locators.leftMonomerOverview
+          : locators.rightMonomerOverview;
+      return overview
+        .locator('text')
+        .filter({ hasText: new RegExp(`^${label}$`) });
+    },
+
     async isVisible() {
       return await locators.window.isVisible();
     },

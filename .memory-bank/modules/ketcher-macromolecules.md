@@ -61,6 +61,13 @@ Three layout modes managed by `BaseMode` subclasses:
 
 Mode is stored in Redux and triggers `CoreEditor.onSelectMode()` which switches the active `BaseMode`.
 
+After `selectMode` finishes initializing and synchronously rendering the requested
+layout and updating history, CoreEditor dispatches the global
+`layoutModeSwitchComplete` CustomEvent with `{ ketcherId, mode }`. This includes
+empty canvases and does not wait for the debounced `renderComplete` event. A failed
+transition does not dispatch completion. The event covers explicit layout
+selection, not undo/redo replay or canvas (Molecules/Macromolecules) switches.
+
 ## Dependencies
 
 - `ketcher-core` (all domain and application types)

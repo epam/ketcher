@@ -112,11 +112,11 @@ function buildTextSegments(
 
   // Apply each style range to the character positions it covers
   styleRanges.forEach((range) => {
-    const startIdx = range.offset;
-    const endIdx = Math.min(range.offset + range.length, text.length);
+    const startIndex = range.offset;
+    const endIndex = Math.min(range.offset + range.length, text.length);
 
-    for (let i = startIdx; i < endIdx; i++) {
-      applyStyleToChar(charStyles[i], range.style);
+    for (let index = startIndex; index < endIndex; index++) {
+      applyStyleToChar(charStyles[index], range.style);
     }
   });
 
@@ -124,9 +124,9 @@ function buildTextSegments(
   const segments: TextSegment[] = [];
   let currentSegment: TextSegment | null = null;
 
-  for (let i = 0; i < text.length; i++) {
-    const charStyle = charStyles[i];
-    const char = text[i];
+  for (let index = 0; index < text.length; index++) {
+    const charStyle = charStyles[index];
+    const char = text[index];
 
     // Check if we need to start a new segment
     if (

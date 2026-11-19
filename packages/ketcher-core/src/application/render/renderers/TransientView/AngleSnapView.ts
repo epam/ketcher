@@ -6,7 +6,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import { arc } from 'd3';
 import { TransientView } from './TransientView';
 
-export type AngleSnapViewParams = {
+export type AngleSnapViewParameters = {
   connectedMonomer: BaseMonomer;
   polymerBond: PolymerBond | HydrogenBond;
   isBondLengthSnapped: boolean;
@@ -30,9 +30,9 @@ export class AngleSnapView extends TransientView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: AngleSnapViewParams,
+    parameters: AngleSnapViewParameters,
   ) {
-    const { connectedMonomer, polymerBond, isBondLengthSnapped } = params;
+    const { connectedMonomer, polymerBond, isBondLengthSnapped } = parameters;
 
     const connectedPosition = connectedMonomer.position;
     const movingMonomer =

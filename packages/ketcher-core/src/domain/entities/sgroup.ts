@@ -46,7 +46,7 @@ export const SUPERATOM_CLASS_TEXT = {
 const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
   typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
 
-export class SGroupBracketParams {
+export class SGroupBracketParameters {
   readonly c: Vec2;
   readonly d: Vec2;
   readonly n: Vec2;
@@ -197,8 +197,8 @@ export class SGroup {
   //      and should only accept valid attributes for each S-group type.
   //      The attributes should be accessed via these methods only and not directly through this.data.
   // stub
-  getAttr(attr: string): unknown {
-    return this.data[attr];
+  getAttr(attribute: string): unknown {
+    return this.data[attribute];
   }
 
   setFunctionalGroup(functionalGroup: FunctionalGroup) {
@@ -207,23 +207,23 @@ export class SGroup {
 
   // TODO: should be group-specific
   getAttrs(): Record<string, unknown> {
-    const attrs: Record<string, unknown> = {};
-    Object.keys(this.data).forEach((attr) => {
-      attrs[attr] = this.data[attr];
+    const attributes: Record<string, unknown> = {};
+    Object.keys(this.data).forEach((attribute) => {
+      attributes[attribute] = this.data[attribute];
     });
-    return attrs;
+    return attributes;
   }
 
   // stub
-  setAttr(attr: string, value: unknown): unknown {
-    const oldValue = this.data[attr];
-    this.data[attr] = value;
+  setAttr(attribute: string, value: unknown): unknown {
+    const oldValue = this.data[attribute];
+    this.data[attribute] = value;
     return oldValue;
   }
 
   // stub
-  checkAttr(attr: string, value: unknown): boolean {
-    return this.data[attr] === value;
+  checkAttr(attribute: string, value: unknown): boolean {
+    return this.data[attribute] === value;
   }
 
   updateOffset(offset: Vec2): void {
@@ -257,8 +257,8 @@ export class SGroup {
         assert(atom, `SGroup.calculatePP: atom ${aid} is not found`);
         const pos = new Vec2(atom.pp);
 
-        const ext = new Vec2(0.05 * 3, 0.05 * 3);
-        const bba = new Box2Abs(pos, pos).extend(ext, ext);
+        const extension = new Vec2(0.05 * 3, 0.05 * 3);
+        const bba = new Box2Abs(pos, pos).extend(extension, extension);
         contentBoxes.push(bba);
       });
 
@@ -526,11 +526,11 @@ export class SGroup {
       cp.data[field] = sgroup.data[field];
     });
 
-    cp.atoms = sgroup.atoms.map((elem) => {
-      const remappedAtomId = aidMap.get(elem);
+    cp.atoms = sgroup.atoms.map((element) => {
+      const remappedAtomId = aidMap.get(element);
       assert(
         remappedAtomId !== undefined,
-        `SGroup.clone: missing remapped atom id for ${elem}`,
+        `SGroup.clone: missing remapped atom id for ${element}`,
       );
       return remappedAtomId;
     });
@@ -648,8 +648,8 @@ export class SGroup {
     bb: Box2Abs,
     d?: Vec2,
     n?: Vec2,
-  ): SGroupBracketParams[] {
-    const brackets: SGroupBracketParams[] = [];
+  ): SGroupBracketParameters[] {
+    const brackets: SGroupBracketParameters[] = [];
     const crossBondsPerAtomValues = Object.values(crossBondsPerAtom);
     const crossBonds = crossBondsPerAtomValues.flat();
     if (crossBonds.length < 2) {
@@ -662,8 +662,13 @@ export class SGroup {
         const bracketHeight = bb.sz().y;
 
         brackets.push(
-          new SGroupBracketParams(cl, d.negated(), bracketWidth, bracketHeight),
-          new SGroupBracketParams(cr, d, bracketWidth, bracketHeight),
+          new SGroupBracketParameters(
+            cl,
+            d.negated(),
+            bracketWidth,
+            bracketHeight,
+          ),
+          new SGroupBracketParameters(cr, d, bracketWidth, bracketHeight),
         );
       })();
     } else if (
@@ -689,13 +694,13 @@ export class SGroup {
         const bracketWidth = 0.25;
         const bracketHeight = 1.5;
         brackets.push(
-          new SGroupBracketParams(
+          new SGroupBracketParameters(
             cl0.addScaled(dl, 0),
             dl,
             bracketWidth,
             bracketHeight,
           ),
-          new SGroupBracketParams(
+          new SGroupBracketParameters(
             cr0.addScaled(dr, 0),
             dr,
             bracketWidth,
@@ -715,7 +720,7 @@ export class SGroup {
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
             : b.getDir(mol).negated();
-          brackets.push(new SGroupBracketParams(c, d, 0.2, 1));
+          brackets.push(new SGroupBracketParameters(c, d, 0.2, 1));
         }
       })();
     }
@@ -816,7 +821,7 @@ export class SGroup {
     let tailAtom = xAtom2;
 
     const newAtoms: number[] = [];
-    for (let j = 0; j < sgroup.data.mul - 1; j++) {
+    for (let index = 0; index < sgroup.data.mul - 1; index++) {
       const amap: Record<number, number> = {};
       sgroup.atoms.forEach((aid) => {
         const atom = mol.atoms.get(aid);

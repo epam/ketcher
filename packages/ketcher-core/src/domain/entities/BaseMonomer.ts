@@ -71,8 +71,8 @@ export abstract class BaseMonomer extends DrawingEntity {
   public get listOfAttachmentPoints() {
     const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
     const attachmentPointList: AttachmentPointName[] = [];
-    for (let i = 1; i <= maxAttachmentPointNumber; i++) {
-      const attachmentPointLabel = getAttachmentPointLabel(i);
+    for (let index = 1; index <= maxAttachmentPointNumber; index++) {
+      const attachmentPointLabel = getAttachmentPointLabel(index);
 
       if (attachmentPointLabel in this.attachmentPointsToBonds) {
         attachmentPointList.push(attachmentPointLabel);
@@ -158,8 +158,8 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get firstFreeAttachmentPoint() {
     const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
-    for (let i = 1; i <= maxAttachmentPointNumber; i++) {
-      const attachmentPoint = `R${i}` as AttachmentPointName;
+    for (let index = 1; index <= maxAttachmentPointNumber; index++) {
+      const attachmentPoint = `R${index}` as AttachmentPointName;
       if (
         this.hasAttachmentPoint(attachmentPoint) &&
         this.attachmentPointsToBonds[attachmentPoint] === null

@@ -3,16 +3,16 @@ import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
   getLibraryEditInitialValues,
-} from './MonomerCreationWizard.utils';
+} from './MonomerCreationWizard.utilities';
 
 const createMonomer = (
-  props: BaseMonomer['monomerItem']['props'],
-  label = props.MonomerCode ?? 'T',
+  monomerProperties: BaseMonomer['monomerItem']['props'],
+  label = monomerProperties.MonomerCode ?? 'T',
 ) =>
   ({
     monomerItem: {
       label,
-      props,
+      props: monomerProperties,
     },
   }) as BaseMonomer;
 

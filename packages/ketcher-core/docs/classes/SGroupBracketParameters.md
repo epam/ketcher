@@ -1,26 +1,26 @@
-[ketcher-core](../README.md) / SGroupBracketParams
+[ketcher-core](../README.md) / SGroupBracketParameters
 
-# Class: SGroupBracketParams
+# Class: SGroupBracketParameters
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](SGroupBracketParams.md#constructor)
+- [constructor](SGroupBracketParameters.md#constructor)
 
 ### Properties
 
-- [c](SGroupBracketParams.md#c)
-- [d](SGroupBracketParams.md#d)
-- [h](SGroupBracketParams.md#h)
-- [n](SGroupBracketParams.md#n)
-- [w](SGroupBracketParams.md#w)
+- [c](SGroupBracketParameters.md#c)
+- [d](SGroupBracketParameters.md#d)
+- [h](SGroupBracketParameters.md#h)
+- [n](SGroupBracketParameters.md#n)
+- [w](SGroupBracketParameters.md#w)
 
 ## Constructors
 
 ### constructor
 
-• **new SGroupBracketParams**(`c`, `d`, `w`, `h`)
+• **new SGroupBracketParameters**(`c`, `d`, `w`, `h`)
 
 #### Parameters
 

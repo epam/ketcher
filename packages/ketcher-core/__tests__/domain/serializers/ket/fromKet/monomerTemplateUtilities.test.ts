@@ -1,5 +1,5 @@
 import { Struct, Atom, Bond } from 'domain/entities';
-import { getLeavingGroupLabelWithHydrogens } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
+import { getLeavingGroupLabelWithHydrogens } from 'domain/serializers/ket/fromKet/monomerTemplateUtilities';
 
 describe('getLeavingGroupLabelWithHydrogens', () => {
   /**
@@ -17,7 +17,7 @@ describe('getLeavingGroupLabelWithHydrogens', () => {
     const atomId = struct.atoms.add(leavingGroupAtom);
 
     // Add connected atoms and bonds
-    for (let i = 0; i < bondCount; i++) {
+    for (let index = 0; index < bondCount; index++) {
       const connectedAtom = new Atom({ label: 'C' });
       const connectedAtomId = struct.atoms.add(connectedAtom);
 

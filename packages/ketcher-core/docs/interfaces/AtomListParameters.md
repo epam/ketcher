@@ -1,13 +1,13 @@
-[ketcher-core](../README.md) / AtomListParams
+[ketcher-core](../README.md) / AtomListParameters
 
-# Interface: AtomListParams
+# Interface: AtomListParameters
 
 ## Table of contents
 
 ### Properties
 
-- [ids](AtomListParams.md#ids)
-- [notList](AtomListParams.md#notlist)
+- [ids](AtomListParameters.md#ids)
+- [notList](AtomListParameters.md#notlist)
 
 ## Properties
 

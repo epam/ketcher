@@ -2,12 +2,12 @@ import { clamp } from 'lodash';
 import type { Render } from '../raphaelRender';
 import type { ScrollOffset } from './scroll-offset';
 import { Scrollbar } from './scrollbar';
-import type { RaphaelRectAttr } from './types';
+import type { RaphaelRectAttribute } from './types';
 import {
   getUserFriendlyScrollOffset,
   getUserFriendlyViewBoxDelta,
   getZoomedValue,
-} from './utils';
+} from './utilities';
 
 export class HorizontalScrollbar extends Scrollbar {
   readonly #scrollOffset: ScrollOffset;
@@ -21,7 +21,7 @@ export class HorizontalScrollbar extends Scrollbar {
     return this.#scrollOffset.hasHorizontalOffset();
   }
 
-  getDynamicAttr(): RaphaelRectAttr {
+  getDynamicAttr(): RaphaelRectAttribute {
     const minX =
       this.render.viewBox.minX +
       clamp(

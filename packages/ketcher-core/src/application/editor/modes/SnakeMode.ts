@@ -8,7 +8,7 @@ import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';
-import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utilities';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {

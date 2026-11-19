@@ -284,7 +284,7 @@ describe('CoreEditor', () => {
     });
 
     // Note: In the KET format, idtAliases is defined at the template level.
-    // During parsing (via templateToMonomerProps), it gets moved to props.idtAliases.
+    // During parsing (via templateToMonomerData), it gets moved to props.idtAliases.
     // The validation checks newMonomer.props?.idtAliases after this conversion.
     it('should reject monomer with idtAliases but no base alias', () => {
       const monomerWithoutBase = {
@@ -1382,7 +1382,7 @@ describe('CoreEditor', () => {
     });
 
     // In the KET format, modificationTypes is defined at the template level.
-    // During parsing (via templateToMonomerProps) it gets moved to
+    // During parsing (via templateToMonomerData) it gets moved to
     // props.modificationTypes, which the validation checks (#8133).
     it('should reject monomer with a disallowed modificationType (Unknown base)', () => {
       const monomerWithDisallowedType = {
@@ -1956,15 +1956,15 @@ describe('CoreEditor', () => {
         rightClickCanvasSequenceHandler,
       );
 
-      const rendererEl = document.createElement('div');
-      (rendererEl as unknown as { __data__: unknown }).__data__ =
+      const rendererElement = document.createElement('div');
+      (rendererElement as unknown as { __data__: unknown }).__data__ =
         monomer.renderer;
 
       const hasEFP = 'elementsFromPoint' in document;
       const savedEFP = hasEFP ? document.elementsFromPoint : undefined;
       (document as unknown as Record<string, unknown>).elementsFromPoint = vi
         .fn()
-        .mockReturnValue([rendererEl]);
+        .mockReturnValue([rendererElement]);
 
       const noDataTarget = document.createElement('div');
       rootElement.appendChild(noDataTarget);

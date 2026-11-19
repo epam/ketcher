@@ -23,13 +23,13 @@
 
 ### constructor
 
-• **new AtomList**(`params`)
+• **new AtomList**(`parameters`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`AtomListParams`](../interfaces/AtomListParams.md) |
+| `parameters` | [`AtomListParameters`](../interfaces/AtomListParameters.md) |
 
 #### Defined in
 

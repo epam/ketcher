@@ -135,21 +135,23 @@ export function textToKet(textNode) {
     // Build paragraphs array
     ketText.paragraphs = (root.children || []).map(
       (paragraph: LexicalParagraph) => {
-        const paraObj: KetTextParagraph = { parts: [] };
+        const paraObject: KetTextParagraph = { parts: [] };
         if (paragraph.alignment !== undefined)
-          paraObj.alignment = paragraph.alignment;
-        if (paragraph.indent !== undefined) paraObj.indent = paragraph.indent;
-        if (paragraph.font !== undefined) paraObj.font = paragraph.font;
-        if (paragraph.color !== undefined) paraObj.color = paragraph.color;
-        if (paragraph.bold !== undefined) paraObj.bold = paragraph.bold;
-        if (paragraph.italic !== undefined) paraObj.italic = paragraph.italic;
+          paraObject.alignment = paragraph.alignment;
+        if (paragraph.indent !== undefined)
+          paraObject.indent = paragraph.indent;
+        if (paragraph.font !== undefined) paraObject.font = paragraph.font;
+        if (paragraph.color !== undefined) paraObject.color = paragraph.color;
+        if (paragraph.bold !== undefined) paraObject.bold = paragraph.bold;
+        if (paragraph.italic !== undefined)
+          paraObject.italic = paragraph.italic;
         if (paragraph.superscript !== undefined)
-          paraObj.superscript = paragraph.superscript;
+          paraObject.superscript = paragraph.superscript;
         if (paragraph.subscript !== undefined)
-          paraObj.subscript = paragraph.subscript;
+          paraObject.subscript = paragraph.subscript;
 
         // Build parts array from text children
-        paraObj.parts = (paragraph.children || [])
+        paraObject.parts = (paragraph.children || [])
           .map((child: LexicalTextChild) => {
             if (child.type !== 'text' || child.text === undefined) return null;
 
@@ -160,7 +162,7 @@ export function textToKet(textNode) {
           })
           .filter((part) => part !== null);
 
-        return paraObj;
+        return paraObject;
       },
     );
 

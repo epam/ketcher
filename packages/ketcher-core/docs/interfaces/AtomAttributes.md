@@ -54,7 +54,7 @@ ___
 
 ### atomList
 
-• `Optional` **atomList**: ``null`` \| [`AtomListParams`](AtomListParams.md)
+• `Optional` **atomList**: ``null`` \| [`AtomListParameters`](AtomListParameters.md)
 
 #### Defined in
 

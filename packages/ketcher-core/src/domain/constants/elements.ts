@@ -1305,10 +1305,10 @@ const elementsArray: Array<Element> = [
   },
 ];
 
-const elementsMap = elementsArray.reduce((acc, element) => {
-  acc.set(element.label, element);
-  acc.set(element.number, element);
-  return acc;
+const elementsMap = elementsArray.reduce((accumulator, element) => {
+  accumulator.set(element.label, element);
+  accumulator.set(element.number, element);
+  return accumulator;
 }, new Map<string | number, Element>());
 
 export const Elements = {

@@ -1,6 +1,6 @@
 import type { D3SvgElementSelection } from 'application/render/types';
 
-export type LineLengthHighlightViewParams = {
+export type LineLengthHighlightViewParameters = {
   currentPosition: number;
 };
 
@@ -9,9 +9,9 @@ export class LineLengthHighlightView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: LineLengthHighlightViewParams,
+    parameters: LineLengthHighlightViewParameters,
   ) {
-    const { currentPosition } = params;
+    const { currentPosition } = parameters;
 
     const VERY_LARGE_VALUE = 100000; // Large enough to appear "infinite"
 

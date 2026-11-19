@@ -4,7 +4,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { MonomersAlignment } from 'application/editor/tools/types';
 
-export type DistanceSnapViewParams = {
+export type DistanceSnapViewParameters = {
   alignment: MonomersAlignment | undefined;
   alignedMonomers: BaseMonomer[] | undefined;
 };
@@ -14,9 +14,9 @@ export class DistanceSnapView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: DistanceSnapViewParams,
+    parameters: DistanceSnapViewParameters,
   ) {
-    const { alignment, alignedMonomers } = params;
+    const { alignment, alignedMonomers } = parameters;
 
     if (!alignment || !alignedMonomers?.length) {
       return;

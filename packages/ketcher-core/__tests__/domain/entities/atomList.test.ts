@@ -1,7 +1,9 @@
-import { type AtomListParams, AtomList } from 'domain/entities/atomList';
+import { type AtomListParameters, AtomList } from 'domain/entities/atomList';
 
 const ids = [66, 44, 12, 88];
-const createParams = (overrides?: Partial<AtomListParams>): AtomListParams => {
+const createParameters = (
+  overrides?: Partial<AtomListParameters>,
+): AtomListParameters => {
   const { ids: overrideIds, ...restOverrides } = overrides ?? {};
 
   return {
@@ -13,7 +15,7 @@ const createParams = (overrides?: Partial<AtomListParams>): AtomListParams => {
 
 describe('labelList', () => {
   it('should return array of elements labels', () => {
-    const atomList = new AtomList(createParams());
+    const atomList = new AtomList(createParameters());
 
     expect(atomList.labelList()).toStrictEqual(['Dy', 'Ru', 'Mg', 'Ra']);
   });
@@ -21,20 +23,20 @@ describe('labelList', () => {
 
 describe('label', () => {
   it('should return list', () => {
-    const atomList = new AtomList(createParams());
+    const atomList = new AtomList(createParameters());
 
     expect(atomList.label()).toBe('[Dy,Ru,Mg,Ra]');
   });
 
   it('should return not list', () => {
-    const atomList = new AtomList(createParams({ notList: true }));
+    const atomList = new AtomList(createParameters({ notList: true }));
 
     expect(atomList.label()).toBe('![Dy,Ru,Mg,Ra]');
   });
 });
 describe('equals', () => {
   it.each([false, true])('should return true', (notList) => {
-    const atomList = new AtomList(createParams({ notList }));
+    const atomList = new AtomList(createParameters({ notList }));
     const sortedIds = [...ids];
     sortedIds.sort((a, b) => a - b);
     sortedIds.reverse();
@@ -49,7 +51,7 @@ describe('equals', () => {
   });
 
   it('should return false', () => {
-    const atomList = new AtomList(createParams());
+    const atomList = new AtomList(createParameters());
     const sortedIds = [...ids];
     sortedIds.sort((a, b) => a - b);
     sortedIds.reverse();

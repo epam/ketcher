@@ -44,6 +44,11 @@ The system SHALL ensure that the atom is displayed underlined in red to flag the
 - **WHEN** an element/charge change produces an impossible valence
 - **THEN** the atom is displayed underlined in red to flag the error
 
+#### Scenario: Query atoms are not flagged
+
+- **WHEN** an atom list or a generic atom (for example _A_, _Q_, _X_) has a valence that does not match its bonds
+- **THEN** it is not underlined in red and gets no implicit hydrogens, in both molecules and macromolecules mode
+
 ### Requirement: Adjusting charge
 
 The system SHALL ensure that the atom's charge increases or decreases by one and implicit hydrogens are recalculated.

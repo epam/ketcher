@@ -31,6 +31,7 @@ const useFunctionalGroupRemove = () => {
       });
 
       editor.update(action);
+      editor.focusCliparea();
       highlightFG(dispatch, { group: null, id: null });
     },
     [dispatch, ketcherId],

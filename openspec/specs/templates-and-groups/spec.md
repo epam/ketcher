@@ -54,6 +54,22 @@ The system SHALL ensure that Ketcher blocks the edit and offers to _Remove the A
 - **WHEN** the user applies an incompatible tool to an atom inside a functional group
 - **THEN** Ketcher blocks the edit and offers to _Remove the Abbreviation_
 
+### Requirement: Hotkeys after abbreviation actions
+
+The system SHALL keep editor hotkeys available immediately after expanding, contracting, or removing a functional-group or salt/solvent abbreviation, and after closing _Edit Abbreviation_ with _Cancel_ or _Remove Abbreviation_, without requiring a canvas click or tool selection. Atom hotkeys H, C, P, and I over an atom inside an expanded abbreviation SHALL open _Edit Abbreviation_ before changing the atom; cancelling SHALL leave the structure unchanged.
+
+#### Scenario: Hotkeys after abbreviation actions
+
+- **WHEN** the user expands, contracts, or removes a functional-group or salt/solvent abbreviation, or closes _Edit Abbreviation_ with _Cancel_ or _Remove Abbreviation_
+- **THEN** editor hotkeys work immediately without clicking the canvas or selecting a tool
+- **AND** undo restores the previous structure; cancelling the dialog leaves the preceding edit available to undo
+
+#### Scenario: Atom hotkeys after expanding an abbreviation
+
+- **WHEN** the user places Cbz, expands it through the context menu, waits for the menu to close, hovers an atom inside the expanded abbreviation, and presses any of the atom hotkeys H, C, P, or I without an intervening canvas click or tool selection
+- **THEN** the _Edit Abbreviation_ dialog opens and offers to _Remove the Abbreviation_ before changing the atom
+- **AND** the structure remains unchanged while the dialog is open and after the user chooses _Cancel_
+
 ### Requirement: Creating a Markush R-Group member
 
 The system SHALL ensure that the fragment becomes an R-Group member linked to the corresponding R-Group position(s).

@@ -1,4 +1,4 @@
-import { Page, test } from '@fixtures';
+import { expect, Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
@@ -11,6 +11,7 @@ import {
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
   readFileContent,
+  getKet,
 } from '@utils';
 import {
   copyAndPaste,
@@ -43,6 +44,135 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
+
+test.describe('Expanded abbreviation atom hotkeys #12361', () => {
+  for (const key of ['h', 'c', 'p', 'i']) {
+    test(`${key.toUpperCase()} opens Edit Abbreviation after expanding Cbz`, async ({
+      initMoleculesCanvas,
+      closePage,
+    }) => {
+      const page = await initMoleculesCanvas();
+      try {
+        await BottomToolbar(page).structureLibrary();
+        await StructureLibraryDialog(page).selectFunctionalGroup(
+          FunctionalGroupsTabItems.Cbz,
+        );
+        await clickInTheMiddleOfTheCanvas(page);
+        await CommonLeftToolbar(page).areaSelectionTool();
+
+        await ContextMenu(
+          page,
+          getAbbreviationLocator(page, { name: 'Cbz' }),
+        ).open();
+        await page.getByTestId(SuperatomOption.ExpandAbbreviation).click();
+        await expect(page.getByRole('menu')).toBeHidden();
+
+        const expandedStructure = await getKet(page);
+        // Preserve the focus left by expansion: only hover before the shortcut.
+        await getAtomLocator(page, { atomLabel: 'C' }).first().hover();
+        await page.keyboard.press(key);
+
+        const dialog = EditAbbreviationDialog(page);
+        await expect(dialog.window).toBeVisible();
+        expect(await getKet(page)).toBe(expandedStructure);
+        await dialog.cancel();
+        await expect(dialog.window).toBeHidden();
+        expect(await getKet(page)).toBe(expandedStructure);
+      } finally {
+        await closePage();
+      }
+    });
+  }
+});
+
+test.describe('Abbreviation action hotkeys #2591', () => {
+  let page: Page;
+
+  test.beforeEach(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+  test.afterEach(async ({ closePage }) => {
+    await closePage();
+  });
+
+  for (const template of [
+    FunctionalGroupsTabItems.Boc,
+    SaltsAndSolventsTabItems.DimethylSulfoxide,
+  ] as const) {
+    for (const action of [
+      'expand',
+      'contract',
+      'remove',
+      'dialog remove',
+      'dialog cancel',
+    ]) {
+      test(`${template}: Ctrl+Z immediately after ${action}`, async () => {
+        /*
+         * Test task: https://github.com/epam/ketcher/issues/2591
+         * Description: Abbreviation actions preserve keyboard undo without a canvas click.
+         * Scenario:
+         * 1. Place a functional group or solvent from the library.
+         * 2. Expand, contract, remove its abbreviation, or close Edit Abbreviation.
+         * 3. Immediately press Ctrl+Z and verify the previous structure is restored.
+         * Version 3.21.0
+         */
+        await BottomToolbar(page).structureLibrary();
+        if (template === FunctionalGroupsTabItems.Boc) {
+          await StructureLibraryDialog(page).selectFunctionalGroup(template);
+        } else {
+          await StructureLibraryDialog(page).selectSaltsAndSolvents(template);
+        }
+        await clickInTheMiddleOfTheCanvas(page);
+        await CommonLeftToolbar(page).areaSelectionTool();
+
+        const group = page.locator('[data-sgroup-id]').first();
+        const clickMenuAction = async (option: SuperatomOption) => {
+          const target =
+            option === SuperatomOption.ContractAbbreviation
+              ? getAtomLocator(page, { atomLabel: 'C' }).first()
+              : group;
+          await ContextMenu(page, target).open();
+          await page.getByTestId(option).click();
+          await expect(page.getByRole('menu')).toBeHidden();
+        };
+        let previous = await getKet(page);
+        if (action !== 'expand' && action !== 'remove') {
+          await clickMenuAction(SuperatomOption.ExpandAbbreviation);
+          if (action !== 'dialog cancel') previous = await getKet(page);
+        }
+
+        if (action.startsWith('dialog')) {
+          await RightToolbar(page).clickAtom(Atom.Nitrogen);
+          await getAtomLocator(page, { atomLabel: 'C' })
+            .first()
+            .click({ force: true });
+          const dialog = EditAbbreviationDialog(page);
+          await expect(dialog.window).toBeVisible();
+          await (
+            action === 'dialog cancel'
+              ? dialog.cancelButton
+              : dialog.removeAbbreviationButton
+          ).click();
+        } else {
+          await clickMenuAction(
+            action === 'expand'
+              ? SuperatomOption.ExpandAbbreviation
+              : action === 'contract'
+                ? SuperatomOption.ContractAbbreviation
+                : SuperatomOption.RemoveAbbreviation,
+          );
+        }
+
+        const changed = await getKet(page);
+        await keyboardPressOnCanvas(page, 'Control+z');
+        expect(changed).not.toBe(previous);
+        await expect.poll(() => getKet(page)).toBe(previous);
+      });
+    }
+  }
+});
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -773,7 +903,7 @@ test.describe('Functional Groups', () => {
     /*
     Test case: EPMLSOPKET-12988
     Description: After pressing hotkey 'N' it can be placed on canvas.
-    Test working not properly. We have open bug https://github.com/epam/ketcher/issues/2591
+    Regression coverage: https://github.com/epam/ketcher/issues/2591
     */
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectFunctionalGroup(

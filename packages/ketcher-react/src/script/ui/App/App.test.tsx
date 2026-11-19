@@ -71,7 +71,7 @@ vi.mock('../state/saltsAndSolvents', () => ({
 }));
 
 vi.mock('../state/templates/init-lib', () => ({
-  initLib: vi.fn(() => ({ type: 'INIT_LIB' })),
+  initLibrary: vi.fn(() => ({ type: 'INIT_LIB' })),
 }));
 
 vi.mock('ketcher-core', () => ({

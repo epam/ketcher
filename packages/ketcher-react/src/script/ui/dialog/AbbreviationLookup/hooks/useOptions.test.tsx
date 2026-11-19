@@ -54,7 +54,7 @@ vi.mock('../../../state/functionalGroups/selectors', () => {
 
 vi.mock('../../../state/templates/selectors', () => {
   return {
-    templatesLibSelector: () => [TEMPLATE, TEMPLATE],
+    templatesLibrarySelector: () => [TEMPLATE, TEMPLATE],
   };
 });
 

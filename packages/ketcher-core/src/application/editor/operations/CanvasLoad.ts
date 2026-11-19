@@ -37,7 +37,8 @@ export class CanvasLoad extends BaseOperation {
         `Unexpected data.struct loaded is equal to the restruct.molecule current`,
       );
 
-    restruct.clearVisels(); // TODO: What is it?
+    // Remove the drawn elements of the current structure before the new one is rendered
+    restruct.clearVisels();
     const oldStruct = restruct.molecule;
     if (this.data.struct) {
       restruct.render.setMolecule(this.data.struct, true);

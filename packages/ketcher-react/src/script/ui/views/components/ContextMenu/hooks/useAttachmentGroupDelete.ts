@@ -3,16 +3,16 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
-  AttachmentGroupContextMenuProperties,
-  AtomContextMenuProperties,
+  AttachmentGroupContextMenuProps,
+  AtomContextMenuProps,
   ItemEventParameters,
-  SelectionContextMenuProperties,
+  SelectionContextMenuProps,
 } from '../contextMenu.types';
 
 type Parameters_ = ItemEventParameters<
-  | AttachmentGroupContextMenuProperties
-  | AtomContextMenuProperties
-  | SelectionContextMenuProperties
+  | AttachmentGroupContextMenuProps
+  | AtomContextMenuProps
+  | SelectionContextMenuProps
 >;
 
 const useAttachmentGroupDelete = () => {

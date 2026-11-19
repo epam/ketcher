@@ -4,12 +4,12 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo';
 import type {
-  AtomContextMenuProperties,
+  AtomContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 import { noOperation } from '../utils';
 
-type Parameters_ = ItemEventParameters<AtomContextMenuProperties>;
+type Parameters_ = ItemEventParameters<AtomContextMenuProps>;
 
 const useAtomStereo = () => {
   const { ketcherId } = useAppContext();

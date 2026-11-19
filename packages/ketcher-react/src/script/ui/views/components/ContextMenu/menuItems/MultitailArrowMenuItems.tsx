@@ -5,14 +5,12 @@ import {
   useMultitailArrowTailsRemove,
 } from '../hooks/useMultitailArrowTails';
 import type {
-  MenuItemsProperties,
-  MultitailArrowContextMenuProperties,
+  MenuItemsProps,
+  MultitailArrowContextMenuProps,
 } from '../contextMenu.types';
 
 export function MultitailArrowMenuItems(
-  properties: Readonly<
-    MenuItemsProperties<MultitailArrowContextMenuProperties>
-  >,
+  properties: Readonly<MenuItemsProps<MultitailArrowContextMenuProps>>,
 ) {
   const { t } = useTranslation('components');
   const { addTail, isAddTailDisabled } = useMultitailArrowTailsAdd();

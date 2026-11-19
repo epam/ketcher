@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-interface BaseProperties<TResult = Record<string, unknown>> {
+interface BaseProps<TResult = Record<string, unknown>> {
   className: string;
   formState: {
     errors: Record<string, string>;
@@ -32,4 +32,4 @@ interface ModalContainerProps {
   ketcherId: string;
 }
 
-export type { BaseProperties, BaseCallProps, ModalContainerProps };
+export type { BaseProps, BaseCallProps, ModalContainerProps };

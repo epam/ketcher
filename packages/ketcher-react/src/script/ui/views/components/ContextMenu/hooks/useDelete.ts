@@ -5,10 +5,10 @@ import type Editor from 'src/script/editor';
 import { didDeleteWithAttachmentGroupSplitConfirm } from 'src/script/editor/utils/attachmentGroupSplit';
 import type {
   ItemEventParameters,
-  SelectionContextMenuProperties,
+  SelectionContextMenuProps,
 } from '../contextMenu.types';
 
-type Parameters_ = ItemEventParameters<SelectionContextMenuProperties>;
+type Parameters_ = ItemEventParameters<SelectionContextMenuProps>;
 
 const useDelete = () => {
   const { ketcherId } = useAppContext();

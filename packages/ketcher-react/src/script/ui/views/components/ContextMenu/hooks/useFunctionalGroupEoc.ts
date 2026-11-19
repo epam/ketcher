@@ -5,11 +5,11 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import { highlightFG } from 'src/script/ui/state/functionalGroups';
 import type {
-  FunctionalGroupsContextMenuProperties,
+  FunctionalGroupsContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 
-type Parameters_ = ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+type Parameters_ = ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
 /**
  * Fullname: useFunctionalGroupExpandOrContract

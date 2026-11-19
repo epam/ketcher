@@ -4,13 +4,13 @@ import type Editor from 'src/script/editor';
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { mapBondIdsToBonds } from 'src/script/editor/tool/select';
 import type {
-  BondsContextMenuProperties,
+  BondsContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 import { getEditableBondIds, noOperation } from '../utils';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 
-type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProps>;
 
 const useBondEdit = () => {
   const { ketcherId } = useAppContext();

@@ -24,13 +24,13 @@ const dispatchAction = (dispatch, actionName, event) => {
   dispatch(onAction(action[actionName].action(event)));
 };
 
-const mapDispatchToProperties = (dispatch, ownProperties) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
   const onZoomIn = (event) => dispatchAction(dispatch, 'zoom-in', event);
   const onZoomOut = (event) => dispatchAction(dispatch, 'zoom-out', event);
 
   return {
     ...dispatch((dispatch, getState) =>
-      initEditor(dispatch, getState, ownProperties.ketcherId),
+      initEditor(dispatch, getState, ownProps.ketcherId),
     ),
     onZoomOut,
     onZoomIn,
@@ -45,6 +45,6 @@ const Editor = connect((state) => {
     serverSettings,
     indigoVerification: state.requestsStatuses.indigoVerification,
   };
-}, mapDispatchToProperties)(StructEditor);
+}, mapDispatchToProps)(StructEditor);
 
 export default Editor;

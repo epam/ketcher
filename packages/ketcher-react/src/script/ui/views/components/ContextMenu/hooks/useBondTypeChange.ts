@@ -9,12 +9,12 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import type {
-  BondsContextMenuProperties,
+  BondsContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 import { getEditableBondIds } from '../utils';
 
-type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProps>;
 
 const useBondTypeChange = () => {
   const { ketcherId } = useAppContext();
@@ -29,14 +29,14 @@ const useBondTypeChange = () => {
       const bondIds = getEditableBondIds(editor.struct(), props?.bondIds ?? []);
       if (bondIds.length === 0) return;
 
-      const bondProperties: Partial<BondAttributes> = {
+      const bondProps: Partial<BondAttributes> = {
         ...(toolAction.opts as Partial<BondAttributes>),
       };
       const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
       if (isCustomQuery) {
-        bondProperties.customQuery = null;
-        bondProperties.topology = 0;
-        bondProperties.reactingCenterStatus = 0;
+        bondProps.customQuery = null;
+        bondProps.topology = 0;
+        bondProps.reactingCenterStatus = 0;
       }
 
       // If only one bond is selected, use bondChangingAction to support direction flipping
@@ -47,7 +47,7 @@ const useBondTypeChange = () => {
             molecule,
             bondIds[0],
             bond.b,
-            bondProperties,
+            bondProps,
           );
           editor.update(action);
           return;
@@ -55,7 +55,7 @@ const useBondTypeChange = () => {
       }
 
       // For multiple bonds, use fromBondsAttrs
-      editor.update(fromBondsAttrs(molecule, bondIds, bondProperties));
+      editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
     },
     [ketcherId],
   );

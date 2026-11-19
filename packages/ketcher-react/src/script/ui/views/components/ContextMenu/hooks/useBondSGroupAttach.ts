@@ -4,13 +4,13 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import SGroupTool from 'src/script/editor/tool/sgroup';
 import type {
-  BondsContextMenuProperties,
+  BondsContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 
-type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProps>;
 
-const getFirstBondId = (properties?: BondsContextMenuProperties) =>
+const getFirstBondId = (properties?: BondsContextMenuProps) =>
   properties?.bondIds?.[0];
 
 const useBondSGroupAttach = () => {

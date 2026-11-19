@@ -17,7 +17,7 @@
 import { type Dispatch, type AnyAction } from 'redux';
 import { formReducer, formsState, type ModalFormState } from './form';
 
-interface ModalDialogProperties {
+interface ModalDialogProps {
   onResult: (value: unknown) => void;
   onCancel: (reason?: unknown) => void;
   isNestedModal?: boolean;
@@ -28,7 +28,7 @@ interface ModalDialogProperties {
 interface ModalState {
   name: string;
   form: ModalFormState | null;
-  prop: ModalDialogProperties | null;
+  prop: ModalDialogProps | null;
   parentModal: ModalState | null;
 }
 
@@ -36,7 +36,7 @@ export interface ModalOpenAction {
   type: 'MODAL_OPEN';
   data: {
     name: string;
-    prop?: Partial<ModalDialogProperties>;
+    prop?: Partial<ModalDialogProps>;
   };
 }
 
@@ -46,7 +46,7 @@ export interface ModalCloseAction {
 
 export type ModalAction = ModalOpenAction | ModalCloseAction | AnyAction;
 
-export type { ModalState, ModalDialogProperties };
+export type { ModalState, ModalDialogProps };
 
 export function openDialog(
   dispatch: Dispatch,
@@ -92,7 +92,7 @@ function modalReducer(
           ...state.parentModal.prop,
           ...state.parentModal.form?.result,
           isRestoredModal: true,
-        } as ModalDialogProperties;
+        } as ModalDialogProps;
         return { ...state.parentModal, prop: restoredProperty };
       }
       return null;
@@ -103,7 +103,7 @@ function modalReducer(
       return {
         name: data.name,
         form: formsState[data.name] || null,
-        prop: (data.prop as ModalDialogProperties) || null,
+        prop: (data.prop as ModalDialogProps) || null,
         parentModal: data.prop?.isNestedModal ? state : null,
       };
     }

@@ -39,17 +39,17 @@ interface SgroupFormState {
   result: SgroupFormResult;
 }
 
-interface SgroupOwnProperties extends DialogParameters {
+interface SgroupOwnProps extends DialogParameters {
   type?: string;
   selectedSruCount?: number;
   [key: string]: unknown;
 }
 
-interface SgroupProperties extends SgroupOwnProperties {
+interface SgroupProps extends SgroupOwnProps {
   formState: SgroupFormState;
 }
 
-function Sgroup({ formState, ...properties }: Readonly<SgroupProperties>) {
+function Sgroup({ formState, ...properties }: Readonly<SgroupProps>) {
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 

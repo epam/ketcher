@@ -4,11 +4,11 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import SGroupTool from 'src/script/editor/tool/sgroup';
 import type {
-  BondsContextMenuProperties,
+  BondsContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 
-type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProps>;
 
 const useBondSGroupEdit = () => {
   const { ketcherId } = useAppContext();

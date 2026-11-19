@@ -14,7 +14,7 @@ export enum CONTEXT_MENU_ID {
   FOR_ATTACHMENT_POINT_LABEL = 'context-menu-for-attachment-point-label',
 }
 
-interface BaseContextMenuProperties {
+interface BaseContextMenuProps {
   id: string;
 }
 
@@ -22,48 +22,48 @@ interface WithExtraItems {
   extraItemsSelected?: boolean;
 }
 
-export interface BondsContextMenuProperties
-  extends BaseContextMenuProperties, WithExtraItems {
+export interface BondsContextMenuProps
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   bondIds: Array<number>;
 }
 
-export interface AtomContextMenuProperties
-  extends BaseContextMenuProperties, WithExtraItems {
+export interface AtomContextMenuProps
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   atomIds: Array<number>;
   attachmentGroupIds?: Array<number>;
 }
 
-export interface AttachmentGroupContextMenuProperties extends BaseContextMenuProperties {
+export interface AttachmentGroupContextMenuProps extends BaseContextMenuProps {
   id: string;
   attachmentGroupIds: Array<number>;
 }
 
-export interface RGroupAttachmentPointContextMenuProperties
-  extends BaseContextMenuProperties, WithExtraItems {
+export interface RGroupAttachmentPointContextMenuProps
+  extends BaseContextMenuProps, WithExtraItems {
   id: string;
   rgroupAttachmentPoints: Array<number>;
-  atomIds?: AtomContextMenuProperties['atomIds'];
+  atomIds?: AtomContextMenuProps['atomIds'];
 }
-export interface SelectionContextMenuProperties
+export interface SelectionContextMenuProps
   extends
-    BaseContextMenuProperties,
-    Partial<Pick<BondsContextMenuProperties, 'bondIds'>>,
-    Partial<Pick<AtomContextMenuProperties, 'atomIds'>>,
+    BaseContextMenuProps,
+    Partial<Pick<BondsContextMenuProps, 'bondIds'>>,
+    Partial<Pick<AtomContextMenuProps, 'atomIds'>>,
     Partial<
-      Pick<RGroupAttachmentPointContextMenuProperties, 'rgroupAttachmentPoints'>
+      Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
     > {
   id: string;
   attachmentGroupIds?: Array<number>;
 }
 
-export interface FunctionalGroupsContextMenuProperties extends BaseContextMenuProperties {
+export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
   id: string;
   functionalGroups: FunctionalGroup[];
 }
 
-export interface MacromoleculeContextMenuProperties extends BaseContextMenuProperties {
+export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   id: string;
   functionalGroups: FunctionalGroup[];
   /**
@@ -76,36 +76,35 @@ export interface MacromoleculeContextMenuProperties extends BaseContextMenuPrope
   hasNonMonomerStructure?: boolean;
 }
 
-export interface MultitailArrowContextMenuProperties {
+export interface MultitailArrowContextMenuProps {
   id: string;
   itemId: number;
   tailId: number | null;
 }
 
-export interface AttachmentPointLabelContextMenuProperties extends BaseContextMenuProperties {
+export interface AttachmentPointLabelContextMenuProps extends BaseContextMenuProps {
   id: string;
   attachmentPointName: AttachmentPointName;
 }
 
-export type ContextMenuProperties =
-  | BondsContextMenuProperties
-  | AtomContextMenuProperties
-  | AttachmentGroupContextMenuProperties
-  | SelectionContextMenuProperties
-  | FunctionalGroupsContextMenuProperties
-  | RGroupAttachmentPointContextMenuProperties
-  | MultitailArrowContextMenuProperties
-  | MacromoleculeContextMenuProperties
-  | AttachmentPointLabelContextMenuProperties;
+export type ContextMenuProps =
+  | BondsContextMenuProps
+  | AtomContextMenuProps
+  | AttachmentGroupContextMenuProps
+  | SelectionContextMenuProps
+  | FunctionalGroupsContextMenuProps
+  | RGroupAttachmentPointContextMenuProps
+  | MultitailArrowContextMenuProps
+  | MacromoleculeContextMenuProps
+  | AttachmentPointLabelContextMenuProps;
 
-export interface MenuItemsProperties<T extends ContextMenuProperties> {
+export interface MenuItemsProps<T extends ContextMenuProps> {
   triggerEvent?: TriggerEvent;
   propsFromTrigger?: T;
 }
 
-export type ItemEventParameters<
-  T extends ContextMenuProperties = ContextMenuProperties,
-> = PredicateParams<T, unknown>;
+export type ItemEventParameters<T extends ContextMenuProps = ContextMenuProps> =
+  PredicateParams<T, unknown>;
 
 export type ContextMenuInfo = {
   [id in CONTEXT_MENU_ID]?: boolean;

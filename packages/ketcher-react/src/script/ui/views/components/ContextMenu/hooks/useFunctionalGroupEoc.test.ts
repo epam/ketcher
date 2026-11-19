@@ -3,7 +3,7 @@ import useFunctionalGroupEoc from './useFunctionalGroupEoc';
 import { SGroup, type FunctionalGroup } from 'ketcher-core';
 import type {
   ItemEventParameters,
-  FunctionalGroupsContextMenuProperties,
+  FunctionalGroupsContextMenuProps,
 } from '../contextMenu.types';
 
 jest.mock('react-redux', () => ({
@@ -26,13 +26,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroupId: 1,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = false means "Contract Abbreviation"
       const shouldHide = hidden(params, false);
@@ -49,13 +48,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroupId: 1,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = false means "Contract Abbreviation"
       const shouldHide = hidden(params, false);
@@ -72,13 +70,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroupId: 1,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = false means "Contract Abbreviation"
       const shouldHide = hidden(params, false);
@@ -98,13 +95,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroup: sgroup,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = false means "Contract Abbreviation"
       const shouldHide = hidden(params, false);
@@ -127,13 +123,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroupId: 2,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup1, mockFunctionalGroup2],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup1, mockFunctionalGroup2],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = false means "Contract Abbreviation"
       const shouldHide = hidden(params, false);
@@ -150,13 +145,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroupId: 1,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = false means "Contract Abbreviation"
       // Should be hidden because it's already contracted
@@ -174,13 +168,12 @@ describe('useFunctionalGroupEoc', () => {
         relatedSGroupId: 1,
       } as FunctionalGroup;
 
-      const params: ItemEventParameters<FunctionalGroupsContextMenuProperties> =
-        {
-          props: {
-            id: 'test',
-            functionalGroups: [mockFunctionalGroup],
-          },
-        } as ItemEventParameters<FunctionalGroupsContextMenuProperties>;
+      const params: ItemEventParameters<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [mockFunctionalGroup],
+        },
+      } as ItemEventParameters<FunctionalGroupsContextMenuProps>;
 
       // toExpand = true means "Expand Abbreviation"
       // Empty name should not affect expand operation

@@ -8,8 +8,8 @@ import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
 import useMarkAs from '../hooks/useMarkAs';
 import type {
-  AtomContextMenuProperties,
-  MenuItemsProperties,
+  AtomContextMenuProps,
+  MenuItemsProps,
 } from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
@@ -112,7 +112,7 @@ function getAtomPropertiesForSubMenu(t: TFunction): {
   ];
 }
 
-const AtomMenuItems: FC<MenuItemsProperties<AtomContextMenuProperties>> = (
+const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (
   properties_,
 ) => {
   const { t } = useTranslation(['components', 'common']);

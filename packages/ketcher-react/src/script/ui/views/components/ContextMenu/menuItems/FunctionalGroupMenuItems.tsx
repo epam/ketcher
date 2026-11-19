@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc';
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove';
 import type {
-  FunctionalGroupsContextMenuProperties,
-  MenuItemsProperties,
+  FunctionalGroupsContextMenuProps,
+  MenuItemsProps,
 } from '../contextMenu.types';
 
 const FunctionalGroupMenuItems: FC<
-  MenuItemsProperties<FunctionalGroupsContextMenuProperties>
+  MenuItemsProps<FunctionalGroupsContextMenuProps>
 > = (properties) => {
   const { t } = useTranslation(['components', 'dialogs']);
   const [handleExpandOrContract, ExpandOrContractHidden] =

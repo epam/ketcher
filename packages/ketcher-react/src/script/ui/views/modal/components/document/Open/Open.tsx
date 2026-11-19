@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -44,7 +44,7 @@ interface OpenProps {
 }
 
 type Props = OpenProps &
-  Pick<BaseProperties, 'className'> &
+  Pick<BaseProps, 'className'> &
   BaseCallProps<OpenResult> & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {

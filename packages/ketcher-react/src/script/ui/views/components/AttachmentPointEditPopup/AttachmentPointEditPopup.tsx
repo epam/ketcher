@@ -15,7 +15,7 @@ import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import type { Editor } from '../../../../editor';
 
-type Properties = {
+type Props = {
   data: AttachmentPointClickData;
   onNameChange: (
     currentName: AttachmentPointName,
@@ -35,7 +35,7 @@ const AttachmentPointEditPopup = ({
   onLeavingAtomChange,
   onClose,
   editor,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('components');
   const popupReference = useRef<HTMLDivElement>(null);
 

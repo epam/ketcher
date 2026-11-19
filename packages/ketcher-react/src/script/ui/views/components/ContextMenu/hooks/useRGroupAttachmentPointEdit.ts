@@ -3,16 +3,15 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
   ItemEventParameters,
-  RGroupAttachmentPointContextMenuProperties,
+  RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utils';
 import { type Ketcher, ketcherProvider, assert } from 'ketcher-core';
 
-type Parameters_ =
-  ItemEventParameters<RGroupAttachmentPointContextMenuProperties>;
+type Parameters_ = ItemEventParameters<RGroupAttachmentPointContextMenuProps>;
 
-const getAtomIdByProperties = (
-  properties: RGroupAttachmentPointContextMenuProperties | undefined,
+const getAtomIdByProps = (
+  properties: RGroupAttachmentPointContextMenuProps | undefined,
   ketcher: Ketcher,
 ): number => {
   const editor = ketcher.editor as Editor;
@@ -37,7 +36,7 @@ const useRGroupAttachmentPointEdit = () => {
     ({ props }: Parameters_) => {
       const ketcher = ketcherProvider.getKetcher(ketcherId);
       const restruct = ketcher.editor.render.ctab;
-      const atomId = getAtomIdByProperties(props, ketcher);
+      const atomId = getAtomIdByProps(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
       assert(atom != null);
 
@@ -50,7 +49,7 @@ const useRGroupAttachmentPointEdit = () => {
     ({ props }: Parameters_) => {
       const ketcher = ketcherProvider.getKetcher(ketcherId);
       const restruct = ketcher.editor.render.ctab;
-      const atomId = getAtomIdByProperties(props, ketcher);
+      const atomId = getAtomIdByProps(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
       assert(atom != null);
 

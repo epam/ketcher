@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { Item } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
 import type {
-  MenuItemsProperties,
-  RGroupAttachmentPointContextMenuProperties,
+  MenuItemsProps,
+  RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 import useRGroupAttachmentPointRemove from '../hooks/useRGroupAttachmentPointRemove';
 import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
@@ -14,7 +14,7 @@ import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors'
 import { ketcherProvider } from 'ketcher-core';
 
 const RGroupAttachmentPointMenuItems: FC<
-  MenuItemsProperties<RGroupAttachmentPointContextMenuProperties>
+  MenuItemsProps<RGroupAttachmentPointContextMenuProps>
 > = (properties) => {
   const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();

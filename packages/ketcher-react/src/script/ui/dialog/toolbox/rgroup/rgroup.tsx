@@ -34,14 +34,14 @@ interface RGroupFormState {
   errors: Record<string, string>;
 }
 
-interface RGroupProperties {
+interface RGroupProps {
   disabledIds: number[];
   values: number[];
   formState: RGroupFormState;
   type: 'atom' | 'fragment';
 }
 
-interface RGroupCallProperties {
+interface RGroupCallProps {
   onCancel: () => void;
   onOk: (result: unknown) => void;
 }
@@ -52,7 +52,7 @@ interface RGroupStoreState {
   };
 }
 
-type Properties = RGroupProperties & RGroupCallProperties;
+type Props = RGroupProps & RGroupCallProps;
 
 function RGroup({
   disabledIds,
@@ -60,7 +60,7 @@ function RGroup({
   formState,
   type,
   ...properties
-}: Properties) {
+}: Props) {
   const { t } = useTranslation(['common', 'dialogs']);
   return (
     <Dialog

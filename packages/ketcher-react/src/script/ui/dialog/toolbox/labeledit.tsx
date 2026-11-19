@@ -39,7 +39,7 @@ interface LabelEditFormState {
   };
 }
 
-interface LabelEditProperties extends AtomLabelData {
+interface LabelEditProps extends AtomLabelData {
   letter?: string;
   formState: LabelEditFormState;
   onCancel: () => void;
@@ -94,7 +94,7 @@ export function deserialize(value: string): AtomLabelData | null {
   return null;
 }
 
-function LabelEdit(properties: Readonly<LabelEditProperties>) {
+function LabelEdit(properties: Readonly<LabelEditProps>) {
   const init = { label: properties.letter ?? serialize(properties) };
   const { formState, ...property } = properties;
   const { result, valid } = formState;

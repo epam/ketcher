@@ -5,30 +5,30 @@ import useAttachmentGroupCreate, {
   ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP,
 } from '../hooks/useAttachmentGroupCreate';
 import type {
-  AtomContextMenuProperties,
-  MenuItemsProperties,
-  SelectionContextMenuProperties,
+  AtomContextMenuProps,
+  MenuItemsProps,
+  SelectionContextMenuProps,
 } from '../contextMenu.types';
 import styles from '../ContextMenu.module.less';
 import AttachmentGroupMenuItems from './AttachmentGroupMenuItems';
 
-type Properties = MenuItemsProperties<
-  AtomContextMenuProperties | SelectionContextMenuProperties
+type Props = MenuItemsProps<
+  AtomContextMenuProps | SelectionContextMenuProps
 > & {
   showCreate: boolean;
 };
 
-const AttachmentGroupActionMenuItem: FC<Properties> = ({
+const AttachmentGroupActionMenuItem: FC<Props> = ({
   showCreate,
-  ...menuItemProperties
+  ...menuItemProps
 }) => {
   const {
     handler: handleAttachmentGroupCreate,
     isDisabled: attachmentGroupCreateDisabled,
   } = useAttachmentGroupCreate();
 
-  if (menuItemProperties.propsFromTrigger?.attachmentGroupIds?.length) {
-    return <AttachmentGroupMenuItems {...menuItemProperties} />;
+  if (menuItemProps.propsFromTrigger?.attachmentGroupIds?.length) {
+    return <AttachmentGroupMenuItems {...menuItemProps} />;
   }
 
   if (!showCreate) {
@@ -39,7 +39,7 @@ const AttachmentGroupActionMenuItem: FC<Properties> = ({
 
   return (
     <Item
-      {...menuItemProperties}
+      {...menuItemProps}
       data-testid="Create Attachment Group-option"
       onClick={handleAttachmentGroupCreate}
       disabled={isAttachmentGroupCreateDisabled}

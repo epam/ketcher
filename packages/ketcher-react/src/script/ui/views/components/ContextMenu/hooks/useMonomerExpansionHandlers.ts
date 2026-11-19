@@ -11,10 +11,10 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
   ItemEventParameters,
-  MacromoleculeContextMenuProperties,
+  MacromoleculeContextMenuProps,
 } from '../contextMenu.types';
 
-type Parameters_ = ItemEventParameters<MacromoleculeContextMenuProperties>;
+type Parameters_ = ItemEventParameters<MacromoleculeContextMenuProps>;
 
 export const canExpandMonomer = (functionalGroup: FunctionalGroup) => {
   return (

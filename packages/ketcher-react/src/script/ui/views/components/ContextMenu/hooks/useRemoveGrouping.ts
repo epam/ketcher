@@ -3,11 +3,11 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
-  MacromoleculeContextMenuProperties,
+  MacromoleculeContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 
-type Parameters_ = ItemEventParameters<MacromoleculeContextMenuProperties>;
+type Parameters_ = ItemEventParameters<MacromoleculeContextMenuProps>;
 
 /**
  * Returns a handler that removes the S-group grouping for each monomer in the

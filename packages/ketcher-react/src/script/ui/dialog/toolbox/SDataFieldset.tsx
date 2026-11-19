@@ -34,7 +34,7 @@ interface SDataFieldsetFormState {
   result: SdataFormResult;
 }
 
-interface SDataFieldsetProperties {
+interface SDataFieldsetProps {
   formState: SDataFieldsetFormState;
 }
 
@@ -87,7 +87,7 @@ const content = (
       }
     });
 
-function SDataFieldset({ formState }: Readonly<SDataFieldsetProperties>) {
+function SDataFieldset({ formState }: Readonly<SDataFieldsetProps>) {
   const { result } = formState;
   const { t } = useTranslation();
   const formSchema = sdataCustomSchema;

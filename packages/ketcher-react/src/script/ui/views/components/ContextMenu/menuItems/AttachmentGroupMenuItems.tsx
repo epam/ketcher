@@ -3,17 +3,17 @@ import { Item } from 'react-contexify';
 import styles from '../ContextMenu.module.less';
 import useAttachmentGroupDelete from '../hooks/useAttachmentGroupDelete';
 import type {
-  AttachmentGroupContextMenuProperties,
-  AtomContextMenuProperties,
-  MenuItemsProperties,
-  SelectionContextMenuProperties,
+  AttachmentGroupContextMenuProps,
+  AtomContextMenuProps,
+  MenuItemsProps,
+  SelectionContextMenuProps,
 } from '../contextMenu.types';
 
 const AttachmentGroupMenuItems: FC<
-  MenuItemsProperties<
-    | AttachmentGroupContextMenuProperties
-    | AtomContextMenuProperties
-    | SelectionContextMenuProperties
+  MenuItemsProps<
+    | AttachmentGroupContextMenuProps
+    | AtomContextMenuProps
+    | SelectionContextMenuProps
   >
 > = (properties) => {
   const handleDelete = useAttachmentGroupDelete();

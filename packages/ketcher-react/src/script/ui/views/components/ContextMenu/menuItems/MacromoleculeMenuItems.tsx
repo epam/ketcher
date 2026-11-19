@@ -1,6 +1,6 @@
 import type {
-  MacromoleculeContextMenuProperties,
-  MenuItemsProperties,
+  MacromoleculeContextMenuProps,
+  MenuItemsProps,
 } from '../contextMenu.types';
 import { Item } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ import { useAppContext, useIsFunctionalityDisabled } from 'src/hooks';
 import type Editor from 'src/script/editor';
 
 const MacromoleculeMenuItems = (
-  properties: MenuItemsProperties<MacromoleculeContextMenuProperties>,
+  properties: MenuItemsProps<MacromoleculeContextMenuProps>,
 ) => {
   const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();

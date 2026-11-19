@@ -1,7 +1,7 @@
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import {
   getAttachmentGroupTargetForBondHalf,
-  getMenuPropertiesForSelection,
+  getMenuPropsForSelection,
 } from './ContextMenuTrigger.utilities';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import type Editor from 'src/script/editor';
@@ -9,7 +9,7 @@ import type Editor from 'src/script/editor';
 describe('getMenuPropsForSelection', () => {
   it('uses the atom menu for a multi-atom selection', () => {
     expect(
-      getMenuPropertiesForSelection({ atoms: [1, 2] }, new Map(), 'test'),
+      getMenuPropsForSelection({ atoms: [1, 2] }, new Map(), 'test'),
     ).toEqual({
       id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
       atomIds: [1, 2],
@@ -18,18 +18,18 @@ describe('getMenuPropsForSelection', () => {
   });
 
   it('keeps a single atom in the atom menu', () => {
-    expect(
-      getMenuPropertiesForSelection({ atoms: [1] }, new Map(), 'test'),
-    ).toEqual({
-      id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
-      atomIds: [1],
-      extraItemsSelected: false,
-    });
+    expect(getMenuPropsForSelection({ atoms: [1] }, new Map(), 'test')).toEqual(
+      {
+        id: CONTEXT_MENU_ID.FOR_ATOMS + 'test',
+        atomIds: [1],
+        extraItemsSelected: false,
+      },
+    );
   });
 
   it('keeps atoms with enhanced flags in the atom menu', () => {
     expect(
-      getMenuPropertiesForSelection(
+      getMenuPropsForSelection(
         { atoms: [1, 2], enhancedFlags: [3] },
         new Map(),
         'test',
@@ -43,7 +43,7 @@ describe('getMenuPropsForSelection', () => {
 
   it('uses the selection menu for atoms and bonds', () => {
     expect(
-      getMenuPropertiesForSelection(
+      getMenuPropsForSelection(
         { atoms: [1, 2], bonds: [3] },
         new Map(),
         'test',
@@ -57,7 +57,7 @@ describe('getMenuPropsForSelection', () => {
 
   it('uses the selection menu when atoms and another drawing item are selected', () => {
     expect(
-      getMenuPropertiesForSelection(
+      getMenuPropsForSelection(
         { atoms: [1, 2], rxnArrows: [3] },
         new Map(),
         'test',
@@ -79,7 +79,7 @@ describe('getMenuPropsForSelection', () => {
     const editor = { struct: () => struct } as Editor;
 
     expect(
-      getMenuPropertiesForSelection(
+      getMenuPropsForSelection(
         { atoms: [atomIds[0]] },
         new Map(),
         'test',
@@ -100,7 +100,7 @@ describe('getMenuPropsForSelection', () => {
     const editor = { struct: () => struct } as Editor;
 
     expect(
-      getMenuPropertiesForSelection(
+      getMenuPropsForSelection(
         { attachmentGroups: [attachmentGroupId] },
         new Map(),
         'test',

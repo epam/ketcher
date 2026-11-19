@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import type {
   ItemEventParameters,
-  MultitailArrowContextMenuProperties,
+  MultitailArrowContextMenuProps,
 } from '../contextMenu.types';
 import { useAppContext } from '../../../../../../hooks';
 import {
@@ -13,7 +13,7 @@ import {
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 
-type Parameters_ = ItemEventParameters<MultitailArrowContextMenuProperties>;
+type Parameters_ = ItemEventParameters<MultitailArrowContextMenuProps>;
 
 function updateEditor(editor: unknown, action: Action) {
   // returned Editor type does not match real editor

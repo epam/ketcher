@@ -8,11 +8,10 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
   ItemEventParameters,
-  RGroupAttachmentPointContextMenuProperties,
+  RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 
-type Parameters_ =
-  ItemEventParameters<RGroupAttachmentPointContextMenuProperties>;
+type Parameters_ = ItemEventParameters<RGroupAttachmentPointContextMenuProps>;
 
 const useDelete = () => {
   const { ketcherId } = useAppContext();

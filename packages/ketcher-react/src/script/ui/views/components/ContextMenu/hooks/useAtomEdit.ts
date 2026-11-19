@@ -4,13 +4,13 @@ import type Editor from 'src/script/editor';
 import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import type {
-  AtomContextMenuProperties,
+  AtomContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
 import { getEditableAtomIds } from '../utils';
 
-type Parameters_ = ItemEventParameters<AtomContextMenuProperties>;
+type Parameters_ = ItemEventParameters<AtomContextMenuProps>;
 
 const useAtomEdit = () => {
   const { ketcherId } = useAppContext();

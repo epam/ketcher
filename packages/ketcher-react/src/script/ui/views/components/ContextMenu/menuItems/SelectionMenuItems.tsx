@@ -18,8 +18,8 @@ import {
 } from '../utils';
 import type Editor from 'src/script/editor';
 import type {
-  MenuItemsProperties,
-  SelectionContextMenuProperties,
+  MenuItemsProps,
+  SelectionContextMenuProps,
 } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 import { useAppContext } from 'src/hooks';
@@ -33,9 +33,9 @@ import AttachmentGroupActionMenuItem from './AttachmentGroupActionMenuItem';
 
 const bondNames = getBondNamesForSelectionContextMenu(tools);
 
-const SelectionMenuItems: FC<
-  MenuItemsProperties<SelectionContextMenuProperties>
-> = (properties) => {
+const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
+  properties,
+) => {
   const { t } = useTranslation(['toolbar', 'components', 'common']);
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;

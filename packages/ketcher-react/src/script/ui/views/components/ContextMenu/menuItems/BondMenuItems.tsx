@@ -17,9 +17,9 @@ import {
   queryBondNames,
 } from '../utils';
 import type {
-  BondsContextMenuProperties,
+  BondsContextMenuProps,
   ItemEventParameters,
-  MenuItemsProperties,
+  MenuItemsProps,
 } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
@@ -27,11 +27,11 @@ import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { isHapticBondWithAttachmentGroup, ketcherProvider } from 'ketcher-core';
 
-type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProps>;
 
 const bondNamesForContextMenu = getBondNamesForContextMenu(tools);
 
-const BondMenuItems: FC<MenuItemsProperties<BondsContextMenuProperties>> = (
+const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (
   properties,
 ) => {
   const { t } = useTranslation(['toolbar', 'components', 'common']);

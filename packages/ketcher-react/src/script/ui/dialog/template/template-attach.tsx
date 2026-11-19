@@ -56,14 +56,14 @@ interface NormalizedTemplate {
   props: AttachPoints;
 }
 
-interface AttachOwnProperties {
+interface AttachOwnProps {
   tmpl: TemplateItem;
   ketcherId: string;
   onCancel: () => void;
   onOk: (result: unknown) => void;
 }
 
-interface AttachStateProperties {
+interface AttachStateProps {
   name: string;
   atomid: number;
   bondid: number;
@@ -72,15 +72,15 @@ interface AttachStateProperties {
   globalSettings: Record<string, unknown>;
 }
 
-interface AttachDispatchProperties {
+interface AttachDispatchProps {
   onInit: (name: string, ap: AttachPoints) => void;
   onAttachEdit: (ap: AttachPoints) => void;
   onNameEdit: (name: string) => void;
 }
 
-type AttachProperties = AttachOwnProperties &
-  AttachStateProperties &
-  AttachDispatchProperties &
+type AttachProps = AttachOwnProps &
+  AttachStateProps &
+  AttachDispatchProps &
   WithTranslation;
 
 // @TODO When theming is implemented, use theme wherever possible
@@ -246,12 +246,12 @@ const editorStyles = {
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 },
 };
 
-class Attach extends Component<AttachProperties> {
+class Attach extends Component<AttachProps> {
   mode: 'save' | 'edit';
   tmpl: NormalizedTemplate;
   oldKetcherEditor: Editor;
 
-  constructor(properties: AttachProperties) {
+  constructor(properties: AttachProps) {
     super(properties);
     const { onInit, ...rest } = properties;
     this.mode = isEmpty(rest.tmpl.props) ? 'save' : 'edit';
@@ -399,23 +399,21 @@ class Attach extends Component<AttachProperties> {
   }
 }
 
-const mapStateToProperties = (store: StoreState): AttachStateProperties => ({
+const mapStateToProps = (store: StoreState): AttachStateProps => ({
   ...store.templates.attach,
   templateLib: store.templates.lib,
   formState: store.modal.form,
   globalSettings: store.options.settings,
 });
 
-const mapDispatchToProperties = (
-  dispatch: Dispatch,
-): AttachDispatchProperties => ({
+const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
   onInit: (name: string, ap: AttachPoints) => dispatch(initAttach(name, ap)),
   onAttachEdit: (ap: AttachPoints) => dispatch(setAttachPoints(ap)),
   onNameEdit: (name: string) => dispatch(setTmplName(name)),
 });
 
-const connector = connect(mapStateToProperties, mapDispatchToProperties);
-const ConnectedAttach: ComponentType<AttachOwnProperties> = connector(
+const connector = connect(mapStateToProps, mapDispatchToProps);
+const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
   withTranslation(['dialogs'])(Attach),
 );
 

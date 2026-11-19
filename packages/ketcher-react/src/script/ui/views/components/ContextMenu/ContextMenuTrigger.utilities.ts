@@ -9,7 +9,7 @@ import {
 } from 'ketcher-core';
 import type { Editor, ClosestItemWithMap } from 'src/script/editor';
 import {
-  type ContextMenuProperties,
+  type ContextMenuProps,
   type GetIsItemInSelectionArguments,
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
@@ -148,11 +148,11 @@ export const isItemInSelection = ({
   }
 };
 
-export function getMenuPropertiesForClosestItem(
+export function getMenuPropsForClosestItem(
   editor: Editor,
   closestItem: ClosestItemWithMap,
   ketcherId: string,
-): ContextMenuProperties | null {
+): ContextMenuProps | null {
   const struct = editor.struct();
 
   switch (closestItem.map) {
@@ -287,12 +287,12 @@ export function getMenuPropertiesForClosestItem(
 
 const IGNORED_MAPS_LIST = ['enhancedFlags'];
 
-export function getMenuPropertiesForSelection(
+export function getMenuPropsForSelection(
   selection: Selection | null,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
   ketcherId: string,
   editor?: Editor,
-): ContextMenuProperties | null {
+): ContextMenuProps | null {
   if (!selection) {
     return null;
   }

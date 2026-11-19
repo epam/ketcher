@@ -1,6 +1,6 @@
 import type {
-  AtomContextMenuProperties,
-  MenuItemsProperties,
+  AtomContextMenuProps,
+  MenuItemsProps,
 } from '../contextMenu.types';
 import type { Editor } from 'src/script/editor';
 import { Item } from 'react-contexify';
@@ -10,8 +10,8 @@ import type { ReactNode } from 'react';
 import { assert } from 'ketcher-core';
 import { useTranslation } from 'react-i18next';
 
-type Properties = {
-  props: MenuItemsProperties<AtomContextMenuProperties>;
+type Props = {
+  props: MenuItemsProps<AtomContextMenuProps>;
   selectedAtomId: number | undefined;
   editor: Editor;
 };
@@ -20,7 +20,7 @@ const useMakeAttachmentPointMenuItems = ({
   props,
   selectedAtomId,
   editor,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('components');
   const selectedAtomInMonomerCreationWizard =
     selectedAtomId !== undefined && editor.isMonomerCreationWizardActive;

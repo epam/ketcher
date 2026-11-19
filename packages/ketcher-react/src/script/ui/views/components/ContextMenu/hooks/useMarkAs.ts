@@ -3,7 +3,7 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 import type {
-  SelectionContextMenuProperties,
+  SelectionContextMenuProps,
   ItemEventParameters,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
@@ -12,7 +12,7 @@ import {
   MonomerCreationMarkAsComponentAction,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.constants';
 
-type Parameters_ = ItemEventParameters<SelectionContextMenuProperties>;
+type Parameters_ = ItemEventParameters<SelectionContextMenuProps>;
 
 const useMarkAs = () => {
   const { ketcherId } = useAppContext();

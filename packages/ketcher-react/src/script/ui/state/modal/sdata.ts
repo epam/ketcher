@@ -153,15 +153,19 @@ const onFieldNameChange = (
   const type = payload.type ?? state.result.type;
 
   let fieldValue = String(payload.fieldValue ?? '');
+  const contextSchema = sdataMap[context];
+  const field =
+    contextSchema && Object.hasOwn(contextSchema, fieldName)
+      ? contextSchema[fieldName]
+      : undefined;
 
-  if (sdataMap[context]?.[fieldName])
-    fieldValue = getSdataDefaultValue(sdataSchema, context, fieldName);
+  if (field) fieldValue = getSdataDefaultValue(sdataSchema, context, fieldName);
 
-  if (
-    fieldValue === state.result.fieldValue &&
-    sdataMap[context]?.[state.result.fieldName]
-  )
-    fieldValue = '';
+  const previousField =
+    contextSchema && Object.hasOwn(contextSchema, state.result.fieldName)
+      ? contextSchema[state.result.fieldName]
+      : undefined;
+  if (fieldValue === state.result.fieldValue && previousField) fieldValue = '';
 
   return {
     result: {

@@ -194,7 +194,7 @@ export const librarySlice: Slice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      if (state.favorites[key]) {
+      if (Object.hasOwn(state.favorites, key)) {
         delete state.favorites[key];
         localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
@@ -656,7 +656,7 @@ export const selectFilteredMonomers = createSelector(
       .map((item: MonomerOrAmbiguousType) => {
         return {
           ...item,
-          favorite: !!favorites[getMonomerUniqueKey(item)],
+          favorite: Object.hasOwn(favorites, getMonomerUniqueKey(item)),
         };
       });
   },
@@ -673,7 +673,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
       const code =
         monomerItem.props.MonomerNaturalAnalogCode ||
         NoNaturalAnalogueGroupCode;
-      if (!result[code]) {
+      if (!Object.hasOwn(result, code)) {
         result[code] = [];
       }
       result[code].push({

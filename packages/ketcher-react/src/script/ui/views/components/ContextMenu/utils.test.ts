@@ -226,6 +226,14 @@ describe('Utils', () => {
         expect(result).toBe(expectedResult);
       },
     );
+
+    it('does not treat an inherited property as present', () => {
+      const checkedObject = Object.assign(Object.create({ atoms: null }), {
+        bonds: null,
+      }) as Record<string, unknown>;
+
+      expect(onlyHasProperty(checkedObject, 'atoms')).toBe(false);
+    });
   });
 
   describe('Attachment Group creation selection', () => {

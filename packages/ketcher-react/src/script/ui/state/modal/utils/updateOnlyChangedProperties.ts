@@ -3,8 +3,11 @@ function castAtomPropToType(property, value) {
     exactChangeFlag: Number,
     unsaturatedAtom: Number,
   };
-  if (typesMapping[property]) {
-    return typesMapping[property](value);
+  const converter = Object.hasOwn(typesMapping, property)
+    ? typesMapping[property]
+    : undefined;
+  if (converter) {
+    return converter(value);
   }
   return value;
 }

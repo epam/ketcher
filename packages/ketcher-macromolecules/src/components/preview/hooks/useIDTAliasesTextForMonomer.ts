@@ -58,8 +58,11 @@ const useIDTAliasesTextForMonomer = ({
         cleanModification.charAt(0),
         cleanModification.slice(1),
       ];
-      baseToPositionsMap[base] = baseToPositionsMap[base]
-        ? [...baseToPositionsMap[base], position]
+      const positions = Object.hasOwn(baseToPositionsMap, base)
+        ? baseToPositionsMap[base]
+        : undefined;
+      baseToPositionsMap[base] = positions
+        ? [...positions, position]
         : [position];
     });
 

@@ -445,9 +445,12 @@ export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
 ) => {
-  if (!preset || !monomerGroupToPresetGroup[groupName]) return;
+  const presetGroup = Object.hasOwn(monomerGroupToPresetGroup, groupName)
+    ? monomerGroupToPresetGroup[groupName]
+    : undefined;
+  if (!preset || !presetGroup) return;
 
-  return preset[monomerGroupToPresetGroup[groupName]];
+  return preset[presetGroup];
 };
 
 export const selectActivePresetMonomerGroup = (state: RootState) =>

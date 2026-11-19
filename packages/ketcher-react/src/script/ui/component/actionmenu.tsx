@@ -315,7 +315,10 @@ function toolMargin(
   menu: MenuItem[],
   visibleTools: VisibleTools,
 ): CSSProperties {
-  if (!visibleTools[menuName]) return {};
+  const visibleTool = Object.hasOwn(visibleTools, menuName)
+    ? visibleTools[menuName]
+    : undefined;
+  if (!visibleTool) return {};
   // now not found better way
   const iconHeight =
     window.innerHeight <= 600 || window.innerWidth <= 1040 ? 32 : 40;
@@ -324,7 +327,7 @@ function toolMargin(
   const flatMenu = menu.filter(
     (item): item is string => typeof item === 'string',
   );
-  let index = flatMenu.indexOf(visibleTools[menuName]);
+  let index = flatMenu.indexOf(visibleTool);
 
   // Second level: check nested menus
   if (index === -1) {

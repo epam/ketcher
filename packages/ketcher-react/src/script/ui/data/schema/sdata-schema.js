@@ -375,7 +375,9 @@ export function getSdataDefault(
 
   if (!fieldName) return firstKeyOf(schema[context]);
 
-  return schema[context][fieldName]
-    ? schema[context][fieldName].properties.fieldValue.default
-    : '';
+  const fields = schema[context];
+  const field = Object.hasOwn(fields, fieldName)
+    ? fields[fieldName]
+    : undefined;
+  return field ? field.properties.fieldValue.default : '';
 }

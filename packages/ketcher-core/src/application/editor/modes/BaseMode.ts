@@ -157,8 +157,11 @@ export abstract class BaseMode {
     if (!this.checkIfTargetIsInput(event)) {
       const hotKeys = initHotKeys(this.keyboardEventHandlers);
       const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
+      const handler = shortcutKey
+        ? this.keyboardEventHandlers[shortcutKey]
+        : undefined;
 
-      if (shortcutKey && this.keyboardEventHandlers[shortcutKey]) {
+      if (shortcutKey && handler) {
         if (shortcutKey === 'start-new-sequence') {
           event.preventDefault();
         }

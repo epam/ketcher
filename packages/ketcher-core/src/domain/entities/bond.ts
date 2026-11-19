@@ -108,8 +108,9 @@ export class Bond extends BaseMicromoleculeEntity {
     const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
     for (const attr in this.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
-      if (key === 'stereo' || bond[key]) {
-        attrs[key] = bond[key] as never;
+      const value = bond[key];
+      if (key === 'stereo' || value) {
+        attrs[key] = value as never;
       }
     }
     return attrs;
@@ -224,7 +225,7 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
+    if (Object.hasOwn(this.attrlist, attr)) {
       return this.attrlist[attr];
     }
   }

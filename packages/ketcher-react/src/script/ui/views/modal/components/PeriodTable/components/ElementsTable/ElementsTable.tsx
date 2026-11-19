@@ -68,7 +68,10 @@ function rowPartition(elements: Element[]): Row[] {
   return elements.reduce((result: Row[], item: Element) => {
     const row = result[item.period - 1];
     if (row) {
-      if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
+      const span = Object.hasOwn(beforeSpan, item.label)
+        ? beforeSpan[item.label]
+        : undefined;
+      if (span) row.push(span);
       row.push(item);
     } else {
       result.push([item]);

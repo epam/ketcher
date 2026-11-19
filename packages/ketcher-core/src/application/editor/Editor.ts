@@ -2341,7 +2341,7 @@ export class CoreEditor {
       const naturalAnalogue = monomerItem.props?.MonomerNaturalAnalogCode;
 
       if (monomerItem.props?.modificationTypes) {
-        if (!grouped[naturalAnalogue]) {
+        if (!Object.hasOwn(grouped, naturalAnalogue)) {
           grouped[naturalAnalogue] = new Set<string>();
         }
 
@@ -2631,7 +2631,7 @@ export class CoreEditor {
       return false;
     }
     const conditions = [
-      eventHandlerName in editorTool,
+      Object.hasOwn(editorTool, eventHandlerName),
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
     ];
 

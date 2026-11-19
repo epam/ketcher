@@ -44,7 +44,7 @@ export const SUPERATOM_CLASS_TEXT = {
 };
 
 const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
-  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
+  typeof value === 'string' && Object.hasOwn(SUPERATOM_CLASS_TEXT, value);
 
 export class SGroupBracketParams {
   readonly c: Vec2;
@@ -568,7 +568,7 @@ export class SGroup {
     const crossBonds: { [key: number]: Array<number> } = {};
     mol.bonds.forEach((bond, bid: number) => {
       if (parentAtomSet.has(bond.begin) && !parentAtomSet.has(bond.end)) {
-        if (!crossBonds[bond.begin]) {
+        if (!Object.hasOwn(crossBonds, bond.begin)) {
           crossBonds[bond.begin] = [];
         }
         crossBonds[bond.begin].push(bid);
@@ -576,7 +576,7 @@ export class SGroup {
         parentAtomSet.has(bond.end) &&
         !parentAtomSet.has(bond.begin)
       ) {
-        if (!crossBonds[bond.end]) {
+        if (!Object.hasOwn(crossBonds, bond.end)) {
           crossBonds[bond.end] = [];
         }
         crossBonds[bond.end].push(bid);

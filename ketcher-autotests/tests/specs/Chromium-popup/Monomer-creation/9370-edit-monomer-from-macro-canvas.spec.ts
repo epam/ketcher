@@ -34,7 +34,6 @@ import {
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
-  undoByKeyboard,
 } from '@utils';
 
 /** Drags two alanines from the library; the last drop leaves it selected. */

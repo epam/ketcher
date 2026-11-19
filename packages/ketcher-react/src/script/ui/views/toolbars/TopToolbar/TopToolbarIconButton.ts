@@ -19,7 +19,6 @@ import { IconButton, IconButtonCustomIcon } from 'components';
 import { css } from '@emotion/react';
 
 const TopToolbarIconStyles = css`
-  border-radius: 4px;
   padding: 2px;
   width: 28px;
   height: 28px;

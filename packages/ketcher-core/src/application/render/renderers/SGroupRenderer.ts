@@ -49,8 +49,16 @@ interface DrawBracketsOptions {
   indexAttribute?: Record<string, string>;
 }
 
+interface DataSGroupValueElement {
+  element: D3SvgElementSelection<SVGGElement, void>;
+  initialPosition: Vec2;
+  labelShift: Vec2;
+}
+
 export class SGroupRenderer extends BaseRenderer {
   private labelElements: D3SvgElementSelection<SVGElement, void>[] = [];
+  private dataSGroupValueElements: DataSGroupValueElement[] = [];
+
   private atomRenderers = new Map<number, AtomRenderer>();
   private bondRenderers = new Map<number, BondRenderer>();
 
@@ -426,24 +434,31 @@ export class SGroupRenderer extends BaseRenderer {
     scaledPosition: Vec2,
     getLabelShift: (bbox: SVGRect) => Vec2,
   ): void {
-    const valueGroup = this.addLabelElement(this.canvas.append('g'));
+    const valueGroup = this.canvas.append('g');
+    if (this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      valueGroup.datum(this);
+    }
+    this.addLabelElement(valueGroup);
     const textElement = this.appendText(
       scaledPosition,
       this.sgroup.data.fieldValue,
       undefined,
       valueGroup,
     );
+    if (this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      textElement?.datum(this);
+    }
     const bbox = textElement?.node()?.getBBox();
 
     if (!bbox) {
       return;
     }
 
-    const valueBackgroundColor = this.sgroup.selected
+    const valueBackgroundColor = this.sgroupDrawingEntity.selected
       ? SELECTION_COLOR
       : CANVAS_BACKGROUND_COLOR;
 
-    valueGroup
+    const valueBackground = valueGroup
       .insert('rect', 'text')
       .attr('x', bbox.x - 1)
       .attr('y', bbox.y - 1)
@@ -454,6 +469,10 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('fill', valueBackgroundColor)
       .attr('stroke', valueBackgroundColor);
 
+    if (this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      valueBackground.datum(this);
+    }
+
     const valueBBox = valueGroup.node()?.getBBox();
 
     if (!valueBBox) {
@@ -463,6 +482,11 @@ export class SGroupRenderer extends BaseRenderer {
     const labelShift = getLabelShift(valueBBox);
 
     valueGroup.attr('transform', `translate(${labelShift.x},${labelShift.y})`);
+    this.dataSGroupValueElements.push({
+      element: valueGroup,
+      initialPosition: new Vec2(scaledPosition),
+      labelShift,
+    });
   }
 
   private appendText(
@@ -512,6 +536,7 @@ export class SGroupRenderer extends BaseRenderer {
       labelElement.remove();
     });
     this.labelElements = [];
+    this.dataSGroupValueElements = [];
   }
 
   public setVisibility(isVisible: boolean): void {
@@ -522,11 +547,39 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public drawSelection(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+    const valueBackgroundColor = this.sgroupDrawingEntity.selected
+      ? SELECTION_COLOR
+      : DATA_SGROUP_BACKGROUND;
+
+    this.dataSGroupValueElements.forEach(({ element }) => {
+      element
+        .select('rect')
+        .attr('fill', valueBackgroundColor)
+        .attr('stroke', valueBackgroundColor);
+    });
   }
 
   public moveSelection(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+    if (!this.sgroupDrawingEntity.isSelectableDataSGroup) {
+      return;
+    }
+
+    const currentPosition = Scale.modelToCanvas(
+      this.sgroupDrawingEntity.center,
+      this.editorSettings,
+    );
+
+    this.dataSGroupValueElements.forEach(
+      ({ element, initialPosition, labelShift }) => {
+        const movement = currentPosition.sub(initialPosition);
+        element.attr(
+          'transform',
+          `translate(${labelShift.x + movement.x},${
+            labelShift.y + movement.y
+          })`,
+        );
+      },
+    );
   }
 
   private getScaledBracketBox(): Box2Abs | undefined {
@@ -679,7 +732,11 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    if (!this.rootElement || !this.sgroup.bracketBox) {
+    if (
+      !this.rootElement ||
+      !this.sgroup.bracketBox ||
+      this.sgroupDrawingEntity.isSelectableDataSGroup
+    ) {
       return;
     }
 

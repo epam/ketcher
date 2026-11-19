@@ -125,6 +125,7 @@ export class RotationView extends TransientView {
   private static readonly rotationCenterSubscribers = new Set<
     (payload: RotationCenterEvent) => void
   >();
+  public static readonly viewName = 'RotationView';
 
   public static subscribeRotationHandle(
     listener: (payload: RotationHandleEvent) => void,
@@ -465,6 +466,4 @@ export class RotationView extends TransientView {
       }
     }
   }
-
-  public static readonly viewName = 'RotationView';
 }

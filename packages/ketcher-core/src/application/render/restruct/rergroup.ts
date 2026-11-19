@@ -30,6 +30,10 @@ const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);
 
 class ReRGroup extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
   public labelBox: Box2Abs | null;
   public item: RGroup;
 
@@ -37,10 +41,6 @@ class ReRGroup extends ReObject {
     super('rgroup');
     this.labelBox = null;
     this.item = rgroup;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   getAtoms(render: Render): number[] {

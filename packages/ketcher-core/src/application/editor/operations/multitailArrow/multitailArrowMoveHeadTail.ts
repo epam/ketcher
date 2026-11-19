@@ -1,6 +1,6 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
-import { type ReStruct, MultitailArrowReferenceName } from 'application/render';
+import { type ReStruct, MultitailArrowRefName } from 'application/render';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export class MultitailArrowMoveHeadTail extends BaseOperation {
@@ -21,21 +21,25 @@ export class MultitailArrowMoveHeadTail extends BaseOperation {
       return;
     }
     switch (this.name) {
-      case MultitailArrowReferenceName.HEAD:
+      case MultitailArrowRefName.HEAD: {
         this.offset = multitailArrow.moveHead(this.offset);
         break;
-      case MultitailArrowReferenceName.TOP_TAIL:
+      }
+      case MultitailArrowRefName.TOP_TAIL: {
         this.offset = multitailArrow.moveTail(this.offset, this.name);
         break;
-      case MultitailArrowReferenceName.BOTTOM_TAIL:
+      }
+      case MultitailArrowRefName.BOTTOM_TAIL: {
         this.offset = multitailArrow.moveTail(this.offset, this.name);
         break;
-      default:
+      }
+      default: {
         this.offset = multitailArrow.moveTail(
           this.offset,
           this.tailId as number,
           this.shouldNormalize,
         );
+      }
     }
     BaseOperation.invalidateItem(reStruct, MULTITAIL_ARROW_KEY, this.id, 1);
   }

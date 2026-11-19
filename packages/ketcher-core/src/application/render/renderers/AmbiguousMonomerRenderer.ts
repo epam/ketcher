@@ -25,10 +25,10 @@ type PreviewAttachmentPointParams = {
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
-    selected: string;
     hover: string;
     body: string;
     variant?: string;
+    autochainPreview: string;
   };
 
   constructor(
@@ -56,6 +56,75 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
     this.CHAIN_END_TERMINAL_INDICATOR_TEXT =
       this.monomerRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
+  }
+
+  private appendNumberOfMonomers() {
+    const isMonomersAmountTenOrMore = this.monomer.monomers.length >= 10;
+    const numberOfMonomersElement = this.rootElement
+      ?.append('g')
+      .attr(
+        'transform',
+        `translate(${
+          this.center.x -
+          this.scaledMonomerPosition.x -
+          (isMonomersAmountTenOrMore ? 2 : 0)
+        }, ${
+          this.center.y -
+          this.scaledMonomerPosition.y +
+          (this.monomer.monomerClass === KetMonomerClass.Base ? 7 : 8)
+        })`,
+      )
+      .attr('pointer-events', 'none');
+
+    numberOfMonomersElement
+      ?.append('foreignObject')
+      .attr('width', '20px')
+      .attr('height', '20px')
+      .attr('x', isMonomersAmountTenOrMore ? '-3' : '-4')
+      .attr('y', '-4')
+      .append('xhtml:div')
+      .attr(
+        'style',
+        `
+        width: ${isMonomersAmountTenOrMore ? '10px' : '8px'};
+        height: 8px;
+        border-radius: ${isMonomersAmountTenOrMore ? '20px' : '50%'};
+        border: 0.5px solid #cceaee;
+      `,
+      );
+
+    numberOfMonomersElement
+      ?.append('text')
+      .attr('x', -1.6)
+      .attr('y', 2.1)
+      .attr('font-size', '6px')
+      .attr('font-weight', 300)
+      .text(this.monomer.monomers.length);
+
+    this.raiseAttachmentPoints();
+  }
+
+  private appendPreviewAttachmentPoint(
+    params: PreviewAttachmentPointParams,
+    attachmentPointName: AttachmentPointName,
+    customAngle?: number,
+  ) {
+    const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
+      params;
+    const attachmentPointParams = this.prepareAttachmentPointsParams(
+      attachmentPointName,
+      customAngle,
+    );
+
+    return new PreviewAttachmentPoint({
+      ...attachmentPointParams,
+      connected:
+        connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
+      selected: selectedAttachmentPoint === attachmentPointName,
+      usage,
+      canvas: params.canvas,
+      applyZoomForPositionCalculation: false,
+    });
   }
 
   public get textColor() {
@@ -112,81 +181,12 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     return super.getHighlightPath(offset);
   }
 
-  private appendNumberOfMonomers() {
-    const isMonomersAmountTenOrMore = this.monomer.monomers.length >= 10;
-    const numberOfMonomersElement = this.rootElement
-      ?.append('g')
-      .attr(
-        'transform',
-        `translate(${
-          this.center.x -
-          this.scaledMonomerPosition.x -
-          (isMonomersAmountTenOrMore ? 2 : 0)
-        }, ${
-          this.center.y -
-          this.scaledMonomerPosition.y +
-          (this.monomer.monomerClass === KetMonomerClass.Base ? 7 : 8)
-        })`,
-      )
-      .attr('pointer-events', 'none');
-
-    numberOfMonomersElement
-      ?.append('foreignObject')
-      .attr('width', '20px')
-      .attr('height', '20px')
-      .attr('x', isMonomersAmountTenOrMore ? '-3' : '-4')
-      .attr('y', '-4')
-      .append('xhtml:div')
-      .attr(
-        'style',
-        `
-        width: ${isMonomersAmountTenOrMore ? '10px' : '8px'};
-        height: 8px;
-        border-radius: ${isMonomersAmountTenOrMore ? '20px' : '50%'};
-        border: 0.5px solid #cceaee;
-      `,
-      );
-
-    numberOfMonomersElement
-      ?.append('text')
-      .attr('x', -1.6)
-      .attr('y', 2.1)
-      .attr('font-size', '6px')
-      .attr('font-weight', 300)
-      .text(this.monomer.monomers.length);
-
-    this.raiseAttachmentPoints();
-  }
-
   public show(theme) {
     super.show(theme);
     this.appendNumberOfMonomers();
     if (this.enumerationElementPosition) {
       this.appendEnumeration();
     }
-  }
-
-  private appendPreviewAttachmentPoint(
-    params: PreviewAttachmentPointParams,
-    attachmentPointName: AttachmentPointName,
-    customAngle?: number,
-  ) {
-    const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
-      params;
-    const attachmentPointParams = this.prepareAttachmentPointsParams(
-      attachmentPointName,
-      customAngle,
-    );
-
-    return new PreviewAttachmentPoint({
-      ...attachmentPointParams,
-      connected:
-        connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
-      selected: selectedAttachmentPoint === attachmentPointName,
-      usage,
-      canvas: params.canvas,
-      applyZoomForPositionCalculation: false,
-    });
   }
 
   public showExternal(params: PreviewAttachmentPointParams) {
@@ -208,11 +208,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   protected get modificationConfig() {
     switch (this.monomer.monomerClass) {
-      case KetMonomerClass.AminoAcid:
+      case KetMonomerClass.AminoAcid: {
         return { backgroundId: '#modified-background', requiresFill: true };
-      case KetMonomerClass.Base:
+      }
+      case KetMonomerClass.Base: {
         return { backgroundId: '#rna-base-modified-background' };
-      case KetMonomerClass.Sugar:
+      }
+      case KetMonomerClass.Sugar: {
         // Ambiguous monomers render on a white body, so the default white sugar
         // band would be invisible — requiresFill drives the <use> fill to a dark
         // color here (the text color isn't #333333) to keep the band visible.
@@ -220,10 +222,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
           backgroundId: '#sugar-modified-background',
           requiresFill: true,
         };
-      case KetMonomerClass.Phosphate:
+      }
+      case KetMonomerClass.Phosphate: {
         return { backgroundId: '#phosphate-modified-background' };
-      default:
+      }
+      default: {
         return undefined;
+      }
     }
   }
 }

@@ -31,7 +31,7 @@ const END_V2000 = '2D 1   1.00000     0.00000     0';
 const NO_PARENT_SGROUP_ID = -1;
 type NumberTuple = [number, number];
 
-interface ParseCTFileProperties {
+interface ParseCTFileProps {
   molfileLines: string[];
   shouldReactionRelayout?: boolean;
   ignoreChiralFlag?: boolean;
@@ -73,9 +73,8 @@ export class Molfile {
     this.bondMapping = {};
   }
 
-  parseCTFile(properties: ParseCTFileProperties): Struct {
-    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } =
-      properties;
+  parseCTFile(props: ParseCTFileProps): Struct {
+    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
     let returnValue: Struct;
     if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
       returnValue = common.parseRxn(
@@ -344,7 +343,7 @@ export class Molfile {
     let index = 1;
 
     const atomsIds: number[] = [];
-    const atomsProperties: {
+    const atomsProps: {
       id: number;
       value: string;
     }[] = [];
@@ -356,17 +355,17 @@ export class Molfile {
       } else if (atom.pseudo) {
         if (atom.pseudo.length > 3) {
           label = 'A';
-          atomsProperties.push({ id, value: `'${atom.pseudo}'` });
+          atomsProps.push({ id, value: `'${atom.pseudo}'` });
         }
       } else if (atom.alias) {
-        atomsProperties.push({ id, value: atom.alias });
+        atomsProps.push({ id, value: atom.alias });
       } else if (
         !Elements.get(atom.label) &&
         !['A', 'Q', 'X', '*', 'R#'].includes(atom.label)
       ) {
         // search in generics?
         label = 'C';
-        atomsProperties.push({ id, value: atom.label });
+        atomsProps.push({ id, value: atom.label });
       }
 
       this.writeAtom(atom, label);
@@ -381,9 +380,9 @@ export class Molfile {
       this.writeBond(bond);
     });
 
-    while (atomsProperties.length > 0) {
-      this.writeAtomProps(atomsProperties[0]);
-      atomsProperties.splice(0, 1);
+    while (atomsProps.length > 0) {
+      this.writeAtomProps(atomsProps[0]);
+      atomsProps.splice(0, 1);
     }
 
     const chargeList: NumberTuple[] = [];
@@ -582,7 +581,7 @@ export class Molfile {
         expandedGroups.push(sg.id + 1);
     });
 
-    if (expandedGroups.length) {
+    if (expandedGroups.length > 0) {
       const expandedGroupsLine = `M  SDS EXP  ${
         expandedGroups.length
       }   ${expandedGroups.join('   ')}`;
@@ -603,7 +602,7 @@ export class Molfile {
       }
 
       const positions = getAtomPositions(sgroup.atoms, mol.atoms);
-      if (!positions.length) {
+      if (positions.length === 0) {
         return;
       }
 
@@ -696,11 +695,11 @@ export class Molfile {
     this.writeCR();
   }
 
-  private writeAtomProps(properties) {
+  private writeAtomProps(props) {
     this.write('A  ');
-    this.writePaddedNumber(properties.id + 1, 3);
+    this.writePaddedNumber(props.id + 1, 3);
     this.writeCR();
-    this.writeCR(properties.value);
+    this.writeCR(props.value);
   }
 
   private writeAtomPropList(propertyId: string, values: NumberTuple[]) {

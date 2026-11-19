@@ -113,6 +113,8 @@
       "invalidPhosphatePositionAttachmentPoints": "La posición 3′ requiere fosfato R1 y azúcar R2; la posición 5′ requiere fosfato R2 y azúcar R1.",
       "phosphatePositionNotSelected": "Debes elegir la posición del fosfato (5' o 3').",
       "usedAttachmentPointsWarning": "Eliminar el punto de unión {points} provocará la eliminación de los enlaces que usan esos puntos de unión al guardar.",
+      "editAllPresetWarning": "La versión editada del monómero debe ser del mismo tipo de monómero y debe tener el punto de unión {points}, porque el monómero participa en un preajuste.",
+      "editAllPresetError": "Los cambios realizados en el monómero impiden que participe en un preajuste. El monómero debe ser de tipo {type} y contener los puntos de unión {points}.",
       "aminoAcidLeavingGroupWarning": "Los monómeros de aminoácido suelen tener un hidrógeno como grupo saliente para R1 y un hidroxilo como grupo saliente para R2. ¿Deseas continuar con los puntos de unión actuales?",
       "sugarLeavingGroupWarning": "Los monómeros de azúcar suelen tener un hidrógeno como grupo saliente para R1 y R2, y un hidroxilo como grupo saliente para R3. ¿Deseas continuar con los puntos de unión actuales?",
       "baseLeavingGroupWarning": "Los monómeros de base suelen tener un hidrógeno como grupo saliente para R1. ¿Deseas continuar con los puntos de unión actuales?",

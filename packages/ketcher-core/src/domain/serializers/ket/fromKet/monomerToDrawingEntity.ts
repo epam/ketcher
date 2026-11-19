@@ -24,7 +24,7 @@ import {
   getTemplateAttachmentPoints,
 } from './monomerTemplateUtilities';
 
-export function templateToMonomerProperties(template: IKetMonomerTemplate) {
+export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
     id: template.id,
     Name: template.fullName ?? template.name ?? template.alias ?? template.id,
@@ -65,7 +65,7 @@ export function monomerToDrawingEntity(
       label: alias ?? id,
       colorScheme: undefined,
       favorite: false,
-      props: templateToMonomerProperties(template),
+      props: templateToMonomerProps(template),
       attachmentPoints: getTemplateAttachmentPoints(template),
       seqId: seqid,
       ...(expanded !== undefined && {
@@ -103,7 +103,7 @@ export function createMonomersForVariantMonomer(
       label: monomerTemplate.alias,
       expanded: false,
       struct: convertMonomerTemplateToStruct(monomerTemplate),
-      props: templateToMonomerProperties(monomerTemplate),
+      props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: getTemplateAttachmentPoints(monomerTemplate),
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
@@ -140,6 +140,7 @@ export function variantMonomerToDrawingEntity(
       id: template.id,
       subtype: template.subtype,
       label: node.alias,
+      seqId: node.seqid,
       options: template.options,
       idtAliases: template.idtAliases,
       isAmbiguous: true,

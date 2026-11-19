@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import { vi } from 'vitest';
 import * as moleculeToKet from 'domain/serializers/ket/toKet/moleculeToKet';
 import * as moleculeToStruct from 'domain/serializers/ket/fromKet/moleculeToStruct';
 import { parseMoleculeNode } from 'domain/serializers/ket/fromKet/hapticKet';
@@ -385,7 +386,7 @@ describe('deserialize (ToStruct)', () => {
     expect(ket.deserialize(withoutHeaderKet).name).toBeFalsy();
   });
   it('rxnToStruct', () => {
-    const spy = jest.spyOn(rxnToStruct, 'rxnToStruct');
+    const spy = vi.spyOn(rxnToStruct, 'rxnToStruct');
     ket.deserialize(rxnKet);
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.rxnArrows).toBeDefined();
@@ -403,7 +404,7 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[1].value.rxnPluses.size).toEqual(2);
   });
   it('simpleObjectToStruct', () => {
-    const spy = jest.spyOn(simpleObjectToStruct, 'simpleObjectToStruct');
+    const spy = vi.spyOn(simpleObjectToStruct, 'simpleObjectToStruct');
     ket.deserialize(simpleObjectKet);
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.simpleObjects).toBeDefined();
@@ -416,14 +417,14 @@ describe('deserialize (ToStruct)', () => {
     ).toBeTruthy();
   });
   it('textToStruct', () => {
-    const spy = jest.spyOn(textToStruct, 'textToStruct');
+    const spy = vi.spyOn(textToStruct, 'textToStruct');
     ket.deserialize(textKet);
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.texts).toBeDefined();
     expect(spy.mock.results[0].value.texts.get(0) instanceof Text).toBeTruthy();
   });
   it('moleculeToStruct', () => {
-    const spy = jest.spyOn(moleculeToStruct, 'moleculeToStruct');
+    const spy = vi.spyOn(moleculeToStruct, 'moleculeToStruct');
     ket.deserialize(moleculeKet);
     expect(spy).toHaveBeenCalled();
     // atoms
@@ -468,7 +469,7 @@ describe('deserialize (ToStruct)', () => {
     expect(ket.deserialize(sgroupPartiallyInvalidAtomKet).sgroups.size).toBe(1);
   });
   it('filters out dangling atom references from S-group (#1804)', () => {
-    const spy = jest.spyOn(moleculeToStruct, 'moleculeToStruct');
+    const spy = vi.spyOn(moleculeToStruct, 'moleculeToStruct');
     spy.mockClear();
     ket.deserialize(sgroupPartiallyInvalidAtomKet);
     expect(spy.mock.results[0].value.sgroups.get(0).atoms).toEqual([0, 1]);
@@ -477,7 +478,7 @@ describe('deserialize (ToStruct)', () => {
     expect(ket.deserialize(sgroupAllInvalidAtomsKet).sgroups.size).toBe(0);
   });
   it('rgroupToStruct', () => {
-    const spy = jest.spyOn(rgroupToStruct, 'rgroupToStruct');
+    const spy = vi.spyOn(rgroupToStruct, 'rgroupToStruct');
     ket.deserialize(moleculeRgroupKet);
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value).toBeTruthy();
@@ -489,7 +490,7 @@ describe('deserialize (ToStruct)', () => {
     ).toBeTruthy();
   });
   it('logs an error when R-group logic is missing', () => {
-    const errorSpy = jest
+    const errorSpy = vi
       .spyOn(KetcherLogger, 'error')
       .mockImplementation(() => undefined);
 
@@ -502,7 +503,7 @@ describe('deserialize (ToStruct)', () => {
     errorSpy.mockRestore();
   });
   it('validation function', () => {
-    const spy = jest.spyOn(validate, 'isValidKet');
+    const spy = vi.spyOn(validate, 'isValidKet');
     ket.deserialize(preparedKet);
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value).toBeTruthy();
@@ -637,7 +638,7 @@ describe('serialize (ToKet)', () => {
     expect(structPlus).toEqual(plusKet);
   });
   it('moleculeToKet', () => {
-    const spy = jest.spyOn(moleculeToKet, 'moleculeToKet');
+    const spy = vi.spyOn(moleculeToKet, 'moleculeToKet');
     ket.serialize(moleculeContentStruct);
     // atoms
     expect(spy).toHaveBeenCalled();
@@ -676,7 +677,7 @@ describe('serialize (ToKet)', () => {
     expect(spy.mock.results[2].value.sgroups[5].connectivity).toEqual('HT');
   });
   it('rgroupToKet', () => {
-    const spy = jest.spyOn(rgroupToKet, 'rgroupToKet');
+    const spy = vi.spyOn(rgroupToKet, 'rgroupToKet');
     const result = JSON.parse(ket.serialize(contentRgroupStruct)).rg14;
     expect(spy).toHaveBeenCalled();
     expect(result).toBeTruthy();
@@ -685,8 +686,8 @@ describe('serialize (ToKet)', () => {
     expect(result.rlogic.number).toEqual(14);
   });
   it('rxnToKet', () => {
-    const spyArrow = jest.spyOn(rxnToKet, 'arrowToKet');
-    const spyPlus = jest.spyOn(rxnToKet, 'plusToKet');
+    const spyArrow = vi.spyOn(rxnToKet, 'arrowToKet');
+    const spyPlus = vi.spyOn(rxnToKet, 'plusToKet');
     const result = JSON.parse(ket.serialize(prepareStruct));
     const plus = result.root.nodes.filter((item) => item.type === 'plus');
     const arrow = result.root.nodes.filter((item) => item.type === 'arrow');
@@ -697,7 +698,7 @@ describe('serialize (ToKet)', () => {
     expect(arrow[0].data.mode).toEqual('open-angle');
   });
   it('prepareStructForKet', () => {
-    const spy = jest.spyOn(prepareStructForKet, 'prepareStructForKet');
+    const spy = vi.spyOn(prepareStructForKet, 'prepareStructForKet');
     ket.serialize(prepareStruct);
     const preparedItems = spy.mock.results[0].value;
     const molecule = preparedItems.find((item) => item.type === 'molecule');

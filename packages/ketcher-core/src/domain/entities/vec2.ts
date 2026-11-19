@@ -34,36 +34,6 @@ export class Vec2 {
   static readonly ZERO = new Vec2(0, 0);
   static readonly UNIT = new Vec2(1, 1);
 
-  x: number;
-  y: number;
-  z: number;
-
-  constructor(point: Point);
-  constructor(x?: number, y?: number, z?: number);
-  constructor(...arguments_: Vec2ConstructorArguments) {
-    if (arguments_.length === 0) {
-      this.x = 0;
-      this.y = 0;
-      this.z = 0;
-    } else if (arguments_.length === 1) {
-      const point: Point =
-        typeof arguments_[0] === 'object' ? arguments_[0] : {};
-      this.x = toNumber(point.x || 0);
-      this.y = toNumber(point.y || 0);
-      this.z = toNumber(point.z || 0);
-    } else if (arguments_.length === 2) {
-      this.x = toNumber(arguments_[0] || 0);
-      this.y = toNumber(arguments_[1] || 0);
-      this.z = 0;
-    } else if (arguments_.length === 3) {
-      this.x = toNumber(arguments_[0] ?? NaN);
-      this.y = toNumber(arguments_[1] ?? NaN);
-      this.z = toNumber(arguments_[2] ?? NaN);
-    } else {
-      throw new Error('Vec2(): invalid arguments');
-    }
-  }
-
   static dist(a: Vec2, b: Vec2): number {
     return this.diff(a, b).length();
   }
@@ -141,6 +111,66 @@ export class Vec2 {
 
   static crossProduct(v1: Vec2, v2: Vec2): number {
     return v1.x * v2.y - v1.y * v2.x;
+  }
+
+  static radiansToDegrees(radians: number) {
+    return radians * (180 / Math.PI);
+  }
+
+  static degrees_to_radians(degrees: number) {
+    return (degrees * Math.PI) / 180;
+  }
+
+  static oxAngleForVector(v1: Vec2, v2: Vec2): number {
+    return Math.atan2(v2.y - v1.y, v2.x - v1.x);
+  }
+
+  static findSecondPoint(
+    startPoint: { x: number; y: number },
+    lineLength: number,
+    lineAngleRadians: number,
+  ) {
+    const cos = Math.cos(lineAngleRadians);
+    const sin = Math.sin(lineAngleRadians);
+
+    const deltaX = lineLength * cos;
+    const deltaY = lineLength * sin;
+
+    const endPoint = {
+      x: startPoint.x + deltaX,
+      y: startPoint.y + deltaY,
+    };
+    return endPoint;
+  }
+
+  x: number;
+  y: number;
+  z: number;
+
+  constructor(point: Point);
+  constructor(x?: number, y?: number, z?: number);
+  constructor(...arguments_: Vec2ConstructorArguments) {
+    if (arguments_.length === 0) {
+      this.x = 0;
+      this.y = 0;
+      this.z = 0;
+    } else if (arguments_.length === 1) {
+      const point: Point =
+        typeof arguments_[0] === 'object' ? arguments_[0] : {};
+      this.x = toNumber(point.x || 0);
+      this.y = toNumber(point.y || 0);
+      this.z = toNumber(point.z || 0);
+    } else if (arguments_.length === 2) {
+      this.x = toNumber(arguments_[0] || 0);
+      this.y = toNumber(arguments_[1] || 0);
+      this.z = 0;
+    } else if (arguments_.length === 3) {
+      this.x = toNumber(arguments_[0] ?? NaN);
+      this.y = toNumber(arguments_[1] ?? NaN);
+      this.z = toNumber(arguments_[2] ?? NaN);
+    } else {
+      throw new Error('Vec2(): invalid arguments');
+    }
   }
 
   length(): number {
@@ -309,35 +339,5 @@ export class Vec2 {
 
   oxAngle(): number {
     return Math.atan2(this.y, this.x);
-  }
-
-  static radiansToDegrees(radians: number) {
-    return radians * (180 / Math.PI);
-  }
-
-  static degrees_to_radians(degrees: number) {
-    return (degrees * Math.PI) / 180;
-  }
-
-  static oxAngleForVector(v1: Vec2, v2: Vec2): number {
-    return Math.atan2(v2.y - v1.y, v2.x - v1.x);
-  }
-
-  static findSecondPoint(
-    startPoint: { x: number; y: number },
-    lineLength: number,
-    lineAngleRadians: number,
-  ) {
-    const cos = Math.cos(lineAngleRadians);
-    const sin = Math.sin(lineAngleRadians);
-
-    const deltaX = lineLength * cos;
-    const deltaY = lineLength * sin;
-
-    const endPoint = {
-      x: startPoint.x + deltaX,
-      y: startPoint.y + deltaY,
-    };
-    return endPoint;
   }
 }

@@ -72,7 +72,20 @@ const SUPERSCRIPT_FLAG = 64;
 
 const SCALE = 40; // from ketcher-core
 
+function normalizeTextWhitespace(text: string): string {
+  return text
+    .split(/([^\S\r\n]+)/)
+    .map((part, index) =>
+      index % 2 === 1 ? '\u00a0'.repeat(part.length) : part,
+    )
+    .join('');
+}
+
 class ReText extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
@@ -81,12 +94,8 @@ class ReText extends ReObject {
     this.item = text;
   }
 
-  static isSelectable() {
-    return true;
-  }
-
   getReferencePoints(): Array<Vec2> {
-    if (!this.paths.length) return [];
+    if (this.paths.length === 0) return [];
 
     const { p0, p1 } = this.getRelBox(this.paths);
 
@@ -175,7 +184,7 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-    if (!paper || !this.paths.length) return null;
+    if (this.paths.length === 0 || !paper) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
@@ -238,8 +247,7 @@ class ReText extends ReObject {
       } else {
         textNodes.forEach((textNode: SerializedTextNode) => {
           const styles = this.getStylesFromTextNode(textNode, options);
-          const text =
-            textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
+          const text = normalizeTextWhitespace(textNode.text) || '\u00a0';
 
           const path = paper.text(paperScale.x, paperScale.y, text).attr({
             font: options.font,

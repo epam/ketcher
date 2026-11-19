@@ -17,7 +17,7 @@ type TestSelectionPoint = ReturnType<RaphaelPaper['circle']>;
 const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
 const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
-export enum MultitailArrowReferenceName {
+export enum MultitailArrowRefName {
   HEAD = 'head',
   TAILS = 'tails',
   TOP_TAIL = 'topTail',
@@ -26,7 +26,7 @@ export enum MultitailArrowReferenceName {
 }
 
 export interface MultitailArrowReferencePosition {
-  name: MultitailArrowReferenceName;
+  name: MultitailArrowRefName;
   isLine: boolean;
   tailId: number | null;
 }
@@ -46,20 +46,48 @@ export class ReMultitailArrow extends ReObject {
   static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
   static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
 
-  private testSelectionPoints: TestSelectionPoint[] = [];
-
   static isSelectable(): boolean {
     return true;
   }
 
   static getTailIdFromRefName(name: string): number | null {
-    if (name.startsWith(MultitailArrowReferenceName.TAILS)) {
+    if (name.startsWith(MultitailArrowRefName.TAILS)) {
       return Number.parseInt(
-        name.replace(`${MultitailArrowReferenceName.TAILS}-`, ''),
+        name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
       );
     }
     return null;
   }
+
+  static drawSingleLineHover(
+    builder: PathBuilder,
+    offset: number,
+    lineStart: Vec2,
+    lineEnd: Vec2,
+    verticalDirection: -1 | 1,
+    horizontalDirection: -1 | 1,
+  ): void {
+    const cubicBezierOffset =
+      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+    const start = lineStart.add(
+      new Vec2(offset * horizontalDirection, offset * verticalDirection),
+    );
+    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
+    builder
+      .addLine(start)
+      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
+        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
+      )
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
+        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
+      )
+      .addLine(end);
+  }
+
+  private testSelectionPoints: TestSelectionPoint[] = [];
 
   constructor(public multitailArrow: MultitailArrow) {
     super(MULTITAIL_ARROW_KEY);
@@ -100,33 +128,6 @@ export class ReMultitailArrow extends ReObject {
     referencePositions = this.getReferencePositions(renderOptions),
   ) {
     return this.multitailArrow.getReferenceLines(referencePositions);
-  }
-
-  static drawSingleLineHover(
-    builder: PathBuilder,
-    offset: number,
-    lineStart: Vec2,
-    lineEnd: Vec2,
-    verticalDirection: -1 | 1,
-    horizontalDirection: -1 | 1,
-  ): void {
-    const cubicBezierOffset = horizontalDirection * this.CUBIC_BEZIER_OFFSET;
-    const start = lineStart.add(
-      new Vec2(offset * horizontalDirection, offset * verticalDirection),
-    );
-    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
-    builder
-      .addLine(start)
-      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
-      .addQuadraticBezierCurve(
-        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
-        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
-      )
-      .addQuadraticBezierCurve(
-        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
-        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
-      )
-      .addLine(end);
   }
 
   buildFrame(renderOptions: RenderOptions): string {
@@ -443,26 +444,26 @@ export class ReMultitailArrow extends ReObject {
           ? point.calculateDistanceToLine(value as Line)
           : Vec2.dist(point, value as Vec2);
         const tailId = ReMultitailArrow.getTailIdFromRefName(name);
-        let referenceName: MultitailArrowReferenceName;
+        let referenceName: MultitailArrowRefName;
         if (typeof tailId === 'number') {
-          referenceName = MultitailArrowReferenceName.TAILS;
+          referenceName = MultitailArrowRefName.TAILS;
         } else if (
           [
-            MultitailArrowReferenceName.HEAD,
-            MultitailArrowReferenceName.BOTTOM_TAIL,
-            MultitailArrowReferenceName.TOP_TAIL,
-          ].includes(name as MultitailArrowReferenceName)
+            MultitailArrowRefName.HEAD,
+            MultitailArrowRefName.BOTTOM_TAIL,
+            MultitailArrowRefName.TOP_TAIL,
+          ].includes(name as MultitailArrowRefName)
         ) {
-          referenceName = name as MultitailArrowReferenceName;
+          referenceName = name as MultitailArrowRefName;
         } else {
-          referenceName = MultitailArrowReferenceName.SPINE;
+          referenceName = MultitailArrowRefName.SPINE;
         }
 
         return distance < accumulator.distance
           ? {
               distance,
               ref:
-                referenceName === MultitailArrowReferenceName.SPINE
+                referenceName === MultitailArrowRefName.SPINE
                   ? null
                   : {
                       name: referenceName,

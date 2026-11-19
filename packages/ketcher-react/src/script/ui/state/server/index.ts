@@ -46,19 +46,22 @@ export function checkServer() {
   return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
 
-    server.then(
-      (res) =>
-        dispatch(
-          appUpdate({
-            indigoVersion: res?.indigoVersion,
-            imagoVersions: res?.imagoVersions,
-            server: res?.isAvailable,
-          }),
-        ),
-      (error: unknown) => {
-        editor?.errorHandler?.(String(error));
-      },
-    );
+    void (async () => {
+      let res;
+      try {
+        res = await server;
+      } catch (e: unknown) {
+        editor?.errorHandler?.(String(e));
+        return;
+      }
+      return dispatch(
+        appUpdate({
+          indigoVersion: res?.indigoVersion,
+          imagoVersions: res?.imagoVersions,
+          server: res?.isAvailable,
+        }),
+      );
+    })();
   };
 }
 
@@ -67,15 +70,17 @@ export function recognize(file: File | null, version: string) {
     const { server, editor } = getState();
     const rec = server.recognize;
 
-    const process = rec(file as Blob, version).then(
-      (res) => {
-        dispatch(setStruct(res.struct));
-      },
-      (error) => {
+    const process = (async () => {
+      let res;
+      try {
+        res = await rec(file as Blob, version);
+      } catch (e) {
         dispatch(setStruct(null));
-        editor?.errorHandler?.(String(error));
-      },
-    );
+        editor?.errorHandler?.(String(e));
+        return;
+      }
+      dispatch(setStruct(res.struct));
+    })();
     dispatch(setStruct(process));
   };
 }
@@ -108,7 +113,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
 }
 
 export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
-  return (dispatch: AppDispatch, getState: () => StoreState) => {
+  return async (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
     const struct = editor.struct();
 
@@ -121,15 +126,19 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
     const options = getState().options.getServerSettings();
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
 
-    return serverCall<CheckResult>(editor, server, 'check', options)
-      .then((res) => {
-        res = Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
-        dispatch(checkErrors(res));
-      })
-      .catch((error) => {
-        KetcherLogger.error('index.js::check', error);
-        editor?.errorHandler?.(String(error));
-      });
+    try {
+      const res = await serverCall<CheckResult>(
+        editor,
+        server,
+        'check',
+        options,
+      );
+      Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
+      dispatch(checkErrors(res));
+    } catch (e) {
+      KetcherLogger.error('index.js::check', e);
+      editor?.errorHandler?.(String(e));
+    }
   };
 }
 
@@ -138,7 +147,7 @@ export function automap(res: AutomapRequest) {
 }
 
 export function analyse(): AppThunk {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     // reset values to initial state
     dispatch({
       type: 'ANALYSE_LOADING',
@@ -155,17 +164,21 @@ export function analyse(): AppThunk {
       ],
     };
 
-    return serverCall(editor, server, 'calculate', serverSettings)
-      .then((values) =>
-        dispatch({
-          type: 'CHANGE_ANALYSE',
-          data: { values },
-        }),
-      )
-      .catch((error) => {
-        KetcherLogger.error('index.js::analyse', error);
-        editor?.errorHandler?.(String(error));
+    try {
+      const values = await serverCall(
+        editor,
+        server,
+        'calculate',
+        serverSettings,
+      );
+      await dispatch({
+        type: 'CHANGE_ANALYSE',
+        data: { values },
       });
+    } catch (e) {
+      KetcherLogger.error('index.js::analyse', e);
+      editor?.errorHandler?.(String(e));
+    }
   };
 }
 
@@ -181,11 +194,18 @@ export function serverTransform(
     opts.data = data;
     dispatch(indigoVerification(true));
 
-    serverCall<LayoutResult>(state.editor, state.server, method, opts, struct)
-      .then((res) => {
+    void (async () => {
+      try {
+        const res = await serverCall<LayoutResult>(
+          state.editor,
+          state.server,
+          method,
+          opts,
+          struct,
+        );
         const loadedStruct = new KetSerializer().deserialize(res.struct);
 
-        return dispatch(
+        await dispatch(
           load(loadedStruct, {
             preserveViewport:
               method === 'aromatize' || method === 'dearomatize',
@@ -193,14 +213,13 @@ export function serverTransform(
             method,
           }),
         );
-      })
-      .catch((error) => {
-        KetcherLogger.error('index.js::serverTransform', error);
-        state.editor?.errorHandler?.(String(error));
-      })
-      .finally(() => {
+      } catch (e) {
+        KetcherLogger.error('index.js::serverTransform', e);
+        state.editor?.errorHandler?.(String(e));
+      } finally {
         dispatch(indigoVerification(false));
-      });
+      }
+    })();
     // TODO: notification
   };
 }
@@ -218,7 +237,7 @@ function resetStereoFlagsPosition(struct: Struct): void {
 }
 
 // TODO: serverCall function should not be exported
-export function serverCall<T>(
+export async function serverCall<T>(
   editor: Editor,
   server: Api,
   method: ServerTransformMethod,
@@ -284,5 +303,6 @@ export function serverCall<T>(
     ...(options.data ?? {}),
   };
 
-  return server.then(() => call(request, omit('data', options)));
+  await server;
+  return call(request, omit('data', options));
 }

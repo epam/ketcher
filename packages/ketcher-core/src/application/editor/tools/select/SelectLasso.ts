@@ -20,6 +20,8 @@ import type { SelectionLassoViewParameters } from 'application/render/renderers/
 import { Vec2 } from 'domain/entities';
 
 export class SelectLasso extends SelectBase {
+  protected readonly autoScrollEnabled = false;
+
   selectionViewParams: SelectionLassoViewParameters = {
     type: 'lasso',
     path: [],

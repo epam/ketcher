@@ -163,7 +163,7 @@ describe('macromolecule monomer creation menu', () => {
 
   it('restores hover state without changing the selection', () => {
     const monomer = createMonomer();
-    const redrawHover = jest.fn();
+    const redrawHover = vi.fn();
     monomer.renderer = { redrawHover } as unknown as BaseMonomer['renderer'];
     const clear = highlightMonomers([monomer]);
     expect(monomer.hovered).toBe(true);
@@ -177,8 +177,8 @@ describe('macromolecule monomer creation menu', () => {
 
   it('highlights sequence symbols using their background renderer', () => {
     const monomer = createMonomer();
-    const drawBackgroundElementHover = jest.fn();
-    const removeBackgroundElementHover = jest.fn();
+    const drawBackgroundElementHover = vi.fn();
+    const removeBackgroundElementHover = vi.fn();
     monomer.renderer = Object.assign(
       Object.create(BaseSequenceItemRenderer.prototype),
       { drawBackgroundElementHover, removeBackgroundElementHover },

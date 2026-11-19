@@ -591,7 +591,7 @@ export class Molfile {
         expandedGroups.push(sg.id + 1);
     });
 
-    if (expandedGroups.length) {
+    if (expandedGroups.length > 0) {
       const expandedGroupsLine = `M  SDS EXP  ${
         expandedGroups.length
       }   ${expandedGroups.join('   ')}`;
@@ -612,7 +612,7 @@ export class Molfile {
       }
 
       const positions = getAtomPositions(sgroup.atoms, mol.atoms);
-      if (!positions.length) {
+      if (positions.length === 0) {
         return;
       }
 

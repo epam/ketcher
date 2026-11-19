@@ -4,7 +4,7 @@ Cleans up GitHub auto-generated release notes for Ketcher releases.
 
 Two modes:
   clean    Take one raw (or already-sectioned) release body on stdin,
-           strip "by @author in <PR URL>" suffixes, look up each ticket's
+           strip "by @author [with @co-author] in <PR URL>" suffixes, look up each ticket's
            GitHub issue type via `gh issue view --json issueType`, drop
            Autotest/Backmerge/Refactor/Task entries into an "excluded" bucket, flag
            anything with no ticket number or no resolvable issue type, and
@@ -39,17 +39,42 @@ ISSUE_TYPE_TO_CATEGORY = {
 }
 EXCLUDE_TITLE_PREFIXES = re.compile(r"^(autotest s?|backmerge|refactor)\b", re.IGNORECASE)
 # Our own prepare-release commit titles - never real changelog content, always drop.
+# Also matches hand-written variants ("- updated ketcher to 3.21.0-rc.2",
+# "Bumped ketcher to X.Y.0-rc.N"); "update ketcher to" only counts when followed
+# by a version, so a real "Update Ketcher to support X" title is not dropped.
 VERSION_BUMP_TITLE_RE = re.compile(
-    r"^(update ketcher to (release candidate|public version)|bump ketcher)\b", re.IGNORECASE
+    r"^(?:-\s*)?(updated? ketcher to (release candidate|public version|v?\d)|bump(ed)? ketcher)\b",
+    re.IGNORECASE,
 )
 SKIP_LINE_PREFIXES = ("**full changelog**",)
 
+# One or more ticket refs before the title: "#123 - x" or "#123, #456 - x".
+TICKETS_PATTERN = r"(?P<tickets>#\d+(?:\s*,\s*#\d+)*)"
+DASH_PATTERN = r"\s*[-–—]\s*"
+# PR titles don't always put a dash after the ticket ("#3709 Displaying ...");
+# raw lines accept a plain space too, or such entries end up flagged as having
+# no ticket number. Sectioned drafts are produced by format_entry, always dashed.
+RAW_SEPARATOR_PATTERN = r"(?:" + DASH_PATTERN + r"|\s+)"
+# GitHub's attribution suffix: "by @a in <url>", and co-authored PRs as
+# "by @a with @b in <url>" / "by @a, @b and @c in <url>".
+AUTHOR_SUFFIX_PATTERN = (
+    r"\s+by\s+@\S+(?:(?:\s*,|\s+and|\s+with)\s+@\S+)*\s+in\s+https?://\S+"
+)
 RAW_LINE_RE = re.compile(
-    r"^\*\s+#(?P<num>\d+)\s*[-–]\s*(?P<title>.*?)"
-    r"(?:\s+by\s+@\S+\s+in\s+https?://\S+)?\s*$"
+    r"^\*\s+" + TICKETS_PATTERN + RAW_SEPARATOR_PATTERN + r"(?P<title>.*?)"
+    r"(?:" + AUTHOR_SUFFIX_PATTERN + r")?\s*$"
 )
 SECTION_HEADER_RE = re.compile(r"^###\s+(.+?)\s*$", re.MULTILINE)
-BULLET_RE = re.compile(r"^\*\s+#(?P<num>\d+)\s*[–-]\s*(?P<title>.+?)\s*$")
+BULLET_RE = re.compile(r"^\*\s+" + TICKETS_PATTERN + DASH_PATTERN + r"(?P<title>.+?)\s*$")
+
+
+def ticket_numbers(tickets):
+    """'#5857, #5676' -> ['5857', '5676']"""
+    return re.findall(r"\d+", tickets)
+
+
+def format_entry(nums, title):
+    return "* " + ", ".join(f"#{n}" for n in nums) + f" – {title}"
 
 
 def gh_issue_type(owner, repo, number):
@@ -83,7 +108,7 @@ def parse_raw_body(body, owner, repo):
         m = RAW_LINE_RE.match(line)
         if not m:
             bare_title = re.sub(r"^\*\s+", "", line)
-            bare_title = re.sub(r"\s+by\s+@\S+\s+in\s+https?://\S+\s*$", "", bare_title)
+            bare_title = re.sub(AUTHOR_SUFFIX_PATTERN + r"\s*$", "", bare_title)
             if VERSION_BUMP_TITLE_RE.match(bare_title):
                 excluded.append({"title": bare_title, "reason": "version bump commit, not a changelog entry"})
             elif EXCLUDE_TITLE_PREFIXES.match(bare_title):
@@ -91,7 +116,10 @@ def parse_raw_body(body, owner, repo):
             else:
                 flagged.append({"line": line, "reason": "no ticket number found"})
             continue
-        num, title = m.group("num"), m.group("title").strip()
+        nums, title = ticket_numbers(m.group("tickets")), m.group("title").strip()
+        # Multi-ticket entries ("#5857, #5676 - ...") are categorized by their
+        # first ticket's issue type; all numbers are kept in the entry.
+        num = nums[0]
 
         if VERSION_BUMP_TITLE_RE.match(title):
             excluded.append({"num": num, "title": title, "reason": "version bump commit, not a changelog entry"})
@@ -113,14 +141,21 @@ def parse_raw_body(body, owner, repo):
             flagged.append({"num": num, "title": title,
                              "reason": f"unrecognized issue type '{issue_type}'"})
             continue
-        categories[category].append(f"* #{num} – {title}")
+        categories[category].append(format_entry(nums, title))
 
     return categories, excluded, flagged
 
 
 def parse_sectioned_body(body):
-    """A body a human already reviewed: '### Category' headers with '* #N - title' bullets."""
+    """A body a human already reviewed: '### Category' headers with '* #N - title' bullets.
+
+    Returns (categories, flagged). Any '*' bullet that can't be parsed, or that
+    appears before the first '###' header, goes to `flagged` instead of being
+    silently dropped - these entries were already human-approved, so losing one
+    without a trace is the worst failure mode here.
+    """
     categories = {c: [] for c in CATEGORY_ORDER}
+    flagged = []
     current = None
     for line in body.splitlines():
         line = line.rstrip()
@@ -129,10 +164,19 @@ def parse_sectioned_body(body):
             current = header.group(1).strip()
             categories.setdefault(current, [])
             continue
-        bullet = BULLET_RE.match(line.strip())
-        if bullet and current:
-            categories[current].append(f"* #{bullet.group('num')} – {bullet.group('title').strip()}")
-    return categories
+        stripped = line.strip()
+        if not stripped.startswith("*"):
+            continue  # blanks, "## What's Changed", "---", "- " notes, etc.
+        bullet = BULLET_RE.match(stripped)
+        if not bullet:
+            flagged.append({"line": stripped, "reason": "unparseable bullet in an already-sectioned body"})
+            continue
+        if current is None:
+            flagged.append({"line": stripped, "reason": "bullet before any '###' section header"})
+            continue
+        nums = ticket_numbers(bullet.group("tickets"))
+        categories[current].append(format_entry(nums, bullet.group("title").strip()))
+    return categories, flagged
 
 
 def looks_sectioned(body):
@@ -161,13 +205,14 @@ def cmd_clean(args):
 def cmd_combine(args):
     merged = {c: [] for c in CATEGORY_ORDER}
     seen_nums = set()
-    all_excluded, all_flagged = [], []
+    all_excluded, all_flagged, sectioned_flagged = [], [], []
 
     for path in args.files:
         with open(path) as f:
             body = f.read()
         if looks_sectioned(body):
-            categories = parse_sectioned_body(body)
+            categories, flagged = parse_sectioned_body(body)
+            sectioned_flagged.extend({**item, "file": path} for item in flagged)
         else:
             categories, excluded, flagged = parse_raw_body(body, args.owner, args.repo)
             all_excluded.extend(excluded)
@@ -176,16 +221,23 @@ def cmd_combine(args):
         for name, entries in categories.items():
             merged.setdefault(name, [])
             for entry in entries:
-                m = re.match(r"^\* #(\d+)", entry)
-                num = m.group(1) if m else entry
-                if num in seen_nums:
-                    continue
-                seen_nums.add(num)
+                m = re.match(r"^\*\s+(#\d+(?:\s*,\s*#\d+)*)", entry)
+                nums = set(ticket_numbers(m.group(1))) if m else {entry}
+                if nums <= seen_nums:
+                    continue  # every ticket in this entry is already listed
+                seen_nums.update(nums)
                 merged[name].append(entry)
 
+    all_flagged.extend(sectioned_flagged)
     if args.report:
         report = {"excluded": all_excluded, "flagged": all_flagged}
         print(json.dumps(report, indent=2), file=sys.stderr)
+    elif sectioned_flagged:
+        # Entries a human already approved would otherwise vanish without a
+        # trace - warn even when --report wasn't asked for.
+        print("WARNING: lines left out of the combined body (not parseable as entries):",
+              file=sys.stderr)
+        print(json.dumps(sectioned_flagged, indent=2), file=sys.stderr)
     print(render_categories(merged))
 
 

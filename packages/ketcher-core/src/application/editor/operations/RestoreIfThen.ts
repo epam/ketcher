@@ -19,14 +19,15 @@ import { OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class RestoreIfThen extends BaseOperation {
-  readonly rgid_new: number;
-  readonly rgid_old: number;
-  readonly ifThenHistory: Map<number, number>;
   static InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     skipRgids?: Array<number>,
   ) => BaseOperation;
+
+  readonly rgid_new: number;
+  readonly rgid_old: number;
+  readonly ifThenHistory: Map<number, number>;
 
   constructor(rgNew: number, rgOld: number, history: Map<number, number>) {
     super(OperationType.RESTORE_IF_THEN);

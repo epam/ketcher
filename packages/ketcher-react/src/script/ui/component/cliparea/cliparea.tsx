@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -72,12 +71,12 @@ const isUserEditing = (): boolean => {
   );
 };
 
-interface ClipboardData {
+export interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
 }
 
-interface ClipAreaProps {
+export interface ClipAreaProps {
   formats: string[];
   focused: () => boolean;
   onCopy: () => Promise<ClipboardData | null | undefined>;
@@ -91,6 +90,8 @@ interface ClipAreaProps {
   onLegacyPaste: (data: ClipboardData, isSmarts?: boolean) => void;
   target?: HTMLElement;
 }
+
+type DomEventListener = Parameters<HTMLElement['addEventListener']>[1];
 
 interface ClipAreaListeners {
   mouseup: (event: MouseEvent) => void;
@@ -151,7 +152,7 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          (async () => {
+          void (async () => {
             const data = await this.props.onCut();
             if (!data) return;
             await copy(data);
@@ -171,15 +172,15 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isAsyncClipboardReadAvailable()) {
-          navigator.clipboard.read().then((data: ClipboardItem[]) => {
+          void (async () => {
+            const data: ClipboardItem[] = await navigator.clipboard.read();
             if (!data) {
               return;
             }
-            this.props.onPaste(data).then(() => {
-              event.preventDefault();
-              notifyRequestCompleted();
-            });
-          });
+            await this.props.onPaste(data);
+            event.preventDefault();
+            notifyRequestCompleted();
+          })();
         } else {
           if (event.clipboardData) {
             const data = legacyPaste(event.clipboardData, this.props.formats);
@@ -218,7 +219,7 @@ class ClipArea extends Component<ClipAreaProps> {
       if (this.target && this.listeners) {
         this.target.addEventListener(
           eventName,
-          this.listeners[eventName] as EventListener,
+          this.listeners[eventName] as DomEventListener,
         );
       }
     });
@@ -236,7 +237,7 @@ class ClipArea extends Component<ClipAreaProps> {
       if (this.target && this.listeners) {
         this.target.removeEventListener(
           eventName,
-          this.listeners[eventName] as EventListener,
+          this.listeners[eventName] as DomEventListener,
         );
       }
     });
@@ -386,15 +387,15 @@ function handleCopyEvent(
   onLegacyCopy: () => ClipboardData | null | undefined,
 ): void {
   if (isAsyncClipboardWriteAvailable()) {
-    onCopy().then((data) => {
+    void (async () => {
+      const data = await onCopy();
       if (!data) {
         return;
       }
-      copy(data).then(() => {
-        event.preventDefault();
-        notifyCopyCut();
-      });
-    });
+      await copy(data);
+      event.preventDefault();
+      notifyCopyCut();
+    })();
     return;
   }
 
@@ -405,15 +406,18 @@ function handleCopyEvent(
   }
 
   if (isSecureClipboardContext() && navigator.clipboard?.writeText) {
-    onCopy().then((data) => {
+    void (async () => {
+      const data = await onCopy();
       if (!data) {
         return;
       }
 
-      navigator.clipboard
-        .writeText(data['text/plain'] || '')
-        .catch((e) => KetcherLogger.error('cliparea.tsx::copy', e));
-    });
+      try {
+        await navigator.clipboard.writeText(data['text/plain'] || '');
+      } catch (e) {
+        KetcherLogger.error('cliparea.tsx::copy', e);
+      }
+    })();
   } else {
     // Keep a synchronous fallback for insecure/legacy environments
     // where async Clipboard API is unavailable or restricted.

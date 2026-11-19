@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { LoadingCircles } from './LoadingCircles';
 import { render } from '@testing-library/react';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 describe('LoadingCircles component', () => {
   it('should render correctly', () => {

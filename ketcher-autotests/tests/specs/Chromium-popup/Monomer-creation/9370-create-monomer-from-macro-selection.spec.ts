@@ -34,7 +34,6 @@ import {
   getVisibleCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
   rubberBandSelect,
-  undoByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';

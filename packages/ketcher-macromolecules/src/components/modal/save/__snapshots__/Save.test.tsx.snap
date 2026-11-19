@@ -10,7 +10,7 @@ exports[`Save modal > renders correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root ez9a65g0 e1gf4okc0 MuiModal-root css-hd61di-MuiModal-root-MuiDialog-root-StyledDialog-StyledModal"
+      class="MuiDialog-root e1czn89r0 e1gf4okc0 MuiModal-root css-hd61di-MuiModal-root-MuiDialog-root-StyledDialog-StyledModal"
       role="presentation"
     >
       <div

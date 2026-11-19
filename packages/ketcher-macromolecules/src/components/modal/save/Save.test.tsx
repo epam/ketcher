@@ -24,6 +24,8 @@ import userEvent from '@testing-library/user-event';
 import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
+import { Provider } from 'react-redux';
+import { configureAppStore } from 'state';
 import { getPropertiesByFormat } from 'helpers/formats';
 
 const mockOnClose = vi.fn();
@@ -31,6 +33,51 @@ const mockOnClose = vi.fn();
 const mockProps = {
   onClose: mockOnClose,
   isModalOpen: true,
+};
+
+const mockSaveDependencies = (
+  convert: ReturnType<typeof vi.fn>,
+  drawingEntitiesManagerOverrides: Record<string, unknown> = {},
+) => {
+  vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
+    convert,
+  } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
+
+  const mockEditor = {
+    drawingEntitiesManager: {
+      micromoleculesHiddenEntities: {
+        clone: () => new Struct(),
+        mergeInto: vi.fn(),
+      },
+      setMicromoleculesHiddenEntities: vi.fn(),
+      detectBondsOverlappedByMonomers: vi.fn(),
+      validateIfApplicableForFasta: vi.fn().mockReturnValue(true),
+      molecules: [],
+      monomers: new Map(),
+      polymerBonds: [],
+      bonds: [],
+      monomerToAtomBonds: [],
+      atoms: [],
+      rxnArrows: [],
+      multitailArrows: [],
+      rxnPluses: [],
+      ...drawingEntitiesManagerOverrides,
+    },
+    monomersLibrary: {},
+    canvas: document.createElement('canvas'),
+    viewModel: {
+      initialize: vi.fn(),
+    },
+    events: {
+      error: {
+        dispatch: vi.fn(),
+      },
+    },
+  } as unknown as CoreEditor;
+
+  vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(
+    () => mockEditor,
+  );
 };
 
 describe('Save modal', () => {
@@ -110,44 +157,7 @@ describe('Save modal', () => {
       struct: 'V3000 format result',
     });
 
-    vi.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
-      convert: mockConvert,
-    } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
-
-    const mockEditor = {
-      drawingEntitiesManager: {
-        micromoleculesHiddenEntities: {
-          clone: () => new Struct(),
-          mergeInto: vi.fn(),
-        },
-        setMicromoleculesHiddenEntities: vi.fn(),
-        detectBondsOverlappedByMonomers: vi.fn(),
-        validateIfApplicableForFasta: vi.fn().mockReturnValue(true),
-        molecules: [],
-        monomers: new Map(),
-        polymerBonds: [],
-        bonds: [],
-        monomerToAtomBonds: [],
-        atoms: [],
-        rxnArrows: [],
-        multitailArrows: [],
-        rxnPluses: [],
-      },
-      monomersLibrary: {},
-      canvas: document.createElement('canvas'),
-      viewModel: {
-        initialize: vi.fn(),
-      },
-      events: {
-        error: {
-          dispatch: vi.fn(),
-        },
-      },
-    } as unknown as CoreEditor;
-
-    vi.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(
-      () => mockEditor,
-    );
+    mockSaveDependencies(mockConvert);
 
     render(withThemeAndStoreProvider(<Save {...mockProps} />));
 
@@ -163,5 +173,33 @@ describe('Save modal', () => {
 
     expect(molProperties.options).toEqual({ 'molfile-saving-mode': '3000' });
     expect(molProperties.name).toBe('MDL Molfile V3000');
+  });
+
+  it('refuses to export a branched structure to FASTA', async () => {
+    const mockConvert = vi.fn();
+
+    mockSaveDependencies(mockConvert, {
+      hasRnaAndDnaMix: vi.fn().mockReturnValue(false),
+      hasBranchesBetweenChains: vi.fn().mockReturnValue(true),
+    });
+
+    const store = configureAppStore();
+
+    render(
+      <Provider store={store}>
+        {withThemeProvider(<Save {...mockProps} />)}
+      </Provider>,
+    );
+
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    await act(async () => {
+      fireEvent.click(await screen.findByRole('option', { name: 'FASTA' }));
+    });
+
+    expect(store.getState().modal.errorModalText).toBe(
+      'Exporting branched structures to FASTA is not supported.',
+    );
+    expect(mockConvert).not.toHaveBeenCalled();
+    expect(screen.getByRole('combobox')).toHaveTextContent('Ket Format');
   });
 });

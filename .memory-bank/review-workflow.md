@@ -161,3 +161,4 @@ For a change that is too large to read line by line but mostly mechanical. The p
 - Two reviewers, one of them a code owner (decision D9; code owners are planned: Phase 4, task 4.3). A 30-minute walkthrough call replaces the first async review round.
 - AI review covers the codemod script and the manual commits only. It skips files that the replay check proves are generated (planned: Phase 5, task 5.7).
 - Merge window: agree on a time, ask the authors of conflicting PRs to wait, and merge fast. A long-lived branch collects conflicts.
+- A clean-up PR written by an agent that gets merge conflicts is rebuilt: close it and open a new PR from current `master` that reruns the fix. It is not fixed with a conflict-resolution or `Merge master` commit, because that commit is new code no one reviewed. Source: #12784.

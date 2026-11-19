@@ -44,11 +44,9 @@ const getTranslateValue = (layoutMode: LayoutMode, lineLength: number) => {
     return SequenceModeStartOffset + index * step;
   }
 
-  if (layoutMode === 'snake-layout-mode') {
-    return SnakeModeStartOffset + lineLength * SnakeModeItemWidth;
-  }
-
-  return 0;
+  return layoutMode === 'snake-layout-mode'
+    ? SnakeModeStartOffset + lineLength * SnakeModeItemWidth
+    : 0;
 };
 
 const getDragPosition = (
@@ -144,13 +142,11 @@ export const RulerArea = () => {
   );
 
   const previewValue = useMemo(() => {
-    if (!isDragging) {
-      return lineLengthValue;
-    }
-
-    return calculateLineLength(
-      getDragPosition(transform, translateValue, dragDelta),
-    );
+    return !isDragging
+      ? lineLengthValue
+      : calculateLineLength(
+          getDragPosition(transform, translateValue, dragDelta),
+        );
   }, [
     isDragging,
     lineLengthValue,

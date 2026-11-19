@@ -41,8 +41,7 @@ function oneOrMore(
   values: string[],
   item: string,
 ): string[] {
-  if (isMultiple) return xor(values, [item]);
-  return xor(values, [...values, item]);
+  return xor(values, isMultiple ? [item] : [...values, item]);
 }
 
 function ButtonList({

@@ -14,11 +14,7 @@ type ImageBoxLocators = {
 
 export const ImageBox = async (page: Page, imageBox?: Locator) => {
   let imageBoxId;
-  if (imageBox) {
-    imageBoxId = await imageBox.getAttribute('data-image-id');
-  } else {
-    imageBoxId = null;
-  }
+  imageBoxId = imageBox ? await imageBox.getAttribute('data-image-id') : null;
   const locators: ImageBoxLocators = {
     imageBoxBody:
       imageBoxId === null

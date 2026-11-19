@@ -560,11 +560,9 @@ function arrowDashedOpenAngle(
 
   // Dashed arrow
   for (let i = 0; i < arrowLength / dashInterval; i++) {
-    if (i % 2) {
-      path.push(`L${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`);
-    } else {
-      path.push(`M${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`);
-    }
+    path.push(
+      `${i % 2 ? 'L' : 'M'}${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+    );
   }
 
   // Arrowhead

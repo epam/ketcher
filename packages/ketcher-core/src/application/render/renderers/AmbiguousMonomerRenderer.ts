@@ -128,10 +128,9 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    if (this.monomer.isModification && this.modificationConfig) {
-      return 'white';
-    }
-    return super.textColor;
+    return this.monomer.isModification && this.modificationConfig
+      ? 'white'
+      : super.textColor;
   }
 
   protected appendBody(

@@ -8,7 +8,7 @@ import { Icon } from '../../../../../../../components';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type Props = {
+type Properties = {
   name: AttachmentPointName;
   editor: Editor;
   onNameChange: (
@@ -28,12 +28,12 @@ const AttachmentPoint = ({
   onNameChange,
   onLeavingAtomChange,
   onRemove,
-}: Props) => {
+}: Properties) => {
   const { t } = useTranslation('components');
-  const attachmentPointsContainerRef = useRef<HTMLDivElement>(null);
+  const attachmentPointsContainerReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const element = attachmentPointsContainerRef.current;
+    const element = attachmentPointsContainerReference.current;
     if (!element) {
       return;
     }
@@ -129,7 +129,7 @@ const AttachmentPoint = ({
           <Icon name="deleteMenu" />
         </button>
       }
-      ref={attachmentPointsContainerRef}
+      ref={attachmentPointsContainerReference}
     />
   );
 };

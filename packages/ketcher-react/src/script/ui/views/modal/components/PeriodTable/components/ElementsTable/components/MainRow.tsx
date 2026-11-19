@@ -19,7 +19,7 @@ import type { Element, ElementLabel } from 'ketcher-core';
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
 
-interface MainRowProps {
+interface MainRowProperties {
   row: Array<Element | number>;
   caption: string | number;
   refer: (element: number) => string | false;
@@ -33,7 +33,7 @@ interface MainRowProps {
   className?: string;
 }
 
-const MainRow: FC<MainRowProps> = ({
+const MainRow: FC<MainRowProperties> = ({
   row,
   caption,
   refer,

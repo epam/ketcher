@@ -66,9 +66,10 @@ const saveSchema = {
       type: 'string',
       maxLength: 128,
       pattern: '^[^.<>:?"*\\\\|\\/][^<>:?"*\\\\|\\/]*$',
-      invalidMessage: (res) => {
-        if (!res) return i18n.t('dialogs:document.save.filenameEmptyError');
-        if (res.length > 128)
+      invalidMessage: (resource) => {
+        if (!resource)
+          return i18n.t('dialogs:document.save.filenameEmptyError');
+        if (resource.length > 128)
           return i18n.t('dialogs:document.save.filenameTooLongError');
         return i18n.t('dialogs:document.save.filenameInvalidCharsError');
       },
@@ -84,23 +85,23 @@ const saveSchema = {
 };
 
 // Type definitions for component props
-interface LoadingStateProps {
+interface LoadingStateProperties {
   classes: typeof classes;
 }
 
-interface ImageContentProps {
+interface ImageContentProperties {
   classes: typeof classes;
   format: string;
   imageSrc: string;
   isCleanStruct: boolean;
 }
 
-interface BinaryContentProps {
+interface BinaryContentProperties {
   classes: typeof classes;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
 }
 
-interface PreviewContentProps {
+interface PreviewContentProperties {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
@@ -131,7 +132,7 @@ interface Editor {
     };
   };
 }
-interface SaveDialogProps {
+interface SaveDialogProperties {
   server: StructService | null;
   struct: Struct;
   options: StructServiceOptions;
@@ -142,7 +143,7 @@ interface SaveDialogProps {
   editor: Editor;
   onCheck: (checkOptions: CheckOption[]) => void;
   onTmplSave: (struct: Struct) => void;
-  onResetForm: (prevState: FormState) => void;
+  onResetForm: (previousState: FormState) => void;
   onOk: (result?: unknown) => void;
   onCancel: () => void;
 }
@@ -172,7 +173,7 @@ interface AppState {
 }
 
 // Extracted components for better performance and React best practices
-const LoadingState = ({ classes }: LoadingStateProps) => (
+const LoadingState = ({ classes }: LoadingStateProperties) => (
   <div className={classes.loadingCirclesContainer}>
     <LoadingCircles />
   </div>
@@ -183,7 +184,7 @@ const ImageContent = ({
   format,
   imageSrc,
   isCleanStruct,
-}: ImageContentProps) => (
+}: ImageContentProperties) => (
   <div className={classes.imageContainer}>
     {!isCleanStruct && (
       <img
@@ -195,7 +196,7 @@ const ImageContent = ({
   </div>
 );
 
-const BinaryContent = ({ classes, textAreaRef }: BinaryContentProps) => (
+const BinaryContent = ({ classes, textAreaRef }: BinaryContentProperties) => (
   <div className={classes.previewBackground}>
     <textarea
       value="Can not display binary content"
@@ -209,13 +210,13 @@ const BinaryContent = ({ classes, textAreaRef }: BinaryContentProps) => (
 
 const PreviewContent = ({
   classes,
-  structStr,
+  structStr: structString,
   textAreaRef,
   handleCopy,
-}: PreviewContentProps) => (
+}: PreviewContentProperties) => (
   <div className={classes.previewBackground}>
     <textarea
-      value={structStr}
+      value={structString}
       className={classes.previewArea}
       readOnly
       ref={textAreaRef}
@@ -230,15 +231,15 @@ const PreviewContent = ({
   </div>
 );
 
-class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
+class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
   static readonly contextType = ErrorsContext;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
   declare context: ContextType<typeof ErrorsContext>;
 
-  constructor(props: SaveDialogProps) {
-    super(props);
+  constructor(properties: SaveDialogProperties) {
+    super(properties);
     this.state = {
       disableControls: true,
       imageFormat: 'svg',
@@ -285,10 +286,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       {
         enum: formats,
         enumNames: formats.map((format) => {
-          const formatProps = this.isImageFormat(format)
+          const formatProperties_ = this.isImageFormat(format)
             ? getPropertiesByImgFormat(format)
             : getPropertiesByFormat(format as SupportedFormat);
-          return formatProps?.name;
+          return formatProperties_?.name;
         }),
       },
     );
@@ -298,10 +299,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const { checkOptions } = this.props.checkState;
     this.props.onCheck(checkOptions);
     void (async () => {
-      const res = await this.changeType(
+      const resource = await this.changeType(
         this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
       );
-      if (res instanceof Error) this.setState({ disableControls: true });
+      if (resource instanceof Error) this.setState({ disableControls: true });
     })();
   }
 
@@ -335,12 +336,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer();
-      const structStr = ketSerialize.serialize(struct);
+      const structString = ketSerialize.serialize(struct);
       this.setState({
         disableControls: true,
         tabIndex: 0,
         imageFormat: type,
-        structStr,
+        structStr: structString,
         isLoading: true,
       });
       const serverOptions = { ...options };
@@ -349,7 +350,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
       try {
         const base64 = await server.generateImageAsBase64(
-          structStr,
+          structString,
           serverOptions as GenerateImageOptions,
         );
         this.setState({
@@ -358,11 +359,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           imageSrc: base64,
           isLoading: false,
         });
-      } catch (e) {
-        KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-        errorHandler(e as string);
+      } catch (error) {
+        KetcherLogger.error('Save.jsx::SaveDialog::changeType', error);
+        errorHandler(error as string);
         this.props.onResetForm(formState);
-        return e as Error;
+        return error as Error;
       }
     } else {
       this.setState({ disableControls: true, isLoading: true });
@@ -404,15 +405,15 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       };
       let result: Error | void = undefined;
       try {
-        const structStr = await getStructFromStringByType();
+        const structString = await getStructFromStringByType();
         this.setState({
           tabIndex: 0,
-          structStr,
+          structStr: structString,
         });
-      } catch (e) {
-        errorHandler((e as Error).message);
+      } catch (error) {
+        errorHandler((error as Error).message);
         this.props.onResetForm(formState);
-        result = e as Error;
+        result = error as Error;
       } finally {
         this.setState({
           disableControls: false,
@@ -540,7 +541,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   handleCopy = (): void => {
-    const { structStr } = this.state;
+    const { structStr: structString } = this.state;
 
     if (!isClipboardAPIAvailable()) {
       this.props.editor.errorHandler(
@@ -549,7 +550,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return;
     }
 
-    void navigator.clipboard.writeText(structStr || '').catch((error) => {
+    void navigator.clipboard.writeText(structString || '').catch((error) => {
       KetcherLogger.error('copyAs.js::copyAs', error);
       this.props.editor.errorHandler(
         i18n.t('common:errors.featureNotAvailableInBrowser'),
@@ -561,7 +562,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const formState = { ...this.props.formState };
     delete formState.moleculeErrors;
     const { format } = formState.result;
-    const { structStr, imageSrc, isLoading } = this.state;
+    const { structStr: structString, imageSrc, isLoading } = this.state;
     const isCleanStruct = this.props.struct.isBlank();
 
     if (isLoading) return <LoadingState classes={classes} />;
@@ -582,7 +583,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return (
       <PreviewContent
         classes={classes}
-        structStr={structStr || ''}
+        structStr={structString || ''}
         textAreaRef={this.textAreaRef}
         handleCopy={this.handleCopy}
       />
@@ -611,7 +612,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   getButtons = (): JSX.Element[] => {
-    const { disableControls, imageFormat, isLoading, structStr } = this.state;
+    const {
+      disableControls,
+      imageFormat,
+      isLoading,
+      structStr: structString,
+    } = this.state;
     const { options, formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
@@ -622,8 +628,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       !isLoading &&
       this.isValidStringFormat(format) &&
       this.isBinaryCdxFormat(format)
-        ? b64toBlob(structStr || '')
-        : structStr;
+        ? b64toBlob(structString || '')
+        : structString;
 
     const isMoleculeContain =
       this.props.struct.atoms.size > 0 && this.props.struct.bonds.size > 0;
@@ -656,7 +662,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         <SaveButton
           mode="saveImage"
           options={options as GenerateImageOptions}
-          data={structStr || ''}
+          data={structString || ''}
           filename={filename}
           key="save-image-button"
           type={`image/${format}+xml`}
@@ -716,8 +722,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   }
 }
 
-const SaveDialogConnectWrapper = (props: SaveDialogProps) => (
-  <SaveDialog {...props} />
+const SaveDialogConnectWrapper = (properties: SaveDialogProperties) => (
+  <SaveDialog {...properties} />
 );
 
 const getOptions = (state: AppState) => state.options;
@@ -725,7 +731,7 @@ const serverSettingsSelector = createSelector([getOptions], (options) =>
   options.getServerSettings(),
 );
 
-const mapStateToProps = (state: AppState) => ({
+const mapStateToProperties = (state: AppState) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   options: serverSettingsSelector(state),
@@ -736,15 +742,15 @@ const mapStateToProps = (state: AppState) => ({
   editor: state.editor,
 });
 
-type SaveDialogDispatchProps = {
+type SaveDialogDispatchProperties = {
   onCheck: (checkOptions: CheckOption[]) => void;
   onTmplSave: (struct: Struct) => void;
-  onResetForm: (prevState: FormState) => void;
+  onResetForm: (previousState: FormState) => void;
 };
 
-const mapDispatchToProps = (
+const mapDispatchToProperties = (
   dispatch: ThunkDispatch<StoreState, undefined, AnyAction>,
-): SaveDialogDispatchProps => ({
+): SaveDialogDispatchProperties => ({
   onCheck: (checkOptions: CheckOption[]) => {
     dispatch(check(checkOptions));
   },
@@ -753,12 +759,12 @@ const mapDispatchToProps = (
     dispatch(saveUserTmpl(struct));
   },
 
-  onResetForm: (prevState: FormState) => {
-    dispatch(updateFormState(prevState));
+  onResetForm: (previousState: FormState) => {
+    dispatch(updateFormState(previousState));
   },
 });
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(SaveDialogConnectWrapper);

@@ -20,36 +20,38 @@ import clsx from 'clsx';
 import styles from './TextButton.module.less';
 import { type IconName, Icon } from 'components';
 
-interface TextButtonProps {
+interface TextButtonProperties {
   button: { command: TextCommand; name: IconName };
   active: boolean;
 }
 
-interface TextButtonPropsCallProps {
+interface TextButtonPropertiesCallProperties {
   toggleStyle: (command: TextCommand) => void;
 }
 
-type Props = TextButtonProps & TextButtonPropsCallProps;
+type Properties = TextButtonProperties & TextButtonPropertiesCallProperties;
 
-export const TextButton = (props: Props) => {
+export const TextButton = (properties: Properties) => {
   const toggleStyle = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     command: TextCommand,
   ) => {
     event.preventDefault();
-    props.toggleStyle(command);
+    properties.toggleStyle(command);
   };
 
   return (
     <button
-      className={clsx(styles.textButton, { [styles.isActive]: props.active })}
-      title={props.button.command.toLowerCase()}
-      data-testid={props.button.name}
+      className={clsx(styles.textButton, {
+        [styles.isActive]: properties.active,
+      })}
+      title={properties.button.command.toLowerCase()}
+      data-testid={properties.button.name}
       onMouseDown={(event) => {
-        toggleStyle(event, props.button.command);
+        toggleStyle(event, properties.button.command);
       }}
     >
-      <Icon name={props.button.name} />
+      <Icon name={properties.button.name} />
     </button>
   );
 };

@@ -28,9 +28,9 @@ import { parseStruct } from '../../../../../../../state/shared';
 import styles from './CDXStructuresViewer.module.less';
 import { editorOptionsSelector } from '../../../../../../../state/editor/selectors';
 
-export type CDXStructuresViewerProps = {
+export type CDXStructuresViewerProperties = {
   structList?: string[];
-  inputHandler: (str: string) => void;
+  inputHandler: (string_: string) => void;
   fileName: string;
 };
 
@@ -44,7 +44,7 @@ export const CDXStructuresViewer = ({
   structList = [],
   inputHandler,
   fileName,
-}: CDXStructuresViewerProps) => {
+}: CDXStructuresViewerProperties) => {
   const { t } = useTranslation('dialogs');
   const server = useSelector(serverSelector);
   const editorOptions = useSelector(editorOptionsSelector);
@@ -61,19 +61,19 @@ export const CDXStructuresViewer = ({
   }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImage = useCallback(
-    (str, index) => {
+    (string_, index) => {
       void (async () => {
         try {
-          const struct = await parseStruct(str, server);
+          const struct = await parseStruct(string_, server);
           setItemsMap((state) => ({
             ...state,
-            [index]: { base64struct: str, struct },
+            [index]: { base64struct: string_, struct },
           }));
         } catch (error) {
           setItemsMap((state) => ({
             ...state,
             [index]: {
-              base64struct: str,
+              base64struct: string_,
               error: error instanceof Error ? error.message : String(error),
             },
           }));

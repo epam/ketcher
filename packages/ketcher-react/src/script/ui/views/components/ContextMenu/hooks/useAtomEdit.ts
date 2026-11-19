@@ -8,7 +8,7 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
-import { getEditableAtomIds } from '../utils';
+import { getEditableAtomIds } from '../utilities';
 
 type Params = ItemEventParams<AtomContextMenuProps>;
 

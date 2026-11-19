@@ -27,7 +27,7 @@ import { bond as bondSchema } from '../data/schema/struct-schema';
 import isHidden from './isHidden';
 import { toBondType } from '../data/convert/structconv';
 import { isFlipDisabled } from './flips';
-import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utils';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utilities';
 import type { UiAction } from './action.types';
 
 type ToolActionEntry = Omit<UiAction, 'action'> & {

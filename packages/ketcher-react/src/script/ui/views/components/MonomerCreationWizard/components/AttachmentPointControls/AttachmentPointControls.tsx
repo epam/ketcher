@@ -5,7 +5,7 @@ import styles from './AttachmentPointControls.module.less';
 import clsx from 'clsx';
 import { type ReactNode, forwardRef } from 'react';
 
-type Props = {
+type Properties = {
   data: AttachmentPointSelectData;
   onNameChange: (newName: AttachmentPointName) => void;
   onLeavingAtomChange: (newLeavingAtomLabel: AtomLabel) => void;
@@ -24,7 +24,7 @@ type Props = {
   nameTooltip?: string;
 };
 
-const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
+const AttachmentPointControls = forwardRef<HTMLDivElement, Properties>(
   (
     {
       data,
@@ -38,7 +38,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
       disabledName,
       nameTooltip,
     },
-    ref,
+    reference,
   ) => {
     const {
       nameOptions,
@@ -62,7 +62,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
           className,
           highlight && styles.highlight,
         )}
-        ref={ref}
+        ref={reference}
         data-testid={`attachment-point-controls-${currentNameOption?.label}`}
       >
         <Select

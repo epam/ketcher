@@ -2,14 +2,19 @@ import clsx from 'clsx';
 
 import styles from './NaturalAnalogueChip.module.less';
 
-export type Props = {
+export type Properties = {
   label: string;
   color: string;
   className?: string;
   testId?: string;
 };
 
-const NaturalAnalogueChip = ({ label, color, className, testId }: Props) => {
+const NaturalAnalogueChip = ({
+  label,
+  color,
+  className,
+  testId,
+}: Properties) => {
   return (
     <button className={clsx(styles.chip, className)} data-testid={testId}>
       <span className={styles.chipLetter}>{label}</span>

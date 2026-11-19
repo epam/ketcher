@@ -14,7 +14,7 @@ import {
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
 import type { Selection } from '../../../../editor/Editor';
-import { getRemovableAttachmentGroupId, onlyHasProperty } from './utils';
+import { getRemovableAttachmentGroupId, onlyHasProperty } from './utilities';
 
 /**
  * Count how many MonomerMicromolecule SGroups on the canvas share the same

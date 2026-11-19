@@ -80,7 +80,7 @@ function getPanelPosition(
 
   return [new Vec2(x, y), new Vec2(width, height)];
 }
-interface InfoPanelProps {
+interface InfoPanelProperties {
   clientX: number | undefined;
   clientY: number | undefined;
   render: Render;
@@ -89,8 +89,9 @@ interface InfoPanelProps {
   className?: string;
 }
 
-const InfoPanel: FC<InfoPanelProps> = (props) => {
-  const { clientX, clientY, render, className, groupStruct, sGroup } = props;
+const InfoPanel: FC<InfoPanelProperties> = (properties) => {
+  const { clientX, clientY, render, className, groupStruct, sGroup } =
+    properties;
   const { t } = useTranslation('components');
 
   const sGroupData = useMemo<string | null>(() => {

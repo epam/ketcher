@@ -15,7 +15,7 @@ import {
   getBondTypeName,
   getBondNamesForSelectionContextMenu,
   monomerWizardDisallowedBondNames,
-} from '../utils';
+} from '../utilities';
 import type Editor from 'src/script/editor';
 import type {
   MenuItemsProps,

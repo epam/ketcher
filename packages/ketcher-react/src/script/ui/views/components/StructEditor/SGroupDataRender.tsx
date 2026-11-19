@@ -30,7 +30,7 @@ function getPanelPositionRelativeToRect(
     return null;
   }
 
-  const hoveringWithAttrs = sGroup.hovering as {
+  const hoveringWithAttributes = sGroup.hovering as {
     removed?: boolean;
     attrs?: { path?: Array<Array<number>> } | null;
   };
@@ -38,13 +38,13 @@ function getPanelPositionRelativeToRect(
   // A selected s-group keeps the outline of an earlier hover, which Raphael
   // has already removed. Its points are gone, so there is nothing to place
   // the panel against.
-  if (hoveringWithAttrs.removed) {
+  if (hoveringWithAttributes.removed) {
     return null;
   }
 
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
   const rectCoords: Array<Array<number>> =
-    hoveringWithAttrs.attrs?.path?.map((line) => line.slice(1)) ?? [];
+    hoveringWithAttributes.attrs?.path?.map((line) => line.slice(1)) ?? [];
 
   const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
     calculateMiddleCoordsForRect(rectCoords);
@@ -86,7 +86,7 @@ function getPanelPositionRelativeToRect(
   return panelPositionInViewBox;
 }
 
-interface SGroupDataRenderProps {
+interface SGroupDataRenderProperties {
   clientX: number;
   clientY: number;
   render: Render;
@@ -95,11 +95,12 @@ interface SGroupDataRenderProps {
   className?: string;
 }
 
-const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
-  const { clientX, clientY, render, className, sGroup, sGroupData } = props;
+const SGroupDataRender: FC<SGroupDataRenderProperties> = (properties) => {
+  const { clientX, clientY, render, className, sGroup, sGroupData } =
+    properties;
   const [wrapperHeight, setWrapperHeight] = useState(0);
   const [wrapperWidth, setWrapperWidth] = useState(0);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperReference = useRef<HTMLDivElement>(null);
 
   // The panel is positioned from its own measured size, so it has to be
   // measured once it is in the DOM and again whenever its content changes.
@@ -108,9 +109,9 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   // measurement and the reposition in the same commit, so the panel is never
   // painted at its pre-measurement position.
   useLayoutEffect(() => {
-    if (wrapperRef.current) {
-      setWrapperHeight(wrapperRef.current.clientHeight);
-      setWrapperWidth(wrapperRef.current.clientWidth);
+    if (wrapperReference.current) {
+      setWrapperHeight(wrapperReference.current.clientHeight);
+      setWrapperWidth(wrapperReference.current.clientWidth);
     }
   }, [sGroupData]);
 
@@ -125,7 +126,7 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
 
   return panelCoordinate ? (
     <div
-      ref={wrapperRef}
+      ref={wrapperReference}
       style={{ left: panelCoordinate.x + 'px', top: panelCoordinate.y + 'px' }}
       className={clsx(classes.infoPanel, className)}
     >

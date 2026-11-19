@@ -39,7 +39,7 @@ function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
 
-interface FooterContentProps {
+interface FooterContentProperties {
   onImage: (file: RecognizeImageFile) => void;
   structStr: StructStringOrPromise;
   openHandler: () => void;
@@ -53,7 +53,7 @@ function FooterContent({
   openHandler,
   copyHandler,
   isAddToCanvasDisabled,
-}: Readonly<FooterContentProps>) {
+}: Readonly<FooterContentProperties>) {
   const { t } = useTranslation('dialogs');
   return (
     <div className={classes.footerContent}>
@@ -87,7 +87,7 @@ function FooterContent({
   );
 }
 
-interface RecognizeDialogProps {
+interface RecognizeDialogProperties {
   file: File | null;
   structStr: StructStringOrPromise;
   fragment: boolean;
@@ -100,7 +100,7 @@ interface RecognizeDialogProps {
   onChangeImago: (version: string) => void;
 }
 
-function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
+function RecognizeDialog(property: Readonly<RecognizeDialogProperties>) {
   const {
     file,
     structStr,
@@ -108,9 +108,9 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     version,
     imagoVersions,
     onOk,
-    ...partProps
-  } = prop;
-  const { onRecognize, onImage, onChangeImago, ...props } = partProps;
+    ...partProperties
+  } = property;
+  const { onRecognize, onImage, onChangeImago, ...properties } = partProperties;
   const { t } = useTranslation('dialogs');
   const [canPreviewImage, setCanPreviewImage] = useState(true);
   const result = () =>
@@ -144,7 +144,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     <Dialog
       title={t('process.recognize.dialogTitle')}
       className={classes.recognize}
-      params={{ ...props, onOk }}
+      params={{ ...properties, onOk }}
       result={result}
       withDivider={true}
       needMargin={false}
@@ -168,12 +168,12 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
             type="text"
             schema={{
               enum: imagoVersions,
-              enumNames: range(1, imagoVersions.length + 1).map((i) =>
-                t('process.recognize.imagoVersionOption', { number: i }),
+              enumNames: range(1, imagoVersions.length + 1).map((index) =>
+                t('process.recognize.imagoVersionOption', { number: index }),
               ),
             }}
             value={version}
-            onChange={(val) => onChangeImago(val as string)}
+            onChange={(value) => onChangeImago(value as string)}
           />
         </label>
         <span>{t('process.recognize.originalImage')}</span>
@@ -249,7 +249,7 @@ interface RecognizeState {
   };
 }
 
-const mapStateToProps = (state: RecognizeState) => ({
+const mapStateToProperties = (state: RecognizeState) => ({
   imagoVersions: state.options.app.imagoVersions,
   file: state.options.recognize.file,
   structStr: state.options.recognize.structStr,
@@ -258,16 +258,16 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
+const mapDispatchToProperties = (dispatch: AppDispatch) => ({
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
-  onRecognize: (file: File | null, ver: string) =>
-    dispatch(recognize(file, ver)),
-  onChangeImago: (ver: string) => dispatch(changeVersion(ver)),
+  onRecognize: (file: File | null, version: string) =>
+    dispatch(recognize(file, version)),
+  onChangeImago: (version: string) => dispatch(changeVersion(version)),
   onOk: (result: unknown) => {
-    const res = result as { structStr: string; fragment: boolean };
+    const resource = result as { structStr: string; fragment: boolean };
     dispatch(
-      load(res.structStr as unknown as Struct, {
-        fragment: res.fragment,
+      load(resource.structStr as unknown as Struct, {
+        fragment: resource.fragment,
       }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)
@@ -275,6 +275,9 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   },
 });
 
-const Recognize = connect(mapStateToProps, mapDispatchToProps)(RecognizeDialog);
+const Recognize = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(RecognizeDialog);
 
 export default Recognize;

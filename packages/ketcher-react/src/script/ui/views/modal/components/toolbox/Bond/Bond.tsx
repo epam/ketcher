@@ -31,7 +31,7 @@ import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
-import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utils';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utilities';
 
 interface BondSettings {
   type: string;

@@ -27,15 +27,15 @@ const ICON_NAMES = {
   IMAGE: 'image-frame',
 } as const;
 
-export type OpenOptionsProps = {
+export type OpenOptionsProperties = {
   selectClipboard: () => void;
-  errorHandler: (err: string) => void;
+  errorHandler: (error: string) => void;
   fileLoadHandler: (files: File[]) => void;
   imageLoadHandler: (files: File[]) => void;
   isRecognizeDisabled: boolean;
 };
 
-export const OpenOptions: FC<OpenOptionsProps> = ({
+export const OpenOptions: FC<OpenOptionsProperties> = ({
   selectClipboard,
   fileLoadHandler,
   imageLoadHandler,
@@ -66,10 +66,8 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
 
       <FileDrop
         onDropAccepted={fileLoadHandler}
-        onDropRejected={(e) =>
-          errorHandler(
-            t('document.openOptions.unableToAcceptFile', { error: e }),
-          )
+        onDropRejected={(error) =>
+          errorHandler(t('document.openOptions.unableToAcceptFile', { error }))
         }
         buttonLabel={t('document.openOptions.openFromFile')}
         textLabel={t('document.openOptions.dragFileHere')}

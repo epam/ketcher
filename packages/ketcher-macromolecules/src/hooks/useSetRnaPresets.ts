@@ -29,7 +29,7 @@ function useSetRnaPresets() {
 
     const monomersLibrary = editor.monomersLibrary;
     const defaultPresetsTemplates = (
-      defaultRnaPresets.length
+      defaultRnaPresets.length > 0
         ? defaultRnaPresets
         : editor.defaultRnaPresetsLibraryItems
     ).filter((preset) => !preset.hidden);

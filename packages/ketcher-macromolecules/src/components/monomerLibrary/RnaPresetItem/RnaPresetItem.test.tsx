@@ -1,13 +1,16 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import RnaPresetItem from './RnaPresetItem';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 describe('Test Rna Preset Item component', () => {
   it('Test click event', () => {
-    const rnaPresetItemHandleClick = jest.fn();
-    const rnaPresetItemHandleContextMenu = jest.fn();
-    const rnaPresetItemHandleMouseLeave = jest.fn();
-    const rnaPresetItemHandleMouseMove = jest.fn();
+    const rnaPresetItemHandleClick = vi.fn();
+    const rnaPresetItemHandleContextMenu = vi.fn();
+    const rnaPresetItemHandleMouseLeave = vi.fn();
+    const rnaPresetItemHandleMouseMove = vi.fn();
     const preset: IRnaPreset = {
       base: undefined,
       name: 'MyRna',
@@ -36,7 +39,7 @@ describe('Test Rna Preset Item component', () => {
   });
 
   it('calls onStarClick when the favorite star is clicked', () => {
-    const onStarClick = jest.fn();
+    const onStarClick = vi.fn();
     const preset: IRnaPreset = {
       base: undefined,
       name: 'MyRna',
@@ -49,10 +52,10 @@ describe('Test Rna Preset Item component', () => {
       withThemeAndStoreProvider(
         <RnaPresetItem
           isSelected={false}
-          onClick={jest.fn()}
-          onContextMenu={jest.fn()}
-          onMouseLeave={jest.fn()}
-          onMouseMove={jest.fn()}
+          onClick={vi.fn()}
+          onContextMenu={vi.fn()}
+          onMouseLeave={vi.fn()}
+          onMouseMove={vi.fn()}
           onStarClick={onStarClick}
           preset={preset}
         />,

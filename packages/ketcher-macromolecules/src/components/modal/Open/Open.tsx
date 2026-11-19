@@ -360,9 +360,10 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     useState(ONE_LETTER);
 
   useEffect(() => {
-    fileOpener().then((chosenOpener) => {
+    void (async () => {
+      const chosenOpener = await fileOpener();
       setOpener({ chosenOpener });
-    });
+    })();
   }, []);
 
   const onCloseCallback = useCallback(() => {
@@ -377,10 +378,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     const windowContext = globalThis as unknown as Record<string, unknown>;
 
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-      document.documentElement.requestFullscreen?.().catch(() => {
-        /*
-        Fullscreen restoration failed or was denied by the browser
-        */
+      void document.documentElement.requestFullscreen?.().catch(() => {
+        /* Fullscreen restoration failed or was denied by the browser */
       });
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
@@ -402,7 +401,15 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       setFormatSelection(id);
     }
 
-    opener?.chosenOpener(files[0]).then(onLoad, onError);
+    if (opener) {
+      void (async () => {
+        try {
+          onLoad(await opener.chosenOpener(files[0]));
+        } catch {
+          onError();
+        }
+      })();
+    }
   };
 
   const addToCanvasHandler = () => {

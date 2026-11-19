@@ -60,6 +60,7 @@ type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 export class RenderersManager {
   private readonly theme: ThemeType;
   private needRecalculateMonomersEnumeration = false;
+  private cachedLeftmostMonomerEdge?: number;
 
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
@@ -118,6 +119,7 @@ export class RenderersManager {
     monomer: BaseMonomer | AmbiguousMonomer,
     callback?: () => void,
   ) {
+    this.cachedLeftmostMonomerEdge = undefined;
     let monomerRenderer: BaseMonomerRenderer | AmbiguousMonomerRenderer;
 
     if (monomer instanceof AmbiguousMonomer) {
@@ -136,6 +138,7 @@ export class RenderersManager {
   }
 
   public moveMonomer(monomer: BaseMonomer) {
+    this.cachedLeftmostMonomerEdge = undefined;
     monomer.renderer?.move();
     monomer.renderer?.drawSelection();
   }
@@ -153,6 +156,7 @@ export class RenderersManager {
   }
 
   public deleteAllDrawingEntities() {
+    this.cachedLeftmostMonomerEdge = undefined;
     this.monomers.forEach((monomerRenderer) => {
       monomerRenderer.remove();
     });
@@ -165,6 +169,7 @@ export class RenderersManager {
   }
 
   public deleteMonomer(monomer: BaseMonomer) {
+    this.cachedLeftmostMonomerEdge = undefined;
     monomer.renderer?.remove();
     this.monomers.delete(monomer.id);
     this.markForReEnumeration();
@@ -401,9 +406,26 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
+    this.cachedLeftmostMonomerEdge = undefined;
     const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
+  }
+
+  public get leftmostMonomerEdge(): number {
+    if (this.cachedLeftmostMonomerEdge === undefined) {
+      let leftmostEdge = Infinity;
+      for (const monomer of provideEditorInstance().drawingEntitiesManager.monomers.values()) {
+        if (monomer.renderer) {
+          leftmostEdge = Math.min(
+            leftmostEdge,
+            monomer.renderer.scaledMonomerPosition.x,
+          );
+        }
+      }
+      this.cachedLeftmostMonomerEdge = leftmostEdge;
+    }
+    return this.cachedLeftmostMonomerEdge;
   }
 
   public update(modelChanges?: Command) {

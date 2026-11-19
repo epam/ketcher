@@ -2,7 +2,39 @@ import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/Chain
 import { STRAND_TYPE } from 'domain/constants';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Phosphate } from 'domain/entities/Phosphate';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
+
+// Lets Snake mode stagger paired strands and route the phosphate bond through the gap.
+export function areSingleNucleotidesPairedAtBaseAndPhosphate(
+  firstChain: Chain | undefined,
+  secondChain: Chain | undefined,
+): boolean {
+  if (!firstChain || !secondChain || firstChain === secondChain) {
+    return false;
+  }
+
+  const first = firstChain.monomers;
+  const second = secondChain.monomers;
+  if (first.length !== 3 || second.length !== 3) {
+    return false;
+  }
+
+  const firstBase = first.find(isRnaBaseOrAmbiguousRnaBase);
+  const secondBase = second.find(isRnaBaseOrAmbiguousRnaBase);
+  const firstPhosphate = first.find((monomer) => monomer instanceof Phosphate);
+  const secondPhosphate = second.find(
+    (monomer) => monomer instanceof Phosphate,
+  );
+  return Boolean(
+    secondBase &&
+    secondPhosphate &&
+    firstBase?.hasHydrogenBondWithMonomer(secondBase) &&
+    firstPhosphate?.hasHydrogenBondWithMonomer(secondPhosphate),
+  );
+}
 
 export const getNodeFromTwoStrandedNode = (
   twoStrandedNode: ITwoStrandedChainItem,

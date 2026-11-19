@@ -24,7 +24,35 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
 class EnhancedStereoTool implements Tool {
-  static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
+  isNotActiveTool: true;
+
+  constructor(editor: Editor) {
+    const selection = editor.selection();
+    this.isNotActiveTool = true;
+
+    const stereoAtoms = findStereoAtoms(
+      editor.struct(),
+      selection
+        ? selection.atoms || []
+        : Array.from(editor.struct().atoms.keys()),
+    );
+    if (stereoAtoms.length === 0) {
+      return;
+    }
+
+    void (async () => {
+      const action = await EnhancedStereoTool.changeAtomsStereoAction(
+        editor,
+        stereoAtoms,
+      );
+      if (action) editor.update(action);
+    })();
+  }
+
+  static async changeAtomsStereoAction(
+    editor: Editor,
+    stereoAtoms: Array<number>,
+  ) {
     const struct = editor.struct();
     const restruct = editor.render.ctab;
     const stereoLabels = stereoAtoms.map((stereoAtom) => {
@@ -38,60 +66,33 @@ class EnhancedStereoTool implements Tool {
       stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
     });
 
-    return res.then((stereoLabel) => {
-      if (!stereoLabel) {
-        return null;
-      }
-
-      const action = stereoAtoms.reduce(
-        (acc, stereoAtom) => {
-          const frid = struct.atoms.get(stereoAtom)?.fragment;
-          const frag =
-            frid === undefined ? null : restruct.molecule.frags.get(frid);
-
-          if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
-          }
-          return acc;
-        },
-        fromAtomsAttrs(
-          restruct,
-          stereoAtoms,
-          {
-            stereoLabel,
-          },
-          false,
-        ),
-      );
-      action.operations.reverse();
-      return action;
-    });
-  }
-
-  private readonly editor: Editor;
-  private readonly stereoAtoms: Array<number>;
-  isNotActiveTool: true;
-
-  constructor(editor) {
-    const selection = editor.selection();
-    this.editor = editor;
-    this.isNotActiveTool = true;
-
-    this.stereoAtoms = findStereoAtoms(
-      editor.struct(),
-      selection
-        ? selection.atoms || []
-        : Array.from(editor.struct().atoms.keys()),
-    );
-
-    if (this.stereoAtoms.length === 0) {
-      return;
+    const stereoLabel = await res;
+    if (!stereoLabel) {
+      return null;
     }
 
-    EnhancedStereoTool.changeAtomsStereoAction(
-      this.editor,
-      this.stereoAtoms,
-    ).then((action) => action && editor.update(action));
+    const action = stereoAtoms.reduce(
+      (acc, stereoAtom) => {
+        const frid = struct.atoms.get(stereoAtom)?.fragment;
+        const frag =
+          frid === undefined ? null : restruct.molecule.frags.get(frid);
+
+        if (frag?.stereoAtoms) {
+          return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
+        }
+        return acc;
+      },
+      fromAtomsAttrs(
+        restruct,
+        stereoAtoms,
+        {
+          stereoLabel,
+        },
+        false,
+      ),
+    );
+    action.operations.reverse();
+    return action;
   }
 }
 

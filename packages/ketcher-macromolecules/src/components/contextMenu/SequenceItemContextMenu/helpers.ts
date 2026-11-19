@@ -119,7 +119,7 @@ const generateNucleoelementTitle = (
   return temporaryTitle;
 };
 
-export const generateSequenceContextMenuProps = (
+export const generateSequenceContextMenuProperties = (
   selections: NodesSelection | undefined,
   t: TFunction,
 ) => {

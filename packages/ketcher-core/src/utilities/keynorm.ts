@@ -91,35 +91,35 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
   } else if (input instanceof KeyboardEvent) {
-    const e = input;
+    const event_ = input;
 
-    if (e.code.includes(KeyboardModifiers.Control)) {
+    if (event_.code.includes(KeyboardModifiers.Control)) {
       return KeyboardModifiers.Ctrl;
     }
-    if (e.code.includes(KeyboardModifiers.Alt)) {
+    if (event_.code.includes(KeyboardModifiers.Alt)) {
       return KeyboardModifiers.Alt;
     }
-    if (e.code.includes(KeyboardModifiers.Meta)) {
+    if (event_.code.includes(KeyboardModifiers.Meta)) {
       return KeyboardModifiers.Meta;
     }
-    if (e.code.includes(KeyboardModifiers.Shift)) {
+    if (event_.code.includes(KeyboardModifiers.Shift)) {
       return KeyboardModifiers.Shift;
     }
 
-    if (e.ctrlKey) {
+    if (event_.ctrlKey) {
       activeModifiers.add(KeyboardModifiers.Ctrl);
     }
-    if (e.altKey) {
+    if (event_.altKey) {
       activeModifiers.add(KeyboardModifiers.Alt);
     }
-    if (e.metaKey) {
+    if (event_.metaKey) {
       activeModifiers.add(KeyboardModifiers.Meta);
     }
-    if (e.shiftKey) {
+    if (event_.shiftKey) {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
 
-    key = normalizeCode(e.code);
+    key = normalizeCode(event_.code);
   } else {
     throw new TypeError('normalizeShortcut expects string or KeyboardEvent');
   }

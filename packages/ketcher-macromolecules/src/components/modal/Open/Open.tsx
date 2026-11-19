@@ -35,7 +35,7 @@ import {
   Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
-import { RequiredModalProps as RequiredModalProperties } from '../modalContainer';
+import { RequiredModalProperties as RequiredModalProperties } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
 import {
   Loader,
@@ -50,7 +50,7 @@ import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
 import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
-export interface Props {
+export interface Properties {
   onClose: () => void;
   isModalOpen: boolean;
 }

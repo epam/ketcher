@@ -20,7 +20,7 @@ import {
   CalculateCipCommandData,
   CalculateCommandData,
   CalculateMacromoleculePropertiesCommandData,
-  CalculateProps,
+  CalculateProperties,
   CheckCommandData,
   CleanCommandData,
   Command,
@@ -182,7 +182,7 @@ function convertMimeTypeToOutputFormat(
   return format;
 }
 
-function mapCalculatedPropertyName(property: CalculateProps) {
+function mapCalculatedPropertyName(property: CalculateProperties) {
   if (property === 'gross-formula') {
     return 'gross';
   }
@@ -846,7 +846,7 @@ class IndigoService implements StructService {
           ).reduce((acc, curr) => {
             const [key, value] = curr;
             const mappedPropertyName = mapCalculatedPropertyName(
-              key as CalculateProps,
+              key as CalculateProperties,
             );
             if (properties.includes(mappedPropertyName)) {
               acc[mappedPropertyName] = value;

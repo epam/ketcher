@@ -22,7 +22,7 @@
 
 ### properties
 
-• **properties**: [`CalculateProps`](../README.md#calculateprops)[]
+• **properties**: [`CalculateProperties`](../README.md#calculateproperties)[]
 
 #### Defined in
 

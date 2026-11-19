@@ -2,77 +2,77 @@
 
 exports[`Test Rna Editor Expanded component > should render correctly in edit mode 1`] = `
 <div
-  class="css-1sdi5u4-RnaEditorExpandedContainer e1lkl9ny0"
+  class="css-1sdi5u4-RnaEditorExpandedContainer et89ixi0"
   data-testid="rna-editor-expanded"
 >
   <input
-    class="css-lp1h1l-CompactViewName e1lkl9ny1"
+    class="css-lp1h1l-CompactViewName et89ixi1"
     data-testid="name-your-structure-editbox"
     placeholder="Name your structure"
     value=""
   />
   <div
-    class="css-8bc8yr-GroupsContainer e1lkl9ny2"
+    class="css-8bc8yr-GroupsContainer et89ixi2"
   >
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e1fgmgxp5"
           name="sugar"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e1fgmgxp8"
       >
         Sugar
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e1fgmgxp5"
           name="base"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e1fgmgxp8"
       >
         Base
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e1fgmgxp5"
           name="phosphate"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e1fgmgxp8"
       >
         Phosphate
       </p>
@@ -102,10 +102,10 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
     </div>
   </div>
   <div
-    class="css-14xjga1-ButtonsContainer e1lkl9ny7"
+    class="css-14xjga1-ButtonsContainer et89ixi7"
   >
     <button
-      class="css-45wob6-StyledButton e1lkl9ny8"
+      class="css-45wob6-StyledButton et89ixi8"
       data-testid="cancel-btn"
       type="button"
     >
@@ -113,7 +113,7 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
     </button>
     <button
       aria-label=""
-      class="css-155nhcg-StyledButton e1lkl9ny8"
+      class="css-155nhcg-StyledButton et89ixi8"
       data-mui-internal-clone-element="true"
       data-testid="add-to-presets-btn"
       disabled=""
@@ -127,78 +127,78 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
 
 exports[`Test Rna Editor Expanded component > should render correctly in edit mode with modification of sequence 1`] = `
 <div
-  class="rna-editor-expanded--sequence-edit-mode css-1sdi5u4-RnaEditorExpandedContainer e1lkl9ny0"
+  class="rna-editor-expanded--sequence-edit-mode css-1sdi5u4-RnaEditorExpandedContainer et89ixi0"
   data-testid="rna-editor-expanded"
 >
   <input
-    class="css-lp1h1l-CompactViewName e1lkl9ny1"
+    class="css-lp1h1l-CompactViewName et89ixi1"
     data-testid="name-your-structure-editbox"
     disabled=""
     placeholder="Name your structure"
     value="2 nucleotides"
   />
   <div
-    class="css-8bc8yr-GroupsContainer e1lkl9ny2"
+    class="css-8bc8yr-GroupsContainer et89ixi2"
   >
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-1ufngfc-GroupIcon e1yrwz0e5"
+          class="css-1ufngfc-GroupIcon e1fgmgxp5"
           name="sugar"
         />
       </div>
       <p
-        class="css-v3da1w-CompactGroupText e1yrwz0e8"
+        class="css-v3da1w-CompactGroupText e1fgmgxp8"
       >
         R
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-1ufngfc-GroupIcon e1yrwz0e5"
+          class="css-1ufngfc-GroupIcon e1fgmgxp5"
           name="base"
         />
       </div>
       <p
-        class="css-v3da1w-CompactGroupText e1yrwz0e8"
+        class="css-v3da1w-CompactGroupText e1fgmgxp8"
       >
         [multiple]
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-1ufngfc-GroupIcon e1yrwz0e5"
+          class="css-1ufngfc-GroupIcon e1fgmgxp5"
           name="phosphate"
         />
       </div>
       <p
-        class="css-v3da1w-CompactGroupText e1yrwz0e8"
+        class="css-v3da1w-CompactGroupText e1fgmgxp8"
       >
         P
       </p>
@@ -229,10 +229,10 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
     </div>
   </div>
   <div
-    class="css-14xjga1-ButtonsContainer e1lkl9ny7"
+    class="css-14xjga1-ButtonsContainer et89ixi7"
   >
     <button
-      class="css-45wob6-StyledButton e1lkl9ny8"
+      class="css-45wob6-StyledButton et89ixi8"
       data-testid="cancel-btn"
       type="button"
     >
@@ -240,7 +240,7 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
     </button>
     <button
       aria-label=""
-      class="css-155nhcg-StyledButton e1lkl9ny8"
+      class="css-155nhcg-StyledButton et89ixi8"
       data-mui-internal-clone-element="true"
       data-testid="save-btn"
       disabled=""
@@ -254,77 +254,77 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
 
 exports[`Test Rna Editor Expanded component > should render correctly in view mode 1`] = `
 <div
-  class="css-1sdi5u4-RnaEditorExpandedContainer e1lkl9ny0"
+  class="css-1sdi5u4-RnaEditorExpandedContainer et89ixi0"
   data-testid="rna-editor-expanded"
 >
   <input
-    class="css-lp1h1l-CompactViewName e1lkl9ny1"
+    class="css-lp1h1l-CompactViewName et89ixi1"
     data-testid="name-your-structure-editbox"
     placeholder="Name your structure"
     value="MyRna"
   />
   <div
-    class="css-8bc8yr-GroupsContainer e1lkl9ny2"
+    class="css-8bc8yr-GroupsContainer et89ixi2"
   >
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e1fgmgxp5"
           name="sugar"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e1fgmgxp8"
       >
         Sugar
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e1fgmgxp5"
           name="base"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e1fgmgxp8"
       >
         Base
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e1fgmgxp6"
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e1fgmgxp7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e1fgmgxp4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e1fgmgxp5"
           name="phosphate"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e1fgmgxp8"
       >
         Phosphate
       </p>
@@ -355,17 +355,17 @@ exports[`Test Rna Editor Expanded component > should render correctly in view mo
     </div>
   </div>
   <div
-    class="css-14xjga1-ButtonsContainer e1lkl9ny7"
+    class="css-14xjga1-ButtonsContainer et89ixi7"
   >
     <button
-      class="css-45wob6-StyledButton e1lkl9ny8"
+      class="css-45wob6-StyledButton et89ixi8"
       data-testid="duplicate-btn"
       type="button"
     >
       Duplicate and Edit
     </button>
     <button
-      class="css-45wob6-StyledButton e1lkl9ny8"
+      class="css-45wob6-StyledButton et89ixi8"
       data-testid="edit-btn"
       type="button"
     >

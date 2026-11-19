@@ -5,7 +5,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { SystemControls } from './SystemControls';
 
 vi.mock('ketcher-core', () => ({
-  shortcutStr: () => 'Shift+/',
+  shortcutString: () => 'Shift+/',
 }));
 
 vi.mock('./TopToolbarIconButton', () => ({

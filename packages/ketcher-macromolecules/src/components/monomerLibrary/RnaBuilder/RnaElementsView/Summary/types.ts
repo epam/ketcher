@@ -16,7 +16,7 @@
 
 import { IconName } from 'ketcher-react';
 
-export interface ISummaryProps {
+export interface ISummaryProperties {
   groupName: string;
   label: string;
   quantity: number;
@@ -24,6 +24,6 @@ export interface ISummaryProps {
   iconName: IconName;
 }
 
-export interface IStyledIconProps {
+export interface IStyledIconProperties {
   expanded?: boolean;
 }

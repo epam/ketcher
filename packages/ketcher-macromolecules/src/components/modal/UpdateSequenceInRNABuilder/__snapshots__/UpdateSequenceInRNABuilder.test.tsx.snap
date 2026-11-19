@@ -68,7 +68,7 @@ exports[`UpdateSequenceInRNABuilder modal component > should render correctly 1`
             data-testid="update-sequence-modal-body"
           >
             <div
-              class="css-8i93i2-TextWrapper e3f5nqh0"
+              class="css-8i93i2-TextWrapper e1h33h7a0"
             >
               You are going to modify 2 nucleotides. Are you sure?
             </div>

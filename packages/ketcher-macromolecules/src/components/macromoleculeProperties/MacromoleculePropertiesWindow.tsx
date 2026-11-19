@@ -463,12 +463,12 @@ const GrossFormulaPart = ({ part }) => {
   );
 };
 
-interface PeptideProperties_ {
+interface PeptidePropertiesData {
   macromoleculesProperties: SingleChainMacromoleculeProperties;
   isError: boolean;
 }
 
-type DnaRnaProperties = PeptideProperties_;
+type DnaRnaProperties = PeptidePropertiesData;
 
 interface HydrophobicityChartProperties {
   data: number[];
@@ -747,7 +747,7 @@ const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
   );
 };
 
-const PeptideProperties = (properties: PeptideProperties_) => {
+const PeptideProperties = (properties: PeptidePropertiesData) => {
   const { t } = useTranslation('macromolecules');
   return properties.isError ? (
     <TabContentErrorWrapper>

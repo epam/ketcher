@@ -19,8 +19,8 @@ import { Collapse } from '@mui/material';
 import { Icon } from 'ketcher-react';
 
 import {
-  IStyledDropdownIconProps as IStyledDropdownIconProperties,
-  OptionsContainerProps as OptionsContainerProperties,
+  IStyledDropdownIconProperties as IStyledDropdownIconProperties,
+  OptionsContainerProperties as OptionsContainerProperties,
 } from './types';
 
 export const StyledDropdownIcon = styled(Icon, {

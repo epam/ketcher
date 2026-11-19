@@ -31,7 +31,7 @@ import {
   AttachmentPointName,
   KetMonomerClass,
 } from 'ketcher-core';
-import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
+import { generateSequenceContextMenuProperties } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import macromoleculesDialogs from '../../../locales/en/macromoleculesDialogs.json';
 
 // Plain i18next interpolation configured with the same {var} delimiters as
@@ -400,12 +400,12 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return undefined if no entry data', () => {
-    const result = generateSequenceContextMenuProps(undefined, t);
+    const result = generateSequenceContextMenuProperties(undefined, t);
     expect(result).toBeUndefined();
   });
 
   it('should return correct data for first in chain selected Nucleotide', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsFirstNucleotide,
       t,
     );
@@ -435,7 +435,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for not first in chain selected Nucleotide', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsNotFirstNucleotide,
       t,
     );
@@ -465,7 +465,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for not first in chain selected Nucleoside', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsNotFirstNucleoside,
       t,
     );
@@ -495,7 +495,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for two selected Nucleotides', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelections2Nucleotides,
       t,
     );
@@ -538,7 +538,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for connected and selected Nucleoside-Phosphate that can be interpreted as Nucleotide', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsNucleosideAndPhosphate,
       t,
     );
@@ -575,7 +575,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for connected and selected Phosphate-Nucleoside that can not be interpreted as Nucleotide', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsPhosphateAndNucleoside,
       t,
     );
@@ -612,7 +612,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct data for three selected elements', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelections3Elements,
       t,
     );
@@ -662,7 +662,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('should return correct count when both strands of N positions are selected', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
       t,
     );
@@ -678,7 +678,7 @@ describe('SequenceItemContextMenu helpers', () => {
         ({ twoStrandedNode, node }) => twoStrandedNode?.senseNode === node,
       ),
     ];
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       senseOnlySelections as unknown as NodesSelection,
       t,
     );
@@ -688,7 +688,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   it('marks each labeled node with the strand it was selected from', () => {
-    const result = generateSequenceContextMenuProps(
+    const result = generateSequenceContextMenuProperties(
       mockedSelectionsWithAntisense as unknown as NodesSelection,
       t,
     );
@@ -776,7 +776,7 @@ describe('SequenceItemContextMenu helpers', () => {
       const antisense = createConnectedBase({ label: 'T', selected: true });
       linkHydrogenBond(sense.base, antisense.base);
 
-      const result = generateSequenceContextMenuProps(
+      const result = generateSequenceContextMenuProperties(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
         t,
       );
@@ -792,7 +792,7 @@ describe('SequenceItemContextMenu helpers', () => {
       const antisense = createConnectedBase({ label: 'T', selected: false });
       linkHydrogenBond(sense.base, antisense.base);
 
-      const result = generateSequenceContextMenuProps(
+      const result = generateSequenceContextMenuProperties(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
         t,
       );
@@ -808,7 +808,7 @@ describe('SequenceItemContextMenu helpers', () => {
       // Deliberately not linked with linkHydrogenBond.
       createConnectedBase({ label: 'T', selected: true });
 
-      const result = generateSequenceContextMenuProps(
+      const result = generateSequenceContextMenuProperties(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
         t,
       );
@@ -828,7 +828,7 @@ describe('SequenceItemContextMenu helpers', () => {
       });
       linkHydrogenBond(sense.base, antisense.base);
 
-      const result = generateSequenceContextMenuProps(
+      const result = generateSequenceContextMenuProperties(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
         t,
       );
@@ -844,7 +844,7 @@ describe('SequenceItemContextMenu helpers', () => {
       const antisense = createConnectedBase({ label: 'T', selected: true });
       linkHydrogenBond(sense.base, antisense.base);
 
-      const result = generateSequenceContextMenuProps(
+      const result = generateSequenceContextMenuProperties(
         selectionFor(sense.nucleotide) as unknown as NodesSelection,
         t,
       );

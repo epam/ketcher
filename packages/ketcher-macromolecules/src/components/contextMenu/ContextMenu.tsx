@@ -143,8 +143,8 @@ export const ContextMenu = ({
   useEffect(() => {
     // Prevent menu from closing when clicking inside it
     // This runs in capture phase BEFORE react-contexify's listener
-    const preventCloseOnMenuClick = (e: MouseEvent) => {
-      const clickedElement = e.target;
+    const preventCloseOnMenuClick = (event_: MouseEvent) => {
+      const clickedElement = event_.target;
       // Type guard: ensure target is an Element
       if (!(clickedElement instanceof Element)) return;
 
@@ -155,15 +155,15 @@ export const ContextMenu = ({
 
       if (isClickInsideMenu && !isClickOnMenuItem) {
         // Clicking on padding, separator, or menu container itself
-        e.stopPropagation();
+        event_.stopPropagation();
       }
     };
 
-    const handleContextMenuClose = (e: MouseEvent) => {
+    const handleContextMenuClose = (event_: MouseEvent) => {
       const isClickOnNucleotide =
-        e.target?.__data__?.node || e.target?.__data__?.monomer;
+        event_.target?.__data__?.node || event_.target?.__data__?.monomer;
       if (isClickOnNucleotide) {
-        e.stopPropagation();
+        event_.stopPropagation();
         return;
       }
       dispatch(setContextMenuActive(false));

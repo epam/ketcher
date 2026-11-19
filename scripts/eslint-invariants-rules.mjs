@@ -55,7 +55,7 @@ export const ALLOWED_UI_IMPORTS = [
     imports: ['react-device-detect'],
   },
   {
-    file: 'packages/ketcher-core/src/utilities/shortcutsUtil.ts',
+    file: 'packages/ketcher-core/src/utilities/shortcutsUtility.ts',
     imports: ['react-device-detect'],
   },
 ];

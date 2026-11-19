@@ -50,7 +50,7 @@ export function legacyCopy(
       }
     });
   } catch (error) {
-    console.error('clipboardUtils.ts::legacyCopy', error);
+    console.error('clipboardUtilities.ts::legacyCopy', error);
     console.info(`Could not write exact type ${currentFmt}`);
   }
 }
@@ -66,10 +66,10 @@ export function legacyPaste(
   }
 
   data[PLAIN_TEXT_MIME_TYPE] = callback.getData(PLAIN_TEXT_MIME_TYPE);
-  return formats.reduce<LegacyClipboardData>((res, fmt) => {
+  return formats.reduce<LegacyClipboardData>((result, fmt) => {
     const d = callback.getData(fmt);
-    if (d) res[fmt] = d;
-    return res;
+    if (d) result[fmt] = d;
+    return result;
   }, data);
 }
 

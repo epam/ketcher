@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { Struct } from 'domain/entities/struct';
-import { ifDef } from 'utilities';
+import { ifDefined } from 'utilities';
 import { moleculeToKet } from './moleculeToKet';
 
 export function rgroupToKet(struct: Struct, data) {
@@ -33,10 +33,10 @@ export function rgroupToKet(struct: Struct, data) {
 function rgroupLogicToKet(rgnumber, rglogic) {
   const result = {};
 
-  ifDef(result, 'number', rgnumber);
-  ifDef(result, 'range', rglogic.range, '');
-  ifDef(result, 'resth', rglogic.resth, false);
-  ifDef(result, 'ifthen', rglogic.ifthen, 0);
+  ifDefined(result, 'number', rgnumber);
+  ifDefined(result, 'range', rglogic.range, '');
+  ifDefined(result, 'resth', rglogic.resth, false);
+  ifDefined(result, 'ifthen', rglogic.ifthen, 0);
 
   return result;
 }

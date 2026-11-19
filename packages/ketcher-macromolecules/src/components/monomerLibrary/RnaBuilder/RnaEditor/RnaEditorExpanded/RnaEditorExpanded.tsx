@@ -34,7 +34,7 @@ import {
   RnaEditorExpandedContainer,
   StyledButton,
 } from './styles';
-import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
+import { IRnaEditorExpandedProperties } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
 import { useDispatch } from 'react-redux';
 import {
   monomerGroupToPresetGroup,
@@ -104,7 +104,7 @@ type SequenceSelectionGroupNames = {
 export const RnaEditorExpanded = ({
   isEditMode,
   onDuplicate,
-}: IRnaEditorExpandedProps) => {
+}: IRnaEditorExpandedProperties) => {
   const { t } = useTranslation(['macromoleculesDialogs', 'common']);
   const groupsData = [
     {

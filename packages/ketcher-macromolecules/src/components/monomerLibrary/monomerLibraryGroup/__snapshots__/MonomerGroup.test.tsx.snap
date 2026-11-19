@@ -18,7 +18,7 @@ exports[`Monomer Group > should apply correct style if selected 1`] = `
     type="button"
   >
     <svg
-      class="css-ipnnca-StyledIcon eugifix2"
+      class="css-ipnnca-StyledIcon e138h71a2"
       name="vertical-dots"
     />
   </button>
@@ -75,7 +75,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -114,7 +114,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -153,7 +153,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -192,7 +192,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -231,7 +231,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -286,7 +286,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -325,7 +325,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -364,7 +364,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -403,7 +403,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -442,7 +442,7 @@ exports[`Monomer Group > should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -549,7 +549,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -588,7 +588,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -627,7 +627,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -666,7 +666,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -705,7 +705,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon e138h71a2"
                 name="vertical-dots"
               />
             </button>
@@ -755,7 +755,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -794,7 +794,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -833,7 +833,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -872,7 +872,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>
@@ -911,7 +911,7 @@ exports[`Monomer Group > should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-ipnnca-StyledIcon eugifix2"
+              class="css-ipnnca-StyledIcon e138h71a2"
               name="vertical-dots"
             />
           </button>

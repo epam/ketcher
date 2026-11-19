@@ -33,7 +33,7 @@ import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
-import { RnaElementsViewProps as RnaElementsViewProperties } from './types';
+import { RnaElementsViewProperties as RnaElementsViewProperties } from './types';
 import { IRnaPreset } from 'ketcher-core';
 
 type Properties = RnaElementsViewProperties & {

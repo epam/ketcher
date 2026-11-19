@@ -108,8 +108,8 @@ const RnaPresetItem = ({
       onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
-      onDoubleClick={(e) => {
-        onAutochainIconClick(e);
+      onDoubleClick={(event_) => {
+        onAutochainIconClick(event_);
         onAutochainIconMouseOut();
       }}
       selected={isSelected}
@@ -128,7 +128,7 @@ const RnaPresetItem = ({
               onMouseOver={onAutochainIconMouseOver}
               onMouseOut={onAutochainIconMouseOut}
               onClick={onAutochainIconClick}
-              onDoubleClick={(e) => e.stopPropagation()}
+              onDoubleClick={(event_) => event_.stopPropagation()}
             />
           </AutochainIconWrapper>
         </Tooltip>

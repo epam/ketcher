@@ -20,7 +20,7 @@ import {
   RnaEditorCollapsedContainer,
   TextContainer,
 } from './styles';
-import { IRnaEditorCollapsedProps as IRnaEditorCollapsedProperties } from './types';
+import { IRnaEditorCollapsedProperties as IRnaEditorCollapsedProperties } from './types';
 
 const RnaEditorCollapsed = ({
   name,

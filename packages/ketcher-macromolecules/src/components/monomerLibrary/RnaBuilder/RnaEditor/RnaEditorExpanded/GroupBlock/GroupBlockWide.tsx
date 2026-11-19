@@ -21,8 +21,8 @@ import {
   MonomerName,
   TextContainer,
 } from './styles';
-import { IGroupBlockProps as IGroupBlockProperties } from './types';
-import { groupNameToRnaEditorItemLabelKey } from './utils';
+import { IGroupBlockProperties as IGroupBlockProperties } from './types';
+import { groupNameToRnaEditorItemLabelKey } from './utilities';
 import { useAppSelector } from 'hooks';
 import { isRnaBuilderEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';

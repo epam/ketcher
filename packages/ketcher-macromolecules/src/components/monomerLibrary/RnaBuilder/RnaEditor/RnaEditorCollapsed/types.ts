@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface IRnaEditorCollapsedProps {
+export interface IRnaEditorCollapsedProperties {
   name?: string;
   fullName?: string;
 }

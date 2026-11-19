@@ -17,7 +17,7 @@
 import {
   type AutomapMode,
   type CalculateMacromoleculePropertiesResult,
-  type CalculateProps,
+  type CalculateProperties,
   type CalculateResult,
   type CheckResult,
   type CheckTypes,
@@ -44,7 +44,7 @@ const defaultTypes: Array<CheckTypes> = [
   'chiral',
   '3d',
 ];
-const defaultCalcProps: Array<CalculateProps> = [
+const defaultCalcProps: Array<CalculateProperties> = [
   'molecular-weight',
   'most-abundant-mass',
   'monoisotopic-mass',
@@ -67,7 +67,7 @@ type CheckOptions = {
   types?: Array<CheckTypes>;
 };
 type CalculateOptions = {
-  properties?: Array<CalculateProps>;
+  properties?: Array<CalculateProperties>;
 };
 type RecognizeOptions = {
   version?: string;

@@ -11,7 +11,7 @@ import {
   deleteMonomerWithPresets,
   getDeleteConfirmation,
   getReferencingCustomPresets,
-} from './MonomerLibraryContextMenu.utils';
+} from './MonomerLibraryContextMenu.utilities';
 
 type LibraryMenuProperties = { libraryItem?: MonomerItemType };
 

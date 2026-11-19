@@ -98,7 +98,7 @@ export const attachmentPointNames = [
   'R8',
 ];
 
-export type AttachmentPointConstructorParams = {
+export type AttachmentPointConstructorParameters = {
   rootElement: D3SvgElementSelection<SVGGElement, void>;
   monomer: BaseMonomer;
   bodyWidth: number;
@@ -114,8 +114,8 @@ export type AttachmentPointConstructorParams = {
   isDragCircleHover?: boolean;
 };
 
-export type PreviewAttachmentPointConstructorParams =
-  AttachmentPointConstructorParams & {
+export type PreviewAttachmentPointConstructorParameters =
+  AttachmentPointConstructorParameters & {
     selected: boolean;
     connected: boolean;
     usage: UsageInMacromolecule;

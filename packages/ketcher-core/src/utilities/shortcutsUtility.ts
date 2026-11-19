@@ -31,7 +31,7 @@ function formatShortcutPart(shortcutPart: string): string {
   );
 }
 
-export function shortcutStr(shortcut?: string | string[]) {
+export function shortcutString(shortcut?: string | string[]) {
   if (!shortcut) {
     return '';
   }
@@ -44,7 +44,7 @@ export const generateMenuShortcuts = <T>(object) =>
   Object.keys(object).reduce((accumulator, key) => {
     if (object[key]?.shortcut) {
       const shortcut = object[key].shortcut;
-      const processedShortcut = shortcutStr(shortcut);
+      const processedShortcut = shortcutString(shortcut);
       accumulator[key] = processedShortcut;
     }
     return accumulator;

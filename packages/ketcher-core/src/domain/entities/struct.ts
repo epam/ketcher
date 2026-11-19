@@ -1035,7 +1035,7 @@ export class Struct {
   /**
    * A scale factor outside [0.01, 100] means the source geometry is degenerate;
    * normalizing it would distort the drawing more than leaving it alone. Shared
-   * with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
+   * with rescaleMolecules() in serializers/mol/utilities.js so the reaction-merge
    * path applies the same rule rather than a copy of these bounds.
    */
   static isRescaleFactorSane(scale: number): boolean {
@@ -1258,7 +1258,7 @@ export class Struct {
   /**
    * Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
    * unit). Applied identically to every input format; rescaleMolecules() in
-   * serializers/mol/utils.js follows the same rule for the reaction-merge path.
+   * serializers/mol/utilities.js follows the same rule for the reaction-merge path.
    *
    * The median rather than the mean: a handful of distorted bonds used to drag the
    * average far from 1, shrinking the whole drawing — shapes, texts and images

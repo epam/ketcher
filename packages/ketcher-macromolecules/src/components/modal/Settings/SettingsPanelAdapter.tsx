@@ -25,7 +25,7 @@ import {
   SettingsFormValue,
 } from 'ketcher-core';
 import { ManageSettingsMenu, SettingsPanel } from 'ketcher-react';
-import { RequiredModalProps } from '../modalContainer';
+import { RequiredModalProperties } from '../modalContainer';
 import { useLayoutBounds } from 'components/Layout/Layout';
 import { SettingsFieldControl } from './SettingsFieldControl';
 import {
@@ -43,7 +43,7 @@ import { CanvasCaptureLayer } from './Settings.styles';
 export const SettingsPanelAdapter = ({
   isModalOpen,
   onClose,
-}: RequiredModalProps) => {
+}: RequiredModalProperties) => {
   const { t } = useTranslation(['common', 'dialogs', 'macromoleculesDialogs']);
   const settingsService = globalThis.ketcher?.settingsService;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function ifDef<TValue = unknown>(
+export function ifDefined<TValue = unknown>(
   target: object,
   key: string,
   value: TValue,

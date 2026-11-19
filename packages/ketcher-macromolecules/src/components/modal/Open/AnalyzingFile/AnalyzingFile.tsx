@@ -17,7 +17,7 @@ import { Icon } from 'ketcher-react';
 import { LoadingCircles } from './LoadingCircles';
 import styled from '@emotion/styled';
 
-export type AnalyzingFileProps = {
+export type AnalyzingFileProperties = {
   fileName?: string;
 };
 
@@ -49,7 +49,7 @@ const FileBox = styled.div`
   }
 `;
 
-export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => {
+export const AnalyzingFile = ({ fileName }: AnalyzingFileProperties) => {
   return (
     <RootContainer>
       {fileName && (

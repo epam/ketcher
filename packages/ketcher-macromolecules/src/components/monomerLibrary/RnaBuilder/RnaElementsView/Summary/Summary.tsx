@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { StyledIcon, SummaryContainer, SummaryText } from './styles';
-import { ISummaryProps as ISummaryProperties } from './types';
+import { ISummaryProperties as ISummaryProperties } from './types';
 
 export const Summary = ({
   groupName,

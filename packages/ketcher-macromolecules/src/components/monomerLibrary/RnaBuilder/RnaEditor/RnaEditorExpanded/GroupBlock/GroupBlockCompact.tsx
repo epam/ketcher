@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { IGroupBlockProps as IGroupBlockProperties } from './types';
+import { IGroupBlockProperties as IGroupBlockProperties } from './types';
 import { useAppSelector } from 'hooks';
 import { isRnaBuilderEditMode } from 'state/rna-builder';
 import {
@@ -7,7 +7,7 @@ import {
   CompactGroupConnection,
   CompactGroupText,
 } from './styles';
-import { groupNameToRnaEditorItemLabelKey } from './utils';
+import { groupNameToRnaEditorItemLabelKey } from './utilities';
 import GroupIcon from './GroupIcon';
 import { PropsWithChildren } from 'react';
 

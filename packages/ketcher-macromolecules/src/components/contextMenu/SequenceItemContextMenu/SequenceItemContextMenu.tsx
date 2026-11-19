@@ -34,7 +34,7 @@ import {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
 } from 'state/rna-builder';
 import {
-  generateSequenceContextMenuProps,
+  generateSequenceContextMenuProperties,
   isEstablishHydrogenBondDisabled,
   isNodeContainHydrogenBonds,
 } from 'components/contextMenu/SequenceItemContextMenu/helpers';
@@ -79,7 +79,7 @@ export const SequenceItemContextMenu = ({
   const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
-  const menuProperties = generateSequenceContextMenuProps(selections, t);
+  const menuProperties = generateSequenceContextMenuProperties(selections, t);
   const selectedMonomers: BaseMonomer[] =
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;

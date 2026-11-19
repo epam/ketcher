@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
-import { IStyledIconProps as IStyledIconProperties } from './types';
+import { IStyledIconProperties as IStyledIconProperties } from './types';
 
 export const SummaryContainer = styled.div((properties) => ({
   minHeight: '32px',

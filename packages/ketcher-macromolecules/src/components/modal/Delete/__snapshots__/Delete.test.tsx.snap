@@ -67,7 +67,7 @@ exports[`Delete component > should render correctly 1`] = `
             class="MuiDialogContent-root e1gf4okc4 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
           >
             <div
-              class="css-1t7fiom-DeleteTextWrapper e1axc6o90"
+              class="css-1t7fiom-DeleteTextWrapper ev7i2i60"
               data-testid="delete-preset-popup-content"
             >
               <div>

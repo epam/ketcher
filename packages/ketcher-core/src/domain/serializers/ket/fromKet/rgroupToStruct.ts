@@ -17,7 +17,7 @@
 import { RGroup, type RGroupAttributes } from 'domain/entities/rgroup';
 import type { Struct } from 'domain/entities/struct';
 
-import { ifDef, KetcherLogger } from 'utilities';
+import { ifDefined, KetcherLogger } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';
 import type { KetItem, KetRGroupLogic } from './types';
 
@@ -40,9 +40,9 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
 
 export function rgroupLogicToStruct(rglogic: KetRGroupLogic): RGroup {
   const params: RGroupAttributes = {};
-  ifDef(params, 'range', rglogic.range);
-  ifDef(params, 'resth', rglogic.resth);
-  ifDef(params, 'ifthen', rglogic.ifthen);
+  ifDefined(params, 'range', rglogic.range);
+  ifDefined(params, 'resth', rglogic.resth);
+  ifDefined(params, 'ifthen', rglogic.ifthen);
 
   return new RGroup(params);
 }

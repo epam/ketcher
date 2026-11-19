@@ -73,15 +73,15 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
 
   serialize(sdfItems: Array<SdfItem>): string {
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    return sdfItems.reduce((res, item) => {
-      res += molSerializer.serialize(item.struct);
+    return sdfItems.reduce((result, item) => {
+      result += molSerializer.serialize(item.struct);
 
       Object.keys(item.props).forEach((property) => {
-        res += `> <${property}>\n`;
-        res += `${item.props[property]}\n\n`;
+        result += `> <${property}>\n`;
+        result += `${item.props[property]}\n\n`;
       });
 
-      return `${res}$$$$\n`;
+      return `${result}$$$$\n`;
     }, '');
   }
 }

@@ -5,9 +5,9 @@ import {
   getStructStringFromClipboardData,
   legacyCopy,
   legacyPaste,
-} from '../clipboardUtils';
+} from '../clipboardUtilities';
 
-describe('clipboardUtils', () => {
+describe('clipboardUtilities', () => {
   describe('legacyCopy', () => {
     it('copies plain text and additional mime types to clipboard data', () => {
       const setData = vi.fn();

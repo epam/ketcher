@@ -35,7 +35,7 @@ import {
   provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
-import { RequiredModalProps as RequiredModalProperties } from '../modalContainer';
+import { RequiredModalProperties as RequiredModalProperties } from '../modalContainer';
 import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
 import {
   Form,

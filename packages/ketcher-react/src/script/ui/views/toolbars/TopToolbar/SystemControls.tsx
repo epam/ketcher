@@ -17,7 +17,7 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { shortcutStr } from 'ketcher-core';
+import { shortcutString } from 'ketcher-core';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
@@ -98,7 +98,7 @@ export const SystemControls = ({
       />
       <TopToolbarIconButton
         title={t('toolbars:systemControls.help', {
-          shortcut: shortcutStr(['?', '&', 'Shift+/']),
+          shortcut: shortcutString(['?', '&', 'Shift+/']),
         })}
         onClick={onHelp}
         iconName="help"

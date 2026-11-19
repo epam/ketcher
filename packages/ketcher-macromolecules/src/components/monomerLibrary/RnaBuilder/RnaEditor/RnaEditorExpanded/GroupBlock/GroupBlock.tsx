@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IGroupBlockProps as IGroupBlockProperties } from './types';
+import { IGroupBlockProperties as IGroupBlockProperties } from './types';
 import { useIsCompactView } from 'hooks';
 import { GroupBlockCompact } from './GroupBlockCompact';
 import { GroupBlockWide } from './GroupBlockWide';

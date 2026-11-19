@@ -115,7 +115,7 @@ ketcher-core
 ### Type Aliases
 
 - [AutomapMode](README.md#automapmode)
-- [CalculateProps](README.md#calculateprops)
+- [CalculateProperties](README.md#calculateproperties)
 - [CalculateResult](README.md#calculateresult)
 - [CheckTypes](README.md#checktypes)
 - [ElementLabel](README.md#elementlabel)
@@ -162,9 +162,9 @@ ketcher-core
 
 ___
 
-### CalculateProps
+### CalculateProperties
 
-Ƭ **CalculateProps**: ``"molecular-weight"`` \| ``"most-abundant-mass"`` \| ``"monoisotopic-mass"`` \| ``"gross"`` \| ``"mass-composition"``
+Ƭ **CalculateProperties**: ``"molecular-weight"`` \| ``"most-abundant-mass"`` \| ``"monoisotopic-mass"`` \| ``"gross"`` \| ``"mass-composition"``
 
 #### Defined in
 
@@ -174,7 +174,7 @@ ___
 
 ### CalculateResult
 
-Ƭ **CalculateResult**: `Record`<[`CalculateProps`](README.md#calculateprops), `string` \| `number` \| `boolean`\>
+Ƭ **CalculateResult**: `Record`<[`CalculateProperties`](README.md#calculateproperties), `string` \| `number` \| `boolean`\>
 
 #### Defined in
 

@@ -138,23 +138,23 @@ async function request<T = unknown>(
     return responseHandler(fetchResponse);
   }
 
-  const res = await fetchResponse;
+  const response = await fetchResponse;
   let json: unknown;
   try {
     // Error responses (e.g. a 413 from a reverse proxy rejecting an
     // oversized body) are not guaranteed to have a JSON body, so parsing
     // must not be the thing that decides whether the request succeeded.
-    json = await res.json();
+    json = await response.json();
   } catch {
     json = null;
   }
 
-  if (res.ok) return json as T;
+  if (response.ok) return json as T;
 
   const message =
     (json as { error?: string } | null)?.error ||
-    res.statusText ||
-    `Request failed with status ${res.status}`;
+    response.statusText ||
+    `Request failed with status ${response.status}`;
   throw new Error(message);
 }
 

@@ -10,7 +10,7 @@ import {
   AttachmentPointName as AttachmentPointNameComponent,
   ModalContent,
 } from './styledComponents';
-import { MonomerConnectionProps as MonomerConnectionProperties } from '../modalContainer/types';
+import { MonomerConnectionProperties as MonomerConnectionProperties } from '../modalContainer/types';
 import {
   AmbiguousMonomer,
   BaseMonomer,

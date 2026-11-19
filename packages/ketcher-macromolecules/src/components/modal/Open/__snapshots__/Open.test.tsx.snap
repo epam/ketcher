@@ -10,7 +10,7 @@ exports[`Open component > should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root eobuy6u0 e1gf4okc0 MuiModal-root css-1gjtmjz-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
+      class="MuiDialog-root ep2bqdu0 e1gf4okc0 MuiModal-root css-1gjtmjz-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
       role="presentation"
     >
       <div
@@ -67,13 +67,13 @@ exports[`Open component > should render correctly 1`] = `
             class="MuiDialogContent-root e1gf4okc4 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
           >
             <div
-              class="css-g19x08-OpenFileWrapper eirroug0"
+              class="css-g19x08-OpenFileWrapper e1756bgh0"
             >
               <div
-                class="css-18k32lv-RootContainer emlg0ft0"
+                class="css-18k32lv-RootContainer ezcy6gf0"
               >
                 <div
-                  class="css-vhyujj-DropContainer emlg0ft1"
+                  class="css-vhyujj-DropContainer ezcy6gf1"
                   data-testid="paste-from-clipboard-button"
                 >
                   <svg
@@ -86,11 +86,11 @@ exports[`Open component > should render correctly 1`] = `
                   </p>
                 </div>
                 <div
-                  class="css-vhyujj-DropContainer emlg0ft1"
+                  class="css-vhyujj-DropContainer ezcy6gf1"
                   data-testid="open-from-file-button"
                 >
                   <button
-                    class="css-1e3isln-DropzoneButton e10arzxy2"
+                    class="css-1e3isln-DropzoneButton e107g06u2"
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="0"
                     type="button"
@@ -102,11 +102,11 @@ exports[`Open component > should render correctly 1`] = `
                       type="file"
                     />
                     <svg
-                      class="css-8ctlu6-StyledIcon e10arzxy0"
+                      class="css-8ctlu6-StyledIcon e107g06u0"
                       name="open-window-upload-icon"
                     />
                     <div
-                      class="css-jm0alk-ButtonContainer e10arzxy1"
+                      class="css-jm0alk-ButtonContainer e107g06u1"
                     >
                       <span>
                         or drag file here
@@ -120,11 +120,11 @@ exports[`Open component > should render correctly 1`] = `
                   </button>
                 </div>
                 <div
-                  class="css-vhyujj-DropContainer emlg0ft1"
+                  class="css-vhyujj-DropContainer ezcy6gf1"
                   data-testid="open-from-image-button"
                 >
                   <button
-                    class="css-1e3isln-DropzoneButton e10arzxy2"
+                    class="css-1e3isln-DropzoneButton e107g06u2"
                     disabled=""
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="-1"
@@ -138,7 +138,7 @@ exports[`Open component > should render correctly 1`] = `
                       type="file"
                     />
                     <svg
-                      class="css-1yp754b-StyledIcon e10arzxy0"
+                      class="css-1yp754b-StyledIcon e107g06u0"
                       disabled=""
                       name="image-frame"
                     />

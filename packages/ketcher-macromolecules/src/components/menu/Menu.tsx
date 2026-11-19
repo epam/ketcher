@@ -19,8 +19,8 @@ import { SubMenu } from './subMenu';
 import { IMenuContext, MenuContext } from '../../contexts';
 import { Divider, MenuLayout, StyledGroup, VerticalDivider } from './styles';
 import {
-  GroupProps as GroupProperties,
-  MenuProps as MenuProperties,
+  GroupProperties as GroupProperties,
+  MenuProperties as MenuProperties,
 } from './types';
 
 const Group = ({

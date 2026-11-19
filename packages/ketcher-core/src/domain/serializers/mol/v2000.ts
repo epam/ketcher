@@ -28,7 +28,7 @@ import { Vec2 } from 'domain/entities/vec2';
 
 import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';
-import utilities from './utils';
+import utilities from './utilities';
 import type { AtomMap, SGroupMap } from './mol.types';
 
 const shouldLoadRGroupFragments = true; // TODO: set to load the fragments
@@ -495,12 +495,12 @@ function parsePropertyLines(
 /**
  * @param atoms { Pool }
  * @param values { Pool }
- * @param propId { string }
+ * @param propertyId { string }
  */
 function applyAtomProperty(
   atoms: Pool<Atom>,
   values: Pool<string | number | AtomList>,
-  propId: string,
+  propertyId: string,
 ): void {
   /*
   reader
@@ -508,7 +508,7 @@ function applyAtomProperty(
   values.forEach((propertyValue, aid) => {
     const atom = atoms.get(aid);
     if (atom) {
-      (atom as Atom & Record<string, unknown>)[propId] = propertyValue;
+      (atom as Atom & Record<string, unknown>)[propertyId] = propertyValue;
     }
   });
 }

@@ -15,11 +15,11 @@
  ***************************************************************************/
 import {
   AnalyzingFile,
-  AnalyzingFileProps as AnalyzingFileProperties,
+  AnalyzingFileProperties as AnalyzingFileProperties,
 } from '../AnalyzingFile';
 import {
   OpenOptions,
-  OpenOptionsProps as OpenOptionsProperties,
+  OpenOptionsProperties as OpenOptionsProperties,
 } from '../OpenOptions';
 import {
   TextEditorProps as TextEditorProperties,

@@ -134,7 +134,7 @@ export interface CalculateMacromoleculePropertiesResult {
 
 export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
 
-export type CalculateProps =
+export type CalculateProperties =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'
@@ -142,10 +142,13 @@ export type CalculateProps =
   | 'mass-composition';
 
 export interface CalculateData extends WithStruct, WithSelection {
-  properties: Array<CalculateProps>;
+  properties: Array<CalculateProperties>;
 }
 
-export type CalculateResult = Record<CalculateProps, string | number | boolean>;
+export type CalculateResult = Record<
+  CalculateProperties,
+  string | number | boolean
+>;
 
 export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
 

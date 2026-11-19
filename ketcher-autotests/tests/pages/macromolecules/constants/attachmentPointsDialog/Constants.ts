@@ -1,8 +1,8 @@
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
 export enum MonomerOverview {
-  LeftMonomer = 'left-monomer-overview',
-  RightMonomer = 'right-monomer-overview',
+  LeftMonomer = 'left-monomer-preview',
+  RightMonomer = 'right-monomer-preview',
 }
 
 export const LeftMonomerAttachmentPointButton: Record<AttachmentPoint, string> =

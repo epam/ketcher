@@ -16,6 +16,7 @@
 
 export * from './scale';
 export * from './stereoValidator';
+export * from './undefinedStereocenters';
 export * from './functionalGroupsProvider';
 export * from './saltsAndSolventsProvider';
 export * from './isGenericAtom';

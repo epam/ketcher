@@ -32,7 +32,6 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { SequenceType } from 'domain/entities/monomer-chains/types';
 import type { Struct } from 'domain/entities/struct';
 import { defaultBondThickness } from './editor';
-
 const defaultTypes: Array<CheckTypes> = [
   'radicals',
   'pseudoatoms',

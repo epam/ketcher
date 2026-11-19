@@ -18,6 +18,7 @@ import {
   ChemicalMimeType,
   KetcherLogger,
   KetSerializer,
+  markUndefinedStereocenters,
   type Struct,
   type CheckResult,
   type LayoutResult,
@@ -205,7 +206,12 @@ export function serverTransform(
         );
         const loadedStruct = new KetSerializer().deserialize(res.struct);
 
-        await dispatch(
+        if (method === 'calculateCip') {
+          // Chiral centers without stereo bonds get the "(?)" label
+          markUndefinedStereocenters(loadedStruct);
+        }
+
+        return dispatch(
           load(loadedStruct, {
             preserveViewport:
               method === 'aromatize' || method === 'dearomatize',

@@ -15,6 +15,9 @@ export enum AtomCIP {
   R = 'R',
   s = 's',
   r = 'r',
+  // Stereocenter without stereo bonds: configuration is not defined.
+  // Display-only label, never serialized to KET.
+  Undefined = '?',
 }
 
 export enum BondCIP {

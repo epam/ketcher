@@ -22,13 +22,13 @@ import clsx from 'clsx';
 import { Icon } from 'components';
 import ColorPickerContent from './ColorPickerContent';
 
-interface Properties {
+interface Props {
   value: string;
   name: string;
   onChange: (value: string) => void;
 }
 
-const ColorPicker = (properties: Properties) => {
+const ColorPicker = (properties: Props) => {
   const { onChange, value } = properties;
   const [isOpen, setIsOpen] = useState(false);
   const [triggerElement, setTriggerElement] =

@@ -128,7 +128,7 @@ function propertiesDialog(editor, id, pos) {
     fragId: atom ? atom.fragment : null,
   });
 
-  Promise.resolve(result)
+  void Promise.resolve(result)
     .then((element) => {
       // TODO review: using Atom.attrlist as a source of default property values
       element = { ...Atom.attrlist, ...element };

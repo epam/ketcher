@@ -143,7 +143,7 @@ function propertiesDialog(
     type: 'text',
   });
 
-  result
+  void result
     .then(({ content }) => {
       if (!id && id !== 0 && content && position && pos) {
         editor.update(

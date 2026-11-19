@@ -22,7 +22,7 @@ interface Schema {
   enumNames: string[];
 }
 
-interface ComboBoxProperties {
+interface ComboBoxProps {
   value: string;
   type?: string;
   schema: Schema;
@@ -33,8 +33,8 @@ interface ComboBoxState {
   suggestsHidden: boolean;
 }
 
-class ComboBox extends Component<ComboBoxProperties, ComboBoxState> {
-  constructor(properties: ComboBoxProperties) {
+class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
+  constructor(properties: ComboBoxProps) {
     super(properties);
     this.state = {
       suggestsHidden: true,
@@ -96,11 +96,11 @@ class ComboBox extends Component<ComboBoxProperties, ComboBoxState> {
           onChange={this.updateInput}
           autoComplete="off"
         />
-        {suggestList.length === 0 ? null : (
+        {suggestList.length > 0 ? (
           <ul className={classes.suggestList} style={suggestListStyles}>
             {suggestList}
           </ul>
-        )}
+        ) : null}
       </div>
     );
   }

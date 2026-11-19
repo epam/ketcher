@@ -40,7 +40,7 @@ export interface Template {
   };
 }
 
-interface TemplateTableProperties {
+interface TemplateTableProps {
   templates: ReadonlyArray<Template>;
   selected: Template | null;
   onSelect: (tmpl: Template) => void;
@@ -59,7 +59,7 @@ const PREVIEW_IDLE_TIMEOUT_MS = 100;
 const getInitialPreviewCount = (templateCount: number) =>
   Math.min(INITIAL_PREVIEW_COUNT, templateCount);
 
-const TemplateTable: FC<TemplateTableProperties> = (properties) => {
+const TemplateTable: FC<TemplateTableProps> = (properties) => {
   const {
     templates,
     selected,

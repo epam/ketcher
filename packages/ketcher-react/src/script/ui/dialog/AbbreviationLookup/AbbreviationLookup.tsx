@@ -51,11 +51,11 @@ import {
 import { ABBREVIATION_LOOKUP_TEST_ID } from './AbbreviationLookup.constants';
 import { CLIP_AREA_BASE_CLASS } from '../../component/cliparea/cliparea';
 
-interface Properties {
+interface Props {
   options: AbbreviationOption[];
 }
 
-export const AbbreviationLookup = ({ options }: Properties) => {
+export const AbbreviationLookup = ({ options }: Props) => {
   const { t } = useTranslation('dialogs');
   const inputReference = useRef<HTMLInputElement | null>(null);
   const autocompleteReference = useRef<HTMLInputElement | null>(null);

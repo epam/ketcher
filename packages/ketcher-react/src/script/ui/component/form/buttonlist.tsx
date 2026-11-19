@@ -23,7 +23,7 @@ interface Schema {
   };
 }
 
-interface ButtonListProperties {
+interface ButtonListProps {
   value: string[];
   onChange: (value: string[]) => void;
   schema: Schema;
@@ -53,7 +53,7 @@ function ButtonList({
   multiple,
   classes,
   testId,
-}: Readonly<ButtonListProperties>) {
+}: Readonly<ButtonListProps>) {
   const selected = classes.selected ?? 'selected';
   return (
     <ul>

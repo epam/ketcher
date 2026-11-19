@@ -28,7 +28,7 @@ const ErrorMessage = styled(Popover)`
   }
 `;
 
-interface ErrorPopoverProperties {
+interface ErrorPopoverProps {
   error: string;
   anchorEl: HTMLElement | null;
   open?: boolean;
@@ -40,7 +40,7 @@ export const ErrorPopover = ({
   anchorEl,
   open = true,
   onClose,
-}: ErrorPopoverProperties) => (
+}: ErrorPopoverProps) => (
   <ErrorMessage
     id="form-error"
     open={open}

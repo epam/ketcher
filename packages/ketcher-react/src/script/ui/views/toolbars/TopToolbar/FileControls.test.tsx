@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { FileControls } from './FileControls';
 
 describe('FileControls', () => {
   const defaultProps = {
-    onFileOpen: jest.fn(),
-    onSave: jest.fn(),
+    onFileOpen: vi.fn(),
+    onSave: vi.fn(),
     shortcuts: {},
     hiddenButtons: [],
   };

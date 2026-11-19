@@ -26,7 +26,7 @@ import { useAppContext } from '../../../../hooks';
 import { fileSaver } from './saveButton.utilities';
 import type { SaverType } from './saveButton.types';
 
-type Properties = {
+type Props = {
   server?: StructService | null;
   filename: string;
   data?: Blob | string;
@@ -42,9 +42,9 @@ type Properties = {
   testId?: string;
 };
 
-type SaveButtonProperties = PropsWithChildren<Properties>;
+type SaveButtonProps = PropsWithChildren<Props>;
 
-const SaveButton = (properties: SaveButtonProperties) => {
+const SaveButton = (properties: SaveButtonProps) => {
   const noop = () => null;
   const {
     server,
@@ -80,7 +80,7 @@ const SaveButton = (properties: SaveButtonProperties) => {
   const saveImage = () => {
     const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
     if (typeof data === 'string' && options?.outputFormat) {
-      ketcherInstance
+      void ketcherInstance
         .generateImage(data, options)
         .then((blob) => {
           saveAs(blob, `${filename}.${options.outputFormat}`);
@@ -96,12 +96,14 @@ const SaveButton = (properties: SaveButtonProperties) => {
   const save = (event: KeyboardEvent | MouseEvent) => {
     event.preventDefault();
     switch (mode) {
-      case 'saveImage':
+      case 'saveImage': {
         saveImage();
         break;
+      }
       case 'saveFile':
-      default:
+      default: {
         saveFile();
+      }
     }
   };
 

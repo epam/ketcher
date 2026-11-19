@@ -41,7 +41,7 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProperties extends Omit<
+interface MeasureInputProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   'onChange'
 > {
@@ -116,7 +116,7 @@ const MeasureInput = ({
   className,
   tooltip,
   ...rest
-}: MeasureInputProperties) => {
+}: MeasureInputProps) => {
   const stringifiedValue = String(value);
   const [internalValue, setInternalValue] = useState(stringifiedValue);
   const [previousPropertyValue, setPreviousPropertyValue] =

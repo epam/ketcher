@@ -65,7 +65,7 @@ function createKeyDownHandler(callback: () => void) {
  * Memoized individual template item component
  * Prevents unnecessary re-renders when parent selection changes
  */
-export interface TemplateItemProperties {
+export interface TemplateItemProps {
   tmpl: Template;
   index: number;
   isSelected: boolean;
@@ -76,7 +76,7 @@ export interface TemplateItemProperties {
   onAttach?: (tmpl: Template) => void;
 }
 
-const TemplateItem: FC<TemplateItemProperties> = memo(
+const TemplateItem: FC<TemplateItemProps> = memo(
   ({
     tmpl,
     index,
@@ -155,16 +155,15 @@ const TemplateItem: FC<TemplateItemProperties> = memo(
     );
   },
   // Custom comparison: only re-render if these specific props change
-  (previousProperties, nextProperties) => {
+  (previousProps, nextProps) => {
     return (
-      previousProperties.isSelected === nextProperties.isSelected &&
-      previousProperties.shouldRenderPreview ===
-        nextProperties.shouldRenderPreview &&
-      previousProperties.tmpl === nextProperties.tmpl &&
-      previousProperties.renderOptions === nextProperties.renderOptions &&
-      previousProperties.onSelect === nextProperties.onSelect &&
-      previousProperties.onDelete === nextProperties.onDelete &&
-      previousProperties.onAttach === nextProperties.onAttach
+      previousProps.isSelected === nextProps.isSelected &&
+      previousProps.shouldRenderPreview === nextProps.shouldRenderPreview &&
+      previousProps.tmpl === nextProps.tmpl &&
+      previousProps.renderOptions === nextProps.renderOptions &&
+      previousProps.onSelect === nextProps.onSelect &&
+      previousProps.onDelete === nextProps.onDelete &&
+      previousProps.onAttach === nextProps.onAttach
     );
   },
 );

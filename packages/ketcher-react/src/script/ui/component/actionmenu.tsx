@@ -49,7 +49,7 @@ interface StatusMap {
   [key: string]: ItemStatus;
 }
 
-interface SharedActionProperties {
+interface SharedActionProps {
   status: StatusMap;
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
@@ -61,7 +61,7 @@ interface SharedActionProperties {
 
 interface MenuItemWithComponent {
   id: string;
-  component: (properties: SharedActionProperties) => JSX.Element;
+  component: (properties: SharedActionProps) => JSX.Element;
 }
 
 interface MenuItemWithMenu {
@@ -71,7 +71,7 @@ interface MenuItemWithMenu {
 
 type MenuItem = string | MenuItemWithMenu | MenuItemWithComponent;
 
-interface ActionButtonProperties {
+interface ActionButtonProps {
   name: IconName;
   action: UiAction;
   status?: ItemStatus;
@@ -80,7 +80,7 @@ interface ActionButtonProperties {
   indigoVerification?: boolean;
 }
 
-interface ActionMenuProperties extends SharedActionProperties {
+interface ActionMenuProps extends SharedActionProps {
   name: string;
   menu: MenuItem[];
   className?: string;
@@ -123,7 +123,7 @@ export function showMenuOrButton(
   action: Tools,
   item: MenuItem,
   status: ItemStatus,
-  properties: SharedActionProperties,
+  properties: SharedActionProps,
 ): JSX.Element {
   if (typeof item !== 'object') {
     // item is a string key from the action object, which is typed as Tools
@@ -155,7 +155,7 @@ function ActionButton({
   onAction,
   disableableButtons = [],
   indigoVerification,
-}: Readonly<ActionButtonProperties>) {
+}: Readonly<ActionButtonProps>) {
   const { t } = useTranslation();
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuReference = useRef<HTMLButtonElement>(null);
@@ -209,7 +209,7 @@ function isOpened(item: MenuItemWithMenu, opened: string | undefined): boolean {
 
 function renderActiveMenuItem(
   item: MenuItemWithMenu,
-  properties: SharedActionProperties,
+  properties: SharedActionProps,
 ): JSX.Element | null {
   const menu = item.menu ?? [];
   const { opened, status } = properties;
@@ -261,7 +261,7 @@ function ActionMenu({
   className,
   role,
   ...properties
-}: Readonly<ActionMenuProperties>) {
+}: Readonly<ActionMenuProps>) {
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
     const itemKey = getItemKey(item);
     const status = properties.status[itemKey];

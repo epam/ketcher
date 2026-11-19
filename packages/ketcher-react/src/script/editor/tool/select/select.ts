@@ -322,7 +322,7 @@ class SelectTool implements Tool {
       if (isSimpleObjectSelectionDragContext(selectionDragContext)) {
         if (selectionDragContext.action)
           selectionDragContext.action.perform(rnd.ctab);
-        const properties = getResizingProperties(
+        const properties = getResizingProps(
           editor,
           selectionDragContext,
           event,
@@ -667,7 +667,7 @@ class SelectTool implements Tool {
         type: 'text',
       });
 
-      dialog
+      void dialog
         .then(({ content }) => {
           if (!content) {
             editor.update(fromTextDeletion(struct, ci.id));
@@ -856,7 +856,7 @@ function getMapsForClosestItem(shouldSelectFragment: boolean) {
   ];
 }
 
-function getResizingProperties(
+function getResizingProps(
   editor: Editor,
   dragContext: SimpleObjectSelectionDragContext,
   event: PointerEvent,

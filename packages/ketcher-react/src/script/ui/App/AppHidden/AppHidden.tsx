@@ -18,13 +18,13 @@
 import { useEffect, useRef } from 'react';
 import { useSettingsContext } from '../../../../hooks';
 
-interface AppHiddenCallProperties {
+interface AppHiddenCallProps {
   onInitTmpls: (cacheElement, url) => void;
 }
 
-type Properties = AppHiddenCallProperties;
+type Props = AppHiddenCallProps;
 // todo: come up with better name
-const AppHidden = (properties: Properties) => {
+const AppHidden = (properties: Props) => {
   const { onInitTmpls } = properties;
 
   const reference = useRef(null);
@@ -43,5 +43,5 @@ const AppHidden = (properties: Properties) => {
   return <div style={{ display: 'none' }} ref={reference} />;
 };
 
-export type { AppHiddenCallProperties };
+export type { AppHiddenCallProps };
 export { AppHidden };

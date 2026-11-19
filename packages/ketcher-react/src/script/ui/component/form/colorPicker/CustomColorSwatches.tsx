@@ -19,7 +19,7 @@ import clsx from 'clsx';
 import classes from './ColorPicker.module.less';
 import { Icon } from 'components';
 
-interface CustomColorSwatchesProperties {
+interface CustomColorSwatchesProps {
   customColors: string[] | readonly string[];
   pendingColor: string;
   onSelectColor: (color: string) => void;
@@ -33,7 +33,7 @@ function CustomColorSwatches({
   onSelectColor,
   isCustomOpen,
   onToggleCustomOpen,
-}: Readonly<CustomColorSwatchesProperties>) {
+}: Readonly<CustomColorSwatchesProps>) {
   return (
     <div className={classes.headerGroup}>
       <div className={classes.customHeader}>

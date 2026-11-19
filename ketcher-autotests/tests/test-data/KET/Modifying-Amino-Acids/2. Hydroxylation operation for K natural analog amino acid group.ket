@@ -575,8 +575,7 @@
             "y": -2.75
         },
         "alias": "Hyl5xi",
-        "templateId": "Hyl5xi___5-hydroxylysine",
-        "seqid": 7
+        "templateId": "Hyl5xi___5-hydroxylysine"
     },
     "monomer7": {
         "type": "monomer",

@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,6 +15,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
   LabeledNodesWithPositionInSequence,
@@ -23,19 +27,19 @@ import {
 import { UpdateSequenceInRNABuilder } from './UpdateSequenceInRNABuilder';
 import { getCountOfMirroredNucleoelements } from 'helpers/countNucleoelents';
 
-jest.mock('helpers/countNucleoelents', () => ({
-  ...jest.requireActual('helpers/countNucleoelents'),
-  getCountOfMirroredNucleoelements: jest.fn(() => 0),
+vi.mock('helpers/countNucleoelents', async () => ({
+  ...(await vi.importActual('helpers/countNucleoelents')),
+  getCountOfMirroredNucleoelements: vi.fn(() => 0),
 }));
 
 const mockProps = {
   isModalOpen: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 };
 
 describe('UpdateSequenceInRNABuilder modal component', () => {
   afterEach(() => {
-    (getCountOfMirroredNucleoelements as jest.Mock).mockReturnValue(0);
+    (getCountOfMirroredNucleoelements as Mock).mockReturnValue(0);
   });
 
   const labeledNucleotide: LabeledNodesWithPositionInSequence = {
@@ -71,7 +75,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     ).toMatchSnapshot();
   });
   it('should close modal', () => {
-    const modifySequenceInRnaBuilderDispatch = jest.fn();
+    const modifySequenceInRnaBuilderDispatch = vi.fn();
     render(
       withThemeAndStoreProvider(<UpdateSequenceInRNABuilder {...mockProps} />, {
         rnaBuilder: {
@@ -144,7 +148,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     });
 
     it('names the additional nucleotides when the update will change some', () => {
-      (getCountOfMirroredNucleoelements as jest.Mock).mockReturnValue(2);
+      (getCountOfMirroredNucleoelements as Mock).mockReturnValue(2);
       render(
         withThemeAndStoreProvider(
           <UpdateSequenceInRNABuilder {...mockProps} />,
@@ -162,7 +166,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
     });
 
     it('dispatches modifySequenceInRnaBuilder with exactly those N entries on confirm', () => {
-      const modifySequenceInRnaBuilderDispatch = jest.fn();
+      const modifySequenceInRnaBuilderDispatch = vi.fn();
 
       render(
         withThemeAndStoreProvider(

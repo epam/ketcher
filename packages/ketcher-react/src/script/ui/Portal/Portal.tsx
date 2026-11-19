@@ -21,7 +21,7 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const CLASSNAME_SEPARATOR = ' ';
 
-interface PortalProperties {
+interface PortalProps {
   isOpen: boolean;
   className?: string;
   style?: CSSProperties;
@@ -29,61 +29,19 @@ interface PortalProperties {
   testId?: string;
 }
 
-type Properties = PortalProperties;
+type Props = PortalProps;
 
-class Portal extends Component<Properties> {
+class Portal extends Component<Props> {
   private readonly element: HTMLDivElement;
   private isElementInDom: boolean;
 
-  constructor(properties: Properties) {
+  constructor(properties: Props) {
     super(properties);
     this.element = document.createElement('div');
     this.isElementInDom = false;
 
     if (this.props.testId) {
       this.element.dataset.testid = this.props.testId;
-    }
-  }
-
-  componentDidMount() {
-    if (!this.isElementInDom && this.props.isOpen) {
-      this.addElementInDOM();
-    }
-
-    const { className, style } = this.props;
-    if (className) {
-      this.addClassName(className);
-    }
-    if (style) {
-      this.updateStyle(style);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.isElementInDom) {
-      this.removeElementFromDOM();
-    }
-  }
-
-  componentDidUpdate(previousProperties: Readonly<Properties>) {
-    const { isOpen, className, style } = this.props;
-    if (className !== previousProperties.className) {
-      this.removeClassNames(previousProperties.className);
-      this.addClassName(className);
-    }
-
-    if (style !== previousProperties.style) {
-      this.updateStyle(style, previousProperties.style);
-    }
-
-    if (isOpen === previousProperties.isOpen) {
-      return;
-    }
-
-    if (isOpen && !this.isElementInDom) {
-      this.addElementInDOM();
-    } else if (this.isElementInDom) {
-      this.removeElementFromDOM();
     }
   }
 
@@ -135,6 +93,48 @@ class Portal extends Component<Properties> {
     Object.keys(style).forEach((property) => {
       this.element.style[property] = style[property];
     });
+  }
+
+  componentDidMount() {
+    if (!this.isElementInDom && this.props.isOpen) {
+      this.addElementInDOM();
+    }
+
+    const { className, style } = this.props;
+    if (className) {
+      this.addClassName(className);
+    }
+    if (style) {
+      this.updateStyle(style);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.isElementInDom) {
+      this.removeElementFromDOM();
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>) {
+    const { isOpen, className, style } = this.props;
+    if (className !== prevProps.className) {
+      this.removeClassNames(prevProps.className);
+      this.addClassName(className);
+    }
+
+    if (style !== prevProps.style) {
+      this.updateStyle(style, prevProps.style);
+    }
+
+    if (isOpen === prevProps.isOpen) {
+      return;
+    }
+
+    if (isOpen && !this.isElementInDom) {
+      this.addElementInDOM();
+    } else if (this.isElementInDom) {
+      this.removeElementFromDOM();
+    }
   }
 
   render() {

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -63,12 +62,12 @@ const isUserEditing = (): boolean => {
   );
 };
 
-interface ClipboardData {
+export interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
 }
 
-interface ClipAreaProperties {
+export interface ClipAreaProps {
   formats: string[];
   focused: () => boolean;
   onCopy: () => Promise<ClipboardData | null | undefined>;
@@ -83,6 +82,8 @@ interface ClipAreaProperties {
   target?: HTMLElement;
 }
 
+type DomEventListener = Parameters<HTMLElement['addEventListener']>[1];
+
 interface ClipAreaListeners {
   mouseup: (event: MouseEvent) => void;
   mousedown: (event: MouseEvent) => void;
@@ -92,12 +93,12 @@ interface ClipAreaListeners {
   keydown: (event: KeyboardEvent) => void;
 }
 
-class ClipArea extends Component<ClipAreaProperties> {
+class ClipArea extends Component<ClipAreaProps> {
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private target: HTMLElement | null = null;
   private listeners: ClipAreaListeners | null = null;
 
-  constructor(properties: ClipAreaProperties) {
+  constructor(properties: ClipAreaProps) {
     super(properties);
     this.textAreaRef = createRef<HTMLTextAreaElement | null>();
   }
@@ -132,15 +133,15 @@ class ClipArea extends Component<ClipAreaProperties> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          this.props.onCopy().then((data) => {
+          void (async () => {
+            const data = await this.props.onCopy();
             if (!data) {
               return;
             }
-            copy(data).then(() => {
-              event.preventDefault();
-              notifyCopyCut();
-            });
-          });
+            await copy(data);
+            event.preventDefault();
+            notifyCopyCut();
+          })();
         } else {
           if (isSafariBrowser()) {
             const data = this.props.onLegacyCopy();
@@ -155,7 +156,8 @@ class ClipArea extends Component<ClipAreaProperties> {
             }
             shouldSkipCopyEvent = true;
 
-            this.props.onCopy().then((data) => {
+            void (async () => {
+              const data = await this.props.onCopy();
               // It is possible to have access to clipboard data through evt.clipboardData
               // only in synchronous code. That's why we dispatch 'copy' event here after server call.
               // It will not work with long operations which time > 5 sec, because browser will close access
@@ -172,7 +174,7 @@ class ClipArea extends Component<ClipAreaProperties> {
                 { once: true },
               );
               document.execCommand('copy');
-            });
+            })();
 
             event.preventDefault();
           }
@@ -187,7 +189,7 @@ class ClipArea extends Component<ClipAreaProperties> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          (async () => {
+          void (async () => {
             const data = await this.props.onCut();
             if (!data) return;
             await copy(data);
@@ -207,15 +209,15 @@ class ClipArea extends Component<ClipAreaProperties> {
           return;
         }
         if (isClipboardAPIAvailable()) {
-          navigator.clipboard.read().then((data: ClipboardItem[]) => {
+          void (async () => {
+            const data: ClipboardItem[] = await navigator.clipboard.read();
             if (!data) {
               return;
             }
-            this.props.onPaste(data).then(() => {
-              event.preventDefault();
-              notifyRequestCompleted();
-            });
-          });
+            await this.props.onPaste(data);
+            event.preventDefault();
+            notifyRequestCompleted();
+          })();
         } else {
           if (event.clipboardData) {
             const data = legacyPaste(event.clipboardData, this.props.formats);
@@ -254,7 +256,7 @@ class ClipArea extends Component<ClipAreaProperties> {
       if (this.target && this.listeners) {
         this.target.addEventListener(
           eventName,
-          this.listeners[eventName] as EventListener,
+          this.listeners[eventName] as DomEventListener,
         );
       }
     });
@@ -272,7 +274,7 @@ class ClipArea extends Component<ClipAreaProperties> {
       if (this.target && this.listeners) {
         this.target.removeEventListener(
           eventName,
-          this.listeners[eventName] as EventListener,
+          this.listeners[eventName] as DomEventListener,
         );
       }
     });

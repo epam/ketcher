@@ -31,7 +31,7 @@ export interface Option {
   markedAsUsed?: boolean;
 }
 
-interface Properties {
+interface Props {
   options: Array<Option>;
   onChange: (value: string) => void;
   className?: string;
@@ -63,7 +63,7 @@ const Select = ({
   'data-testid': testId,
   error,
   title,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('common');
   const currentValue = options?.find((option) => option.value === value);
   const isFullscreen = !!document.fullscreenElement;

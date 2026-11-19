@@ -40,7 +40,7 @@ import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-export interface FormOwnProperties {
+export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
   init?: Record<string, unknown> | null;
@@ -49,7 +49,7 @@ export interface FormOwnProperties {
   deserialize?: Record<string, string>;
 }
 
-interface FormDispatchProperties {
+interface FormDispatchProps {
   onUpdate: (
     result: Record<string, unknown>,
     isValid: boolean,
@@ -57,7 +57,7 @@ interface FormDispatchProperties {
   ) => void;
 }
 
-interface FormStateProperties {
+interface FormStateProps {
   result: Record<string, unknown>;
   errors?: Record<string, string>;
 }
@@ -69,9 +69,7 @@ export interface FormState<TResult = Record<string, unknown>> {
   errors?: Record<string, string>;
 }
 
-type FormProperties = FormOwnProperties &
-  FormDispatchProperties &
-  FormStateProperties;
+type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 
 function applySchemaDefaults<T extends Record<string, unknown>>(
   state: T,
@@ -93,9 +91,9 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
 }
 
 // Keep backward-compatible export
-export type { FormProperties };
+export type { FormProps };
 
-export interface FieldProperties {
+export interface FieldProps {
   title?: string;
   name?: string;
   component?: React.ElementType | string;
@@ -125,14 +123,14 @@ export interface FieldProperties {
   classes?: Record<string, string | undefined>;
 }
 
-export interface FieldWithModalProperties extends FieldProperties {
+export interface FieldWithModalProps extends FieldProps {
   onEdit?: (onChange: (value: unknown) => void) => void;
   autoFocus?: boolean;
 }
 
-export type SelectOneOfProperties = FieldProperties;
+export type SelectOneOfProps = FieldProps;
 
-export interface CustomQueryFieldProperties extends FieldProperties {
+export interface CustomQueryFieldProps extends FieldProps {
   name: string;
   labelPos: string;
   checkboxValue?: boolean;
@@ -161,12 +159,12 @@ const updateFieldValue = (
     ? omit(result, [fieldName])
     : { ...result, [fieldName]: value };
 
-class Form extends Component<FormProperties> {
-  schema: ReturnType<typeof propertySchema>;
+class Form extends Component<FormProps> {
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
+  schema: ReturnType<typeof propertySchema>;
 
-  constructor(properties: FormProperties) {
+  constructor(properties: FormProps) {
     super(properties);
     const { onUpdate, schema, init } = this.props;
 
@@ -183,12 +181,12 @@ class Form extends Component<FormProperties> {
     this._contextValue = { schema, stateStore: this };
   }
 
-  componentDidUpdate(previousProperties: FormProperties) {
+  componentDidUpdate(previousProps: FormProps) {
     const { schema, result, customValid, serialize, deserialize } = this.props;
 
     if (
-      (schema.key && schema.key !== previousProperties.schema.key) ||
-      (customValid !== previousProperties.customValid &&
+      (schema.key && schema.key !== previousProps.schema.key) ||
+      (customValid !== previousProps.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propertySchema(schema, {
@@ -262,11 +260,11 @@ export default connect(null, (dispatch) => ({
     dispatch(updateFormState({ result, valid: isValid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
-}))(
-  Form as unknown as React.ComponentClass<FormProperties>,
-) as React.ComponentType<FormOwnProperties & FormStateProperties>;
+}))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
+  FormOwnProps & FormStateProps
+>;
 
-interface LabelProperties extends React.LabelHTMLAttributes<HTMLLabelElement> {
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
   title?: string;
   tooltip?: string;
@@ -336,7 +334,7 @@ function Label({
   tooltip,
   children,
   ...properties
-}: Readonly<LabelProperties>) {
+}: Readonly<LabelProps>) {
   const { t } = useTranslation();
   const resolvedTitle = resolveTranslatableText(title, t) ?? '';
   const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
@@ -351,7 +349,7 @@ function Label({
   );
 }
 
-function Field(properties: Readonly<FieldProperties>) {
+function Field(properties: Readonly<FieldProps>) {
   const {
     name,
     extraName,
@@ -496,7 +494,7 @@ function Field(properties: Readonly<FieldProperties>) {
   );
 }
 
-function FieldWithModal(properties: Readonly<FieldWithModalProperties>) {
+function FieldWithModal(properties: Readonly<FieldWithModalProps>) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = properties;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
@@ -561,7 +559,7 @@ function FieldWithModal(properties: Readonly<FieldWithModalProperties>) {
   );
 }
 
-function CustomQueryField(properties: Readonly<CustomQueryFieldProperties>) {
+function CustomQueryField(properties: Readonly<CustomQueryFieldProps>) {
   const {
     name,
     onChange,
@@ -639,7 +637,7 @@ function CustomQueryField(properties: Readonly<CustomQueryFieldProperties>) {
   );
 }
 
-const SelectOneOf = (properties: SelectOneOfProperties) => {
+const SelectOneOf = (properties: SelectOneOfProps) => {
   const { title, name, schema, ...property } = properties;
   const { t } = useTranslation();
 

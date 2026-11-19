@@ -22,7 +22,7 @@ import { type SchemaProperty } from '../../../../../contexts';
 
 export type InputSchema = SchemaProperty | unknown[];
 
-type InputComponentProperties = {
+type InputComponentProps = {
   schema?: InputSchema;
   value?: unknown;
   onChange?: (value: unknown) => void;
@@ -36,9 +36,9 @@ type InputComponentProperties = {
   [key: string]: unknown;
 };
 
-type Properties = {
+type Props = {
   name?: string;
-  component?: ComponentType<InputComponentProperties>;
+  component?: ComponentType<InputComponentProps>;
   children?: React.ReactNode;
   className?: string;
   type?: string;
@@ -85,7 +85,7 @@ GenericInput.val = function (event_, schema) {
   const isNumber =
     input.type === 'number' || input.type === 'range' || isInteger || isFloat;
 
-  const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
+  const value = isNumber ? input.value.replaceAll(',', '.') : input.value;
 
   if (isNumber && value.trim() === '') {
     return;
@@ -332,7 +332,7 @@ function multipleSelectCtrl(component, schema, onChange) {
   };
 }
 
-function ctrlMap(component, properties: Properties) {
+function ctrlMap(component, properties: Props) {
   const { schema, multiple, onChange } = properties;
 
   if (!schema) {
@@ -357,7 +357,7 @@ function ctrlMap(component, properties: Properties) {
   return singleSelectCtrl(component, schema, onChange);
 }
 
-function componentMap(properties: Properties) {
+function componentMap(properties: Props) {
   const { schema, type, multiple } = properties;
 
   if (!Array.isArray(schema)) {
@@ -387,8 +387,8 @@ function componentMap(properties: Properties) {
   return type === 'radio' ? FieldSet : Select;
 }
 
-type AnyComponentWithReferenceProperties = {
-  Component: ComponentType<InputComponentProperties>;
+type AnyComponentWithReferenceProps = {
+  Component: ComponentType<InputComponentProps>;
   schema?: InputSchema;
   value?: unknown;
   onChange?: (value: unknown) => void;
@@ -407,22 +407,20 @@ type AnyComponentWithReferenceProperties = {
 
 const AnyComponentWithReference = React.forwardRef(
   (
-    { Component, ...properties }: AnyComponentWithReferenceProperties,
+    { Component, ...restProps }: AnyComponentWithReferenceProps,
     reference: React.Ref<HTMLInputElement>,
-  ) => <Component {...properties} innerRef={reference} />,
+  ) => <Component {...restProps} innerRef={reference} />,
 );
 
 class Input extends PureComponent<
-  Properties & { innerRef: React.Ref<HTMLInputElement> }
+  Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
-  component: ComponentType<InputComponentProperties>;
+  component: ComponentType<InputComponentProps>;
 
-  constructor(
-    properties: Properties & { innerRef: React.Ref<HTMLInputElement> },
-  ) {
+  constructor(properties: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(properties);
     this.component = (properties.component ||
-      componentMap(properties)) as ComponentType<InputComponentProperties>;
+      componentMap(properties)) as ComponentType<InputComponentProps>;
   }
 
   render() {
@@ -430,7 +428,7 @@ class Input extends PureComponent<
       children: _children,
       onChange: _onChange,
       innerRef,
-      ...restProperties
+      ...restProps
     } = this.props;
     const ctrl = ctrlMap(this.component, this.props);
     return (
@@ -438,14 +436,14 @@ class Input extends PureComponent<
         Component={this.component}
         ref={innerRef}
         {...ctrl}
-        {...restProperties}
+        {...restProps}
       />
     );
   }
 }
 
 export default React.forwardRef(
-  (properties: Properties, reference: React.Ref<HTMLInputElement>) => {
+  (properties: Props, reference: React.Ref<HTMLInputElement>) => {
     return <Input innerRef={reference} {...properties} />;
   },
 );

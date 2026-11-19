@@ -5,20 +5,16 @@ import {
   ColorContainer,
   ColorItem,
   ColorSquare,
-  Divider,
   standardColors,
 } from './style';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 
-interface HighlightMenuProperties {
+interface HighlightMenuProps {
   onHighlight: (color: string) => void;
   disabled?: boolean;
 }
 
-const HighlightMenu: FC<HighlightMenuProperties> = ({
-  onHighlight,
-  disabled,
-}) => {
+const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
   const { t } = useTranslation('toolbar');
 
   return (
@@ -38,7 +34,7 @@ const HighlightMenu: FC<HighlightMenuProperties> = ({
           </ColorItem>
         ))}
       </ColorContainer>
-      <Divider />
+      <Separator />
       <Item data-testid="No highlight-option" onClick={() => onHighlight('')}>
         <div
           style={{

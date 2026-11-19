@@ -32,7 +32,7 @@ interface EnumSchema {
 
 type Schema = BooleanSchema | EnumSchema;
 
-interface SelectCheckboxProperties {
+interface SelectCheckboxProps {
   schema: Schema;
   type: string;
   value: number | string | boolean;
@@ -52,7 +52,7 @@ function isBooleanSchema(schema: Schema): schema is BooleanSchema {
 function SelectCheckbox({
   schema,
   ...properties
-}: Readonly<SelectCheckboxProperties>) {
+}: Readonly<SelectCheckboxProps>) {
   let currentSchema: EnumSchema;
 
   if (isBooleanSchema(schema)) {

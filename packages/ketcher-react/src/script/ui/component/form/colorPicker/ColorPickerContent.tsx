@@ -32,7 +32,7 @@ import CustomColorEditor from './CustomColorEditor';
 const DEFAULT_COLOR = '#FF3232';
 const DEFAULT_CUSTOM_COLORS: string[] = [];
 
-interface ColorPickerContentProperties {
+interface ColorPickerContentProps {
   value: string;
   onCancel: () => void;
   onApply: (color: string) => void;
@@ -44,7 +44,7 @@ function ColorPickerContent({
   onCancel,
   onApply,
   onContentResize,
-}: Readonly<ColorPickerContentProperties>) {
+}: Readonly<ColorPickerContentProps>) {
   const { settings, updateSettings } = useSettings();
   const customColors =
     settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS;

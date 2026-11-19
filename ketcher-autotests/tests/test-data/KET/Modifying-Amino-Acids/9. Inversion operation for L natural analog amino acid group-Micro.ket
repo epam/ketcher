@@ -425,8 +425,7 @@
             "y": -2.75
         },
         "alias": "dL",
-        "templateId": "dL___D-Leucine",
-        "seqid": 5
+        "templateId": "dL___D-Leucine"
     },
     "monomer5": {
         "type": "monomer",

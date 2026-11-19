@@ -14,20 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type AppHiddenCallProperties, AppHidden } from './AppHidden';
+import { type AppHiddenCallProps, AppHidden } from './AppHidden';
 
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { initTmplLib as initTmplLibrary } from '../../state/templates';
 
-const mapDispatchToProperties = (
-  dispatch: Dispatch,
-): AppHiddenCallProperties => ({
+const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
   onInitTmpls: (cacheElement, url) => {
     initTmplLibrary(dispatch, url, cacheElement);
   },
 });
 
-const AppHiddenContainer = connect(null, mapDispatchToProperties)(AppHidden);
+const AppHiddenContainer = connect(null, mapDispatchToProps)(AppHidden);
 
 export { AppHiddenContainer };

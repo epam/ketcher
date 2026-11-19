@@ -88,7 +88,7 @@ function a11yProps(index) {
   };
 }
 
-interface TemplateLibraryProperties {
+interface TemplateLibraryProps {
   filter: string;
   group: string;
   lib: Array<Template>;
@@ -99,7 +99,7 @@ interface TemplateLibraryProperties {
   isMonomerCreationWizardActive?: boolean;
 }
 
-interface TemplateLibraryCallProperties {
+interface TemplateLibraryCallProps {
   onAttach: (tmpl: Template) => void;
   onCancel: () => void;
   onChangeGroup: (group: string) => void;
@@ -111,11 +111,11 @@ interface TemplateLibraryCallProperties {
   functionalGroups: Template[];
 }
 
-type Properties = TemplateLibraryProperties & TemplateLibraryCallProperties;
+type Props = TemplateLibraryProps & TemplateLibraryCallProps;
 
 interface TemplateDialogStoreState {
   templates: Pick<
-    TemplateLibraryProperties,
+    TemplateLibraryProps,
     'filter' | 'group' | 'lib' | 'selected' | 'tab'
   > & { attach: Record<string, unknown> };
   editor?: {
@@ -131,8 +131,8 @@ enum TemplateTabs {
 }
 
 const filterLibrarySelector = createSelector(
-  (properties: Properties) => properties.lib,
-  (properties: Properties) => properties.filter,
+  (properties: Props) => properties.lib,
+  (properties: Props) => properties.filter,
   filterLibrary,
 );
 
@@ -201,7 +201,7 @@ const FooterContent = ({
 
 const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
 
-export const TemplateDialog: FC<Properties> = (properties) => {
+export const TemplateDialog: FC<Props> = (properties) => {
   const {
     filter,
     onFilter,
@@ -353,7 +353,7 @@ export const TemplateDialog: FC<Properties> = (properties) => {
       <div className={classes.tabsContent}>
         <TabPanel value={activeTab} index={TemplateTabs.TemplateLibrary}>
           <div>
-            {groupNames.length ? (
+            {groupNames.length > 0 ? (
               groupNames.map((groupName) => {
                 const shouldGroupBeRended =
                   expandedAccordions.includes(groupName);
@@ -476,7 +476,7 @@ export default connect(
     saltsAndSolvents: saltsAndSolventsSelector(store),
     isMonomerCreationWizardActive: store.editor?.isMonomerCreationWizardActive,
   }),
-  (dispatch: AppDispatch, properties: Properties) => ({
+  (dispatch: AppDispatch, properties: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onTabChange: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, properties, dispatch),

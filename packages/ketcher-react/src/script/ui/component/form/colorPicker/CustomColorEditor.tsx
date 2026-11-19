@@ -23,7 +23,7 @@ import { type ChangeEvent } from 'react';
 const HUE_BACKGROUND =
   'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)';
 
-interface CustomColorEditorProperties {
+interface CustomColorEditorProps {
   customColors: string[] | readonly string[];
   pendingColor: string;
   hue: number;
@@ -45,7 +45,7 @@ function CustomColorEditor({
   onLightnessChange,
   onHexInputChange,
   onDeleteCustomColor,
-}: Readonly<CustomColorEditorProperties>) {
+}: Readonly<CustomColorEditorProps>) {
   const lightnessBg = `linear-gradient(to right, #ffffff, ${hslToHex(
     hue,
     100,

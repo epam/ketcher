@@ -30,7 +30,7 @@ interface TabPanel {
   tabIndex?: number;
 }
 
-interface TabsProperties {
+interface TabsProps {
   tabs: TabPanel[];
   tabIndex?: number;
   changeTab: (index: number) => void;
@@ -42,8 +42,8 @@ interface TabsState {
   tabIndex: number;
 }
 
-class Tabs extends Component<TabsProperties, TabsState> {
-  constructor(properties: TabsProperties) {
+class Tabs extends Component<TabsProps, TabsState> {
+  constructor(properties: TabsProps) {
     super(properties);
     this.state = {
       tabIndex: properties.tabIndex ?? 0,
@@ -64,8 +64,8 @@ class Tabs extends Component<TabsProperties, TabsState> {
     }
   }
 
-  componentDidUpdate(previousProperties: TabsProperties) {
-    if (this.props.tabIndex !== previousProperties.tabIndex) {
+  componentDidUpdate(previousProps: TabsProps) {
+    if (this.props.tabIndex !== previousProps.tabIndex) {
       this.setState({ tabIndex: this.props.tabIndex || 0 });
     }
   }
@@ -74,7 +74,7 @@ class Tabs extends Component<TabsProperties, TabsState> {
     const { tabs, contentClassName, className, tabIndex } = this.props;
     const tabPanel = tabs[this.state.tabIndex];
     const TabComponent = tabPanel?.component;
-    const componentProperties = tabPanel?.props;
+    const componentProps = tabPanel?.props;
     return (
       <div>
         <ul className={className} tabIndex={tabIndex}>
@@ -98,7 +98,7 @@ class Tabs extends Component<TabsProperties, TabsState> {
         </ul>
         {TabComponent && (
           <div className={contentClassName}>
-            <TabComponent {...componentProperties} />
+            <TabComponent {...componentProps} />
           </div>
         )}
       </div>

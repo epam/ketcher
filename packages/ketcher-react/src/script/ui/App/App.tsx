@@ -45,7 +45,7 @@ import { selectSnackbarNotificationText } from '../state/notifications';
 import { useSelector } from 'react-redux';
 import { IconButton } from 'components';
 
-interface AppCallProperties {
+interface AppCallProps {
   checkServer: () => void;
   togglerComponent?: JSX.Element;
 }
@@ -60,9 +60,9 @@ const muiTheme = createTheme({
   },
 });
 
-type Properties = AppCallProperties;
+type Props = AppCallProps;
 
-const App = (properties: Properties) => {
+const App = (properties: Props) => {
   const dispatch = useAppDispatch();
   const { checkServer } = properties;
   const snackbarNotificationText = useSelector(selectSnackbarNotificationText);
@@ -150,5 +150,5 @@ const App = (properties: Properties) => {
   );
 };
 
-export type { AppCallProperties };
+export type { AppCallProps };
 export { App };

@@ -164,7 +164,7 @@ export function toElement(element: ElementFormData) {
       : [];
 
     return {
-      label: values.length ? 'R#' : 'C',
+      label: values.length > 0 ? 'R#' : 'C',
       rglabel: values.length === 0 ? null : toRlabel(values),
     };
   }
@@ -360,7 +360,7 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
 export function fromStereoLabel(stereoLabel: string | null) {
   if (stereoLabel === null) return { type: null };
   const typeMatch = stereoLabel.match(/\D+/g);
-  if (!typeMatch?.length) {
+  if (typeMatch === null || typeMatch.length === 0) {
     return { type: stereoLabel, orNumber: 0, andNumber: 0 };
   }
 
@@ -400,14 +400,17 @@ export function toStereoLabel(stereoLabel: {
   orNumber?: number;
 }) {
   switch (stereoLabel.type) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return `${StereoLabel.And}${stereoLabel.andNumber ?? 1}`;
+    }
 
-    case StereoLabel.Or:
+    case StereoLabel.Or: {
       return `${StereoLabel.Or}${stereoLabel.orNumber ?? 1}`;
+    }
 
-    default:
+    default: {
       return stereoLabel.type;
+    }
   }
 }
 
@@ -577,20 +580,24 @@ export function toSgroup(sgroup: SGroupFormData) {
   const attached = 'attached';
 
   switch (radiobuttons) {
-    case 'Absolute':
+    case 'Absolute': {
       attributes[absolute] = true;
       attributes[attached] = false;
       break;
-    case 'Attached':
+    }
+    case 'Attached': {
       attributes[absolute] = false;
       attributes[attached] = true;
       break;
-    case 'Relative':
+    }
+    case 'Relative': {
       attributes[absolute] = false;
       attributes[attached] = false;
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
 
   if (attributes.fieldName) attributes.fieldName = attributes.fieldName.trim();

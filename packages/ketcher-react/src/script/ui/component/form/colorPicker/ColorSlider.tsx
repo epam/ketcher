@@ -18,7 +18,7 @@ import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 
 import classes from './ColorPicker.module.less';
 
-interface ColorSliderProperties {
+interface ColorSliderProps {
   value: number;
   min: number;
   max: number;
@@ -38,7 +38,7 @@ function ColorSlider({
   background,
   thumbColor,
   ariaLabel,
-}: Readonly<ColorSliderProperties>) {
+}: Readonly<ColorSliderProps>) {
   const containerReference = useRef<HTMLDivElement>(null);
   // Track container width as state so re-measuring on resize triggers re-render
   const [containerWidth, setContainerWidth] = useState(0);

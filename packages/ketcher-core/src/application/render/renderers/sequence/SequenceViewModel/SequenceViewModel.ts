@@ -218,7 +218,7 @@ export class SequenceViewModel {
                   firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
                 );
             const hasAnotherAntisenseConnection =
-              currentTwoStrandedSnakeLayoutNodeIndex > 0 &&
+              index > 0 &&
               hasValidAntisenseConnection(currentTwoStrandedSnakeLayoutNode);
 
             lastSenseNodeIndex =

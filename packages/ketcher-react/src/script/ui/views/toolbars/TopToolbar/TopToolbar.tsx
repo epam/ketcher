@@ -192,6 +192,7 @@ export const TopToolbar = ({
           hiddenButtons={hiddenButtons}
           disabledButtons={disabledButtons}
         />
+        <Divider />
         <ClipboardControls
           onCopy={onCopy}
           onCopyMol={onCopyMol}

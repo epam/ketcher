@@ -6,7 +6,7 @@ type HotkeyModules = {
   hotkeysConfiguration: typeof import('../editorEvents').hotkeysConfiguration;
   keyNorm: typeof import('../../../utilities/keynorm').keyNorm;
   initHotKeys: typeof import('../../../utilities/keynorm').initHotKeys;
-  generateMenuShortcuts: typeof import('../../../utilities/shortcutsUtil').generateMenuShortcuts;
+  generateMenuShortcuts: typeof import('../../../utilities/shortcutsUtility').generateMenuShortcuts;
 };
 
 const loadOnPlatform = async (
@@ -23,7 +23,7 @@ const loadOnPlatform = async (
   const { hotkeysConfiguration } = await import('../editorEvents');
   const { keyNorm, initHotKeys } = await import('../../../utilities/keynorm');
   const { generateMenuShortcuts } =
-    await import('../../../utilities/shortcutsUtil');
+    await import('../../../utilities/shortcutsUtility');
 
   return {
     hotkeysConfiguration,

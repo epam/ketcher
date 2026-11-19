@@ -214,17 +214,15 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   // Keep all inter-component connection points visible while editing any tab.
   const syncConnectionAttachmentPoints = useCallback(() => {
-      editor.setVisibleAssignedAttachmentPoints(undefined);
-      editor.setConnectionAttachmentPoints(
-        getConnectionAttachmentPointAtomIdsForRnaPreset(
-          wizardState,
-          struct,
-          phosphatePosition,
-        ),
-      );
-    },
-    [editor, struct, wizardState, phosphatePosition],
-  );
+    editor.setVisibleAssignedAttachmentPoints(undefined);
+    editor.setConnectionAttachmentPoints(
+      getConnectionAttachmentPointAtomIdsForRnaPreset(
+        wizardState,
+        struct,
+        phosphatePosition,
+      ),
+    );
+  }, [editor, struct, wizardState, phosphatePosition]);
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);

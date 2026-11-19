@@ -4,6 +4,14 @@ Many molecules are chiral, and their biological and chemical behavior depends on
 
 Spec: [openspec/specs/stereochemistry/spec.md](../../openspec/specs/stereochemistry/spec.md)
 
+## Undefined stereocenters
+
+WHEN the user runs _Calculate CIP_ and the structure has a stereocenter (a tetrahedral atom with four different substituents) that has no stereo bond
+THEN the atom is labelled `(?)`, so all undefined stereocenters are marked consistently.
+
+- Atoms that already received an R/S label, or that have a stereo bond, are not marked `(?)`.
+- `(?)` is a display-only label: it is not saved to KET.
+
 ## Limitations
 
 - CIP labels are recomputed on demand (via the button); they are not continuously live as the structure changes.

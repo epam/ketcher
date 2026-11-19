@@ -2631,7 +2631,7 @@ export class CoreEditor {
       return false;
     }
     const conditions = [
-      Object.hasOwn(editorTool, eventHandlerName),
+      editorTool[eventHandlerName] !== undefined,
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
     ];
 

@@ -4405,7 +4405,7 @@ function useToolIfNeeded(
 
   editor.lastEvent = event;
   const conditions = [
-    Object.hasOwn(editorTool, eventHandlerName),
+    editorTool[eventHandlerName] !== undefined,
     clientArea.contains(event.target as Node | null) ||
       editorTool.isSelectionRunning?.(),
     isContextMenuClosed(editor.contextMenu),

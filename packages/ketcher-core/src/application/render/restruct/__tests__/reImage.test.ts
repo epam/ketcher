@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import { ReImage } from '../reImage';
 import { Image } from 'domain/entities/image';
 import { Vec2 } from 'domain/entities/vec2';
@@ -13,7 +14,7 @@ const TRUNCATED_PNG = VALID_PNG.slice(0, 80);
 // Not checked structurally, so it is left to the browser's load events
 const JPEG = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==';
 
-// jsdom never fires load/error for images: tests settle the probe by hand
+// The probe stands in for the browser Image: tests settle load/error by hand
 class ProbeImage {
   static readonly instances: ProbeImage[] = [];
   onload: (() => void) | null = null;
@@ -29,8 +30,8 @@ const originalImage = globalThis.Image;
 
 interface FakeElement {
   node: SVGElement;
-  attr: jest.Mock;
-  insertBefore: jest.Mock;
+  attr: Mock;
+  insertBefore: Mock;
 }
 
 function createFakeElement(tag: string): FakeElement {
@@ -38,8 +39,8 @@ function createFakeElement(tag: string): FakeElement {
   document.body.appendChild(node);
   const element: FakeElement = {
     node,
-    attr: jest.fn(() => element),
-    insertBefore: jest.fn(),
+    attr: vi.fn(() => element),
+    insertBefore: vi.fn(),
   };
   return element;
 }
@@ -56,7 +57,7 @@ function createReStruct() {
       return set;
     },
     circle: () => createFakeElement('circle'),
-    image: jest.fn(() => {
+    image: vi.fn(() => {
       const element = createFakeElement('image');
       images.push(element);
       return element;
@@ -65,7 +66,7 @@ function createReStruct() {
   const reStruct = {
     render: { paper },
     molecule: { images: { keyOf: () => 0 } },
-    addReObjectPath: jest.fn(),
+    addReObjectPath: vi.fn(),
   } as unknown as ReStruct;
   return { reStruct, paper, images };
 }
@@ -79,7 +80,7 @@ function createImage(bitmap: string) {
   return new Image(bitmap, new Vec2(1, 1), new Vec2(0.5, 0.5));
 }
 
-function lastImageSource(paper: { image: jest.Mock }) {
+function lastImageSource(paper: { image: Mock }) {
   return paper.image.mock.calls[paper.image.mock.calls.length - 1][0];
 }
 

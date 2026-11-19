@@ -18,7 +18,7 @@ const ButtonsBox = styled('div')`
   gap: 10px;
 `;
 
-type ButtonSelectProperties = {
+type ButtonSelectProps = {
   hiddenButtons: string[];
   setHiddenButtons: (argument: string[]) => void;
 };
@@ -26,7 +26,7 @@ type ButtonSelectProperties = {
 export const ButtonsSelect = ({
   hiddenButtons,
   setHiddenButtons,
-}: ButtonSelectProperties) => {
+}: ButtonSelectProps) => {
   const handleChange = useCallback(
     (event: SelectChangeEvent<string[]>) => {
       const value = event.target.value;

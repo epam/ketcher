@@ -2,7 +2,7 @@ import { getCopolymerLabel } from 'application/render/restruct/resgroup';
 
 describe('getCopolymerLabel (#10457)', () => {
   it('labels a copolymer without a subtype as "co"', () => {
-    expect(getCopolymerLabel(undefined)).toBe('co');
+    expect(getCopolymerLabel()).toBe('co');
     expect(getCopolymerLabel(null)).toBe('co');
     expect(getCopolymerLabel('')).toBe('co');
   });

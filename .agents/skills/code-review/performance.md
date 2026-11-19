@@ -17,4 +17,4 @@ Focus:
 - Deep copies of Struct, Atom, or Bond inside a loop or a per-event handler. A new `cloneDeep` on a hot path is a finding.
 - Nested loops over atoms, bonds, or monomers, and lookups such as `find` or `includes` inside them. A map built once before the loop is the usual fix.
 - Calls to Indigo, through the server formatter route in [serialization.md](../../../.memory-bank/modules/serialization.md#2-formatters), made inside a loop or on each input event. Batch them or debounce them.
-- Bundle size: ketcher-standalone is built with rollup (`packages/ketcher-standalone/rollup.config.mjs`). Flag a new import that pulls a large transitive dependency into that bundle.
+- Bundle size: ketcher-standalone is built with Vite (`packages/ketcher-standalone/vite.config.mjs`). Flag a new import that pulls a large transitive dependency into that bundle.

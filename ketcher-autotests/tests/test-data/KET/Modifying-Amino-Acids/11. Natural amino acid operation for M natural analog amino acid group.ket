@@ -108,8 +108,7 @@
             "y": -1.25
         },
         "alias": "M",
-        "templateId": "M___Methionine",
-        "seqid": 1
+        "templateId": "M___Methionine"
     },
     "monomerTemplate-M___Methionine": {
         "type": "monomerTemplate",

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -38,7 +37,7 @@ type OpenResult = {
 };
 
 interface OpenProps {
-  server: any;
+  server: unknown;
   errorHandler: (err: string) => void;
   isRecognizeDisabled: boolean;
   isAnalyzingFile: boolean;
@@ -117,18 +116,19 @@ const Open: FC<Props> = (props) => {
     [ketcherId],
   );
 
-  const onFileLoad = (files) => {
-    if ((globalThis as any).isKetcherFullscreenBeforeFilePicker) {
-      document.documentElement.requestFullscreen?.().catch(() => {
+  const onFileLoad = (files: File[]) => {
+    const windowContext = globalThis as unknown as Record<string, unknown>;
+    if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+      void document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
-      (globalThis as any).isKetcherFullscreenBeforeFilePicker = false;
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
-        if (!fileContent.structures.length && files[0].size > 0) {
+        if (fileContent.structures.length === 0 && files[0].size > 0) {
           errorHandler(t('dialogs:document.open.passwordProtectedError'));
         }
         setStructStr('');
@@ -146,12 +146,20 @@ const Open: FC<Props> = (props) => {
     };
 
     setFileName(files[0].name);
-    fileOpener(server)
-      .then((chosenOpener) => chosenOpener(files[0]))
-      .then(onLoad, onError);
+    void (async () => {
+      let fileContent;
+      try {
+        const chosenOpener = await fileOpener(server);
+        fileContent = await chosenOpener(files[0]);
+      } catch {
+        onError();
+        return;
+      }
+      onLoad(fileContent);
+    })();
   };
 
-  const onImageLoad = (files) => {
+  const onImageLoad = (files: File[]) => {
     onImageUpload(files[0]);
     setCurrentState(MODAL_STATES.imageRec);
   };

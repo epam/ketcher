@@ -63,7 +63,8 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  indigoModulePromise.then((indigo: IndigoModule) => {
+  void (async () => {
+    const indigo = await indigoModulePromise;
     const indigoOptions = new indigo.MapStringString();
     let msg: OutputMessage<string>;
     try {
@@ -88,7 +89,7 @@ function handle(
     }
 
     globalThis.postMessage(msg);
-  });
+  })();
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
@@ -301,7 +302,8 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       break;
     }
 
-    default:
+    default: {
       throw new Error('Unsupported enum type');
+    }
   }
 };

@@ -47,6 +47,90 @@ describe('Test Rna Editor Expanded component', () => {
     useIsCompactViewMock.mockReturnValue(true);
   });
 
+  describe('deferred library scrolling', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.clearAllTimers();
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+    });
+
+    const renderPresetEditor = () =>
+      render(
+        withThemeAndStoreProvider(
+          <>
+            <div data-rna-preset-item-name="Preset" data-testid="preset-item" />
+            <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+          </>,
+          {
+            rnaBuilder: {
+              activePreset: {
+                name: 'Preset',
+                nameInList: 'Preset',
+                sugar: { label: 'R', props: { MonomerName: 'R' } },
+                base: { label: 'A', props: { MonomerName: 'A' } },
+              },
+              activeRnaBuilderItem: RnaBuilderPresetsItem.Presets,
+              presetsDefault: [],
+              presetsCustom: [],
+              groupItemValidations: {
+                [MonomerGroups.BASES]: [],
+                [MonomerGroups.SUGARS]: [],
+                [MonomerGroups.PHOSPHATES]: [],
+              },
+            },
+          },
+        ),
+      );
+
+    it.each(['selection', 'save'])(
+      'scrolls to the preset after %s while mounted',
+      (action) => {
+        const { unmount } = renderPresetEditor();
+        const scrollIntoView = vi.spyOn(
+          screen.getByTestId('preset-item'),
+          'scrollIntoView',
+        );
+
+        fireEvent.click(
+          screen.getByTestId(
+            action === 'save' ? 'save-btn' : 'name-your-structure-editbox',
+          ),
+        );
+
+        expect(scrollIntoView).not.toHaveBeenCalled();
+        act(() => {
+          vi.advanceTimersByTime(100);
+        });
+        expect(scrollIntoView).toHaveBeenCalledOnce();
+        unmount();
+      },
+    );
+
+    it.each(['selection', 'repeated selection', 'save'])(
+      'does not access a disposed document after %s and unmount',
+      (action) => {
+        const { unmount } = renderPresetEditor();
+        const target = screen.getByTestId(
+          action === 'save' ? 'save-btn' : 'name-your-structure-editbox',
+        );
+        fireEvent.click(target);
+        if (action === 'repeated selection') {
+          fireEvent.click(target);
+        }
+
+        unmount();
+        vi.stubGlobal('document', undefined);
+
+        expect(() => vi.advanceTimersByTime(100)).not.toThrow();
+      },
+    );
+  });
+
   it('brings back the duplicated preset when Duplicate and Edit is cancelled (#4447)', () => {
     const store = configureAppStore({});
     const original = { name: 'A', nameInList: 'A' };

@@ -26,6 +26,8 @@ library is usually ready before the first switch
 
 A host app embeds Ketcher as the React `Editor` component. A host page may hold several editors, and it may mount and unmount an editor many times, so each editor owns its resources ([A8](invariants.md)). `example/` has one host page per case; [example-app](modules/example-app.md) lists them.
 
+A host app embeds Ketcher as the React `Editor` component. A host page may hold several editors, and it may mount and unmount an editor many times, so each editor owns its resources ([A8](invariants.md)). `example/` has one host page per case; [example-app](modules/example-app.md) lists them.
+
 ---
 
 ## Package Structure

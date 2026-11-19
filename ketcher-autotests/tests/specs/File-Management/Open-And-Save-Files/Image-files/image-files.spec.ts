@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@fixtures';
+import { test, expect, Page, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
@@ -17,6 +17,9 @@ import {
   deleteByKeyboard,
   moveMouseAway,
   takeElementScreenshot,
+  getKet,
+  setZoom,
+  waitForRender,
 } from '@utils';
 import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
 import {
@@ -63,6 +66,85 @@ test.describe('Image files', () => {
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
+
+  for (const tool of ['selection', 'image'] as const) {
+    test(`Image corner resizing preserves the drag-start ratio with the ${tool} tool #5569`, async () => {
+      /*
+       * Test case: #5569
+       * Description: Middle handles can distort images; corner handles preserve
+       * that ratio at non-default zoom, including undo and redo.
+       */
+      const image = await openImageAndAddToCanvas(page, 'Images/image-png.png');
+      const readBounds = async () => {
+        const ket: {
+          root: {
+            nodes: Array<{
+              type?: string;
+              boundingBox: {
+                x: number;
+                y: number;
+                width: number;
+                height: number;
+              };
+            }>;
+          };
+        } = JSON.parse(await getKet(page));
+        const node = ket.root.nodes.find((node) => node.type === 'image');
+        if (!node) throw new Error('Expected an image in the exported KET');
+        return node.boundingBox;
+      };
+      const dragHandle = async (handle: Locator, dx: number, dy: number) => {
+        await handle.hover({ force: true });
+        const box = await handle.boundingBox();
+        if (!box) throw new Error('Image resize handle has no bounding box');
+        const x = box.x + box.width / 2;
+        const y = box.y + box.height / 2;
+        await page.mouse.move(x, y);
+        await dragMouseTo(page, x + dx, y + dy);
+      };
+      const ZOOM = 1.25;
+      const DISTORT_X = 60;
+      const CORNER_X = 60;
+      const CORNER_Y = 15;
+      try {
+        await CommonLeftToolbar(page).areaSelectionTool(
+          SelectionToolType.Rectangle,
+        );
+        await waitForRender(page, async () => {
+          await setZoom(page, ZOOM);
+        });
+        if (tool === 'image') await LeftToolbar(page).image();
+
+        const original = await readBounds();
+        await dragHandle(image.rightMiddleHandle, DISTORT_X, 0);
+        const before = await readBounds();
+        expect(before.width).toBeGreaterThan(original.width);
+        expect(before.height).toBeCloseTo(original.height);
+
+        await dragHandle(image.bottomRightHandle, CORNER_X, CORNER_Y);
+        const after = await readBounds();
+        expect(after.width / after.height).toBeCloseTo(
+          before.width / before.height,
+        );
+        expect(after.width).toBeGreaterThan(before.width);
+        expect(after.x).toBeCloseTo(before.x);
+        expect(after.y).toBeCloseTo(before.y);
+
+        await CommonTopLeftToolbar(page).undo();
+        const restored = await readBounds();
+        for (const key of ['x', 'y', 'width', 'height'] as const) {
+          expect(restored[key]).toBeCloseTo(before[key], 10);
+        }
+        await CommonTopLeftToolbar(page).redo();
+        const redone = await readBounds();
+        for (const key of ['x', 'y', 'width', 'height'] as const) {
+          expect(redone[key]).toBeCloseTo(after[key], 10);
+        }
+      } finally {
+        await CommonTopRightToolbar(page).resetZoom();
+      }
+    });
+  }
 
   test('Verify that single image of SVG format can be saved to KET file and load', async () => {
     /**

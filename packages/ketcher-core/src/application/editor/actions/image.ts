@@ -1,6 +1,10 @@
 import type { ReStruct } from 'application/render';
-import { type ImageReferencePositionInfo, Image } from 'domain/entities/image';
-import type { Vec2 } from 'domain/entities/vec2';
+import {
+  type ImageReferenceName,
+  type ImageReferencePositionInfo,
+  Image,
+} from 'domain/entities/image';
+import { Vec2 } from 'domain/entities/vec2';
 import {
   ImageDelete,
   ImageMove,
@@ -8,6 +12,14 @@ import {
   ImageUpsert,
 } from '../operations/image';
 import { Action } from './action';
+
+const oppositeCorners: Partial<Record<ImageReferenceName, ImageReferenceName>> =
+  {
+    topLeftPosition: 'bottomRightPosition',
+    topRightPosition: 'bottomLeftPosition',
+    bottomRightPosition: 'topLeftPosition',
+    bottomLeftPosition: 'topRightPosition',
+  };
 
 export function fromImageCreation(
   reStruct: ReStruct,
@@ -40,7 +52,34 @@ export function fromImageResize(
   referencePositionInfo: ImageReferencePositionInfo,
 ) {
   const action = new Action();
-  const positionWithOffset = position.add(referencePositionInfo.offset);
+  let positionWithOffset = position.add(referencePositionInfo.offset);
+  const oppositeCorner = oppositeCorners[referencePositionInfo.name];
+  const image = reStruct.molecule.images.get(id);
+  if (image && oppositeCorner) {
+    const positions = image.getReferencePositions();
+    const size = positions.bottomRightPosition.sub(positions.topLeftPosition);
+    // Degenerate images retain the existing unconstrained resize behavior.
+    if (size.x > 0 && size.y > 0) {
+      const anchor = positions[oppositeCorner];
+      const displacement = positionWithOffset.sub(anchor);
+      const originalDisplacement =
+        positions[referencePositionInfo.name].sub(anchor);
+      const scale = Math.max(
+        Math.abs(displacement.x) / size.x,
+        Math.abs(displacement.y) / size.y,
+      );
+      positionWithOffset = anchor.add(
+        new Vec2(
+          (Math.sign(displacement.x) || Math.sign(originalDisplacement.x)) *
+            size.x *
+            scale,
+          (Math.sign(displacement.y) || Math.sign(originalDisplacement.y)) *
+            size.y *
+            scale,
+        ),
+      );
+    }
+  }
   action.addOp(
     new ImageResize(id, positionWithOffset, referencePositionInfo.name),
   );

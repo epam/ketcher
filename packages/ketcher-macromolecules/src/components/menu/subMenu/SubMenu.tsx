@@ -34,7 +34,7 @@ import { createPortal } from 'react-dom';
 import { selectSelectedMenuGroupItem } from 'state/common';
 import { useAppSelector } from 'hooks';
 
-type SubMenuProps = {
+type SubMenuProperties = {
   vertical?: boolean;
   autoSize?: boolean;
   disabled?: boolean;
@@ -61,12 +61,12 @@ const SubMenu = ({
   generalTitle,
   activeItem,
   subMenuId,
-}: React.PropsWithChildren<SubMenuProps>) => {
-  const ref = useRef<HTMLDivElement>(null);
+}: React.PropsWithChildren<SubMenuProperties>) => {
+  const reference = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
   const [portalStyle] = usePortalStyle([
-    ref,
+    reference,
     open,
     vertical,
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
@@ -78,7 +78,7 @@ const SubMenu = ({
   const lastActiveOption = subMenuId ? selectedMenuGroupItem : null;
   const handleDropDownClick = () => {
     if (disabled) return;
-    setOpen((prev) => !prev);
+    setOpen((previous) => !previous);
   };
 
   const hideCollapse = () => {
@@ -111,7 +111,7 @@ const SubMenu = ({
     <RootContainer
       data-testid={testId}
       data-is-selected={isActive(visibleItemId) ? 'true' : 'false'}
-      ref={ref}
+      ref={reference}
     >
       <>
         <VisibleItem>

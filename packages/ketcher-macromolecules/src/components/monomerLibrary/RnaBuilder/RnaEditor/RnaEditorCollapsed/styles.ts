@@ -27,10 +27,10 @@ export const RnaEditorCollapsedContainer = styled.div`
 `;
 
 export const MonomerName = styled.span`
-  font-size: ${(props) => props.theme.ketcher.font.size.medium};
+  font-size: ${(properties) => properties.theme.ketcher.font.size.medium};
   overflow: hidden;
   text-overflow: ellipsis;
-  color: ${(props) => props.theme.ketcher.color.text.primary};
+  color: ${(properties) => properties.theme.ketcher.color.text.primary};
 `;
 
 export const TextContainer = styled.div`

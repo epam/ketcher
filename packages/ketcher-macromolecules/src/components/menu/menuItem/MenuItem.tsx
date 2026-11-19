@@ -21,7 +21,7 @@ import { StyledIconButton } from './styles';
 import { blurActiveElement } from 'helpers/canvas';
 import { Button } from '@mui/material';
 
-type MenuItemProp = {
+type MenuItemProperty = {
   itemId: IconName;
   title?: string;
   testId?: string;
@@ -48,7 +48,7 @@ const MenuItem = ({
   testId,
   onClick,
   type = 'icon-button',
-}: MenuItemProp) => {
+}: MenuItemProperty) => {
   const { isActive, activate } = useMenuContext();
 
   const onClickCallback = useCallback(() => {

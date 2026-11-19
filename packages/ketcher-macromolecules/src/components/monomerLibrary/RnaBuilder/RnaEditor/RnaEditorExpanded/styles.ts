@@ -17,7 +17,7 @@
 import styled from '@emotion/styled';
 import { Button, Input } from 'ketcher-react';
 
-export const RnaEditorExpandedContainer = styled.div((props) => ({
+export const RnaEditorExpandedContainer = styled.div((properties) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '10px',
@@ -27,7 +27,7 @@ export const RnaEditorExpandedContainer = styled.div((props) => ({
   '&.rna-editor-expanded--sequence-edit-mode': {
     padding: '8px',
     paddingTop: '10px',
-    border: `2px ${props.theme.ketcher.color.editMode.sequenceInRNABuilder} solid`,
+    border: `2px ${properties.theme.ketcher.color.editMode.sequenceInRNABuilder} solid`,
     borderTop: 'none',
   },
 }));
@@ -104,54 +104,60 @@ export const ButtonsContainer = styled.div({
   gap: '8px',
 });
 
-export const StyledButton = styled(Button)<{ primary?: boolean }>((props) => {
+export const StyledButton = styled(Button)<{ primary?: boolean }>((
+  properties,
+) => {
   return {
     width: '100%',
     whiteSpace: 'nowrap',
-    fontSize: props.theme.ketcher.font.size.regular,
-    backgroundColor: props.primary
-      ? props.theme.ketcher.color.button.primary.active
+    fontSize: properties.theme.ketcher.font.size.regular,
+    backgroundColor: properties.primary
+      ? properties.theme.ketcher.color.button.primary.active
       : undefined,
     color:
-      props.primary && !props.disabled
-        ? props.theme.ketcher.color.button.text.primary
-        : props.theme.ketcher.color.text.light,
+      properties.primary && !properties.disabled
+        ? properties.theme.ketcher.color.button.text.primary
+        : properties.theme.ketcher.color.text.light,
     outline:
-      props.primary && !props.disabled
-        ? props.theme.ketcher.outline.selected.small
-        : props.theme.ketcher.outline.grey.small,
+      properties.primary && !properties.disabled
+        ? properties.theme.ketcher.outline.selected.small
+        : properties.theme.ketcher.outline.grey.small,
   };
 });
 
-export const NameContainer = styled.div<{ selected?: boolean }>((props) => ({
-  position: 'relative',
-  borderRadius: props.theme.ketcher.border.radius.regular,
-  backgroundColor: props.theme.ketcher.color.background.primary,
-  boxShadow: props.theme.ketcher.shadow.regular,
-  cursor: 'pointer',
-  overflow: 'hidden',
-  padding: '0 6px 6px 6px',
-  display: 'flex',
-  alignItems: 'flex-end',
-  height: '48px',
-  outline: props.selected
-    ? props.theme.ketcher.outline.selected.medium
-    : 'none',
+export const NameContainer = styled.div<{ selected?: boolean }>(
+  (properties) => ({
+    position: 'relative',
+    borderRadius: properties.theme.ketcher.border.radius.regular,
+    backgroundColor: properties.theme.ketcher.color.background.primary,
+    boxShadow: properties.theme.ketcher.shadow.regular,
+    cursor: 'pointer',
+    overflow: 'hidden',
+    padding: '0 6px 6px 6px',
+    display: 'flex',
+    alignItems: 'flex-end',
+    height: '48px',
+    outline: properties.selected
+      ? properties.theme.ketcher.outline.selected.medium
+      : 'none',
 
-  ':hover': {
-    outline: props.selected ? undefined : props.theme.ketcher.outline.small,
-  },
-}));
+    ':hover': {
+      outline: properties.selected
+        ? undefined
+        : properties.theme.ketcher.outline.small,
+    },
+  }),
+);
 
-export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
+export const NameLine = styled.span<{ selected?: boolean }>((properties) => ({
   position: 'absolute',
   top: '0',
   insetInlineStart: '0',
   width: '100%',
   height: '8px',
-  backgroundColor: props.selected
-    ? props.theme.ketcher.outline.selected.color
-    : props.theme.ketcher.outline.color,
+  backgroundColor: properties.selected
+    ? properties.theme.ketcher.outline.selected.color
+    : properties.theme.ketcher.outline.color,
 }));
 
 export const NameInput = styled(Input)({

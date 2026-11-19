@@ -36,33 +36,35 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
       const chunk = m[0].replaceAll('\r', '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
-        const propChunks: string[] = chunk
+        const propertyChunks: string[] = chunk
           .substr(end + 7)
           .trim()
           .split(/^$\n?/m);
 
         const struct = molSerializer.deserialize(chunk.substring(0, end + 6));
-        const props = propChunks.reduce(
-          (acc: StructAssociatedData, pc: string) => {
+        const properties = propertyChunks.reduce(
+          (accumulator: StructAssociatedData, pc: string) => {
             const m = /^> [ \d]*<(\S+)>/.exec(pc);
             if (m) {
               const field = m[1];
-              const valueArr = pc.split('\n').slice(1, -1);
+              const valueArray = pc.split('\n').slice(1, -1);
               let value: string;
-              if (valueArr.length > 1) {
-                value = valueArr.join(',');
+              if (valueArray.length > 1) {
+                value = valueArray.join(',');
               } else {
                 value = pc.split('\n')[1].trim();
               }
 
-              acc[field] = Number.isFinite(value) ? +value : value.toString();
+              accumulator[field] = Number.isFinite(value)
+                ? +value
+                : value.toString();
             }
-            return acc;
+            return accumulator;
           },
           {} as StructAssociatedData,
         );
 
-        result.push({ struct, props });
+        result.push({ struct, props: properties });
       }
       m = DelimeterRegex.exec(content);
     }
@@ -74,9 +76,9 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
     return sdfItems.reduce((res, item) => {
       res += molSerializer.serialize(item.struct);
 
-      Object.keys(item.props).forEach((prop) => {
-        res += `> <${prop}>\n`;
-        res += `${item.props[prop]}\n\n`;
+      Object.keys(item.props).forEach((property) => {
+        res += `> <${property}>\n`;
+        res += `${item.props[property]}\n\n`;
       });
 
       return `${res}$$$$\n`;

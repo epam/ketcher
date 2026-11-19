@@ -11,12 +11,12 @@ import {
   SnakeModeStartOffset,
 } from 'components/Ruler/RulerArea.constants';
 
-type Props = {
+type Properties = {
   transform: ZoomTransform;
   layoutMode: LayoutMode;
 };
 
-const RulerScale = ({ transform, layoutMode }: Props) => {
+const RulerScale = ({ transform, layoutMode }: Properties) => {
   const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
@@ -31,7 +31,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
 
     return Array.from(
       { length: endIndex - startIndex },
-      (_, i) => offset + (startIndex + i) * step,
+      (_, index) => offset + (startIndex + index) * step,
     );
   };
 
@@ -66,7 +66,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
   const svgChildren = useMemo(() => {
     const children: JSX.Element[] = [];
 
-    positions.forEach((position, i) => {
+    positions.forEach((position, index) => {
       if (layoutMode === 'sequence-layout-mode') {
         children.push(
           <line
@@ -81,7 +81,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
         );
       } else if (layoutMode === 'snake-layout-mode') {
         if (isZoomedOut) {
-          const isMultipleOfFive = i % 5 === 0;
+          const isMultipleOfFive = index % 5 === 0;
           if (isMultipleOfFive) {
             children.push(
               <text
@@ -94,7 +94,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
                 textAnchor="middle"
                 dominantBaseline="middle"
               >
-                {i}
+                {index}
               </text>,
             );
           } else {
@@ -122,13 +122,13 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
               textAnchor="middle"
               dominantBaseline="middle"
             >
-              {i}
+              {index}
             </text>,
           );
         }
       }
 
-      const nextPosition = positions[i + 1];
+      const nextPosition = positions[index + 1];
       if (nextPosition === undefined) {
         return;
       }

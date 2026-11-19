@@ -77,7 +77,8 @@ const RnaElementsTabsView = ({
             groupName as MonomerGroups,
           );
           const quantity = [...groups, ...variantMonomers].reduce(
-            (acc, group) => acc + (group.groupItems.length || 0),
+            (accumulator, group) =>
+              accumulator + (group.groupItems.length || 0),
             0,
           );
           const label = t(groupNameToTabLabelKey[groupName]);
@@ -126,7 +127,7 @@ const RnaElementsTabsView = ({
                   hasIndicator={isFilterActive}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setIsFilterOpen((prev) => !prev);
+                    setIsFilterOpen((previous) => !previous);
                   }}
                   aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"

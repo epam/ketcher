@@ -18,12 +18,13 @@ import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 
 export const GroupBlockContainer = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'isEditMode',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'isEditMode',
 })<{
   selected?: boolean;
   isEditMode?: boolean;
-}>((props) => {
-  const { selected, isEditMode, theme } = props;
+}>((properties) => {
+  const { selected, isEditMode, theme } = properties;
   let backgroundColor = 'transparent';
 
   if (selected) {
@@ -88,7 +89,7 @@ export const TextContainer = styled.div`
 `;
 
 export const GroupName = styled('span', {
-  shouldForwardProp: (prop) => prop !== 'selected',
+  shouldForwardProp: (property) => property !== 'selected',
 })<{ selected?: boolean }>`
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ selected, theme }) =>
@@ -99,7 +100,8 @@ export const GroupName = styled('span', {
 `;
 
 export const MonomerName = styled('span', {
-  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'empty',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'empty',
 })<{ selected?: boolean; empty: boolean }>`
   margin-top: 1px;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
@@ -127,7 +129,8 @@ export const GroupIconContainer = styled.div`
 `;
 
 export const GroupIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'empty',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'empty',
 })<{
   selected?: boolean;
   empty?: boolean;
@@ -150,7 +153,8 @@ export const GroupIcon = styled(Icon, {
 `;
 
 export const CompactGroupBlockContainer = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'isEditMode',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'isEditMode',
 })<{
   selected?: boolean;
   isEditMode?: boolean;
@@ -184,7 +188,8 @@ export const CompactGroupConnection = styled.div`
 `;
 
 export const CompactGroupText = styled('p', {
-  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'empty',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'empty',
 })<{
   selected?: boolean;
   empty?: boolean;

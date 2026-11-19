@@ -34,12 +34,15 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
-  handler: (...args: TArgs) => TResult,
-): (...args: TArgs) => TResult | undefined {
-  return (...args: TArgs) => {
+export function guardForMacromoleculesEditor<
+  TArguments extends unknown[],
+  TResult,
+>(
+  handler: (...arguments_: TArguments) => TResult,
+): (...arguments_: TArguments) => TResult | undefined {
+  return (...arguments_: TArguments) => {
     if (globalThis.isPolymerEditorTurnedOn) {
-      return handler(...args);
+      return handler(...arguments_);
     }
     return undefined;
   };
@@ -59,12 +62,15 @@ export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
-  handler: (...args: TArgs) => TResult,
-): (...args: TArgs) => TResult | undefined {
-  return (...args: TArgs) => {
+export function guardForMicromoleculesEditor<
+  TArguments extends unknown[],
+  TResult,
+>(
+  handler: (...arguments_: TArguments) => TResult,
+): (...arguments_: TArguments) => TResult | undefined {
+  return (...arguments_: TArguments) => {
     if (!globalThis.isPolymerEditorTurnedOn) {
-      return handler(...args);
+      return handler(...arguments_);
     }
     return undefined;
   };
@@ -76,14 +82,14 @@ export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
 // page text (e.g. an error toast) and presses Ctrl+C. Only treat it as a
 // structure copy if the live selection is actually inside the given element.
 export function isSelectionOutsideElement(
-  containerEl: Element | null,
+  containerElement: Element | null,
 ): boolean {
-  if (!containerEl) {
+  if (!containerElement) {
     return false;
   }
   const selection = document.getSelection();
   if (!selection || selection.isCollapsed || !selection.anchorNode) {
     return false;
   }
-  return !containerEl.contains(selection.anchorNode);
+  return !containerElement.contains(selection.anchorNode);
 }

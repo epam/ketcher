@@ -50,16 +50,16 @@ export interface MenuItem {
   onMouseOut?: (itemId: string) => void;
 }
 
-interface MenuProps {
+interface MenuProperties {
   id: CONTEXT_MENU_ID;
   menuItems: MenuItem[];
-  handleMenuChange: (params: ItemParams) => void;
+  handleMenuChange: (parameters: ItemParams) => void;
   onVisibilityChange?: (isVisible: boolean) => void;
 }
 
 const assembleMenuItems = (
   menuItems: MenuItem[],
-  handleMenuChange: (params: ItemParams) => void,
+  handleMenuChange: (parameters: ItemParams) => void,
 ) => {
   const MENU_CLOSING_TIME = 500;
   let isMouseOverThrottling = false;
@@ -86,12 +86,12 @@ const assembleMenuItems = (
       ) : (
         <Item
           id={name}
-          onClick={(params) => {
+          onClick={(parameters) => {
             isMouseOverThrottling = true;
             setTimeout(() => {
               isMouseOverThrottling = false;
             }, MENU_CLOSING_TIME);
-            handleMenuChange(params);
+            handleMenuChange(parameters);
           }}
           key={name}
           data-testid={name}
@@ -136,7 +136,7 @@ export const ContextMenu = ({
   handleMenuChange,
   menuItems,
   onVisibilityChange,
-}: MenuProps) => {
+}: MenuProperties) => {
   const dispatch = useAppDispatch();
   const isContextMenuActive = useAppSelector(isContextMenuActivated);
 

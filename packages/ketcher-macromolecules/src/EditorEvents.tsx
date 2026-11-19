@@ -127,11 +127,23 @@ export const EditorEvents = () => {
       dispatch(openErrorModal(errorData));
     };
     const handleOpenMonomerConnectionModal = (
-      additionalProps: MonomerConnectionOnlyProps,
-    ) => dispatch(openModal({ name: 'monomerConnection', additionalProps }));
+      additionalProperties: MonomerConnectionOnlyProps,
+    ) =>
+      dispatch(
+        openModal({
+          name: 'monomerConnection',
+          additionalProps: additionalProperties,
+        }),
+      );
     const handleOpenConfirmationDialog = (
-      additionalProps: ConfirmationDialogOnlyProps,
-    ) => dispatch(openModal({ name: 'confirmationDialog', additionalProps }));
+      additionalProperties: ConfirmationDialogOnlyProps,
+    ) =>
+      dispatch(
+        openModal({
+          name: 'confirmationDialog',
+          additionalProps: additionalProperties,
+        }),
+      );
 
     if (editor) {
       editor.events.error.add(handleError);

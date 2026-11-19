@@ -35,7 +35,7 @@ import {
   Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
-import { RequiredModalProps } from '../modalContainer';
+import { RequiredModalProps as RequiredModalProperties } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
 import {
   Loader,
@@ -342,10 +342,10 @@ const onOk = async ({
 const isAnalyzingFile = false;
 const errorHandler = (error: string) => console.log(error);
 
-const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
+const Open = ({ isModalOpen, onClose }: RequiredModalProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
-  const [structStr, setStructStr] = useState<string>('');
+  const [structString, setStructString] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [opener, setOpener] = useState<
@@ -368,7 +368,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const onCloseCallback = useCallback(() => {
     setCurrentState(MODAL_STATES.openOptions);
-    setStructStr('');
+    setStructString('');
     setFormatSelection(KET);
     setAdditionalSelection(RNA);
     onClose();
@@ -385,7 +385,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     }
 
     const onLoad = (fileContent: string) => {
-      setStructStr(fileContent);
+      setStructString(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
     const onError = () => errorHandler('Error processing file');
@@ -396,7 +396,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setFileName(fileName);
     if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
+      const option = options.find((element) => element.id === fileExtension);
       const id = option?.id ? option.id : SEQ;
       setFormatSelection(id);
     }
@@ -414,7 +414,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const addToCanvasHandler = () => {
     onOk({
-      struct: structStr,
+      struct: structString,
       formatSelection,
       additionalSelection,
       peptideLettersFormatSelection,
@@ -435,7 +435,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     editor.zoomToStructuresIfNeeded();
 
     onOk({
-      struct: structStr,
+      struct: structString,
       formatSelection,
       additionalSelection,
       peptideLettersFormatSelection,
@@ -478,7 +478,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <FooterButtonContainer>
         <FooterButton
           key="openButton"
-          disabled={!structStr.trim()}
+          disabled={!structString.trim()}
           clickHandler={openHandler}
           label={t('open.openAsNew')}
           styleType="secondary"
@@ -486,7 +486,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
         />
         <FooterButton
           key="copyButton"
-          disabled={!structStr.trim()}
+          disabled={!structString.trim()}
           clickHandler={addToCanvasHandler}
           label={t('open.addToCanvas')}
           title={t('open.addToCanvasTooltip')}
@@ -516,8 +516,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
             selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
             fileLoadHandler={onFileLoad}
             errorHandler={errorHandler}
-            value={structStr}
-            inputHandler={setStructStr}
+            value={structString}
+            inputHandler={setStructString}
           />
           {isLoading && (
             <Loader>

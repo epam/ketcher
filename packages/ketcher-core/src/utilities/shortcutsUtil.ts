@@ -40,12 +40,12 @@ export function shortcutStr(shortcut?: string | string[]) {
   return shortcutKey.split('+').map(formatShortcutPart).join('+');
 }
 
-export const generateMenuShortcuts = <T>(obj) =>
-  Object.keys(obj).reduce((acc, key) => {
-    if (obj[key]?.shortcut) {
-      const shortcut = obj[key].shortcut;
+export const generateMenuShortcuts = <T>(object) =>
+  Object.keys(object).reduce((accumulator, key) => {
+    if (object[key]?.shortcut) {
+      const shortcut = object[key].shortcut;
       const processedShortcut = shortcutStr(shortcut);
-      acc[key] = processedShortcut;
+      accumulator[key] = processedShortcut;
     }
-    return acc;
+    return accumulator;
   }, {}) as { [key in keyof T]: string };

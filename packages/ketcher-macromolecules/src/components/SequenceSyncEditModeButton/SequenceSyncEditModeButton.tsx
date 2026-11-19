@@ -55,12 +55,12 @@ export const SequenceSyncEditModeButton = () => {
     Boolean(editor?.drawingEntitiesManager?.hasAntisenseChains),
   );
 
-  const isSequenceSyncEditModeRef = useRef(isSequenceSyncEditMode);
+  const isSequenceSyncEditModeReference = useRef(isSequenceSyncEditMode);
 
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
-    isSequenceSyncEditModeRef.current = isSequenceSyncEditModeNewState;
+    isSequenceSyncEditModeReference.current = isSequenceSyncEditModeNewState;
     setIsSequenceSyncEditMode(isSequenceSyncEditModeNewState);
     editor?.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,
@@ -78,7 +78,7 @@ export const SequenceSyncEditModeButton = () => {
 
       if (isSequenceMode && hasAntisenseChains) {
         editor?.events.toggleIsSequenceSyncEditMode.dispatch(
-          isSequenceSyncEditModeRef.current,
+          isSequenceSyncEditModeReference.current,
         );
       }
     };

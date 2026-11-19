@@ -27,7 +27,7 @@ const ICON_NAMES: Record<string, IconName> = {
 
 export type OpenOptionsProps = {
   selectClipboard: () => void;
-  errorHandler: (err: string) => void;
+  errorHandler: (error: string) => void;
   fileLoadHandler: (files: File[]) => void;
 };
 

@@ -55,7 +55,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 async function pollDeferred<T>(
   process: () => Promise<T>,
-  isComplete: (val: T) => boolean,
+  isComplete: (value: T) => boolean,
   timeGap: number,
   startTimeGap?: number,
 ): Promise<T> {
@@ -80,7 +80,7 @@ async function pollDeferred<T>(
   }
 }
 
-function parametrizeUrl(url: string, params: Record<string, string>) {
+function parametrizeUrl(url: string, parameters: Record<string, string>) {
   return url
     .split(/(:[A-Za-z_]\w*)/)
     .map((segment, index) => {
@@ -90,11 +90,11 @@ function parametrizeUrl(url: string, params: Record<string, string>) {
 
       const key = segment.slice(1);
       if (
-        Object.prototype.hasOwnProperty.call(params, key) &&
-        params[key] !== undefined &&
-        params[key] !== null
+        Object.prototype.hasOwnProperty.call(parameters, key) &&
+        parameters[key] !== undefined &&
+        parameters[key] !== null
       ) {
-        return String(params[key]);
+        return String(parameters[key]);
       }
       return segment;
     })
@@ -452,7 +452,7 @@ export class RemoteStructService implements StructService {
 
   async recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : '';
-    const req = request<ImagoUploadResponse>(
+    const request_ = request<ImagoUploadResponse>(
       'POST',
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
@@ -465,7 +465,7 @@ export class RemoteStructService implements StructService {
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
       request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
-    const data = await req;
+    const data = await request_;
     const response = await pollDeferred(
       status.bind(null, { id: data.upload_id }),
       (statusResponse: ImagoStatusResponse) => {

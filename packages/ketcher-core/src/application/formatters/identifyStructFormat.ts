@@ -75,8 +75,8 @@ function isBase64Cdx(struct: string): boolean {
   const clearStr = struct
     .split(/\s+/)
     .join('')
-    .replaceAll('\\r', '')
-    .replaceAll('\\n', '');
+    .replaceAll(String.raw`\r`, '')
+    .replaceAll(String.raw`\n`, '');
   const base64StringPattern =
     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   const cdxHeader = 'VjCD0100';

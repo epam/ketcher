@@ -1020,6 +1020,10 @@ class Editor implements KetcherEditor {
       return false;
     }
 
+    if (!provideEditorInstance()) {
+      return false;
+    }
+
     const currentStruct = this.struct();
     const selection = this.selection();
 
@@ -1178,7 +1182,7 @@ class Editor implements KetcherEditor {
         nonLeavingAtoms.has(bond.begin) && nonLeavingAtoms.has(bond.end),
     );
 
-    if (nonLeavingAtomBonds.size < 1) {
+    if (nonLeavingAtomBonds.size === 0) {
       return false;
     }
 
@@ -1186,7 +1190,7 @@ class Editor implements KetcherEditor {
       this.isBondSuitableForAttachmentPoint(bond),
     );
 
-    return suitableBonds.size >= 1;
+    return suitableBonds.size > 0;
   }
 
   static isStructureImpure(struct: Struct) {
@@ -1285,7 +1289,7 @@ class Editor implements KetcherEditor {
           atomIds.add(atomId);
         });
       }
-      if (!atomIds.size) {
+      if (atomIds.size === 0) {
         throw new Error('Select a structure to create or edit a monomer.');
       }
       const bonds = [...struct.bonds.entries()]
@@ -1509,7 +1513,10 @@ class Editor implements KetcherEditor {
       );
     const initialValues =
       mode === 'library'
-        ? getLibraryEditInitialValues(libraryItem)
+        ? getLibraryEditInitialValues(
+            libraryItem,
+            provideEditorInstance()?.monomersLibraryParsedJson,
+          )
         : { ...getEditInstanceInitialValues(libraryItem), libraryOnly: true };
     this.struct(structure, false);
     this.openMonomerCreationWizard(
@@ -1529,11 +1536,32 @@ class Editor implements KetcherEditor {
     }
   }
 
+  /**
+   * The wizard's uniqueness checks read the default monomers library, which
+   * loads lazily. The selection can change, another request can open the
+   * wizard, or the user can switch to macromolecules mode while it loads, so
+   * the wizard is checked again before it opens.
+   */
+  async openMonomerCreationWizardWhenLibraryLoaded() {
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
+    if (
+      !window.isPolymerEditorTurnedOn &&
+      this.isMonomerCreationWizardEnabled
+    ) {
+      this.openMonomerCreationWizard();
+    }
+  }
+
   openMonomerCreationWizard(
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
   ) {
+    if (!provideEditorInstance()) {
+      return;
+    }
+
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
       this.selection() ?? {
@@ -3626,7 +3654,7 @@ class Editor implements KetcherEditor {
 
     for (const [operation, ids] of changesMap.entries()) {
       switch (operation) {
-        case OperationType.ATOM_DELETE:
+        case OperationType.ATOM_DELETE: {
           {
             // Invalidate assigned attachment points – check if any of the atoms in the atom pair is deleted
             const attachmentPointsToInvalidate = [
@@ -3708,6 +3736,7 @@ class Editor implements KetcherEditor {
             this.removeAtomsAndBondsFromRnaComponents([...ids.values()], []);
           }
           break;
+        }
 
         case OperationType.BOND_ATTR: {
           for (const id of ids.values()) {
@@ -3865,8 +3894,9 @@ class Editor implements KetcherEditor {
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     }
 
@@ -3924,14 +3954,14 @@ class Editor implements KetcherEditor {
           res[key] = [...resolvedCi[key]];
       });
 
-      if (Object.keys(res).length !== 0) {
+      if (Object.keys(res).length > 0) {
         this._selection = res;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
         this.explicitSelected().atoms ?? [],
       );
-      if (stereoFlags.length !== 0) {
+      if (stereoFlags.length > 0) {
         if (this._selection?.enhancedFlags) {
           this._selection.enhancedFlags = [
             ...new Set([...this._selection.enhancedFlags, ...stereoFlags]),
@@ -4148,8 +4178,9 @@ class Editor implements KetcherEditor {
         break;
       }
 
-      default:
+      default: {
         this.event[eventName].add(handler);
+      }
     }
 
     return subscriber;
@@ -4176,10 +4207,11 @@ class Editor implements KetcherEditor {
         break;
       }
 
-      default:
+      default: {
         this.event[eventName].remove(
           subscriber.handler as (action?: unknown) => void,
         );
+      }
     }
   }
 

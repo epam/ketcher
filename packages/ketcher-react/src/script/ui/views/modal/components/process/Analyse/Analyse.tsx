@@ -49,22 +49,25 @@ interface AnalyseItem {
   withSelector: boolean;
 }
 
-interface AnalyseDialogProperties extends DialogParameters {
+interface AnalyseDialogProps extends DialogParameters {
   values: AnalyseValues | null;
   round: RoundSettings;
   loading: boolean;
 }
 
-interface AnalyseDialogCallProperties {
+interface AnalyseDialogCallProps {
   onAnalyse: () => void;
   onChangeRound: (roundName: AnalyseRoundName, value: string) => void;
 }
 
-type Properties = AnalyseDialogProperties & AnalyseDialogCallProperties;
+type Props = AnalyseDialogProps & AnalyseDialogCallProps;
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
-  return value.replace(/\d*\.\d+/g, (string_) => (+string_).toFixed(round));
+  return value
+    .split(/(\d*\.\d+)/)
+    .map((part, index) => (index % 2 === 1 ? (+part).toFixed(round) : part))
+    .join('');
 }
 
 const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(
@@ -155,7 +158,7 @@ function AnalyseDialog({
   onAnalyse,
   onChangeRound,
   ...properties
-}: Properties) {
+}: Props) {
   const { t } = useTranslation(['common', 'dialogs']);
   useEffect(() => {
     onAnalyse();
@@ -214,7 +217,7 @@ function AnalyseDialog({
   );
 }
 
-const mapStateToProperties = (state: StoreState) => ({
+const mapStateToProps = (state: StoreState) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -226,15 +229,12 @@ const mapStateToProperties = (state: StoreState) => ({
 
 type AppDispatch = ThunkDispatch<StoreState, unknown, Action<string>>;
 
-const mapDispatchToProperties = (dispatch: AppDispatch) => ({
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName: AnalyseRoundName, value: string) =>
     dispatch(changeRound(roundName, value)),
 });
 
-const Analyse = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
-)(AnalyseDialog);
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
 
 export default Analyse;

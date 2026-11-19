@@ -20,17 +20,17 @@ import styles from './FormulaInput.module.less';
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
 const errorRegexp = /error:.*/g;
 
-interface FormulaInputMarkdownProperties {
+interface FormulaInputMarkdownProps {
   content: ReactNode;
   contentEditable: boolean;
 }
 
-interface FormulaInputProperties {
+interface FormulaInputProps {
   value: string;
   contentEditable: boolean;
 }
 
-function formulaInputMarkdown(contentData: FormulaInputMarkdownProperties) {
+function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
   const { content, contentEditable } = contentData;
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.keyCode === 8) {
@@ -51,7 +51,7 @@ function formulaInputMarkdown(contentData: FormulaInputMarkdownProperties) {
   );
 }
 
-function FormulaInput({ value, contentEditable }: FormulaInputProperties) {
+function FormulaInput({ value, contentEditable }: FormulaInputProps) {
   if (errorRegexp.test(value)) {
     return formulaInputMarkdown({ content: value, contentEditable });
   }

@@ -19,7 +19,7 @@ import { GenSet } from './GenSet';
 import { isGenericGroup } from '../../helpers';
 import styles from './GenGroup.module.less';
 
-type GenProperties = {
+type GenProps = {
   selected: (label: string) => boolean;
   onAtomSelect: (label: string) => void;
   onAtomActivate: (label: string) => void;
@@ -45,7 +45,7 @@ const GenGroup = ({
   onAtomActivate,
   selected,
   disabledQueryElements,
-}: GenProperties) => {
+}: GenProps) => {
   return (
     <div className={styles.fieldFlexWrapper}>
       <fieldset className={styles.fieldset}>

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
 import dialogClasses from '../../../../../../../components/Dialog/Dialog.module.less';
@@ -24,16 +24,17 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
+  provideEditorInstance,
   type EditMonomerVariant,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 
-interface EditMonomerDialogProps extends BaseProperties {
+interface EditMonomerDialogProps extends BaseProps {
   fgIds: number[];
   variant: EditMonomerVariant;
 }
 
-type Props = EditMonomerDialogProps & BaseCallProperties;
+type Props = EditMonomerDialogProps & BaseCallProps;
 
 const EditMonomer = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
@@ -60,7 +61,10 @@ const EditMonomer = (props: Props) => {
     onOk(true);
   };
 
-  const handleEditMonomer = (shouldEditAllInstances = false) => {
+  const handleEditMonomer = async (shouldEditAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     if (editor.openEditMonomerWizard(fgIds, shouldEditAllInstances)) {
       onOk(true);
     }

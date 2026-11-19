@@ -6,7 +6,7 @@ import styles from '../AttachmentPoint/AttachmentPoint.module.less';
 import { createReadonlyAttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
 import { useTranslation } from 'react-i18next';
 
-type Properties = {
+type Props = {
   name: AttachmentPointName;
   leavingAtomLabel: AtomLabel;
   editor: Editor;
@@ -31,7 +31,7 @@ const ReadonlyAttachmentPoint = ({
   editor,
   atomId,
   onLeavingAtomChange,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('components');
   const containerReference = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);

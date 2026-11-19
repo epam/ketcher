@@ -21,7 +21,7 @@ import { Generics } from 'ketcher-core';
 import classes from './GenericGroups.module.less';
 import { groupNames } from './groupNames';
 
-type GenericGroupsProperties = {
+type GenericGroupsProps = {
   selected: (label: string) => boolean;
   onAtomSelect: (label: string) => void;
   onAtomActivate: (label: string) => void;
@@ -65,7 +65,7 @@ function GenericGroups({
   onAtomSelect,
   onAtomActivate,
   disabledQueryElements,
-}: Readonly<GenericGroupsProperties>) {
+}: Readonly<GenericGroupsProps>) {
   return (
     <div className={classes.genericGroups}>
       <div className={classes.topGroupsContainer}>

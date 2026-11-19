@@ -18,12 +18,12 @@ import { ElementColor, type Element } from 'ketcher-core';
 import classes from './AtomInfo.module.less';
 import clsx from 'clsx';
 
-interface AtomInfoProperties {
+interface AtomInfoProps {
   el: Element;
   isInfo: boolean;
 }
 
-function AtomInfo({ el, isInfo }: Readonly<AtomInfoProperties>) {
+function AtomInfo({ el, isInfo }: Readonly<AtomInfoProps>) {
   const numberStyle = {
     color: ElementColor[el.label] || 'black',
     fontSize: '12px',

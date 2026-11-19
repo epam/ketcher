@@ -18,7 +18,7 @@ import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
 import type { Element } from 'ketcher-core';
 
-interface OutinerRowProperties {
+interface OutinerRowProps {
   row: Element[];
   caption: string;
   onAtomSelect: (label: string) => void;
@@ -36,7 +36,7 @@ function OutinerRow({
   currentEvents,
   atomClassNames,
   className,
-}: Readonly<OutinerRowProperties>) {
+}: Readonly<OutinerRowProps>) {
   return (
     <tbody>
       <tr>

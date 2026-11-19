@@ -29,7 +29,7 @@ const OVERVIEW_URL =
 const LIFE_SCIENCES_URL = 'https://lifescience.opensource.epam.com/';
 const INDIGO_URL = 'https://lifescience.opensource.epam.com/indigo/';
 
-interface AboutDialogProperties {
+interface AboutDialogProps {
   date: string;
   indigoVersion?: string;
   indigoMachine?: string;
@@ -40,7 +40,7 @@ interface AboutDialogProperties {
   onOk: (result?: unknown) => void;
 }
 
-function AboutDialog(properties: Readonly<AboutDialogProperties>) {
+function AboutDialog(properties: Readonly<AboutDialogProps>) {
   const { t } = useTranslation('dialogs');
   const indigoInfo = properties.indigoVersion?.split('.r') || []; // Indigo version and build info
 
@@ -149,7 +149,7 @@ interface AppState {
   };
 }
 
-const mapStateToProperties = (state: AppState) => ({
+const mapStateToProps = (state: AppState) => ({
   date: state.options.app.buildDate.replace('T', '; '),
   indigoVersion: state.options.app.indigoVersion,
   indigoMachine: state.options.app.indigoMachine,
@@ -159,15 +159,12 @@ const mapStateToProperties = (state: AppState) => ({
   version: state.options.app.version,
 });
 
-const mapDispatchToProperties = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   onOk: (_result?: unknown) => {
     dispatch({ type: 'MODAL_CLOSE' });
   },
 });
 
-const About = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
-)(AboutDialog);
+const About = connect(mapStateToProps, mapDispatchToProps)(AboutDialog);
 
 export default About;

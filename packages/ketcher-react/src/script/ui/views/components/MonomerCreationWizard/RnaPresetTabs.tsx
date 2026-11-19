@@ -49,7 +49,7 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
-  getConnectionAttachmentPointAtomIdsForComponent,
+  getConnectionAttachmentPointAtomIdsForRnaPreset,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
@@ -58,7 +58,7 @@ import {
   hasRequiredRnaPresetComponents,
 } from './RnaPresetStructureValidation';
 
-interface IRnaPresetTabsProperties {
+interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
@@ -89,7 +89,7 @@ const RNA_COMPONENT_HINTS = {
   phosphate: i18n.t('components:monomerCreationWizard.selectPhosphateAtoms'),
 } satisfies Record<RnaPresetComponentKey, string>;
 
-export const RnaPresetTabs = (properties: IRnaPresetTabsProperties) => {
+export const RnaPresetTabs = (properties: IRnaPresetTabsProps) => {
   const { t } = useTranslation(['components', 'common']);
   const [selectedTab, setSelectedTab] = useState(0);
   const structureSelection = useSelector(selectionSelector);
@@ -268,28 +268,17 @@ export const RnaPresetTabs = (properties: IRnaPresetTabsProperties) => {
     editor.selection(null);
   }, [applyHighlights, currentTabStructure, editor, selectedTab]);
 
-  // Sync connection (readonly) attachment points with the canvas whenever the
-  // active RNA component tab or the wizard state changes. All assigned APs
-  // (R-labels) stay visible on every tab so users can see the full attachment-
-  // point picture while editing a single component.
+  // Keep all inter-component connection points visible while editing any tab.
   useEffect(() => {
     editor.setVisibleAssignedAttachmentPoints(undefined);
-
-    const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
-
-    if (!activeComponentKey) {
-      editor.setConnectionAttachmentPoints(new Map());
-      return;
-    }
-
-    const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
-      wizardState,
-      struct,
-      activeComponentKey,
-      phosphatePosition as PhosphatePosition | undefined,
+    editor.setConnectionAttachmentPoints(
+      getConnectionAttachmentPointAtomIdsForRnaPreset(
+        wizardState,
+        struct,
+        phosphatePosition as PhosphatePosition | undefined,
+      ),
     );
-    editor.setConnectionAttachmentPoints(connectionAtomIds);
-  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
+  }, [editor, struct, wizardState, phosphatePosition]);
 
   useEffect(() => {
     return () => {

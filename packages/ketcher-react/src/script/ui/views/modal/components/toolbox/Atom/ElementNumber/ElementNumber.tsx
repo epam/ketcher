@@ -18,13 +18,13 @@ import { Elements } from 'ketcher-core';
 import { capitalize } from 'lodash/fp';
 import { useTranslation } from 'react-i18next';
 
-interface ElementNumberProperties {
+interface ElementNumberProps {
   label: string;
 }
 
-type Properties = ElementNumberProperties;
+type Props = ElementNumberProps;
 
-const ElementNumber = (properties: Properties) => {
+const ElementNumber = (properties: Props) => {
   const { t } = useTranslation('dialogs');
   const { label } = properties;
   const value = Elements.get(capitalize(label))?.number ?? '';

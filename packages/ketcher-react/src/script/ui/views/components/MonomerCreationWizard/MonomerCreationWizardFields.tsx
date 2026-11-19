@@ -38,7 +38,7 @@ import { Autocomplete, TextField } from '@mui/material';
 import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utilities';
 import { useTranslation } from 'react-i18next';
 
-interface IMonomerCreationWizardFieldsProperties {
+interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   readonlyAttachmentPoints?: Array<{
@@ -62,7 +62,7 @@ interface ModificationTypeItem {
 }
 
 const MonomerCreationWizardFields = (
-  properties: IMonomerCreationWizardFieldsProperties,
+  properties: IMonomerCreationWizardFieldsProps,
 ) => {
   const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();

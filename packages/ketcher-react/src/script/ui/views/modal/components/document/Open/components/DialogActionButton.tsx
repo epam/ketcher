@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-type Properties = {
+type Props = {
   clickHandler: () => void;
   disabled: boolean;
   label: string;
@@ -30,7 +30,7 @@ export const DialogActionButton = ({
   styles,
   disabled,
   testId,
-}: Properties) => (
+}: Props) => (
   <input
     key="Open"
     type="button"

@@ -60,24 +60,24 @@ interface CheckFormState extends FormState<CheckState> {
   moleculeErrors: MoleculeErrors;
 }
 
-interface CheckDialogOwnProperties {
+interface CheckDialogOwnProps {
   onOk: (result: unknown) => void;
   onCancel: () => void;
 }
 
-interface CheckDialogStateProperties {
+interface CheckDialogStateProps {
   formState: CheckFormState;
   checkState: CheckState;
 }
 
-interface CheckDialogDispatchProperties {
+interface CheckDialogDispatchProps {
   onCheck: (options: CheckOption[]) => Promise<void>;
   onApply: (resource: CheckState) => void;
 }
 
-type CheckDialogProperties = CheckDialogOwnProperties &
-  CheckDialogStateProperties &
-  CheckDialogDispatchProperties;
+type CheckDialogProps = CheckDialogOwnProps &
+  CheckDialogStateProps &
+  CheckDialogDispatchProps;
 
 interface State {
   modal: {
@@ -142,7 +142,7 @@ const getFormattedDateString = (date: Date): string => {
   )}`;
 };
 
-interface FooterContentProperties {
+interface FooterContentProps {
   handleCheck: () => void;
   handleApply: () => void;
   onCancel: () => void;
@@ -150,7 +150,7 @@ interface FooterContentProperties {
   isCheckedWithNewSettings: boolean;
 }
 
-const FooterContent: FC<FooterContentProperties> = ({
+const FooterContent: FC<FooterContentProps> = ({
   handleCheck,
   handleApply,
   onCancel,
@@ -195,16 +195,10 @@ const FooterContent: FC<FooterContentProperties> = ({
   );
 };
 
-const CheckDialog: FC<CheckDialogProperties> = (properties) => {
+const CheckDialog: FC<CheckDialogProps> = (properties) => {
   const { t } = useTranslation('dialogs');
-  const {
-    formState,
-    checkState,
-    onCheck,
-    onApply,
-    onCancel,
-    ...restProperties
-  } = properties;
+  const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
+    properties;
   const { result = checkState, moleculeErrors } = formState;
   const [isStructureChecking, setIsStructureChecking] = useState(false);
   const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
@@ -215,11 +209,12 @@ const CheckDialog: FC<CheckDialogProperties> = (properties) => {
 
   const handleCheck = () => {
     setIsStructureChecking(false);
-    onCheck(result.checkOptions).then(() => {
+    void (async () => {
+      await onCheck(result.checkOptions);
       setIsStructureChecking(true);
       setLastCheckDate(new Date());
       setIsCheckedWithNewSettings(true);
-    });
+    })();
   };
 
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
@@ -235,7 +230,7 @@ const CheckDialog: FC<CheckDialogProperties> = (properties) => {
     <Dialog
       title={t('process.check.dialogTitle')}
       className={style.dialog_body}
-      params={{ ...restProperties, onCancel }}
+      params={{ ...restProps, onCancel }}
       buttons={[]}
       footerContent={
         <FooterContent
@@ -279,7 +274,7 @@ const CheckDialog: FC<CheckDialogProperties> = (properties) => {
             </span>
             <div
               className={
-                isStructureChecking && Object.keys(moleculeErrors).length
+                isStructureChecking && Object.keys(moleculeErrors).length > 0
                   ? style.warnings
                   : style.centeredContainer
               }
@@ -288,7 +283,7 @@ const CheckDialog: FC<CheckDialogProperties> = (properties) => {
               {isStructureChecking ? (
                 <div
                   className={
-                    Object.keys(moleculeErrors).length
+                    Object.keys(moleculeErrors).length > 0
                       ? style.warningsContainer
                       : style.centeredContainer
                   }
@@ -318,26 +313,31 @@ const CheckDialog: FC<CheckDialogProperties> = (properties) => {
   );
 };
 
-const mapStateToProperties = (state: State): CheckDialogStateProperties => ({
+const mapStateToProps = (state: State): CheckDialogStateProps => ({
   formState: state.modal.form,
   checkState: state.options.check,
 });
 
-const mapDispatchToProperties = (
+const mapDispatchToProps = (
   dispatch: AppDispatch,
-  ownProperties: CheckDialogOwnProperties,
-): CheckDialogDispatchProperties => ({
-  onCheck: (options: CheckOption[]) =>
-    dispatch(check(options)).catch(ownProperties.onCancel),
+  ownProps: CheckDialogOwnProps,
+): CheckDialogDispatchProps => ({
+  onCheck: async (options: CheckOption[]) => {
+    try {
+      await dispatch(check(options));
+    } catch {
+      ownProps.onCancel();
+    }
+  },
   onApply: (resource: CheckState) => {
     dispatch(checkOptions(resource));
-    ownProperties.onOk(resource);
+    ownProps.onOk(resource);
   },
 });
 
 const ConnectedCheckDialog = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
+  mapStateToProps,
+  mapDispatchToProps,
 )(CheckDialog);
 
-export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProperties>;
+export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProps>;

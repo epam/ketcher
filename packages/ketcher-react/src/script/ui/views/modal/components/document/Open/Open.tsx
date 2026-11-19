@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -36,16 +36,16 @@ type OpenResult = {
   'input-format'?: string;
 };
 
-interface OpenProperties {
+interface OpenProps {
   server: unknown;
   errorHandler: (error: string) => void;
   isRecognizeDisabled: boolean;
   isAnalyzingFile: boolean;
 }
 
-type Properties = OpenProperties &
-  Pick<BaseProperties, 'className'> &
-  BaseCallProperties<OpenResult> & { onImageUpload: (file: File) => void };
+type Props = OpenProps &
+  Pick<BaseProps, 'className'> &
+  BaseCallProps<OpenResult> & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
   idle: 'idle',
@@ -94,7 +94,7 @@ const FooterContent = ({
   );
 };
 
-const Open: FC<Properties> = (properties) => {
+const Open: FC<Props> = (properties) => {
   const {
     server,
     onImageUpload,
@@ -119,7 +119,7 @@ const Open: FC<Properties> = (properties) => {
   const onFileLoad = (files: File[]) => {
     const windowContext = globalThis as unknown as Record<string, unknown>;
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-      document.documentElement.requestFullscreen?.().catch(() => {
+      void document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
@@ -128,7 +128,7 @@ const Open: FC<Properties> = (properties) => {
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
-        if (!fileContent.structures.length && files[0].size > 0) {
+        if (fileContent.structures.length === 0 && files[0].size > 0) {
           errorHandler(t('dialogs:document.open.passwordProtectedError'));
         }
         setStructString('');
@@ -146,9 +146,17 @@ const Open: FC<Properties> = (properties) => {
     };
 
     setFileName(files[0].name);
-    fileOpener(server)
-      .then((chosenOpener) => chosenOpener(files[0]))
-      .then(onLoad, onError);
+    void (async () => {
+      let fileContent;
+      try {
+        const chosenOpener = await fileOpener(server);
+        fileContent = await chosenOpener(files[0]);
+      } catch {
+        onError();
+        return;
+      }
+      onLoad(fileContent);
+    })();
   };
 
   const onImageLoad = (files: File[]) => {
@@ -229,5 +237,5 @@ const Open: FC<Properties> = (properties) => {
   );
 };
 
-export type { OpenProperties, OpenResult };
+export type { OpenProps, OpenResult };
 export default Open;

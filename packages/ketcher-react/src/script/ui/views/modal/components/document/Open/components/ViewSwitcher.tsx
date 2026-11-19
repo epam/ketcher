@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import type { FC } from 'react';
-import { type AnalyzingFileProperties, AnalyzingFile } from './AnalyzingFile';
+import { type AnalyzingFileProps, AnalyzingFile } from './AnalyzingFile';
 
-import { type OpenOptionsProperties, OpenOptions } from './OpenOptions';
-import { type TextEditorProperties, TextEditor } from './TextEditor';
+import { type OpenOptionsProps, OpenOptions } from './OpenOptions';
+import { type TextEditorProps, TextEditor } from './TextEditor';
 import CDXStructuresViewer from './CDXStructuresViewer';
-import type { CDXStructuresViewerProperties } from './CDXStructuresViewer/CDXStructuresViewer';
+import type { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
 
 type ViewStates = {
   idle: string;
@@ -29,30 +29,32 @@ type ViewStates = {
   presentationViewer: string;
 };
 
-type SwitchProperties = {
+type SwitchProps = {
   currentState: string;
   states: ViewStates;
   isAnalyzingFile: boolean;
-} & OpenOptionsProperties &
-  TextEditorProperties &
-  AnalyzingFileProperties &
-  CDXStructuresViewerProperties;
+} & OpenOptionsProps &
+  TextEditorProps &
+  AnalyzingFileProps &
+  CDXStructuresViewerProps;
 
-export const ViewSwitcher: FC<SwitchProperties> = (
-  properties: SwitchProperties,
-) => {
+export const ViewSwitcher: FC<SwitchProps> = (properties: SwitchProps) => {
   if (properties.isAnalyzingFile) {
     return <AnalyzingFile fileName={properties.fileName} />;
   } else {
     switch (properties.currentState) {
-      case properties.states.idle:
+      case properties.states.idle: {
         return <OpenOptions {...properties} />;
-      case properties.states.textEditor:
+      }
+      case properties.states.textEditor: {
         return <TextEditor {...properties} testId="open-structure-textarea" />;
-      case properties.states.presentationViewer:
+      }
+      case properties.states.presentationViewer: {
         return <CDXStructuresViewer {...properties} />;
-      default:
+      }
+      default: {
         return null;
+      }
     }
   }
 };

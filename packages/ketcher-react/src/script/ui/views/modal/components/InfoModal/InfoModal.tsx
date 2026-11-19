@@ -60,19 +60,16 @@ function ErrorInfoModal(properties) {
   );
 }
 
-const mapStateToProperties = (state) => ({
+const mapStateToProps = (state) => ({
   errorMessage: state.options.app.errorMessage,
 });
 
-const mapDispatchToProperties = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   onOk: (_result) => {
     dispatch({ type: 'MODAL_CLOSE' });
   },
 });
 
-const InfoModal = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
-)(ErrorInfoModal);
+const InfoModal = connect(mapStateToProps, mapDispatchToProps)(ErrorInfoModal);
 
 export default InfoModal;

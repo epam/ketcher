@@ -21,7 +21,7 @@ import parentStyles from './OpenOptions.module.less';
 import styles from './FileDrop.module.less';
 import { type IconName, Icon } from 'components';
 
-type FileDropProperties = {
+type FileDropProps = {
   buttonLabel: string;
   textLabel: string;
   iconName: IconName;
@@ -38,7 +38,7 @@ const FileDrop = ({
   disabledText,
   testId,
   ...rest
-}: FileDropProperties) => {
+}: FileDropProps) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,
@@ -52,10 +52,8 @@ const FileDrop = ({
     onFileDialogCancel: () => {
       const windowContext = globalThis as unknown as Record<string, unknown>;
       if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-        document.documentElement.requestFullscreen?.().catch(() => {
-          /*
-          Restore fullscreen silently if failed
-          */
+        void document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
         });
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }

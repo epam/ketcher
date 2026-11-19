@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +22,7 @@ import IfThenSelect from './components';
 import classes from './RgroupLogic.module.less';
 import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema';
 
-interface RgroupLogicProps extends BaseProperties {
+interface RgroupLogicProps extends BaseProps {
   frags: Set<number>;
   ifthen: number;
   label: number;
@@ -32,7 +32,7 @@ interface RgroupLogicProps extends BaseProperties {
   name?: string;
 }
 
-type Props = RgroupLogicProps & BaseCallProperties;
+type Props = RgroupLogicProps & BaseCallProps;
 
 const RgroupLogic = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
@@ -64,11 +64,7 @@ const RgroupLogic = (props: Props) => {
 
 function rangeConv(range) {
   // structConv
-  const res = range
-    .replace(/\s*/g, '')
-    .replace(/,+/g, ',')
-    .replace(/^,/, '')
-    .replace(/,$/, '');
+  const res = range.split(/\s+/).join('').split(',').filter(Boolean).join(',');
 
   return res
     .split(',')

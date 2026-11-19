@@ -16,13 +16,13 @@
 
 import styles from './Tooltip.module.less';
 
-export interface TooltipProperties {
+export interface TooltipProps {
   message: string;
   position: { x: number; y: number };
 }
 const OFFSET_FROM_POSITION = 10;
 
-export const Tooltip = (properties: TooltipProperties) =>
+export const Tooltip = (properties: TooltipProps) =>
   properties.message ? (
     <div
       className={`${styles.container}`}

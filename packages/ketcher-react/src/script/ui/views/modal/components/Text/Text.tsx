@@ -50,7 +50,7 @@ interface TextFormState {
   form: FormState;
 }
 
-interface TextProperties extends DialogParameters {
+interface TextProps extends DialogParameters {
   formState: TextFormState;
   id?: string;
   content: string;
@@ -125,7 +125,7 @@ const TextEditorInner = (properties: {
   formState: TextFormState;
   position?: string;
   id?: string;
-  params: TextProperties;
+  params: TextProps;
 }) => {
   const { formState, position, id, params } = properties;
   const { t } = useTranslation(['common', 'dialogs']);
@@ -275,7 +275,7 @@ export const normalizeEditorState = (
   return undefined;
 };
 
-const Text = (properties: TextProperties) => {
+const Text = (properties: TextProps) => {
   const { formState, position, id } = properties;
 
   const initialEditorState = normalizeEditorState(properties.content);

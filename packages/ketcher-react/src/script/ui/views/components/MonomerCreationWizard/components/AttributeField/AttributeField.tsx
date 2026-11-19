@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import styles from './AttributeField.module.less';
 import clsx from 'clsx';
 
-type Properties = {
+type Props = {
   title: string;
   titleTestId?: string;
   control: ReactNode;
@@ -17,7 +17,7 @@ const AttributeField = ({
   control,
   required,
   disabled,
-}: Properties) => {
+}: Props) => {
   return (
     <div className={styles.field}>
       <p

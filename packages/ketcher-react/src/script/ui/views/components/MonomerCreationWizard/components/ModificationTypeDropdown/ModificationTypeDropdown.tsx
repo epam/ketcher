@@ -28,7 +28,7 @@ interface IOptionType {
 
 const filter = createFilterOptions<IOptionType>();
 
-interface IModificationTypeDropdownProperties {
+interface IModificationTypeDropdownProps {
   naturalAnalogue: string;
   value: string | null;
   error?: string | null;
@@ -37,11 +37,11 @@ interface IModificationTypeDropdownProperties {
 }
 
 export default function ModificationTypeDropdown(
-  properties: Readonly<IModificationTypeDropdownProperties>,
+  properties: Readonly<IModificationTypeDropdownProps>,
 ) {
   const editor = provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =
-    editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
+    editor?.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() ?? {};
   const modificationTypesOthersFromCurrentNaturalAnalogue = [
     ...new Set(
       Object.entries(modificationTypesGroupedByNaturalAnalogue)
@@ -112,11 +112,11 @@ export default function ModificationTypeDropdown(
         return option.title;
       }}
       renderOption={(properties, option) => {
-        const { key, ...optionProperties } = properties;
+        const { key, ...optionProps } = properties;
         return (
           <li
             key={key}
-            {...optionProperties}
+            {...optionProps}
             data-testid={`modification-type-option-${option.title}`}
             className={clsx(
               properties.className,

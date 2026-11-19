@@ -43,17 +43,13 @@ const typeSchema: TypeSchemaItem[] = [
   },
 ];
 
-interface TypeChoiceProperties {
+interface TypeChoiceProps {
   value: PeriodTableType;
   onChange: (value: PeriodTableType) => void;
   disabled?: boolean;
 }
 
-function TypeChoice({
-  value,
-  onChange,
-  disabled,
-}: Readonly<TypeChoiceProperties>) {
+function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
   const { t } = useTranslation('dialogs');
   return (
     <fieldset className={classes.fieldset} disabled={disabled}>

@@ -47,7 +47,7 @@ import {
 
 const Viewer = lazy(() => import('miew-react'));
 
-type MiewDialogProperties = {
+type MiewDialogProps = {
   miewOpts: ReturnType<typeof createMiewOptions>;
   server: StructService;
   struct: Struct;
@@ -55,11 +55,11 @@ type MiewDialogProperties = {
   onOk: (result: unknown) => void;
   miewTheme: 'dark' | 'light';
 };
-type MiewDialogCallProperties = {
+type MiewDialogCallProps = {
   dispatch: ThunkDispatch<unknown, undefined, AnyAction>;
   serverSettings: Record<string, unknown>;
 };
-type Properties = MiewDialogProperties & MiewDialogCallProperties;
+type Props = MiewDialogProps & MiewDialogCallProps;
 
 /*
 OPTIONS for MIEW
@@ -138,7 +138,7 @@ const MiewDialog = ({
   serverSettings,
   miewTheme = 'light',
   ...property
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const miewReference = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -161,18 +161,20 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
       const moleculeOnlyStruct = struct.clone(null, null, true);
 
-      service
-        .getStringFromStructureAsync(moleculeOnlyStruct)
-        .then((resource) =>
-          miew.load(resource, { sourceType: 'immediate', fileType: 'cml' }),
-        )
-        .then(() => {
+      void (async () => {
+        try {
+          const resource =
+            await service.getStringFromStructureAsync(moleculeOnlyStruct);
+          await miew.load(resource, {
+            sourceType: 'immediate',
+            fileType: 'cml',
+          });
           miew.setOptions(miewOpts);
           setIsInitialized(true);
-        })
-        .catch((error) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
-        });
+        } catch (e) {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        }
+      })();
     },
     [miewOpts, server, struct],
   );
@@ -323,7 +325,7 @@ const miewOptionsSelector = createSelector([getOptionsSettings], (settings) =>
   createMiewOptions(pick(MIEW_OPTIONS, settings)),
 );
 
-const mapStateToProperties = (state) => ({
+const mapStateToProps = (state) => ({
   miewOpts: miewOptionsSelector(state),
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
@@ -331,10 +333,10 @@ const mapStateToProperties = (state) => ({
   serverSettings: state.options.getServerSettings(),
 });
 
-const mapDispatchToProperties = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   dispatch,
 });
 
-const Miew = connect(mapStateToProperties, mapDispatchToProperties)(MiewDialog);
+const Miew = connect(mapStateToProps, mapDispatchToProps)(MiewDialog);
 
 export default Miew;

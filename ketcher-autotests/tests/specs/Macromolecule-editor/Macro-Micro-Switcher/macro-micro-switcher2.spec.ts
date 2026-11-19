@@ -97,8 +97,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     ]);
     await Library(page).hideLibrary();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).showLibrary();
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
@@ -121,8 +122,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       getAtomLocator(page, { atomLabel: 'P' }),
       { padding: 250 },
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -139,8 +141,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -231,8 +234,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -277,8 +281,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -294,8 +299,9 @@ test.describe('Macro-Micro-Switcher2', () => {
      * Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
      *
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -332,8 +338,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Ket,
@@ -402,8 +409,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -423,11 +431,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/single-atom-properties.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await getAtomLocator(page, { atomLabel: 'Zn' }).first().dblclick({
       force: true,
     });
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -441,8 +451,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Expected: The file is saved and loaded correctly.
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -469,8 +480,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Expected: The file is saved and loaded correctly.
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -499,8 +511,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Expected: The SVG preview is correct.
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -519,8 +532,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Expected: Atom properties are displayed correctly.
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -558,8 +572,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/single-atom-properties.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -595,8 +610,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
@@ -626,8 +642,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
@@ -647,8 +664,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Expected: The file is saved and loaded correctly.
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -677,8 +695,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Expected: The file is saved and loaded correctly.
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -709,8 +728,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Macromolecules mode
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
     await takePageScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -896,8 +916,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       5. Switch to Macromolecules mode
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
@@ -944,8 +965,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -966,8 +988,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -997,8 +1020,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       y: 100,
     });
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1024,8 +1048,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1051,8 +1076,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1078,8 +1104,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1100,8 +1127,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/resized-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1124,8 +1152,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await getArrowLocator(page, { arrowType: ArrowType.OpenAngle }).hover({
       force: true,
     });
@@ -1148,6 +1177,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await dragMouseTo(page, 200, 450);
     await getPlusLocator(page).hover({ force: true });
     await dragMouseTo(page, 200, 500);
+    await page.waitForTimeout(100);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1171,8 +1201,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -1202,8 +1233,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await verifyFileExport(page, 'KET/all-arrows-expected.ket', FileType.KET);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1228,8 +1260,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await pageReloadMicro(page);
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await verifySVGExport(page);
   });
 
@@ -1247,8 +1280,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/resized-arrows.ket');
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await verifySVGExport(page);
   });
 
@@ -1296,8 +1330,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await getArrowLocator(page, { arrowType: ArrowType.OpenAngle }).hover({
       force: true,
     });
@@ -1342,8 +1377,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

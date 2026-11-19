@@ -38,7 +38,7 @@ import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizar
 import MonomerCreationWizardBackdrop from '../MonomerCreationWizard/MonomerCreationWizardBackdrop';
 import { Tooltip } from '../Tooltip';
 
-interface StructEditorProperties {
+interface StructEditorProps {
   ketcherId: string;
   prevKetcherId?: string;
   struct?: Struct;
@@ -68,34 +68,34 @@ interface StructEditorState {
 // TODO: need to update component after making refactoring of store
 function setupEditor(
   editor: Editor,
-  properties: StructEditorProperties,
-  oldProperties: Partial<StructEditorProperties> = {},
+  properties: StructEditorProps,
+  oldProps: Partial<StructEditorProps> = {},
 ) {
   const { struct, tool, toolOpts, options } = properties;
-  const haveOptionsChanged = !isEqual(options, oldProperties.options);
+  const haveOptionsChanged = !isEqual(options, oldProps.options);
 
-  if (struct !== oldProperties.struct) editor.struct(struct);
+  if (struct !== oldProps.struct) editor.struct(struct);
 
-  if (tool !== oldProperties.tool || toolOpts !== oldProperties.toolOpts) {
+  if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts) {
     editor.tool(tool, toolOpts);
-    if (toolOpts !== oldProperties.toolOpts) {
+    if (toolOpts !== oldProps.toolOpts) {
       editor.event.message.dispatch({ info: JSON.stringify(toolOpts) });
     }
   }
 
-  if (oldProperties.options && haveOptionsChanged) {
+  if (oldProps.options && haveOptionsChanged) {
     editor.options(options);
     editor.setServerSettings(properties.serverSettings);
-  } else if (properties.serverSettings !== oldProperties.serverSettings) {
+  } else if (properties.serverSettings !== oldProps.serverSettings) {
     editor.setServerSettings(properties.serverSettings);
   }
 
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (properties[eventName] !== oldProperties[eventName]) {
-      if (oldProperties[eventName]) {
-        editor.event[name].remove(oldProperties[eventName]);
+    if (properties[eventName] !== oldProps[eventName]) {
+      if (oldProps[eventName]) {
+        editor.event[name].remove(oldProps[eventName]);
       }
 
       if (properties[eventName]) {
@@ -104,16 +104,13 @@ function setupEditor(
     }
   });
 
-  if (struct !== oldProperties.struct || haveOptionsChanged) {
+  if (struct !== oldProps.struct || haveOptionsChanged) {
     editor.render.unobserveCanvasResize();
     editor.render.observeCanvasResize();
   }
 }
 
-function removeEditorHandlers(
-  editor: Editor,
-  properties: StructEditorProperties,
-) {
+function removeEditorHandlers(editor: Editor, properties: StructEditorProps) {
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
@@ -121,25 +118,11 @@ function removeEditorHandlers(
   });
 }
 
-class StructEditor extends Component<
-  StructEditorProperties,
-  StructEditorState
-> {
+class StructEditor extends Component<StructEditorProps, StructEditorState> {
   editor!: Editor;
   editorRef: RefObject<HTMLDivElement | null>;
   logRef: RefObject<HTMLDivElement | null>;
   private zoomDeltaAccumulator = 0;
-
-  constructor(properties: StructEditorProperties) {
-    super(properties);
-    this.state = {
-      enableCursor: false,
-      tooltip: '',
-    };
-    this.editorRef = createRef();
-    this.logRef = createRef();
-  }
-
   handleWheel = (event: WheelEvent) => {
     if (event.ctrlKey) {
       event.preventDefault();
@@ -169,6 +152,16 @@ class StructEditor extends Component<
       }
     }
   };
+
+  constructor(props: StructEditorProps) {
+    super(props);
+    this.state = {
+      enableCursor: false,
+      tooltip: '',
+    };
+    this.editorRef = createRef();
+    this.logRef = createRef();
+  }
 
   // TODO https://github.com/epam/ketcher/issues/3472
   /**
@@ -212,11 +205,11 @@ class StructEditor extends Component<
   }
 
   shouldComponentUpdate(
-    nextProperties: StructEditorProperties,
+    nextProps: StructEditorProps,
     nextState: StructEditorState,
   ) {
     return (
-      this.props.indigoVerification !== nextProperties.indigoVerification ||
+      this.props.indigoVerification !== nextProps.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor ||
       nextState.tooltip !== this.state.tooltip
     );
@@ -224,7 +217,7 @@ class StructEditor extends Component<
 
   // NOSONAR - canvas editor must be updated before React renders to prevent
   // white-screen states during struct changes; componentDidUpdate fires too late.
-  UNSAFE_componentWillReceiveProps(properties: StructEditorProperties) {
+  UNSAFE_componentWillReceiveProps(properties: StructEditorProps) {
     // NOSONAR
     setupEditor(this.editor, properties, this.props);
   }
@@ -330,8 +323,9 @@ class StructEditor extends Component<
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     });
 
@@ -350,7 +344,7 @@ class StructEditor extends Component<
   }
 
   render() {
-    const omittedProperties = [
+    const omittedProps = [
       'ketcherId',
       'prevKetcherId',
       'struct',
@@ -384,10 +378,7 @@ class StructEditor extends Component<
       'serverSettings',
     ];
 
-    const remaining = omit(
-      this.props,
-      omittedProperties,
-    ) as StructEditorProperties;
+    const remaining = omit(this.props, omittedProps) as StructEditorProps;
     const {
       Tag = 'div',
       className,

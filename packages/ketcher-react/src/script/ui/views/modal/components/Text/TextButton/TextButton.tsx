@@ -20,18 +20,18 @@ import clsx from 'clsx';
 import styles from './TextButton.module.less';
 import { type IconName, Icon } from 'components';
 
-interface TextButtonProperties {
+interface TextButtonProps {
   button: { command: TextCommand; name: IconName };
   active: boolean;
 }
 
-interface TextButtonPropertiesCallProperties {
+interface TextButtonPropsCallProps {
   toggleStyle: (command: TextCommand) => void;
 }
 
-type Properties = TextButtonProperties & TextButtonPropertiesCallProperties;
+type Props = TextButtonProps & TextButtonPropsCallProps;
 
-export const TextButton = (properties: Properties) => {
+export const TextButton = (properties: Props) => {
   const toggleStyle = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     command: TextCommand,

@@ -39,7 +39,7 @@ function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
 
-interface FooterContentProperties {
+interface FooterContentProps {
   onImage: (file: RecognizeImageFile) => void;
   structStr: StructStringOrPromise;
   openHandler: () => void;
@@ -53,7 +53,7 @@ function FooterContent({
   openHandler,
   copyHandler,
   isAddToCanvasDisabled,
-}: Readonly<FooterContentProperties>) {
+}: Readonly<FooterContentProps>) {
   const { t } = useTranslation('dialogs');
   return (
     <div className={classes.footerContent}>
@@ -87,7 +87,7 @@ function FooterContent({
   );
 }
 
-interface RecognizeDialogProperties {
+interface RecognizeDialogProps {
   file: File | null;
   structStr: StructStringOrPromise;
   fragment: boolean;
@@ -100,7 +100,7 @@ interface RecognizeDialogProperties {
   onChangeImago: (version: string) => void;
 }
 
-function RecognizeDialog(property: Readonly<RecognizeDialogProperties>) {
+function RecognizeDialog(property: Readonly<RecognizeDialogProps>) {
   const {
     file,
     structStr,
@@ -108,9 +108,9 @@ function RecognizeDialog(property: Readonly<RecognizeDialogProperties>) {
     version,
     imagoVersions,
     onOk,
-    ...partProperties
+    ...partProps
   } = property;
-  const { onRecognize, onImage, onChangeImago, ...properties } = partProperties;
+  const { onRecognize, onImage, onChangeImago, ...properties } = partProps;
   const { t } = useTranslation('dialogs');
   const [canPreviewImage, setCanPreviewImage] = useState(true);
   const result = () =>
@@ -249,7 +249,7 @@ interface RecognizeState {
   };
 }
 
-const mapStateToProperties = (state: RecognizeState) => ({
+const mapStateToProps = (state: RecognizeState) => ({
   imagoVersions: state.options.app.imagoVersions,
   file: state.options.recognize.file,
   structStr: state.options.recognize.structStr,
@@ -258,7 +258,7 @@ const mapStateToProperties = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-const mapDispatchToProperties = (dispatch: AppDispatch) => ({
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, version: string) =>
     dispatch(recognize(file, version)),
@@ -275,9 +275,6 @@ const mapDispatchToProperties = (dispatch: AppDispatch) => ({
   },
 });
 
-const Recognize = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
-)(RecognizeDialog);
+const Recognize = connect(mapStateToProps, mapDispatchToProps)(RecognizeDialog);
 
 export default Recognize;

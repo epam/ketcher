@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 
 import Form, {
   Field,
@@ -47,8 +47,7 @@ import {
 } from './helper';
 import AtomElement, { type AtomFormResult } from './AtomElement/AtomElement';
 
-interface AtomProperties
-  extends BaseCallProperties, BaseProperties<AtomFormResult> {
+interface AtomProps extends BaseCallProps, BaseProps<AtomFormResult> {
   alias: string;
   charge: string;
   exactChangeFlag: boolean;
@@ -64,13 +63,13 @@ interface AtomProperties
   customQuery: string;
 }
 
-type Properties = AtomProperties & {
+type Props = AtomProps & {
   isMultipleAtoms?: boolean;
   isRestoredModal: boolean;
   isMonomerCreationWizardActive?: boolean;
 };
 
-const atomProperties = atomSchema.properties;
+const atomProps = atomSchema.properties;
 const querySpecificFields: Array<{
   name: AtomAllAttributeName;
   component?: 'dropdown';
@@ -89,7 +88,7 @@ const querySpecificFields: Array<{
   { name: 'chirality', component: 'dropdown' },
 ];
 
-const Atom: FC<Properties> = (properties: Properties) => {
+const Atom: FC<Props> = (properties: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const {
     formState,
@@ -163,27 +162,24 @@ const Atom: FC<Properties> = (properties: Properties) => {
           <Field name="alias" data-testid="alias" />
           <Field
             name="charge"
-            maxLength={atomProperties.charge.maxLength}
+            maxLength={atomProps.charge.maxLength}
             data-testid="charge"
           />
           <Field
             name="isotope"
-            maxLength={atomProperties.isotope.maxLength}
+            maxLength={atomProps.isotope.maxLength}
             data-testid="isotope"
           />
           <Field
             name="explicitValence"
             component={Select}
-            options={getSelectOptionsFromSchema(
-              atomProperties.explicitValence,
-              t,
-            )}
+            options={getSelectOptionsFromSchema(atomProps.explicitValence, t)}
             data-testid="explicitValence"
           />
           <Field
             name="radical"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProperties.radical, t)}
+            options={getSelectOptionsFromSchema(atomProps.radical, t)}
             data-testid="radical"
           />
         </div>
@@ -201,10 +197,7 @@ const Atom: FC<Properties> = (properties: Properties) => {
                   key={field.name}
                   name={field.name}
                   component={Select}
-                  options={getSelectOptionsFromSchema(
-                    atomProperties[field.name],
-                    t,
-                  )}
+                  options={getSelectOptionsFromSchema(atomProps[field.name], t)}
                   data-testid={field.name}
                 />
               );
@@ -223,7 +216,7 @@ const Atom: FC<Properties> = (properties: Properties) => {
           <Field
             name="invRet"
             component={Select}
-            options={getSelectOptionsFromSchema(atomProperties.invRet, t)}
+            options={getSelectOptionsFromSchema(atomProps.invRet, t)}
             data-testid="inversion"
           />
           <Field
@@ -315,5 +308,5 @@ const Atom: FC<Properties> = (properties: Properties) => {
   );
 };
 
-export type { AtomProperties };
+export type { AtomProps };
 export default Atom;

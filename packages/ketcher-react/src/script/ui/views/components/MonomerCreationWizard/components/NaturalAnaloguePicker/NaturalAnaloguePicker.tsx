@@ -12,7 +12,7 @@ import { isNaturalAnalogueRequired } from '../../MonomerCreationWizardFields.uti
 
 export { isNaturalAnalogueRequired };
 
-interface ChipGridSelectProperties {
+interface ChipGridSelectProps {
   monomerType: KetMonomerClass | 'rnaPreset' | undefined;
   value: string;
   onChange: (value: string) => void;
@@ -59,7 +59,7 @@ const rnaOptions = [
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
 
-const NaturalAnaloguePicker: FC<ChipGridSelectProperties> = ({
+const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   monomerType,
   value,
   onChange,
@@ -95,7 +95,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProperties> = ({
     [options, t],
   );
 
-  const menuProperties: Partial<MenuProps> = useMemo(
+  const menuProps: Partial<MenuProps> = useMemo(
     () => ({
       className: styles.dropdownMenu,
       PaperProps: {
@@ -119,7 +119,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProperties> = ({
       onChange={handleChange}
       displayEmpty
       renderValue={renderValue}
-      MenuProps={menuProperties}
+      MenuProps={menuProps}
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
       disabled={isDisabled}

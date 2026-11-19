@@ -16,10 +16,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import type {
-  BaseCallProperties,
-  ModalContainerProperties,
-} from './modal.types';
+import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
 import selectClasses from '../../component/form/Select/Select.module.less';
 import clsx from 'clsx';
@@ -30,16 +27,14 @@ import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
 import type { ModalState } from '../../state/modal';
 
-interface ModalProperties extends BaseCallProperties {
+interface ModalProps extends BaseCallProps {
   modal: Pick<ModalState, 'name' | 'form' | 'prop'>;
 }
 
-type Properties = ModalProperties &
-  BaseCallProperties &
-  ModalContainerProperties;
+type Props = ModalProps & BaseCallProps & ModalContainerProps;
 
-type ModalContentProperties = Omit<Properties, 'modal'> & {
-  modal: NonNullable<Properties['modal']>;
+type ModalContentProps = Omit<Props, 'modal'> & {
+  modal: NonNullable<Props['modal']>;
 };
 
 /**
@@ -80,7 +75,7 @@ const DRAGGABLE_DIALOGS = new Set([
 // No dialog rendered through this file is resizable — only the Settings panel
 // (which uses SettingsPanel.tsx directly) keeps resize handles.
 
-function ModalContent({ modal, ketcherId, ...rest }: ModalContentProperties) {
+function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerReference = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: containerReference as React.RefObject<HTMLDivElement>,
@@ -122,7 +117,7 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProperties) {
   );
 }
 
-function Modal(properties: Properties) {
+function Modal(properties: Props) {
   const { modal, ...rest } = properties;
 
   if (!modal) return null;
@@ -130,5 +125,5 @@ function Modal(properties: Properties) {
   return <ModalContent modal={modal} {...rest} />;
 }
 
-export type { ModalProperties };
+export type { ModalProps };
 export { Modal };

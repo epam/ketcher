@@ -40,12 +40,12 @@ interface MoleculeErrors {
   [key: string]: string;
 }
 
-interface ErrorsCheckProperties {
+interface ErrorsCheckProps {
   moleculeErrors: MoleculeErrors;
   checkSchema: CheckSchema;
 }
 
-function ErrorsCheck(properties: Readonly<ErrorsCheckProperties>) {
+function ErrorsCheck(properties: Readonly<ErrorsCheckProps>) {
   const { t } = useTranslation('dialogs');
   const { moleculeErrors, checkSchema } = properties;
   const moleculeErrorsTypes = Object.keys(moleculeErrors);

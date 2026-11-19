@@ -8,7 +8,7 @@ import { Icon } from '../../../../../../../components';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type Properties = {
+type Props = {
   name: AttachmentPointName;
   editor: Editor;
   onNameChange: (
@@ -28,7 +28,7 @@ const AttachmentPoint = ({
   onNameChange,
   onLeavingAtomChange,
   onRemove,
-}: Properties) => {
+}: Props) => {
   const { t } = useTranslation('components');
   const attachmentPointsContainerReference = useRef<HTMLDivElement>(null);
 

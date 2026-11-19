@@ -10,31 +10,6 @@ import {
 import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class Sugar extends BaseMonomer {
-  public getValidSourcePoint(secondMonomer?: BaseMonomer) {
-    if (!secondMonomer) {
-      return this.firstFreeAttachmentPoint;
-    }
-
-    return Sugar.getValidPoint(
-      this,
-      secondMonomer,
-      secondMonomer.potentialSecondAttachmentPointForBond,
-    );
-  }
-
-  public getValidTargetPoint(firstMonomer: BaseMonomer) {
-    if (!firstMonomer) {
-      return this.firstFreeAttachmentPoint;
-    }
-
-    // same implementation for both source and target attachment points
-    return Sugar.getValidPoint(
-      this,
-      firstMonomer,
-      firstMonomer.chosenFirstAttachmentPointForBond,
-    );
-  }
-
   private static getValidPoint(
     self: BaseMonomer,
     otherMonomer: BaseMonomer,
@@ -107,6 +82,31 @@ export class Sugar extends BaseMonomer {
     }
 
     return undefined;
+  }
+
+  public getValidSourcePoint(secondMonomer?: BaseMonomer) {
+    if (!secondMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
+    return Sugar.getValidPoint(
+      this,
+      secondMonomer,
+      secondMonomer.potentialSecondAttachmentPointForBond,
+    );
+  }
+
+  public getValidTargetPoint(firstMonomer: BaseMonomer) {
+    if (!firstMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
+    // same implementation for both source and target attachment points
+    return Sugar.getValidPoint(
+      this,
+      firstMonomer,
+      firstMonomer.chosenFirstAttachmentPointForBond,
+    );
   }
 
   public get SubChainConstructor() {

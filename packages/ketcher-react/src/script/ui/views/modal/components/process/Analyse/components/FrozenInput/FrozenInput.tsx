@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export type FrozenInputProperties = {
+export type FrozenInputProps = {
   value: string | number;
   'data-testid'?: string;
 };
@@ -22,7 +22,7 @@ export type FrozenInputProperties = {
 const FrozenInput = ({
   value,
   'data-testid': dataTestId,
-}: FrozenInputProperties) => {
+}: FrozenInputProps) => {
   return (
     <input
       data-testid={dataTestId}

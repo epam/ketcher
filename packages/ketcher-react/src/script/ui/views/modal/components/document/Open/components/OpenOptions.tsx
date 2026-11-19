@@ -27,7 +27,7 @@ const ICON_NAMES = {
   IMAGE: 'image-frame',
 } as const;
 
-export type OpenOptionsProperties = {
+export type OpenOptionsProps = {
   selectClipboard: () => void;
   errorHandler: (error: string) => void;
   fileLoadHandler: (files: File[]) => void;
@@ -35,7 +35,7 @@ export type OpenOptionsProperties = {
   isRecognizeDisabled: boolean;
 };
 
-export const OpenOptions: FC<OpenOptionsProperties> = ({
+export const OpenOptions: FC<OpenOptionsProps> = ({
   selectClipboard,
   fileLoadHandler,
   imageLoadHandler,

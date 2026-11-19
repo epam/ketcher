@@ -10,10 +10,10 @@ import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
-import type { BaseProperties } from '../../../../modal.types';
+import type { BaseProps } from '../../../../modal.types';
 import type { AtomType } from 'ketcher-core';
 import { capitalize } from 'lodash';
-const atomProperties = atomSchema.properties;
+const atomProps = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
 
@@ -27,7 +27,7 @@ export type AtomFormResult = {
 
 const AtomElement = ({
   formState,
-}: Pick<BaseProperties<AtomFormResult>, 'formState'>) => {
+}: Pick<BaseProps<AtomFormResult>, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ const AtomElement = ({
     properties: object,
     onChange: ChangeFunction,
   ) => {
-    openDialog(dispatch, modalName, {
+    void openDialog(dispatch, modalName, {
       ...properties,
       isNestedModal: true,
     }).then(
@@ -110,7 +110,7 @@ const AtomElement = ({
       <Field
         name="atomType"
         component={Select}
-        options={getSelectOptionsFromSchema(atomProperties.atomType, t)}
+        options={getSelectOptionsFromSchema(atomProps.atomType, t)}
         data-testid="atom"
       />
       {AtomFields[atomType]}

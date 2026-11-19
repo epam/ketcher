@@ -19,7 +19,7 @@ import type { GenItem } from 'ketcher-core';
 import { useTranslation } from 'react-i18next';
 import classes from './ButtonGenSet.module.less';
 
-type ButtonGenSetProperties = {
+type ButtonGenSetProps = {
   button: GenItem;
   onAtomSelect: (label: string) => void;
   onAtomActivate: (label: string) => void;
@@ -33,7 +33,7 @@ const ButtonGenSet = ({
   onAtomActivate,
   selected,
   disabled,
-}: ButtonGenSetProperties) => {
+}: ButtonGenSetProps) => {
   const { t } = useTranslation('dialogs');
   const titleText = disabled
     ? t('shared.disabledSuffix', { label: button.label })

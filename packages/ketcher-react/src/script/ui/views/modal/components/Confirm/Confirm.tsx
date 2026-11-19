@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import classes from '../toolbox/FG/RemoveFG.module.less';
 
-type ConfirmProperties = {
+type ConfirmProps = {
   onOk: () => void;
   onCancel: () => void;
   text?: string;
@@ -15,7 +15,7 @@ export const Confirm = ({
   text,
   title,
   okButtonLabel,
-}: ConfirmProperties) => {
+}: ConfirmProps) => {
   const { t } = useTranslation(['common', 'dialogs']);
   return (
     <div className={classes.window}>

@@ -17,7 +17,7 @@
 import { type IconName, Icon } from 'components';
 import classes from './SpecialSymbolsList.module.less';
 
-interface SpecialSymbolsListProperties {
+interface SpecialSymbolsListProps {
   id: string;
   onSelect: (event: React.MouseEvent<HTMLButtonElement>, value: string) => void;
 }
@@ -26,7 +26,7 @@ const SpecialSymbolsList = ({
   onSelect,
   ...properties
 }: Omit<React.HTMLAttributes<HTMLMenuElement>, 'onSelect'> &
-  SpecialSymbolsListProperties) => {
+  SpecialSymbolsListProps) => {
   const symbols: IconName[] = [
     'α',
     'β',

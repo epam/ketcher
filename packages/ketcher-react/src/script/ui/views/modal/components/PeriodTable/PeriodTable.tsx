@@ -30,7 +30,7 @@ import { xor } from 'lodash/fp';
 import { Icon } from 'components';
 import i18n from 'src/i18n/i18n';
 
-interface TableOwnProperties {
+interface TableOwnProps {
   type?: PeriodTableType;
   values?: string[];
   label?: string;
@@ -39,7 +39,7 @@ interface TableOwnProperties {
   onOk: (result: PeriodTableResult) => void;
 }
 
-interface TableStateProperties {
+interface TableStateProps {
   isMonomerCreationWizardActive: boolean;
   type?: PeriodTableType;
   values?: string[];
@@ -47,13 +47,11 @@ interface TableStateProperties {
   pseudo?: string;
 }
 
-interface TableDispatchProperties {
+interface TableDispatchProps {
   onOk: (result: PeriodTableResult) => void;
 }
 
-type TableProperties = TableOwnProperties &
-  TableStateProperties &
-  TableDispatchProperties;
+type TableProps = TableOwnProps & TableStateProps & TableDispatchProps;
 
 interface TableState {
   type: PeriodTableType;
@@ -62,26 +60,7 @@ interface TableState {
   isInfo: boolean;
 }
 
-class Table extends Component<TableProperties, TableState> {
-  constructor(properties: TableProperties) {
-    super(properties);
-    const heliumElement = Elements.get(2);
-
-    let initialValue: string | string[] | null = null;
-    if (properties.values) {
-      initialValue = properties.values;
-    } else if (!properties.pseudo && properties.label) {
-      initialValue = properties.label;
-    }
-
-    this.state = {
-      type: properties.type ?? 'atom',
-      value: initialValue,
-      current: heliumElement || ({} as Element),
-      isInfo: false,
-    };
-  }
-
+class Table extends Component<TableProps, TableState> {
   changeType = (type: PeriodTableType) => {
     const isPreviousListChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
@@ -135,7 +114,7 @@ class Table extends Component<TableProperties, TableState> {
 
   result = (): PeriodTableResult => {
     const { type, value } = this.state;
-    if (!value || (Array.isArray(value) && !value.length)) {
+    if (!value || (Array.isArray(value) && value.length === 0)) {
       return null;
     }
     if (type === 'atom') {
@@ -152,6 +131,25 @@ class Table extends Component<TableProperties, TableState> {
       onMouseLeave: () => this.setState({ isInfo: false }),
     };
   };
+
+  constructor(props: TableProps) {
+    super(props);
+    const heliumElement = Elements.get(2);
+
+    let initialValue: string | string[] | null = null;
+    if (props.values) {
+      initialValue = props.values;
+    } else if (!props.pseudo && props.label) {
+      initialValue = props.label;
+    }
+
+    this.state = {
+      type: props.type ?? 'atom',
+      value: initialValue,
+      current: heliumElement || ({} as Element),
+      isInfo: false,
+    };
+  }
 
   render() {
     const { value } = this.state;
@@ -200,7 +198,7 @@ class Table extends Component<TableProperties, TableState> {
 }
 
 // Helps react-redux connect with this legacy class component under the current React typings.
-const PeriodTableWrapper: FC<TableProperties> = (properties) => (
+const PeriodTableWrapper: FC<TableProps> = (properties) => (
   <Table {...properties} />
 );
 
@@ -208,9 +206,7 @@ interface RootState {
   editor: Editor;
 }
 
-function mapSelectionToProperties(
-  editor: Editor,
-): Partial<TableStateProperties> {
+function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
   const selection = editor.selection();
 
   if (
@@ -222,33 +218,33 @@ function mapSelectionToProperties(
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
     if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<TableStateProperties>;
+    return { ...fromElement(atom) } as Partial<TableStateProps>;
   }
 
   return {};
 }
 
-const mapStateToProperties = (
+const mapStateToProps = (
   state: RootState,
-  ownProperties: TableOwnProperties,
-): TableStateProperties => {
-  const result: TableStateProperties = {
+  ownProps: TableOwnProps,
+): TableStateProps => {
+  const result: TableStateProps = {
     isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
   };
 
-  if (ownProperties.values || ownProperties.label) {
+  if (ownProps.values || ownProps.label) {
     return result;
   }
 
-  const selectionProperties = mapSelectionToProperties(state.editor);
+  const selectionProps = mapSelectionToProps(state.editor);
 
-  return { ...selectionProperties, ...result };
+  return { ...selectionProps, ...result };
 };
 
-const mapDispatchToProperties = (
+const mapDispatchToProps = (
   dispatch: Dispatch,
-  ownProperties: TableOwnProperties,
-): TableDispatchProperties => {
+  ownProps: TableOwnProps,
+): TableDispatchProps => {
   return {
     onOk: (result: PeriodTableResult) => {
       if (!result) return;
@@ -256,7 +252,7 @@ const mapDispatchToProperties = (
       if (!hasType) {
         dispatch(addAtoms(result.label));
       }
-      if (!ownProperties.isNestedModal) {
+      if (!ownProps.isNestedModal) {
         dispatch(
           onAction({
             tool: 'atom',
@@ -264,14 +260,14 @@ const mapDispatchToProperties = (
           }),
         );
       }
-      ownProperties.onOk(result);
+      ownProps.onOk(result);
     },
   };
 };
 
 const PeriodTable = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
+  mapStateToProps,
+  mapDispatchToProps,
 )(PeriodTableWrapper);
 
 export default PeriodTable;

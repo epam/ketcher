@@ -134,14 +134,14 @@ export function getEditableBondIds(struct: Struct, bondIds: number[]) {
 export function onlyHasProperty<T extends object>(
   checkedObject: T,
   key: keyof T,
-  ignoredProperties: string[] = [],
+  ignoredProps: string[] = [],
 ) {
   const properties = Object.keys(checkedObject).filter(
-    (key) => !ignoredProperties.includes(key),
+    (key) => !ignoredProps.includes(key),
   );
 
-  const numberOfProperties = properties.length;
-  return numberOfProperties === 1 && key in checkedObject;
+  const numberOfProps = properties.length;
+  return numberOfProps === 1 && key in checkedObject;
 }
 
 export function getBondIdsConnectingSelectedAtoms(

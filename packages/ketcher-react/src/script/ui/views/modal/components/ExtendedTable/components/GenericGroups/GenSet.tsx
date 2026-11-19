@@ -19,7 +19,7 @@ import classes from './GenSet.module.less';
 import { isGenericGroup } from '../../helpers';
 import ButtonGenSet from './components/ButtonGenSet';
 
-type GenSetProperties = {
+type GenSetProps = {
   labels: GenItemSet[];
   selected: (label: string) => boolean;
   onAtomSelect: (label: string) => void;
@@ -39,7 +39,7 @@ function GenSet({
   className,
   group,
   disabledQueryElements,
-}: Readonly<GenSetProperties>) {
+}: Readonly<GenSetProps>) {
   return (
     <>
       {labels.map((item) => {

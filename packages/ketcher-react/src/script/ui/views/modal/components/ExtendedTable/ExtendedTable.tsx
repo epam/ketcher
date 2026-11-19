@@ -36,7 +36,7 @@ interface GenericElement {
   pseudo: string;
 }
 
-interface TableProperties {
+interface TableProps {
   pseudo?: string;
   label?: string;
   disabledQueryElements: Array<string> | null | undefined;
@@ -44,7 +44,7 @@ interface TableProperties {
   onCancel: () => void;
 }
 
-const Table = (properties: TableProperties) => {
+const Table = (properties: TableProps) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const [value, setValue] = useState<string | null>(
     properties.pseudo ? (properties.label ?? null) : null,
@@ -93,46 +93,46 @@ interface State {
   editor: Editor;
 }
 
-interface OwnProperties {
+interface OwnProps {
   isNestedModal?: boolean;
   onOk: (result: unknown) => void;
 }
 
-interface StateProperties {
+interface StateProps {
   disabledQueryElements: Array<string> | null | undefined;
   pseudo?: string;
   label?: string;
 }
 
-interface DispatchProperties {
+interface DispatchProps {
   onOk: (result: unknown) => void;
 }
 
-function mapSelectionToProperties(editor: Editor): Partial<StateProperties> {
+function mapSelectionToProps(editor: Editor): Partial<StateProps> {
   const selection = editor.selection();
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
     if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<StateProperties>;
+    return { ...fromElement(atom) } as Partial<StateProps>;
   }
 
   return {};
 }
 
-const mapStateToProperties = (state: State): StateProperties => {
+const mapStateToProps = (state: State): StateProps => {
   const editor = state.editor;
   const disabledQueryElements = editor.render.options.disableQueryElements;
-  return { disabledQueryElements, ...mapSelectionToProperties(editor) };
+  return { disabledQueryElements, ...mapSelectionToProps(editor) };
 };
 
-const mapDispatchToProperties = (
+const mapDispatchToProps = (
   dispatch: Dispatch,
-  ownProperties: OwnProperties,
-): DispatchProperties => {
+  ownProps: OwnProps,
+): DispatchProps => {
   return {
     onOk: (result: unknown) => {
-      if (!ownProperties.isNestedModal) {
+      if (!ownProps.isNestedModal) {
         dispatch(
           onAction({
             tool: 'atom',
@@ -140,14 +140,11 @@ const mapDispatchToProperties = (
           }),
         );
       }
-      ownProperties.onOk(result);
+      ownProps.onOk(result);
     },
   };
 };
 
-const ExtendedTable = connect(
-  mapStateToProperties,
-  mapDispatchToProperties,
-)(Table);
+const ExtendedTable = connect(mapStateToProps, mapDispatchToProps)(Table);
 
 export default ExtendedTable;

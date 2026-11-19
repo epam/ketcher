@@ -273,7 +273,7 @@ class Attach extends Component<AttachProps> {
       (name !== this.tmpl.struct.name ||
         atomid !== this.tmpl.props.atomid ||
         bondid !== this.tmpl.props.bondid) &&
-      name.trim().length
+      name.trim().length > 0
       ? { name, attach: { atomid, bondid } }
       : null;
   }

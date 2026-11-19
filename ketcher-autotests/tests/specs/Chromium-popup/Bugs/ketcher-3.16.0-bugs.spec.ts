@@ -295,3 +295,31 @@ test('Case 9: ', async ({ SnakeCanvas: _ }) => {
   expect(filteredErrors.length).toBe(0);
   await takeEditorScreenshot(page);
 });
+
+test('Case 10: ', async ({ SnakeCanvas: _ }) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6093
+   * Description: Phosphate in antisense chain converted wrong
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM using paste from clipboard: RNA1{[RSpabC](A)[Ssp]}$$$$V2.0
+   * 3. Select all monomers on the canvas and click Create Antisense Strand from context menu
+
+   * Actual result: Phosphate in antisense chain copied as it is (Ssp)
+   * Expected result: Phosphate in antisense chain copied as it is P if it belongs to nucleotide
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[RSpabC](A)[Ssp]}$$$$V2.',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(
+    page,
+    getMonomerLocator(page, { monomerType: MonomerType.Phosphate }).first(),
+  ).click(MonomerOption.CreateAntisenseRNAStrand);
+  await expect(getMonomerLocator(page, { monomerAlias: 'Ssp' })).toHaveCount(1);
+  await expect(getMonomerLocator(page, { monomerAlias: 'P' })).toHaveCount(1);
+});

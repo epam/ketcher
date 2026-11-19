@@ -162,6 +162,25 @@ describe('shouldInvokeConnectionModal', () => {
     });
   });
 
+  describe('chosen source attachment point without a potential target', () => {
+    it.each([
+      [[AttachmentPointName.R2], false],
+      [[AttachmentPointName.R1, AttachmentPointName.R2], false],
+      [[AttachmentPointName.R2, AttachmentPointName.R3], true],
+    ])('with free target points %s returns %s', (freePoints, expected) => {
+      const source = makePeptide({
+        chosenFirstAttachmentPointForBond: AttachmentPointName.R3,
+      });
+      const target = makePeptide({
+        potentialSecondAttachmentPointForBond: null,
+        unUsedAttachmentPointsNamesList: freePoints,
+        isAttachmentPointExistAndFree: (point) => freePoints.includes(point),
+      });
+
+      expect(shouldInvokeConnectionModal(source, target)).toBe(expected);
+    });
+  });
+
   describe('Modal: Chem monomers', () => {
     it('returns true when first monomer is Chem', () => {
       const a = makeChem();

@@ -80,7 +80,10 @@ export function shouldInvokeConnectionModal(
     firstMonomer.chosenFirstAttachmentPointForBond !== null &&
     secondMonomer.potentialSecondAttachmentPointForBond === null
   ) {
-    return !secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1);
+    return (
+      secondMonomer.unUsedAttachmentPointsNamesList.length > 1 &&
+      !secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+    );
   }
 
   // Modal: either of the monomers doesn't have any potential APs

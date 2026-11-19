@@ -9,6 +9,7 @@ import {
 import {
   type Struct,
   Bond,
+  FunctionalGroup,
   Pool,
   RGroupAttachmentPoint,
   SGroup,
@@ -16,6 +17,48 @@ import {
 } from 'domain/entities';
 import { restruct } from '../../../mock-data';
 import type { RenderOptions } from 'application/render/render.types';
+
+describe('functional group hover reuse', () => {
+  it.each([
+    { selected: false, expanded: false, functional: true, opacity: 1 },
+    { selected: true, expanded: false, functional: true, opacity: 1 },
+    { selected: false, expanded: true, functional: true, opacity: 0 },
+    { selected: true, expanded: true, functional: true, opacity: 1 },
+    { selected: false, expanded: false, functional: false, opacity: 0 },
+  ])(
+    'restores hover opacity to $opacity for selected=$selected, expanded=$expanded, functional=$functional',
+    ({ selected, expanded, functional, opacity }) => {
+      const sgroup = new SGroup('SUP');
+      sgroup.data.expanded = expanded;
+      if (functional) {
+        new FunctionalGroup(sgroup);
+      }
+      const group = new ReSGroup(sgroup);
+      group.selected = selected;
+      const render = new Render(document.createElement('div'), {
+        microModeScale: 20,
+        width: 100,
+        height: 100,
+      } as RenderOptions);
+      const hover = render.paper
+        .path('M0,0L20,0L20,20L0,20Z')
+        .attr(render.options.hoverStyle);
+      group.hovering = hover;
+
+      expect(hover.attr('fill-opacity')).toBe(1);
+      group.setHover(false, render);
+      group.setHover(true, render);
+
+      expect(hover.attr('fill')).toBe(render.options.hoverStyle.fill);
+      expect(hover.attr('fill-opacity')).toBe(opacity);
+      expect(hover.attr('stroke')).toBe(render.options.hoverStyle.stroke);
+      group.changeSelectionStyle(render.options, false);
+      expect(hover.attr('fill-opacity')).toBe(opacity);
+      expect(hover.attr('stroke')).toBe('none');
+      render.paper.remove();
+    },
+  );
+});
 
 describe('resgroup should draw brackets with attachment points correctly', () => {
   const mockBonds = [

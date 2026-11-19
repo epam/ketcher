@@ -38,6 +38,8 @@ The render object owns the paper, viewBox, zoom, and connection table. There are
 
 Selection is drawn on dedicated selection/info layers. The layer map fixes z-order from low to high: background, images, selection plate, selection points, hovering, atoms, bond skeleton, warnings, data, additional info, indices.
 
+Contracted functional groups retain their filled hover contour when a cached hover is reused, regardless of selection. `ReSGroup.changeSelectionStyle` preserves this fill; other objects retain the base wrapper's selection-dependent hover opacity.
+
 ### Editor integration
 
 The render object is constructed by the micro editor. Operations mutate `Struct` and mark the render-structure dirty; after an action the render update re-shows only the marked items.

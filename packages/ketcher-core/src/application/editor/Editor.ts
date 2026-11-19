@@ -2312,6 +2312,11 @@ export class CoreEditor {
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
+    globalThis.dispatchEvent(
+      new CustomEvent('layoutModeSwitchComplete', {
+        detail: { ketcherId: this.ketcherId, mode },
+      }),
+    );
   }
 
   private undoLatestSnakeLayout() {

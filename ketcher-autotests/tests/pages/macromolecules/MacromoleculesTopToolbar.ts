@@ -1,10 +1,11 @@
 import { Page, Locator } from '@playwright/test';
-import { waitForRender } from '@utils/index';
+import { waitForRender } from '@utils/common/loaders/waitForRender';
 import {
   AntisenseStrandType,
   LayoutMode,
 } from '../constants/macromoleculesTopToolbar/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
+import { waitForLayoutModeSwitch } from '@utils/common/loaders/waitForLayoutModeSwitch';
 
 type MacromoleculesTopToolbarLocators = {
   arrangeAsRingButton: Locator;
@@ -154,7 +155,21 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       const layoutModeButton = page.getByTestId(layoutMode).first();
       if (!(await layoutModeButton.isVisible())) {
         await this.expandSwitchLayoutModeDropdown();
-        await layoutModeButton.click();
+        const ketcherId =
+          await locators.switchLayoutModeDropdownButton.evaluate((element) =>
+            element
+              .closest('[data-ketcher-editor]')
+              ?.getAttribute('data-ketcher-id'),
+          );
+        if (!ketcherId) {
+          throw new Error('Cannot identify the active Ketcher editor.');
+        }
+        await waitForLayoutModeSwitch(
+          page,
+          () => layoutModeButton.click(),
+          layoutMode,
+          ketcherId,
+        );
         await switchLayoutModeDropdown.waitFor({
           state: 'hidden',
         });

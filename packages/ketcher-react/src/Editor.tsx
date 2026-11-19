@@ -40,6 +40,20 @@ interface MacromoleculesEditorProps {
   monomersLibraryReplace?: string | JSON;
   onInit(macromoleculesEditor: CoreEditor): void;
 }
+
+type CanvasMode = 'molecules' | 'macromolecules';
+
+const notifyCanvasModeSwitchComplete = (
+  ketcherId: string,
+  mode: CanvasMode,
+) => {
+  globalThis.dispatchEvent(
+    new CustomEvent('canvasModeSwitchComplete', {
+      detail: { ketcherId, mode },
+    }),
+  );
+};
+
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -200,12 +214,13 @@ export const Editor = (props: Props) => {
 
     try {
       macromoleculesEditor.finishMonomerWizardSession(hasSavedCanvas);
+      notifyCanvasModeSwitchComplete(ketcherId, 'macromolecules');
     } catch (error) {
       moleculesEditor?.errorHandler?.(
         error instanceof Error ? error.message : String(error),
       );
     }
-  }, [showPolymerEditor, macromoleculesEditor, moleculesEditor]);
+  }, [showPolymerEditor, macromoleculesEditor, moleculesEditor, ketcherId]);
 
   useEffect(() => {
     globalThis.isPolymerEditorTurnedOn = isMacromoleculesEditorTurnedOn;
@@ -324,6 +339,7 @@ export const Editor = (props: Props) => {
     if (!isMacromoleculesEditorTurnedOn) {
       macromoleculesEditor.switchToMicromolecules();
       moleculesEditor.focusCliparea();
+      notifyCanvasModeSwitchComplete(ketcherId, 'molecules');
       return;
     }
 
@@ -335,6 +351,7 @@ export const Editor = (props: Props) => {
     macromoleculesEditor.ensureDefaultMonomersLibraryLoaded().then(() => {
       if (!cancelled) {
         macromoleculesEditor.switchToMacromolecules();
+        notifyCanvasModeSwitchComplete(ketcherId, 'macromolecules');
       }
     });
 
@@ -344,6 +361,7 @@ export const Editor = (props: Props) => {
   }, [
     isMacromoleculesEditorEnabled,
     isMacromoleculesEditorTurnedOn,
+    ketcherId,
     moleculesEditor,
     macromoleculesEditor,
     togglePolymerEditor,
@@ -394,6 +412,7 @@ export const Editor = (props: Props) => {
       <div dir={i18n.dir()} className={styles.root}>
         <div
           data-ketcher-editor
+          data-ketcher-id={ketcherId}
           className={styles.editorsWrapper}
           style={{
             display: isMacromoleculesEditorTurnedOn ? undefined : 'none',
@@ -420,6 +439,7 @@ export const Editor = (props: Props) => {
         </div>
         <div
           data-ketcher-editor
+          data-ketcher-id={ketcherId}
           className={styles.editorsWrapper}
           style={{
             display: isMacromoleculesEditorTurnedOn ? 'none' : undefined,

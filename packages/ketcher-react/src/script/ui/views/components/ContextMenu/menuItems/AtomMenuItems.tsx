@@ -134,6 +134,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     struct,
     props.propsFromTrigger?.atomIds ?? [],
   );
+  const hasCustomQuery = editableAtomIds.some((atomId) =>
+    Boolean(struct.atoms.get(atomId)?.queryProperties.customQuery),
+  );
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
     const { ctab } = editor.render;
@@ -294,7 +297,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         label={t('components:contextMenu.queryPropertiesMenu')}
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
-        disabled={disabledForMonomerCreation || editableAtomIds.length === 0}
+        disabled={
+          disabledForMonomerCreation ||
+          editableAtomIds.length === 0 ||
+          hasCustomQuery
+        }
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (

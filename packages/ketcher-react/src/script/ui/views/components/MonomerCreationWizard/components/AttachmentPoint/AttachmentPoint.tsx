@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 type Props = {
   name: AttachmentPointName;
+  pendingName?: AttachmentPointName;
   editor: Editor;
   onNameChange: (
     currentName: AttachmentPointName,
@@ -24,6 +25,7 @@ type Props = {
 
 const AttachmentPoint = ({
   name,
+  pendingName,
   editor,
   onNameChange,
   onLeavingAtomChange,
@@ -98,8 +100,18 @@ const AttachmentPoint = ({
     return null;
   }
 
+  const displayData =
+    pendingName && pendingName !== name
+      ? {
+          ...selectsData,
+          currentNameOption: selectsData.nameOptions.find(
+            (o) => o.value === pendingName,
+          ),
+        }
+      : selectsData;
+
   const handleNameChange = (newName: AttachmentPointName) => {
-    if (newName !== name) {
+    if (newName !== (pendingName ?? name)) {
       onNameChange(name, newName);
     }
   };
@@ -114,7 +126,7 @@ const AttachmentPoint = ({
 
   return (
     <AttachmentPointControls
-      data={selectsData}
+      data={displayData}
       onNameChange={handleNameChange}
       onLeavingAtomChange={handleLeavingAtomChange}
       className={styles.selects}

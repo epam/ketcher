@@ -54,6 +54,11 @@ interface IMonomerCreationWizardFieldsProps {
   ) => void;
   showNaturalAnalogue?: boolean;
   attachmentPointsExtra?: ReactNode;
+  onAttachmentPointNameChange?: (
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
+  ) => void;
+  pendingApNameOverrides?: Map<AttachmentPointName, AttachmentPointName>;
 }
 
 interface ModificationTypeItem {
@@ -77,6 +82,8 @@ const MonomerCreationWizardFields = (
     onFieldChange,
     onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
+    onAttachmentPointNameChange,
+    pendingApNameOverrides,
   } = props;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
@@ -124,7 +131,11 @@ const MonomerCreationWizardFields = (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
   ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
+    if (onAttachmentPointNameChange) {
+      onAttachmentPointNameChange(currentName, newName);
+    } else {
+      editor.reassignAttachmentPoint(currentName, newName);
+    }
   };
 
   const handleLeavingAtomChange = (
@@ -247,6 +258,7 @@ const MonomerCreationWizardFields = (
             {[...assignedAttachmentPoints.entries()].map(([name, atomPair]) => (
               <AttachmentPoint
                 name={name}
+                pendingName={pendingApNameOverrides?.get(name)}
                 editor={editor}
                 onNameChange={handleAttachmentPointNameChange}
                 onLeavingAtomChange={handleLeavingAtomChange}

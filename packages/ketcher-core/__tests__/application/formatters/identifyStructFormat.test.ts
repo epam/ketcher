@@ -125,7 +125,7 @@ describe('identifyStructFormat', () => {
       ['CDX in base64', cdxBase64, false, SupportedFormat.cdx],
       [
         'CDX in base64 with escaped line breaks',
-        `${cdxBase64.slice(0, 8)}\\r\\n${cdxBase64.slice(8)}`,
+        String.raw`${cdxBase64.slice(0, 8)}\r\n${cdxBase64.slice(8)}`,
         false,
         SupportedFormat.cdx,
       ],

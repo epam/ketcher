@@ -1,3 +1,4 @@
+import { type MockInstance, vi } from 'vitest';
 import { CanvasLoad } from 'application/editor/operations/CanvasLoad';
 import { Render } from 'application/render';
 import { ReStruct } from 'application/render/restruct';
@@ -7,8 +8,8 @@ import { Struct } from 'domain/entities';
 describe('CanvasLoad', () => {
   let restruct: ReStruct;
   let render: Render;
-  let setMolecule: jest.SpyInstance;
-  let clearVisels: jest.SpyInstance;
+  let setMolecule: MockInstance;
+  let clearVisels: MockInstance;
 
   beforeEach(() => {
     const options = {
@@ -18,14 +19,14 @@ describe('CanvasLoad', () => {
     } as unknown as RenderOptions;
     render = new Render(document as unknown as HTMLElement, options);
     restruct = new ReStruct(new Struct(), render);
-    setMolecule = jest
+    setMolecule = vi
       .spyOn(render, 'setMolecule')
       .mockImplementation(() => undefined);
-    clearVisels = jest.spyOn(restruct, 'clearVisels');
+    clearVisels = vi.spyOn(restruct, 'clearVisels');
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('clears the drawn elements of the current structure before rendering the new one', () => {

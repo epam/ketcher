@@ -74,4 +74,80 @@ describe('identifyStructFormat', () => {
       );
     });
   });
+
+  describe('detection order', () => {
+    const v2000 = [
+      '',
+      '  Ketcher',
+      '',
+      '  1  0  0  0  0  0  0  0  0  0999 V2000',
+      '    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+      'M  END',
+    ].join('\n');
+    const v3000 = [
+      '',
+      '  Ketcher',
+      '',
+      '  0  0  0     0  0            999 V3000',
+      'M  V30 BEGIN CTAB',
+      'M  V30 COUNTS 1 0 0 0 0',
+      'M  V30 END CTAB',
+      'M  END',
+    ].join('\n');
+    const molfileWithoutVersion = [
+      '',
+      '  Ketcher',
+      '',
+      '  1  0',
+      'M  END',
+    ].join('\n');
+    const cdxBase64 = globalThis.btoa('VjCD0100abcd');
+
+    it.each([
+      ['KET', '{"root":{"nodes":[]}}', false, SupportedFormat.ket],
+      ['RXN', '$RXN\n\n\n\n  1  0', false, SupportedFormat.rxn],
+      ['SDF V2000', `${v2000}\n$$$$`, false, SupportedFormat.sdf],
+      ['SDF V3000', `${v3000}\n$$$$`, false, SupportedFormat.sdfV3000],
+      ['MOL V2000', v2000, false, SupportedFormat.mol],
+      ['MOL V3000', v3000, false, SupportedFormat.molV3000],
+      [
+        'MOL without a version',
+        molfileWithoutVersion,
+        false,
+        SupportedFormat.mol,
+      ],
+      [
+        'CML',
+        '<?xml version="1.0"?>\n<cml><molecule/></cml>',
+        false,
+        SupportedFormat.cml,
+      ],
+      ['CDX in base64', cdxBase64, false, SupportedFormat.cdx],
+      ['InChI', 'InChI=1S/CH4/h1H4', false, SupportedFormat.inChI],
+      [
+        'CDXML',
+        '<?xml version="1.0"?>\n<CDXML></CDXML>',
+        false,
+        SupportedFormat.cdxml,
+      ],
+      ['FASTA', '>seq1\nACGT', false, SupportedFormat.fasta],
+      ['IDT', '/5Phos/ACGT', false, SupportedFormat.idt],
+      ['SMILES', 'CCO', false, SupportedFormat.smiles],
+      [
+        'a sequence in macromolecules mode',
+        'ACGTUACG',
+        true,
+        SupportedFormat.sequence,
+      ],
+      [
+        'three-letter codes in macromolecules mode',
+        'AlaGlyCys',
+        true,
+        SupportedFormat.unknown,
+      ],
+      ['anything else', 'foo\n123', false, SupportedFormat.unknown],
+    ])('detects %s', (_name, input, isMacromolecules, expected) => {
+      expect(identifyStructFormat(input, isMacromolecules)).toBe(expected);
+    });
+  });
 });

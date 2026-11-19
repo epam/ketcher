@@ -25,6 +25,69 @@ function isIdtString(s: string): boolean {
   return idtBaseSeq.test(s) || idtModToken.test(s);
 }
 
+// A molfile without a version line ends with `M  END` (or `$END MOL`), at the
+// end of the input or right before the next record
+function isMolfileWithoutVersion(struct: string): boolean {
+  const match = /^(M {2}END|\$END MOL)$/m.exec(struct);
+
+  if (!match) {
+    return false;
+  }
+
+  const end = (match.index ?? 0) + match[0].length;
+
+  return (
+    end === struct.length ||
+    struct.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
+  );
+}
+
+// Reactions, RDF and SD files and molfiles
+function identifyMdlFormat(struct: string): SupportedFormat | undefined {
+  if (struct.includes('$RXN')) {
+    return SupportedFormat.rxn;
+  }
+
+  // An RDF file without reactions is not a molfile: a molfile cannot start
+  // with the $RDFILE tag, so Indigo decides how to read it (#5273)
+  if (struct.startsWith('$RDFILE')) {
+    return SupportedFormat.unknown;
+  }
+
+  const isV2000 = struct.includes('V2000');
+
+  if (struct.includes('\n$$$$')) {
+    return isV2000 ? SupportedFormat.sdf : SupportedFormat.sdfV3000;
+  }
+
+  if (isV2000) {
+    return SupportedFormat.mol;
+  }
+
+  if (struct.includes('V3000')) {
+    return SupportedFormat.molV3000;
+  }
+
+  return isMolfileWithoutVersion(struct) ? SupportedFormat.mol : undefined;
+}
+
+function isBase64Cdx(struct: string): boolean {
+  const clearStr = struct
+    .split(/\s+/)
+    .join('')
+    .replaceAll('\\r', '')
+    .replaceAll('\\n', '');
+  const base64StringPattern =
+    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+  const cdxHeader = 'VjCD0100';
+
+  return (
+    clearStr.length % 4 === 0 &&
+    base64StringPattern.test(clearStr) &&
+    globalThis.atob(clearStr).startsWith(cdxHeader)
+  );
+}
+
 export function identifyStructFormat(
   stringifiedStruct: string,
   isMacromolecules = false,
@@ -40,47 +103,10 @@ export function identifyStructFormat(
     KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', error);
   }
 
-  const isRXN = sanitizedString.includes('$RXN');
-  const isSDF = sanitizedString.includes('\n$$$$');
-  const isV2000 = sanitizedString.includes('V2000');
-  const isV3000 = sanitizedString.includes('V3000');
+  const mdlFormat = identifyMdlFormat(sanitizedString);
 
-  if (isRXN) {
-    return SupportedFormat.rxn;
-  }
-
-  // An RDF file without reactions is not a molfile: a molfile cannot start
-  // with the $RDFILE tag, so Indigo decides how to read it (#5273)
-  if (sanitizedString.startsWith('$RDFILE')) {
-    return SupportedFormat.unknown;
-  }
-
-  if (isSDF) {
-    if (isV2000) {
-      return SupportedFormat.sdf;
-    } else {
-      return SupportedFormat.sdfV3000;
-    }
-  }
-
-  if (isV2000) {
-    return SupportedFormat.mol;
-  }
-
-  if (isV3000) {
-    return SupportedFormat.molV3000;
-  }
-
-  const match = /^(M {2}END|\$END MOL)$/m.exec(sanitizedString);
-
-  if (match) {
-    const end = (match.index ?? 0) + match[0].length;
-    if (
-      end === sanitizedString.length ||
-      sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
-    ) {
-      return SupportedFormat.mol;
-    }
+  if (mdlFormat !== undefined) {
+    return mdlFormat;
   }
 
   if (
@@ -90,19 +116,7 @@ export function identifyStructFormat(
     return SupportedFormat.cml;
   }
 
-  const clearStr = sanitizedString
-    .split(/\s+/)
-    .join('')
-    .replaceAll('\\r', '')
-    .replaceAll('\\n', '');
-  const base64StringPattern =
-    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-  const cdxHeader = 'VjCD0100';
-  if (
-    clearStr.length % 4 === 0 &&
-    base64StringPattern.test(clearStr) &&
-    globalThis.atob(clearStr).startsWith(cdxHeader)
-  ) {
+  if (isBase64Cdx(sanitizedString)) {
     return SupportedFormat.cdx;
   }
 

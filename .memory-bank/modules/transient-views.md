@@ -30,7 +30,7 @@ Because `update()` fully redraws, views hold no state between frames — they re
 ## Public interface (conceptual)
 
 - **`TransientView`** — abstract base (`viewName` + static `show`).
-- **`TransientDrawingView`** — the manager, held on the macro editor as `transientDrawingView`. It exposes paired `showX` / `hideX` methods (selection, rotation, the snap guides, autochain preview, modify-amino-acids, line-length highlight, replacement highlight) plus `update()` and `clear()`.
+- **`TransientDrawingView`** — the manager, held on the macro editor as `transientDrawingView`. It exposes paired `showX` / `hideX` methods (selection, rotation, the snap guides, autochain preview, modify-amino-acids (also marks the monomers _Edit All_ will change), line-length highlight, replacement highlight) plus `update()` and `clear()`.
 - Concrete views are added by (a) creating a `TransientView` subclass, (b) exporting it from the transient-view barrel, and (c) adding a `showX` / `hideX` pair on the manager.
 
 ## Dependencies

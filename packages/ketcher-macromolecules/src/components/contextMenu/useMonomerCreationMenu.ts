@@ -53,8 +53,11 @@ export const useMonomerCreationMenu = (
             separator: true,
             onMouseOver: () => {
               clearHighlight();
-              if (!state.editAllDisabled) {
-                clearHover.current = highlightMonomers(state.matchingMonomers);
+              if (editor && !state.editAllDisabled) {
+                clearHover.current = highlightMonomers(
+                  editor,
+                  state.matchingMonomers,
+                );
               }
             },
             onMouseOut: clearHighlight,

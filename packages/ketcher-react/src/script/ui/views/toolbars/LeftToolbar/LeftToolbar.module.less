@@ -20,9 +20,8 @@
   .toolbar();
   .vertical-toolbar();
 
-  width: 41px;
-  margin-top: 12px;
-  margin-inline-start: 6px;
+  width: 49px;
+  margin-inline-start: 4px;
   padding-inline-end: 5px;
   align-items: flex-start;
 
@@ -34,7 +33,9 @@
 
 .buttons {
   overflow: hidden;
-  padding-inline-end: 5px;
+  // Room for the groups' shadow (0 2px 5px) inside this clipping box.
+  padding-block: 6px 2px;
+  padding-inline: 8px 5px;
   scroll-behavior: smooth;
 }
 

@@ -518,7 +518,7 @@ test('Copy stays enabled in Macro mode', async () => {
 
 ### Screenshot Testing
 
-Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes a `data-canvasmode` attribute, atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
+Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes `data-canvasmode` and, in the macromolecules editor, `data-canvaslayout` (`flex`, `snake`, or `sequence`). Atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
 
 10. **Use `takeEditorScreenshot`** for canvas comparisons, not `takePageScreenshot`. Canvas screenshots are more stable across viewport changes.
 11. **Add `hideMacromoleculeEditorScrollBars: true`** when macromolecule editor scroll bars might appear and affect snapshots.

@@ -73,6 +73,13 @@ const formatDetector = {
   biln: ChemicalMimeType.BILN,
 };
 
+const getErrorText = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return typeof error === 'string' ? error : JSON.stringify(error);
+};
+
 const StyledModal = styled(Modal)({
   '& div.MuiPaper-root': {
     background: 'white',
@@ -107,6 +114,20 @@ export const Save = ({
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
 
+  const notifyAboutHelmExportLimitations = () => {
+    if (editor.drawingEntitiesManager.molecules.length > 0) {
+      editor.events.error.dispatch(t('save.helmSmilesExportNotice'));
+    }
+    if (
+      !isHelmCompatible(
+        [...editor.drawingEntitiesManager.monomers.values()],
+        editor.monomersLibrary,
+      )
+    ) {
+      editor.events.error.dispatch(t('save.helmAliasExportNotice'));
+    }
+  };
+
   const handleSelectChange = async (fileFormat: SupportedFormats) => {
     setCurrentFileFormat(fileFormat);
     const ketSerializer = new KetSerializer();
@@ -125,17 +146,7 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'helm') {
-      if (editor.drawingEntitiesManager.molecules.length > 0) {
-        editor.events.error.dispatch(t('save.helmSmilesExportNotice'));
-      }
-      if (
-        !isHelmCompatible(
-          [...editor.drawingEntitiesManager.monomers.values()],
-          editor.monomersLibrary,
-        )
-      ) {
-        editor.events.error.dispatch(t('save.helmAliasExportNotice'));
-      }
+      notifyAboutHelmExportLimitations();
     }
 
     try {
@@ -180,13 +191,9 @@ export const Save = ({
       );
       setStruct(result.struct);
     } catch (error) {
-      let stringError;
-      if (error instanceof Error) {
-        stringError = error.message;
-      } else {
-        stringError = typeof error === 'string' ? error : JSON.stringify(error);
-      }
-      const errorMessage = t('save.convertError', { error: stringError });
+      const errorMessage = t('save.convertError', {
+        error: getErrorText(error),
+      });
       dispatch(openErrorModal(errorMessage));
       KetcherLogger.error(errorMessage);
       setCurrentFileFormat('ket');

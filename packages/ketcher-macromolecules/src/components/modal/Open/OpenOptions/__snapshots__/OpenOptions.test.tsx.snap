@@ -6,10 +6,10 @@ exports[`OpenOptions component > should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-18k32lv-RootContainer emlg0ft0"
+        class="css-18k32lv-RootContainer e17brfd50"
       >
         <div
-          class="css-vhyujj-DropContainer emlg0ft1"
+          class="css-vhyujj-DropContainer e17brfd51"
           data-testid="paste-from-clipboard-button"
         >
           <svg
@@ -22,7 +22,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="css-vhyujj-DropContainer emlg0ft1"
+          class="css-vhyujj-DropContainer e17brfd51"
           data-testid="open-from-file-button"
         >
           <button
@@ -56,7 +56,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
           </button>
         </div>
         <div
-          class="css-vhyujj-DropContainer emlg0ft1"
+          class="css-vhyujj-DropContainer e17brfd51"
           data-testid="open-from-image-button"
         >
           <button
@@ -90,10 +90,10 @@ exports[`OpenOptions component > should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-18k32lv-RootContainer emlg0ft0"
+      class="css-18k32lv-RootContainer e17brfd50"
     >
       <div
-        class="css-vhyujj-DropContainer emlg0ft1"
+        class="css-vhyujj-DropContainer e17brfd51"
         data-testid="paste-from-clipboard-button"
       >
         <svg
@@ -106,7 +106,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
         </p>
       </div>
       <div
-        class="css-vhyujj-DropContainer emlg0ft1"
+        class="css-vhyujj-DropContainer e17brfd51"
         data-testid="open-from-file-button"
       >
         <button
@@ -140,7 +140,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
         </button>
       </div>
       <div
-        class="css-vhyujj-DropContainer emlg0ft1"
+        class="css-vhyujj-DropContainer e17brfd51"
         data-testid="open-from-image-button"
       >
         <button

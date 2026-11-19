@@ -10,7 +10,7 @@ exports[`Open component > should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root eobuy6u0 e1gf4okc0 MuiModal-root css-1gjtmjz-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
+      class="MuiDialog-root e1okx8px0 e1gf4okc0 MuiModal-root css-1gjtmjz-MuiModal-root-MuiDialog-root-StyledDialog-OpenModal"
       role="presentation"
     >
       <div
@@ -70,10 +70,10 @@ exports[`Open component > should render correctly 1`] = `
               class="css-g19x08-OpenFileWrapper eirroug0"
             >
               <div
-                class="css-18k32lv-RootContainer emlg0ft0"
+                class="css-18k32lv-RootContainer e17brfd50"
               >
                 <div
-                  class="css-vhyujj-DropContainer emlg0ft1"
+                  class="css-vhyujj-DropContainer e17brfd51"
                   data-testid="paste-from-clipboard-button"
                 >
                   <svg
@@ -86,7 +86,7 @@ exports[`Open component > should render correctly 1`] = `
                   </p>
                 </div>
                 <div
-                  class="css-vhyujj-DropContainer emlg0ft1"
+                  class="css-vhyujj-DropContainer e17brfd51"
                   data-testid="open-from-file-button"
                 >
                   <button
@@ -120,7 +120,7 @@ exports[`Open component > should render correctly 1`] = `
                   </button>
                 </div>
                 <div
-                  class="css-vhyujj-DropContainer emlg0ft1"
+                  class="css-vhyujj-DropContainer e17brfd51"
                   data-testid="open-from-image-button"
                 >
                   <button

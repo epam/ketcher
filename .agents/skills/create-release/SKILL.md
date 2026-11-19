@@ -2,7 +2,7 @@
 name: create-release
 description: Tag a Ketcher release and create its GitHub release (draft candidate, or published public release combining candidate drafts) after a prepare-release PR merges
 disable-model-invocation: true
-argument-hint: <mode: draft-candidate|publish-public> <X.Y>
+argument-hint: '<mode: draft-candidate|publish-public> <X.Y>'
 ---
 
 # Create a Ketcher GitHub release
@@ -17,6 +17,15 @@ tags still use the real semver/npm convention `X.Y.0-rc.N` (e.g.
 `v3.19.0-rc.1`). Don't rewrite those to "candidate" — `rc` there is a
 literal part of the published version string, not just a label.
 
+**Shell and tools.** Every snippet below is bash, run from the repo root.
+On Linux and macOS use bash directly or wrap a snippet in `bash -c '…'`
+when your interactive shell is something else (zsh, fish); on Windows run
+them in Git Bash or WSL — not PowerShell or cmd. They need `git`, `gh`
+(authenticated for `epam/ketcher`), `node`/`npm`, `python3`, `curl`,
+`zip` and `tar` on `PATH`; if `python3` isn't the interpreter's name on
+your machine (some Windows installs only have `python` or `py`), use
+whichever runs Python 3.
+
 A changelog-cleanup script lives at `scripts/clean_changelog.py` next to
 this file — both modes below use it. It strips GitHub's `by @author in
 <PR URL>` noise, looks up each ticket's GitHub issue type (`gh issue view
@@ -29,6 +38,15 @@ to a `flagged` bucket instead of being silently dropped — always show the
 user `excluded` and `flagged` before finalizing a release body, and do a
 quick read over the kept entries yourself for typos (don't reword
 chemistry/domain terms that merely look unfamiliar).
+
+Entries may reference several tickets (`* #5857, #5676 - title`); the
+script keeps all numbers and categorizes by the first one. When `combine`
+reads an already-sectioned draft, any `*` bullet it can't parse is printed
+to stderr as a warning (with `--report`, it's in `flagged`) rather than
+dropped — never ignore that output, since those entries were already
+human-approved. As a cross-check, the combined body's entry count should
+equal the sectioned drafts' entries plus the kept raw entries, minus
+tickets that appear in more than one input.
 
 ## Mode: `draft-candidate`
 
@@ -166,23 +184,47 @@ draft from `draft-candidate` mode was already cleaned and categorized once;
 redoing that work by hand (or re-running the cleaner over the full public
 diff) is exactly the duplicated effort this skill exists to avoid.
 
-Find all candidates in this cycle and save each body to a file, in
-candidate order — don't hand-count N or copy-paste one `gh release view`
-per candidate, drive it from the actual list:
+Drive this from the cycle's **git tags**, not from the releases list — a
+candidate can be tagged without anyone creating its draft release (in
+3.21, rc.1 was tagged but had no draft), and its fixes would then be
+missing from every draft. Walk the rc tags in order and save each draft body that
+exists; for a tag with no draft, generate that candidate's notes from the
+previous tag instead (a raw body — `combine` cleans it):
 
 ```bash
-N=$(gh release list --repo epam/ketcher | grep -c "vX.Y.0-rc\.")
-for i in $(seq 1 "$N"); do
-  gh release view "vX.Y.0-rc.$i" --repo epam/ketcher --json body --jq .body > "/tmp/rc$i.txt"
+git fetch --tags --quiet
+PREV=""
+for t in $(git tag -l 'vX.Y.0-rc.*' --sort=v:refname); do
+  if body=$(gh release view "$t" --repo epam/ketcher --json body --jq .body 2>/dev/null); then
+    printf '%s\n' "$body" > "/tmp/$t.txt"
+    echo "$t: draft saved"
+  elif [ -n "$PREV" ]; then
+    gh api repos/epam/ketcher/releases/generate-notes \
+      -f tag_name="$t" -f previous_tag_name="$PREV" --jq .body > "/tmp/$t.txt"
+    echo "$t: NO draft - generated raw notes from $PREV"
+  else
+    echo "$t: NO draft and no previous rc tag - stop and ask the user"
+  fi
+  PREV=$t
 done
 ```
 
-This assumes rc numbers run contiguously from 1 to N. If any candidate was
-skipped, retagged, or is otherwise out of sequence, list the actual tags
-first (`gh release list --repo epam/ketcher | grep "vX.Y.0-rc\."`) and
-adjust the loop to match.
+If the first candidate (`rc.1`) has no draft, stop and ask the user for the
+start tag — it's the previous cycle's rc.1, the same choice as
+`draft-candidate` Case A — rather than guessing. Once confirmed, generate
+`/tmp/vX.Y.0-rc.1.txt` with `generate-notes` from that start tag to
+`vX.Y.0-rc.1`, the same way as in the loop. Then always add the tail
+from the **last rc tag to the public tag**. Normally it holds only the
+`promote-public` bump (which the cleaner excludes), but anything merged to
+`release/X.Y` after the last candidate shows up here instead of being lost:
 
-**Sanity check before running the cleaner:** `grep -c '^\* #' /tmp/rcK.txt`
+```bash
+LAST=$(git tag -l 'vX.Y.0-rc.*' --sort=v:refname | tail -1)
+gh api repos/epam/ketcher/releases/generate-notes \
+  -f tag_name=vX.Y.Z -f previous_tag_name="$LAST" --jq .body > /tmp/tail.txt
+```
+
+**Sanity check before running the cleaner:** `grep -c '^\* #' /tmp/vX.Y.0-rc.K.txt`
 on each file. A candidate draft created by `draft-candidate` mode is
 already sectioned (has `### ` headers) and gets merged as-is, cheaply. But
 if a draft predates this skill, it will be a raw, un-sectioned body, and
@@ -194,17 +236,21 @@ mode as the Case A bug above) and should be re-created with
 `draft-candidate` against the correct start tag first, rather than combined
 as-is.
 
+Pass the inputs in candidate order, with the tail last:
+
 ```bash
 python3 .agents/skills/create-release/scripts/clean_changelog.py \
   --owner epam --repo ketcher combine --report \
-  /tmp/rc1.txt /tmp/rc2.txt ... /tmp/rcN.txt \
+  $(git tag -l 'vX.Y.0-rc.*' --sort=v:refname | sed 's|.*|/tmp/&.txt|') /tmp/tail.txt \
   > /tmp/release-notes.md
 ```
 
-`--report` prints any `excluded`/`flagged` items from raw (unreviewed)
-inputs to stderr — show those to the user the same way as in
-`draft-candidate` mode. Sectioned inputs are trusted as-is (a human already
-reviewed them when that draft was created), so nothing to re-review there.
+`--report` prints any `excluded`/`flagged` items to stderr — from raw
+inputs (generated notes for draft-less candidates, and the tail) and any
+unparseable bullets from sectioned drafts. Show those to the user the same
+way as in `draft-candidate` mode. Parsed entries from sectioned drafts are
+trusted as-is (a human already reviewed them when that draft was created),
+so there's nothing to re-review there.
 
 ### Append the Indigo compatibility line
 
@@ -235,11 +281,21 @@ release actually shipped with. Build the two links from it:
 - **remote** → the Docker Hub image layer page:
   `https://hub.docker.com/layers/epmlsop/indigo-service/{X.Y.Z}/images`
   (the trailing `sha256-...` digest segment is only needed if the tag has
-  more than one image. Check first: `curl -s
-"https://hub.docker.com/v2/repositories/epmlsop/indigo-service/tags/{X.Y.Z}"`
-  and count entries in the response's `images` array. Exactly one → the
-  digest-less `/images` URL is unambiguous, use it as-is. More than one →
-  pick the correct image and append its digest to the URL instead.)
+  more than one **real** image. The tag's `images` array also lists
+  build-attestation manifests (provenance/SBOM) — they show
+  `architecture`/`os` as `unknown` and are only ~1 KB, so don't count
+  them as images. List the real ones:
+
+  ```bash
+  curl -s "https://hub.docker.com/v2/repositories/epmlsop/indigo-service/tags/{X.Y.Z}" |
+    python3 -c "import json,sys; [print(i['os'], i['architecture'], i['digest']) for i in json.load(sys.stdin)['images'] if i.get('architecture') != 'unknown']"
+  ```
+
+  Exactly one → the digest-less `/images` URL is unambiguous, use it as-is
+  (e.g. 1.49.0 lists `linux/amd64` plus one `unknown/unknown`
+  attestation — that's one image). More than one real image (e.g. several
+  architectures) → pick the correct one and append its digest to the URL,
+  as `/images/sha256-<hex>`.)
 
 The visible link text conventionally drops the trailing `.0` patch
 (`1.45` reads better than `1.45.0`) — use `{X.Y}` in the sentence and the
@@ -250,25 +306,61 @@ notes:` block as shown above, after the category sections.
 
 Public releases ship the built binaries as 6 zip attachments.
 
-**Clear stale rollup caches before building.** A leftover
-`packages/*/node_modules/.cache` (rollup-plugin-typescript2 cache) from a
-previous build can feed stale compiled output into the new `dist/` instead
-of retranspiling, surfacing as `Attempted import error: 'X' is not
-exported from 'ketcher-core'` for a symbol that no longer exists anywhere
-in source. Clear the cache first, every time:
+**Start from a clean slate — delete every package's previous build output
+and build caches first.** A `dist/` or cache left over from building
+another branch can leak into the new build: the example bundles are built
+from the packages' `dist/` folders, so a stale one either breaks the build
+(`Attempted import error: 'X' is not exported from 'ketcher-react'`) or,
+worse, compiles and silently ships the wrong code. Clearing only the
+caches is not enough; remove the `dist/` folders too.
+
+Keep the cleanup and its check wrapped in `bash -c` even if you're
+already in bash: the paths are globs, and some may match nothing (e.g.
+`packages/*/node_modules/.vite` when no package has one). Bash passes an
+unmatched glob through literally and `rm -rf` ignores it, but other shells
+treat it as an error — zsh, for one, aborts the whole command with `no
+matches found`, deleting nothing, so an `&&`-chained build would run
+against the stale `dist/` folders. The wrapper gives the same behaviour
+whatever shell you call it from.
 
 ```bash
-rm -rf packages/*/node_modules/.cache
+bash -c 'rm -rf packages/*/dist packages/*/node_modules/.cache packages/*/node_modules/.vite \
+  example/node_modules/.cache example/dist
+  for d in packages/*/dist example/dist; do [ -e "$d" ] && { echo "still there: $d"; exit 1; }; done; true'
+# silent with exit 0 when clean; names any leftover dist/ and exits 1
+npm install     # local node_modules can drift from the lockfile after branch switches; this syncs it without changing tracked files
 ```
 
-Then build from repo root:
+Then build everything in one go — the same for rollup (`release/3.21`) and
+Vite (3.22 onward) branches. `ketcher-macromolecules` is a declared
+dependency of `ketcher-react` on both, so it stays an external
+`import('ketcher-macromolecules')` rather than being bundled, and the
+build order between the two doesn't matter:
 
 ```bash
-npm run build   # = build:packages (core, react, macromolecules, standalone) + build:example (remote, standalone)
+npm run build            # = build:packages + build:example
+git status --short       # must still be clean
 ```
 
-If it still fails on an "is not exported from" error after clearing the
-cache, that's a real regression on the branch — don't chase it as another
+**Cross-check `ketcher-react` against the published npm package before
+zipping.** The file lists must match; JS contents should differ only in
+the embedded `buildDate`. If they don't, the build doesn't match what
+CodeBuild did — stop and figure out why rather than attaching zips that
+differ from npm:
+
+```bash
+mkdir -p /tmp/npm-react && (cd /tmp/npm-react && npm pack ketcher-react@X.Y.Z --silent && tar -xzf ketcher-react-X.Y.Z.tgz)
+diff <(cd packages/ketcher-react/dist && find . -type f | sort) \
+     <(cd /tmp/npm-react/package/dist && find . -type f | sort)
+```
+
+(Verified against npm on `release/3.21`: a single clean-slate build gave
+the same 1220 files, identical JS apart from `buildDate` and an identical
+`index.css`. The Vite build on `master` hasn't been through a release yet
+— the cross-check is what confirms it the first time.)
+
+If it still fails with an "is not exported from" error after starting
+clean, that's a real regression on the branch — don't chase it as another
 cache issue.
 
 Then zip each package's `dist/` folder, named after the package, plus the
@@ -304,7 +396,8 @@ npm view ketcher-core time --json | python3 -c "
 import json, sys
 from datetime import datetime
 t = json.load(sys.stdin)['X.Y.Z']
-print(datetime.fromisoformat(t.replace('Z', '+00:00')).strftime('%B %-d, %Y'))
+d = datetime.fromisoformat(t.replace('Z', '+00:00'))
+print(f'{d:%B} {d.day}, {d.year}')  # not %-d: that flag isn't supported on Windows
 "
 ```
 
@@ -333,18 +426,20 @@ have served their purpose — their content is now folded into the public
 release body, and leaving them around just clutters the releases list.
 Deleting a draft release destroys its body text for good (the underlying
 tag stays, but the description doesn't) — before deleting, make sure the
-`/tmp/rc1.txt` .. `/tmp/rcN.txt` files saved during the changelog step are
+`/tmp/vX.Y.0-rc.N.txt` files saved during the changelog step are
 still around and move them somewhere durable if `/tmp` isn't reliably kept
 on this machine; don't delete drafts if those files are already gone and
 you have no other copy of their content.
 
 Confirm with the user before deleting (this destroys the draft release
-entries, though their tags stay intact for history):
+entries, though their tags stay intact for history). Delete only the rc
+releases that actually exist as drafts — some rc tags may never have had
+one:
 
 ```bash
-N=$(gh release list --repo epam/ketcher | grep -c "vX.Y.0-rc\.")
-for i in $(seq 1 "$N"); do
-  gh release delete "vX.Y.0-rc.$i" --repo epam/ketcher --yes
+for t in $(gh release list --repo epam/ketcher --limit 100 --json tagName,isDraft \
+    --jq '.[] | select(.isDraft) | .tagName' | grep '^vX\.Y\.0-rc\.'); do
+  gh release delete "$t" --repo epam/ketcher --yes
 done
 ```
 

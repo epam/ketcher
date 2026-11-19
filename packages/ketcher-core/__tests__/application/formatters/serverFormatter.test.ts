@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ServerFormatter } from 'application/formatters/serverFormatter';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -8,13 +9,13 @@ import { pickStandardServerOptions } from 'infrastructure/services/struct/remote
 
 describe('pickStandardServerOptions', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it.each(['daylight', 'chemaxon'])(
     'passes the %s SMILES saving format to Indigo services',
     (smilesSavingFormat) => {
-      jest.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      vi.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
         editor: { options: () => ({ ignoreChiralFlag: false }) },
       } as never);
 
@@ -29,13 +30,13 @@ describe('pickStandardServerOptions', () => {
 
 describe('ServerFormatter', () => {
   const createFormatter = (format: SupportedFormat) => {
-    const convert = jest.fn().mockResolvedValue({ struct: 'C1=CC=CC=C1' });
+    const convert = vi.fn().mockResolvedValue({ struct: 'C1=CC=CC=C1' });
     const structService = {
       convert,
-      layout: jest.fn(),
+      layout: vi.fn(),
     } as unknown as StructService;
     const ketSerializer = {
-      serialize: jest.fn().mockReturnValue('{}'),
+      serialize: vi.fn().mockReturnValue('{}'),
     } as unknown as KetSerializer;
     const formatter = new ServerFormatter(structService, ketSerializer, format);
 
@@ -108,8 +109,8 @@ describe('ServerFormatter', () => {
   );
 
   it('uses convert (not layout) for IDT input', () => {
-    const convert = jest.fn();
-    const layout = jest.fn();
+    const convert = vi.fn();
+    const layout = vi.fn();
     const structService = { convert, layout } as unknown as StructService;
     const formatter = new ServerFormatter(
       structService,
@@ -129,8 +130,8 @@ describe('ServerFormatter', () => {
     ['trailing CR', 'P\r\r\r'],
     ['leading newlines', '\n\nP'],
   ])('trims %s from SMILES input', (_caseName, stringifiedStruct) => {
-    const convert = jest.fn();
-    const layout = jest.fn();
+    const convert = vi.fn();
+    const layout = vi.fn();
     const structService = { convert, layout } as unknown as StructService;
     const formatter = new ServerFormatter(
       structService,
@@ -150,8 +151,8 @@ describe('ServerFormatter', () => {
   });
 
   it('keeps using convert for extended SMILES with coordinates', () => {
-    const convert = jest.fn();
-    const layout = jest.fn();
+    const convert = vi.fn();
+    const layout = vi.fn();
     const structService = { convert, layout } as unknown as StructService;
     const formatter = new ServerFormatter(
       structService,

@@ -53,3 +53,6 @@ output.txt
 
 # ketcher-flow skill: run directories and worktrees
 .ketcher-flow/
+
+# CodeMie analytics reports
+docs/codemie/analytics/

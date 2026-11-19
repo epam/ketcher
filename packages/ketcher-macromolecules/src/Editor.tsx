@@ -124,7 +124,10 @@ import { DragGhost } from 'components/DragGhost/DragGhost';
 import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 import { FloatingTools } from 'components/FloatingTools';
 
-import './theme.less';
+import * as themeStyles from './theme.less';
+
+// Keep the runtime stylesheet while excluding its Less import from declarations.
+void themeStyles;
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -208,9 +211,13 @@ function Editor({
   const [isPasteAvailable, setIsPasteAvailable] = useState(true);
   const updatePasteAvailability = useCallback(() => {
     if (!editor) return;
-    isPasteContentAvailable((content) =>
-      editor.mode.isPasteContentValid(content),
-    ).then(setIsPasteAvailable);
+    void (async () => {
+      setIsPasteAvailable(
+        await isPasteContentAvailable((content) =>
+          editor.mode.isPasteContentValid(content),
+        ),
+      );
+    })();
   }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,

@@ -419,8 +419,7 @@
             "y": -1.25
         },
         "alias": "V",
-        "templateId": "V___Valine",
-        "seqid": 2
+        "templateId": "V___Valine"
     },
     "monomer2": {
         "type": "monomer",

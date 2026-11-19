@@ -831,8 +831,7 @@
             "y": -2.75
         },
         "alias": "TyrPO3",
-        "templateId": "TyrPO3___O-phospho-L-tyrosine",
-        "seqid": 8
+        "templateId": "TyrPO3___O-phospho-L-tyrosine"
     },
     "monomer8": {
         "type": "monomer",

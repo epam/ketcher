@@ -9,7 +9,12 @@ permissions:
   issues: write
   pull-requests: write
   id-token: write
- 
+
+# The model Claude runs on. Set the AUTOTEST_MODEL repository variable to
+# change it without a code change; the default applies when it is unset.
+env:
+  AUTOTEST_MODEL: ${{ vars.AUTOTEST_MODEL || 'claude-sonnet-5-5' }}
+
 jobs:
   implement-autotests:
     if: |
@@ -129,7 +134,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           claude_args: |
-            --model ${{ vars.AUTOTEST_MODEL || 'claude-sonnet-5-5' }}
+            --model ${{ env.AUTOTEST_MODEL }}
             --allowedTools "Read" "Glob" "Grep" "Edit(ketcher-autotests/**)" "Write(ketcher-autotests/**)"
           prompt: |
             Follow the generate-autotests skill (.agents/skills/generate-autotests/SKILL.md) to write a Playwright autotest for this Autotest Request.

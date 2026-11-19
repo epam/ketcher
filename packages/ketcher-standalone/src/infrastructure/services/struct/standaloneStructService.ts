@@ -211,14 +211,14 @@ function cancelPendingTimeouts(eventEmitter: EventEmitter) {
 }
 
 /**
- * Creates a wrapper that adds timeout functionality to worker communication
- * @param eventEmitter - The event emitter instance
- * @param workerEvent - The worker event type to listen to
- * @param action - The callback function to execute on success
- * @param reject - The callback function to execute on timeout
- * @param timeout - Timeout in milliseconds (0 means no timeout)
- * @returns An object with setup method to initialize the timeout wrapper
- */
+Creates a wrapper that adds timeout functionality to worker communication
+@param eventEmitter - The event emitter instance
+@param workerEvent - The worker event type to listen to
+@param action - The callback function to execute on success
+@param reject - The callback function to execute on timeout
+@param timeout - Timeout in milliseconds (0 means no timeout)
+@returns An object with setup method to initialize the timeout wrapper
+*/
 function createTimeoutWrapper<T>(
   eventEmitter: EventEmitter,
   workerEvent: WorkerEvent,

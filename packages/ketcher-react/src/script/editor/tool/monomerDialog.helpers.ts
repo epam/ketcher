@@ -18,12 +18,12 @@ import { type EditMonomerVariant, MonomerMicromolecule } from 'ketcher-core';
 import type { Editor } from '../Editor';
 
 /**
- * Given a list of functional-group ids, determine the Edit Monomer dialog
- * variant:
- * - 'single'        — exactly one monomer S-group
- * - 'identical'     — multiple monomers that all share the same template label
- * - 'non-identical' — multiple monomers with differing template labels
- */
+Given a list of functional-group ids, determine the Edit Monomer dialog
+variant:
+- 'single'        — exactly one monomer S-group
+- 'identical'     — multiple monomers that all share the same template label
+- 'non-identical' — multiple monomers with differing template labels
+*/
 export function getMonomerVariant(
   editor: Editor,
   monomerFgIds: number[],
@@ -46,17 +46,17 @@ export function getMonomerVariant(
 }
 
 /**
- * Central dispatcher for FG-related tool interactions.
- *
- * Given a list of functional-group ids (from any tool dispatch site), this
- * helper:
- *  1. Separates monomer S-groups (MonomerMicromolecule) from plain groups.
- *  2. For monomers — dispatches `editor.event.editMonomer` with the computed
- *     variant.
- *  3. For plain groups — dispatches `editor.event.removeFG` as before.
- *
- * This keeps the "Edit Monomer" vs "Edit Abbreviation" routing in one place.
- */
+Central dispatcher for FG-related tool interactions.
+
+Given a list of functional-group ids (from any tool dispatch site), this
+helper:
+ 1. Separates monomer S-groups (MonomerMicromolecule) from plain groups.
+ 2. For monomers — dispatches `editor.event.editMonomer` with the computed
+    variant.
+ 3. For plain groups — dispatches `editor.event.removeFG` as before.
+
+This keeps the "Edit Monomer" vs "Edit Abbreviation" routing in one place.
+*/
 export function dispatchMonomerOrGroupDialog(
   editor: Editor,
   fgIds: number[],

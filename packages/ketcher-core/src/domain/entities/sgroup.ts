@@ -358,12 +358,12 @@ export class SGroup {
   }
 
   /**
-   * Connection point - is not! the same as Attachment point.
-   * Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
-   * So it doesn't matter how it happens (connection atom).
-   * When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
-   * But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
-   */
+  Connection point - is not! the same as Attachment point.
+  Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
+  So it doesn't matter how it happens (connection atom).
+  When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
+  But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
+  */
   private getConnectionPointsCount(struct: Struct): number {
     const connectionAtoms = new Set<number>();
     for (const atomId of this.atoms) {
@@ -383,24 +383,24 @@ export class SGroup {
   }
 
   /**
-   * Why only one?
-   * Currently other parts of application don't support several attachment points for sgroup.
-   * So to support it - it's required to refactor almost every peace of code with sgroups.
-   *
-   *
-   * Why return 'undefined' without fallback?
-   * If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
-   */
+  Why only one?
+  Currently other parts of application don't support several attachment points for sgroup.
+  So to support it - it's required to refactor almost every peace of code with sgroups.
+
+
+  Why return 'undefined' without fallback?
+  If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
+  */
   getAttachmentAtomId(): number | undefined {
     return this.attachmentPoints[0]?.atomId;
   }
 
   /**
-   * WHY? atomId drives which atom renders the sgroup label; position is the visual
-   * center used for movement, hit-testing and rendering. Keeping them separate lets
-   * the label always float at the geometric center of all atoms regardless of which
-   * atom happens to be the attachment point.
-   */
+  WHY? atomId drives which atom renders the sgroup label; position is the visual
+  center used for movement, hit-testing and rendering. Keeping them separate lets
+  the label always float at the geometric center of all atoms regardless of which
+  atom happens to be the attachment point.
+  */
   getContractedPosition(struct: Struct): {
     atomId: number;
     position: Vec2;

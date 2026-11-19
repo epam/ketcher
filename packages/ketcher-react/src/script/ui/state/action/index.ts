@@ -38,9 +38,9 @@ type ActionParams = {
     buttons?: Record<string, { hidden?: boolean }>;
   };
   /**
-   * The Settings window is non-modal: the canvas stays visible, so every toolbar
-   * button has to be reported disabled for as long as the window is open.
-   */
+  The Settings window is non-modal: the canvas stays visible, so every toolbar
+  button has to be reported disabled for as long as the window is open.
+  */
   isSettingsPanelOpen?: boolean;
 };
 
@@ -129,11 +129,11 @@ function status(
 }
 
 /**
- * Builds the state object with action statuses for all actions
- * @param activeTool - The currently active tool
- * @param params - Additional parameters for status computation
- * @returns State object containing active tool and action statuses
- */
+Builds the state object with action statuses for all actions
+@param activeTool - The currently active tool
+@param params - Additional parameters for status computation
+@returns State object containing active tool and action statuses
+*/
 function buildStateWithStatuses(
   activeTool: UiActionAction | null | undefined,
   params: ActionParams,

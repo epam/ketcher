@@ -177,12 +177,12 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
 }
 
 /**
- * @param restruct { ReStruct }
- * @param aid { number }
- * @param frid { number }
- * @param newfrid { number }
- * @returns { Action }
- */
+@param restruct { ReStruct }
+@param aid { number }
+@param frid { number }
+@param newfrid { number }
+@returns { Action }
+*/
 function processAtom(restruct, aid, frid, newfrid) {
   const struct = restruct.molecule;
   const atomIds = struct
@@ -205,11 +205,11 @@ function processAtom(restruct, aid, frid, newfrid) {
 }
 
 /**
- * @param restruct { ReStruct }
- * @param frid { number }
- * @param rgForRemove
- * @return { Action }
- */
+@param restruct { ReStruct }
+@param frid { number }
+@param rgForRemove
+@return { Action }
+*/
 // TODO [RB] the thing is too tricky :) need something else in future
 export function fromFragmentSplit(
   restruct,

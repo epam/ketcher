@@ -323,3 +323,36 @@ test('Case 10: ', async ({ SnakeCanvas: _ }) => {
   await expect(getMonomerLocator(page, { monomerAlias: 'Ssp' })).toHaveCount(1);
   await expect(getMonomerLocator(page, { monomerAlias: 'P' })).toHaveCount(1);
 });
+
+test('Case 11: ', async ({ SnakeCanvas: _ }) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6094
+   * Description: It is possible to create antisense even if it is not allowed (when base has extra bond out of r1-r3 to sugar)
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM using paste from clipboard: RNA1{R([nC6n5C])P.R([nC6n5C])P}$RNA1,RNA1,2:R2-5:R2$$$V2.0
+   * 3. Select all monomers on the top of the chain and click Create Antisense Strand from context menu
+
+   * Actual result: System creates antisense chain for all bases
+   * Expected result: Create Antisense Strand option is disabled
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R([nC6n5C])P.R([nC6n5C])P}$RNA1,RNA1,2:R2-5:R2$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  const menu = ContextMenu(
+    page,
+    getMonomerLocator(page, { monomerAlias: 'P' }).first(),
+  );
+  await menu.open();
+  await expect(
+    menu.getOptionLocator(MonomerOption.CreateAntisenseRNAStrand),
+  ).toBeDisabled();
+  await expect(
+    menu.getOptionLocator(MonomerOption.CreateAntisenseDNAStrand),
+  ).toBeDisabled();
+});

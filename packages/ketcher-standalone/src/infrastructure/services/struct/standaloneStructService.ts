@@ -20,7 +20,7 @@ import {
   CalculateCipCommandData,
   CalculateCommandData,
   CalculateMacromoleculePropertiesCommandData,
-  CalculateProps,
+  CalculateProperties,
   CheckCommandData,
   CleanCommandData,
   Command,
@@ -182,7 +182,7 @@ function convertMimeTypeToOutputFormat(
   return format;
 }
 
-function mapCalculatedPropertyName(property: CalculateProps) {
+function mapCalculatedPropertyName(property: CalculateProperties) {
   if (property === 'gross-formula') {
     return 'gross';
   }
@@ -287,11 +287,11 @@ function makeMolResultAction(
   reject: (reason?: unknown) => void,
 ) {
   return ({ data }: OutputMessageWrapper) => {
-    const msg: OutputMessage<string> = data;
-    if (msg.hasError) {
-      reject(new Error(msg.error));
+    const message: OutputMessage<string> = data;
+    if (message.hasError) {
+      reject(new Error(message.error));
     } else {
-      resolve({ struct: msg.payload, format: ChemicalMimeType.Mol });
+      resolve({ struct: message.payload, format: ChemicalMimeType.Mol });
     }
   };
 }
@@ -305,8 +305,10 @@ class IndigoService implements StructService {
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
     this.worker = getIndigoWorker();
-    this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-      if (e.data.type === Command.Info) {
+    this.worker.onmessage = (
+      messageEvent: MessageEvent<OutputMessage<string>>,
+    ) => {
+      if (messageEvent.data.type === Command.Info) {
         const callbackMethod = import.meta.env.SEPARATE_INDIGO_RENDER
           ? this.callIndigoNoRenderLoadedCallback
           : this.callIndigoLoadedCallback;
@@ -314,7 +316,7 @@ class IndigoService implements StructService {
         callbackMethod();
       }
 
-      const message: OutputMessage<string> = e.data;
+      const message: OutputMessage<string> = messageEvent.data;
       if (message.type !== undefined) {
         const event = messageTypeToEventMapping[message.type];
         this.EE.emit(event, { data: message });
@@ -350,11 +352,11 @@ class IndigoService implements StructService {
   async getInChIKey(struct: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
-          resolve(msg.payload ?? '');
+          resolve(message.payload ?? '');
         }
       };
 
@@ -380,12 +382,12 @@ class IndigoService implements StructService {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('info action', data);
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
           const result: InfoResult = {
-            indigoVersion: msg.payload,
+            indigoVersion: message.payload,
             imagoVersions: [],
             isAvailable: true,
           };
@@ -425,13 +427,13 @@ class IndigoService implements StructService {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data);
-        const msg: OutputMessage<string> = data;
-        if (msg.inputData === struct) {
-          if (msg.hasError) {
-            reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.inputData === struct) {
+          if (message.hasError) {
+            reject(new Error(message.error));
           } else {
             const result: ConvertResult = {
-              struct: msg.payload,
+              struct: message.payload,
               format: outputFormat,
             };
             resolve(result);
@@ -502,15 +504,15 @@ class IndigoService implements StructService {
         original_format: ChemicalMimeType;
       }>) => {
         console.log('layout action', data);
-        const msg: OutputMessage<{
+        const message: OutputMessage<{
           struct: string;
           format: string;
           original_format: ChemicalMimeType;
         }> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
-          const { struct } = msg.payload;
+          const { struct } = message.payload;
           const result: LayoutResult = {
             struct,
             format: ChemicalMimeType.Mol,
@@ -571,12 +573,12 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
           const result: CleanResult = {
-            struct: msg.payload,
+            struct: message.payload,
             format: ChemicalMimeType.Mol,
           };
           resolve(result);
@@ -691,12 +693,12 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
           const result: CalculateCipResult = {
-            struct: msg.payload,
+            struct: message.payload,
             format: ChemicalMimeType.Mol,
           };
           resolve(result);
@@ -738,12 +740,12 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
           const result: AutomapResult = {
-            struct: msg.payload,
+            struct: message.payload,
             format: ChemicalMimeType.Mol,
           };
           resolve(result);
@@ -782,19 +784,19 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
-          const warnings = JSON.parse(msg.payload) as KeyValuePair;
+          const warnings = JSON.parse(message.payload) as KeyValuePair;
 
           const result: CheckResult = Object.entries(warnings).reduce(
-            (acc, curr) => {
-              const [key, value] = curr;
+            (accumulator, current) => {
+              const [key, value] = current;
               const mappedPropertyName = mapWarningGroup(key);
-              acc[mappedPropertyName] = value as string;
+              accumulator[mappedPropertyName] = value as string;
 
-              return acc;
+              return accumulator;
             },
             {} as CheckResult,
           );
@@ -836,23 +838,25 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
-          const calculatedProperties: CalculateResult = JSON.parse(msg.payload);
+          const calculatedProperties: CalculateResult = JSON.parse(
+            message.payload,
+          );
           const result: CalculateResult = Object.entries(
             calculatedProperties,
-          ).reduce((acc, curr) => {
-            const [key, value] = curr;
+          ).reduce((accumulator, current) => {
+            const [key, value] = current;
             const mappedPropertyName = mapCalculatedPropertyName(
-              key as CalculateProps,
+              key as CalculateProperties,
             );
             if (properties.includes(mappedPropertyName)) {
-              acc[mappedPropertyName] = value;
+              accumulator[mappedPropertyName] = value;
             }
 
-            return acc;
+            return accumulator;
           }, {} as CalculateResult);
           resolve(result);
         }
@@ -901,12 +905,12 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.inputData === inputData) {
-          if (msg.hasError) {
-            reject(new Error(msg.error));
+        const message: OutputMessage<string> = data;
+        if (message.inputData === inputData) {
+          if (message.hasError) {
+            reject(new Error(message.error));
           } else {
-            resolve(msg.payload);
+            resolve(message.payload);
           }
         }
       };
@@ -1010,12 +1014,12 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
+        const message: OutputMessage<string> = data;
 
-        if (msg.hasError) {
-          reject(new Error(msg.error));
+        if (message.hasError) {
+          reject(new Error(message.error));
         } else {
-          resolve(JSON.parse(msg.payload));
+          resolve(JSON.parse(message.payload));
         }
       };
 

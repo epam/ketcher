@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import isHidden from './isHidden';
-import { getFullscreenElement } from '../../../utils';
+import { getFullscreenElement } from '../../../utilities';
 
 const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {

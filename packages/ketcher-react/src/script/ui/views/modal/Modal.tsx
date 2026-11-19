@@ -16,7 +16,10 @@
 
 import { useEffect, useRef } from 'react';
 
-import type { BaseCallProps, ModalContainerProps } from './modal.types';
+import type {
+  BaseCallProperties,
+  ModalContainerProperties,
+} from './modal.types';
 import classes from './Modal.module.less';
 import selectClasses from '../../component/form/Select/Select.module.less';
 import clsx from 'clsx';
@@ -27,11 +30,11 @@ import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
 import type { ModalState } from '../../state/modal';
 
-interface ModalProps extends BaseCallProps {
+interface ModalProps extends BaseCallProperties {
   modal: Pick<ModalState, 'name' | 'form' | 'prop'>;
 }
 
-type Props = ModalProps & BaseCallProps & ModalContainerProps;
+type Props = ModalProps & BaseCallProperties & ModalContainerProperties;
 
 type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;

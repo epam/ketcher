@@ -16,8 +16,8 @@
 
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
-  type ToolbarGroupItemCallProps,
-  type ToolbarGroupItemProps,
+  type ToolbarGroupItemCallProperties,
+  type ToolbarGroupItemProperties,
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 import type { ToolbarItem, ToolbarItemVariant } from '../toolbar.types';
@@ -42,39 +42,39 @@ import clsx from 'clsx';
 import { useResizeObserver } from '../../../../../hooks';
 import { useVerticalToolbarScroll } from '../useVerticalToolbarScroll';
 
-interface LeftToolbarProps extends Omit<
-  ToolbarGroupItemProps,
+interface LeftToolbarProperties extends Omit<
+  ToolbarGroupItemProperties,
   'id' | 'options'
 > {
   className?: string;
 }
 
-type LeftToolbarCallProps = ToolbarGroupItemCallProps;
+type LeftToolbarCallProperties = ToolbarGroupItemCallProperties;
 
-type Props = LeftToolbarProps & LeftToolbarCallProps;
+type Properties = LeftToolbarProperties & LeftToolbarCallProperties;
 
-type ItemProps = {
+type ItemProperties = {
   id: ToolbarItemVariant;
   options?: ToolbarItem[];
   dataTestId?: string;
 };
 
-interface GroupProps {
-  items?: ItemProps[];
+interface GroupProperties {
+  items?: ItemProperties[];
   className?: string;
   height?: number;
-  rest: Omit<Props, 'className'>;
+  rest: Omit<Properties, 'className'>;
 }
 
-const Group = ({ items, className, height, rest }: GroupProps) => {
+const Group = ({ items, className, height, rest }: GroupProperties) => {
   const { status } = rest;
   const visibleItems =
-    items?.reduce<ItemProps[]>(
-      (acc, item) =>
+    items?.reduce<ItemProperties[]>(
+      (accumulator, item) =>
         status[item.id]?.hidden ||
         item.options?.every((option) => status[option.id]?.hidden)
-          ? acc
-          : [...acc, item],
+          ? accumulator
+          : [...accumulator, item],
       [],
     ) ?? [];
 
@@ -118,8 +118,8 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
   ) : null;
 };
 
-const LeftToolbar = (props: Props) => {
-  const { className, ...rest } = props;
+const LeftToolbar = (properties: Properties) => {
+  const { className, ...rest } = properties;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const {
     scrollContainerRef,
@@ -229,5 +229,5 @@ const LeftToolbar = (props: Props) => {
   );
 };
 
-export type { LeftToolbarProps, LeftToolbarCallProps };
+export type { LeftToolbarProperties, LeftToolbarCallProperties };
 export { LeftToolbar };

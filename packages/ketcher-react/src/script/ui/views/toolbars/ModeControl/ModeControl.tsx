@@ -19,7 +19,7 @@ import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
-interface IStyledIconProps {
+interface IStyledIconProperties {
   expanded?: boolean;
   hidden?: boolean;
   disabled?: boolean;
@@ -56,14 +56,16 @@ const DropDownButton = styled(Button)(() => ({
   },
 }));
 
-const StyledIcon = styled(Icon)<IStyledIconProps>`
+const StyledIcon = styled(Icon)<IStyledIconProperties>`
   width: 16px;
   height: 16px;
   transform: ${({ expanded }) => (expanded ? 'rotate(180deg)' : 'none')};
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
+const StyledIconForMacromoleculesToggler = styled(
+  StyledIcon,
+)<IStyledIconProperties>`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
@@ -72,7 +74,7 @@ const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
   }
 `;
 
-const ModeIconWrapper = styled('div')<IStyledIconProps>`
+const ModeIconWrapper = styled('div')<IStyledIconProperties>`
   display: inline-flex;
   align-items: center;
   opacity: ${({ disabled }) => (disabled ? '0.38' : '1')};
@@ -145,7 +147,7 @@ const DropDownContent = styled('div')`
   cursor: pointer;
 `;
 
-interface ModeProps {
+interface ModeProperties {
   toggle: (isEnabled: boolean) => void;
   isPolymerEditor: boolean;
   disabled?: boolean;
@@ -155,16 +157,18 @@ export const ModeControl = ({
   toggle,
   isPolymerEditor,
   disabled = false,
-}: ModeProps) => {
+}: ModeProperties) => {
   const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [btnElement, setBtnElement] = useState<HTMLButtonElement | null>(null);
+  const [buttonElement, setButtonElement] = useState<HTMLButtonElement | null>(
+    null,
+  );
 
   const handleModeSwitch = (isPolymer: boolean) => {
     toggle(isPolymer);
     setIsExpanded(false);
     setTimeout(() => {
-      btnElement?.blur();
+      buttonElement?.blur();
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
       const canvas = document.querySelector('canvas') as HTMLElement;
@@ -189,7 +193,7 @@ export const ModeControl = ({
         data-testid="polymer-toggler"
         disabled={disabled}
         onClick={onExpand}
-        ref={setBtnElement}
+        ref={setButtonElement}
       >
         <ModeIconWrapper
           disabled={disabled}
@@ -209,7 +213,7 @@ export const ModeControl = ({
         title=""
         open={isExpanded}
         onClose={onClose}
-        anchorEl={btnElement}
+        anchorEl={buttonElement}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

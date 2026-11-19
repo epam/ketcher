@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { ElementWithDropdown } from './ElementWithDropdown';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface ExternalFuncProps {
+interface ExternalFunctionProperties {
   isCollapsed: boolean;
   onLayout: () => void;
   onClean: () => void;
@@ -35,7 +35,7 @@ interface ExternalFuncProps {
   shortcuts: { [key in string]: string };
 }
 
-export const ExternalFuncControls = ({
+export const ExternalFunctionControls = ({
   isCollapsed,
   onLayout,
   onClean,
@@ -50,9 +50,9 @@ export const ExternalFuncControls = ({
   indigoVerification,
   hiddenButtons,
   shortcuts,
-}: ExternalFuncProps) => {
+}: ExternalFunctionProperties) => {
   const { t } = useTranslation('toolbar');
-  const externalFuncButtons = [
+  const externalFunctionButtons = [
     {
       name: 'arom',
       title: t('server.aromatize'),
@@ -122,18 +122,18 @@ export const ExternalFuncControls = ({
     />
   );
 
-  const firstButtonObj = externalFuncButtons.find(
+  const firstButtonObject = externalFunctionButtons.find(
     (button) => !hiddenButtons.includes(button.name),
   );
 
-  const collapsibleElements = externalFuncButtons
-    .filter((button) => button !== firstButtonObj)
+  const collapsibleElements = externalFunctionButtons
+    .filter((button) => button !== firstButtonObject)
     .map((button) => getButtonElement(button));
 
   if (isCollapsed) {
     return (
       <ElementWithDropdown
-        topElement={getButtonElement(firstButtonObj)}
+        topElement={getButtonElement(firstButtonObject)}
         dropDownElements={collapsibleElements}
       />
     );
@@ -141,7 +141,7 @@ export const ExternalFuncControls = ({
 
   return (
     <>
-      {firstButtonObj && getButtonElement(firstButtonObj)}
+      {firstButtonObject && getButtonElement(firstButtonObject)}
       {<>{collapsibleElements}</>}
     </>
   );

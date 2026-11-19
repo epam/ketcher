@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import Form, {
   CustomQueryField,
   Field,
@@ -39,17 +39,21 @@ interface BondSettings {
   center: number | null;
   customQuery: string;
 }
-interface BondProps extends BaseProps, BondSettings {}
+interface BondProperties extends BaseProperties, BondSettings {}
 
-type Props = BondProps &
-  BaseCallProps & {
+type Properties = BondProperties &
+  BaseCallProperties & {
     isMonomerCreationWizardActive?: boolean;
   };
 
-const Bond = (props: Props) => {
+const Bond = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
-  const { formState, isMonomerCreationWizardActive = false, ...rest } = props;
-  const bondProps = bondSchema.properties;
+  const {
+    formState,
+    isMonomerCreationWizardActive = false,
+    ...rest
+  } = properties;
+  const bondProperties = bondSchema.properties;
   const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
   const previousSettings = useRef<BondSettings>({
     type: 'single',
@@ -59,7 +63,7 @@ const Bond = (props: Props) => {
   });
   const bondTypeOptions = useMemo(
     () =>
-      getSelectOptionsFromSchema(bondProps.type, t)
+      getSelectOptionsFromSchema(bondProperties.type, t)
         .filter((option) => option.value !== 'haptic')
         .map((option) => ({
           ...option,
@@ -67,7 +71,7 @@ const Bond = (props: Props) => {
             isMonomerCreationWizardActive &&
             MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
         })),
-    [bondProps.type, isMonomerCreationWizardActive, t],
+    [bondProperties.type, isMonomerCreationWizardActive, t],
   );
   const customValid = useMemo(
     () => ({
@@ -139,7 +143,7 @@ const Bond = (props: Props) => {
         <Field
           name="topology"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.topology, t)}
+          options={getSelectOptionsFromSchema(bondProperties.topology, t)}
           disabled={isCustomQuery || isMonomerCreationWizardActive}
           formName="bond-properties"
           data-testid="topology"
@@ -147,7 +151,7 @@ const Bond = (props: Props) => {
         <Field
           name="center"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.center, t)}
+          options={getSelectOptionsFromSchema(bondProperties.center, t)}
           disabled={isCustomQuery || isMonomerCreationWizardActive}
           formName="bond-properties"
           data-testid="reacting-center"
@@ -187,7 +191,7 @@ function customQueryValid(customQuery: string, isCustomQuery: boolean) {
 }
 
 function getBondCustomQuery(bond: BondSettings) {
-  let queryAttrsText = '';
+  let queryAttributesText = '';
   const { type, topology } = bond;
   const patterns = {
     bondType: {
@@ -206,16 +210,16 @@ function getBondCustomQuery(bond: BondSettings) {
   };
 
   if (type in patterns.bondType) {
-    queryAttrsText += patterns.bondType[type];
+    queryAttributesText += patterns.bondType[type];
   }
 
   if (topology && topology in patterns.topology) {
-    if (queryAttrsText) {
-      queryAttrsText += ';';
+    if (queryAttributesText) {
+      queryAttributesText += ';';
     }
-    queryAttrsText += patterns.topology[topology];
+    queryAttributesText += patterns.topology[topology];
   }
-  return queryAttrsText;
+  return queryAttributesText;
 }
-export type { BondProps };
+export type { BondProperties };
 export default Bond;

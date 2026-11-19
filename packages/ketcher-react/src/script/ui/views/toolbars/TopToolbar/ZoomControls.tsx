@@ -107,9 +107,9 @@ const getValidZoom = (zoom: number, currentZoom: number): number => {
   return zoom;
 };
 
-interface ZoomProps {
+interface ZoomProperties {
   currentZoom: number;
-  onZoom: (arg: number) => void;
+  onZoom: (argument: number) => void;
   onZoomIn: VoidFunction;
   onZoomOut: VoidFunction;
   disabledButtons: string[];
@@ -125,25 +125,25 @@ export const ZoomControls = ({
   disabledButtons,
   hiddenButtons,
   shortcuts,
-}: ZoomProps) => {
+}: ZoomProperties) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
+  const containerReference = useRef<HTMLDivElement>(null);
+  const inputReference = useRef<HTMLInputElement>(null);
 
   const onZoomSubmit = useCallback(() => {
-    const inputEl = inputRef.current;
-    if (!inputEl) {
+    const inputElement = inputReference.current;
+    if (!inputElement) {
       return;
     }
-    const userInput = getIntegerFromString(inputEl.value);
+    const userInput = getIntegerFromString(inputElement.value);
     if (userInput && userInput !== currentZoom) {
       const zoomToSet = getValidZoom(userInput, currentZoom);
-      updateInputString(zoomToSet, inputEl);
+      updateInputString(zoomToSet, inputElement);
       onZoom(zoomToSet);
     } else {
-      updateInputString(currentZoom, inputEl);
+      updateInputString(currentZoom, inputElement);
     }
   }, [onZoom, currentZoom]);
 
@@ -152,11 +152,11 @@ export const ZoomControls = ({
       onZoomSubmit();
     }
     setIsExpanded(false);
-    setAnchorEl(null);
+    setAnchorElement(null);
   };
 
   const onExpand = () => {
-    setAnchorEl(containerRef.current);
+    setAnchorElement(containerReference.current);
     setIsExpanded(true);
   };
 
@@ -165,7 +165,7 @@ export const ZoomControls = ({
   };
 
   return (
-    <ElementAndDropdown ref={containerRef}>
+    <ElementAndDropdown ref={containerReference}>
       <DropDownButton onClick={onExpand} data-testid="zoom-selector">
         <ZoomLabel data-testid="zoom-input">
           {Math.round(currentZoom)}%
@@ -176,7 +176,7 @@ export const ZoomControls = ({
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={anchorEl}
+        anchorEl={anchorElement}
         container={
           document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
           document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
@@ -189,7 +189,7 @@ export const ZoomControls = ({
         <DropDownContent>
           <ZoomInput
             onZoomSubmit={onZoomSubmit}
-            inputRef={inputRef as RefObject<HTMLInputElement>}
+            inputRef={inputReference as RefObject<HTMLInputElement>}
             currentZoom={currentZoom}
             shortcuts={shortcuts}
           />

@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { shortcutStr } from 'ketcher-core';
 import { type IconName, Icon } from 'components';
 
-interface ActionButtonProps {
+interface ActionButtonProperties {
   name: IconName;
   action?: UiAction;
   status?: {
@@ -37,13 +37,13 @@ interface ActionButtonProps {
   dataTestId?: string;
 }
 
-interface ActionButtonCallProps {
+interface ActionButtonCallProperties {
   onAction: (action: UiActionAction) => void;
 }
 
-type Props = ActionButtonProps & ActionButtonCallProps;
+type Properties = ActionButtonProperties & ActionButtonCallProperties;
 
-const ActionButton = (props: Props) => {
+const ActionButton = (properties: Properties) => {
   const {
     name,
     action,
@@ -54,7 +54,7 @@ const ActionButton = (props: Props) => {
     className,
     onAction,
     dataTestId,
-  } = props;
+  } = properties;
   const { t } = useTranslation();
 
   if (status.hidden) {
@@ -93,5 +93,5 @@ const ActionButton = (props: Props) => {
   );
 };
 
-export type { ActionButtonProps, ActionButtonCallProps };
+export type { ActionButtonProperties, ActionButtonCallProperties };
 export { ActionButton };

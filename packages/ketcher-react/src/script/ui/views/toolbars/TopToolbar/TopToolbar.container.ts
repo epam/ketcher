@@ -50,19 +50,19 @@ const selectCustomButtons = (state: State) =>
 const disabledButtonsSelector = createSelector(
   [getActionState],
   (actionState) =>
-    Object.keys(actionState).reduce((acc: string[], item) => {
+    Object.keys(actionState).reduce((accumulator: string[], item) => {
       if (actionState[item]?.disabled) {
-        acc.push(item);
+        accumulator.push(item);
       }
-      return acc;
+      return accumulator;
     }, []),
 );
 const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
-  Object.keys(actionState).reduce((acc: string[], item) => {
+  Object.keys(actionState).reduce((accumulator: string[], item) => {
     if (actionState[item]?.hidden) {
-      acc.push(item);
+      accumulator.push(item);
     }
-    return acc;
+    return accumulator;
   }, []),
 );
 
@@ -77,7 +77,7 @@ const disableableButtons = [
 
 const shortcuts = generateMenuShortcuts<typeof action>(action);
 
-const mapStateToProps = (state: State) => {
+const mapStateToProperties = (state: State) => {
   return {
     currentZoom: Math.round((state.editor?.zoom() ?? 1) * 100),
     disabledButtons: disabledButtonsSelector(state),
@@ -94,7 +94,7 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProperties = (dispatch: Dispatch) => {
   const dispatchAction = (actionName: string) => {
     if (['zoom-in', 'zoom-out'].includes(actionName)) {
       dispatch(onAction(action[actionName].action()));
@@ -147,8 +147,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 };
 
 const TopToolbarContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(TopToolbar);
 
 export { TopToolbarContainer };

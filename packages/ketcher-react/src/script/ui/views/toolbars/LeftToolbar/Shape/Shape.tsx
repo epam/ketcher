@@ -15,23 +15,28 @@
  ***************************************************************************/
 
 import {
-  type ToolbarGroupItemCallProps,
-  type ToolbarGroupItemProps,
+  type ToolbarGroupItemCallProperties,
+  type ToolbarGroupItemProperties,
   ToolbarGroupItem,
 } from '../../ToolbarGroupItem';
 
 import { shapeOptions } from '../leftToolbarOptions';
 
-interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+interface ShapeProperties extends Omit<
+  ToolbarGroupItemProperties,
+  'id' | 'options'
+> {
   height?: number;
 }
-type ShapeCallProps = ToolbarGroupItemCallProps;
+type ShapeCallProperties = ToolbarGroupItemCallProperties;
 
-type Props = ShapeProps & ShapeCallProps;
+type Properties = ShapeProperties & ShapeCallProperties;
 
-const Shape = (props: Props) => {
-  return <ToolbarGroupItem id="shapes" options={shapeOptions} {...props} />;
+const Shape = (properties: Properties) => {
+  return (
+    <ToolbarGroupItem id="shapes" options={shapeOptions} {...properties} />
+  );
 };
 
-export type { ShapeProps, ShapeCallProps };
+export type { ShapeProperties, ShapeCallProperties };
 export { Shape };

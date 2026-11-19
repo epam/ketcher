@@ -3,12 +3,12 @@ import { Divider } from './Divider';
 import { TopToolbarCustomIconButton } from './TopToolbarIconButton';
 import { ElementWithDropdown } from './ElementWithDropdown';
 
-interface CustomButtonElementProps {
+interface CustomButtonElementProperties {
   customButton: CustomButton;
   onClick: (name: string) => void;
 }
 
-interface CustomButtonsProps {
+interface CustomButtonsProperties {
   customButtons: Array<CustomButton>;
   isCollapsed: boolean;
   onCustomAction: (name: string) => void;
@@ -17,7 +17,7 @@ interface CustomButtonsProps {
 const CustomButtonElement = ({
   customButton,
   onClick,
-}: CustomButtonElementProps) => (
+}: CustomButtonElementProperties) => (
   <TopToolbarCustomIconButton
     link={customButton.imageLink}
     onClick={() => onClick(customButton.id)}
@@ -29,7 +29,7 @@ export const CustomButtons = ({
   isCollapsed,
   customButtons,
   onCustomAction,
-}: CustomButtonsProps) => {
+}: CustomButtonsProperties) => {
   if (customButtons.length === 0) {
     return null;
   }

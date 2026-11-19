@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
@@ -22,15 +22,15 @@ import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 import type { RemoveFGParams } from 'src/script/editor/Editor.types';
 
-interface RemoveFGProps extends BaseProps, RemoveFGParams {}
+interface RemoveFGProperties extends BaseProperties, RemoveFGParams {}
 
-type Props = RemoveFGProps & BaseCallProps;
+type Properties = RemoveFGProperties & BaseCallProperties;
 
-const RemoveFG = (props: Props) => {
+const RemoveFG = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-  const { fgIds } = props;
+  const { fgIds } = properties;
 
   const remove = function () {
     if (fgIds.length > 0)
@@ -58,7 +58,7 @@ const RemoveFG = (props: Props) => {
           type="button"
           value={t('common:button.cancel')}
           className={classes.buttonCancel}
-          onClick={() => props.onOk(false)}
+          onClick={() => properties.onOk(false)}
           data-testid="Cancel"
         />
         <input
@@ -66,12 +66,12 @@ const RemoveFG = (props: Props) => {
           value={t('dialogs:toolbox.removeFG.removeAbbreviation')}
           data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
-          onClick={() => props.onOk(remove())}
+          onClick={() => properties.onOk(remove())}
         />
       </footer>
     </div>
   );
 };
 
-export type { RemoveFGProps };
+export type { RemoveFGProperties };
 export { RemoveFG };

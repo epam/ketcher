@@ -546,6 +546,7 @@ export class SequenceMode extends BaseMode {
     const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = new Command();
+    const selectionAnchors: BaseMonomer[] = [];
     // Update Nucleotides one by one
     for (const labeledNucleoelement of updatedSelection) {
       const nodeIndexOverall = labeledNucleoelement.nodeIndexOverall;
@@ -562,6 +563,15 @@ export class SequenceMode extends BaseMode {
         labeledNucleoelement,
         nodeIndexOverall,
       );
+
+      if (nodeToModify) {
+        selectionAnchors.push(
+          nodeToModify instanceof Nucleotide ||
+            nodeToModify instanceof Nucleoside
+            ? nodeToModify.sugar
+            : nodeToModify.monomer,
+        );
+      }
 
       if (
         nodeToModify instanceof Nucleotide ||
@@ -674,8 +684,26 @@ export class SequenceMode extends BaseMode {
     }
 
     // Refresh UI
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(new ReinitializeModeOperation(false, false));
     editor.renderersContainer.update(modelChanges);
+    // Bond changes can deselect endpoints, and replacement creates new bases.
+    // Resolve fresh nodes through their surviving backbone anchors after layout.
+    const anchors = new Set(selectionAnchors);
+    const resultingMonomers = new Set<BaseMonomer>();
+    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+      [twoStrandedNode.senseNode, twoStrandedNode.antisenseNode].forEach(
+        (node) => {
+          if (node?.monomers.some((monomer) => anchors.has(monomer))) {
+            node.monomers.forEach((monomer) => resultingMonomers.add(monomer));
+          }
+        },
+      );
+    });
+    const selectionChanges =
+      editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+        [...resultingMonomers].filter((monomer) => !monomer.selected),
+      );
+    editor.renderersContainer.update(selectionChanges);
     history.update(modelChanges);
   }
 

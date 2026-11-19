@@ -51,7 +51,7 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   }, [onClose]);
 
   const reset = () => {
-    resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+    resetRnaBuilderAfterSequenceUpdate(dispatch, editor, false);
   };
 
   const cancelHandler = () => {

@@ -46,7 +46,7 @@ export function greekify(str: string): string {
     .join('');
 }
 
-export function filterLib(lib: Template[], filter: string): TemplateGroups {
+export function filterLibrary(lib: Template[], filter: string): TemplateGroups {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   return flow(
@@ -66,7 +66,10 @@ export function filterLib(lib: Template[], filter: string): TemplateGroups {
   )(lib);
 }
 
-export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
+export function filterFGLibrary(
+  lib: Template[],
+  filter: string,
+): TemplateGroups {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   const searchFunction = (item: Template) => {

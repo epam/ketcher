@@ -1,4 +1,4 @@
-import { matchCharge } from 'src/script/ui/data/utils';
+import { matchCharge } from 'src/script/ui/data/utilities';
 
 describe('data utils', () => {
   describe('matchCharge', () => {

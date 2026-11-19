@@ -9,12 +9,15 @@ import {
 } from './style';
 import { Item, Submenu, Separator } from 'react-contexify';
 
-interface HighlightMenuProps {
+interface HighlightMenuProperties {
   onHighlight: (color: string) => void;
   disabled?: boolean;
 }
 
-const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
+const HighlightMenu: FC<HighlightMenuProperties> = ({
+  onHighlight,
+  disabled,
+}) => {
   const { t } = useTranslation('toolbar');
 
   return (

@@ -55,7 +55,7 @@ async function buildKetcherAsync({
   togglerComponent,
   customButtons,
   disabledFunctionality,
-  ketcherId: prevKetcherId,
+  ketcherId: previousKetcherId,
 }: Config) {
   const builder = new KetcherBuilder();
 
@@ -66,7 +66,7 @@ async function buildKetcherAsync({
   structService.addKetcherId(ketcher.id);
 
   const { cleanup, setServer } = await builder.appendUiAsync(
-    prevKetcherId,
+    previousKetcherId,
     ketcher.id,
     element,
     appRoot,

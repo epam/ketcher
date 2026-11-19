@@ -52,7 +52,7 @@ export interface FormStateStore {
     extraName?: string,
   ): FieldState;
   updateState(newState: Record<string, unknown>): void;
-  props: {
+  properties: {
     result: Record<string, unknown>;
     errors?: Record<string, string>;
   };

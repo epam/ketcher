@@ -19,13 +19,18 @@ import clsx from 'clsx';
 import type { ButtonHTMLAttributes } from 'react';
 import type { Element } from 'ketcher-core';
 
-type AtomProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value'> & {
+type AtomProperties = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value'> & {
   el: Element;
   shortcut?: string | null;
   selected?: boolean;
 };
 
-function Atom({ el, shortcut, selected, ...props }: Readonly<AtomProps>) {
+function Atom({
+  el,
+  shortcut,
+  selected,
+  ...properties
+}: Readonly<AtomProperties>) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
@@ -34,7 +39,7 @@ function Atom({ el, shortcut, selected, ...props }: Readonly<AtomProps>) {
       })}
       value={el.number}
       data-testid={`${el.label}-button`}
-      {...props}
+      {...properties}
     >
       <span>{el.label}</span>
     </button>

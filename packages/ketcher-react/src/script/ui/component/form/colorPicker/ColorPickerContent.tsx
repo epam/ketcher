@@ -24,7 +24,7 @@ import {
   hslToHex,
   isValidHex,
   sanitizeHexInput,
-} from './ColorPicker.utils';
+} from './ColorPicker.utilities';
 import PresetGrid from './PresetGrid';
 import CustomColorSwatches from './CustomColorSwatches';
 import CustomColorEditor from './CustomColorEditor';
@@ -32,7 +32,7 @@ import CustomColorEditor from './CustomColorEditor';
 const DEFAULT_COLOR = '#FF3232';
 const DEFAULT_CUSTOM_COLORS: string[] = [];
 
-interface ColorPickerContentProps {
+interface ColorPickerContentProperties {
   value: string;
   onCancel: () => void;
   onApply: (color: string) => void;
@@ -44,7 +44,7 @@ function ColorPickerContent({
   onCancel,
   onApply,
   onContentResize,
-}: Readonly<ColorPickerContentProps>) {
+}: Readonly<ColorPickerContentProperties>) {
   const { settings, updateSettings } = useSettings();
   const customColors =
     settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS;
@@ -101,8 +101,8 @@ function ColorPickerContent({
     applyColorFromHsl(hue, l);
   };
 
-  const handleHexInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const raw = sanitizeHexInput(e.target.value);
+  const handleHexInputChange = (event_: ChangeEvent<HTMLInputElement>) => {
+    const raw = sanitizeHexInput(event_.target.value);
     setHexInput(raw);
     if (isValidHex(raw)) {
       applyHexColor('#' + raw);
@@ -142,7 +142,7 @@ function ColorPickerContent({
           pendingColor={pendingColor}
           onSelectColor={applyHexColor}
           isCustomOpen={isCustomOpen}
-          onToggleCustomOpen={() => setIsCustomOpen((prev) => !prev)}
+          onToggleCustomOpen={() => setIsCustomOpen((previous) => !previous)}
         />
 
         {isCustomOpen && (

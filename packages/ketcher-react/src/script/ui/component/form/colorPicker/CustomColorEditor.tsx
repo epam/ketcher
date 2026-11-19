@@ -16,14 +16,14 @@
 
 import classes from './ColorPicker.module.less';
 import { Icon } from 'components';
-import { hslToHex } from './ColorPicker.utils';
+import { hslToHex } from './ColorPicker.utilities';
 import ColorSlider from './ColorSlider';
 import { type ChangeEvent } from 'react';
 
 const HUE_BACKGROUND =
   'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)';
 
-interface CustomColorEditorProps {
+interface CustomColorEditorProperties {
   customColors: string[] | readonly string[];
   pendingColor: string;
   hue: number;
@@ -31,7 +31,7 @@ interface CustomColorEditorProps {
   hexInput: string;
   onHueChange: (h: number) => void;
   onLightnessChange: (sliderLightness: number) => void;
-  onHexInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onHexInputChange: (event_: ChangeEvent<HTMLInputElement>) => void;
   onDeleteCustomColor: () => void;
 }
 
@@ -45,7 +45,7 @@ function CustomColorEditor({
   onLightnessChange,
   onHexInputChange,
   onDeleteCustomColor,
-}: Readonly<CustomColorEditorProps>) {
+}: Readonly<CustomColorEditorProperties>) {
   const lightnessBg = `linear-gradient(to right, #ffffff, ${hslToHex(
     hue,
     100,

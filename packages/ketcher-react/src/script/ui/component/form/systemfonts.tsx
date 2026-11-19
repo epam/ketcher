@@ -61,12 +61,12 @@ function checkInSystem(): Promise<(string | null)[]> {
   return Promise.all(availableFontsPromises);
 }
 
-interface SystemFontsProps {
+interface SystemFontsProperties {
   value: string;
   onChange: (value: string) => void;
 }
 
-function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
+function SystemFonts({ value, onChange }: Readonly<SystemFontsProperties>) {
   const [availableFonts, setAvailableFonts] = useState<Option[] | null>(null);
   const onChangeCallback = useCallback(
     (value: string) => {
@@ -80,7 +80,7 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
     void (async () => {
       const results = await checkInSystem();
       const fonts = results
-        .filter((i): i is string => i !== null)
+        .filter((index): index is string => index !== null)
         .map((font) => {
           // TODO remove font-size from here
           return { value: `30px ${font}`, label: font };

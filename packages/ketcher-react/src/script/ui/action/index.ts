@@ -43,8 +43,8 @@ const updateConfigItem = (item: UiAction): UiAction => {
     const originalDisabled = item.disabled;
     return {
       ...item,
-      disabled: (...props) =>
-        isViewOnly(props[0]) || originalDisabled(...props),
+      disabled: (...properties) =>
+        isViewOnly(properties[0]) || originalDisabled(...properties),
     };
   } else {
     return {
@@ -302,8 +302,8 @@ const configWithNonViewOnlyActionsDisabled: Tools = Object.entries({
   ...fullscreen,
   ...help,
 }).reduce(
-  (acc, [key, item]) => ({
-    ...acc,
+  (accumulator, [key, item]) => ({
+    ...accumulator,
     [key]: updateConfigItem(item as UiAction),
   }),
   {},

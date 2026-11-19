@@ -29,7 +29,7 @@ const templateStructs = templates as Struct[];
 const isToolWithMode = (tool: Tool | null): tool is ToolWithMode =>
   typeof tool === 'object' && tool !== null && 'mode' in tool;
 
-const templateLib: Record<string, UiAction> = {
+const templateLibrary: Record<string, UiAction> = {
   'template-lib': {
     shortcut: 'Shift+t',
     title: 'toolbar:templates.structureLibrary',
@@ -42,8 +42,8 @@ const templateLib: Record<string, UiAction> = {
 };
 
 const templateActions = templateStructs.reduce<Record<string, UiAction>>(
-  (res, struct, i) => {
-    res[`template-${i}`] = {
+  (result, struct, index) => {
+    result[`template-${index}`] = {
       title: `${struct.name}`,
       shortcut: 't',
       action: {
@@ -51,9 +51,9 @@ const templateActions = templateStructs.reduce<Record<string, UiAction>>(
         opts: { struct },
       },
     };
-    return res;
+    return result;
   },
-  templateLib,
+  templateLibrary,
 );
 
 export default templateActions;

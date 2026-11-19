@@ -195,21 +195,21 @@ function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
   });
 
   const reImages = [...restruct.images.entries()].reduce(
-    (acc: Array<number>, [id, item]): Array<number> => {
+    (accumulator: Array<number>, [id, item]): Array<number> => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => point.isInsidePolygon(polygon));
-      return isPointInside ? [...acc, id] : acc;
+      return isPointInside ? [...accumulator, id] : accumulator;
     },
     [],
   );
 
   const reMultitailArrows = [...restruct.multitailArrows.entries()].reduce(
-    (acc: Array<number>, [id, item]): Array<number> => {
+    (accumulator: Array<number>, [id, item]): Array<number> => {
       const isPointInside = item.multitailArrow
         .getReferencePositionsArray()
         .some((point) => point.isInsidePolygon(polygon));
-      return isPointInside ? [...acc, id] : acc;
+      return isPointInside ? [...accumulator, id] : accumulator;
     },
     [],
   );
@@ -364,21 +364,21 @@ function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
   });
 
   const reImages = [...restruct.images.entries()].reduce(
-    (acc: Array<number>, [id, item]) => {
+    (accumulator: Array<number>, [id, item]) => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => isPointInPolygon(r, point));
-      return isPointInside ? [...acc, id] : acc;
+      return isPointInside ? [...accumulator, id] : accumulator;
     },
     [],
   );
 
   const reMultitailArrows = [...restruct.multitailArrows.entries()].reduce(
-    (acc: Array<number>, [id, item]) => {
+    (accumulator: Array<number>, [id, item]) => {
       const isPointInside = item.multitailArrow
         .getReferencePositionsArray()
         .some((point) => isPointInPolygon(r, point));
-      return isPointInside ? [...acc, id] : acc;
+      return isPointInside ? [...accumulator, id] : accumulator;
     },
     [],
   );

@@ -25,7 +25,7 @@ type DebugActions = {
   hidden: GetHiddenState;
 };
 
-const debugObj: DebugActions = {
+const debugObject: DebugActions = {
   // original: for dev purposes
   'force-update': {
     shortcut: 'Ctrl+Shift+r',
@@ -38,8 +38,8 @@ const debugObj: DebugActions = {
     shortcut: 'Alt+Shift+r',
     action: (editor: Editor) => {
       const molSerializer = new MolSerializer();
-      const molStr = molSerializer.serialize(editor.struct());
-      const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
+      const molString = molSerializer.serialize(editor.struct());
+      const molQs = 'mol=' + encodeURIComponent(molString).replace(/%20/g, '+');
       const qs = document.location.search;
       if (!qs) {
         document.location.search = '?' + molQs;
@@ -53,4 +53,4 @@ const debugObj: DebugActions = {
   hidden: (options) => isHidden(options, 'qs-serialize'),
 };
 
-export default debugObj;
+export default debugObject;

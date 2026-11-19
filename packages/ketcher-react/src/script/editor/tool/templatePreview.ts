@@ -145,7 +145,7 @@ class TemplatePreview {
   }
 
   private moveFloatingPreview() {
-    const dist = this.position.sub(this.previousPosition);
+    const distribution = this.position.sub(this.previousPosition);
     this.previousPosition = this.position;
     fromMultipleMove(
       this.restruct,
@@ -153,7 +153,7 @@ class TemplatePreview {
         ...this.floatingPreview,
         enhancedFlags: this.getFloatingPreviewFragmentIds(),
       },
-      dist,
+      distribution,
     );
     this.editor.render.update(false, null);
   }

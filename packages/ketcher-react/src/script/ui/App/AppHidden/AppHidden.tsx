@@ -18,28 +18,30 @@
 import { useEffect, useRef } from 'react';
 import { useSettingsContext } from '../../../../hooks';
 
-interface AppHiddenCallProps {
-  onInitTmpls: (cacheEl, url) => void;
+interface AppHiddenCallProperties {
+  onInitTmpls: (cacheElement, url) => void;
 }
 
-type Props = AppHiddenCallProps;
+type Properties = AppHiddenCallProperties;
 // todo: come up with better name
-const AppHidden = (props: Props) => {
-  const { onInitTmpls } = props;
+const AppHidden = (properties: Properties) => {
+  const { onInitTmpls } = properties;
 
-  const ref = useRef(null);
+  const reference = useRef(null);
   const { staticResourcesUrl } = useSettingsContext();
 
   useEffect(() => {
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => onInitTmpls(ref.current, staticResourcesUrl));
+      requestIdleCallback(() =>
+        onInitTmpls(reference.current, staticResourcesUrl),
+      );
     } else {
-      onInitTmpls(ref.current, staticResourcesUrl);
+      onInitTmpls(reference.current, staticResourcesUrl);
     }
   }, []);
 
-  return <div style={{ display: 'none' }} ref={ref} />;
+  return <div style={{ display: 'none' }} ref={reference} />;
 };
 
-export type { AppHiddenCallProps };
+export type { AppHiddenCallProperties };
 export { AppHidden };

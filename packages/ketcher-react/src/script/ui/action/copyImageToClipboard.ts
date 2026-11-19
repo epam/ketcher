@@ -40,9 +40,9 @@ async function copyImageToClipboard(): Promise<void> {
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
-    const structStr = ketSerializer.serialize(struct);
+    const structString = ketSerializer.serialize(struct);
 
-    const image = await ketcher.generateImage(structStr, {
+    const image = await ketcher.generateImage(structString, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,

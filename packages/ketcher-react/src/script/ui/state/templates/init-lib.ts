@@ -35,7 +35,7 @@ interface TemplateLibrary {
   data: { lib: SdfItem[] };
 }
 
-export function initLib(lib: SdfItem[]): TemplateLibrary {
+export function initLibrary(lib: SdfItem[]): TemplateLibrary {
   return {
     type: 'TMPL_INIT',
     data: { lib },
@@ -76,7 +76,7 @@ export default async function initTmplLib(
 
   const res = await deserializeSdfTemplates(baseUrl, cacheEl, fileName);
   const lib = [...res, ...userTmpls()];
-  dispatch(initLib(lib));
+  dispatch(initLibrary(lib));
   dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
   if (shouldReinitializeTemplateLibrary) {
     reinitializeTemplateLibrary();

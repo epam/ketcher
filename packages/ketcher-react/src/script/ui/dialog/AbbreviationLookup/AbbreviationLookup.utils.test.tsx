@@ -20,12 +20,12 @@ import {
   getOptionLabel,
   getSimilarity,
   highlightOptionLabel,
-} from './AbbreviationLookup.utils';
+} from './AbbreviationLookup.utilities';
 import type { AbbreviationOption } from './AbbreviationLookup.types';
 import {
   createGenericOption,
   createOption,
-} from './AbbreviationLookup.test.utils';
+} from './AbbreviationLookup.test.utilities';
 
 describe('AbbreviationLookup Utils', () => {
   describe('highlightOptionLabel', () => {

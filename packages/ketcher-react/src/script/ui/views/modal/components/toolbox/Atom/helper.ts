@@ -4,7 +4,7 @@ import {
   atom as atomSchema,
   CUSTOM_QUERY_MAX_LENGTH,
 } from '../../../../../data/schema/struct-schema';
-import { matchCharge } from 'src/script/ui/data/utils';
+import { matchCharge } from 'src/script/ui/data/utilities';
 
 export function atomValid(
   label: string,

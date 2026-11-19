@@ -12,7 +12,7 @@ import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
-import { getDifference, rotatePoint } from './rotate-controller.utils';
+import { getDifference, rotatePoint } from './rotate-controller.utilities';
 import { normalizeAngle } from '../utils/normalizeAngle';
 import FragmentSelectionTool from './fragmentSelection';
 
@@ -584,13 +584,13 @@ class RotateController implements RotateControllerContract {
   private getProtractorBaseInfo(radius: number) {
     const DEGREE_TEXT_MARGIN = 10;
 
-    const distBetweenDegree0TextAndCenter =
+    const distributionBetweenDegree0TextAndCenter =
       radius +
       STYLE.HANDLE_MARGIN +
       STYLE.HANDLE_RADIUS * 2 +
       DEGREE_TEXT_MARGIN;
     const centerDegree0TextVec = this.normalizedCenterInitialHandleVec.scaled(
-      distBetweenDegree0TextAndCenter,
+      distributionBetweenDegree0TextAndCenter,
     );
     const degree0TextPos = this.center.add(centerDegree0TextVec);
 
@@ -831,7 +831,7 @@ class RotateController implements RotateControllerContract {
   }, 40);
 
   private updateSnapAngleIndicator() {
-    const snapAngleDrawingProps = this.rotateTool.snapAngleDrawingProps;
+    const snapAngleDrawingProps = this.rotateTool.snapAngleDrawingProperties;
     if (
       snapAngleDrawingProps === null ||
       (snapAngleDrawingProps.snapMode === 'multiple-bonds' &&
@@ -919,4 +919,4 @@ class RotateController implements RotateControllerContract {
 }
 
 export default RotateController;
-export { getDifference } from './rotate-controller.utils';
+export { getDifference } from './rotate-controller.utilities';

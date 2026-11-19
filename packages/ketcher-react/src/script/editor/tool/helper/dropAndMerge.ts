@@ -103,28 +103,30 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
 
   const action = new Action();
 
-  mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
-    const sGroup = struct.sgroups.get(functionalGroupId) as SGroup;
+  mergeItems.atomToFunctionalGroup?.forEach(
+    (functionalGroupId, sourceAtomId) => {
+      const sGroup = struct.sgroups.get(functionalGroupId) as SGroup;
 
-    const { atomId: positionAtomId } = sGroup.getContractedPosition(
-      reStruct.molecule,
-    );
+      const { atomId: positionAtomId } = sGroup.getContractedPosition(
+        reStruct.molecule,
+      );
 
-    if (positionAtomId !== undefined) {
-      const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
-        (atomId) => atomId !== positionAtomId,
-      );
-      const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
-      action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
-      action.mergeWith(
-        fromFragmentDeletion(reStruct, {
-          atoms: atomsToDelete,
-          bonds: bondsToDelete,
-        }),
-      );
-      newMergeItems.atoms.set(srcAtomId, positionAtomId);
-    }
-  });
+      if (positionAtomId !== undefined) {
+        const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
+          (atomId) => atomId !== positionAtomId,
+        );
+        const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
+        action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
+        action.mergeWith(
+          fromFragmentDeletion(reStruct, {
+            atoms: atomsToDelete,
+            bonds: bondsToDelete,
+          }),
+        );
+        newMergeItems.atoms.set(sourceAtomId, positionAtomId);
+      }
+    },
+  );
 
   return [newMergeItems, action] as const;
 }

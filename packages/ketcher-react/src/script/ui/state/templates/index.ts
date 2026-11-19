@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { initLib } from './init-lib';
+import { initLibrary } from './init-lib';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
 import { isNumber } from 'lodash';
@@ -22,7 +22,7 @@ import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
 
-export { default as initTmplLib } from './init-lib';
+export { default as initTmplLibrary } from './init-lib';
 
 /*
 TEMPLATES
@@ -155,7 +155,7 @@ export function saveUserTmpl(struct) {
         tmpl.props = { ...attach, group: 'User Templates' };
 
         const lib = [...getState().templates.lib, tmpl];
-        dispatch(initLib(lib));
+        dispatch(initLibrary(lib));
         updateLocalStore(lib);
       } catch (e) {
         KetcherLogger.error('index.ts::saveUserTmpl', e);

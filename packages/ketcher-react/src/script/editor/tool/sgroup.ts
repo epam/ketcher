@@ -779,24 +779,24 @@ class SGroupTool implements Tool {
       return Promise.resolve();
     }
 
-    let attrs;
+    let attributes;
     if (sg) {
-      attrs = sg.getAttrs();
-      if (!attrs.context)
-        attrs.context = getContextBySgroup(restruct, sg.atoms);
+      attributes = sg.getAttrs();
+      if (!attributes.context)
+        attributes.context = getContextBySgroup(restruct, sg.atoms);
     } else {
-      attrs = {
+      attributes = {
         context: getContextBySelection(restruct, selection),
       };
     }
 
-    const res = editor.event.sgroupEdit.dispatch({
+    const result = editor.event.sgroupEdit.dispatch({
       type: sg?.type,
-      attrs,
+      attrs: attributes,
     });
 
     try {
-      const newSg = (await Promise.resolve(res)) as SGroupDialogResult;
+      const newSg = (await Promise.resolve(result)) as SGroupDialogResult;
       // TODO: check before signal
       const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
       const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
@@ -841,8 +841,8 @@ class SGroupTool implements Tool {
         }
         editor.selection(null);
       }
-    } catch (e) {
-      KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+    } catch (error) {
+      KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
     }
   }
 }
@@ -936,11 +936,11 @@ function fromContextType(
   id: number | null,
   editor: Editor,
   newSg: SGroupDialogResult,
-  currSelection: Selection,
+  currentSelection: Selection,
 ) {
   const restruct = editor.render.ctab;
   const sg = id === null ? undefined : restruct.molecule.sgroups.get(id);
-  const sourceAtoms = sg?.atoms ?? currSelection.atoms ?? [];
+  const sourceAtoms = sg?.atoms ?? currentSelection.atoms ?? [];
   const context = newSg.attrs.context;
 
   if (
@@ -955,10 +955,10 @@ function fromContextType(
     restruct,
     newSg,
     sourceAtoms,
-    currSelection,
+    currentSelection,
   );
 
-  result.selection = result.selection || currSelection;
+  result.selection = result.selection || currentSelection;
 
   if (id !== null && id !== undefined) {
     result.action = result.action.mergeWith(fromSgroupDeletion(restruct, id));
@@ -974,12 +974,12 @@ function anyChainedBonds(bonds: Array<Bond>) {
     return true;
   }
 
-  for (let i = 0; i < bonds.length; ++i) {
-    const fixedBond = bonds[i];
-    for (let j = 0; j < bonds.length; ++j) {
-      if (i === j) continue;
+  for (let index = 0; index < bonds.length; ++index) {
+    const fixedBond = bonds[index];
+    for (let index_ = 0; index_ < bonds.length; ++index_) {
+      if (index === index_) continue;
 
-      const bond = bonds[j];
+      const bond = bonds[index_];
 
       if (fixedBond.end === bond.begin || fixedBond.end === bond.end) {
         return true;
@@ -1008,7 +1008,8 @@ function countOfSelectedComponents(
   const atomSet = new Pile<number>(atoms);
 
   return [...restruct.connectedComponents.values()].reduce(
-    (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
+    (accumulator: number, component) =>
+      accumulator + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );
 }

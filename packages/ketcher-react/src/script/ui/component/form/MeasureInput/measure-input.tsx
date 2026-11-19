@@ -41,7 +41,7 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProps extends Omit<
+interface MeasureInputProperties extends Omit<
   HTMLAttributes<HTMLDivElement>,
   'onChange'
 > {
@@ -79,13 +79,13 @@ const getNewFloat = (value: string): GetNewFloatResult => {
 };
 
 const getNewInternalValue = (
-  prevValue: string,
+  previousValue: string,
   endorcedValue: string,
 ): string => {
   const newValueEndsWithDot = endorcedValue?.endsWith('.');
-  const prevValueHasDot = prevValue?.includes('.');
-  const isDotDeleted = prevValueHasDot && newValueEndsWithDot;
-  const isDotAdded = !prevValueHasDot && newValueEndsWithDot;
+  const previousValueHasDot = previousValue?.includes('.');
+  const isDotDeleted = previousValueHasDot && newValueEndsWithDot;
+  const isDotAdded = !previousValueHasDot && newValueEndsWithDot;
 
   if (isDotDeleted) {
     return endorcedValue.replace(/\.$/, '');
@@ -116,18 +116,19 @@ const MeasureInput = ({
   className,
   tooltip,
   ...rest
-}: MeasureInputProps) => {
+}: MeasureInputProperties) => {
   const stringifiedValue = String(value);
   const [internalValue, setInternalValue] = useState(stringifiedValue);
-  const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
+  const [previousPropertyValue, setPreviousPropertyValue] =
+    useState(stringifiedValue);
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
 
-  if (prevPropValue !== stringifiedValue) {
-    setPrevPropValue(stringifiedValue);
+  if (previousPropertyValue !== stringifiedValue) {
+    setPreviousPropertyValue(stringifiedValue);
     setInternalValue(stringifiedValue);
   }
 

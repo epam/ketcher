@@ -397,7 +397,7 @@ ClipArea
 export function initClipboard(
   dispatch: ThunkDispatch<StoreState, unknown, Action<string>>,
   getState: () => StoreState,
-): clipArea.ClipAreaProps {
+): clipArea.ClipAreaProperties {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
   );

@@ -22,7 +22,7 @@ interface Schema {
   enumNames: string[];
 }
 
-interface ComboBoxProps {
+interface ComboBoxProperties {
   value: string;
   type?: string;
   schema: Schema;
@@ -33,9 +33,9 @@ interface ComboBoxState {
   suggestsHidden: boolean;
 }
 
-class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
-  constructor(props: ComboBoxProps) {
-    super(props);
+class ComboBox extends Component<ComboBoxProperties, ComboBoxState> {
+  constructor(properties: ComboBoxProperties) {
+    super(properties);
     this.state = {
       suggestsHidden: true,
     };

@@ -98,7 +98,7 @@ class TextTool implements Tool {
     this.editor.hover(null);
 
     if (!closestItem) {
-      propsDialog(
+      propertiesDialog(
         this.editor,
         null,
         CoordinateTransformation.pageToModel(event, render),
@@ -114,14 +114,14 @@ class TextTool implements Tool {
     this.editor.hover(null);
 
     if (closestItem?.map === 'texts') {
-      propsDialog(this.editor, closestItem.id);
+      propertiesDialog(this.editor, closestItem.id);
     }
 
     return true;
   }
 }
 
-function propsDialog(
+function propertiesDialog(
   editor: Editor,
   id: number | null,
   position?: Vec2,
@@ -132,7 +132,7 @@ function propsDialog(
     id || id === 0 ? (struct.texts.get(id) ?? null) : null;
   const origilContent = text ? text.content : '';
 
-  const res = editor.event.elementEdit.dispatch({
+  const result = editor.event.elementEdit.dispatch({
     content: origilContent,
     id,
     position,
@@ -140,7 +140,7 @@ function propsDialog(
     type: 'text',
   });
 
-  void res
+  void result
     .then(({ content }) => {
       if (!id && id !== 0 && content && position && pos) {
         editor.update(

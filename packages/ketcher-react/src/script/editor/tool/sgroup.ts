@@ -754,7 +754,7 @@ class SGroupTool implements Tool {
     this.editor.selection(null);
   }
 
-  static sgroupDialog(editor: Editor, id: number | null) {
+  static async sgroupDialog(editor: Editor, id: number | null) {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() ?? {};
@@ -763,7 +763,7 @@ class SGroupTool implements Tool {
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
     if (id !== null && sg?.isMonomer) {
       editor.event.editMonomer.dispatch({ fgIds: [id], variant: 'single' });
-      return Promise.resolve();
+      return;
     }
 
     if (sg?.isMonomer) {
@@ -795,57 +795,55 @@ class SGroupTool implements Tool {
       attrs,
     });
 
-    return Promise.resolve(res)
-      .then((newSg: SGroupDialogResult) => {
-        // TODO: check before signal
-        const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
-        const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
+    try {
+      const newSg = (await Promise.resolve(res)) as SGroupDialogResult;
+      // TODO: check before signal
+      const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
+      const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
+      if (
+        !isDataSGroup && // when data s-group separates
+        !isQuerySGroup &&
+        checkOverlapping(struct, 'common', selection.atoms)
+      ) {
+        editor.event.message.dispatch({
+          error: 'Partial S-group overlapping is not allowed.',
+        });
+      } else {
         if (
-          !isDataSGroup && // when data s-group separates
+          !sg &&
+          !isDataSGroup &&
           !isQuerySGroup &&
-          checkOverlapping(struct, 'common', selection.atoms)
+          (!selection.atoms || selection.atoms.length === 0)
         ) {
-          editor.event.message.dispatch({
-            error: 'Partial S-group overlapping is not allowed.',
-          });
-        } else {
-          if (
-            !sg &&
-            !isDataSGroup &&
-            !isQuerySGroup &&
-            (!selection.atoms || selection.atoms.length === 0)
-          ) {
-            return;
-          }
-
-          const canReplaceExistingDataSg =
-            sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
-
-          if (sg && canReplaceExistingDataSg) {
-            const action = fromSeveralSgroupAddition(
-              restruct,
-              newSg.type,
-              sg.atoms,
-              newSg.attrs,
-            ).mergeWith(fromSgroupDeletion(restruct, id));
-
-            editor.update(action);
-            editor.selection(selection);
-            return;
-          }
-          const result = isQuerySGroup
-            ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
-            : fromContextType(id, editor, newSg, selection);
-
-          if (result) {
-            editor.update(result.action);
-          }
-          editor.selection(null);
+          return;
         }
-      })
-      .catch((error) => {
-        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
-      });
+        const canReplaceExistingDataSg =
+          sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
+
+        if (sg && canReplaceExistingDataSg) {
+          const action = fromSeveralSgroupAddition(
+            restruct,
+            newSg.type,
+            sg.atoms,
+            newSg.attrs,
+          ).mergeWith(fromSgroupDeletion(restruct, id));
+
+          editor.update(action);
+          editor.selection(selection);
+          return;
+        }
+        const result = isQuerySGroup
+          ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
+          : fromContextType(id, editor, newSg, selection);
+
+        if (result) {
+          editor.update(result.action);
+        }
+        editor.selection(null);
+      }
+    } catch (e) {
+      KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+    }
   }
 }
 

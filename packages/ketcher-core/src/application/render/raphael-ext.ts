@@ -21,14 +21,8 @@ import type { RaphaelStatic } from 'raphael';
 
 type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
 
-// require() is unavailable in strict-ESM bundler output (e.g. Vite), so
-// guard against it the same way we guard against a missing `window` (SSR)
-const canRequireRaphael =
-  typeof globalThis.window !== 'undefined' && typeof require !== 'undefined';
-
-const raphaelModule: RaphaelModule | undefined = canRequireRaphael
-  ? require('raphael')
-  : undefined;
+const raphaelModule: RaphaelModule | undefined =
+  typeof globalThis.window === 'undefined' ? undefined : require('raphael');
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments

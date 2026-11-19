@@ -74,16 +74,16 @@ describe('BondTool rejected drag preview', () => {
   ] as const)(
     'clears the preview and reports a %s validation failure on mouseup',
     (failure, expectedMessage) => {
-      const update = jest.fn();
-      const errorHandler = jest.fn();
+      const update = vi.fn();
+      const errorHandler = vi.fn();
       const editor = {
         selection: () => null,
         update,
         errorHandler,
         render: { ctab: { molecule: new Struct() } },
-        event: { message: { dispatch: jest.fn() } },
-        hover: jest.fn(),
-        findItem: jest.fn().mockReturnValue(null),
+        event: { message: { dispatch: vi.fn() } },
+        hover: vi.fn(),
+        findItem: vi.fn().mockReturnValue(null),
       } as unknown as Editor;
       const tool = new BondTool(editor, {
         type: Bond.PATTERN.TYPE.HAPTIC,
@@ -129,18 +129,18 @@ describe('BondTool rejected drag preview', () => {
     );
     const { render } = createReStruct(struct);
     render.update(false);
-    const update = jest.fn((action: Action | true) => {
+    const update = vi.fn((action: Action | true) => {
       render.update(action === true);
     });
-    const errorHandler = jest.fn();
+    const errorHandler = vi.fn();
     const editor = {
       selection: () => null,
       update,
       errorHandler,
       render,
-      event: { message: { dispatch: jest.fn() } },
-      hover: jest.fn(),
-      findItem: jest.fn().mockReturnValue(null),
+      event: { message: { dispatch: vi.fn() } },
+      hover: vi.fn(),
+      findItem: vi.fn().mockReturnValue(null),
     } as unknown as Editor;
     const tool = new BondTool(editor, {
       type: Bond.PATTERN.TYPE.HAPTIC,

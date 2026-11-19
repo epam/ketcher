@@ -145,11 +145,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Set the ruler value to 210
      * 3. Verify that the ruler value is set to 210
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
+      {
+        disableChainLengthRuler: false,
+      },
     );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('210');
@@ -262,8 +262,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'KET/Bugs/structure-with-two-a.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheCanvas(page);
@@ -316,11 +317,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Set the ruler value to 1000
      * 3. Verify that the ruler value is set to 1000
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
+      {
+        disableChainLengthRuler: false,
+      },
     );
 
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
@@ -373,8 +374,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
@@ -575,8 +577,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'CHEM1{4aPEGMal]}$$$$V2.0',
     ];
     for (const helm of helmCases) {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(

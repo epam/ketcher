@@ -6,7 +6,7 @@ import {
 import { coreEditorTheme, polymerEditorTheme } from '../../mock-data';
 import { KetcherLogger, SettingsManager } from 'utilities';
 
-jest.mock('application/editor/data/monomers.ket', () => {
+vi.mock('application/editor/data/monomers.ket', () => {
   throw new Error('Failed to fetch dynamically imported module');
 });
 
@@ -35,21 +35,21 @@ describe('CoreEditor when the default monomers library fails to load', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should still apply monomers persisted in localStorage', async () => {
-    jest
-      .spyOn(SettingsManager, 'monomerLibraryUpdates', 'get')
-      .mockReturnValue([storedUpdate]);
-    jest.spyOn(KetcherLogger, 'error').mockImplementation();
+    vi.spyOn(SettingsManager, 'monomerLibraryUpdates', 'get').mockReturnValue([
+      storedUpdate,
+    ]);
+    vi.spyOn(KetcherLogger, 'error').mockImplementation(() => undefined);
 
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
-    const openErrorModalSpy = jest.fn();
+    const openErrorModalSpy = vi.fn();
     editor.events.openErrorModal.add(openErrorModalSpy);
 
     await editor.ensureDefaultMonomersLibraryLoaded();

@@ -6,7 +6,7 @@ import { configureAppStore } from 'state';
 import { showPreview } from 'state/common';
 import { BondPreviewState, PreviewType } from 'state/types';
 
-jest.mock('components/shared/ConnectionOverview/ConnectionOverview', () => ({
+vi.mock('components/shared/ConnectionOverview/ConnectionOverview', () => ({
   __esModule: true,
   default: ({
     firstMonomer,

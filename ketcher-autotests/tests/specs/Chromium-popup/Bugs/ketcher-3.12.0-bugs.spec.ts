@@ -328,8 +328,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      */
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, 120, 50);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).switchToCHEMTab();
     await Library(page).clickMonomerAutochain(Chem.Test_6_Ch);
     for (let i = 1; i <= 6; i++) {

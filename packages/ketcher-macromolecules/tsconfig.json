@@ -24,7 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["jest", "node", "react", "react-dom"],
+    "types": ["vitest/globals", "node", "react", "react-dom"],
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {

@@ -1315,7 +1315,7 @@ export class CoreEditor {
       this.events.keyDown.dispatch(event);
 
       if (!isPropagationStopped) {
-        this.mode.onKeyDown(event).catch((error) => {
+        void this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });
       }

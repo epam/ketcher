@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { Struct } from 'ketcher-core';
 import action, { type UiAction, type UiActionAction } from '../../../../action';
 import type { ToolbarStatus } from '../../toolbar.types';
 
@@ -26,7 +26,7 @@ interface TemplatesListProps {
   active?: {
     tool?: string;
     opts: {
-      struct: any;
+      struct: Struct;
     };
   };
   disableableButtons: string[];
@@ -46,7 +46,7 @@ const TemplatesList = (props: Props) => {
 
   const isTemplate = active?.tool === 'template';
 
-  const makeAction = (struct, index): UiAction => ({
+  const makeAction = (struct: Struct, index: number): UiAction => ({
     shortcut: action[`template-${index}`].shortcut,
     action: { tool: 'template', opts: { struct } },
     title: struct.name,

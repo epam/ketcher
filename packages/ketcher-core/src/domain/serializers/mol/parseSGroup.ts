@@ -380,13 +380,13 @@ function identityMap(array: number[]): Record<number, number> {
 }
 
 /**
- * Superatom attachment point parsing for 'ctab' v2000
- * Implemented based on: https://github.com/epam/ketcher/issues/2467
- * @param ctabString example '   1  1   2   0   '
- *        M SAP sssnn6 iii ooo cc
- *             ^
- *             start position for ctabString content
- */
+Superatom attachment point parsing for 'ctab' v2000
+Implemented based on: https://github.com/epam/ketcher/issues/2467
+@param ctabString example '   1  1   2   0   '
+       M SAP sssnn6 iii ooo cc
+            ^
+            start position for ctabString content
+*/
 function parseSGroupSAPLineV2000(ctabString: string): {
   sGroupId: number;
   attachmentPoints: SGroupAttachmentPoint[];

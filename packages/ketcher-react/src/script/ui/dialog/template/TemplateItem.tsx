@@ -62,9 +62,9 @@ function createKeyDownHandler(callback: () => void) {
 }
 
 /**
- * Memoized individual template item component
- * Prevents unnecessary re-renders when parent selection changes
- */
+Memoized individual template item component
+Prevents unnecessary re-renders when parent selection changes
+*/
 export interface TemplateItemProps {
   tmpl: Template;
   index: number;

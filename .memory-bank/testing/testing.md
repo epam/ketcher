@@ -144,6 +144,11 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+Docker tests use the standalone build served inside the container at
+`http://127.0.0.1:4002`, a secure context for clipboard access. Set
+`DOCKER_KETCHER_URL` to test an external deployment instead; clipboard tests
+require an HTTPS URL.
+
 ### Local run caveats
 
 - **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.

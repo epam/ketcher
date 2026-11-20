@@ -21,6 +21,7 @@
  * tests in scripts/invariant-rules.test.mjs assert that every allowlist entry
  * still suppresses at least one real violation, so the lists cannot go stale.
  */
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 /** Modules that pull React or UI frameworks in. Used by A4 and A5. */
@@ -369,6 +370,25 @@ const isImportSourceNode = (node) => {
   }
 };
 
+let coreDependencies;
+
+/**
+ * The dependencies ketcher-core declares, read once from its package.json.
+ * `ui-deps-in-core` checks them when the config passes no `forbiddenDeps`, so
+ * a config file needs no copy of the list.
+ */
+const getCoreDependencies = () => {
+  coreDependencies ??= Object.keys(
+    JSON.parse(
+      readFileSync(
+        new URL('../packages/ketcher-core/package.json', import.meta.url),
+        'utf8',
+      ),
+    ).dependencies ?? {},
+  );
+  return coreDependencies;
+};
+
 export const rules = {
   'domain-no-application-imports': {
     meta: {
@@ -466,9 +486,9 @@ export const rules = {
       ],
     },
     create(context) {
-      const forbidden = (context.options?.[0]?.forbiddenDeps ?? []).filter(
-        (dep) => FRAMEWORK_DEPENDENCY_PATTERN.test(dep),
-      );
+      const forbidden = (
+        context.options?.[0]?.forbiddenDeps ?? getCoreDependencies()
+      ).filter((dep) => FRAMEWORK_DEPENDENCY_PATTERN.test(dep));
       if (forbidden.length === 0) {
         return {};
       }

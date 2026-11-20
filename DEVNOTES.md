@@ -185,11 +185,13 @@ prettier
 prettier:write
 ```
 
-### Start eslint
+### Start oxlint
 
 ```sh
-test:lint
+npm run lint
 ```
+
+This lints `packages` and `scripts` with `.oxlintrc.json`. In one package, `npm run test:oxlint` lints it and `npm run test:oxlint:fix` fixes what it can.
 
 ### Start stylelint
 
@@ -209,7 +211,7 @@ npm test
 
 `npm install` sets up the hooks with husky. They check only the files you change:
 
-- `pre-commit` runs lint-staged on the staged files: Prettier, ESLint, and stylelint (`.lintstagedrc.json`).
+- `pre-commit` runs lint-staged on the staged files: Prettier, Oxlint, and stylelint (`.lintstagedrc.json`).
 - `pre-push` runs the Vitest tests related to the files your branch changes against `origin/master`, one run per package (`lint-staged.pre-push.mjs`).
 
 A new git worktree gets the hooks when you run `npm install` or `npx husky` in it.

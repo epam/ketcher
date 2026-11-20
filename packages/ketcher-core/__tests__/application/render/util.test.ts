@@ -25,8 +25,8 @@ describe('util', () => {
   describe('chooseNonOverlappingLabelPlacement()', () => {
     it('falls back to zero extra distance when every placement overlaps', () => {
       const directions = [new Vec2(1, 0), new Vec2(0, 1)];
-      const getLabelBox = jest.fn(() => new Box2Abs(8, 8, 12, 12));
-      const getLabelDistance = jest.fn();
+      const getLabelBox = vi.fn(() => new Box2Abs(8, 8, 12, 12));
+      const getLabelDistance = vi.fn();
 
       const placement = util.chooseNonOverlappingLabelPlacement(
         directions,

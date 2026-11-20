@@ -2,7 +2,7 @@
 name: prepare-release
 description: Bump Ketcher package versions and open a bump-X.Y PR (new candidate, candidate update, promote to public, or public patch)
 disable-model-invocation: true
-argument-hint: <mode: new-candidate|update-candidate|promote-public|patch-public> <X.Y>
+argument-hint: '<mode: new-candidate|update-candidate|promote-public|patch-public> <X.Y>'
 ---
 
 # Prepare a Ketcher release (version bump)

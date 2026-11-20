@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
@@ -6,7 +7,7 @@ import { Vec2 } from 'domain/entities';
 
 describe('TransientDrawingView', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     document.body.innerHTML = '';
   });
 
@@ -20,13 +21,13 @@ describe('TransientDrawingView', () => {
     svg.appendChild(drawingLayer);
     document.body.appendChild(svg);
 
-    jest
-      .spyOn(Coordinates, 'modelToCanvas')
-      .mockImplementation((position) => position);
+    vi.spyOn(Coordinates, 'modelToCanvas').mockImplementation(
+      (position) => position,
+    );
     const autochainView = AutochainPreviewView as unknown as {
-      showSingleMonomerPreview: jest.Mock;
+      showSingleMonomerPreview: Mock;
     };
-    const showSingleMonomerPreview = jest
+    const showSingleMonomerPreview = vi
       .spyOn(autochainView, 'showSingleMonomerPreview')
       .mockReturnValue({ width: 10, height: 10 });
     const transientDrawingView = new TransientDrawingView();

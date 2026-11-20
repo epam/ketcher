@@ -86,19 +86,13 @@ export class FormatterFactory {
       (isLoading && Boolean(structServiceOptions['dearomatize-on-load']));
 
     switch (format) {
-      case SupportedFormat.ket:
+      case SupportedFormat.ket: {
         formatter = new KetFormatter(new KetSerializer());
         break;
+      }
 
-      case SupportedFormat.mol:
-        if (shouldDelegateToIndigo) {
-          formatter = new ServerFormatter(
-            this.#structService,
-            new KetSerializer(),
-            format,
-            structServiceOptions,
-          );
-        } else if (struct && isMolfileV2000LimitExceeded(struct)) {
+      case SupportedFormat.mol: {
+        if (struct && isMolfileV2000LimitExceeded(struct)) {
           // V2000 cannot address more than 999 atoms/bonds, so oversized
           // structures are delegated to Indigo, which upgrades them to V3000.
           formatter = new ServerFormatter(
@@ -107,12 +101,20 @@ export class FormatterFactory {
             SupportedFormat.molAuto,
             structServiceOptions,
           );
+        } else if (shouldDelegateToIndigo) {
+          formatter = new ServerFormatter(
+            this.#structService,
+            new KetSerializer(),
+            format,
+            structServiceOptions,
+          );
         } else {
           formatter = new MolfileV2000Formatter(
             new MolSerializer(molSerializerOptions),
           );
         }
         break;
+      }
 
       case SupportedFormat.cml:
       case SupportedFormat.inChIAuxInfo:
@@ -128,13 +130,14 @@ export class FormatterFactory {
       case SupportedFormat.binaryCdx:
       case SupportedFormat.unknown:
       case SupportedFormat.rxn:
-      default:
+      default: {
         formatter = new ServerFormatter(
           this.#structService,
           new KetSerializer(),
           format,
           structServiceOptions,
         );
+      }
     }
 
     return formatter;

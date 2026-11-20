@@ -194,11 +194,11 @@ export class Struct {
   }
 
   hasRxnArrow(): boolean {
-    return this.rxnArrows.size >= 1;
+    return this.rxnArrows.size > 0;
   }
 
   hasMultitailArrow(): boolean {
-    return this.multitailArrows.size >= 1;
+    return this.multitailArrows.size > 0;
   }
 
   hasRxnPluses(): boolean {
@@ -223,7 +223,7 @@ export class Struct {
   }
 
   isSingleGroup(): boolean {
-    if (!this.sgroups.size || this.sgroups.size > 1) return false;
+    if (this.sgroups.size === 0 || this.sgroups.size > 1) return false;
     const sgroup = this.sgroups.values().next().value; // get sgroup from map
     return sgroup !== undefined && this.atoms.size === sgroup.atoms.length;
   }
@@ -569,28 +569,35 @@ export class Struct {
       }
 
       switch (bond.type) {
-        case Bond.PATTERN.TYPE.SINGLE:
+        case Bond.PATTERN.TYPE.SINGLE: {
           conn += 1;
           break;
-        case Bond.PATTERN.TYPE.DOUBLE:
+        }
+        case Bond.PATTERN.TYPE.DOUBLE: {
           conn += 2;
           break;
-        case Bond.PATTERN.TYPE.TRIPLE:
+        }
+        case Bond.PATTERN.TYPE.TRIPLE: {
           conn += 3;
           break;
+        }
         case Bond.PATTERN.TYPE.DATIVE:
-        case Bond.PATTERN.TYPE.HYDROGEN:
+        case Bond.PATTERN.TYPE.HYDROGEN: {
           break;
-        case Bond.PATTERN.TYPE.HAPTIC:
+        }
+        case Bond.PATTERN.TYPE.HAPTIC: {
           if (!isAllowedNonAttachmentGroupHapticBondMetal(atom)) {
             conn += 1;
           }
           break;
-        case Bond.PATTERN.TYPE.AROMATIC:
+        }
+        case Bond.PATTERN.TYPE.AROMATIC: {
           if (atom.neighbors.length === 1) return [-1, true];
           return [atom.neighbors.length, true];
-        default:
+        }
+        default: {
           return [-1, false];
+        }
       }
     }
     return [conn, false];
@@ -1042,7 +1049,6 @@ export class Struct {
   getAvgClosestAtomDistance(): number {
     let totalDist = 0;
     let minDist;
-    let dist: number;
     const keys = [...this.atoms.keys()];
     let k;
     let j;
@@ -1054,7 +1060,7 @@ export class Struct {
         const atomK = this.atoms.get(keys[k]);
         assert(atomJ, `Atom ${keys[j]} not found`);
         assert(atomK, `Atom ${keys[k]} not found`);
-        dist = Vec2.dist(atomJ.pp, atomK.pp);
+        const dist = Vec2.dist(atomJ.pp, atomK.pp);
         if (minDist < 0 || minDist > dist) minDist = dist;
       }
       totalDist += minDist;
@@ -1121,7 +1127,7 @@ export class Struct {
   findConnectedComponents(shouldDiscardExistingFragments?: boolean) {
     // NB: this is a hack
     // TODO: need to maintain half-bond and neighbor structure permanently
-    if (!this.halfBonds.size) {
+    if (this.halfBonds.size === 0) {
       this.initHalfBonds();
       this.initNeighbors();
       const endpointIds = [

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -23,7 +22,7 @@ import {
 } from '../ToolbarGroupItem';
 
 import { ArrowScroll } from '../ArrowScroll';
-import { AtomsList } from './AtomsList';
+import { type AtomsListProps, AtomsList } from './AtomsList';
 import { basicAtoms } from '../../../action/atoms';
 import classes from './RightToolbar.module.less';
 import clsx from 'clsx';
@@ -41,11 +40,8 @@ interface RightToolbarProps extends Omit<
   'id' | 'options'
 > {
   className?: string;
-  active?: {
-    opts: any;
-    tool: string;
-  };
-  freqAtoms: any[];
+  active?: AtomsListProps['active'];
+  freqAtoms: string[];
 }
 
 type RightToolbarCallProps = ToolbarGroupItemCallProps;

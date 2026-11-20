@@ -337,8 +337,7 @@
             "y": -2.75
         },
         "alias": "meM",
-        "templateId": "meM___N-Methyl-Methionine",
-        "seqid": 4
+        "templateId": "meM___N-Methyl-Methionine"
     },
     "monomer4": {
         "type": "monomer",

@@ -34,11 +34,13 @@ class MonomerTool implements BaseTool {
   private monomerPreviewRenderer:
     BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
 
+  private readonly monomer: MonomerOrAmbiguousType;
+
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
-  private readonly monomer: MonomerOrAmbiguousType;
+
   constructor(
     private readonly editor: CoreEditor,
     ...args: unknown[]

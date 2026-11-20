@@ -13,7 +13,6 @@ export const test = mergeTests(utils, pageObjects).extend<
       ketcher,
       CommonTopRightToolbar,
       CommonTopLeftToolbar,
-      MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
       resetClipboard,
@@ -21,8 +20,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     use,
   ) => {
     const page = ketcher.page as Page;
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await use();
@@ -36,14 +34,10 @@ export const test = mergeTests(utils, pageObjects).extend<
     await resetClipboard(page);
   },
   initSequenceCanvas: [
-    async (
-      { createPage, CommonTopRightToolbar, MacromoleculesTopToolbar },
-      use,
-    ) => {
+    async ({ createPage, CommonTopRightToolbar }, use) => {
       await use(async () => {
         const page = await createPage();
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Sequence,
         );
         return page;

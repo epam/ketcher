@@ -789,7 +789,7 @@ export class SGroup {
       }
     });
 
-    if (xBonds.length !== 0 && xBonds.length !== 2) {
+    if (xBonds.length > 0 && xBonds.length !== 2) {
       throw new Error('Unsupported cross-bonds number');
     }
 

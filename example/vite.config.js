@@ -83,16 +83,12 @@ const PACKAGE_TS_PATHS = Object.fromEntries(
   }),
 );
 
-const getImporterPackageName = (importer) => {
-  return importer?.match(/packages[\\/](.*?)(?:[\\/]|$)/)?.[1];
-};
-
 const resolvePackageAlias = (source, importer) => {
   if (!importer || source.startsWith('.') || source.startsWith('\0')) {
     return null;
   }
 
-  const packageName = getImporterPackageName(importer);
+  const packageName = importer?.match(/packages[\\/](.*?)(?:[\\/]|$)/)?.[1];
 
   if (!packageName) {
     return null;

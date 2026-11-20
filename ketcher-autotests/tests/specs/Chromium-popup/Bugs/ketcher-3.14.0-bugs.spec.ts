@@ -114,7 +114,7 @@ test.describe('Bugs: ketcher-3.14.0', () => {
     const options = page.getByRole('option');
     const optionTexts = await options.allTextContents();
     // Verify Copolymer is in the list
-    expect(optionTexts).toContain('Copolymer');
+    expect(optionTexts).toContain('Copolymer (co)');
 
     // Close dropdown and dialog
     await page.keyboard.press('Escape');

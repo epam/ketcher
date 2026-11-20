@@ -10,6 +10,7 @@ Spec: [openspec/specs/templates-and-groups/spec.md](../../openspec/specs/templat
 - _Aromatize_ / _Dearomatize_ do not apply to rings that are part of a functional group.
 - Individual atoms/bonds of an abbreviation are inaccessible until the abbreviation is removed.
 - A neighbouring fragment that itself contains further abbreviations is repositioned by an approximate row-based heuristic rather than by exact bond geometry, so expanding or contracting a chain of abbreviations can still distort the bonds between them.
+- The Block copolymer subtype is stored and saved as `blo` / `BLO` (the MDL and Indigo value); the dialog and the bracket label show the standard abbreviation `blk`.
 - This is a **molecules-mode** feature.
 
 ## Related

@@ -378,11 +378,11 @@
       },
       "sgroup": {
         "variantData": "Data",
-        "variantMultipleGroup": "Multiple group",
+        "variantMultipleGroup": "Multiple group (#)",
         "mulCount": {
           "title": "Repeat count"
         },
-        "variantSruPolymer": "SRU polymer",
+        "variantSruPolymer": "SRU polymer (n)",
         "subscript": {
           "title": "Polymer label",
           "invalidMessage": "SRU subscript should not be empty and contain double quotes"
@@ -393,13 +393,13 @@
           "enumHeadToHead": "Head-to-head",
           "enumEitherUnknown": "Either unknown"
         },
-        "variantCopolymer": "Copolymer",
+        "variantCopolymer": "Copolymer (co)",
         "subtype": {
           "title": "Subtype",
           "enumBlank": "<Blank>",
-          "enumRandom": "Random",
-          "enumBlock": "Block",
-          "enumAlternating": "Alternating"
+          "enumRandom": "Random (ran)",
+          "enumBlock": "Block (blk)",
+          "enumAlternating": "Alternating (alt)"
         },
         "variantSuperatom": "Superatom",
         "name": {

@@ -1,4 +1,4 @@
-import { Page, test } from '@fixtures';
+import { expect, Page, test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheCanvas,
@@ -12,6 +12,7 @@ import {
   getCachedBodyCenter,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -47,6 +48,7 @@ import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
+import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -692,6 +694,23 @@ test.describe('Templates - Functional Group Tools3', () => {
     const atomToolbar = RightToolbar(page);
     const commonLeftToolbar = CommonLeftToolbar(page);
     const leftToolbar = LeftToolbar(page);
+    const abbreviation = getAbbreviationLocator(page, {
+      name: FunctionalGroupsTabItems.CO2Et,
+    });
+    const preview = AbbreviationPreviewTooltip(page);
+    const contextMenu = ContextMenu(page, abbreviation);
+    const takeContextMenuScreenshot = async () => {
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    };
+    const openContextMenuAndCapturePreview = async () => {
+      await abbreviation.hover();
+      await expect(preview.window).toBeVisible();
+      await clickInTheMiddleOfTheCanvas(page, 'right');
+      await expect(contextMenu.contextMenuBody).toBeVisible();
+      await expect(preview.window).toBeVisible();
+      await takeEditorScreenshot(page);
+    };
 
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectFunctionalGroup(
@@ -701,63 +720,60 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await commonLeftToolbar.handTool();
     await commonLeftToolbar.areaSelectionDropdownButton.click();
-    await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await openContextMenuAndCapturePreview();
 
     await commonLeftToolbar.eraseButton.click();
-    await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await openContextMenuAndCapturePreview();
 
     await commonLeftToolbar.bondTool(MicroBondTool.Single);
-    await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await openContextMenuAndCapturePreview();
 
     await leftToolbar.chain();
-    await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await openContextMenuAndCapturePreview();
 
     await leftToolbar.chargePlus();
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await leftToolbar.chargeMinus();
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await leftToolbar.sGroup();
-    await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await openContextMenuAndCapturePreview();
 
     await leftToolbar.selectRGroupTool(RGroupType.RGroupLabel);
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await leftToolbar.selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await leftToolbar.selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await leftToolbar.selectRGroupTool(RGroupType.RGroupLabel);
     await clickInTheMiddleOfTheCanvas(page, 'right');
+    await expect(contextMenu.contextMenuBody).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(contextMenu.contextMenuBody).toBeHidden();
 
     await leftToolbar.selectShapeTool(ShapeType.Ellipse);
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await leftToolbar.text();
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await takeContextMenuScreenshot();
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickInTheMiddleOfTheCanvas(page, 'right');
-    await takeEditorScreenshot(page);
+    await openContextMenuAndCapturePreview();
   });
 
   test('Expand/Contract/Remove Abbreviation with multiple FG', async () => {

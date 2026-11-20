@@ -682,9 +682,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
     (result, monomerItem) => {
       // separate monomers by NaturalAnalogCode
-      const code =
-        monomerItem.props.MonomerNaturalAnalogCode ||
-        NoNaturalAnalogueGroupCode;
+      const code = monomerItem.props.MonomerNaturalAnalogCode || 'X';
       if (!result[code]) {
         result[code] = [];
       }

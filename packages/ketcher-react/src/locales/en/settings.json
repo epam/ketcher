@@ -87,7 +87,12 @@
       "title": "Display valence"
     },
     "showHydrogenLabels": {
-      "title": "Display hydrogen labels explicitly"
+      "title": "Display hydrogen labels explicitly",
+      "enumOff": "Off",
+      "enumHetero": "Hetero",
+      "enumTerminal": "Terminal",
+      "enumTerminalAndHetero": "Terminal and Hetero",
+      "enumOn": "On"
     },
     "aromaticCircle": {
       "title": "Aromatic Bonds as circle"

@@ -22,8 +22,10 @@ export function getTextLabelLocator(
     .join('');
 
   if (options.text) {
-    return page.locator(`${attributeSelectors} >> text=${options.text}`);
+    return page
+      .locator(`${attributeSelectors} >> text=${options.text}`)
+      .filter({ visible: true });
   }
 
-  return page.locator(attributeSelectors);
+  return page.locator(attributeSelectors).filter({ visible: true });
 }

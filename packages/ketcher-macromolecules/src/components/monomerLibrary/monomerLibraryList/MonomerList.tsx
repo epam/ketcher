@@ -15,8 +15,10 @@
  ***************************************************************************/
 
 import { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import {
   FavoritesSectionTitle,
   FavoritesSubsectionTitle,
@@ -44,22 +46,26 @@ const MonomerList = ({
   duplicatePreset,
   editPreset,
 }: IMonomerListProps) => {
+  const { t } = useTranslation(['macromoleculesDialogs', 'macromolecules']);
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
   const favorites = useFavoritesGroups(monomers, presets);
 
   const renderMonomerGroups = (groups: Group[]) =>
-    groups.map(({ groupItems, groupTitle }) => (
-      <MonomerGroup
-        key={groupTitle}
-        title={groupTitle}
-        items={groupItems}
-        libraryName={libraryName}
-        onItemClick={onItemClick}
-        selectedMonomerUniqueKey=""
-      />
-    ));
+    groups.map(({ groupItems, groupTitle }) => {
+      const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
+      return (
+        <MonomerGroup
+          key={groupTitle}
+          title={resolvedTitle}
+          items={groupItems}
+          libraryName={libraryName}
+          onItemClick={onItemClick}
+          selectedMonomerUniqueKey=""
+        />
+      );
+    });
 
   if (isFavoriteTab) {
     const { peptides, rna, chem } = favorites;
@@ -114,10 +120,11 @@ const MonomerList = ({
   return (
     <MonomerListContainer>
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
+        const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
         return (
           <MonomerGroup
             key={groupTitle}
-            title={groups.length === 1 ? undefined : groupTitle}
+            title={groups.length === 1 ? undefined : resolvedTitle}
             items={groupItems}
             libraryName={libraryName}
             onItemClick={onItemClick}
@@ -128,10 +135,11 @@ const MonomerList = ({
       <>
         {libraryName === MONOMER_LIBRARY_PEPTIDES &&
           ambiguousMonomers.map((group) => {
+            const resolvedTitle = resolveLocalizedTitle(group.groupTitle, t);
             return (
               <MonomerGroup
                 key={group.groupTitle}
-                title={group.groupTitle}
+                title={resolvedTitle}
                 items={group.groupItems}
                 libraryName={libraryName}
                 onItemClick={onItemClick}

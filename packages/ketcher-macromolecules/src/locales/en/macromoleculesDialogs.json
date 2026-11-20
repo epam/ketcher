@@ -104,7 +104,13 @@
     "openFromFile": "Open from file",
     "openFromImage": "Open from image",
     "orDragFileHere": "or drag file here",
-    "imageRecognitionUnavailable": "Image Recognition service is not available"
+    "imageRecognitionUnavailable": "Image Recognition service is not available",
+    "formats": {
+      "sequence": "Sequence",
+      "peptide": "Peptide",
+      "oneLetterCode": "1-letter code",
+      "threeLetterCode": "3-letter code"
+    }
   },
   "save": {
     "title": "save structure",
@@ -114,7 +120,12 @@
     "convertError": "Convert error! {error}",
     "helmSmilesExportNotice": "The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer",
     "helmAliasExportNotice": "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
-    "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)"
+    "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)",
+    "formats": {
+      "sequence1Letter": "Sequence (1-letter code)",
+      "sequence3Letter": "Sequence (3-letter code)",
+      "svgDocument": "SVG Document"
+    }
   },
   "updateSequence": {
     "title": "Update sequence",

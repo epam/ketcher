@@ -46,8 +46,6 @@ export class ReMultitailArrow extends ReObject {
   static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
   static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
 
-  private testSelectionPoints: TestSelectionPoint[] = [];
-
   static isSelectable(): boolean {
     return true;
   }
@@ -60,6 +58,36 @@ export class ReMultitailArrow extends ReObject {
     }
     return null;
   }
+
+  static drawSingleLineHover(
+    builder: PathBuilder,
+    offset: number,
+    lineStart: Vec2,
+    lineEnd: Vec2,
+    verticalDirection: -1 | 1,
+    horizontalDirection: -1 | 1,
+  ): void {
+    const cubicBezierOffset =
+      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+    const start = lineStart.add(
+      new Vec2(offset * horizontalDirection, offset * verticalDirection),
+    );
+    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
+    builder
+      .addLine(start)
+      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
+        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
+      )
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
+        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
+      )
+      .addLine(end);
+  }
+
+  private testSelectionPoints: TestSelectionPoint[] = [];
 
   constructor(public multitailArrow: MultitailArrow) {
     super(MULTITAIL_ARROW_KEY);
@@ -100,33 +128,6 @@ export class ReMultitailArrow extends ReObject {
     referencePositions = this.getReferencePositions(renderOptions),
   ) {
     return this.multitailArrow.getReferenceLines(referencePositions);
-  }
-
-  static drawSingleLineHover(
-    builder: PathBuilder,
-    offset: number,
-    lineStart: Vec2,
-    lineEnd: Vec2,
-    verticalDirection: -1 | 1,
-    horizontalDirection: -1 | 1,
-  ): void {
-    const cubicBezierOffset = horizontalDirection * this.CUBIC_BEZIER_OFFSET;
-    const start = lineStart.add(
-      new Vec2(offset * horizontalDirection, offset * verticalDirection),
-    );
-    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
-    builder
-      .addLine(start)
-      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
-      .addQuadraticBezierCurve(
-        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
-        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
-      )
-      .addQuadraticBezierCurve(
-        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
-        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
-      )
-      .addLine(end);
   }
 
   buildFrame(renderOptions: RenderOptions): string {

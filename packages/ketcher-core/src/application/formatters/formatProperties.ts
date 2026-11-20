@@ -36,6 +36,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   molV3000: new SupportedFormatProperties(
     'MDL Molfile V3000',
@@ -49,6 +50,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.Rxn,
     ['.rxn'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   rxnV3000: new SupportedFormatProperties(
     'MDL Rxnfile V3000',
@@ -185,6 +187,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.RDF,
     ['.rdf'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   rdfV3000: new SupportedFormatProperties(
     'RDF V3000',

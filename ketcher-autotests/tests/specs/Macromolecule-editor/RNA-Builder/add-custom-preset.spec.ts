@@ -14,7 +14,6 @@ import { waitForPageInit } from '@utils/common';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -29,8 +28,9 @@ async function createRNA(page: Page) {
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await createRNA(page);
   });
 
@@ -57,8 +57,9 @@ test.describe('Macromolecules custom presets', () => {
     await waitForPageInit(page);
 
     // Click on POLYMER_TOGGLER
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
 
     // Click on <button> "RNA"
     await Library(page).switchToRNATab();

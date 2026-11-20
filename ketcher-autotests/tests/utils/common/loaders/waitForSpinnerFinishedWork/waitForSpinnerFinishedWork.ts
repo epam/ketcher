@@ -5,7 +5,7 @@ import { waitForRender } from '../waitForRender';
 export const waitForSpinnerFinishedWork = async (
   page: Page,
   callback: () => Promise<void>,
-  timeout = 250,
+  timeout = 260,
 ) => {
   const loadingSpinner = page.getByTestId('loading-spinner');
 

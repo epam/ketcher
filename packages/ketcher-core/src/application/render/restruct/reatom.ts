@@ -99,6 +99,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     rectangle: Element;
   };
 
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private expandedMonomerAttachmentPoints?: Element | null;
 
   // Number of visel.boxes entries that belong to the atom's own label
@@ -122,10 +126,6 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     this.color = '#000000';
     this.component = -1;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
@@ -1457,14 +1457,18 @@ export function getColorFromStereoLabel(
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
 
   switch (stereoLabelType) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return options.colorOfAndCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Or:
+    }
+    case StereoLabel.Or: {
       return options.colorOfOrCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Abs:
+    }
+    case StereoLabel.Abs: {
       return options.colorOfAbsoluteCenters;
-    default:
+    }
+    default: {
       return DEFAULT_STEREO_COLOR;
+    }
   }
 }
 
@@ -1502,20 +1506,25 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereoLabelStyleType.Off:
+    case StereoLabelStyleType.Off: {
       return false;
-    case StereoLabelStyleType.On:
+    }
+    case StereoLabelStyleType.On: {
       return true;
-    case StereoLabelStyleType.Classic:
+    }
+    case StereoLabelStyleType.Classic: {
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereoLabelStyleType.IUPAC:
+    }
+    case StereoLabelStyleType.IUPAC: {
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }
 
@@ -1662,6 +1671,20 @@ function addTooltip(node: SVGElement, text: string) {
   );
 }
 
+// Below 100% zoom, browsers round text metrics to whole screen pixels, which
+// inflates the measured size of labels drawn while zoomed out. Measure them
+// without hinting so the layout matches the one drawn at 100%.
+function getTextRelBox(path: Element, options: RenderOptions) {
+  if (options.zoom >= 1) {
+    return util.relBox(path.getBBox());
+  }
+
+  path.node.setAttribute('text-rendering', 'geometricPrecision');
+  const rbb = util.relBox(path.getBBox());
+  path.node.removeAttribute('text-rendering');
+  return rbb;
+}
+
 function buildLabel(
   atom: ReAtom,
   paper: Render['paper'],
@@ -1750,10 +1773,10 @@ function buildLabel(
     addTooltip(path.node, tooltip);
   }
 
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
-  let rightMargin = (rbb.width / 2) * Math.min(options.zoom, 1);
-  let leftMargin = (-rbb.width / 2) * Math.min(options.zoom, 1);
+  let rightMargin = rbb.width / 2;
+  let leftMargin = -rbb.width / 2;
 
   if (atom.a.atomList !== null) {
     const xShift =
@@ -1842,7 +1865,7 @@ function showHydroIndex(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
   const labelHeight = atom.label?.rbb.height ?? 0;
 
@@ -1863,7 +1886,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
   let path = paper.set();
   let hshift: number;
   switch (atom.a.radical) {
-    case 1:
+    case 1: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1872,12 +1895,14 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('fill', atom.color);
       break;
-    case 2:
+    }
+    case 2: {
       path = paper.set();
       path.push(draw.radicalBullet(paper, ps, options));
       path.attr('fill', atom.color);
       break;
-    case 3:
+    }
+    case 3: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1886,8 +1911,10 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('stroke', atom.color);
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
   const rbb = util.relBox(path.getBBox());
   const labelHeight = atom.label?.rbb.height ?? 0;
@@ -1911,7 +1938,7 @@ function showIsotope(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1944,7 +1971,7 @@ function showCharge(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1975,7 +2002,7 @@ function showExplicitValence(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -2014,7 +2041,7 @@ function showHydrogen(
     'font-size': options.fontszInPx,
     fill: atom.color,
   });
-  const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
+  const hydrogenRbb = getTextRelBox(hydrogenPath, options);
   draw.recenterText(hydrogenPath, hydrogenRbb);
   if (!isHydrogenOnLeft) {
     pathAndRBoxTranslate(
@@ -2032,7 +2059,7 @@ function showHydrogen(
       'font-size': options.fontszsubInPx,
       fill: atom.color,
     });
-    const hydroIndexRbb = util.relBox(hydroIndexPath.getBBox());
+    const hydroIndexRbb = getTextRelBox(hydroIndexPath, options);
     draw.recenterText(hydroIndexPath, hydroIndexRbb);
     hydroIndex = {
       text: hydroIndexText,
@@ -2043,9 +2070,7 @@ function showHydrogen(
       pathAndRBoxTranslate(
         hydroIndexPath,
         hydroIndexRbb,
-        data.rightMargin +
-          0.15 * hydroIndexRbb.width * Math.min(options.zoom, 1) +
-          delta,
+        data.rightMargin + 0.15 * hydroIndexRbb.width + delta,
         0.2 * (atom.label?.rbb.height ?? 0),
       );
       data.rightMargin += hydroIndexRbb.width + delta;
@@ -2064,11 +2089,7 @@ function showHydrogen(
     pathAndRBoxTranslate(
       hydrogenPath,
       hydrogenRbb,
-      data.leftMargin -
-        0.4 *
-          hydrogenRbb.width *
-          (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
-        delta,
+      data.leftMargin - 0.4 * hydrogenRbb.width - delta,
       0,
     );
     data.leftMargin -= hydrogenRbb.width + delta;

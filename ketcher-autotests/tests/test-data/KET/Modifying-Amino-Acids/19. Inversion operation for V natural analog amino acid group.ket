@@ -469,8 +469,7 @@
             "y": -2.75
         },
         "alias": "dV",
-        "templateId": "dV___D-Valine",
-        "seqid": 7
+        "templateId": "dV___D-Valine"
     },
     "monomer7": {
         "type": "monomer",

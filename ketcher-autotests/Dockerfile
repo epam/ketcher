@@ -1,3 +1,3 @@
-FROM mcr.microsoft.com/playwright:v1.62.1-jammy
+FROM mcr.microsoft.com/playwright:v1.65.0-jammy
 
 WORKDIR /app

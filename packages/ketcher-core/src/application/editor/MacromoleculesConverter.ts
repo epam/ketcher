@@ -405,7 +405,10 @@ export class MacromoleculesConverter {
     const monomerAdditionCommand =
       monomerMicromolecule.monomer instanceof AmbiguousMonomer
         ? drawingEntitiesManager.addAmbiguousMonomer(
-            monomerMicromolecule.monomer.variantMonomerItem,
+            {
+              ...monomerMicromolecule.monomer.variantMonomerItem,
+              seqId: monomerMicromolecule.monomer.monomerItem.seqId,
+            },
             monomerMicromolecule.monomer.position,
           )
         : drawingEntitiesManager.addMonomer(

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from './shared/utilities';
+import utils from './shared/utils';
 
 export const vectorUtils = {
   fracAngle: utils.fracAngle,
@@ -39,5 +39,5 @@ export * from './editorSettings';
 export * from './tools';
 export * from './MacromoleculesConverter';
 export * from './tools/types';
-export type { FlipDirection } from './shared/utilities.types';
+export type { FlipDirection } from './shared/utils.types';
 export type { LibraryItemDragState } from './editor.types';

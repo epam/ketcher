@@ -29,7 +29,7 @@ import { Action } from './action';
 import closest from '../shared/closest';
 import { fromAromaticTemplateOnBond } from './aromaticFusing';
 import { fromPaste, type CreatedItems } from './paste';
-import utils from '../shared/utilities';
+import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
 import { KetcherLogger } from 'utilities';

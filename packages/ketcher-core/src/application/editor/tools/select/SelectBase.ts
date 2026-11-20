@@ -33,7 +33,7 @@ import {
   SequenceRenderer,
 } from 'application/render';
 import type { MonomersAlignment } from 'application/editor/tools/types';
-import { vectorUtils } from 'application/editor/shared/vectorUtilities';
+import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,

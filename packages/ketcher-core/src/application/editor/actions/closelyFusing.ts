@@ -18,7 +18,7 @@ import { Action } from './action';
 import { checkAtomValence } from './atom';
 import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
-import utils from '../shared/utilities';
+import utils from '../shared/utils';
 import { isHapticBondWithAttachmentGroup } from 'domain/helpers/hapticBond';
 
 export function fromItemsFuse(restruct, items) {

@@ -17,7 +17,7 @@
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { inRange } from 'lodash';
-import type { BondAtoms, FlipDirection } from './utilities.types';
+import type { BondAtoms, FlipDirection } from './utils.types';
 
 let FRAC = Math.PI / 12; // '15º'
 

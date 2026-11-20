@@ -43,7 +43,7 @@ import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import type { ReSGroup, ReStruct } from '../../render';
-import utils from '../shared/utilities';
+import utils from '../shared/utils';
 import { fromSgroupAttachmentPointRemove } from './sgroupAttachmentPoint';
 
 export function fromBondAddition(

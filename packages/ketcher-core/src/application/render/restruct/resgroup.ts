@@ -27,9 +27,9 @@ import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../util';
 import { toFixed } from 'utilities';
-import BracketParams from '../bracket-params';
+import BracketParams from '../bracket-parameters';
 import type {
   Element as RaphaelElement,
   RaphaelPaper,
@@ -463,10 +463,10 @@ function SGroupdrawBrackets({
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning
-    const indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
+    const indexBox = Box2Abs.fromRelBox(utility.relBox(indexPath.getBBox()));
     const t =
       Math.max(
-        util.shiftRayBox(
+        utility.shiftRayBox(
           indexPos,
           bracketR.bracketAngleDirection.negated(),
           indexBox,
@@ -534,13 +534,13 @@ function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
   const name = showValue(paper, ps, sgroup, options);
 
   if (sgroup.data.context !== SgContexts.Bond) {
-    const box = util.relBox(name.getBBox());
+    const box = utility.relBox(name.getBBox());
     name.translateAbs(0.5 * box.width, -0.5 * box.height);
   }
 
   set.push(name);
 
-  const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
+  const sbox = Box2Abs.fromRelBox(utility.relBox(name.getBBox()));
   sgroup.dataArea = sbox.transform(Scale.canvasToModel, render.options);
 
   if (!restruct.sgroupData.has(sgroup.id)) {
@@ -564,10 +564,10 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
       if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
       p.x += options.lineWidth; // shift a bit to the right
       const nameI = showValue(paper, p, sgroup, options);
-      const boxI = util.relBox(nameI.getBBox());
+      const boxI = utility.relBox(nameI.getBBox());
       nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
       set.push(nameI);
-      let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
+      let sboxI = Box2Abs.fromRelBox(utility.relBox(nameI.getBBox()));
       sboxI = sboxI.transform(Scale.canvasToModel, render.options);
       sgroup.areas.push(sboxI);
     }

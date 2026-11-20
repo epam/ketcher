@@ -2,7 +2,7 @@ import { AttachmentPoint } from './AttachmentPoint';
 import type { Coordinates } from 'domain/helpers/attachmentPointCalculations';
 import type { PreviewAttachmentPointConstructorParams } from 'domain/types';
 import type { UsageInMacromolecule } from 'application/render';
-import util from 'application/render/util';
+import utility from 'application/render/util';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class PreviewAttachmentPoint extends AttachmentPoint {
@@ -43,7 +43,7 @@ export class PreviewAttachmentPoint extends AttachmentPoint {
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', '1px');
 
-    const { color, stroke, fill } = util.useLabelStyles(
+    const { color, stroke, fill } = utility.useLabelStyles(
       this.selected,
       this.connected,
       this.usage,

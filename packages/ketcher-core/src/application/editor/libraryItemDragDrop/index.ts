@@ -1,6 +1,6 @@
 export {
   LibraryItemDragDropHandler,
-  type LibraryItemDragDropHandlerDeps,
+  type LibraryItemDragDropHandlerDependencies,
   type IAutochainMonomerAddResult,
 } from './LibraryItemDragDropHandler';
 export type { DragDropModalContext } from './libraryItemDragDrop.types';

@@ -19,14 +19,14 @@ import { type RxnArrowMode, RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
-import Raphael from '../raphael-ext';
+import Raphael from '../raphael-extension';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../util';
 import { toFixed } from 'utilities';
 import type { RaphaelPaper, RaphaelSet } from 'raphael';
 
@@ -223,7 +223,7 @@ class ReRxnArrow extends ReObject {
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);
 
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
+    this.visel.add(path, Box2Abs.fromRelBox(utility.relBox(path.getBBox())));
   }
 }
 
@@ -237,8 +237,8 @@ function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
   }
   const length = Math.hypot(b.x - a.x, b.y - a.y);
   const lengthHyp = Math.hypot(length / 2, height);
-  const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1;
-  const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2;
+  const coordinates1 = utility.calcCoordinates(a, b, lengthHyp).pos1;
+  const coordinates2 = utility.calcCoordinates(a, b, lengthHyp).pos2;
 
   if (height > 0) {
     if (b.x < a.x) {

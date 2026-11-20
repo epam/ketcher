@@ -112,6 +112,17 @@ means check `dist/` by hand after changing it.
   the Settings select only).
 - **CSS Modules class names** follow `[name]_[local]__[hash:base64:5]` in react, macromolecules, and
   `example`, so consumers that match class names keep working. Guard: none.
+- **Example package chunk names describe their emitted modules.** `example/vite.config.js` assigns
+  package and vendor groups through `codeSplitting.groups`; package groups use
+  `includeDependenciesRecursively: false`, so a package name is matched only against modules whose
+  ids match that package's `getChunkName` rule instead of recursively capturing transitive
+  dependencies from the first matching package group. This keeps emitted names such as
+  `ketcher-macromolecules*`, `ketcher-react-*`, and `vendor-mui` aligned with the modules they
+  actually contain. A chunk whose name starts with `ketcher-macromolecules` is not allowed to
+  contain modules outside `packages/ketcher-macromolecules/src/` or
+  `packages/ketcher-macromolecules/node_modules/`. Guard: `ketcher-check-macromolecules-chunks`
+  in `example/vite.config.js`, exercised by `npm run test:build-config`; it fails the production
+  build on a name/content mismatch.
 - **Declarations come from `tsc`**, so a broken `tsconfig` fails the build.
 - **Transpilation is Vite's own.** `@rolldown/plugin-emotion` covers Emotion.
 - **One Vite version.** The four packages declare `^8.3.1`, `example` and `demo` pin `8.3.1`, and the

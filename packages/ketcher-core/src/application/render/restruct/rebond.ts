@@ -417,8 +417,8 @@ class ReBond extends ReObject {
     const paper = render.paper;
     const hb1Id = this.b.hb1;
     const hb2Id = this.b.hb2;
-    const hb1 = hb1Id === undefined ? null : struct.halfBonds.get(hb1Id);
-    const hb2 = hb2Id === undefined ? null : struct.halfBonds.get(hb2Id);
+    const hb1 = hb1Id === undefined ? undefined : struct.halfBonds.get(hb1Id);
+    const hb2 = hb2Id === undefined ? undefined : struct.halfBonds.get(hb2Id);
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
@@ -432,7 +432,7 @@ class ReBond extends ReObject {
       LayerMap.bondSkeleton,
       this.visel,
       this.path,
-      null,
+      undefined,
       true,
     );
     const reactingCenter: { path: Element | null; rbb?: RelativeBox } = {
@@ -445,7 +445,7 @@ class ReBond extends ReObject {
         LayerMap.data,
         this.visel,
         reactingCenter.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -459,7 +459,7 @@ class ReBond extends ReObject {
         LayerMap.data,
         this.visel,
         topology.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -1607,7 +1607,7 @@ function getBondMark(
 ) {
   const options = render.options;
   let mark: string;
-  let tooltip: string | null = null;
+  let tooltip: string | undefined;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
     if (bond.b.customQuery.length > 8) {

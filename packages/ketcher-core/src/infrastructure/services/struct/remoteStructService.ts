@@ -89,14 +89,11 @@ function parametrizeUrl(url: string, params: Record<string, string>) {
       }
 
       const key = segment.slice(1);
-      if (
-        Object.prototype.hasOwnProperty.call(params, key) &&
+      return Object.prototype.hasOwnProperty.call(params, key) &&
         params[key] !== undefined &&
         params[key] !== null
-      ) {
-        return String(params[key]);
-      }
-      return segment;
+        ? String(params[key])
+        : segment;
     })
     .join('');
 }
@@ -108,9 +105,10 @@ async function request<T = unknown>(
   headers?: Record<string, string>,
   responseHandler?: (promise: Promise<Response>) => Promise<T>,
 ): Promise<T> {
-  let requestUrl = url;
-  if (data && method === 'GET')
-    requestUrl = parametrizeUrl(url, data as Record<string, string>);
+  const requestUrl =
+    data && method === 'GET'
+      ? parametrizeUrl(url, data as Record<string, string>)
+      : url;
 
   const mergedHeaders = {
     Accept: 'application/json',

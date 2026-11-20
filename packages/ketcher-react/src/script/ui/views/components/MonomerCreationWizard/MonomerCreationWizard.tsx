@@ -120,11 +120,9 @@ const initialWizardState: WizardState = getInitialWizardState();
 
 /** "R2", "R2 and R3", "R1, R2 and R3" — for preset requirement messages. */
 const formatAttachmentPoints = (points: AttachmentPointName[]): string => {
-  if (points.length <= 1) {
-    return points[0] ?? '';
-  }
-
-  return `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
+  return points.length <= 1
+    ? (points[0] ?? '')
+    : `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
 };
 
 /**
@@ -1279,18 +1277,14 @@ const MonomerCreationWizardInternal = ({
   // `handleSubmit`/`handleDiscard`), so every recompute — including one that
   // resolves to an empty set — is always synced to the editor.
   const problematicAtomIds = useMemo(() => {
-    if (
-      !isRnaPresetType ||
+    return !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors ||
       !editor?.render?.monomerCreationState
-    ) {
-      return null;
-    }
-
-    return getRnaPresetStructureValidationResult(
-      editor.struct(),
-      rnaPresetComponentStructures,
-    ).problematicAtomIds;
+      ? null
+      : getRnaPresetStructureValidationResult(
+          editor.struct(),
+          rnaPresetComponentStructures,
+        ).problematicAtomIds;
   }, [
     editor,
     isRnaPresetType,
@@ -1852,11 +1846,9 @@ const MonomerCreationWizardInternal = ({
   const validateOnSubmit = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
   ) => {
-    if (isRnaPresetType) {
-      return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
-    } else {
-      return validateMonomerWizard(assignedAttachmentPointsByMonomer);
-    }
+    return isRnaPresetType
+      ? validateRnaPresetWizard(assignedAttachmentPointsByMonomer)
+      : validateMonomerWizard(assignedAttachmentPointsByMonomer);
   };
 
   const finishMonomerCreation = async (
@@ -2141,13 +2133,12 @@ const MonomerCreationWizardInternal = ({
         const shouldBeHidden = isRnaPresetType;
 
         // Auto-assign properties for hidden monomers
-        let valuesToSave = monomerToSave.values;
-        if (shouldBeHidden) {
-          valuesToSave = autoAssignPropertiesForHiddenMonomer(
-            monomerToSave.values,
-            rnaPresetWizardState.preset.name,
-          );
-        }
+        const valuesToSave = shouldBeHidden
+          ? autoAssignPropertiesForHiddenMonomer(
+              monomerToSave.values,
+              rnaPresetWizardState.preset.name,
+            )
+          : monomerToSave.values;
 
         const result = editor.saveNewMonomer({
           type: valuesToSave.type as KetMonomerClass,

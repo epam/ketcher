@@ -140,15 +140,11 @@ function closestToMerge(struct, closestMap) {
     }
   });
 
-  if (
-    mergeMap.atoms.size === 0 &&
+  return mergeMap.atoms.size === 0 &&
     mergeMap.bonds.size === 0 &&
     mergeMap.atomToFunctionalGroup.size === 0
-  ) {
-    return null;
-  }
-
-  return mergeMap;
+    ? null
+    : mergeMap;
 }
 
 function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {

@@ -592,8 +592,10 @@ export class Struct {
           break;
         }
         case Bond.PATTERN.TYPE.AROMATIC: {
-          if (atom.neighbors.length === 1) return [-1, true];
-          return [atom.neighbors.length, true];
+          return [
+            atom.neighbors.length === 1 ? -1 : atom.neighbors.length,
+            true,
+          ];
         }
         default: {
           return [-1, false];
@@ -1721,10 +1723,7 @@ export class Struct {
 
   getBondIdByHalfBond(halfBondId: number) {
     const halfBond = this.halfBonds.get(halfBondId);
-    if (halfBond) {
-      return halfBond.bid;
-    }
-    return undefined;
+    return halfBond ? halfBond.bid : undefined;
   }
 
   /**

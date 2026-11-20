@@ -86,35 +86,35 @@ describe('SelectBase event-local bond sorting', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     tool.destroy();
     editor.destroy();
     canvas.remove();
   });
 
   function select(monomer: Peptide) {
-    jest
-      .spyOn(editor.drawingEntitiesManager, 'selectedMonomers', 'get')
-      .mockReturnValue([monomer]);
-    jest
-      .spyOn(
-        editor.drawingEntitiesManager,
-        'externalConnectionsToSelection',
-        'get',
-      )
-      .mockReturnValue(
-        monomer.hydrogenBonds.map((bond) => ({
-          monomerFromSelection: monomer,
-          monomerConnectedToSelection: bond.getAnotherMonomer(monomer)!,
-          bond,
-        })),
-      );
+    vi.spyOn(
+      editor.drawingEntitiesManager,
+      'selectedMonomers',
+      'get',
+    ).mockReturnValue([monomer]);
+    vi.spyOn(
+      editor.drawingEntitiesManager,
+      'externalConnectionsToSelection',
+      'get',
+    ).mockReturnValue(
+      monomer.hydrogenBonds.map((bond) => ({
+        monomerFromSelection: monomer,
+        monomerConnectedToSelection: bond.getAnotherMonomer(monomer)!,
+        bond,
+      })),
+    );
   }
 
   it('sorts each visited monomer at most once per invocation', () => {
     select(hub);
     const sorts = [hub, ...leaves].map((monomer) =>
-      jest.spyOn(monomer, 'bondsSortedByLength', 'get'),
+      vi.spyOn(monomer, 'bondsSortedByLength', 'get'),
     );
     tool.snap(new MouseEvent('mousemove'), new Vec2(0.02, 0.01));
     expect(sorts[0]).toHaveBeenCalledTimes(1);
@@ -125,7 +125,7 @@ describe('SelectBase event-local bond sorting', () => {
 
   it('recomputes sorting on the next invocation after positions change', () => {
     select(hub);
-    const sort = jest.spyOn(hub, 'polymerBondsSortedByLength', 'get');
+    const sort = vi.spyOn(hub, 'polymerBondsSortedByLength', 'get');
     tool.snap(new MouseEvent('mousemove'), new Vec2(0, 0));
     expect(sort).toHaveBeenCalledTimes(1);
     expect(sort.mock.results[0].value.slice(0, 4)).toEqual(bonds.slice(0, 4));
@@ -148,7 +148,7 @@ describe('SelectBase event-local bond sorting', () => {
       ]) {
         const cached = tool.snap(new MouseEvent('mousemove'), delta);
         // Omit the event cache while running the same production calculations.
-        const uncached = jest
+        const uncached = vi
           .spyOn(SelectBase, 'calculateDistanceSnap')
           .mockImplementation((position, initial, connected) =>
             original.call(SelectBase, position, initial, connected),
@@ -280,13 +280,11 @@ describe('SelectBase batched drag rendering', () => {
     frames = new Map();
     editorDestroyed = false;
     nextFrameId = 0;
-    jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((callback) => {
-        frames.set(++nextFrameId, callback);
-        return nextFrameId;
-      });
-    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.set(++nextFrameId, callback);
+      return nextFrameId;
+    });
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
       frames.delete(id);
     });
     canvas = createPolymerEditorCanvas();
@@ -320,7 +318,7 @@ describe('SelectBase batched drag rendering', () => {
     if (!editorDestroyed) editor.destroy();
     notifyRenderComplete.cancel();
     canvas.remove();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     if (originalBBox) {
       Object.defineProperty(SVGElement.prototype, 'getBBox', originalBBox);
     } else {
@@ -342,13 +340,13 @@ describe('SelectBase batched drag rendering', () => {
   }
 
   it('updates the model between mousemoves and draws only the latest state once', () => {
-    const draw = jest.spyOn(editor.renderersContainer, 'moveDrawingEntity');
-    const overlays = jest.spyOn(editor.transientDrawingView, 'clear');
-    const reinitialize = jest.spyOn(
+    const draw = vi.spyOn(editor.renderersContainer, 'moveDrawingEntity');
+    const overlays = vi.spyOn(editor.transientDrawingView, 'clear');
+    const reinitialize = vi.spyOn(
       editor.renderersContainer,
       'reinitializeViewModel',
     );
-    const postRender = jest.spyOn(
+    const postRender = vi.spyOn(
       editor.renderersContainer,
       'runPostRenderMethods',
     );
@@ -367,7 +365,7 @@ describe('SelectBase batched drag rendering', () => {
     expect(overlays).toHaveBeenCalledTimes(1);
     expect(reinitialize).toHaveBeenCalledTimes(1);
     expect(postRender).toHaveBeenCalledTimes(1);
-    const notify = jest.spyOn(window, 'dispatchEvent');
+    const notify = vi.spyOn(window, 'dispatchEvent');
     notifyRenderComplete.flush();
     expect(notify).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'renderComplete' }),
@@ -391,11 +389,8 @@ describe('SelectBase batched drag rendering', () => {
     );
     editor.renderersContainer.update(manager.selectDrawingEntity(monomer));
     const bond = manager.polymerBondsArray[0];
-    const drawBond = jest.spyOn(
-      editor.renderersContainer,
-      'redrawDrawingEntity',
-    );
-    const showSnap = jest.spyOn(editor.transientDrawingView, 'showBondSnap');
+    const drawBond = vi.spyOn(editor.renderersContainer, 'redrawDrawingEntity');
+    const showSnap = vi.spyOn(editor.transientDrawingView, 'showBondSnap');
     editor.lastCursorPositionOfCanvas = Coordinates.modelToCanvas(
       new Vec2(3.1, 1),
     );
@@ -417,7 +412,7 @@ describe('SelectBase batched drag rendering', () => {
   });
 
   it('flushes on mouseup without moving twice and preserves Undo/Redo', () => {
-    const draw = jest.spyOn(editor.renderersContainer, 'moveDrawingEntity');
+    const draw = vi.spyOn(editor.renderersContainer, 'moveDrawingEntity');
     moveTo(3.1);
     moveTo(3.2);
     tool.mouseup(new MouseEvent('mouseup'));
@@ -427,7 +422,7 @@ describe('SelectBase batched drag rendering', () => {
     expect(monomer.position.x).toBeCloseTo(3.2);
     const history = EditorHistory.getInstance(editor);
     expect(history.historyPointer).toBe(1);
-    const flush = jest.spyOn(editor, 'flushPendingDragRender');
+    const flush = vi.spyOn(editor, 'flushPendingDragRender');
     history.undo();
     expect(monomer.position.x).toBeCloseTo(3);
     history.redo();
@@ -440,7 +435,7 @@ describe('SelectBase batched drag rendering', () => {
   it.each(['tool', 'editor', 'stop', 'blur', 'hidden'] as const)(
     'flushes and cancels pending rendering during %s cleanup',
     (cleanup) => {
-      const draw = jest.spyOn(editor.renderersContainer, 'moveDrawingEntity');
+      const draw = vi.spyOn(editor.renderersContainer, 'moveDrawingEntity');
       moveTo(3.2);
       if (cleanup === 'tool') {
         editor.selectTool(ToolName.selectRectangle);
@@ -450,7 +445,7 @@ describe('SelectBase batched drag rendering', () => {
       } else if (cleanup === 'blur') {
         window.dispatchEvent(new Event('blur'));
       } else if (cleanup === 'hidden') {
-        jest.spyOn(document, 'hidden', 'get').mockReturnValue(true);
+        vi.spyOn(document, 'hidden', 'get').mockReturnValue(true);
         document.dispatchEvent(new Event('visibilitychange'));
       } else {
         tool.stopMovement();

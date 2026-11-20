@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { act, createElement, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CoreEditor, FlexMode } from 'application/editor';
@@ -38,13 +39,11 @@ describe('CoreEditor mounted React cleanup', () => {
       configurable: true,
       value: () => ({ x: 0, y: 0, width: 0, height: 0 }),
     });
-    jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((callback) => {
-        frames.set(++nextFrameId, callback);
-        return nextFrameId;
-      });
-    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.set(++nextFrameId, callback);
+      return nextFrameId;
+    });
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
       frames.delete(id);
     });
 
@@ -87,7 +86,7 @@ describe('CoreEditor mounted React cleanup', () => {
         new Vec2(3.2, 1),
       );
       tool.mousemove(new MouseEvent('mousemove', { ctrlKey: true }));
-      const draw = jest.spyOn(editor.renderersContainer, 'moveDrawingEntity');
+      const draw = vi.spyOn(editor.renderersContainer, 'moveDrawingEntity');
       expect(frames.size).toBe(1);
       expect(monomer.position.x).toBeCloseTo(3.2);
 
@@ -104,7 +103,7 @@ describe('CoreEditor mounted React cleanup', () => {
       actEnvironment.IS_REACT_ACT_ENVIRONMENT = originalActEnvironment;
       container.remove();
       canvas?.remove();
-      jest.restoreAllMocks();
+      vi.restoreAllMocks();
       if (originalBBox) {
         Object.defineProperty(SVGElement.prototype, 'getBBox', originalBBox);
       } else {

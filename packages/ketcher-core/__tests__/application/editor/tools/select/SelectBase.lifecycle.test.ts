@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { CoreEditor, EditorHistory, FlexMode } from 'application/editor';
 import { SelectRectangle } from 'application/editor/tools/select';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -33,13 +34,11 @@ describe('SelectBase drag lifecycle integration', () => {
     });
     frames = new Map();
     let frameId = 0;
-    jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((callback) => {
-        frames.set(++frameId, callback);
-        return frameId;
-      });
-    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.set(++frameId, callback);
+      return frameId;
+    });
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
       frames.delete(id);
     });
     canvas = createPolymerEditorCanvas();
@@ -71,7 +70,7 @@ describe('SelectBase drag lifecycle integration', () => {
     editor.destroy();
     notifyRenderComplete.cancel();
     canvas.remove();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     if (originalBBox)
       Object.defineProperty(SVGElement.prototype, 'getBBox', originalBBox);
     else Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
@@ -139,7 +138,7 @@ describe('SelectBase drag lifecycle integration', () => {
     history.update(previousMovement);
     startDrag();
     moveTo(3.3);
-    const draw = jest.spyOn(
+    const draw = vi.spyOn(
       editor.renderersContainer,
       'renderAppliedDragMovement',
     );
@@ -206,7 +205,7 @@ describe('SelectBase drag lifecycle integration', () => {
   it('flushes and cancels when changing from selection to the hand tool', () => {
     startDrag();
     moveTo(3.2);
-    const draw = jest.spyOn(
+    const draw = vi.spyOn(
       editor.renderersContainer,
       'renderAppliedDragMovement',
     );

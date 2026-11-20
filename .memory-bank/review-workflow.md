@@ -14,7 +14,7 @@ For features and high-risk changes. Only those need a spec.
 
 1. **Propose.** Add `openspec/changes/<change>/` with `proposal.md`, spec deltas, `design.md`, and `tasks.md`.
 2. **Implement.** Tick each task when it is done, one at a time.
-3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/`.
+3. **Archive.** Move the change to `openspec/changes/archive/`. Archive with `--skip-specs`, then fold the change's deltas into the owner of current behavior, `.memory-bank/features/<capability>.md`.
 
 Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI runs `openspec validate --all --strict` and `openspec validate --archived` on every PR.
 

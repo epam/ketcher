@@ -1,14 +1,9 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test, expect } from '@fixtures';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils';
+import { selectAllStructuresOnCanvas, takeEditorScreenshot } from '@utils';
 import { openFileAndAddToCanvasMacro } from '@utils/files/readFile';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -37,8 +32,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -86,6 +81,26 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
     await expect(rotationTool.rotationHandle).toBeVisible();
   });
 
+  test('Case 3b - Rotation is enabled when more than two disconnected monomers are selected', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12491
+     * Description: Rotation is enabled when more than two monomers without bonds are selected
+     * Scenario:
+     * 1. Open Macromolecules canvas - Flex mode
+     * 2. Place three monomers on the canvas without connecting them
+     * 3. Select all structures
+     * 4. Verify that the rotation handle is visible
+     *
+     * Version 3.14.0
+     */
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
+    await selectAllStructuresOnCanvas(page);
+
+    await expect(RotationTool(page).rotationHandle).toBeVisible();
+  });
+
   test('Case 4 - Rotation is not enabled when only one monomer is selected', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/12491
@@ -122,8 +137,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -140,18 +155,21 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      * 1. Open Macromolecules canvas - Flex mode
      * 2. Place two monomers on the canvas
      * 3. Select all structures
-     * 4. Verify that flip horizontally, flip vertically, and delete buttons are visible
+     * 4. Verify that rotation, flip horizontally, flip vertically, and delete controls are visible
+     * 5. Take a screenshot to verify their position above the bounding box
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
+    await expect(rotationTool.rotationHandle).toBeVisible();
     await expect(rotationTool.flipHorizontallyButton).toBeVisible();
     await expect(rotationTool.flipVerticallyButton).toBeVisible();
     await expect(rotationTool.deleteButton).toBeVisible();
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Case 7 - Rotation angles are displayed near the bounding box while rotating', async () => {
@@ -167,8 +185,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -194,8 +212,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -221,8 +239,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -250,8 +268,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -346,8 +364,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -374,8 +392,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -400,8 +418,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -427,8 +445,8 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 100, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 400, y: 300 });
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);

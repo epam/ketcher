@@ -1579,10 +1579,6 @@ test(`31. Verify that in create monomer wizard: it is possible to change atom us
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
-
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
   await RightToolbar(page).periodicTable();
@@ -1616,10 +1612,6 @@ test(`32. Verify that in create monomer wizard: it is possible to change atom us
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
-
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
@@ -1906,10 +1898,6 @@ test(`40. Verify that in create monomer wizard: user can use Charge plus and Cha
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
-
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
 
   const targetAtomBr = getAtomLocator(page, { atomLabel: 'Br' }).first();
   const targetAtomN = getAtomLocator(page, { atomLabel: 'N' }).first();

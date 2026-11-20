@@ -1249,11 +1249,6 @@ test(`24. Verify that options/toolbar icons are now enabled for atoms in create 
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
-
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
   expect(
@@ -1288,11 +1283,6 @@ test(`25. Verify that right-click menu Delete option works correct for atoms in 
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
-
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
   await ContextMenu(page, targetAtom).click(MicroAtomOption.Delete);
@@ -1325,11 +1315,6 @@ test(`26. Verify that in create monomer wizard: In the right-click menu, Edit op
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
-
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
@@ -1383,7 +1368,6 @@ test(`27. Verify that in create monomer wizard: for bonds in the right-click men
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1465,7 +1449,6 @@ test(`28. Verify that in create monomer wizard: in the right-click menu, Edit op
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1596,7 +1579,6 @@ test(`31. Verify that in create monomer wizard: it is possible to change atom us
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1635,7 +1617,6 @@ test(`32. Verify that in create monomer wizard: it is possible to change atom us
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1707,7 +1688,6 @@ test(`34. Verify that in create monomer wizard: it is possible to put molecules 
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 600, 250);
@@ -1844,7 +1824,6 @@ test(`38. Verify that in create monomer wizard: user can add bonds to molecule a
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1890,7 +1869,6 @@ test(`39. Verify that in create monomer wizard: user can add bonds using Chain t
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1929,7 +1907,6 @@ test(`40. Verify that in create monomer wizard: user can use Charge plus and Cha
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);
@@ -1979,7 +1956,6 @@ test(`41. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 500, 250);

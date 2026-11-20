@@ -1,3 +1,5 @@
+/* global KetcherAPI */
+
 import styled from '@emotion/styled';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { useCallback, useState } from 'react';
@@ -89,10 +91,10 @@ const App = () => {
             structServiceProvider={structServiceProvider}
             errorHandler={(err) => console.log(err)}
             onInit={(ketcher: Ketcher) => {
-              (globalThis as any).ketcher = ketcher;
-              (globalThis as any).KetcherFunctions = KetcherAPI(
-                globalThis.ketcher,
-              );
+              const demoGlobalThis = globalThis as typeof globalThis & {
+                KetcherFunctions: ReturnType<typeof KetcherAPI>;
+              };
+              demoGlobalThis.KetcherFunctions = KetcherAPI(ketcher);
             }}
           />
         </KetcherBox>

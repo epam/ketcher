@@ -1,3 +1,5 @@
+/* global KetcherFunctions */
+
 import { Button, TextField, FormControl } from '@mui/material';
 import styled from '@emotion/styled';
 import { useState } from 'react';

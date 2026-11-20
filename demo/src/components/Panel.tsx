@@ -1,3 +1,5 @@
+/* global KetcherFunctions */
+
 import styled from '@emotion/styled';
 
 import { PanelButton } from './shared/Buttons';

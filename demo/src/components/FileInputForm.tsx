@@ -1,3 +1,5 @@
+/* global KetcherFunctions */
+
 import { useState } from 'react';
 import styled from '@emotion/styled';
 

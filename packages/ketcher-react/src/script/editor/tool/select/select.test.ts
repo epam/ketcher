@@ -234,7 +234,7 @@ describe('SelectTool', () => {
       expect(editor.historyStack).toHaveLength(historyLengthBefore + 1);
     });
 
-    it('does not fuse a structure dropped onto a salt', () => {
+    it('does not fuse or add a history entry when a structure is dropped onto a salt', () => {
       const { editor, selectTool } = setupDrag(
         CHAIN_AND_SALT_KET,
         { atoms: CHAIN_ATOMS, bonds: CHAIN_BONDS },
@@ -245,10 +245,10 @@ describe('SelectTool', () => {
       selectTool.mouseup(new PointerEvent('mouseup'));
 
       expect(editor.struct().atoms.size).toBe(7);
-      expect(editor.historyStack).toHaveLength(historyLengthBefore + 1);
+      expect(editor.historyStack).toHaveLength(historyLengthBefore);
     });
 
-    it('fuses a structure dropped onto a superatom that is not a salt', () => {
+    it('does not fuse a structure dropped onto a superatom that is not a salt', () => {
       SaltsAndSolventsProvider.getInstance().setSaltsAndSolventsList([]);
       const { editor, selectTool } = setupDrag(
         CHAIN_AND_SALT_KET,
@@ -258,7 +258,7 @@ describe('SelectTool', () => {
 
       selectTool.mouseup(new PointerEvent('mouseup'));
 
-      expect(editor.struct().atoms.size).toBe(6);
+      expect(editor.struct().atoms.size).toBe(7);
     });
   });
 });

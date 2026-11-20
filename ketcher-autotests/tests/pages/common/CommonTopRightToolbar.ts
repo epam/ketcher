@@ -172,6 +172,14 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
     },
 
+    // Unlike turnOn*Editor, clicks the option even when the mode is active
+    async selectModeOption(mode: Mode) {
+      const option = page.getByTestId(mode);
+      await locators.ketcherModeSwitcherCombobox.click();
+      await option.click();
+      await option.waitFor({ state: 'hidden' });
+    },
+
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);

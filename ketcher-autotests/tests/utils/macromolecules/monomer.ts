@@ -202,9 +202,7 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     .map(([key, value]) => `[${key}="${value}"]`)
     .join('');
 
-  const locator = page.locator(attributeSelectors);
-
-  return locator;
+  return page.locator(attributeSelectors).filter({ visible: true });
 }
 
 export function getAttachmentPointLocator(
@@ -229,11 +227,13 @@ export function getAttachmentPointLocator(
     );
   }
 
-  return root.locator(
-    Object.entries(attributes)
-      .map(([key, value]) => `[${key}="${value}"]`)
-      .join(''),
-  );
+  return root
+    .locator(
+      Object.entries(attributes)
+        .map(([key, value]) => `[${key}="${value}"]`)
+        .join(''),
+    )
+    .filter({ visible: true });
 }
 
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
@@ -340,5 +340,5 @@ export function getSymbolLocator(
     ? page.locator(attributeSelectors).getByText(symbolAlias)
     : page.locator(attributeSelectors);
 
-  return locator;
+  return locator.filter({ visible: true });
 }

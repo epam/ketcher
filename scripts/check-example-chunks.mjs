@@ -1,16 +1,14 @@
 const MACROMOLECULES_CHUNK_PREFIX = 'ketcher-macromolecules';
 const MACROMOLECULES_PACKAGE_PATH = '/packages/ketcher-macromolecules/';
 
-const normalizeModuleId = (moduleId) =>
-  String(moduleId).replaceAll('\\', '/');
+const normalizeModuleId = (moduleId) => String(moduleId).replaceAll('\\', '/');
 
 const isMacromoleculesModule = (moduleId) => {
   const normalizedId = normalizeModuleId(moduleId);
 
   return (
     normalizedId.includes(MACROMOLECULES_PACKAGE_PATH) &&
-    (normalizedId.includes('/src/') ||
-      normalizedId.includes('/node_modules/'))
+    (normalizedId.includes('/src/') || normalizedId.includes('/node_modules/'))
   );
 };
 

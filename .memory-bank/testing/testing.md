@@ -144,6 +144,11 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+Docker tests use the standalone build served inside the container at
+`http://127.0.0.1:4002`, a secure context for clipboard access. Set
+`DOCKER_KETCHER_URL` to test an external deployment instead; clipboard tests
+require an HTTPS URL.
+
 ### Local run caveats
 
 - **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.
@@ -375,8 +380,18 @@ await page.getByTestId('context-menu').getByText('Copy').click();
 | `waitForPageInit(page)`                | Navigate to `''`, wait for `window.ketcher`, wait for Indigo button enabled |
 | `waitForKetcherInit(page)`             | Wait for `window.ketcher` to exist                                          |
 | `waitForIndigoToLoad(page)`            | Wait for aromatize button to be enabled (Indigo WASM ready)                 |
-| `waitForRender(page, cb)`              | Run `cb`, then wait for `renderComplete` custom event (250 ms timeout)      |
+| `waitForRender(page, cb)`              | Run `cb`, then wait for `renderComplete` custom event (260 ms timeout)      |
+| `waitForCanvasModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for canvas switch completion for that editor and mode |
+| `waitForLayoutModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for Flex/Snake/Sequence switch completion for that editor and mode |
 | `waitForSpinnerFinishedWork(page, cb)` | Run `cb`, wait for all loading spinners to detach, then `waitForRender`     |
+
+Canvas and layout switch helpers resolve on their dedicated completion events,
+without a fixed render delay. They fail after 30 seconds if no matching event
+arrives, and remove their listener when the action fails or the wait finishes.
+The toolbar methods also wait for their dropdown to close after the switch.
+Canvas mode completion alone does not mean the mode menu's backdrop has stopped
+intercepting pointer events. Callers should not add a fixed delay or an outer
+`waitForRender` for those switches.
 
 ### Canvas Screenshots
 
@@ -544,7 +559,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
 20. **Import `Page` and `Locator` from `@fixtures`**, not from `@playwright/test`.
-21. **Do not share test-action values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name) are defined locally inside that test; hoisting them to the module level couples the tests and makes each one harder to read. Static inputs may stay at module level: fixture file paths and facts describing a fixture (e.g. its atom count).
+21. **Do not share values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name), fixture file paths, and facts describing a fixture (e.g. its atom count) are defined inside the test that uses them. Hoisting them to the module level couples the tests and makes each one harder to read. The shared `page` of the shared-page pattern (rule 6) is the exception.
 
 ---
 

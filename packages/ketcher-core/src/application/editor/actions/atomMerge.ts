@@ -23,6 +23,7 @@ import {
   BondAdd,
   BondAttribute,
   BondDelete,
+  CalcImplicitH,
 } from '../operations';
 import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 import { atomGetDegree, atomGetSGroups } from './utilities';
@@ -177,6 +178,7 @@ export function fromAtomMerge(
   });
 
   action.addOp(new AtomDelete(sourceId));
+  action.addOp(new CalcImplicitH([destinationId]));
   const destinationAtomNeighbors =
     restruct.molecule.atomGetNeighbors(destinationId) ?? [];
   const bond = restruct.molecule.bonds.get(

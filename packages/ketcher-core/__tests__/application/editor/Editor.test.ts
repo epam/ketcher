@@ -1,4 +1,13 @@
-import { type MockInstance, type Mock, vi } from 'vitest';
+import {
+  type MockInstance,
+  type Mock,
+  vi,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+} from 'vitest';
 import {
   CoreEditor,
   EditorClassName,
@@ -67,6 +76,77 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  describe('layout mode switch completion', () => {
+    it.each([
+      'flex-layout-mode',
+      'snake-layout-mode',
+      'sequence-layout-mode',
+    ] as const)('announces %s after rendering an empty canvas', (mode) => {
+      const canvas = createPolymerEditorCanvas();
+      const renderers = createRenderersManager(polymerEditorTheme);
+      const editor = new CoreEditor({
+        canvas,
+        theme: coreEditorTheme,
+        renderersContainer: renderers,
+        mode: mode === 'flex-layout-mode' ? undefined : new FlexMode(),
+      });
+      const update = vi.spyOn(renderers, 'update');
+      const completed = vi.fn((event: Event) => {
+        expect(editor.mode.modeName).toBe(mode);
+        expect(update).toHaveBeenCalled();
+        expect(update.mock.results.at(-1)?.type).toBe('return');
+        expect(
+          EditorHistory.getInstance(editor).historyPointer,
+        ).toBeGreaterThan(0);
+        expect((event as CustomEvent).detail).toEqual({
+          ketcherId: editor.ketcherId,
+          mode,
+        });
+      });
+      globalThis.addEventListener('layoutModeSwitchComplete', completed);
+
+      try {
+        editor.events.selectMode.dispatch(mode);
+        expect(completed).toHaveBeenCalledTimes(1);
+        expect(update.mock.invocationCallOrder[0]).toBeLessThan(
+          completed.mock.invocationCallOrder[0],
+        );
+      } finally {
+        globalThis.removeEventListener('layoutModeSwitchComplete', completed);
+        update.mockRestore();
+        editor.destroy();
+        canvas.remove();
+      }
+    });
+
+    it('does not announce a switch when rendering fails', () => {
+      const canvas = createPolymerEditorCanvas();
+      const renderers = createRenderersManager(polymerEditorTheme);
+      const editor = new CoreEditor({
+        canvas,
+        theme: coreEditorTheme,
+        renderersContainer: renderers,
+      });
+      const update = vi.spyOn(renderers, 'update').mockImplementation(() => {
+        throw new Error('Rendering failed');
+      });
+      const completed = vi.fn();
+      globalThis.addEventListener('layoutModeSwitchComplete', completed);
+
+      try {
+        expect(() =>
+          editor.events.selectMode.dispatch('flex-layout-mode'),
+        ).toThrow('Rendering failed');
+        expect(completed).not.toHaveBeenCalled();
+      } finally {
+        globalThis.removeEventListener('layoutModeSwitchComplete', completed);
+        update.mockRestore();
+        editor.destroy();
+        canvas.remove();
+      }
+    });
+  });
+
   it('uses the current canvas for library drag/drop after manager swaps', () => {
     const canvas = createPolymerEditorCanvas();
     const editor = new CoreEditor({

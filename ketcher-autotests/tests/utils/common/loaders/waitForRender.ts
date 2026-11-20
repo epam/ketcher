@@ -9,7 +9,7 @@ const emptyFunction: AnyFunction = async () => {};
 export const waitForRender = async (
   page: Page,
   callback = emptyFunction,
-  timeout = 100,
+  timeout = 260,
 ) => {
   await callback();
 

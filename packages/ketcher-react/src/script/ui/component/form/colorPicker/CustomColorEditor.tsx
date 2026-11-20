@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { type ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import classes from './ColorPicker.module.less';
 import { Icon } from 'components';
 import { hslToHex } from './ColorPicker.utils';
 import ColorSlider from './ColorSlider';
-import { type ChangeEvent } from 'react';
 
 const HUE_BACKGROUND =
   'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)';
@@ -46,6 +48,7 @@ function CustomColorEditor({
   onHexInputChange,
   onDeleteCustomColor,
 }: Readonly<CustomColorEditorProps>) {
+  const { t } = useTranslation('components');
   const lightnessBg = `linear-gradient(to right, #ffffff, ${hslToHex(
     hue,
     100,
@@ -66,7 +69,7 @@ function CustomColorEditor({
             onValueChange={onHueChange}
             background={HUE_BACKGROUND}
             thumbColor={hslToHex(hue, 100, 50)}
-            ariaLabel="Hue"
+            ariaLabel={t('colorPicker.hue')}
           />
           <ColorSlider
             value={100 - lightness}
@@ -75,13 +78,13 @@ function CustomColorEditor({
             onValueChange={onLightnessChange}
             background={lightnessBg}
             thumbColor={pendingColor}
-            ariaLabel="Lightness"
+            ariaLabel={t('colorPicker.lightness')}
           />
         </div>
         <div
           className={classes.colorPreviewBox}
           style={{ backgroundColor: pendingColor }}
-          aria-label="Color preview"
+          aria-label={t('colorPicker.colorPreview')}
         />
       </div>
 
@@ -105,7 +108,7 @@ function CustomColorEditor({
           type="button"
           className={classes.deleteBtn}
           onClick={onDeleteCustomColor}
-          aria-label="Delete custom color"
+          aria-label={t('colorPicker.deleteCustomColor')}
           disabled={!canDeleteCustomColor}
         >
           <Icon name="delete" className={classes.deleteIcon} />

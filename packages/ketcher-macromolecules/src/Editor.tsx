@@ -65,6 +65,7 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
+  useLayoutMode,
   useSequenceEditInRNABuilderMode,
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
@@ -110,6 +111,10 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
+import {
+  LayoutBoundsProvider,
+  MACROMOLECULES_MAIN_AREA_TEST_ID,
+} from 'components/Layout/Layout';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
@@ -120,7 +125,10 @@ import { DragGhost } from 'components/DragGhost/DragGhost';
 import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 import { FloatingTools } from 'components/FloatingTools';
 
-import './theme.less';
+import * as themeStyles from './theme.less';
+
+// Keep the runtime stylesheet while excluding its Less import from declarations.
+void themeStyles;
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -184,6 +192,7 @@ function EditorContainer({
 }
 
 function Editor({
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -195,6 +204,7 @@ function Editor({
   const errorTooltips = useAppSelector(selectErrorTooltips);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
+  const layoutMode = useLayoutMode();
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -204,9 +214,13 @@ function Editor({
   const [isPasteAvailable, setIsPasteAvailable] = useState(true);
   const updatePasteAvailability = useCallback(() => {
     if (!editor) return;
-    isPasteContentAvailable((content) =>
-      editor.mode.isPasteContentValid(content),
-    ).then(setIsPasteAvailable);
+    void (async () => {
+      setIsPasteAvailable(
+        await isPasteContentAvailable((content) =>
+          editor.mode.isPasteContentValid(content),
+        ),
+      );
+    })();
   }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
@@ -218,6 +232,7 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
+        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,
@@ -352,7 +367,7 @@ function Editor({
   }, []);
 
   return (
-    <>
+    <LayoutBoundsProvider>
       <Layout>
         <Layout.Top
           shortened={!isMonomerLibraryHidden}
@@ -384,13 +399,14 @@ function Editor({
           <LeftMenuComponent />
         </Layout.Left>
 
-        <Layout.Main>
+        <Layout.Main data-testid={MACROMOLECULES_MAIN_AREA_TEST_ID}>
           <EditorEvents />
           <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
             data-canvasmode="macromolecules-mode"
+            data-canvaslayout={layoutMode.replace(/-layout-mode$/, '')}
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
@@ -476,7 +492,7 @@ function Editor({
           ))}
         </StyledToastContainer>
       </Snackbar>
-    </>
+    </LayoutBoundsProvider>
   );
 }
 

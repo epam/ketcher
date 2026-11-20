@@ -1,7 +1,21 @@
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CustomColorEditor from './CustomColorEditor';
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'colorPicker.hue': 'Hue',
+        'colorPicker.lightness': 'Lightness',
+        'colorPicker.colorPreview': 'Color preview',
+        'colorPicker.deleteCustomColor': 'Delete custom color',
+      })[key] ?? key,
+  }),
+}));
 
 const defaultProps = {
   customColors: ['#123456', '#ABCDEF'],
@@ -9,10 +23,10 @@ const defaultProps = {
   hue: 0,
   lightness: 50,
   hexInput: '123456',
-  onHueChange: jest.fn(),
-  onLightnessChange: jest.fn(),
-  onHexInputChange: jest.fn(),
-  onDeleteCustomColor: jest.fn(),
+  onHueChange: vi.fn(),
+  onLightnessChange: vi.fn(),
+  onHexInputChange: vi.fn(),
+  onDeleteCustomColor: vi.fn(),
 };
 
 describe('CustomColorEditor', () => {
@@ -23,7 +37,7 @@ describe('CustomColorEditor', () => {
   });
 
   it('calls onHexInputChange when the hex input changes', () => {
-    const onHexInputChange = jest.fn();
+    const onHexInputChange = vi.fn();
     render(
       <CustomColorEditor
         {...defaultProps}
@@ -51,7 +65,7 @@ describe('CustomColorEditor', () => {
   });
 
   it('calls onDeleteCustomColor when the delete button is clicked', async () => {
-    const onDeleteCustomColor = jest.fn();
+    const onDeleteCustomColor = vi.fn();
     render(
       <CustomColorEditor
         {...defaultProps}

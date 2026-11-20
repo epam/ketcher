@@ -163,7 +163,13 @@ test.describe('Macro-Micro-Switcher', () => {
         name: label,
       }).hover();
       await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(
+        page,
+        getAbbreviationLocator(page, {
+          name: label,
+        }),
+        { padding: 250 },
+      );
     }
   });
 
@@ -1228,8 +1234,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'KET/one-attachment-point-added-in-micro-mode.ket',
       );
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Snake,
       );
       await Library(page).dragMonomerOnCanvas(data.monomer, {
@@ -1259,8 +1264,9 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
       x: 750,
       y: 370,
@@ -1874,8 +1880,7 @@ test.describe('Macro-Micro-Switcher', () => {
           page,
           'KET/two-attachment-points-added-in-micro-mode.ket',
         );
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Sequence,
         );
 
@@ -1921,8 +1926,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: R2-R1 connection was formed when switching to flex or snake mode
       */
         await drawBenzeneRing(page);
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Sequence,
         );
 

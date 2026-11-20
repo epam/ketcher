@@ -10,6 +10,7 @@ import {
   rnaTabPresetsSection,
 } from '../constants/library/Constants';
 import { ContextMenu } from '../common/ContextMenu';
+import { LibraryPresetOption } from '../constants/contextMenu/Constants';
 import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
 import { waitForRender } from '../../utils/common/loaders/waitForRender';
 import { moveMouseAway } from '../../utils/moveMouseAway';
@@ -228,6 +229,46 @@ export const Library = (page: Page) => {
 
     getMonomerLibraryCardLocator(monomer: Monomer | PresetType) {
       return getElement(monomer.testId);
+    },
+
+    /** The three-dot ("Actions") button of a monomer card (absent for ambiguous monomers). */
+    getMonomerCardDotsButton(monomer: Monomer | PresetType): Locator {
+      return this.getMonomerLibraryCardLocator(monomer).locator('button.dots');
+    },
+
+    /** Locates a library card by its `${code}___${name}` testid (for cards created at runtime). */
+    getMonomerCardByCodeAndNameLocator(code: string, name: string): Locator {
+      return getElement(`${code}___${name}`);
+    },
+
+    /** Opens the three-dot menu of a monomer card. */
+    async openMonomerCardMenu(
+      monomer: Monomer | PresetType,
+      shouldSelectOnFavoritesTab = false,
+    ) {
+      if (shouldSelectOnFavoritesTab) {
+        await this.openTab(LibraryTab.Favorites);
+      } else {
+        await this.goToMonomerLibraryLocation(monomer);
+      }
+
+      const card = this.getMonomerLibraryCardLocator(monomer);
+      await expect(card).toBeVisible();
+      await this.getMonomerCardDotsButton(monomer).click();
+    },
+
+    /** An item of the open card three-dot menu. */
+    getCardMenuItemLocator(option: LibraryPresetOption): Locator {
+      return getElement(option).first();
+    },
+
+    /**
+     * Clicks an item of the open card three-dot menu. The menu eases into its
+     * final position after opening, so a regular click fails Playwright's
+     * stability check — the click event is dispatched directly instead.
+     */
+    async clickCardMenuItem(option: LibraryPresetOption) {
+      await this.getCardMenuItemLocator(option).dispatchEvent('click');
     },
 
     getMonomerHELMAlias(monomer: Monomer | PresetType) {

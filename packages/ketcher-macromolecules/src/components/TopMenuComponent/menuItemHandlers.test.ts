@@ -1,12 +1,13 @@
+import { type Mock } from 'vitest';
 import { CoreEditor } from 'ketcher-core';
 import { AppDispatch } from 'state';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { createMenuItemHandlers, MenuItemName } from './menuItemHandlers';
 
-jest.mock(
+vi.mock(
   'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers',
   () => ({
-    resetRnaBuilderAfterSequenceUpdate: jest.fn(),
+    resetRnaBuilderAfterSequenceUpdate: vi.fn(),
   }),
 );
 
@@ -26,8 +27,8 @@ type EventName = (typeof eventNames)[number];
 
 const createEditorMock = () => {
   const events = Object.fromEntries(
-    eventNames.map((eventName) => [eventName, { dispatch: jest.fn() }]),
-  ) as Record<EventName, { dispatch: jest.Mock }>;
+    eventNames.map((eventName) => [eventName, { dispatch: vi.fn() }]),
+  ) as Record<EventName, { dispatch: Mock }>;
 
   return { editor: { events } as unknown as CoreEditor, events };
 };
@@ -36,7 +37,7 @@ const createHandlers = (
   overrides: { isSequenceEditInRNABuilderMode?: boolean } = {},
 ) => {
   const { editor, events } = createEditorMock();
-  const dispatch = jest.fn() as unknown as AppDispatch;
+  const dispatch = vi.fn() as unknown as AppDispatch;
   const handlers = createMenuItemHandlers({
     editor,
     dispatch,
@@ -50,7 +51,7 @@ const createHandlers = (
 
 describe('createMenuItemHandlers', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it.each<[MenuItemName, EventName, unknown[]]>([
@@ -112,7 +113,7 @@ describe('createMenuItemHandlers', () => {
   it('does not throw when there is no editor yet', () => {
     const handlers = createMenuItemHandlers({
       editor: undefined,
-      dispatch: jest.fn() as unknown as AppDispatch,
+      dispatch: vi.fn() as unknown as AppDispatch,
       lastSelectedSelectionMenuItem: 'select-rectangle',
       isSequenceEditInRNABuilderMode: false,
     });

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -34,6 +33,7 @@ import clsx from 'clsx';
 import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import { useTranslation } from 'react-i18next';
 import classes from './InfoPanel.module.less';
+import type { StoreState } from 'src/script/ui/state/store.types';
 
 const HOVER_PANEL_PADDING = 20;
 const MAX_INFO_PANEL_SIZE = 200;
@@ -189,7 +189,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   );
 };
 
-export default connect((store: any) => ({
+export default connect((store: StoreState) => ({
   clientX: functionGroupInfoSelector(store)?.event?.clientX,
   clientY: functionGroupInfoSelector(store)?.event?.clientY,
   groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,

@@ -20,12 +20,20 @@ const iconMap: Record<WizardNotificationType, IconName> = {
   warning: 'warningFilled',
 };
 
+// Preset-participation notifications are the only non-info messages the ticket
+// specifies as dismissible via OK.
+const okDismissibleNotificationIds: ReadonlySet<WizardNotificationId> = new Set(
+  ['editAllPresetWarning', 'editAllPresetError'],
+);
+
 const Notification = ({ id, type, message, onDismiss }: Props) => {
   const { t } = useTranslation('common');
   const handleButtonClick = () => {
     onDismiss?.(id);
   };
-  const isDismissible = type === 'info' && onDismiss;
+  const isDismissible =
+    Boolean(onDismiss) &&
+    (type === 'info' || okDismissibleNotificationIds.has(id));
 
   return (
     <div

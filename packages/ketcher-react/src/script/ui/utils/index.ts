@@ -28,16 +28,7 @@ const GREEK_SIMBOLS: Record<string, string> = {
   gamma: 'γ',
 };
 
-const greekRe = new RegExp(
-  String.raw`\b` +
-    Object.keys(GREEK_SIMBOLS).join(String.raw`\b|\b`) +
-    String.raw`\b`,
-  'g',
-);
-
-/**
-Library items grouped by their `props.group` value.
-*/
+/** Library items grouped by their `props.group` value. */
 type TemplateGroups = Record<string, Template[]>;
 
 /**
@@ -49,7 +40,10 @@ type TemplateGroups = Record<string, Template[]>;
 type EnumSchemaLike = { enum?: unknown; enumNames?: unknown };
 
 export function greekify(str: string): string {
-  return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);
+  return str
+    .split(/\b/)
+    .map((part) => GREEK_SIMBOLS[part] ?? part)
+    .join('');
 }
 
 export function filterLib(lib: Template[], filter: string): TemplateGroups {

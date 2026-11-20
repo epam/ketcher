@@ -6,15 +6,15 @@ import {
 } from './monomerCreation.helpers';
 import { useMonomerCreationMenu } from './useMonomerCreationMenu';
 
-jest.mock('./monomerCreation.helpers');
+vi.mock('./monomerCreation.helpers');
 
 describe('useMonomerCreationMenu', () => {
   const monomer = {
     monomerItem: { label: 'A', props: { MonomerCode: 'A' } },
   } as BaseMonomer;
-  const openWizard = jest.fn();
-  const confirm = jest.fn();
-  const clearHighlight = jest.fn();
+  const openWizard = vi.fn();
+  const confirm = vi.fn();
+  const clearHighlight = vi.fn();
   const editor = {
     drawingEntitiesManager: {},
     events: {
@@ -32,9 +32,9 @@ describe('useMonomerCreationMenu', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.mocked(getMonomerCreationMenuState).mockReturnValue(state);
-    jest.mocked(highlightMonomers).mockReturnValue(clearHighlight);
+    vi.clearAllMocks();
+    vi.mocked(getMonomerCreationMenuState).mockReturnValue(state);
+    vi.mocked(highlightMonomers).mockReturnValue(clearHighlight);
   });
 
   it('orders the editing entries and separates them from Delete', () => {
@@ -85,7 +85,7 @@ describe('useMonomerCreationMenu', () => {
   });
 
   it('does not highlight or edit a disabled composite symbol', () => {
-    jest.mocked(getMonomerCreationMenuState).mockReturnValue({
+    vi.mocked(getMonomerCreationMenuState).mockReturnValue({
       ...state,
       editDisabled: true,
       editAllDisabled: true,
@@ -102,7 +102,7 @@ describe('useMonomerCreationMenu', () => {
   });
 
   it('offers only Create monomer for a chemical structure', () => {
-    jest.mocked(getMonomerCreationMenuState).mockReturnValue({
+    vi.mocked(getMonomerCreationMenuState).mockReturnValue({
       ...state,
       canCreate: true,
       showEdit: false,

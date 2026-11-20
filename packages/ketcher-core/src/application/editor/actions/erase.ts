@@ -106,7 +106,7 @@ function fromBondDeletion(
   const atomIds = [bond.begin, bond.end].filter((id) =>
     restruct.molecule.atoms.has(id),
   );
-  if (atomIds.length) {
+  if (atomIds.length > 0) {
     action.addOp(new CalcImplicitH(atomIds).perform(restruct));
   }
   if (atomIds.length === 2) {

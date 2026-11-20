@@ -9,24 +9,23 @@ import {
 } from 'ketcher-core';
 import useAttachmentGroupDelete from './useAttachmentGroupDelete';
 
-jest.mock('src/hooks', () => ({
+vi.mock('src/hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test-ketcher-id' }),
 }));
 
-jest.mock('ketcher-core', () => {
-  const actual = jest.requireActual('ketcher-core');
+vi.mock('ketcher-core', async () => {
+  const actual =
+    await vi.importActual<typeof import('ketcher-core')>('ketcher-core');
 
   return {
     ...actual,
-    fromAttachmentGroupDeletion: jest.fn(
-      () => 'delete-attachment-group-action',
-    ),
+    fromAttachmentGroupDeletion: vi.fn(() => 'delete-attachment-group-action'),
   };
 });
 
 describe('useAttachmentGroupDelete', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('deletes only the clicked Attachment Group marker', () => {
@@ -42,9 +41,9 @@ describe('useAttachmentGroupDelete', () => {
         atomIds: [firstEndpointId, secondEndpointId],
       }),
     );
-    const update = jest.fn();
-    const selection = jest.fn();
-    const focusCliparea = jest.fn();
+    const update = vi.fn();
+    const selection = vi.fn();
+    const focusCliparea = vi.fn();
     const restruct = {};
     const editor = {
       struct: () => struct,
@@ -53,9 +52,9 @@ describe('useAttachmentGroupDelete', () => {
       selection,
       focusCliparea,
     };
-    jest
-      .spyOn(ketcherProvider, 'getKetcher')
-      .mockReturnValue({ editor } as never);
+    vi.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      editor,
+    } as never);
     const { result } = renderHook(() => useAttachmentGroupDelete());
 
     act(() => {
@@ -83,17 +82,17 @@ describe('useAttachmentGroupDelete', () => {
     const atomId = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),
     );
-    const update = jest.fn();
+    const update = vi.fn();
     const editor = {
       struct: () => struct,
       render: { ctab: {} },
       update,
-      selection: jest.fn(),
-      focusCliparea: jest.fn(),
+      selection: vi.fn(),
+      focusCliparea: vi.fn(),
     };
-    jest
-      .spyOn(ketcherProvider, 'getKetcher')
-      .mockReturnValue({ editor } as never);
+    vi.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      editor,
+    } as never);
     const { result } = renderHook(() => useAttachmentGroupDelete());
 
     act(() => {

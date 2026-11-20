@@ -134,8 +134,9 @@ const resolvePackageAlias = (source, importer) => {
 };
 
 const PackageScopedAliasesPlugin = () => {
-  return {
-    name: 'ketcher-package-scoped-aliases',
+  class PackageScopedAliasesPlugin {
+    name = 'ketcher-package-scoped-aliases';
+
     async resolveId(source, importer, options) {
       const updatedId = resolvePackageAlias(source, importer);
 
@@ -149,8 +150,10 @@ const PackageScopedAliasesPlugin = () => {
       });
 
       return resolved || { id: updatedId };
-    },
-  };
+    }
+  }
+
+  return new PackageScopedAliasesPlugin();
 };
 
 const getDefineValue = (value) => {

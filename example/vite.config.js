@@ -15,6 +15,7 @@ import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.j
 import { createReplaceValues, mode } from '../build-config/replace-values.mjs';
 import { INDIGO_WORKER_IMPORTS } from '../build-config/indigo-worker-imports.mjs';
 import { BROWSER_BUILD_TARGET } from '../build-config/browser-target.mjs';
+import { findMacromoleculesChunkViolations } from '../scripts/check-example-chunks.mjs';
 
 // Computed before the process.env assignment below, to match the point at which
 // the packages' own builds resolve these values.
@@ -534,6 +535,32 @@ const CopyServeConfigPlugin = () => {
   };
 };
 
+const CheckMacromoleculesChunksPlugin = () => ({
+  name: 'ketcher-check-macromolecules-chunks',
+  generateBundle(_outputOptions, bundle) {
+    const chunks = Object.values(bundle)
+      .filter((output) => output.type === 'chunk')
+      .map((chunk) => ({
+        name: chunk.name,
+        modules: Object.keys(chunk.modules),
+      }));
+    const violations = findMacromoleculesChunkViolations(chunks);
+
+    if (violations.length) {
+      const details = violations
+        .map(
+          ({ chunkName, unexpectedModules }) =>
+            `${chunkName}: ${unexpectedModules.join(', ')}`,
+        )
+        .join('\n');
+
+      this.error(
+        `Macromolecules chunk name/content mismatch:\n${details}`,
+      );
+    }
+  },
+});
+
 const logger = createLogger();
 const loggerWarn = logger.warn;
 logger.warn = (msg, options) => {
@@ -633,6 +660,7 @@ export default defineConfig(({ command }) => ({
     ),
     HtmlReplaceVitePlugin(),
     CopyServeConfigPlugin(),
+    CheckMacromoleculesChunksPlugin(),
   ],
   define: {
     ...envDefines,

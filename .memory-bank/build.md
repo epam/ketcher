@@ -134,3 +134,7 @@ script.
   undeclared dependencies.
 - The `example-ssr` build proves the entry points load through `exports` and are SSR-safe.
 - `npm run test:build-config` runs `node --test` suites for the `example` and `demo` Vite configs.
+  It also runs the emitted-chunk guard tests. During an `example` production build, the
+  `ketcher-check-macromolecules-chunks` plugin fails if a chunk named
+  `ketcher-macromolecules*` contains modules outside `packages/ketcher-macromolecules/src/` or
+  `packages/ketcher-macromolecules/node_modules/`.

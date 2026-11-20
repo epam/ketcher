@@ -38,7 +38,6 @@ import {
 import {
   LibraryNameType,
   FAVORITE_ITEMS_UNIQUE_KEYS,
-  NoNaturalAnalogueGroupTitle,
   NoNaturalAnalogueGroupCode,
   DNA_TEMPLATE_NAME_PART,
   RNA_TEMPLATE_NAME_PART,
@@ -670,7 +669,9 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
     (result, monomerItem) => {
       // separate monomers by NaturalAnalogCode
-      const code = monomerItem.props.MonomerNaturalAnalogCode || 'X';
+      const code =
+        monomerItem.props.MonomerNaturalAnalogCode ||
+        NoNaturalAnalogueGroupCode;
       if (!result[code]) {
         result[code] = [];
       }
@@ -707,10 +708,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 
   return sortedGroupCodes.reduce((result, code) => {
     const group: Group = {
-      groupTitle:
-        code === NoNaturalAnalogueGroupCode
-          ? NoNaturalAnalogueGroupTitle
-          : code,
+      groupTitle: code,
       groupItems: [],
     };
     sortedPreparedData[code].forEach((item: MonomerItemType) => {

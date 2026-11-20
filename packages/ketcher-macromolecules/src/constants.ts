@@ -90,9 +90,7 @@ export const PRESET_PHOSPHATE_FILTER_STORAGE_KEY =
   'ketcher_preset_phosphate_filter';
 export const SEQUENCE_TYPE_STORAGE_KEY = 'ketcher_polymer_sequence_type';
 
-// It's set as Z, so it will always be put in the end when alphabetically sorting groups by code
-export const NoNaturalAnalogueGroupCode = 'Z';
-export const NoNaturalAnalogueGroupTitle = 'No natural analogue';
+export const NoNaturalAnalogueGroupCode = 'X';
 
 export const DNA_TEMPLATE_NAME_PART = 'thymine';
 export const RNA_TEMPLATE_NAME_PART = 'uracil';

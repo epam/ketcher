@@ -16,7 +16,7 @@
 
 import {
   type ConcreteMonomerEntityClass,
-  monomerEntityFactory,
+  concreteMonomerEntityFactory,
 } from 'domain/helpers/monomerEntityFactory';
 import type { MonomerItemType } from 'domain/types';
 import type { KetMonomerClass } from 'domain/constants/monomers';
@@ -72,7 +72,7 @@ export const monomerRendererFactory = (
   RendererClass: DerivedRendererClass,
   ketMonomerClass: KetMonomerClass,
 ] => {
-  const [EntityClass, ketMonomerClass] = monomerEntityFactory(monomer);
+  const [EntityClass, ketMonomerClass] = concreteMonomerEntityFactory(monomer);
   const RendererClass = entityToRenderer.get(EntityClass);
   // 'RendererClass as DerivedRendererClass' - to satisfy the return type, but it should always be defined since the map is exhaustive
   return [EntityClass, RendererClass as DerivedRendererClass, ketMonomerClass];

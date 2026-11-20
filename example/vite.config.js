@@ -404,6 +404,8 @@ const codeSplitting = {
     },
     {
       name: getChunkName,
+      // Package chunks own only modules directly matched by getChunkName.
+      includeDependenciesRecursively: false,
     },
   ],
 };

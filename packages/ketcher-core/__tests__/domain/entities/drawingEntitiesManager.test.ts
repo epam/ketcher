@@ -250,22 +250,54 @@ describe('Drawing Entities Manager', () => {
       );
     });
 
-    it.each(['missing', 'occupied'])(
-      'opens the modal when target R1 is %s even if R2 is free',
-      (state) => {
+    it.each([
+      ['missing', false, AttachmentPointName.R2],
+      ['occupied', false, AttachmentPointName.R2],
+      ['missing', true, undefined],
+      ['occupied', true, undefined],
+    ])(
+      'when target R1 is %s, requests a modal with multiple free points: %s',
+      (state, hasMultipleFreePoints, expectedTargetAP) => {
+        const manager = new DrawingEntitiesManager();
         const source = new Peptide(peptideMonomerItem);
         source.attachmentPointsToBonds = { R1: null, R2: null };
         source.setChosenFirstAttachmentPoint(AttachmentPointName.R2);
         const target = new Peptide(peptideMonomerItem);
-        target.attachmentPointsToBonds =
-          state === 'missing'
-            ? { R2: null }
-            : {
-                R1: new PolymerBond(target, new Peptide(peptideMonomerItem)),
-                R2: null,
-              };
+        target.attachmentPointsToBonds = { R2: null };
+        if (state === 'occupied') {
+          target.attachmentPointsToBonds.R1 = new PolymerBond(
+            target,
+            new Peptide(peptideMonomerItem),
+          );
+        }
+        if (hasMultipleFreePoints) {
+          target.attachmentPointsToBonds.R3 = null;
+        }
+        const { polymerBond } = manager.startPolymerBondCreation(
+          source,
+          new Vec2(),
+          new Vec2(10, 10),
+          MACROMOLECULES_BOND_TYPES.SINGLE,
+        );
 
-        expect(shouldInvokeConnectionModal(source, target, false)).toBe(true);
+        const showModalOnHover = shouldInvokeConnectionModal(
+          source,
+          target,
+          false,
+        );
+        expect(showModalOnHover).toBe(hasMultipleFreePoints);
+        manager.intendToFinishBondCreation(
+          target,
+          polymerBond,
+          !showModalOnHover,
+        );
+
+        expect(shouldInvokeConnectionModal(source, target)).toBe(
+          hasMultipleFreePoints,
+        );
+        expect(target.getPotentialAttachmentPointByBond(polymerBond)).toBe(
+          expectedTargetAP,
+        );
       },
     );
 

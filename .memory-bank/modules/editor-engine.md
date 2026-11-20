@@ -56,7 +56,7 @@ The default mode is Sequence. Each mode is registered by name and looked up by n
 
 Tools follow the same pattern as the micromolecules side: a map of tool constructors keyed by name, and a shared base class. The macromolecules tool set covers monomer placement, bond creation, erasing, selection variants, rotation, zoom, and sequence editing.
 
-For covalent bonds from a specific attachment point to a monomer center, `shouldInvokeConnectionModal` prioritizes the selected source and the availability of target R1 over generic monomer-class rules. `DrawingEntitiesManager.intendToFinishBondCreation` uses R1 for that preview; explicitly targeted attachment points keep their separate path. See the [macromolecules spec](../../openspec/specs/macromolecules/spec.md#requirement-specific-attachment-point-to-monomer-center).
+For covalent bonds from a specific attachment point to a monomer center, `shouldInvokeConnectionModal` checks target availability before applying generic monomer-class rules. `DrawingEntitiesManager.intendToFinishBondCreation` previews an automatic connection using R1 when free or the monomer's target-point resolver otherwise. Explicitly targeted attachment points keep their separate path. See the [macromolecules spec](../../openspec/specs/macromolecules/spec.md#requirement-specific-attachment-point-to-monomer-center).
 
 ### Event bus
 

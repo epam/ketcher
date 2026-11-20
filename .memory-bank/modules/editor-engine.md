@@ -58,6 +58,8 @@ Snake mode's row packing and molecule placement are described in [snake-layout](
 
 Tools follow the same pattern as the micromolecules side: a map of tool constructors keyed by name, and a shared base class. The macromolecules tool set covers monomer placement, bond creation, erasing, selection variants, rotation, zoom, and sequence editing.
 
+For covalent bonds from a specific attachment point to a monomer center, `shouldInvokeConnectionModal` checks target availability before applying generic monomer-class rules. `DrawingEntitiesManager.intendToFinishBondCreation` previews an automatic connection using R1 when free or the monomer's target-point resolver otherwise. Explicitly targeted attachment points keep their separate path. See the [macromolecules spec](../../openspec/specs/macromolecules/spec.md#requirement-specific-attachment-point-to-monomer-center).
+
 ### Event bus
 
 Each macromolecules editor instance builds its **own** event bus on construction — there is no shared global bus, so multiple editor instances on the same page do not leak events into each other. The bus is a collection of about 74 typed subscriptions covering tool selection, mode switching, monomer/preset selection, bond creation, clipboard operations, layout commands, flip and rotation, and mode-switch triggers between the two editor domains. On teardown every handler is removed.

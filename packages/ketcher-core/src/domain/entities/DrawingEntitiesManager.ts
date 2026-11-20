@@ -1489,9 +1489,11 @@ export class DrawingEntitiesManager {
       monomer.removePotentialBonds();
       const firstMonomerValidSourcePoint =
         bond.firstMonomer.getValidSourcePoint(monomer);
-      const secondMonomerValidTargetPoint = monomer.getValidTargetPoint(
-        bond.firstMonomer,
-      );
+      const secondMonomerValidTargetPoint =
+        bond.firstMonomer.chosenFirstAttachmentPointForBond &&
+        monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+          ? AttachmentPointName.R1
+          : monomer.getValidTargetPoint(bond.firstMonomer);
       bond.firstMonomer.setPotentialBond(firstMonomerValidSourcePoint, bond);
       monomer.setPotentialBond(secondMonomerValidTargetPoint, bond);
     }

@@ -76,6 +76,16 @@ export function shouldInvokeConnectionModal(
     return false;
   }
 
+  if (
+    firstMonomer.chosenFirstAttachmentPointForBond !== null &&
+    secondMonomer.potentialSecondAttachmentPointForBond === null
+  ) {
+    return (
+      secondMonomer.unUsedAttachmentPointsNamesList.length > 1 &&
+      !secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+    );
+  }
+
   // Modal: either of the monomers doesn't have any potential APs
   if (
     shouldCheckForPotentialBonds &&

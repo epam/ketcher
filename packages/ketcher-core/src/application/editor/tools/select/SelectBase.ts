@@ -1574,7 +1574,6 @@ abstract class SelectBase implements BaseTool {
   }
 
   destroy() {
-
     this.cancelAutoScroll();
     this.flushPendingDragRender();
     this.editor.transientDrawingView.clear();

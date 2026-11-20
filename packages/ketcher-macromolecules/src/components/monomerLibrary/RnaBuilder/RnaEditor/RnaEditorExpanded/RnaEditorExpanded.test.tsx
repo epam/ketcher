@@ -47,6 +47,90 @@ describe('Test Rna Editor Expanded component', () => {
     useIsCompactViewMock.mockReturnValue(true);
   });
 
+  describe('deferred library scrolling', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.clearAllTimers();
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+    });
+
+    const renderPresetEditor = () =>
+      render(
+        withThemeAndStoreProvider(
+          <>
+            <div data-rna-preset-item-name="Preset" data-testid="preset-item" />
+            <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+          </>,
+          {
+            rnaBuilder: {
+              activePreset: {
+                name: 'Preset',
+                nameInList: 'Preset',
+                sugar: { label: 'R', props: { MonomerName: 'R' } },
+                base: { label: 'A', props: { MonomerName: 'A' } },
+              },
+              activeRnaBuilderItem: RnaBuilderPresetsItem.Presets,
+              presetsDefault: [],
+              presetsCustom: [],
+              groupItemValidations: {
+                [MonomerGroups.BASES]: [],
+                [MonomerGroups.SUGARS]: [],
+                [MonomerGroups.PHOSPHATES]: [],
+              },
+            },
+          },
+        ),
+      );
+
+    it.each(['selection', 'save'])(
+      'scrolls to the preset after %s while mounted',
+      (action) => {
+        const { unmount } = renderPresetEditor();
+        const scrollIntoView = vi.spyOn(
+          screen.getByTestId('preset-item'),
+          'scrollIntoView',
+        );
+
+        fireEvent.click(
+          screen.getByTestId(
+            action === 'save' ? 'save-btn' : 'name-your-structure-editbox',
+          ),
+        );
+
+        expect(scrollIntoView).not.toHaveBeenCalled();
+        act(() => {
+          vi.advanceTimersByTime(100);
+        });
+        expect(scrollIntoView).toHaveBeenCalledOnce();
+        unmount();
+      },
+    );
+
+    it.each(['selection', 'repeated selection', 'save'])(
+      'does not access a disposed document after %s and unmount',
+      (action) => {
+        const { unmount } = renderPresetEditor();
+        const target = screen.getByTestId(
+          action === 'save' ? 'save-btn' : 'name-your-structure-editbox',
+        );
+        fireEvent.click(target);
+        if (action === 'repeated selection') {
+          fireEvent.click(target);
+        }
+
+        unmount();
+        vi.stubGlobal('document', undefined);
+
+        expect(() => vi.advanceTimersByTime(100)).not.toThrow();
+      },
+    );
+  });
+
   it('brings back the duplicated preset when Duplicate and Edit is cancelled (#4447)', () => {
     const store = configureAppStore({});
     const original = { name: 'A', nameInList: 'A' };
@@ -394,5 +478,52 @@ describe('Test Rna Editor Expanded component', () => {
     // Re-entering edit mode must start a fresh session: Update stays
     // disabled until a monomer is actually picked again.
     expect(screen.getByTestId('save-btn')).toBeDisabled();
+  });
+
+  it('merges a picked monomer into the preset name in preset edit mode', () => {
+    const sugar = { label: 'R' } as MonomerOrAmbiguousType;
+
+    const store = configureAppStore({
+      rnaBuilder: {
+        activePreset: {},
+        presetsDefault: [],
+        presetsCustom: [],
+        activeRnaBuilderItem: MonomerGroups.SUGARS,
+      },
+    });
+
+    const tree = (
+      <ThemeProvider theme={testTheme}>
+        <StoreProvider store={store}>
+          <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+        </StoreProvider>
+      </ThemeProvider>
+    );
+
+    const { rerender } = render(tree);
+
+    const nameInput = screen.getByTestId(
+      'name-your-structure-editbox',
+    ) as HTMLInputElement;
+    // No monomer picked yet: the preset name is still empty.
+    expect(nameInput.value).toBe('');
+
+    // Picking a sugar in preset edit mode must fold it into the local preset
+    // copy and recompute the full name during render (previously done via an
+    // effect reacting to the redux monomer selection).
+    act(() => {
+      store.dispatch(
+        setActivePresetMonomerGroup({
+          groupName: MonomerGroups.SUGARS,
+          groupItem: sugar,
+        }),
+      );
+    });
+    rerender(tree);
+
+    expect(
+      (screen.getByTestId('name-your-structure-editbox') as HTMLInputElement)
+        .value,
+    ).toBe('R');
   });
 });

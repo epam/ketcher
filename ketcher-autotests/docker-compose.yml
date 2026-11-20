@@ -25,3 +25,5 @@ services:
       - ./:/app
       - ./build:/app/node_modules
       - ../:/ketcher
+    environment:
+      KETCHER_URL: http://host.docker.internal:4002

@@ -67,16 +67,6 @@ class ReSGroup extends ReObject {
     this.item = sgroup;
   }
 
-  override changeSelectionStyle(
-    options: RenderOptions,
-    shouldDrawOutline = true,
-  ): void {
-    super.changeSelectionStyle(options, shouldDrawOutline);
-    if (this.item?.functionalGroup && this.item.isContracted()) {
-      this.hovering?.attr({ 'fill-opacity': 1 });
-    }
-  }
-
   /**
    * @param remol {ReStruct}
    * @param sgroup {SGroup}

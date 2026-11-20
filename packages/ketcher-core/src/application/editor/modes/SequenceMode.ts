@@ -110,13 +110,6 @@ interface PreservedHydrogenBonds {
   fromMonomer: BaseMonomer;
 }
 
-interface PreservedSideChainConnection {
-  sourceMonomer: BaseMonomer;
-  firstMonomerAttachmentPointName: AttachmentPointName;
-  secondMonomer: BaseMonomer;
-  secondMonomerAttachmentPointName: AttachmentPointName;
-}
-
 function getNodeForStrand(
   twoStrandedNode: ITwoStrandedChainItem | undefined,
   strandType: STRAND_TYPE,
@@ -2158,20 +2151,6 @@ export class SequenceMode extends BaseMode {
     return this.isR1Free(firstEntity) && this.isR2Free(lastEntity);
   }
 
-  private isConnectionPossible(
-    firstMonomer: BaseMonomer,
-    firstMonomerAttachmentPoint: AttachmentPointName,
-    secondMonomer: BaseMonomer,
-    secondMonomerAttachmentPoint: AttachmentPointName,
-  ) {
-    return (
-      firstMonomer.attachmentPointsToBonds[firstMonomerAttachmentPoint] ===
-        null &&
-      secondMonomer.attachmentPointsToBonds[secondMonomerAttachmentPoint] ===
-        null
-    );
-  }
-
   isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
     if (!this.isEditMode) {
       return true;
@@ -2251,56 +2230,6 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private preserveSideChainConnections(selectedNode: SequenceNode) {
-    const allMonomers = selectedNode.monomers;
-    const hasAnySideConnection = allMonomers.some(
-      (monomer) => monomer.sideConnections.length > 0,
-    );
-
-    if (!hasAnySideConnection) {
-      return null;
-    }
-
-    const sideConnectionsData: PreservedSideChainConnection[] = [];
-
-    allMonomers.forEach((monomer) => {
-      Object.entries(monomer.attachmentPointsToBonds).forEach(([key, bond]) => {
-        if (
-          !bond ||
-          bond instanceof MonomerToAtomBond ||
-          !bond.isSideChainConnection
-        ) {
-          return;
-        }
-
-        const secondMonomer = bond.getAnotherMonomer(monomer);
-        if (!secondMonomer?.attachmentPointsToBonds) {
-          return;
-        }
-
-        const secondMonomerBondData = Object.entries(
-          secondMonomer.attachmentPointsToBonds,
-        ).find(([, value]) => value === bond);
-
-        if (!secondMonomerBondData) {
-          return;
-        }
-
-        const [secondMonomerAttachmentPointName] = secondMonomerBondData;
-
-        sideConnectionsData.push({
-          sourceMonomer: monomer,
-          firstMonomerAttachmentPointName: key as AttachmentPointName,
-          secondMonomer,
-          secondMonomerAttachmentPointName:
-            secondMonomerAttachmentPointName as AttachmentPointName,
-        });
-      });
-    });
-
-    return sideConnectionsData;
-  }
-
   private replaceSelectionWithMonomer(
     monomerItem: MonomerItemType,
     selectedNode: SequenceNode,
@@ -2316,8 +2245,6 @@ export class SequenceMode extends BaseMode {
       : SequenceRenderer.getNextNodeInSameChain(selectedTwoStrandedNode);
     const nextNodeInStrand = getNodeForStrand(nextTwoStrandedNode, strandType);
     const position = selectedNode.monomer.position;
-    const sideChainConnections =
-      this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
         return [
@@ -2364,33 +2291,6 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    sideChainConnections?.forEach((sideConnectionData) => {
-      const {
-        firstMonomerAttachmentPointName,
-        secondMonomer,
-        secondMonomerAttachmentPointName,
-      } = sideConnectionData;
-      if (
-        !this.isConnectionPossible(
-          newMonomer,
-          firstMonomerAttachmentPointName,
-          secondMonomer,
-          secondMonomerAttachmentPointName,
-        )
-      ) {
-        return;
-      }
-
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
-          secondMonomer,
-          firstMonomerAttachmentPointName,
-          secondMonomerAttachmentPointName,
-        ),
-      );
-    });
-
     preservedHydrodenBonds.forEach(({ toMonomer }) => {
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
@@ -2404,58 +2304,6 @@ export class SequenceMode extends BaseMode {
     });
 
     return newMonomerSequenceNode;
-  }
-
-  private getPresetMonomerForPreservedSideChainConnection(
-    newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode,
-    sourceMonomer: BaseMonomer,
-  ): BaseMonomer | undefined {
-    const sourceMonomerClass =
-      sourceMonomer.monomerItem.props.MonomerClass ||
-      (sourceMonomer instanceof AmbiguousMonomer
-        ? sourceMonomer.monomerClass
-        : undefined);
-
-    if (newPresetNode instanceof Nucleotide) {
-      if (
-        sourceMonomer instanceof RNABase ||
-        sourceMonomerClass === KetMonomerClass.Base
-      ) {
-        return newPresetNode.rnaBase;
-      }
-      if (
-        sourceMonomer instanceof Sugar ||
-        sourceMonomerClass === KetMonomerClass.Sugar
-      ) {
-        return newPresetNode.sugar;
-      }
-      if (
-        sourceMonomer instanceof Phosphate ||
-        sourceMonomerClass === KetMonomerClass.Phosphate
-      ) {
-        return newPresetNode.phosphate;
-      }
-    }
-
-    if (newPresetNode instanceof Nucleoside) {
-      if (
-        sourceMonomer instanceof RNABase ||
-        sourceMonomerClass === KetMonomerClass.Base
-      ) {
-        return newPresetNode.rnaBase;
-      }
-      if (
-        sourceMonomer instanceof Sugar ||
-        sourceMonomerClass === KetMonomerClass.Sugar
-      ) {
-        return newPresetNode.sugar;
-      }
-    }
-
-    return sourceMonomer instanceof Sugar ||
-      sourceMonomerClass === KetMonomerClass.Sugar
-      ? newPresetNode.monomer
-      : undefined;
   }
 
   private replaceSelectionsWithMonomer(
@@ -2556,7 +2404,6 @@ export class SequenceMode extends BaseMode {
   private checkIfNewMonomerCouldEstablishConnections(
     selectedNode: SequenceNode,
     monomerItem: MonomerItemType | undefined,
-    hasSideChainConnections?: boolean,
   ) {
     if (!monomerItem?.attachmentPoints) {
       return false;
@@ -2566,33 +2413,25 @@ export class SequenceMode extends BaseMode {
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
         monomerItem.attachmentPoints,
       );
-    // Side chains
     const oldMonomerBonds: [
       AttachmentPointName,
       PolymerBond | MonomerToAtomBond | null | undefined,
-    ][] = hasSideChainConnections
-      ? (Object.entries(selectedNode.monomer.attachmentPointsToBonds) as [
-          AttachmentPointName,
-          PolymerBond | MonomerToAtomBond | null | undefined,
-        ][])
-      : [
-          [
-            AttachmentPointName.R1,
-            selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1,
-          ],
-          [
-            AttachmentPointName.R2,
-            selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
-          ],
-        ];
-    // Backbone
+    ][] = [
+      [
+        AttachmentPointName.R1,
+        selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1,
+      ],
+      [
+        AttachmentPointName.R2,
+        selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
+      ],
+    ];
+
     return oldMonomerBonds.every(([key, bond]) => {
       if (
         !bond ||
         (!(bond instanceof MonomerToAtomBond) &&
-          (hasSideChainConnections
-            ? !bond.isSideChainConnection
-            : !bond.isBackBoneChainConnection))
+          !bond.isBackBoneChainConnection)
       ) {
         return true;
       }
@@ -2617,7 +2456,6 @@ export class SequenceMode extends BaseMode {
   private getFirstMissingAttachmentPoint(
     selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
-    hasSideChainConnections?: boolean,
   ): AttachmentPointName | null {
     const newMonomerAttachmentPoints = monomerItem.attachmentPoints
       ? BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
@@ -2642,10 +2480,9 @@ export class SequenceMode extends BaseMode {
           !this.checkIfNewMonomerCouldEstablishConnections(
             selectedNode,
             monomerItem,
-            hasSideChainConnections,
           )
         ) {
-          if (hasSideChainConnections || !newMonomerAttachmentPoints) {
+          if (!newMonomerAttachmentPoints) {
             return AttachmentPointName.R1;
           }
 
@@ -2707,30 +2544,27 @@ export class SequenceMode extends BaseMode {
     return sugarHasR1;
   }
 
-  private selectionsCantPreserveConnectionsWithPreset(
+  private selectionsContainSideChainConnections(
     selections: TwoStrandedNodesSelection,
-    preset: IRnaPreset,
-    hasSideChainConnections?: boolean,
   ) {
+    // The nodes that would actually be replaced, visited the same way
+    // replaceSelectionsWithMonomer and replaceSelectionsWithPreset visit
+    // them, so antisense nodes count too.
     return splitSelectionsIntoStrandRuns(selections).some(
       ({ strandType, selectionRange }) =>
-        selectionRange.some((nodeSelection) => {
-          // The node that would actually be replaced, visited the same way
-          // replaceSelectionsWithPreset visits it, so antisense nodes are
-          // checked as well.
-          const selectedNode = getNodeForStrand(nodeSelection.node, strandType);
-
-          return [preset.sugar, preset.base, preset.phosphate].some(
+        selectionRange.some((nodeSelection) =>
+          getNodeForStrand(nodeSelection.node, strandType)?.monomers.some(
             (monomer) =>
-              monomer &&
-              selectedNode &&
-              !this.checkIfNewMonomerCouldEstablishConnections(
-                selectedNode,
-                monomer,
-                hasSideChainConnections,
+              // Hydrogen bonds are not attachment-point bonds and are
+              // carried over by the replacement, so they are not counted.
+              Object.values(monomer.attachmentPointsToBonds).some(
+                (bond) =>
+                  bond &&
+                  !(bond instanceof MonomerToAtomBond) &&
+                  bond.isSideChainConnection,
               ),
-          );
-        }),
+          ),
+        ),
     );
   }
 
@@ -2869,9 +2703,7 @@ export class SequenceMode extends BaseMode {
             this.replaceSelectionsWithMonomer(selections, monomerItem);
           },
         });
-      } else if (
-        this.getFirstMissingAttachmentPoint(selections, monomerItem, true)
-      ) {
+      } else if (this.selectionsContainSideChainConnections(selections)) {
         editor.events.openConfirmationDialog.dispatch({
           confirmationText:
             'Side chain connections will be deleted during replacement. Do you want to proceed?',
@@ -3001,8 +2833,6 @@ export class SequenceMode extends BaseMode {
     const hasNextNodeInChain =
       selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2;
 
-    const sideChainConnections =
-      this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
         return [
@@ -3053,41 +2883,6 @@ export class SequenceMode extends BaseMode {
         false,
       ),
     );
-
-    sideChainConnections?.forEach((sideConnectionData) => {
-      const {
-        sourceMonomer,
-        firstMonomerAttachmentPointName,
-        secondMonomer,
-        secondMonomerAttachmentPointName,
-      } = sideConnectionData;
-      const monomerForSideConnections =
-        this.getPresetMonomerForPreservedSideChainConnection(
-          newPresetNode,
-          sourceMonomer,
-        );
-
-      if (
-        !monomerForSideConnections ||
-        !this.isConnectionPossible(
-          monomerForSideConnections,
-          firstMonomerAttachmentPointName,
-          secondMonomer,
-          secondMonomerAttachmentPointName,
-        )
-      ) {
-        return;
-      }
-
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          monomerForSideConnections,
-          secondMonomer,
-          firstMonomerAttachmentPointName,
-          secondMonomerAttachmentPointName,
-        ),
-      );
-    });
 
     preservedHydrodenBonds.forEach(({ toMonomer, fromMonomer }) => {
       let monomerForHydrogenBond: BaseMonomer | undefined;
@@ -3246,13 +3041,7 @@ export class SequenceMode extends BaseMode {
             this.replaceSelectionsWithPreset(selections, preset);
           },
         });
-      } else if (
-        this.selectionsCantPreserveConnectionsWithPreset(
-          selections,
-          preset,
-          true,
-        )
-      ) {
+      } else if (this.selectionsContainSideChainConnections(selections)) {
         editor.events.openConfirmationDialog.dispatch({
           confirmationText:
             'Side chain connections will be deleted during replacement. Do you want to proceed?',

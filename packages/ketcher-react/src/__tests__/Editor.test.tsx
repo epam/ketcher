@@ -151,6 +151,20 @@ describe('Editor', () => {
     });
   });
 
+  it('reports initialization after both editors are ready', async () => {
+    const onInit = vi.fn();
+
+    render(<Editor {...editorProps} onInit={onInit} />);
+
+    expect(
+      await screen.findByTestId('macromolecules-editor'),
+    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(onInit).toHaveBeenCalledTimes(1);
+      expect(onInit).toHaveBeenCalledWith(testKetcher);
+    });
+  });
+
   it('loads the macromolecules editor when the feature is enabled', async () => {
     render(<Editor {...editorProps} />);
 

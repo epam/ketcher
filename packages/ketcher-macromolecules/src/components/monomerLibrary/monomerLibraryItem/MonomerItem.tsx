@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
@@ -33,7 +33,6 @@ import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import {
   selectEditor,
-  isSequenceModeEnabled,
   isEditorDragging,
   setContextMenuActive,
 } from 'state/common';
@@ -62,7 +61,7 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_MONOMER_LIBRARY });
-  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');

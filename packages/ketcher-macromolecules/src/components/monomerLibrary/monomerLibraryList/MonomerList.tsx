@@ -14,42 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
-import { MonomerListContainer } from './styles';
-import { IMonomerListProps } from './types';
+import {
+  FavoritesSectionTitle,
+  FavoritesSubsectionTitle,
+  MonomerListContainer,
+} from './styles';
+import { Group, IMonomerListProps } from './types';
+import { useFavoritesGroups } from './hooks/useFavoritesGroups';
 import {
   selectFilteredMonomers,
   selectMonomerGroups,
   selectMonomersInCategory,
-  selectMonomersInFavorites,
   selectAmbiguousMonomersInCategory,
-  selectAmbiguousMonomersInFavorites,
 } from 'state/library';
 import {
   MONOMER_LIBRARY_FAVORITES,
   MONOMER_LIBRARY_PEPTIDES,
   MonomerGroups,
 } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
-import {
-  selectFilteredPresets,
-  selectPresetsInFavorites,
-} from 'state/rna-builder';
+import { selectFilteredPresets } from 'state/rna-builder';
 import { RnaPresetGroup } from '../RnaPresetGroup/RnaPresetGroup';
-import { IRnaPreset } from '../RnaBuilder/types';
-
-export type Group = {
-  groupItems: Array<MonomerItemType>;
-  groupTitle?: string;
-};
-
-export type Favorites = {
-  monomers: MonomerItemType[];
-  presets: IRnaPreset[];
-};
 
 const MonomerList = ({
   onItemClick,
@@ -61,27 +50,75 @@ const MonomerList = ({
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
+  const favorites = useFavoritesGroups(monomers, presets);
 
-  const items = isFavoriteTab
-    ? ({
-        monomers: selectMonomersInFavorites(monomers),
-        presets: selectPresetsInFavorites(presets),
-      } as Favorites)
-    : selectMonomersInCategory(monomers, libraryName);
+  const renderMonomerGroups = (groups: Group[]) =>
+    groups.map(({ groupItems, groupTitle }) => {
+      const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
+      return (
+        <MonomerGroup
+          key={groupTitle}
+          title={resolvedTitle}
+          items={groupItems}
+          libraryName={libraryName}
+          onItemClick={onItemClick}
+          selectedMonomerUniqueKey=""
+        />
+      );
+    });
+
+  if (isFavoriteTab) {
+    const { peptides, rna, chem } = favorites;
+
+    return (
+      <MonomerListContainer>
+        {peptides.hasItems && (
+          <>
+            <FavoritesSectionTitle>Peptides</FavoritesSectionTitle>
+            {renderMonomerGroups(peptides.groups)}
+          </>
+        )}
+        {rna.hasItems && (
+          <>
+            <FavoritesSectionTitle>RNA</FavoritesSectionTitle>
+            {rna.presets.length > 0 && (
+              <>
+                <FavoritesSubsectionTitle>Presets</FavoritesSubsectionTitle>
+                <RnaPresetGroup
+                  duplicatePreset={duplicatePreset}
+                  editPreset={editPreset}
+                  presets={rna.presets}
+                />
+              </>
+            )}
+            {rna.subsections.map(({ title, groups }) => (
+              <Fragment key={title}>
+                <FavoritesSubsectionTitle>{title}</FavoritesSubsectionTitle>
+                {renderMonomerGroups(groups)}
+              </Fragment>
+            ))}
+          </>
+        )}
+        {chem.hasItems && (
+          <>
+            <FavoritesSectionTitle>CHEM</FavoritesSectionTitle>
+            {renderMonomerGroups(chem.groups)}
+          </>
+        )}
+      </MonomerListContainer>
+    );
+  }
 
   const monomerGroups = selectMonomerGroups(
-    isFavoriteTab
-      ? (items as Favorites).monomers
-      : (items as MonomerItemType[]),
+    selectMonomersInCategory(monomers, libraryName),
   );
-  const ambiguousMonomers = isFavoriteTab
-    ? selectAmbiguousMonomersInFavorites(monomers)
-    : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
+  const ambiguousMonomers = selectAmbiguousMonomersInCategory(
+    monomers,
+    MonomerGroups.PEPTIDES,
+  );
+
   return (
     <MonomerListContainer>
-      {isFavoriteTab && monomerGroups.length > 0 && (
-        <div>{t('monomerLibrary.monomersSectionHeader')}</div>
-      )}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
         const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
         return (
@@ -91,21 +128,12 @@ const MonomerList = ({
             items={groupItems}
             libraryName={libraryName}
             onItemClick={onItemClick}
+            selectedMonomerUniqueKey=""
           />
         );
       })}
-      {isFavoriteTab && (items as Favorites).presets.length > 0 && (
-        <>
-          <div>{t('monomerLibrary.presetsSectionHeader')}</div>
-          <RnaPresetGroup
-            duplicatePreset={duplicatePreset}
-            editPreset={editPreset}
-            presets={(items as Favorites).presets}
-          />
-        </>
-      )}
       <>
-        {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
+        {libraryName === MONOMER_LIBRARY_PEPTIDES &&
           ambiguousMonomers.map((group) => {
             const resolvedTitle = resolveLocalizedTitle(group.groupTitle, t);
             return (
@@ -115,6 +143,7 @@ const MonomerList = ({
                 items={group.groupItems}
                 libraryName={libraryName}
                 onItemClick={onItemClick}
+                selectedMonomerUniqueKey=""
               />
             );
           })}

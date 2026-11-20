@@ -63,6 +63,27 @@ describe('EditorHistory', () => {
     expect(history.historyPointer).toEqual(1);
   });
 
+  it('notifies layout subscribers after restoring the mode on undo and redo', () => {
+    editor.events.selectMode.dispatch('flex-layout-mode');
+    editor.events.selectMode.dispatch('snake-layout-mode');
+    const observedModes: string[] = [];
+    const onLayoutModeChange = (modeName: string) => {
+      observedModes.push(editor.mode.modeName);
+      expect(editor.mode.modeName).toBe(modeName);
+    };
+    editor.events.layoutModeChange.add(onLayoutModeChange);
+
+    try {
+      history.undo();
+      expect(editor.mode.modeName).toBe('flex-layout-mode');
+      history.redo();
+      expect(editor.mode.modeName).toBe('snake-layout-mode');
+      expect(observedModes).toEqual(['flex-layout-mode', 'snake-layout-mode']);
+    } finally {
+      editor.events.layoutModeChange.remove(onLayoutModeChange);
+    }
+  });
+
   it('should have stack maximum size equal 32 commands', () => {
     for (let i = 0; i < 40; i++) {
       history.update(new Command());

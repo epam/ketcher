@@ -24,3 +24,19 @@ export const MonomerListContainer = styled.div({
   gap: '8px',
   padding: '8px',
 });
+
+export const FavoritesSectionTitle = styled.div`
+  font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+  font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
+  font-weight: ${({ theme }) => theme.ketcher.font.weight.bold};
+  color: ${({ theme }) => theme.ketcher.color.text.primary};
+  margin: 0;
+`;
+
+export const FavoritesSubsectionTitle = styled.div`
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
+  font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
+  color: ${({ theme }) => theme.ketcher.color.text.secondary};
+  margin: 0;
+`;

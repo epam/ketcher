@@ -79,6 +79,23 @@ export const RNABuilder = (page: Page) => {
       await locators.phosphateSlot.click();
     },
 
+    async selectPhosphatePosition(position: 'left' | 'right') {
+      await this.selectPhosphateSlot();
+      const bounds = await locators.phosphateSlot.boundingBox();
+      if (!bounds) {
+        throw new Error('Phosphate slot is not visible');
+      }
+      await locators.phosphateSlot.hover({
+        position: { x: bounds.width - 8, y: 8 },
+      });
+      await locators.phosphateSlot
+        .getByLabel(
+          new RegExp(`^(Switch to ${position}|Phosphate on the ${position})$`),
+        )
+        .getByRole('button')
+        .click();
+    },
+
     async addToPresets() {
       await moveMouseAway(page);
       await this.expand();

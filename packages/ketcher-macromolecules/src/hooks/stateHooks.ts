@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'state';
 import {
@@ -35,7 +35,7 @@ import {
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export function useLayoutMode() {
+export function useLayoutMode(): LayoutMode {
   const ketcherId = useAppSelector(selectKetcherId);
   const editor = useAppSelector(selectEditor);
   const previousLayoutMode = useAppSelector(selectEditorLayoutMode);
@@ -55,23 +55,21 @@ export function useLayoutMode() {
 
   const isBlank = ketcher?.editor?.struct().isBlank();
   const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
-    previousLayoutMode || fallbackMode,
+  const subscribe = useCallback(
+    (onLayoutModeChange: () => void) => {
+      editor?.events.layoutModeChange.add(onLayoutModeChange);
+      return () => {
+        editor?.events.layoutModeChange.remove(onLayoutModeChange);
+      };
+    },
+    [editor],
   );
-  const onLayoutModeChange = useCallback((newLayoutMode: LayoutMode) => {
-    setLayoutMode(newLayoutMode);
-  }, []);
+  const getSnapshot = useCallback(
+    () => editor?.mode.modeName || previousLayoutMode || fallbackMode,
+    [editor, previousLayoutMode, fallbackMode],
+  );
 
-  useEffect(() => {
-    editor?.events.layoutModeChange.add(onLayoutModeChange);
-
-    return () => {
-      onLayoutModeChange(DEFAULT_LAYOUT_MODE);
-      editor?.events.layoutModeChange.remove(onLayoutModeChange);
-    };
-  }, [onLayoutModeChange, editor]);
-
-  return layoutMode;
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
 export function useSequenceEditInRNABuilderMode() {

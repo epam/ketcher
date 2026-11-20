@@ -147,8 +147,6 @@ describe('syncSettingsFromCore', () => {
 });
 
 describe('Redux reducer - SYNC_SETTINGS_FROM_CORE', () => {
-  // Import the reducer
-
   it('should handle SYNC_SETTINGS_FROM_CORE action', () => {
     const initialState = {
       settings: {

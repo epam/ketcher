@@ -662,6 +662,7 @@ class ReStruct {
     this.showAtoms();
     this.showAttachmentGroups();
     this.showBonds();
+    this.showCIPLabels();
     this.showRgroupAttachmentPoints();
     if (shouldUpdateLoops) this.showLoops();
     this.showReactionSymbols();
@@ -968,6 +969,14 @@ class ReStruct {
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
+    });
+  }
+
+  private showCIPLabels(): void {
+    const options = this.render.options;
+    this.atomsChanged.forEach((_value, aid) => {
+      const atom = this.atoms.get(aid);
+      if (atom) atom.showCIPLabel(this, aid, options);
     });
   }
 

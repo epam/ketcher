@@ -7,6 +7,10 @@ on:
   pull_request:
     types: [labeled]
 
+defaults:
+  run:
+    shell: bash
+
 permissions: {}
 
 concurrency:
@@ -44,19 +48,35 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          specs=$(gh api --paginate "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" \
+          mapfile -t specs < <(gh api --paginate "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" \
             --jq '.[] | select(.status != "removed") | .filename' \
             | grep -E '^ketcher-autotests/tests/specs/.+\.spec\.ts$' || true)
-          popup=$(echo "$specs" | grep '/Chromium-popup/' | sed 's|^ketcher-autotests/||' | tr '\n' ' ' || true)
-          fullscale=$(echo "$specs" | grep -v '/Chromium-popup/' | sed 's|^ketcher-autotests/||' | tr '\n' ' ' || true)
-          echo "Popup specs: ${popup:-none}"
-          echo "FullScale specs: ${fullscale:-none}"
-          if [ -z "${popup// }" ] && [ -z "${fullscale// }" ]; then
+          popup=()
+          fullscale=()
+          for spec in "${specs[@]}"; do
+            if [[ "$spec" == */Chromium-popup/* ]]; then
+              popup+=("${spec#ketcher-autotests/}")
+            else
+              fullscale+=("${spec#ketcher-autotests/}")
+            fi
+          done
+          echo "Popup specs: ${#popup[@]}, FullScale specs: ${#fullscale[@]}"
+          printf '  %s\n' "${popup[@]}" "${fullscale[@]}"
+          if [ "${#specs[@]}" -eq 0 ]; then
             echo "The PR changes no spec file under ketcher-autotests/tests/specs/." >&2
             exit 1
           fi
-          echo "popup=${popup}" >> "$GITHUB_OUTPUT"
-          echo "fullscale=${fullscale}" >> "$GITHUB_OUTPUT"
+          # One path per line: some spec paths contain spaces.
+          write_list() {
+            echo "$1<<EOF_SPECS"
+            shift
+            if [ "$#" -gt 0 ]; then printf '%s\n' "$@"; fi
+            echo "EOF_SPECS"
+          }
+          {
+            write_list popup "${popup[@]}"
+            write_list fullscale "${fullscale[@]}"
+          } >> "$GITHUB_OUTPUT"
 
   build_ketcher:
     needs: changed_specs
@@ -128,22 +148,32 @@ jobs:
           cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
           cd ketcher-autotests/
           npx playwright install chromium
-          if [ -n "${POPUP_SPECS// }" ]; then
-            npx playwright test --project=chromium-popup --update-snapshots=missing $POPUP_SPECS || true
+          # Playwright reads each path as a regular expression, so escape it.
+          to_filters() {
+            if [ -n "$1" ]; then
+              # shellcheck disable=SC2001 # one sed escapes every metacharacter
+              sed 's/[][\\.^$*+?(){}|]/\\&/g' <<< "$1"
+            fi
+          }
+          mapfile -t popup < <(to_filters "$POPUP_SPECS")
+          mapfile -t fullscale < <(to_filters "$FULLSCALE_SPECS")
+          if [ "${#popup[@]}" -gt 0 ]; then
+            npx playwright test --project=chromium-popup --update-snapshots=missing "${popup[@]}" || true
           fi
-          if [ -n "${FULLSCALE_SPECS// }" ]; then
-            npx playwright test --project=chromium --update-snapshots=missing $FULLSCALE_SPECS || true
+          if [ "${#fullscale[@]}" -gt 0 ]; then
+            npx playwright test --project=chromium --update-snapshots=missing "${fullscale[@]}" || true
           fi
       - name: Collect the new baselines
         run: |
           git config --global --add safe.directory '*'
           mkdir -p new-snapshots
-          git ls-files --others --exclude-standard -- ketcher-autotests \
-            | grep -E '^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$' \
-            | while IFS= read -r file; do
-                mkdir -p "new-snapshots/$(dirname "$file")"
-                cp "$file" "new-snapshots/$file"
-              done
+          # -z and quotePath=false keep file names with non-ASCII characters as they are.
+          while IFS= read -r -d '' file; do
+            if [[ "$file" =~ ^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$ ]]; then
+              mkdir -p "new-snapshots/$(dirname "$file")"
+              cp "$file" "new-snapshots/$file"
+            fi
+          done < <(git -c core.quotePath=false ls-files -z --others --exclude-standard -- ketcher-autotests)
           echo "New baselines: $(find new-snapshots -name '*.png' | wc -l)"
       - name: Upload the new baselines
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -178,9 +208,10 @@ jobs:
           SOURCE: ${{ runner.temp }}/new-snapshots
         run: |
           cd "$SOURCE"
-          find . -type f | sed 's|^\./||' | while IFS= read -r file; do
-            if ! echo "$file" | grep -qE '^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$' \
-              || echo "$file" | grep -qE '(^|/)\.\.(/|$)'; then
+          while IFS= read -r -d '' file; do
+            file="${file#./}"
+            if [[ ! "$file" =~ ^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$ ]] \
+              || [[ "$file" =~ (^|/)\.\.(/|$) ]]; then
               echo "Not a baseline path: $file" >&2
               exit 1
             fi
@@ -190,7 +221,7 @@ jobs:
             fi
             mkdir -p "$GITHUB_WORKSPACE/$(dirname "$file")"
             cp "$file" "$GITHUB_WORKSPACE/$file"
-          done
+          done < <(find . -type f -print0)
       - name: Commit and push
         id: commit
         env:
@@ -220,10 +251,10 @@ jobs:
           POPUP_SPECS: ${{ needs.changed_specs.outputs.popup }}
           FULLSCALE_SPECS: ${{ needs.changed_specs.outputs.fullscale }}
         run: |
-          if [ -n "${POPUP_SPECS// }" ]; then
+          if [ -n "$POPUP_SPECS" ]; then
             gh workflow run run-tests-popup.yml --repo "$REPOSITORY" --ref "$BRANCH_NAME"
           fi
-          if [ -n "${FULLSCALE_SPECS// }" ]; then
+          if [ -n "$FULLSCALE_SPECS" ]; then
             gh workflow run run-tests.yml --repo "$REPOSITORY" --ref "$BRANCH_NAME"
           fi
 

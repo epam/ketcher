@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,

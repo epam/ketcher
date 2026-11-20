@@ -7,6 +7,7 @@ import { Linter } from 'eslint';
 import tsParser from '@typescript-eslint/parser';
 import ts from 'typescript';
 import {
+  ALLOWED_COORDINATE_CONVERSIONS,
   ALLOWED_DOMAIN_IMPORTS,
   ALLOWED_HTML_SINKS,
   ALLOWED_MODEL_MUTATIONS,
@@ -343,6 +344,62 @@ test('every ALLOWED_HTML_SINKS entry still holds a real HTML sink', () => {
     assert.ok(
       sinks.length > 0,
       `${file} no longer writes HTML from a string. Remove its ALLOWED_HTML_SINKS entry.`,
+    );
+  }
+});
+
+test('R19 flags hand-written coordinate conversion and leaves Coordinates calls alone', () => {
+  const code = [
+    'const model = ZoomTool.instance.invertZoom(point);',
+    'const view = zoomTool.scaleCoordinates(point);',
+    'const matrix = this.zoomTool.canvas.node()?.getScreenCTM();',
+    'const a = Coordinates.viewToModel(point);',
+    'const b = Coordinates.canvasToView(point);',
+    'const c = transform.invertX(x);',
+    'const d = invertZoom(point);',
+  ].join('\n');
+  assert.deepEqual(
+    lint(
+      code,
+      toRuleConfig('no-manual-coordinate-conversion', { allowedFiles: [] }),
+      'a.ts',
+    ),
+    [1, 2, 3],
+  );
+});
+
+test('R19 skips an allowlisted file', () => {
+  assert.deepEqual(
+    lint(
+      'const model = ZoomTool.instance.invertZoom(point);',
+      toRuleConfig('no-manual-coordinate-conversion', {
+        allowedFiles: ['src/known.ts'],
+      }),
+      'lib/src/known.ts',
+    ),
+    [],
+  );
+});
+
+test('every ALLOWED_COORDINATE_CONVERSIONS entry still holds a real manual conversion', () => {
+  assert.ok(
+    ALLOWED_COORDINATE_CONVERSIONS.length > 0,
+    'the allowlist is not empty',
+  );
+  for (const file of ALLOWED_COORDINATE_CONVERSIONS) {
+    const filename = path.join(REPO_ROOT, file);
+    assert.ok(
+      fs.existsSync(filename),
+      `${file} no longer exists. Remove its ALLOWED_COORDINATE_CONVERSIONS entry.`,
+    );
+    const conversions = lint(
+      fs.readFileSync(filename, 'utf8'),
+      toRuleConfig('no-manual-coordinate-conversion', { allowedFiles: [] }),
+      filename,
+    );
+    assert.ok(
+      conversions.length > 0,
+      `${file} no longer converts coordinates by hand. Remove its ALLOWED_COORDINATE_CONVERSIONS entry.`,
     );
   }
 });

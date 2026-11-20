@@ -76,6 +76,9 @@ export abstract class BaseMode {
     const result = await ketcher.structService.convert(
       { struct: ket, output_format: ChemicalMimeType.Mol },
       { 'molfile-saving-mode': '3000' },
+      {
+        skipMonomerLibraryTransfer: !editor.drawingEntitiesManager.hasMonomers,
+      },
     );
 
     return result.struct;
@@ -284,10 +287,6 @@ export abstract class BaseMode {
     }
   }
 
-  /**
-   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
-   * exports it (monomers are drawn as they look on the canvas).
-   */
   /**
    * Puts the copied structure on the clipboard. By default only KET is written
    * as plain text; modes can override it to add other formats.

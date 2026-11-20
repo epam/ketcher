@@ -1193,13 +1193,10 @@ function bondSingleDown(
   const bsp = 0.7 * options.stereoBond;
 
   let path = '';
-  let p;
-  let q;
-  let r;
   for (let i = 0; i < nlines; ++i) {
-    r = a.addScaled(d, step * i);
-    p = r.addScaled(n, (bsp * (i + 0.5)) / (nlines - 0.5));
-    q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5));
+    const r = a.addScaled(d, step * i);
+    const p = r.addScaled(n, (bsp * (i + 0.5)) / (nlines - 0.5));
+    const q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5));
     path += makeStroke(p, q);
   }
   return paper
@@ -1227,9 +1224,8 @@ function bondSingleEither(
   const bsp = 0.7 * options.stereoBond;
 
   let path = 'M' + toFixed(a.x) + ',' + toFixed(a.y);
-  let r: Vec2;
   for (let i = 0; i < nlines; ++i) {
-    r = a
+    const r = a
       .addScaled(d, step * (i + 0.5))
       .addScaled(n, ((i & 1 ? -1 : +1) * bsp * (i + 0.5)) / (nlines - 0.5));
     path += 'L' + toFixed(r.x) + ',' + toFixed(r.y);
@@ -1285,10 +1281,9 @@ function bondSingleOrDouble(
   const bsp = options.bondSpace / 2;
 
   let path = '';
-  let pi;
   let pp = a;
   for (let i = 1; i <= nSect; ++i) {
-    pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
+    const pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
     if (i & 1) {
       path += makeStroke(pp, pi);
     } else {

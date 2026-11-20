@@ -3,7 +3,10 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import {
+  type ResolvedMonomerClass,
+  resolveMonomerClass,
+} from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
@@ -35,7 +38,7 @@ export const MONOMER_CLASS_TO_CONSTRUCTOR = {
 };
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
-  public static getMonomerClass(monomers: BaseMonomer[]) {
+  public static getMonomerClass(monomers: BaseMonomer[]): ResolvedMonomerClass {
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
     const hasDifferentMonomerTypes = monomers.some((monomer) => {
@@ -81,7 +84,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
-    generateId = true,
+    shouldGenerateId = true,
   ) {
     const variantMonomerLabel =
       variantMonomerItem.subtype ===
@@ -106,7 +109,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         isAmbiguous: true,
       },
       position,
-      { generateId },
+      { generateId: shouldGenerateId },
     );
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(

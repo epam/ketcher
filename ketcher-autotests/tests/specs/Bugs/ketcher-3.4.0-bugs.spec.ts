@@ -423,8 +423,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/fifty-monomers.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -449,8 +450,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/hundred-monomers.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -651,8 +653,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       y: 100,
     });
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await ContextMenu(
@@ -727,8 +730,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       page,
       'KET/Bugs/benzene-ring-with-attachment-point.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await getMonomerLocator(page, {
       monomerAlias: 'F1',
     }).hover();
@@ -774,8 +778,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/Layout changes when switching from micro mode to sequence mode and back.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page);

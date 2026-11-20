@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { CoreEditor, EditorHistory, FlexMode } from 'application/editor';
 import { SelectRectangle } from 'application/editor/tools/select';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
@@ -212,8 +213,8 @@ describe('SelectBase mouseup', () => {
 
   it('does not start rotation center drag when selection has external connections', () => {
     const event = new MouseEvent('mousedown', { bubbles: true });
-    const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
-    const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
+    const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
+    const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
     const externalConnection = { connected: true };
 
     editor.lastCursorPosition = new Vec2(10, 20);

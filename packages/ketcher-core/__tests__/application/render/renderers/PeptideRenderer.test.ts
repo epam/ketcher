@@ -12,8 +12,8 @@ describe('PeptideRenderer', () => {
     // const canvas = createPolymerEditorCanvas();
     // const peptide = new Peptide(peptideMonomerItem);
     // const peptideRenderer = new PeptideRenderer(peptide);
-    // global.SVGElement.prototype.getBBox = jest.fn();
-    // jest
+    // global.SVGElement.prototype.getBBox = vi.fn();
+    // vi
     //   .spyOn(global.SVGElement.prototype, 'getBBox')
     //   .mockImplementation(() => ({ width: 30, height: 20 }));
     // peptideRenderer.show(polymerEditorTheme);

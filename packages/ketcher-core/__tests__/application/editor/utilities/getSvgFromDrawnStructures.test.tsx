@@ -1,5 +1,6 @@
-jest.mock('../../../../src/utilities/KetcherLogger', () => ({
-  KetcherLogger: { error: jest.fn() },
+import { vi } from 'vitest';
+vi.mock('../../../../src/utilities/KetcherLogger', () => ({
+  KetcherLogger: { error: vi.fn() },
 }));
 
 import { KetcherLogger } from '../../../../src/utilities/KetcherLogger';
@@ -33,7 +34,7 @@ const makeRect = (
 
 describe('getSvgFromDrawnStructures', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('returns preview SVG and cleans up dynamic elements with numeric margin', () => {

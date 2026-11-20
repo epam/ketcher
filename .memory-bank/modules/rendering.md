@@ -73,6 +73,7 @@ A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode re
 - A **static** sequence orchestrator builds a sequence view model, shows nodes, shows bonds, and attaches delegated events. It manages the caret, two-stranded (sense/antisense) rows, and "new sequence" buttons.
 - A factory maps each sequence node to a concrete sequence-item renderer (nucleotide, nucleoside, peptide, CHEM, phosphate, empty, backbone, ambiguous, …).
 - A base sequence-item renderer draws one monospaced symbol plus background, counter, caret, and spacer.
+- The sequence view model reserves sense columns only for hydrogen-bonded partners in antisense chains that meet its pairing criteria, even before those chains are processed. Other hydrogen bonds, such as a connection to a standalone base without sugar, do not reserve columns. Unpaired antisense overhangs, including terminal phosphates, use additional columns rather than occupying reserved positions.
 
 ### Transient overlays
 

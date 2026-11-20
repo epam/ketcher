@@ -47,10 +47,9 @@ function assertCustomQueryLength(customQuery: string, context: string): void {
 function fromRlabel(rg: number): number[] {
   const res: number[] = [];
   let rgi;
-  let val;
   for (rgi = 0; rgi < 32; rgi++) {
     if (rg & (1 << rgi)) {
-      val = rgi + 1;
+      const val = rgi + 1;
       res.push(val); // push the string
     }
   }
@@ -252,8 +251,9 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
     }
     case 'GEN':
     case 'queryComponent':
-    default:
+    default: {
       break;
+    }
   }
 
   return result;

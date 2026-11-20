@@ -6,25 +6,31 @@
 
 The project uses three levels of testing:
 
-### 1. Unit Tests (Jest)
+### 1. Unit Tests (Vitest)
 
-Each package has its own Jest configuration. Tests live in `__tests__/` directories alongside source code.
+Each package runs unit tests with Vitest using a `vitest.config.mjs` that merges the package's
+Vite configuration. This keeps test transforms and path aliases aligned with production. Core,
+React, and macromolecules use the `happy-dom` environment; standalone uses `node`. jsdom is not
+a dependency: if it were installed, Paper.js would build a canvas-less jsdom window on the server
+and break the `example-ssr` prerender. `packages/vitest.happy-dom.setup.mjs` runs first in those
+three packages and corrects happy-dom where tests depend on it: it removes happy-dom's `getBBox`,
+so stubs on `SVGElement.prototype.getBBox` apply, and makes `MutationObserver`'s `attributeFilter`
+case-sensitive.
 
-- **ketcher-core**: `packages/ketcher-core/__tests__/` and `packages/ketcher-core/src/**/__tests__/`
-  - Tests domain entities, serializers, helpers, and utilities
-  - Config: `packages/ketcher-core/jest.config.js`
-- **ketcher-react**: `packages/ketcher-react/src/__tests__/`
-  - Tests React components and editor utilities
-  - Config: `packages/ketcher-react/jest.config.js`
-- **ketcher-macromolecules**: `packages/ketcher-macromolecules/src/**/*.test.tsx`
-  - Tests Redux slices, hooks, and components
-  - Config: `packages/ketcher-macromolecules/jest.config.js`
-- **ketcher-standalone**: minimal unit tests
+- **ketcher-core**: `packages/ketcher-core/__tests__/` and
+  `packages/ketcher-core/src/**/__tests__/` (the former Jest `testMatch` also required
+  `*.spec`/`*.test` filenames with `.ts` or `.js` extensions)
+- **ketcher-react**: `packages/ketcher-react/src/**`
+- **ketcher-macromolecules**: `packages/ketcher-macromolecules/src/**`
+- **ketcher-standalone**: `packages/ketcher-standalone/__tests__/`
 
 Mocking: mock only system boundaries. Ketcher exception: in a component test, a hook that is the only way the component reaches a boundary counts as the boundary. Example: `useSettings` in `ketcher-react` is the only way components reach browser storage. Mock that hook at the top of the test file and keep every other module of the package real.
 
-Run all unit tests: `npm run test` (from root)
-Run type checks: `npm run test:types`
+Build core before testing the other packages: `npm run build:core`.
+
+Run the package test scripts for all four packages: `npm run test` (from root).
+Run one package's unit tests: `npm run test:unit --workspace=packages/<package-name>`.
+Run type checks: `npm run test:types` (from root).
 
 ### 2. End-to-End Tests (Playwright)
 
@@ -38,6 +44,23 @@ All E2E tests live in `ketcher-autotests/`. This is a separate npm workspace.
 ### 3. Type Checking
 
 TypeScript type checks run separately per package: `npm run test:types --workspaces`
+
+### 4. Published Package Metadata
+
+After `npm run build`, run `npm run check:package-metadata` to pack all four publishable
+workspaces and check each tarball with `publint` (errors) and Are The Types Wrong. The CI build job
+runs the same check, so it validates packed files rather than workspace links.
+
+`ketcher-core` currently has no `exports` map, so this check cannot catch problems in a future
+core exports map. Add a packed-consumer type-resolution assertion if one is introduced.
+
+ATW's `unexpected-module-syntax` rule is ignored for the ESM `.js` entries in standalone,
+macromolecules, and react: all declare Node 24.20+ (which detects their module syntax), while
+ATW's Node 16 profile flags the ambiguous extensions. The macromolecules `Editor.d.ts` also
+imports an unshipped `theme.less`; its `internal-resolution-error` is a separate declaration
+packaging defect. The two packages' CSS export paths are excluded from
+ATW's JS/type analysis; `publint` still checks their packed tarballs. The packed Vite/webpack
+consumer check covers the standalone entries.
 
 ---
 
@@ -121,6 +144,11 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+Docker tests use the standalone build served inside the container at
+`http://127.0.0.1:4002`, a secure context for clipboard access. Set
+`DOCKER_KETCHER_URL` to test an external deployment instead; clipboard tests
+require an HTTPS URL.
+
 ### Local run caveats
 
 - **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.
@@ -172,7 +200,7 @@ test('some test', async () => {
 });
 ```
 
-**When to use**: Test suites with many tests that share the same editor mode.
+**When to use**: The default for every suite, also for small ones.
 
 #### Pattern B — per-test page (simpler, but slower)
 
@@ -189,7 +217,7 @@ test('some test', async ({ page }) => {
 });
 ```
 
-**When to use**: Small suites, isolated tests, or tests that need a fresh page each time.
+**When to use**: Only for API tests and low-level cases without a canvas preset, and for tests that assert on undo/redo stack depth or boundaries or otherwise need a fully clean editor state (see below).
 
 **Choosing between A and B.** Pattern A reuses one page for the whole suite, so it is fast — but the canvas fixtures only reset the canvas, zoom, localStorage and settings; they do **not** fully reset the undo/redo history (some cleanup steps leave entries behind), and other subtle editor state can persist across tests. Use Pattern B when a test asserts on undo/redo stack depth or boundaries, or otherwise depends on a fully clean editor state — the extra per-test page-init cost is worth the isolation.
 
@@ -215,7 +243,7 @@ Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates
 - For API tests and low-level cases that should not use a canvas preset, take the `page` fixture and call `waitForPageInit(page)` (Pattern B).
 - Prefer one `test.describe()` per file, with `let page: Page;` at file scope.
 - If a test changes the mode, restore the default with the matching canvas fixture in `test.afterEach`, for example `test.afterEach(async ({ SnakeCanvas: _ }) => {});`.
-- If a test must run on a canvas other than the suite's default, pass that canvas fixture as a test parameter, for example `async ({ FlexCanvas: _ })`.
+- If a test must run on a canvas other than the suite's default, pass that canvas fixture as a test parameter, for example `async ({ FlexCanvas: _ })`. Do not switch the mode by hand at the start of the test.
 
 **Good**
 
@@ -352,8 +380,18 @@ await page.getByTestId('context-menu').getByText('Copy').click();
 | `waitForPageInit(page)`                | Navigate to `''`, wait for `window.ketcher`, wait for Indigo button enabled |
 | `waitForKetcherInit(page)`             | Wait for `window.ketcher` to exist                                          |
 | `waitForIndigoToLoad(page)`            | Wait for aromatize button to be enabled (Indigo WASM ready)                 |
-| `waitForRender(page, cb)`              | Run `cb`, then wait for `renderComplete` custom event (250 ms timeout)      |
+| `waitForRender(page, cb)`              | Run `cb`, then wait for `renderComplete` custom event (260 ms timeout)      |
+| `waitForCanvasModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for canvas switch completion for that editor and mode |
+| `waitForLayoutModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for Flex/Snake/Sequence switch completion for that editor and mode |
 | `waitForSpinnerFinishedWork(page, cb)` | Run `cb`, wait for all loading spinners to detach, then `waitForRender`     |
+
+Canvas and layout switch helpers resolve on their dedicated completion events,
+without a fixed render delay. They fail after 30 seconds if no matching event
+arrives, and remove their listener when the action fails or the wait finishes.
+The toolbar methods also wait for their dropdown to close after the switch.
+Canvas mode completion alone does not mean the mode menu's backdrop has stopped
+intercepting pointer events. Callers should not add a fixed delay or an outer
+`waitForRender` for those switches.
 
 ### Canvas Screenshots
 
@@ -452,7 +490,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Test Structure
 
-6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time. Prefer a per-test page (Pattern B) instead when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
+6. **Use the shared-page pattern (`initXxxCanvas`)** by default, whatever the number of tests — it significantly reduces test suite execution time. Use a per-test page (Pattern B) only when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
 8. **Add a comment block** in each test following the standard pattern — issue link, description, numbered scenario steps, and the Ketcher version the test was written for:
    ```ts
@@ -495,7 +533,7 @@ test('Copy stays enabled in Macro mode', async () => {
 
 ### Screenshot Testing
 
-Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes a `data-canvasmode` attribute, atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
+Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes `data-canvasmode` and, in the macromolecules editor, `data-canvaslayout` (`flex`, `snake`, or `sequence`). Atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
 
 10. **Use `takeEditorScreenshot`** for canvas comparisons, not `takePageScreenshot`. Canvas screenshots are more stable across viewport changes.
 11. **Add `hideMacromoleculeEditorScrollBars: true`** when macromolecule editor scroll bars might appear and affect snapshots.
@@ -521,7 +559,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
 20. **Import `Page` and `Locator` from `@fixtures`**, not from `@playwright/test`.
-21. **Do not share test-action values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name) are defined locally inside that test; hoisting them to the module level couples the tests and makes each one harder to read. Static inputs may stay at module level: fixture file paths and facts describing a fixture (e.g. its atom count).
+21. **Do not share values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name), fixture file paths, and facts describing a fixture (e.g. its atom count) are defined inside the test that uses them. Hoisting them to the module level couples the tests and makes each one harder to read. The shared `page` of the shared-page pattern (rule 6) is the exception.
 
 ---
 
@@ -532,6 +570,8 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **`await page.waitForTimeout(N)`** as a wait for an action to complete — fragile and slow. Use `waitForRender`, `waitFor({ state })`, or structural waits instead. Raw `waitForTimeout` is only acceptable in rare edge cases (e.g. after a spinner disappears, to allow animation to settle) and must have a comment explaining why.
 - **Bare `await page.keyboard.press(key)`** for canvas actions — prefer the named helpers when one exists (`undoByKeyboard`, `deleteByKeyboard`, …); otherwise wrap in `waitForRender` or use `keyboardPressOnCanvas`.
 - **Bare `await locator.click()`** without waiting for any result — use the POM method that wraps with the appropriate wait.
+- **Asserting on a value that was read once**, such as `expect(await banner.getNotificationText()).toContain('...')` — it does not retry. Use a web-first assertion on a locator, such as `await expect(locator).toContainText('...')`, `toBeVisible()` or `toHaveAttribute()`.
+- **Negative check right after an action**, such as `not.toBeVisible()` straight after opening a file — it can pass before the element has a chance to appear. First wait until the action has finished (`waitForSpinnerFinishedWork`, `waitForRender`, or a visible result of the action), then check the absence.
 - **Clicking a disabled button via a POM method** — Playwright waits for the element to become enabled, and with `actionTimeout: 0` (no timeout) this hangs forever. To check that a control is disabled, assert `toBeDisabled()`;
 
 ### Selector Anti-Patterns
@@ -547,6 +587,8 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **`page.reload()` in `beforeEach` of a shared-page suite** — this resets the page context and loses the shared page, causing subsequent tests to fail.
 - **Tests that depend on execution order** — each test in a suite must be independently executable. Use `beforeEach` / the canvas fixture for cleanup.
 - **Commented-out tests or `test.skip`** left indefinitely — use `test.skip` with a comment and a tracking issue reference; do not comment out code.
+- **Using an expected file as test input** — files named `*-expected.*` are outputs of other tests, and `GENERATE_DATA=true` can rewrite them. Add a separate input file.
+- **Inventing a test-data folder name** — put new input files for a feature in a folder named like the spec file, `<featureID>-<Feature-Name>` (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`).
 - **Overly broad screenshots** — `takePageScreenshot` captures the entire page including the library panel, which is noisy. Prefer `takeEditorScreenshot` or `takeElementScreenshot`.
 - **Single giant test file** (>500 lines) — split by feature or connection rule type. The `connection-rules-for-*.spec.ts` pattern is the right approach.
 

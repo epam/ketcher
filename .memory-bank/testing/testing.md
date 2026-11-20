@@ -554,7 +554,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
 20. **Import `Page` and `Locator` from `@fixtures`**, not from `@playwright/test`.
-21. **Do not share test-action values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name) are defined locally inside that test; hoisting them to the module level couples the tests and makes each one harder to read. Static inputs may stay at module level: fixture file paths and facts describing a fixture (e.g. its atom count).
+21. **Do not share values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name), fixture file paths, and facts describing a fixture (e.g. its atom count) are defined inside the test that uses them. Hoisting them to the module level couples the tests and makes each one harder to read. The shared `page` of the shared-page pattern (rule 6) is the exception.
 
 ---
 

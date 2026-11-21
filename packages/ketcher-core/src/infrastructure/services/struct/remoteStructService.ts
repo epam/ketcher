@@ -30,6 +30,7 @@ import {
   type CleanData,
   type CleanResult,
   type ConvertData,
+  type ConvertContext,
   type ConvertResult,
   type DearomatizeData,
   type DearomatizeResult,
@@ -299,13 +300,16 @@ export class RemoteStructService implements StructService {
   async convert(
     data: ConvertData,
     options?: StructServiceOptions,
+    context?: ConvertContext,
   ): Promise<ConvertResult> {
-    // Without this, the server gets no monomer library if macromolecules mode was never opened.
-    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
-
-    const monomerLibrary = JSON.stringify(
-      provideEditorInstance()?.monomersLibraryParsedJson,
-    );
+    let monomerLibrary: string | undefined;
+    if (!context?.skipMonomerLibraryTransfer) {
+      // Without this, the server gets no monomer library if macromolecules mode was never opened.
+      await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+      monomerLibrary = JSON.stringify(
+        provideEditorInstance()?.monomersLibraryParsedJson,
+      );
+    }
     const expandedOptions = {
       monomerLibrary,
       ...this.getStandardServerOptions(options),

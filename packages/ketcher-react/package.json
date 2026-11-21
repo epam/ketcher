@@ -107,7 +107,7 @@
     "cross-env": "^7.0.3",
     "dpdm": "^4.3.0",
     "dotenv": "^10.0.0",
-    "eslint": "10.9.0",
+    "eslint": "10.15.0",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^7.1.1",

@@ -25,7 +25,7 @@
     "errorMessage": "Mensaje de error"
   },
   "tools": {
-    "hand": "mano",
+    "hand": "Mover",
     "selectRectangle": "Selección rectangular",
     "selectLasso": "Selección con lazo",
     "selectStructure": "Selección de estructura",

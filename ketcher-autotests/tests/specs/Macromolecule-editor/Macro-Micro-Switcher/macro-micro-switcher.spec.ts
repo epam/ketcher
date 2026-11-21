@@ -163,7 +163,13 @@ test.describe('Macro-Micro-Switcher', () => {
         name: label,
       }).hover();
       await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(
+        page,
+        getAbbreviationLocator(page, {
+          name: label,
+        }),
+        { padding: 250 },
+      );
     }
   });
 

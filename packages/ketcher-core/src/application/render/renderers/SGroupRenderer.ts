@@ -129,9 +129,10 @@ export class SGroupRenderer extends BaseRenderer {
 
     const options: DrawBracketsOptions = {};
     switch (this.sgroup.type) {
-      case SGroup.TYPES.MUL:
+      case SGroup.TYPES.MUL: {
         options.lowerIndexText = String(this.sgroup.data.mul);
         break;
+      }
       case SGroup.TYPES.SRU: {
         const connectivity =
           this.sgroup.data.connectivity === 'ht'
@@ -141,18 +142,21 @@ export class SGroupRenderer extends BaseRenderer {
         options.upperIndexText = connectivity;
         break;
       }
-      case SGroup.TYPES.COP:
+      case SGroup.TYPES.COP: {
         options.upperIndexText = this.sgroup.data.connectivity || 'eu';
         if (this.sgroup.data.subtype) {
           options.lowerIndexText = this.sgroup.data.subtype;
         }
         break;
-      case SGroup.TYPES.SUP:
+      }
+      case SGroup.TYPES.SUP: {
         options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
 
     this.drawBrackets(bracketBox, options);

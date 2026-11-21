@@ -5,6 +5,18 @@ import userEvent from '@testing-library/user-event';
 
 import CustomColorEditor from './CustomColorEditor';
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'colorPicker.hue': 'Hue',
+        'colorPicker.lightness': 'Lightness',
+        'colorPicker.colorPreview': 'Color preview',
+        'colorPicker.deleteCustomColor': 'Delete custom color',
+      })[key] ?? key,
+  }),
+}));
+
 const defaultProps = {
   customColors: ['#123456', '#ABCDEF'],
   pendingColor: '#123456',

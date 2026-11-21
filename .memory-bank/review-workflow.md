@@ -49,17 +49,17 @@ Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `np
 
 `danger.yml` runs Danger on every PR to `master` and `release/**`. The rules are in `scripts/pr-checks.mjs`. A fail blocks the PR; a warning only shows in Danger's comment.
 
-| Rule         | Fails                                                                                                | Warns                                                                                       |
-| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Title        | No issue prefix while the PR links an issue. A `Backmerge: ` prefix is allowed                       | An issue in the title that the PR does not link                                             |
-| Branch       | Its name contains `#`                                                                                |                                                                                             |
-| Linked issue |                                                                                                      | The PR links no issue (`Closes #N`)                                                         |
-| Size         |                                                                                                      | Over 400 changed lines, lockfiles and snapshots not counted. Skipped on large-scale changes |
-| File length  |                                                                                                      | A package source file grows past 1,000 lines (R16). A file already over it is skipped       |
-| Unit test    |                                                                                                      | `ketcher-core` domain or operations code changed with no unit test change                   |
-| PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing | Bug fix or Feature without a test change                                                    |
-| Memory bank  |                                                                                                      | The body has no `Memory bank:` line (`not needed` is a valid answer). Backmerges skipped    |
-| Reviewers    |                                                                                                      | No requested reviewer or team. Draft PRs skipped                                            |
+| Rule         | Fails                                                                                                | Warns                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title        | No issue prefix while the PR links an issue. A `Backmerge: ` prefix is allowed                       | An issue in the title that the PR does not link                                                                                             |
+| Branch       | Its name contains `#`                                                                                |                                                                                                                                             |
+| Linked issue |                                                                                                      | The PR links no issue (`Closes #N`)                                                                                                         |
+| Size         |                                                                                                      | Over 400 changed code lines. Documentation, agent skills, fixtures, lockfiles and snapshots are not counted. Skipped on large-scale changes |
+| File length  |                                                                                                      | A package source file grows past 1,000 lines (R16). A file already over it is skipped                                                       |
+| Unit test    |                                                                                                      | `ketcher-core` domain or operations code changed with no unit test change                                                                   |
+| PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing | Bug fix or Feature without a test change                                                                                                    |
+| Memory bank  |                                                                                                      | The body has no `Memory bank:` line (`not needed` is a valid answer). Backmerges skipped                                                    |
+| Reviewers    |                                                                                                      | No requested reviewer or team. Draft PRs skipped                                                                                            |
 
 Planned:
 
@@ -161,3 +161,4 @@ For a change that is too large to read line by line but mostly mechanical. The p
 - Two reviewers, one of them a code owner (decision D9; code owners are planned: Phase 4, task 4.3). A 30-minute walkthrough call replaces the first async review round.
 - AI review covers the codemod script and the manual commits only. It skips files that the replay check proves are generated (planned: Phase 5, task 5.7).
 - Merge window: agree on a time, ask the authors of conflicting PRs to wait, and merge fast. A long-lived branch collects conflicts.
+- A clean-up PR written by an agent that gets merge conflicts is rebuilt: close it and open a new PR from current `master` that reruns the fix. It is not fixed with a conflict-resolution or `Merge master` commit, because that commit is new code no one reviewed. Source: #12784.

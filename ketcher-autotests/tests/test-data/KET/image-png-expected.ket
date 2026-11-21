@@ -6,8 +6,8 @@
                 "type": "image",
                 "format": "image/png",
                 "boundingBox": {
-                    "x": 13.275,
-                    "y": -6.45,
+                    "x": 13.2,
+                    "y": -6.35,
                     "z": 0,
                     "width": 2.85,
                     "height": 3.0500000000000003

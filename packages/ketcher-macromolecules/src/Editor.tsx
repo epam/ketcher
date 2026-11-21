@@ -65,6 +65,7 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
+  useLayoutMode,
   useSequenceEditInRNABuilderMode,
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
@@ -191,6 +192,7 @@ function EditorContainer({
 }
 
 function Editor({
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -202,6 +204,7 @@ function Editor({
   const errorTooltips = useAppSelector(selectErrorTooltips);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
+  const layoutMode = useLayoutMode();
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -229,6 +232,7 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
+        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,
@@ -402,6 +406,7 @@ function Editor({
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
             data-canvasmode="macromolecules-mode"
+            data-canvaslayout={layoutMode.replace(/-layout-mode$/, '')}
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"

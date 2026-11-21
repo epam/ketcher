@@ -106,6 +106,7 @@ import {
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
 import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import { areSingleNucleotidesPairedAtBaseAndPhosphate } from 'domain/helpers/chains';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
@@ -744,6 +745,7 @@ export class DrawingEntitiesManager {
     isPartialRotation = true,
   ) {
     const command = new Command();
+    const zeroOffset = new Vec2(0, 0);
 
     [
       ...this.atoms.values(),
@@ -789,7 +791,9 @@ export class DrawingEntitiesManager {
         drawingEntity.firstMonomer.selected ||
         drawingEntity.secondMonomer?.selected
       ) {
-        command.addOperation(this.movePolymerBond(drawingEntity));
+        command.merge(
+          this.createDrawingEntityMovingCommand(drawingEntity, zeroOffset),
+        );
       }
     });
 
@@ -2102,6 +2106,25 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private getSnakeAntisensePosition(
+    sensePosition: Vec2,
+    senseChain: Chain,
+    antisenseChain: Chain | undefined,
+  ): Vec2 {
+    // Shift the whole antisense strand to leave room for the phosphate bond's side exits.
+    const offset = areSingleNucleotidesPairedAtBaseAndPhosphate(
+      senseChain,
+      antisenseChain,
+    )
+      ? SnakeLayoutCellWidth * 0.7
+      : 0;
+
+    return new Vec2(
+      sensePosition.x + offset,
+      sensePosition.y + SnakeLayoutCellWidth * 3,
+    );
+  }
+
   public applySnakeLayout(
     isSnakeMode: boolean,
     shouldRedrawBonds = true,
@@ -2150,6 +2173,7 @@ export class DrawingEntitiesManager {
         ...this.monomers.values(),
       ]);
       chainsCollection.rearrange();
+      const monomerToChain = chainsCollection.monomerToChain;
 
       const snakeLayoutModel = new SnakeLayoutModel(
         chainsCollection,
@@ -2252,14 +2276,16 @@ export class DrawingEntitiesManager {
               }
 
               if (antisenseNode) {
+                const antisensePosition = this.getSnakeAntisensePosition(
+                  newSenseNodePosition,
+                  twoStrandedSnakeLayoutNode.chain,
+                  monomerToChain.get(antisenseNode.monomers[0]),
+                );
                 if (antisenseNode instanceof SugarWithBaseSnakeLayoutNode) {
                   command.merge(
                     this.rearrangeSugarWithBaseSnakeLayoutNode(
                       antisenseNode,
-                      new Vec2(
-                        newSenseNodePosition.x,
-                        newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
-                      ),
+                      antisensePosition,
                       rearrangedMonomersSet,
                       shouldRepositionMonomers,
                       true,
@@ -2272,10 +2298,7 @@ export class DrawingEntitiesManager {
                   command.merge(
                     this.rearrangeSingleMonomerSnakeLayoutNode(
                       antisenseNode,
-                      new Vec2(
-                        newSenseNodePosition.x,
-                        newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
-                      ),
+                      antisensePosition,
                       rearrangedMonomersSet,
                       shouldRepositionMonomers,
                     ),

@@ -474,17 +474,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.1 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.1 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 
@@ -503,17 +500,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.2 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.2 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 
@@ -530,17 +524,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.3 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.3 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 
@@ -559,17 +550,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.4 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.4 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 
@@ -586,17 +574,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.5 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.5 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 
@@ -613,17 +598,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.6 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.6 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 
@@ -640,17 +622,14 @@ test.describe('Side chain connections', () => {
 
   test(
     '4.7 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
+    {},
     async () => {
       /*
     /* Case 4.7 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
-    /* connection drawn on the left from these monomers 
+    /* connection drawn on the right from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the right of each chain. 
-    /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5070
-    /* Screenshot should be updated after fix.
     /*
     */
 

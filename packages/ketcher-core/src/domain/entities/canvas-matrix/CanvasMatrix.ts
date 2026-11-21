@@ -13,6 +13,7 @@ interface MatrixConfig {
 }
 
 export class CanvasMatrix {
+  public readonly monomerToChain: ChainsCollection['monomerToChain'];
   private readonly matrix: Matrix<Cell>;
   private readonly initialMatrixWidth: number;
   private readonly monomerToCell: Map<BaseMonomer, Cell> = new Map();
@@ -25,6 +26,7 @@ export class CanvasMatrix {
       initialMatrix: new Matrix<Cell>(),
     },
   ) {
+    this.monomerToChain = chainsCollection.monomerToChain;
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();

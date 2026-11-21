@@ -54,7 +54,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@welldone-software/why-did-you-render": "^4.3.1",
     "cross-env": "^7.0.3",
-    "eslint": "10.9.0",
+    "eslint": "10.15.0",
     "less": "^4.2.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",

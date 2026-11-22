@@ -353,10 +353,8 @@ export const CreateMonomerDialog = (page: Page) => {
     }) {
       const combobox =
         attachmentPointAtomComboboxByAP[options.attachmentPointName];
-      await waitForRender(page, async () => {
-        await combobox.click();
-        await page.getByTestId(options.newAtom).first().click();
-      });
+      await combobox.click();
+      await page.getByTestId(options.newAtom).first().click();
     },
 
     async deleteAttachmentPoint(attachmentPointName: AttachmentPointOption) {

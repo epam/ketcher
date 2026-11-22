@@ -1653,8 +1653,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
-    await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

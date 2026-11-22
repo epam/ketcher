@@ -31,6 +31,15 @@ export class LinkerSequenceNode {
     );
   }
 
+  /**
+   * A phosphate hydrogen-bonded to a monomer of another strand is shown as its
+   * own "p" in sequence mode, aligned with its pair, instead of being merged
+   * into a group of phosphates shown as "@" (#6438).
+   */
+  public static isPairedPhosphate(monomer?: BaseMonomer): monomer is Phosphate {
+    return monomer instanceof Phosphate && monomer.hydrogenBonds.length > 0;
+  }
+
   public static isPartOfLinker(monomer?: BaseMonomer) {
     if (!monomer) {
       return false;
@@ -75,7 +84,8 @@ export class LinkerSequenceNode {
     let nextMonomer = getNextMonomerInChain(this.firstMonomerInNode);
     while (
       nextMonomer !== this.firstMonomerInChain &&
-      LinkerSequenceNode.isValidPartForLinker(nextMonomer)
+      LinkerSequenceNode.isValidPartForLinker(nextMonomer) &&
+      !LinkerSequenceNode.isPairedPhosphate(nextMonomer)
     ) {
       monomers.push(nextMonomer);
       nextMonomer = getNextMonomerInChain(nextMonomer, firstMonomer);

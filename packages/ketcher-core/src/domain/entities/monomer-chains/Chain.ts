@@ -174,12 +174,20 @@ export class Chain {
         nextMonomer instanceof Peptide
       );
     };
+    // A paired phosphate is its own node and also bounds the neighbouring
+    // phosphates, which then follow the usual rule: one alone is shown as "p",
+    // two or more as a linker "@" (#4607, #6438).
+    const isPairedPhosphate = LinkerSequenceNode.isPairedPhosphate;
     if (
       monomer instanceof Phosphate &&
-      (!this.lastNode ||
-        this.lastNode instanceof Nucleoside ||
-        this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
-      (!nextMonomer || isNextMonomerNucleotideLikeOrPeptide())
+      (isPairedPhosphate(monomer) ||
+        ((!this.lastNode ||
+          this.lastNode instanceof Nucleoside ||
+          this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide ||
+          isPairedPhosphate(this.lastNode.lastMonomerInNode)) &&
+          (!nextMonomer ||
+            isNextMonomerNucleotideLikeOrPeptide() ||
+            isPairedPhosphate(nextMonomer))))
     ) {
       this.getLastSubChain().add(new MonomerSequenceNode(monomer));
       return;

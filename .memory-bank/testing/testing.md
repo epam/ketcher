@@ -109,6 +109,11 @@ consumer check covers the standalone entries.
 
 Always use these aliases. Never use relative `../../` paths from test files.
 
+The keyboard clipboard helpers wait for `copyOrCutComplete` or `pasteComplete`
+when operating on the editor canvas in micro and macro modes. Native editing
+fields use the browser's clipboard handling instead. These events report that
+the handler finished, not that the pasted structure was valid.
+
 ---
 
 ## How to Run E2E Tests

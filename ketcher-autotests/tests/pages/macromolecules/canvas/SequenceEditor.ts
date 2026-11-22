@@ -5,7 +5,7 @@ export const SequenceEditor = (page: Page) => {
 
   return {
     async waitForEditModeToExit() {
-      await sequenceStartArrow.waitFor({ state: 'hidden' });
+      await sequenceStartArrow.first().waitFor({ state: 'hidden' });
     },
   };
 };

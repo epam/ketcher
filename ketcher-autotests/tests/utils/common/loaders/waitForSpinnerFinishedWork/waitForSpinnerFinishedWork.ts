@@ -14,7 +14,7 @@ export const waitForSpinnerFinishedWork = async (
       await callback();
       do {
         if ((await loadingSpinner.count()) === 0)
-          await page.waitForTimeout(100);
+          await page.waitForTimeout(200);
         await loadingSpinner.first().waitFor({ state: 'detached' });
       } while ((await loadingSpinner.count()) > 0);
     },

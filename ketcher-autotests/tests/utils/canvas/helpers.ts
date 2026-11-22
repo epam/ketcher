@@ -5,7 +5,6 @@ import {
   Locator,
 } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
-import { emptyFunction } from '../common/helpers';
 import { waitForRender } from '../common/loaders/waitForRender';
 import { waitForSpinnerFinishedWork } from '../common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -241,10 +240,6 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
-
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`ControlOrMeta+KeyC`, options),
@@ -259,10 +254,6 @@ export async function cutToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
-
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`ControlOrMeta+KeyX`, options),
@@ -277,10 +268,6 @@ export async function pasteFromClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. For ex. - select object on the screen can took time
-  await waitForRender(page, emptyFunction);
-
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),

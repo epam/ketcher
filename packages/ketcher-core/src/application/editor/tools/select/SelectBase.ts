@@ -88,9 +88,10 @@ abstract class SelectBase implements BaseTool {
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
   /**
-   * Controls whether auto-scroll is active during a selection drag.
+   * Controls whether auto-scroll is active while a selection area is drawn.
    * Override to `false` in subclasses that should not auto-scroll
    * (e.g. SelectLasso, where the lasso shape would distort on scroll).
+   * Moving selected structures always auto-scrolls.
    */
   protected readonly autoScrollEnabled: boolean = true;
 
@@ -110,6 +111,13 @@ abstract class SelectBase implements BaseTool {
   private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
   private autoScrollRequestAnimationFrameID: number | null = null;
   private autoScrollDelta: Vec2 = new Vec2(0, 0);
+  // Last mouse move of the current drag, replayed on each auto-scroll frame so
+  // the dragged structures follow the scrolled view.
+  private lastAutoScrollMoveEvent: MouseEvent | undefined;
+  // A move's model changes are applied on the next animation frame. Until
+  // then structure positions are stale: auto-scroll waits for them, and mouseup
+  // applies them early so the history step covers the whole move.
+  private readonly pendingMoveRenders = new Set<() => void>();
 
   /**
    * Reads renderer data from d3-bound event targets (`target.__data__`).
@@ -413,6 +421,10 @@ abstract class SelectBase implements BaseTool {
 
   public isSelectionRunning() {
     return this.mode === 'selecting';
+  }
+
+  public isMovingSelection() {
+    return this.mode === 'moving';
   }
 
   protected abstract createSelectionView(): void;
@@ -1024,8 +1036,11 @@ abstract class SelectBase implements BaseTool {
     return snappingOptions[0] ?? emptyResult;
   }
 
-  private handleAutoScrollDuringSelection(event: MouseEvent) {
-    if (!this.autoScrollEnabled) {
+  private handleAutoScroll(event: MouseEvent) {
+    const isAutoScrollAllowed =
+      this.mode === 'moving' ||
+      (this.mode === 'selecting' && this.autoScrollEnabled);
+    if (!isAutoScrollAllowed) {
       this.cancelAutoScroll();
       return;
     }
@@ -1078,11 +1093,18 @@ abstract class SelectBase implements BaseTool {
   }
 
   private performAutoScroll() {
+    const isMoving = this.mode === 'moving';
     if (
-      this.mode !== 'selecting' ||
+      (this.mode !== 'selecting' && !isMoving) ||
       this.autoScrollRequestAnimationFrameID === null
     ) {
       this.autoScrollRequestAnimationFrameID = null;
+      return;
+    }
+
+    if (isMoving && this.pendingMoveRenders.size > 0) {
+      // Wait a frame for the previous move to reach the model.
+      this.scheduleAutoScrollFrame();
       return;
     }
 
@@ -1090,6 +1112,26 @@ abstract class SelectBase implements BaseTool {
       this.autoScrollDelta.x,
       this.autoScrollDelta.y,
     );
+
+    if (isMoving && this.lastAutoScrollMoveEvent) {
+      // The cursor stays still on screen but now points at another canvas
+      // spot, so the dragged structures move with the view (#4481).
+      this.editor.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
+        this.editor.lastCursorPosition,
+      );
+      this.moveSelectedEntitiesWithCursor(this.lastAutoScrollMoveEvent);
+    }
+
+    // Scheduled after the move above, so the move's frame runs first.
+    this.scheduleAutoScrollFrame();
+  }
+
+  private applyPendingMoveRenders() {
+    // Set iteration follows insertion order, so moves apply in order.
+    [...this.pendingMoveRenders].forEach((renderMove) => renderMove());
+  }
+
+  private scheduleAutoScrollFrame() {
     this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
       this.performAutoScroll(),
     );
@@ -1101,7 +1143,7 @@ abstract class SelectBase implements BaseTool {
     }
 
     if (this.mode === 'selecting') {
-      this.handleAutoScrollDuringSelection(event);
+      this.handleAutoScroll(event);
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
       return;
@@ -1121,6 +1163,13 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    this.moveSelectedEntitiesWithCursor(event);
+    // After the move, so its frame runs before the first auto-scroll frame.
+    this.lastAutoScrollMoveEvent = event;
+    this.handleAutoScroll(event);
+  }
+
+  private moveSelectedEntitiesWithCursor(event: MouseEvent) {
     if (!this.firstMonomerPositionBeforeMove) {
       this.firstMonomerPositionBeforeMove = this.editor.drawingEntitiesManager
         .selectedMonomers[0]?.position
@@ -1221,16 +1270,24 @@ abstract class SelectBase implements BaseTool {
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
 
-    requestAnimationFrame(() => {
+    const renderMove = () => {
+      if (!this.pendingMoveRenders.delete(renderMove)) {
+        return; // Already applied early by mouseup.
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
       this.editor.transientDrawingView.update();
-    });
+    };
+    this.pendingMoveRenders.add(renderMove);
+    requestAnimationFrame(renderMove);
   }
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
     const history = EditorHistory.getInstance(this.editor);
+    // The move history step is measured from structure positions, so the last
+    // move must reach the model first.
+    this.applyPendingMoveRenders();
 
     try {
       if (this.mode === 'rotating') {
@@ -1493,6 +1550,7 @@ abstract class SelectBase implements BaseTool {
     }
     this.autoScrollDelta.x = 0;
     this.autoScrollDelta.y = 0;
+    this.lastAutoScrollMoveEvent = undefined;
   }
 
   destroy() {

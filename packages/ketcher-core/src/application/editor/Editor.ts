@@ -2643,7 +2643,9 @@ export class CoreEditor {
     }
     const conditions = [
       eventHandlerName in editorTool,
-      this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
+      this.canvas.contains(event?.target) ||
+        editorTool.isSelectionRunning?.() ||
+        editorTool.isMovingSelection?.(),
     ];
 
     if (conditions.every(Boolean)) {

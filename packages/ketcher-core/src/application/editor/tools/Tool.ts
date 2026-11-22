@@ -140,6 +140,12 @@ export interface Tool extends ToolEventHandler {
   cancel?(): void;
 
   isSelectionRunning?(): boolean;
+  /**
+   * True while selected structures are dragged. The editor then passes mouse
+   * events from anywhere on the page, so dragging past the canvas border (and
+   * releasing there) works.
+   */
+  isMovingSelection?(): boolean;
 
   isNotActiveTool?: boolean;
 

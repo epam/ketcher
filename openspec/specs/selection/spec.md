@@ -84,6 +84,27 @@ The system SHALL scroll the canvas continuously while the user drags a selection
 - **THEN** the canvas scrolls continuously in that direction at a constant speed until the cursor moves away from the edge or the mouse button is released
 - **AND** scrolling is synchronized with the browser repaint cycle for smooth, jank-free movement
 
+### Requirement: Auto-scrolling while moving selected structures near the canvas edge
+
+The system SHALL, in the macromolecules editor, scroll the canvas continuously while the user drags selected structures near a canvas edge, and move the dragged structures with the view, so they can be placed beyond the originally visible area.
+
+#### Scenario: Holding dragged structures at the canvas edge
+
+- **WHEN** the user drags selected structures in the macromolecules editor and holds the cursor within 15 px of an edge of the canvas wrapper, or beyond it
+- **THEN** the canvas scrolls continuously in that direction, along both axes near a corner, even while the cursor stays still
+- **AND** the dragged structures stay under the cursor and move with the view
+- **AND** scrolling stops when the cursor moves away from the edge or the mouse button is released
+
+#### Scenario: Releasing the dragged structures outside the canvas
+
+- **WHEN** the user drags selected structures past the canvas edge, for example over the library panel, and releases the mouse button there
+- **THEN** the move ends at the last position and scrolling stops
+
+#### Scenario: Undoing an auto-scrolled move
+
+- **WHEN** the user moves structures with auto-scroll and then undoes
+- **THEN** the structures return exactly to their positions before the drag in one undo step
+
 ## User interaction
 
 - **Selection tools** — _Rectangle Selection_, _Lasso_, _Structure (whole-object) Selection_, and _Fragment Selection_. Cycle between them with `Escape`.
@@ -109,3 +130,4 @@ The system SHALL scroll the canvas continuously while the user drags a selection
 - Deleting a bond does not delete its atoms unless they become disconnected fragments per the tool's rules; each manipulation is one atomic undo entry.
 - Selection state is purely a view concern and never alters the chemical model.
 - Auto-scroll during selection drag is active in all macromolecules layout modes (sequence, flex, snake); it is disabled for the Lasso selection tool.
+- In the macromolecules editor, auto-scroll while moving selected structures works with every selection tool, Lasso included.

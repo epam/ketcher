@@ -29,8 +29,6 @@ import {
   ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForCustomEvent } from '@utils/common/loaders/waitForRender';
-
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -1640,8 +1638,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from KET file
      * 3. Click on Save to RXN
      * 4. Copy RXN from the preview and paste to Canvas
-     * 5. Move the paste preview, wait for it to update, and place it
-     * 6. Take screenshot
+     * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
       page,

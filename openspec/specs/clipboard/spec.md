@@ -35,6 +35,20 @@ The system SHALL ensure that the clipboard receives the selection serialized in 
 - **WHEN** the user chooses _Copy as MOL_ or _Copy as KET_
 - **THEN** the clipboard receives the selection serialized in that format, suitable for pasting into external tools
 
+### Requirement: Attach a paste to an atom
+
+The system SHALL merge a pasted atom into the canvas atom it is dropped on, and SHALL attach the pasted structure with a new single bond when the user drags from that atom, as the Template tool does.
+
+#### Scenario: Click on an atom merges
+
+- **WHEN** a pasted atom is over a canvas atom and the user clicks
+- **THEN** the two atoms merge into one
+
+#### Scenario: Drag from an atom forms a bond
+
+- **WHEN** a pasted atom is over a canvas atom and the user presses there and drags more than one bond length away
+- **THEN** a new single bond leads from the canvas atom to that pasted atom, and the pasted structure points toward the pointer, snapped to the rotation step from the settings (15° by default) unless `Ctrl` is held
+
 ### Requirement: Paste external structure
 
 The system SHALL ensure that the corresponding structure is parsed and added to the canvas.

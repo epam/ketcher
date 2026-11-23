@@ -12,8 +12,8 @@
 //   load    (--text S | --file F) [--via paste|api] [--type 'HELM'] [--api-kind molecule|helm]   load a structure
 //   click   (--testid ID | --role R --name N) [--nth N] [--y-from-bottom N]
 //   canvas-click [--dx N --dy N] [--button left|right] [--clicks 2]   click the canvas, offset in px from its centre
-//   drag    (--from-testid ID [--from-nth N] | --from-dx N --from-dy N) --to-dx N --to-dy N [--hold-ms N] [--shot FILE]
-//           press, move in steps, release; --shot takes a screenshot while the button is still down
+//   drag    (--from-testid ID [--from-nth N] | --from-dx N --from-dy N) --to-dx N --to-dy N [--settle-ms N] [--hold-ms N] [--shot FILE]
+//           hover the start for --settle-ms, press, move in steps, release; --shot takes a screenshot while the button is still down
 //   state   (--testid ID | --role R --name N) [--nth N]   count, visible, enabled, text, value, and
 //           offset (centre and size, as px from the canvas centre) of one element
 //   fill    (--testid ID | --role R --name N) --text S
@@ -283,6 +283,7 @@ async function daemon() {
       } else from = await canvasPoint(f['from-dx'], f['from-dy']);
       const to = await canvasPoint(f['to-dx'], f['to-dy']);
       await page.mouse.move(from.x, from.y);
+      await page.waitForTimeout(Number(f['settle-ms'] ?? 0));
       await page.mouse.down();
       await page.mouse.move(to.x, to.y, { steps: 10 });
       await page.waitForTimeout(Number(f['hold-ms'] ?? 300));

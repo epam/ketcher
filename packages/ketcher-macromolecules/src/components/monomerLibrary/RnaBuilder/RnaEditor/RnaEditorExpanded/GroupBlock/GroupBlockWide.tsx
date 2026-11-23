@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import {
   GroupBlockContainer,
   GroupName,
@@ -21,9 +22,9 @@ import {
   TextContainer,
 } from './styles';
 import { IGroupBlockProps } from './types';
-import { groupNameToRnaEditorItemLabel } from './utils';
+import { groupNameToRnaEditorItemLabelKey } from './utils';
 import { useAppSelector } from 'hooks';
-import { selectIsEditMode } from 'state/rna-builder';
+import { isRnaBuilderEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
 import { PropsWithChildren } from 'react';
 
@@ -31,30 +32,31 @@ export const GroupBlockWide = ({
   groupName,
   iconName,
   monomerName,
-  selected,
+  selected: isSelected,
   onClick,
   testid,
   children,
 }: IGroupBlockProps & PropsWithChildren) => {
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const { t } = useTranslation('macromoleculesDialogs');
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
 
-  const empty = !monomerName;
+  const isEmpty = !monomerName;
 
   return (
     <GroupBlockContainer
-      selected={selected}
+      selected={isSelected}
       onClick={onClick}
       isEditMode={isEditMode}
       data-testid={testid}
     >
       <>
-        <GroupIcon name={iconName} selected={selected} empty={empty} />
+        <GroupIcon name={iconName} selected={isSelected} empty={isEmpty} />
         <TextContainer>
-          <GroupName selected={selected}>
-            {groupNameToRnaEditorItemLabel[groupName]}
+          <GroupName selected={isSelected}>
+            {t(groupNameToRnaEditorItemLabelKey[groupName])}
           </GroupName>
-          <MonomerName empty={empty} selected={selected}>
-            {monomerName ?? 'Not selected'}
+          <MonomerName empty={isEmpty} selected={isSelected}>
+            {monomerName ?? t('monomerLibrary.notSelected')}
           </MonomerName>
         </TextContainer>
         {children}

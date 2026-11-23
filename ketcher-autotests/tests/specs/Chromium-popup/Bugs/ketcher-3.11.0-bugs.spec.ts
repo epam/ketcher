@@ -286,7 +286,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await ContextMenu(page, getBondLocator(page, { bondId: 3 })).open();
     await takeElementScreenshot(page, getBondLocator(page, { bondId: 3 }), {
-      padding: 200,
+      padding: 230,
     });
   });
 
@@ -1040,12 +1040,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       HELMAlias: 'BaseAlias',
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],
       bondIds: [5, 6],
@@ -1053,9 +1047,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       name: 'S1',
       HELMAlias: 'SugAlias',
     });
-
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupPhosphate({
       atomIds: [8, 9, 10, 11, 12],
@@ -1150,12 +1141,22 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'Molfiles-V2000/complex-molecule-for-layout.mol',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await selectWithLasso(page, 420, 290, [
-      { x: 740, y: 170 },
-      { x: 740, y: 455 },
-      { x: 300, y: 455 },
-      { x: 300, y: 170 },
-      { x: 420, y: 290 },
+    // Start on empty canvas: starting on an atom or bracket drags it instead of
+    // drawing the lasso. Edges keep >= 12px from every atom, so a few pixels of
+    // canvas offset left by earlier tests cannot change what gets selected.
+    await selectWithLasso(page, 300, 180, [
+      { x: 620, y: 180 },
+      { x: 620, y: 285 },
+      { x: 735, y: 285 },
+      { x: 735, y: 312 },
+      { x: 765, y: 312 },
+      { x: 765, y: 470 },
+      { x: 600, y: 470 },
+      { x: 600, y: 437 },
+      { x: 428, y: 437 },
+      { x: 428, y: 480 },
+      { x: 300, y: 480 },
+      { x: 300, y: 180 },
     ]);
     await layout(page);
     await CommonTopRightToolbar(page).setZoomInputValue('40');
@@ -1194,12 +1195,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'BaseAlias',
     });
-
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],

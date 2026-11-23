@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,9 @@
 import type { Action, Struct, Vec2 } from 'ketcher-core';
 import type { ClosestItemWithMap } from '../shared/closest.types';
 
-/** Sign value used for bond-orientation calculations: positive (+1), negative (−1), or unset (0). */
+/**
+Sign value used for bond-orientation calculations: positive (+1), negative (−1), or unset (0).
+*/
 export type Sign = 0 | 1 | -1;
 
 /**
@@ -30,7 +32,9 @@ export interface InternalTemplate {
   molecule: Struct;
   xy0?: Vec2;
   angle0: number;
-  /** Sign of the template relative to its attachment bond (+1 or -1). 0 when no bond is present. */
+  /**
+  Sign of the template relative to its attachment bond (+1 or -1). 0 when no bond is present.
+  */
   sign: Sign;
 }
 
@@ -44,13 +48,19 @@ export interface InternalTemplate {
  */
 export interface TemplateToolInput {
   struct: Struct;
-  /** Attachment-atom id override (string or number from SDF; falls back to SGroup attachment). */
+  /**
+  Attachment-atom id override (string or number from SDF; falls back to SGroup attachment).
+  */
   aid?: string | number;
-  /** Attachment-bond id override (string or number from SDF). */
+  /**
+  Attachment-bond id override (string or number from SDF).
+  */
   bid?: string | number;
   mode?: string;
   props?: {
-    /** Template group name (e.g. "Functional Groups", "Salts and Solvents"). */
+    /**
+    Template group name (e.g. "Functional Groups", "Salts and Solvents").
+    */
     group?: string;
   };
 }
@@ -70,9 +80,13 @@ export type MergeItems = {
 export interface DragContext {
   xy0: Vec2;
   item?: ClosestItemWithMap | null;
-  /** Sign of the bond relative to the molecule (+1 or -1). 0 until set in mousedown. */
+  /**
+  Sign of the bond relative to the molecule (+1 or -1). 0 until set in mousedown.
+  */
   sign1: Sign;
-  /** Sign of the bond relative to the template (+1 or -1). 0 until set in mousedown. */
+  /**
+  Sign of the bond relative to the template (+1 or -1). 0 until set in mousedown.
+  */
   sign2: Sign;
   action?: Action | null;
   mergeItems?: MergeItems;

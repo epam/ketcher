@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import {
   isLibraryItemRnaPreset,
   LibraryItemDragState,
@@ -31,6 +30,13 @@ export const DragGhost = () => {
     }
 
     const handleLibraryItemDrag = (state: LibraryItemDragState) => {
+      if (ZoomTool.instance) {
+        const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
+        if (canvasWrapper) {
+          canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
+        }
+      }
+
       setLibraryItemDragData(state);
     };
 
@@ -40,19 +46,6 @@ export const DragGhost = () => {
       editor.events.setLibraryItemDragState.remove(handleLibraryItemDrag);
     };
   }, [editor]);
-
-  useEffect(() => {
-    if (!ZoomTool.instance || !libraryItemDragData) {
-      return;
-    }
-
-    const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
-    if (!canvasWrapper) {
-      return;
-    }
-
-    canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
-  }, [libraryItemDragData]);
 
   const leftOffset = editor?.ketcherRootElementBoundingClientRect?.left || 0;
   const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;

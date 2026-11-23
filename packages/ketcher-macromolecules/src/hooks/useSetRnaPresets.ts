@@ -29,7 +29,7 @@ function useSetRnaPresets() {
 
     const monomersLibrary = editor.monomersLibrary;
     const defaultPresetsTemplates = (
-      defaultRnaPresets.length
+      defaultRnaPresets.length > 0
         ? defaultRnaPresets
         : editor.defaultRnaPresetsLibraryItems
     ).filter((preset) => !preset.hidden);
@@ -38,7 +38,9 @@ function useSetRnaPresets() {
     ];
     let customLabeledPresets = getCachedCustomRnaPresets();
     let customPresets: IRnaPreset[] = [];
-    const presetsDefaultNames = defaultPresets.map((preset) => preset.name);
+    const presetsDefaultNames = new Set(
+      defaultPresets.map((preset) => preset.name),
+    );
 
     if (customLabeledPresets) {
       // If preset with the same name already exists:
@@ -47,7 +49,7 @@ function useSetRnaPresets() {
         let i = 0;
         let presetUniqName = customLabeledPreset.name;
 
-        while (presetsDefaultNames.includes(presetUniqName)) {
+        while (presetsDefaultNames.has(presetUniqName)) {
           i++;
           presetUniqName = `${customLabeledPreset.name}${'_Copy'.repeat(i)}`;
         }

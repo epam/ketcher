@@ -1,8 +1,10 @@
+import { vi } from 'vitest';
 import { CoreEditor } from 'application/editor';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { AttachmentPointName } from 'domain/types';
+import { compareStrings } from 'utilities';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
@@ -15,13 +17,15 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+const sortLabels = (labels: string[]) => labels.sort(compareStrings);
+
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
   x: 0,
   y: 0,
   width: 12,
@@ -93,7 +97,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -101,6 +105,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {
@@ -138,6 +143,69 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     );
   });
 
+  it('skips a chain whose base is bonded to something besides its sugar', () => {
+    const eligibleChain = Nucleotide.createOnCanvas('A', new Vec2(0, 0));
+    const blockedChain = Nucleotide.createOnCanvas('nC6n8A', new Vec2(0, 5));
+    const chemLibraryItem = editor.monomersLibrary.find(
+      (item) => item.label === '4aPEGMal',
+    );
+
+    if (!eligibleChain || !blockedChain || !chemLibraryItem) {
+      throw new Error('Test monomers are not available in the library');
+    }
+
+    const chem = editor.drawingEntitiesManager.addMonomer(
+      chemLibraryItem,
+      new Vec2(3, 5),
+    ).operations[0].monomer as BaseMonomer;
+
+    editor.drawingEntitiesManager.createPolymerBond(
+      blockedChain.node.rnaBase,
+      chem,
+      AttachmentPointName.R2,
+      AttachmentPointName.R1,
+    );
+
+    selectAllMonomers(editor);
+    editor.drawingEntitiesManager.createAntisenseChain(false);
+
+    const antisenseMonomers = [
+      ...editor.drawingEntitiesManager.monomers.values(),
+    ].filter((monomer) => monomer.monomerItem.isAntisense);
+
+    expect(antisenseMonomers).toHaveLength(3);
+    expect(blockedChain.node.rnaBase.hydrogenBonds).toHaveLength(0);
+    expect(eligibleChain.node.rnaBase.hydrogenBonds).toHaveLength(1);
+  });
+
+  it('does not add a second antisense to an already paired chain', () => {
+    const pairedChain = Nucleotide.createOnCanvas('A', new Vec2(0, 0));
+
+    if (!pairedChain) {
+      throw new Error('Test monomers are not available in the library');
+    }
+
+    selectAllMonomers(editor);
+    editor.drawingEntitiesManager.createAntisenseChain(false);
+
+    const newChain = Nucleotide.createOnCanvas('G', new Vec2(0, 10));
+
+    if (!newChain) {
+      throw new Error('Test monomers are not available in the library');
+    }
+
+    selectAllMonomers(editor);
+    editor.drawingEntitiesManager.createAntisenseChain(false);
+
+    const antisenseMonomers = [
+      ...editor.drawingEntitiesManager.monomers.values(),
+    ].filter((monomer) => monomer.monomerItem.isAntisense);
+
+    expect(antisenseMonomers).toHaveLength(6);
+    expect(pairedChain.node.rnaBase.hydrogenBonds).toHaveLength(1);
+    expect(newChain.node.rnaBase.hydrogenBonds).toHaveLength(1);
+  });
+
   it('complements 2-damdA into P+R+U and keeps the original as sense', () => {
     const unsplit = addUnsplitNucleotide(editor, '2-damdA', new Vec2(0, 0));
     selectAllMonomers(editor);
@@ -152,9 +220,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     ].filter((monomer) => monomer.monomerItem.isAntisense);
 
     expect(antisenseMonomers).toHaveLength(3);
-    expect(antisenseMonomers.map((monomer) => monomer.label).sort()).toEqual(
-      ['P', 'R', 'U'].sort(),
-    );
+    expect(
+      sortLabels(antisenseMonomers.map((monomer) => monomer.label)),
+    ).toEqual(sortLabels(['P', 'R', 'U']));
     expect(unsplit.hydrogenBonds.length).toBe(1);
   });
 
@@ -296,7 +364,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   it.each(['Dab', 'ddC', '3InvdT', '3Puro', '5Ade', 'InvddT'])(
     'creates antisense for single-AP unsplit %s without dispatching errors',
     (alias) => {
-      const errorDispatch = jest.fn();
+      const errorDispatch = vi.fn();
       editor.events.error.add(errorDispatch);
 
       addUnsplitNucleotide(editor, alias, new Vec2(0, 0));

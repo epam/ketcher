@@ -1,7 +1,9 @@
-/* eslint-disable no-undef */
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import {
+  CANVAS_BACKGROUND_COLOR,
+  SELECTION_COLOR,
+} from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
@@ -12,11 +14,14 @@ import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { editorEvents } from 'application/editor/editorEvents';
 import paperjs from 'paper';
 
+type PaperPath = InstanceType<typeof paperjs.Path>;
+type PaperCompoundPath = InstanceType<typeof paperjs.CompoundPath>;
+type PaperPathItem = InstanceType<typeof paperjs.PathItem>;
+
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#a9a9a9';
-const DATA_SGROUP_BACKGROUND = '#F5F5F5';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
 const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
@@ -124,9 +129,10 @@ export class SGroupRenderer extends BaseRenderer {
 
     const options: DrawBracketsOptions = {};
     switch (this.sgroup.type) {
-      case SGroup.TYPES.MUL:
+      case SGroup.TYPES.MUL: {
         options.lowerIndexText = String(this.sgroup.data.mul);
         break;
+      }
       case SGroup.TYPES.SRU: {
         const connectivity =
           this.sgroup.data.connectivity === 'ht'
@@ -136,18 +142,21 @@ export class SGroupRenderer extends BaseRenderer {
         options.upperIndexText = connectivity;
         break;
       }
-      case SGroup.TYPES.COP:
+      case SGroup.TYPES.COP: {
         options.upperIndexText = this.sgroup.data.connectivity || 'eu';
         if (this.sgroup.data.subtype) {
           options.lowerIndexText = this.sgroup.data.subtype;
         }
         break;
-      case SGroup.TYPES.SUP:
+      }
+      case SGroup.TYPES.SUP: {
         options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
 
     this.drawBrackets(bracketBox, options);
@@ -436,7 +445,7 @@ export class SGroupRenderer extends BaseRenderer {
 
     const valueBackgroundColor = this.sgroup.selected
       ? SELECTION_COLOR
-      : DATA_SGROUP_BACKGROUND;
+      : CANVAS_BACKGROUND_COLOR;
 
     valueGroup
       .insert('rect', 'text')
@@ -578,7 +587,7 @@ export class SGroupRenderer extends BaseRenderer {
     });
   }
 
-  private getAtomHoverPath(atomRenderer: AtomRenderer): paper.Path {
+  private getAtomHoverPath(atomRenderer: AtomRenderer): PaperPath {
     const contour = atomRenderer.getHoverContour();
 
     if (contour.type === 'circle') {
@@ -601,7 +610,7 @@ export class SGroupRenderer extends BaseRenderer {
 
   private getBondHoverPath(
     bondRenderer: BondRenderer,
-  ): paper.CompoundPath | null {
+  ): PaperCompoundPath | null {
     const pathData = bondRenderer.getHoverContourPath();
 
     return pathData ? new paperjs.CompoundPath(pathData) : null;
@@ -616,10 +625,10 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => path !== null),
+        .filter((path): path is PaperCompoundPath => path !== null),
     ];
 
-    let combinedPath: paper.PathItem | undefined;
+    let combinedPath: PaperPathItem | undefined;
 
     hoverPaths.forEach((path) => {
       if (!path.closed) {

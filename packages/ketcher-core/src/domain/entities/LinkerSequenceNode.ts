@@ -13,46 +13,6 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class LinkerSequenceNode {
-  constructor(
-    public monomer: BaseMonomer,
-    private readonly firstMonomerInChain?: BaseMonomer,
-  ) {}
-
-  public get SubChainConstructor() {
-    return this.monomer.SubChainConstructor;
-  }
-
-  public get firstMonomerInNode() {
-    return this.monomer;
-  }
-
-  public get lastMonomerInNode() {
-    return this.monomers[this.monomers.length - 1];
-  }
-
-  public get monomers() {
-    const monomers = [this.firstMonomerInNode];
-    const firstMonomer = this.firstMonomerInNode;
-    let nextMonomer = getNextMonomerInChain(this.firstMonomerInNode);
-    while (
-      nextMonomer !== this.firstMonomerInChain &&
-      LinkerSequenceNode.isValidPartForLinker(nextMonomer)
-    ) {
-      monomers.push(nextMonomer);
-      nextMonomer = getNextMonomerInChain(nextMonomer, firstMonomer);
-    }
-
-    return monomers;
-  }
-
-  public get renderer() {
-    return this.monomer.renderer;
-  }
-
-  public get modified() {
-    return false;
-  }
-
   public static isValidPartForLinker(
     monomer?: BaseMonomer,
   ): monomer is BaseMonomer {
@@ -84,5 +44,51 @@ export class LinkerSequenceNode {
       (LinkerSequenceNode.isValidPartForLinker(previousMonomerInChain) ||
         LinkerSequenceNode.isValidPartForLinker(nextMonomerInChain))
     );
+  }
+
+  constructor(
+    public monomer: BaseMonomer,
+    private readonly firstMonomerInChain?: BaseMonomer,
+  ) {}
+
+  public get SubChainConstructor() {
+    return this.monomer.SubChainConstructor;
+  }
+
+  public get firstMonomerInNode() {
+    return this.monomer;
+  }
+
+  public get lastMonomerInNode() {
+    const lastMonomer = this.monomers.at(-1);
+
+    if (!lastMonomer) {
+      throw new Error('Cannot get the last monomer of an empty linker node');
+    }
+
+    return lastMonomer;
+  }
+
+  public get monomers() {
+    const monomers = [this.firstMonomerInNode];
+    const firstMonomer = this.firstMonomerInNode;
+    let nextMonomer = getNextMonomerInChain(this.firstMonomerInNode);
+    while (
+      nextMonomer !== this.firstMonomerInChain &&
+      LinkerSequenceNode.isValidPartForLinker(nextMonomer)
+    ) {
+      monomers.push(nextMonomer);
+      nextMonomer = getNextMonomerInChain(nextMonomer, firstMonomer);
+    }
+
+    return monomers;
+  }
+
+  public get renderer() {
+    return this.monomer.renderer;
+  }
+
+  public get modified() {
+    return false;
   }
 }

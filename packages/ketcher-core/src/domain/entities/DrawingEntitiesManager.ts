@@ -159,13 +159,13 @@ const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const UNSPLIT_NUCLEOTIDE_MONOMERS_AMOUNT = 3;
 
-const SENSE_NATURAL_ANALOGUES: string[] = [
+const SENSE_NATURAL_ANALOGUES = new Set<string>([
   RnaDnaNaturalAnaloguesEnum.ADENINE,
   RnaDnaNaturalAnaloguesEnum.CYTOSINE,
   RnaDnaNaturalAnaloguesEnum.GUANINE,
   RnaDnaNaturalAnaloguesEnum.THYMINE,
   RnaDnaNaturalAnaloguesEnum.URACIL,
-];
+]);
 
 function isUnsplitNucleotideNode(
   node: SubChainNode,
@@ -377,7 +377,7 @@ export class DrawingEntitiesManager {
   }
 
   public get hasDrawingEntities() {
-    return this.allEntities.length !== 0;
+    return this.allEntities.length > 0;
   }
 
   public get hasMonomers() {
@@ -387,7 +387,7 @@ export class DrawingEntitiesManager {
         isMonomerSgroupWithAttachmentPoints(monomer),
     );
 
-    return monomers.length !== 0;
+    return monomers.length > 0;
   }
 
   public get allBondsToMonomers() {
@@ -441,14 +441,16 @@ export class DrawingEntitiesManager {
   public createMonomer(
     monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
-    generateId = true,
+    shouldGenerateId = true,
   ) {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
-      return new AmbiguousMonomer(monomerItem, position, generateId);
+      return new AmbiguousMonomer(monomerItem, position, shouldGenerateId);
     } else {
       const [Monomer] = monomerEntityFactory(monomerItem);
 
-      return new Monomer(monomerItem, position, { generateId });
+      return new Monomer(monomerItem, position, {
+        generateId: shouldGenerateId,
+      });
     }
   }
 
@@ -495,14 +497,14 @@ export class DrawingEntitiesManager {
 
   public deleteDrawingEntity(
     drawingEntity: DrawingEntity,
-    needToDeleteConnectedEntities = true,
-    force = false,
+    shouldDeleteConnectedEntities = true,
+    shouldForce = false,
   ) {
     if (drawingEntity instanceof BaseMonomer) {
       return this.deleteMonomer(
         drawingEntity,
-        needToDeleteConnectedEntities,
-        force,
+        shouldDeleteConnectedEntities,
+        shouldForce,
       );
     } else if (
       drawingEntity instanceof PolymerBond ||
@@ -514,7 +516,7 @@ export class DrawingEntitiesManager {
     } else if (drawingEntity instanceof Bond) {
       return this.deleteBond(drawingEntity);
     } else if (drawingEntity instanceof Atom) {
-      return this.deleteAtom(drawingEntity, needToDeleteConnectedEntities);
+      return this.deleteAtom(drawingEntity, shouldDeleteConnectedEntities);
     } else if (drawingEntity instanceof RxnArrow) {
       return this.deleteRxnArrow(drawingEntity);
     } else if (drawingEntity instanceof MultitailArrow) {
@@ -659,7 +661,7 @@ export class DrawingEntitiesManager {
   }
 
   private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
-    if (drawingEntity.monomerItem.props.isMicromoleculeFragment && offset) {
+    if (offset && drawingEntity.monomerItem.props.isMicromoleculeFragment) {
       drawingEntity.monomerItem.struct.atoms.forEach((atom) => {
         atom.pp.add_(offset);
       });
@@ -1014,8 +1016,8 @@ export class DrawingEntitiesManager {
 
   public deleteMonomer(
     monomer: BaseMonomer,
-    needToDeleteConnectedBonds = true,
-    force = false,
+    shouldDeleteConnectedBonds = true,
+    shouldForce = false,
   ) {
     const command = new Command();
 
@@ -1034,11 +1036,11 @@ export class DrawingEntitiesManager {
     );
     command.addOperation(operation);
 
-    if (needToDeleteConnectedBonds && monomer.hasBonds) {
+    if (shouldDeleteConnectedBonds && monomer.hasBonds) {
       monomer.forEachBond((bond) => {
         // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
         // This check helps to avoid operations duplication
-        if (bond.selected && !force) return;
+        if (bond.selected && !shouldForce) return;
 
         if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
           // We need to remove connected bond when doing a group selection even if it is not selected
@@ -1073,7 +1075,7 @@ export class DrawingEntitiesManager {
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
     previousSelectedEntities: [number, DrawingEntity][],
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     const command = new Command();
     this.allEntities.forEach(([, drawingEntity]) => {
@@ -1101,7 +1103,7 @@ export class DrawingEntitiesManager {
           rectangleTopLeftPoint,
           rectangleBottomRightPoint,
           !!isPreviousSelected,
-          shiftKey,
+          isShiftKeyPressed,
         );
       }
       if (isValueChanged) {
@@ -1121,7 +1123,7 @@ export class DrawingEntitiesManager {
   public selectIfLocatedInPolygon(
     polygonPoints: Vec2[],
     previousSelectedEntities: [number, DrawingEntity][],
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     const command = new Command();
     this.allEntities.forEach(([, drawingEntity]) => {
@@ -1148,7 +1150,7 @@ export class DrawingEntitiesManager {
         isValueChanged = drawingEntity.selectIfLocatedInPolygon(
           polygonPoints,
           !!isPreviousSelected,
-          shiftKey,
+          isShiftKeyPressed,
         );
       }
       if (isValueChanged) {
@@ -1958,7 +1960,7 @@ export class DrawingEntitiesManager {
 
     const chainsCollection =
       _chainsCollection ||
-      ChainsCollection.fromMonomers(Array.from(this.monomers.values()));
+      ChainsCollection.fromMonomers([...this.monomers.values()]);
 
     if (!_chainsCollection) {
       chainsCollection.rearrange();
@@ -2067,11 +2069,11 @@ export class DrawingEntitiesManager {
     snakeLayoutNode: SingleMonomerSnakeLayoutNode,
     newPosition: Vec2,
     rearrangedMonomersSet: Set<number>,
-    needRepositionMonomers = true,
+    shouldRepositionMonomers = true,
   ) {
     const command = new Command();
 
-    if (needRepositionMonomers) {
+    if (shouldRepositionMonomers) {
       this.addRnaOperations(
         command,
         snakeLayoutNode.monomer.position,
@@ -2089,12 +2091,12 @@ export class DrawingEntitiesManager {
     snakeLayoutNode: SugarWithBaseSnakeLayoutNode,
     newSugarPosition: Vec2,
     rearrangedMonomersSet: Set<number>,
-    needRepositionMonomers = true,
+    shouldRepositionMonomers = true,
     isAntisense = false,
   ) {
     const command = new Command();
 
-    if (needRepositionMonomers) {
+    if (shouldRepositionMonomers) {
       this.addRnaOperations(
         command,
         snakeLayoutNode.sugar.position,
@@ -2120,10 +2122,10 @@ export class DrawingEntitiesManager {
 
   public applySnakeLayout(
     isSnakeMode: boolean,
-    needRedrawBonds = true,
-    needRepositionMonomers = true,
-    needRecalculateOldAntisense = true,
-    needRepositionMolecules = true,
+    shouldRedrawBonds = true,
+    shouldRepositionMonomers = true,
+    shouldRecalculateOldAntisense = true,
+    shouldRepositionMolecules = true,
   ) {
     if (this.monomers.size === 0) {
       return new Command();
@@ -2131,9 +2133,10 @@ export class DrawingEntitiesManager {
 
     const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
-    let chainsCollection: ChainsCollection;
 
-    command.merge(this.recalculateAntisenseChains(needRecalculateOldAntisense));
+    command.merge(
+      this.recalculateAntisenseChains(shouldRecalculateOldAntisense),
+    );
 
     // not only snake mode???
     if (isSnakeMode) {
@@ -2161,7 +2164,7 @@ export class DrawingEntitiesManager {
         y: MONOMER_START_Y_POSITION,
       });
 
-      chainsCollection = ChainsCollection.fromMonomers([
+      const chainsCollection = ChainsCollection.fromMonomers([
         ...this.monomers.values(),
       ]);
       chainsCollection.rearrange();
@@ -2169,7 +2172,7 @@ export class DrawingEntitiesManager {
       const snakeLayoutModel = new SnakeLayoutModel(
         chainsCollection,
         this,
-        needRepositionMolecules,
+        shouldRepositionMolecules,
       );
       let hasAntisenseInRow = false;
       let hasRnaInRow = false;
@@ -2209,6 +2212,14 @@ export class DrawingEntitiesManager {
           hasAntisenseInRow = false;
           hasRnaInRow = false;
 
+          const maxMoleculeHeight = row.snakeLayoutModelItems.reduce(
+            (maxHeight, node) =>
+              node instanceof MoleculeSnakeLayoutNode
+                ? Math.max(maxHeight, getStructureBbox(node.molecule).height)
+                : maxHeight,
+            0,
+          );
+
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
               const moleculeBbox = getStructureBbox(
@@ -2218,7 +2229,9 @@ export class DrawingEntitiesManager {
                 Coordinates.canvasToModel(newSenseNodePosition),
                 new Vec2(
                   moleculeBbox.left + cellWidthInAngstroms / 4,
-                  moleculeBbox.top + cellWidthInAngstroms / 4,
+                  moleculeBbox.top +
+                    cellWidthInAngstroms / 4 -
+                    (maxMoleculeHeight - moleculeBbox.height) / 2,
                 ),
               );
 
@@ -2240,7 +2253,7 @@ export class DrawingEntitiesManager {
                       senseNode,
                       newSenseNodePosition,
                       rearrangedMonomersSet,
-                      needRepositionMonomers,
+                      shouldRepositionMonomers,
                     ),
                   );
                   hasRnaInRow = true;
@@ -2250,7 +2263,7 @@ export class DrawingEntitiesManager {
                       senseNode,
                       newSenseNodePosition,
                       rearrangedMonomersSet,
-                      needRepositionMonomers,
+                      shouldRepositionMonomers,
                     ),
                   );
                 }
@@ -2266,7 +2279,7 @@ export class DrawingEntitiesManager {
                         newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
                       ),
                       rearrangedMonomersSet,
-                      needRepositionMonomers,
+                      shouldRepositionMonomers,
                       true,
                     ),
                   );
@@ -2282,7 +2295,7 @@ export class DrawingEntitiesManager {
                         newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
                       ),
                       rearrangedMonomersSet,
-                      needRepositionMonomers,
+                      shouldRepositionMonomers,
                     ),
                   );
                 }
@@ -2324,7 +2337,7 @@ export class DrawingEntitiesManager {
       );
     }
 
-    if (needRedrawBonds) {
+    if (shouldRedrawBonds) {
       command.merge(this.redrawBonds());
     }
 
@@ -2427,6 +2440,7 @@ export class DrawingEntitiesManager {
           ? targetDrawingEntitiesManager.addAmbiguousMonomer(
               {
                 ...monomer.variantMonomerItem,
+                seqId: monomer.monomerItem.seqId,
               },
               monomer.position,
             )
@@ -2851,11 +2865,11 @@ export class DrawingEntitiesManager {
     SequenceRenderer.clear();
   }
 
-  public applyFlexLayoutMode(needRedrawBonds = false) {
+  public applyFlexLayoutMode(shouldRedrawBonds = false) {
     const editor = provideEditorInstance();
     const command = new Command();
 
-    if (needRedrawBonds) {
+    if (shouldRedrawBonds) {
       command.merge(this.redrawBonds());
     }
 
@@ -2929,7 +2943,7 @@ export class DrawingEntitiesManager {
         res.drawingEntities.forEach((entity) =>
           command.addOperation(new DrawingEntitySelectOperation(entity)),
         );
-        return selectedDrawingEntities.concat(res.drawingEntities);
+        return [...selectedDrawingEntities, ...res.drawingEntities];
       },
       [],
     );
@@ -2986,7 +3000,7 @@ export class DrawingEntitiesManager {
 
   public getAllSelectedEntitiesForSingleEntity(
     drawingEntity: DrawingEntity,
-    needToSelectConnectedBonds = true,
+    shouldSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
     if (drawingEntity instanceof SGroupDrawingEntity) {
@@ -3026,7 +3040,7 @@ export class DrawingEntitiesManager {
     }
     drawingEntities.forEach((entity) => {
       const monomer = entity as BaseMonomer;
-      if (needToSelectConnectedBonds && monomer.hasBonds) {
+      if (shouldSelectConnectedBonds && monomer.hasBonds) {
         monomer.forEachBond((polymerBond) => {
           if (
             !selectedDrawingEntities?.includes(polymerBond) &&
@@ -3071,6 +3085,46 @@ export class DrawingEntitiesManager {
     });
 
     return isValid;
+  }
+
+  /**
+   * Returns true when the canvas contains both RNA and DNA sequences.
+   *
+   * Both monomer types share MonomerType='RNA' in the library, so they cannot
+   * be distinguished via the generic monomerTypes Set used in
+   * validateIfApplicableForFasta(). This check is therefore kept separate so
+   * that formats which CAN represent mixed RNA/DNA (e.g. IDT) do not trigger
+   * a false validation error.
+   *
+   * Detection strategy:
+   *  - Split nucleotides: inspect the Sugar monomer label ('R' = RNA, 'dR' = DNA)
+   *  - Unsplit nucleotides: inspect MonomerClass (KetMonomerClass.RNA vs .DNA)
+   */
+  public hasRnaAndDnaMix(): boolean {
+    let hasRnaContent = false;
+    let hasDnaContent = false;
+
+    this.monomers.forEach((monomer) => {
+      if (monomer instanceof Sugar) {
+        if (monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA) {
+          hasRnaContent = true;
+        } else if (
+          monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
+        ) {
+          hasDnaContent = true;
+        }
+      } else if (monomer instanceof UnsplitNucleotide) {
+        if (monomer.monomerItem.props.MonomerClass === KetMonomerClass.RNA) {
+          hasRnaContent = true;
+        } else if (
+          monomer.monomerItem.props.MonomerClass === KetMonomerClass.DNA
+        ) {
+          hasDnaContent = true;
+        }
+      }
+    });
+
+    return hasRnaContent && hasDnaContent;
   }
 
   public moveMonomer(monomer: BaseMonomer, position: Vec2) {
@@ -3153,6 +3207,7 @@ export class DrawingEntitiesManager {
           initialFirstMonomerAttachmentPoint: newFirstMonomerAttachmentPoint,
           initialSecondMonomerAttachmentPoint: newSecondMonomerAttachmentPoint,
         }),
+        polymerBond,
       ),
     );
 
@@ -3255,7 +3310,7 @@ export class DrawingEntitiesManager {
     return atom;
   }
 
-  private deleteAtom(atom: Atom, needToDeleteConnectedEntities = true) {
+  private deleteAtom(atom: Atom, shouldDeleteConnectedEntities = true) {
     const command = new Command();
 
     command.addOperation(
@@ -3274,7 +3329,7 @@ export class DrawingEntitiesManager {
       ),
     );
 
-    if (needToDeleteConnectedEntities) {
+    if (shouldDeleteConnectedEntities) {
       atom.bonds.forEach((bond) => {
         if (bond.selected) {
           return;
@@ -3365,7 +3420,7 @@ export class DrawingEntitiesManager {
     return bond;
   }
 
-  private deleteBond(bond: Bond, needToDeleteDisconnectedAtoms = true) {
+  private deleteBond(bond: Bond, shouldDeleteDisconnectedAtoms = true) {
     const command = new Command();
 
     command.addOperation(
@@ -3390,7 +3445,7 @@ export class DrawingEntitiesManager {
       atom.deleteBond(bond.id);
 
       if (
-        !needToDeleteDisconnectedAtoms ||
+        !shouldDeleteDisconnectedAtoms ||
         !atom.bonds.every((atomBond) => atomBond instanceof MonomerToAtomBond)
       ) {
         return;
@@ -3616,14 +3671,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public recalculateAntisenseChains(needRecalculateOldAntisense = true) {
+  public recalculateAntisenseChains(shouldRecalculateOldAntisense = true) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     const handledChains = new Set<Chain>();
 
-    if (needRecalculateOldAntisense) {
+    if (shouldRecalculateOldAntisense) {
       this.monomers.forEach((monomer) => {
         command.merge(
           this.modifyMonomerItem(monomer, {
@@ -3641,7 +3696,7 @@ export class DrawingEntitiesManager {
         return;
       }
 
-      if (!needRecalculateOldAntisense) {
+      if (!shouldRecalculateOldAntisense) {
         const isAntisenseChain = chain.monomers.some(
           (monomer) => monomer.monomerItem.isAntisense,
         );
@@ -3802,31 +3857,38 @@ export class DrawingEntitiesManager {
         rnaBaseMonomerOrLabel.monomerItem.props.MonomerNaturalAnalogCode;
     }
 
-    return DrawingEntitiesManager.antisenseChainBasesMap(isDnaAntisense)[
-      baseLabelKey
-    ];
+    return this.antisenseChainBasesMap(isDnaAntisense)[baseLabelKey];
   }
 
   private static getAntisenseBaseLabelForNode(
     node: SubChainNode,
     isDnaAntisense: boolean,
   ) {
+    // A base already bonded to something besides its sugar cannot pair with
+    // an antisense base (requirement 1.2 of #5678)
     if (node instanceof Nucleotide || node instanceof Nucleoside) {
-      return DrawingEntitiesManager.getAntisenseBaseLabel(
-        node.rnaBase,
-        isDnaAntisense,
-      );
+      const { rnaBase } = node;
+
+      if (
+        rnaBase.hydrogenBonds.length > 0 ||
+        rnaBase.covalentBonds.length > 1
+      ) {
+        return undefined;
+      }
+
+      return this.getAntisenseBaseLabel(rnaBase, isDnaAntisense);
     }
 
     if (isUnsplitNucleotideNode(node)) {
+      if (node.monomer.hydrogenBonds.length > 0) {
+        return undefined;
+      }
+
       const naturalAnalogCode =
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 
-      return SENSE_NATURAL_ANALOGUES.includes(naturalAnalogCode)
-        ? DrawingEntitiesManager.getAntisenseBaseLabel(
-            naturalAnalogCode,
-            isDnaAntisense,
-          )
+      return SENSE_NATURAL_ANALOGUES.has(naturalAnalogCode)
+        ? this.getAntisenseBaseLabel(naturalAnalogCode, isDnaAntisense)
         : undefined;
     }
 
@@ -3837,8 +3899,10 @@ export class DrawingEntitiesManager {
     node: Nucleoside | Nucleotide | MonomerSequenceNode,
     isDnaAntisense: boolean,
   ) {
-    const antisenseBaseLabel =
-      DrawingEntitiesManager.getAntisenseBaseLabelForNode(node, isDnaAntisense);
+    const antisenseBaseLabel = this.getAntisenseBaseLabelForNode(
+      node,
+      isDnaAntisense,
+    );
 
     if (!antisenseBaseLabel) {
       return;
@@ -3886,14 +3950,14 @@ export class DrawingEntitiesManager {
           (monomer) => monomer.selected,
         );
 
-        if (!hasSelectedMonomerInNode) {
+        if (hasSelectedMonomerInNode) {
+          selectedPiece.push(node);
+        } else {
           if (hasRnaInPiece) {
             selectedPiecesInChains.push(selectedPiece);
           }
           selectedPiece = [];
           hasRnaInPiece = false;
-        } else {
-          selectedPiece.push(node);
         }
 
         if (
@@ -4062,10 +4126,16 @@ export class DrawingEntitiesManager {
             const isModifiedPhosphate =
               monomer instanceof Phosphate && monomer.isModification;
             const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+            const isAmbiguousPhosphateMonomer =
+              isAmbiguousMonomer &&
+              monomer.monomerClass === KetMonomerClass.Phosphate;
+            // AmbiguousMonomer.monomerItem lacks the `monomers` field needed to recreate it, so fall back to variantMonomerItem
             let antisenseMonomerItem: MonomerOrAmbiguousType =
-              monomer.monomerItem;
+              isAmbiguousMonomer
+                ? monomer.variantMonomerItem
+                : monomer.monomerItem;
 
-            if (isModifiedPhosphate || isAmbiguousMonomer) {
+            if (isModifiedPhosphate || isAmbiguousPhosphateMonomer) {
               const nonModifiedPhosphateItem = getRnaPartLibraryItem(
                 editor,
                 RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -4073,8 +4143,6 @@ export class DrawingEntitiesManager {
 
               if (nonModifiedPhosphateItem) {
                 antisenseMonomerItem = nonModifiedPhosphateItem;
-              } else if (isAmbiguousMonomer) {
-                antisenseMonomerItem = monomer.variantMonomerItem;
               }
             }
             const monomerAddCommand = this.addMonomer(
@@ -4447,6 +4515,7 @@ export class DrawingEntitiesManager {
     entitiesToReturn: Array<typeof Atom | typeof Bond> = [Atom, Bond],
   ) {
     const connectedMoleculeMonomers: Array<Atom | Bond> = [];
+    const entitiesToReturnSet = new Set(entitiesToReturn);
     const queue = [startEntity];
     const visited = new Set<number>();
 
@@ -4459,12 +4528,12 @@ export class DrawingEntitiesManager {
 
       if (current instanceof Bond) {
         queue.push(current.firstAtom, current.secondAtom);
-        if (entitiesToReturn.includes(Bond)) {
+        if (entitiesToReturnSet.has(Bond)) {
           connectedMoleculeMonomers.push(current);
         }
       } else if (current instanceof Atom) {
         queue.push(...current.bonds);
-        if (entitiesToReturn.includes(Atom)) {
+        if (entitiesToReturnSet.has(Atom)) {
           connectedMoleculeMonomers.push(current);
         }
       }

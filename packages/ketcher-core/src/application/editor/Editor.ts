@@ -1,5 +1,10 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { type Editor, EditorType } from 'application/editor/editor.types';
+import {
+  type CreateBondViaModalPayload,
+  type Editor,
+  EditorType,
+  type SelectLayoutModePayload,
+} from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   editorEvents,
@@ -8,10 +13,10 @@ import {
   resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
-  type LayoutMode,
   DEFAULT_LAYOUT_MODE,
-  HAS_CONTENT_LAYOUT_MODE,
+  CONTENT_LAYOUT_MODE,
 } from 'application/editor/modes/types';
 import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
@@ -94,7 +99,6 @@ import {
   keyNorm,
   SettingsManager,
 } from 'utilities';
-import monomersDataRaw from './data/monomers.ket';
 import { type HistoryOperationType, EditorHistory } from './EditorHistory';
 import { EditorHistoryAction } from './EditorHistoryAction';
 import { Coordinates } from './shared/coordinates';
@@ -135,6 +139,7 @@ import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
+  setMonomerTemplatePrefix,
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
@@ -181,6 +186,17 @@ interface ModifyAminoAcidsHandlerParams {
   modificationType: string;
 }
 
+/**
+ * Identifies the canvas monomers to swap out after a monomer wizard session,
+ * and the library item to swap in. A monomer is identified by its class and
+ * its code, the pair the user edits in the wizard's attributes panel.
+ */
+export interface MonomerInstanceReplacement {
+  monomerClass: KetMonomerClass | undefined;
+  symbol: string;
+  newMonomerItem: MonomerItemType;
+}
+
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
@@ -194,11 +210,89 @@ const hasBilnAliasUniquenessScope = (
   monomerClass === KetMonomerClass.AminoAcid ||
   monomerClass === KetMonomerClass.CHEM;
 
+/**
+ * A HELM alias is resolved within the polymer type it is written under, so it
+ * only has to be unique there. Sugars, bases and phosphates share the RNA
+ * polymer type and therefore one namespace; peptides and CHEM monomers each
+ * have their own. An amino acid alias never collides with a base alias.
+ */
+const getHelmAliasUniquenessScope = (
+  monomerClass: KetMonomerClass | undefined,
+) => {
+  switch (monomerClass) {
+    case KetMonomerClass.AminoAcid: {
+      return 'peptide';
+    }
+    case KetMonomerClass.Sugar:
+    case KetMonomerClass.Base:
+    case KetMonomerClass.Phosphate:
+    case KetMonomerClass.RNA: {
+      return 'rna';
+    }
+    case KetMonomerClass.CHEM: {
+      return 'chem';
+    }
+    default: {
+      // Unrecognised classes keep their own namespace rather than losing the check.
+      return monomerClass;
+    }
+  }
+};
+
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
+// Template refs of monomers explicitly created via the Monomer Creation Wizard.
+// Only refs in this set are eligible for deletion by the user.
+// Populated by updateMonomersLibrary(…, …, isUserCreated=true) and replayed
+// from localStorage updates tagged source:'wizard' (or legacy entries without
+// a source tag, which are always from the wizard). API-added monomers —
+// via ketcher.updateMonomersLibrary or ketcher.replaceMonomersLibrary — are
+// never added here. See Editor.isUserMadeMonomer.
+let persistentUserCreatedMonomerRefs: Set<string> = new Set();
+
+const loadDefaultMonomersData = async () =>
+  (await import('./data/monomers.ket')).default;
 
 export class CoreEditor {
+  private _monomersLibraryParsedJson: IKetMacromoleculesContent =
+    getEmptyMonomersLibraryJson();
+  private _monomersLibrary: MonomerItemType[] = [];
+  private defaultMonomersLibraryReady?: Promise<void>;
+  private defaultMonomersLibraryInitialized = false;
+  private pendingMonomerLibraryUpdates: Array<{
+    data: string;
+    editedMonomerRef?: string;
+    isUserCreated?: boolean;
+  }> = [];
+  private libraryItemDragCancelled = false;
+  /** Handles all drag-and-drop attachment-point logic for library items. */
+  private dragDropHandler!: LibraryItemDragDropHandler;
+  private tool?: Tool | BaseTool;
+  private readonly previousModes: BaseMode[] = [];
+  private readonly micromoleculesEditor: Editor;
+  private monomerWizardMode?: BaseMode;
+  private pendingMonomerWizardInstanceReplacement?: MonomerInstanceReplacement;
+  private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
+  private copyEventHandler: (event: ClipboardEvent) => void = () => {};
+  private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
+  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
+  private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
+  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
+  private readonly cleanupsForDomEvents: Array<() => void> = [];
+  private readonly handleVisibilityChange = (): void => {
+    if (document.hidden) {
+      this.cancelActiveDrag();
+    }
+  };
+  private readonly handleWindowBlur = (): void => {
+    this.cancelActiveDrag();
+  };
+  private readonly handleWindowResize = () => {
+    this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
+  };
+
   public events: IEditorEvents;
   public ketcherId?: string;
 
@@ -209,8 +303,6 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
-  private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public ketcherRootElement: HTMLDivElement | null;
   public drawnStructuresWrapperElement: SVGGElement;
@@ -225,29 +317,26 @@ export class CoreEditor {
 
   public nextAutochainPosition?: Vec2 = undefined;
 
-  private libraryItemDragCancelled = false;
-
   public theme: CoreEditorTheme;
-  /** Handles all drag-and-drop attachment-point logic for library items. */
-  private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
-  private tool?: Tool | BaseTool;
 
   public get selectedTool(): Tool | BaseTool | undefined {
     return this.tool;
   }
 
   public mode: BaseMode;
-  private readonly previousModes: BaseMode[] = [];
   public sequenceTypeEnterMode = SequenceType.RNA;
-  private readonly micromoleculesEditor: Editor;
-  private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
-  private copyEventHandler: (event: ClipboardEvent) => void = () => {};
-  private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
-  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
-  private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
-  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
-  private readonly cleanupsForDomEvents: Array<() => void> = [];
+  // True while a macromolecules dialog is open, so the canvas does not react
+  // to clipboard paste behind it (as in micro mode)
+  private isModalOpen = false;
+
+  public setIsModalOpen(isModalOpen: boolean) {
+    this.isModalOpen = isModalOpen;
+  }
+
+  public get isMonomerWizardSessionActive() {
+    return Boolean(this.monomerWizardMode);
+  }
 
   constructor({
     ketcherId,
@@ -272,16 +361,13 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
-    this.setMonomersLibrary(monomersDataRaw);
-    this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
-    const editor = this;
     this.dragDropHandler = new LibraryItemDragDropHandler({
       get drawingEntitiesManager() {
-        return editor.drawingEntitiesManager;
+        return this.getEditor().drawingEntitiesManager;
       },
       renderersContainer: this.renderersContainer,
       events: this.events,
@@ -325,21 +411,6 @@ export class CoreEditor {
     window.addEventListener('resize', this.handleWindowResize);
   }
 
-  private readonly handleVisibilityChange = (): void => {
-    if (document.hidden) {
-      this.cancelActiveDrag();
-    }
-  };
-
-  private readonly handleWindowBlur = (): void => {
-    this.cancelActiveDrag();
-  };
-
-  private readonly handleWindowResize = () => {
-    this.resetCanvasOffset();
-    this.resetKetcherRootElementOffset();
-  };
-
   private cancelActiveDrag(): void {
     if (this.tool instanceof SelectBase && this.tool.mode !== 'standby') {
       this.tool.stopMovement();
@@ -376,6 +447,8 @@ export class CoreEditor {
       return;
     }
 
+    await this.ensureDefaultMonomersLibraryLoaded();
+
     try {
       const ketcher = ketcherProvider.getKetcher(this.ketcherId);
       if (monomersLibraryReplace) {
@@ -386,23 +459,23 @@ export class CoreEditor {
           monomersLibraryUpdateData,
         );
       this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
-    } catch (err) {
+    } catch (error) {
       KetcherLogger.error(
         'Editor::initializeMonomersLibraryFromKetcher failed:',
-        err,
+        error,
       );
 
       let errorMessage: string;
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
-        errorMessage = err;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       } else {
         errorMessage = 'Failed to load monomers library';
       }
 
       const errorTitle =
-        err instanceof MonomerLibraryConvertError
+        error instanceof MonomerLibraryConvertError
           ? 'Monomer library conversion failed'
           : 'Monomer library update failed';
 
@@ -410,60 +483,170 @@ export class CoreEditor {
         errorMessage,
         errorTitle,
       });
-      onError?.(err);
+      onError?.(error);
     }
   }
 
-  private setMonomersLibrary(monomersDataRaw: string) {
+  /**
+   * The default monomers library is a lazily loaded code-split chunk (dynamic
+   * import()). Readers that use it synchronously (e.g. KET serializer
+   * enrichment) must await this at an async boundary first. Idempotent: the
+   * load runs at most once per editor. A failed load is logged and not retried,
+   * so the library may still be empty after the await.
+   */
+  public async ensureDefaultMonomersLibraryLoaded(): Promise<void> {
+    if (!this.defaultMonomersLibraryReady) {
+      this.defaultMonomersLibraryReady = this.initializeMonomersLibrary();
+    }
+
+    await this.defaultMonomersLibraryReady;
+  }
+
+  private async initializeMonomersLibrary(): Promise<void> {
+    const loadResult = await this.loadDefaultMonomersLibrary();
+
+    // Set before applying stored updates so they are not queued as pending.
+    this.defaultMonomersLibraryInitialized = true;
+
+    // A cached library already contains the stored updates.
+    if (loadResult !== 'cached') {
+      try {
+        this.applyStoredMonomerLibraryUpdates();
+        // Cache only a complete library, so that after a failed load the next
+        // editor retries the defaults.
+        if (loadResult === 'loaded') {
+          persistentMonomersLibrary = this._monomersLibrary;
+          persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
+        }
+      } catch (err) {
+        KetcherLogger.error(
+          'Editor::initializeMonomersLibrary failed to apply stored updates:',
+          err,
+        );
+      }
+    }
+
+    // Preserve direct caller updates even when the default chunk failed to load.
+    this.replayPendingMonomerLibraryUpdates();
+
+    this.events.updateMonomersLibrary.dispatch();
+  }
+
+  /**
+   * Installs the default library. On failure the library is left empty and an
+   * error modal opens.
+   */
+  private async loadDefaultMonomersLibrary(): Promise<
+    'loaded' | 'cached' | 'failed'
+  > {
+    try {
+      const monomersDataRaw = await loadDefaultMonomersData();
+      return this.setMonomersLibrary(monomersDataRaw);
+    } catch (err) {
+      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', err);
+      this.clearMonomersLibrary();
+      this.events.openErrorModal.dispatch({
+        errorMessage: 'Failed to load default monomers library',
+        errorTitle: 'Monomer library load failed',
+      });
+      return 'failed';
+    }
+  }
+
+  private replayPendingMonomerLibraryUpdates() {
+    const pendingUpdates = this.pendingMonomerLibraryUpdates;
+    this.pendingMonomerLibraryUpdates = [];
+    for (const { data, editedMonomerRef, isUserCreated } of pendingUpdates) {
+      this.updateMonomersLibrary(data, editedMonomerRef, isUserCreated);
+    }
+  }
+
+  private setMonomersLibrary(monomersDataRaw: string): 'loaded' | 'cached' {
     if (
-      persistentMonomersLibrary.length !== 0 &&
-      persistentMonomersLibraryParsedJson !== undefined
+      persistentMonomersLibraryParsedJson !== null &&
+      persistentMonomersLibrary.length > 0
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
-      return;
+      return 'cached';
     }
 
     const { monomersLibraryParsedJson, monomersLibrary } =
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+    return 'loaded';
+  }
+
+  private applyStoredMonomerLibraryUpdates() {
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
     storedMonomerLibraryUpdates.forEach((update) => {
       const parsedUpdate = JSON.parse(update);
 
-      if (parsedUpdate.replacement) {
+      if (parsedUpdate.removedMonomerRef) {
+        const ref = parsedUpdate.removedMonomerRef;
+        const monomer = this._monomersLibrary.find(
+          (item) =>
+            !isAmbiguousMonomerLibraryItem(item) &&
+            getMonomerTemplateRefFromMonomerItem(item) === ref,
+        );
+        if (monomer) {
+          this.removeMonomerFromLibrary(monomer, false);
+        } else if (
+          this._monomersLibraryParsedJson?.[ref]?.type ===
+          KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
+          // `removedMonomerRef` is reused for preset removal (see
+          // `removePresetFromLibrary`) since both are persisted the same way.
+          this.removePresetFromLibrary(ref, false);
+        }
+      } else if (parsedUpdate.replacement) {
         this.clearMonomersLibrary();
-        this.updateMonomersLibrary(parsedUpdate.data);
+        this.updateMonomersLibrary(parsedUpdate.data, undefined, true);
       } else {
-        this.updateMonomersLibrary(parsedUpdate.data || update);
+        // Every entry in localStorage was placed there by user action
+        // (MCW create/edit, or ketcher.updateMonomersLibrary with shouldPersist).
+        this.updateMonomersLibrary(
+          parsedUpdate.data || update,
+          parsedUpdate.editedMonomerRef,
+          true,
+        );
       }
     });
-    persistentMonomersLibrary = this._monomersLibrary;
-    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
   /**
    * Upserts the provided monomer definitions into the in-memory library.
-   * Invalid items are logged and skipped.
+   * Invalid items are reported via `KetcherLogger` and skipped; valid items
+   * from the same payload are still committed.
    */
-  public updateMonomersLibrary(monomersDataRaw: string | JSON) {
-    // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
-    // in the constructor before any consumer can call `updateMonomersLibrary`.
-    // A `null` value here would indicate a programming error (e.g. calling
-    // this method before the editor finished constructing), not a normal
-    // runtime case, so we fail loudly instead of silently no-op-ing.
+  public updateMonomersLibrary(
+    monomersDataRaw: string | JSON,
+    editedMonomerRef?: string,
+    isUserCreated?: boolean,
+  ) {
+    // The library starts empty before defaults are loaded, so synchronous
+    // consumers can update it immediately.
     const monomersLibraryParsedJson = this._monomersLibraryParsedJson;
-    if (!monomersLibraryParsedJson) {
-      throw new Error(
-        'Editor::updateMonomersLibrary: monomers library parsed JSON is not initialized',
-      );
-    }
 
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
+    const isEditedMonomer = (monomer: MonomerItemType) =>
+      !isAmbiguousMonomerLibraryItem(monomer) &&
+      getMonomerTemplateRefFromMonomerItem(monomer) === editedMonomerRef;
+    const editedMonomer = editedMonomerRef
+      ? this._monomersLibrary.find(isEditedMonomer)
+      : undefined;
+    if (
+      editedMonomerRef &&
+      (!editedMonomer || newMonomersLibraryChunk.length !== 1)
+    ) {
+      throw new Error(
+        'The original monomer is no longer available for editing.',
+      );
+    }
     const reportValidationError = (name: string, reason: string) => {
       KetcherLogger.error(
         'Editor::updateMonomersLibrary',
@@ -564,7 +747,10 @@ export class CoreEditor {
         return;
       }
 
-      const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+      const hasNewMonomerBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+        newMonomer.props?.MonomerClass,
+      );
+      const newMonomerHelmAliasUniquenessScope = getHelmAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );
       if (
@@ -601,9 +787,24 @@ export class CoreEditor {
 
       const newMonomerModificationAliases =
         getIdtModificationAliases(newMonomer);
+      const originalModificationAliases = editedMonomer
+        ? getIdtModificationAliases(editedMonomer)
+        : [];
+      const hasOriginalSymbol =
+        editedMonomer?.props.MonomerName === newMonomer.props.MonomerName &&
+        editedMonomer?.props.MonomerClass === newMonomer.props.MonomerClass;
+      // Bundled entries can share aliases; unchanged aliases are not new collisions.
+      const hasChangedHelmAlias =
+        editedMonomer?.props.aliasHELM !== newMonomer.props.aliasHELM;
+      const hasChangedBilnAlias =
+        editedMonomer?.props.aliasBILN !== newMonomer.props.aliasBILN;
 
       const conflictingMonomer = this._monomersLibrary.find((monomer) => {
-        if (areSameMonomers(monomer, newMonomer)) {
+        if (
+          editedMonomerRef
+            ? isEditedMonomer(monomer)
+            : areSameMonomers(monomer, newMonomer)
+        ) {
           return false;
         }
 
@@ -611,14 +812,29 @@ export class CoreEditor {
           getIdtModificationAliases(monomer);
 
         return (
+          (Boolean(editedMonomerRef) &&
+            !hasOriginalSymbol &&
+            areSameMonomers(monomer, newMonomer)) ||
+          (Boolean(editedMonomerRef) &&
+            monomer.props?.MonomerClass === newMonomer.props.MonomerClass &&
+            ((!hasOriginalSymbol &&
+              monomer.props.aliasHELM === newMonomer.props.MonomerName) ||
+              (hasChangedHelmAlias &&
+                monomer.props.MonomerName === newMonomer.props.aliasHELM))) ||
           (Boolean(newMonomer.props?.aliasHELM) &&
+            hasChangedHelmAlias &&
+            getHelmAliasUniquenessScope(monomer.props?.MonomerClass) ===
+              newMonomerHelmAliasUniquenessScope &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
-          (newMonomerHasBilnAliasUniquenessScope &&
+          (hasNewMonomerBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&
+            hasChangedBilnAlias &&
             hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
             monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
-          newMonomerModificationAliases.some((alias) =>
-            existingMonomerModificationAliases.includes(alias),
+          newMonomerModificationAliases.some(
+            (alias) =>
+              !originalModificationAliases.includes(alias) &&
+              existingMonomerModificationAliases.includes(alias),
           )
         );
       });
@@ -683,7 +899,9 @@ export class CoreEditor {
       }
 
       const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>
-        areSameMonomers(monomer, newMonomer),
+        editedMonomerRef
+          ? isEditedMonomer(monomer)
+          : areSameMonomers(monomer, newMonomer),
       );
 
       const newMonomerTemplateRef =
@@ -697,6 +915,9 @@ export class CoreEditor {
         );
         monomersLibraryParsedJson[newMonomerTemplateRef] =
           newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+        if (isUserCreated) {
+          persistentUserCreatedMonomerRefs.add(newMonomerTemplateRef);
+        }
       } else {
         const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
           this._monomersLibrary[existingMonomerIndex],
@@ -720,8 +941,10 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex].props.id =
             existingMonomerId;
 
-          monomersLibraryParsedJson[existingMonomerTemplateRef] =
-            newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+          monomersLibraryParsedJson[existingMonomerTemplateRef] = {
+            ...newMonomersLibraryChunkParsedJson[newMonomerTemplateRef],
+            id: existingMonomerId,
+          };
         }
       }
     });
@@ -749,12 +972,13 @@ export class CoreEditor {
 
       if (!monomerNameValidationResult.isValid) {
         switch (monomerNameValidationResult.error) {
-          case MonomerNameValidationErrorType.Empty:
+          case MonomerNameValidationErrorType.Empty: {
             reportValidationError(
               templateRef.$ref,
               `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
             );
             return;
+          }
           case MonomerNameValidationErrorType.TooLong: {
             const truncatedTemplateName = `${templateDefinition.name.slice(
               0,
@@ -765,11 +989,12 @@ export class CoreEditor {
             );
             return;
           }
-          case MonomerNameValidationErrorType.InvalidCharacters:
+          case MonomerNameValidationErrorType.InvalidCharacters: {
             KetcherLogger.error(
               `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
             );
             return;
+          }
         }
       }
 
@@ -832,6 +1057,19 @@ export class CoreEditor {
       }
     });
 
+    if (!this.defaultMonomersLibraryInitialized) {
+      // Keep synchronous writes visible immediately, then replay them in order
+      // after deferred defaults (and persisted updates) have been installed.
+      this.pendingMonomerLibraryUpdates.push({
+        data:
+          typeof monomersDataRaw === 'string'
+            ? monomersDataRaw
+            : JSON.stringify(monomersDataRaw),
+        editedMonomerRef,
+        isUserCreated,
+      });
+    }
+
     this.events.updateMonomersLibrary.dispatch();
   }
 
@@ -841,6 +1079,128 @@ export class CoreEditor {
 
   public get monomersLibrary() {
     return this._monomersLibrary;
+  }
+
+  public isMonomerReferencedInLibrary(monomer: MonomerItemType) {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return (
+      this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
+        const template = this._monomersLibraryParsedJson?.[$ref];
+        return (
+          template?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE &&
+          'options' in template &&
+          template.options.some(
+            ({ templateId }) =>
+              templateId === ref ||
+              setMonomerTemplatePrefix(templateId) === ref,
+          )
+        );
+      }) ?? false
+    );
+  }
+
+  /**
+   * Returns every library preset (`MONOMER_GROUP_TEMPLATE`) that references
+   * `monomer` as one of its components. Unlike `isMonomerReferencedInLibrary`
+   * (which only guards against ambiguous-template membership), preset
+   * participation does not block deletion by itself — callers use this list
+   * to drive the delete-confirmation/cascade flow instead.
+   */
+  public getReferencingPresets(
+    monomer: MonomerItemType,
+  ): IKetMonomerGroupTemplate[] {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const parsedJson = this._monomersLibraryParsedJson;
+    if (!parsedJson) return [];
+    const presets: IKetMonomerGroupTemplate[] = [];
+    parsedJson.root.templates.forEach(({ $ref }) => {
+      const template = parsedJson[$ref];
+      if (
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template.templates.some((component) => component.$ref === ref)
+      ) {
+        presets.push(template);
+      }
+    });
+    return presets;
+  }
+
+  /**
+   * A monomer is "user-made" when its template ref was explicitly added via the
+   * Monomer Creation Wizard (see `persistentUserCreatedMonomerRefs`). Monomers
+   * from the bundled default library and monomers added by the embedding app
+   * via ketcher.updateMonomersLibrary / ketcher.replaceMonomersLibrary are NOT
+   * user-made and cannot be deleted by the user.
+   */
+  public isUserMadeMonomer(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return persistentUserCreatedMonomerRefs.has(ref);
+  }
+
+  /**
+   * Whether at least one instance of `monomer` is currently placed on the
+   * canvas, following the same ref-comparison idiom used elsewhere (e.g.
+   * `invalidateNextAutochainPositionIfNeeded`, `replaceMonomerInstances`).
+   */
+  public isMonomerPlacedOnCanvas(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return this.drawingEntitiesManager.monomersArray.some((placedMonomer) => {
+      const placedMonomerItem = placedMonomer.monomerItem;
+      return (
+        !isAmbiguousMonomerLibraryItem(placedMonomerItem) &&
+        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === ref
+      );
+    });
+  }
+
+  public removeMonomerFromLibrary(
+    monomer: MonomerItemType,
+    shouldPersist = true,
+  ) {
+    if (this.isMonomerReferencedInLibrary(monomer)) {
+      throw new Error(
+        'A monomer used in an ambiguous monomer cannot be deleted.',
+      );
+    }
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const index = this._monomersLibrary.findIndex(
+      (item) =>
+        !isAmbiguousMonomerLibraryItem(item) &&
+        getMonomerTemplateRefFromMonomerItem(item) === ref,
+    );
+    if (index === -1 || !this._monomersLibraryParsedJson) return;
+    this._monomersLibrary.splice(index, 1);
+    this._monomersLibraryParsedJson.root.templates =
+      this._monomersLibraryParsedJson.root.templates.filter(
+        ({ $ref }) => $ref !== ref,
+      );
+    delete this._monomersLibraryParsedJson[ref];
+    if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
+      SettingsManager.addMonomerLibraryUpdate(
+        JSON.stringify({ removedMonomerRef: ref }),
+      );
+    }
+    this.events.updateMonomersLibrary.dispatch();
+  }
+
+  /**
+   * Removes a library preset (`MONOMER_GROUP_TEMPLATE`) by its template ref,
+   * mirroring `removeMonomerFromLibrary`'s splice/filter/delete/persist/dispatch
+   * shape. Does not touch the preset's component monomers.
+   */
+  public removePresetFromLibrary(presetRef: string, shouldPersist = true) {
+    if (!this._monomersLibraryParsedJson) return;
+    this._monomersLibraryParsedJson.root.templates =
+      this._monomersLibraryParsedJson.root.templates.filter(
+        ({ $ref }) => $ref !== presetRef,
+      );
+    delete this._monomersLibraryParsedJson[presetRef];
+    if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
+      SettingsManager.addMonomerLibraryUpdate(
+        JSON.stringify({ removedMonomerRef: presetRef }),
+      );
+    }
+    this.events.updateMonomersLibrary.dispatch();
   }
 
   public checkIfMonomerSymbolClassPairExists(
@@ -961,7 +1321,7 @@ export class CoreEditor {
       this.events.keyDown.dispatch(event);
 
       if (!isPropagationStopped) {
-        this.mode.onKeyDown(event).catch((error) => {
+        void this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });
       }
@@ -982,7 +1342,7 @@ export class CoreEditor {
     };
     this.pasteEventHandler = (event: ClipboardEvent) => {
       // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
-      if (this._type === EditorType.Micromolecules) {
+      if (this._type === EditorType.Micromolecules || this.isModalOpen) {
         return;
       }
 
@@ -1011,8 +1371,8 @@ export class CoreEditor {
       const target = event.target as Node | null;
       // Guard: only handle events whose target is inside this editor's root element
       if (
-        !this.ketcherRootElement ||
         !target ||
+        !this.ketcherRootElement ||
         !this.ketcherRootElement.contains(target)
       ) {
         return;
@@ -1048,7 +1408,7 @@ export class CoreEditor {
             const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
 
             // Add sense node if it's selected
-            if (senseNode?.monomer.selected && senseNode) {
+            if (senseNode && senseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: senseNode as SubChainNode,
@@ -1057,7 +1417,7 @@ export class CoreEditor {
             }
 
             // Add antisense node if it's selected
-            if (antisenseNode?.monomer.selected && antisenseNode) {
+            if (antisenseNode && antisenseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: antisenseNode as SubChainNode,
@@ -1193,8 +1553,8 @@ export class CoreEditor {
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
     this.events.turnOffSequenceEditInRNABuilderMode.add(
-      (needToRemoveSelection?: boolean) =>
-        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
+      (shouldRemoveSelection?: boolean) =>
+        this.onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -1213,6 +1573,15 @@ export class CoreEditor {
       this.mode.onCopy();
       this.clearSelectionAfterCopy();
     });
+    this.events.cutSelectedStructure.add(() => {
+      this.mode.onCut();
+    });
+    this.events.copySelectedStructureAs.add(
+      (format: 'ket' | 'mol' | 'image') => {
+        this.mode.onCopyAs(format);
+        this.clearSelectionAfterCopy();
+      },
+    );
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
     });
@@ -1243,7 +1612,7 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
@@ -1260,13 +1629,13 @@ export class CoreEditor {
     );
 
     this.events.toggleLineLengthHighlighting.add(
-      (value: boolean, currentPosition = 0) => {
+      (shouldHighlightLineLength: boolean, currentPosition: number = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
-        if (value) {
+        if (shouldHighlightLineLength) {
           this.transientDrawingView.showLineLengthHighlight({
             currentPosition,
           });
@@ -1403,7 +1772,7 @@ export class CoreEditor {
       isLibraryItemRnaPreset(monomerOrRnaItem),
     );
 
-    const canvasWasEmptyBeforeAutochain =
+    const isCanvasEmptyBeforeAutochain =
       this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
     const history = EditorHistory.getInstance(this);
@@ -1462,7 +1831,7 @@ export class CoreEditor {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
     }
 
-    if (canvasWasEmptyBeforeAutochain) {
+    if (isCanvasEmptyBeforeAutochain) {
       modelChanges.merge(
         this.drawingEntitiesManager.selectDrawingEntities(
           monomersAddResult.drawingEntities,
@@ -1521,13 +1890,13 @@ export class CoreEditor {
         isAddedMonomerHorizontallyOutOfCanvas ||
         isAddedMonomerVerticallyOutOfCanvas
       ) {
-        const needToScrollToBeginningOfChain =
+        const shouldScrollToBeginningOfChain =
           Boolean(selectedMonomerToConnect) &&
           isStructureWithAutochainOffsetFitCanvas;
 
         turnOnScrollAnimation(this.zoomTool.canvas);
         this.zoomTool.scrollTo(
-          needToScrollToBeginningOfChain
+          shouldScrollToBeginningOfChain
             ? Coordinates.modelToCanvas(
                 chainsCollection.firstNode.firstMonomerInNode.position,
               )
@@ -1541,7 +1910,7 @@ export class CoreEditor {
                 ),
               ),
           isAddedMonomerOutBelowCanvas,
-          needToScrollToBeginningOfChain
+          shouldScrollToBeginningOfChain
             ? oneLayoutCellInAngstroms * editorSettings.macroModeScale
             : 0,
           isAddedMonomerOutBelowCanvas
@@ -1788,13 +2157,13 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
+  private onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection = true) {
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
     this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
-      needToRemoveSelection,
+      shouldRemoveSelection,
     );
   }
 
@@ -1873,16 +2242,7 @@ export class CoreEditor {
     this.selectTool(tool, options);
   }
 
-  private onCreateBond(payload: {
-    firstMonomer: BaseMonomer;
-    secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: AttachmentPointName;
-    secondSelectedAttachmentPoint: AttachmentPointName;
-    polymerBond?: PolymerBond;
-    isReconnection?: boolean;
-    initialFirstMonomerAttachmentPoint?: AttachmentPointName;
-    initialSecondMonomerAttachmentPoint?: AttachmentPointName;
-  }) {
+  private onCreateBond(payload: CreateBondViaModalPayload) {
     if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
       const history = EditorHistory.getInstance(this);
@@ -1942,27 +2302,13 @@ export class CoreEditor {
     }
   }
 
-  private onSelectMode(
-    data:
-      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
-  ) {
+  private onSelectMode(data: SelectLayoutModePayload) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = getModeConstructor(mode);
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
-    const isLastCommandTurnOnSnakeMode =
-      history.previousCommand?.operations.some((operation) => {
-        return (
-          operation instanceof SelectLayoutModeOperation &&
-          operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
-        );
-      });
-
-    if (isLastCommandTurnOnSnakeMode) {
-      history.undo();
-    }
+    this.undoLatestSnakeLayout();
 
     this.mode.destroy();
     this.previousModes.push(this.mode);
@@ -1972,6 +2318,27 @@ export class CoreEditor {
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
+    globalThis.dispatchEvent(
+      new CustomEvent('layoutModeSwitchComplete', {
+        detail: { ketcherId: this.ketcherId, mode },
+      }),
+    );
+  }
+
+  private undoLatestSnakeLayout() {
+    const history = EditorHistory.getInstance(this);
+    const isLatestCommandTurningOnSnakeMode =
+      history.previousCommand?.operations.some((operation) => {
+        return (
+          operation instanceof SelectLayoutModeOperation &&
+          operation.mode === 'snake-layout-mode' &&
+          operation.prevMode !== 'snake-layout-mode'
+        );
+      });
+
+    if (isLatestCommandTurningOnSnakeMode) {
+      history.undo();
+    }
   }
 
   public setMode(mode: BaseMode) {
@@ -1998,7 +2365,7 @@ export class CoreEditor {
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
     const result: Record<string, string[]> = {};
     Object.entries(grouped).forEach(([analogue, typesSet]) => {
-      const types = Array.from(typesSet).sort((a, b) => {
+      const types = [...typesSet].sort((a, b) => {
         const aTitle = a.toLowerCase();
         const bTitle = b.toLowerCase();
         const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
@@ -2298,11 +2665,199 @@ export class CoreEditor {
     this.mode?.[eventHandlerName]?.(event);
   }
 
+  public beginMonomerWizardSession(shouldIncludeCanvas = true) {
+    if (this.isMonomerWizardSessionActive) {
+      throw new Error('A monomer wizard session is already active.');
+    }
+    // Unlike a normal mode switch, keep the live macro model and history.
+    const result = shouldIncludeCanvas
+      ? MacromoleculesConverter.convertDrawingEntitiesToStruct(
+          this.drawingEntitiesManager,
+          new Struct(),
+          undefined,
+          true,
+        )
+      : {
+          struct: new Struct(),
+          monomerToAtomIdMap: new Map<BaseMonomer, Map<number, number>>(),
+          conversionErrorMessage: '',
+        };
+    if (result.conversionErrorMessage) {
+      throw new Error(result.conversionErrorMessage);
+    }
+    const scaleFactor = this.rescaleStructForModeTransition(
+      result.struct,
+      'macroToMicro',
+    );
+    result.struct.applyMonomersTransformations(scaleFactor);
+    this.monomerWizardMode = this.mode;
+    this._type = EditorType.Micromolecules;
+    return result;
+  }
+
+  public finishMonomerWizardSession(isCanvasSaved: boolean) {
+    if (!this.monomerWizardMode) {
+      return;
+    }
+    const originalManager = this.drawingEntitiesManager;
+    let hasCanvasChanged = false;
+    this.mode = this.monomerWizardMode;
+    // Read it now so a failed restore cannot leave a stale request behind.
+    const instanceReplacement = this.pendingMonomerWizardInstanceReplacement;
+    this.pendingMonomerWizardInstanceReplacement = undefined;
+    try {
+      if (isCanvasSaved) {
+        const struct = this.micromoleculesEditor.struct();
+        this.rescaleStructForModeTransition(struct, 'microToMacro');
+        const manager = new DrawingEntitiesManager();
+        const { modelChanges } =
+          MacromoleculesConverter.convertStructToDrawingEntities(
+            struct,
+            manager,
+          );
+        hasCanvasChanged = true;
+        originalManager.clearCanvas();
+        this.drawingEntitiesManager = manager;
+        this.viewModel.initialize([...manager.bonds.values()]);
+        if (this.mode.modeName === 'snake-layout-mode') {
+          modelChanges.merge(manager.applySnakeLayout(true, true, true));
+        } else if (this.mode.modeName === 'flex-layout-mode') {
+          modelChanges.merge(manager.recalculateAntisenseChains());
+        }
+        if (this.mode.modeName === 'sequence-layout-mode') {
+          this.mode.initialize(false, false, false);
+        } else {
+          this.renderersContainer.update(modelChanges);
+        }
+        // The canvas the user left behind is gone: drop the transient views
+        // (rotation handles, snap hints) and the selection they were drawn for.
+        this.resetCanvasInteractionState();
+        const command = new Command();
+        command.addOperation(
+          new MonomerWizardCanvasOperation(
+            originalManager,
+            manager,
+            this.restoreMonomerWizardCanvas.bind(this),
+          ),
+        );
+        EditorHistory.getInstance(this).update(command);
+      }
+    } catch (error) {
+      if (hasCanvasChanged) {
+        this.restoreMonomerWizardCanvas(originalManager);
+      }
+      throw error;
+    } finally {
+      this.monomerWizardMode = undefined;
+      this._type = EditorType.Macromolecules;
+      this.micromoleculesEditor.clear(true);
+    }
+
+    if (instanceReplacement) {
+      this.replaceMonomerInstances(instanceReplacement);
+    }
+  }
+
+  /**
+   * Queues a swap of every canvas instance of a monomer for a new library item.
+   *
+   * Editing a monomer from a library card leaves the canvas untouched for the
+   * whole wizard session, so the instances can only be swapped on the way back
+   * — and only once macromolecules mode is on screen again, since monomer
+   * renderers measure the DOM and a hidden canvas measures as 0x0.
+   * `finishMonomerWizardSession` is the point where both hold.
+   */
+  public scheduleMonomerWizardInstanceReplacement(
+    replacement: MonomerInstanceReplacement,
+  ) {
+    this.pendingMonomerWizardInstanceReplacement = replacement;
+  }
+
+  private replaceMonomerInstances({
+    monomerClass,
+    symbol,
+    newMonomerItem,
+  }: MonomerInstanceReplacement) {
+    // `replaceMonomer` adds and deletes monomers, so iterate over a snapshot.
+    const monomers = [...this.drawingEntitiesManager.monomers.values()];
+    const command = new Command();
+    let hasReplacedAnyMonomer = false;
+
+    monomers.forEach((monomer) => {
+      const monomerItem = monomer.monomerItem;
+
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return;
+      }
+
+      const { props, label } = monomerItem;
+
+      if (
+        props.MonomerClass !== monomerClass ||
+        (props.MonomerCode ?? label) !== symbol
+      ) {
+        return;
+      }
+
+      command.merge(
+        this.drawingEntitiesManager.replaceMonomer(monomer, newMonomerItem)
+          .command,
+      );
+      hasReplacedAnyMonomer = true;
+    });
+
+    if (!hasReplacedAnyMonomer) {
+      return;
+    }
+
+    command.setUndoOperationsByPriority();
+    EditorHistory.getInstance(this).update(command);
+    this.renderersContainer.update(command);
+
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.mode.initialize(false, false, false);
+    }
+  }
+
+  private restoreMonomerWizardCanvas(manager: DrawingEntitiesManager) {
+    const previousManager = this.drawingEntitiesManager;
+    this.drawingEntitiesManager = manager;
+    previousManager.clearCanvas();
+    this.viewModel.initialize([...manager.bonds.values()]);
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.mode.initialize(false, false, false);
+    } else {
+      this.renderersContainer.update(manager.applyFlexLayoutMode());
+    }
+    manager.sgroups.forEach((group) =>
+      this.renderersContainer.addSGroup(group),
+    );
+    manager.stereoFlags.forEach((flag) =>
+      this.renderersContainer.addStereoFlag(flag),
+    );
+    this.resetCanvasInteractionState();
+  }
+
+  private resetCanvasInteractionState() {
+    this.clearTransientViews();
+    this.clearSelection();
+  }
+
   public switchToMicromolecules() {
+    if (this.isMonomerWizardSessionActive) {
+      return;
+    }
+
     if (this._type === EditorType.Micromolecules) {
       this.micromoleculesEditor?.update(true);
       return;
     }
+
+    // Snake layout is a temporary macro-mode presentation. Follow the same
+    // path used when leaving Snake for another macro layout, so its generated
+    // positions are not exported to the molecules editor.
+    this.undoLatestSnakeLayout();
+
     const restorePreviousMode = this.captureModeState();
     const struct = new Struct();
     const zoomTool = ZoomTool.instance;
@@ -2341,6 +2896,7 @@ export class CoreEditor {
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
+    this.micromoleculesEditor.selection(null);
     this.micromoleculesEditor.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
@@ -2351,9 +2907,7 @@ export class CoreEditor {
       const ketcher = ketcherProvider.getKetcher();
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
-      const newModeName = isBlank
-        ? DEFAULT_LAYOUT_MODE
-        : HAS_CONTENT_LAYOUT_MODE;
+      const newModeName = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
 
       if (oldModeName === newModeName) {
         return;
@@ -2368,6 +2922,9 @@ export class CoreEditor {
 
   public switchToMacromolecules() {
     // History restores the model before React makes the canvas visible.
+    if (this.isMonomerWizardSessionActive) {
+      return;
+    }
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
     if (this._type === EditorType.Macromolecules) {
@@ -2418,6 +2975,16 @@ export class CoreEditor {
     this.micromoleculesEditor?.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
+
+    // The macro canvas's scrollbars are otherwise only redrawn by a
+    // ResizeObserver on the canvas wrapper, which fires when the wrapper's
+    // own size changes (e.g. becoming visible), not when the structures
+    // drawn inside it change. Since the switch to Macromolecules now waits
+    // on the lazily loaded default monomers library before converting and
+    // rendering the struct here, that ResizeObserver firing can no longer be
+    // relied on to happen after this content is drawn. Explicitly refresh
+    // the scrollbars so they reflect the structure that was just rendered.
+    ZoomTool.instance.drawScrollBars();
   }
 
   private captureModeState(): () => void {
@@ -2435,7 +3002,7 @@ export class CoreEditor {
       this.drawingEntitiesManager.clearCanvas();
       this.mode.destroy();
       this._type = type;
-      window.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
+      globalThis.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
       this.drawingEntitiesManager = drawingEntitiesManager;
       this.zoomTool.drawingEntitiesManager = drawingEntitiesManager;
       this.mode = new (getModeConstructor(modeName))();
@@ -2509,15 +3076,19 @@ export class CoreEditor {
   }
 
   public zoomToStructuresIfNeeded() {
+    ZoomTool.instance.forgetRememberedZoomTransform();
+
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      window._ketcher_isAutozoomDisabled ||
+      globalThis._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers
     ) {
       return;
     }
-    const structureBbox = getRenderedStructuresBbox();
+    const structureBbox = getRenderedStructuresBbox(undefined, {
+      includePolymerBonds: true,
+    });
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
@@ -2535,6 +3106,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
+    }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

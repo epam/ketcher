@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,11 +19,11 @@ import { OperationPriority, OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class FragmentDeleteStereoAtom extends BaseOperation {
-  readonly data: { frid: number; aid: number };
   static InverseConstructor: new (
     fragmentId: number,
     atomId: number,
   ) => BaseOperation;
+  readonly data: { frid: number; aid: number };
 
   constructor(fragmentId: number, atomId: number) {
     super(

@@ -1,6 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -18,6 +19,7 @@ import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
+  CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
@@ -312,7 +314,9 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.properties.alias ?? this.atom.label;
   }
 
-  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  /**
+  True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *).
+  */
   public get isGenericLabel(): boolean {
     return isGenericAtom(this.atom.label);
   }
@@ -324,7 +328,9 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.label === AtomLabel.H;
   }
 
-  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  /**
+  The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary.
+  */
   public get displayLabelText() {
     const text = this.labelText;
     if (text.length > MAX_LABEL_LENGTH) {
@@ -333,7 +339,9 @@ export class AtomRenderer extends BaseRenderer {
     return text;
   }
 
-  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  /**
+  When the label is truncated, this holds the full text for use as a tooltip.
+  */
   public get labelTooltipText(): string | null {
     const text = this.labelText;
     return text.length > MAX_LABEL_LENGTH ? text : null;
@@ -344,9 +352,12 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    return (
-      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1
-    );
+    // Bonds to monomers are not half-edges, so count them separately
+    const monomerBondsCount = this.atom.bonds.filter(
+      (bond) => bond instanceof MonomerToAtomBond,
+    ).length;
+
+    return (atomNeighborsHalfEdges?.length ?? 0) + monomerBondsCount <= 1;
   }
 
   public get isLabelVisible() {
@@ -354,14 +365,15 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
-    const visibleTerminal = true;
+    const isTerminalVisible = true;
     const isAtomTerminal = this.isAtomTerminal;
-    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
+    const isAtomInMiddleOfChain = !isAtomTerminal;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
     const hasAlias = this.atom.hasAlias;
     const hasExplicitValence = this.atom.hasExplicitValence;
     const hasExplicitIsotope = this.atom.hasExplicitIsotope;
+    const hasBadValence = this.atom.hasBadValence;
 
     if (
       isCarbon &&
@@ -370,7 +382,8 @@ export class AtomRenderer extends BaseRenderer {
       !hasRadical &&
       !hasAlias &&
       !hasExplicitValence &&
-      !hasExplicitIsotope
+      !hasExplicitIsotope &&
+      !hasBadValence
     ) {
       // Show carbon label when bonds are collinear (180 degree angle),
       if (atomNeighborsHalfEdges?.length === 2) {
@@ -382,7 +395,7 @@ export class AtomRenderer extends BaseRenderer {
       return false;
     }
 
-    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain) {
+    if ((isAtomTerminal && isTerminalVisible) || isAtomInMiddleOfChain) {
       return true;
     }
 
@@ -481,12 +494,12 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
+    if (!isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias) {
       textElement
         ?.append('tspan')
         .attr(
           'dy',
-          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+          shouldHydrogenBeOnLeft && this.atom.hasExplicitIsotope ? 4 : 0,
         )
         .text('H');
 
@@ -568,7 +581,7 @@ export class AtomRenderer extends BaseRenderer {
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
-    this.cipLabelElement?.select('rect')?.attr('fill', '#F5F5F5');
+    this.cipLabelElement?.select('rect')?.attr('fill', CANVAS_BACKGROUND_COLOR);
   }
 
   public drawSelection() {
@@ -616,7 +629,7 @@ export class AtomRenderer extends BaseRenderer {
     this.radicalElement = this.rootElement?.append('g');
 
     switch (radical) {
-      case AtomRadical.Single:
+      case AtomRadical.Single: {
         this.radicalElement
           ?.append('circle')
           .attr('cx', 3)
@@ -630,7 +643,8 @@ export class AtomRenderer extends BaseRenderer {
           .attr('r', 2)
           .attr('fill', this.labelColor);
         break;
-      case AtomRadical.Doublet:
+      }
+      case AtomRadical.Doublet: {
         this.radicalElement
           ?.append('circle')
           .attr('cx', 0)
@@ -638,7 +652,8 @@ export class AtomRenderer extends BaseRenderer {
           .attr('r', 2)
           .attr('fill', this.labelColor);
         break;
-      case AtomRadical.Triplet:
+      }
+      case AtomRadical.Triplet: {
         this.radicalElement
           ?.append('path')
           .attr('d', `M 0 -5 L 2 -10 L 4 -5 M -6 -5 L -4 -10 L -2 -5`)
@@ -646,6 +661,7 @@ export class AtomRenderer extends BaseRenderer {
           .attr('stroke', this.labelColor)
           .attr('stroke-width', 1.4);
         break;
+      }
     }
   }
 
@@ -757,7 +773,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('height', height + 2)
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('fill', '#f5f5f5');
+      .attr('fill', CANVAS_BACKGROUND_COLOR);
 
     this.cipLabelElementBBox = this.cipLabelElement?.node()?.getBBox();
 
@@ -838,14 +854,18 @@ export class AtomRenderer extends BaseRenderer {
     const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
 
     switch (stereoLabelType) {
-      case StereoLabel.And:
+      case StereoLabel.And: {
         return '#0000cd'; // Default AND Centers color
-      case StereoLabel.Or:
+      }
+      case StereoLabel.Or: {
         return '#228b22'; // Default OR Centers color
-      case StereoLabel.Abs:
+      }
+      case StereoLabel.Abs: {
         return '#ff0000'; // Default Absolute Center color
-      default:
+      }
+      default: {
         return '#000';
+      }
     }
   }
 
@@ -860,13 +880,13 @@ export class AtomRenderer extends BaseRenderer {
       .getKetcher(editor.ketcherId)
       .settingsService?.getSettings();
     const labelStyle = getStereoLabelStyleType(settings?.stereoLabelStyle);
-    const ignoreChiralFlag = settings?.ignoreChiralFlag ?? false;
+    const shouldIgnoreChiralFlag = settings?.ignoreChiralFlag ?? false;
     const enhancedStereoFlag = this.getEnhancedStereoFlag();
 
     return shouldDisplayStereoLabel(
       stereoLabel,
       labelStyle,
-      ignoreChiralFlag,
+      shouldIgnoreChiralFlag,
       enhancedStereoFlag,
     );
   }
@@ -1030,44 +1050,54 @@ function getStereoLabelStyleType(
   stereoLabelStyle: Settings['stereoLabelStyle'] | undefined,
 ): StereoLabelStyleType | undefined {
   switch (stereoLabelStyle) {
-    case 'IUPAC':
+    case 'IUPAC': {
       return StereoLabelStyleType.IUPAC;
-    case 'classic':
+    }
+    case 'classic': {
       return StereoLabelStyleType.Classic;
-    case 'On-Atoms':
+    }
+    case 'On-Atoms': {
       return StereoLabelStyleType.On;
-    case 'off':
+    }
+    case 'off': {
       return StereoLabelStyleType.Off;
-    default:
+    }
+    default: {
       return undefined;
+    }
   }
 }
 
 function shouldDisplayStereoLabel(
   stereoLabel: string,
   labelStyle: StereoLabelStyleType | undefined,
-  ignoreChiralFlag: boolean,
+  shouldIgnoreChiralFlag: boolean,
   flag: StereoFlag | undefined,
 ): boolean {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
 
-  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
     return false;
   }
-  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
     return true;
   }
 
   switch (labelStyle) {
-    case StereoLabelStyleType.Off:
+    case StereoLabelStyleType.Off: {
       return false;
-    case StereoLabelStyleType.On:
+    }
+    case StereoLabelStyleType.On: {
       return true;
-    case StereoLabelStyleType.Classic:
+    }
+    case StereoLabelStyleType.Classic: {
       return flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or;
-    case StereoLabelStyleType.IUPAC:
+    }
+    case StereoLabelStyleType.IUPAC: {
       return flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs;
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }

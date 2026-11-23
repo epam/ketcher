@@ -6,7 +6,7 @@ import { Subscription } from 'subscription';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,8 +59,10 @@ import {
 } from './utils';
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
+  type DisabledFunctionalityConfig,
   type ExportImageParams,
   type KetcherApiSettings,
+  type KetcherFunctionality,
   type SupportedImageFormats,
   type SupportedModes,
   type UpdateMonomersLibraryParams,
@@ -100,47 +102,29 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
 
+// A whole-library convert can carry thousands of monomers, so give it more
+// room than a single interactive edit, but still a finite bound so a
+// crashed/unresponsive worker rejects instead of hanging forever.
+const MONOMER_LIBRARY_CONVERT_TIMEOUT_MS = 5 * 60 * 1000;
+
 export class Ketcher {
+  readonly #formatterFactory: FormatterFactory;
+  #editor: Editor | null = null;
+  readonly #eventBus: EventEmitter;
+  readonly #settingsService?: ISettingsService;
   _id: string;
   logging: LogSettings;
   structService: StructService;
-  readonly #formatterFactory: FormatterFactory;
-  #editor: Editor | null = null;
   _indigo: Indigo;
-  readonly #eventBus: EventEmitter;
-  readonly #settingsService?: ISettingsService;
+  readonly #disabledFunctionality: ReadonlySet<KetcherFunctionality>;
   changeEvent: Subscription;
   libraryUpdateEvent: Subscription;
-
-  get editor(): Editor {
-    // we should assign editor exactly after ketcher creation, so #editor
-    // being null here would indicate a programming error (accessing the
-    // editor before Ketcher has finished initializing), not a normal
-    // runtime case
-    if (!this.#editor) {
-      throw new Error(
-        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
-      );
-    }
-    return this.#editor;
-  }
-
-  get eventBus(): EventEmitter {
-    return this.#eventBus;
-  }
-
-  /**
-   * Get settings service for managing application settings
-   * Returns undefined if settings service was not provided during construction
-   */
-  get settingsService(): ISettingsService | undefined {
-    return this.#settingsService;
-  }
 
   constructor(
     structService: StructService,
     formatterFactory: FormatterFactory,
     settingsService?: ISettingsService,
+    disabledFunctionality?: DisabledFunctionalityConfig,
   ) {
     assert(structService != null);
     assert(formatterFactory != null);
@@ -150,6 +134,7 @@ export class Ketcher {
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
     this.#settingsService = settingsService;
+    this.#disabledFunctionality = new Set(disabledFunctionality ?? []);
     this._indigo = new Indigo(this.structService);
     this.#eventBus = new EventEmitter();
     this.logging = {
@@ -177,6 +162,41 @@ export class Ketcher {
     KetcherLogger.info('Settings changed', settings);
   }
 
+  get editor(): Editor {
+    // we should assign editor exactly after ketcher creation, so #editor
+    // being null here would indicate a programming error (accessing the
+    // editor before Ketcher has finished initializing), not a normal
+    // runtime case
+    if (!this.#editor) {
+      throw new Error(
+        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
+      );
+    }
+    return this.#editor;
+  }
+
+  get eventBus(): EventEmitter {
+    return this.#eventBus;
+  }
+
+  /**
+   * Get settings service for managing application settings
+   * Returns undefined if settings service was not provided during construction
+   */
+  get settingsService(): ISettingsService | undefined {
+    return this.#settingsService;
+  }
+
+  /**
+   * Checks whether a given piece of functionality was disabled via the
+   * `disabledFunctionality` configuration option. Any UI entry point that
+   * can trigger that functionality (context menu item, toolbar button,
+   * etc.) should consult this method and hide/disable itself accordingly.
+   */
+  isFunctionalityDisabled(functionality: KetcherFunctionality): boolean {
+    return this.#disabledFunctionality.has(functionality);
+  }
+
   get id() {
     return this._id;
   }
@@ -202,7 +222,7 @@ export class Ketcher {
       }
     }
 
-    if (!Object.keys(result).length) {
+    if (Object.keys(result).length === 0) {
       throw new Error('Allowed options are not provided');
     }
 
@@ -241,7 +261,7 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('SMILES format is not available in macro mode');
     }
     const format = isExtended
@@ -304,7 +324,7 @@ export class Ketcher {
   }
 
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');
     }
     if (!this.containsReaction()) {
@@ -326,7 +346,9 @@ export class Ketcher {
     return rxnfile;
   }
 
-  getKet(): Promise<string> {
+  async getKet(): Promise<string> {
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     return getStructure(
       this.id,
       this.#formatterFactory,
@@ -353,11 +375,19 @@ export class Ketcher {
     );
   }
 
+  /**
+   * Rejects if the macromolecules editor is unavailable or disabled.
+   */
   async getSequence(
     format: '1-letter' | '3-letter' = '1-letter',
   ): Promise<string> {
     if (format === '1-letter' || format === '3-letter') {
       const editor = provideEditorInstance();
+      if (!editor) {
+        throw new Error(
+          'Cannot get a sequence because the macromolecules editor is unavailable.',
+        );
+      }
       const indigo = this.indigo;
 
       const ketSerializer = new KetSerializer();
@@ -398,7 +428,7 @@ export class Ketcher {
   }
 
   getSmarts(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('SMARTS format is not available in macro mode');
     }
     return getStructure(
@@ -410,7 +440,7 @@ export class Ketcher {
   }
 
   getCml(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('CML format is not available in macro mode');
     }
     return getStructure(
@@ -422,7 +452,7 @@ export class Ketcher {
   }
 
   getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('SDF format is not available in macro mode');
     }
     const format =
@@ -438,7 +468,7 @@ export class Ketcher {
   }
 
   getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('RDF format is not available in macro mode');
     }
     const format =
@@ -454,7 +484,7 @@ export class Ketcher {
   }
 
   getCDXml(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('CDXML format is not available in macro mode');
     }
     return getStructure(
@@ -466,7 +496,7 @@ export class Ketcher {
   }
 
   getCDX(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('CDX format is not available in macro mode');
     }
     return getStructure(
@@ -477,12 +507,14 @@ export class Ketcher {
     );
   }
 
-  getInchi(withAuxInfo = false): Promise<string> {
+  getInchi(shouldIncludeAuxInfo = false): Promise<string> {
     return getStructure(
       this.id,
       this.#formatterFactory,
       this.editor.struct(),
-      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
+      shouldIncludeAuxInfo
+        ? SupportedFormat.inChIAuxInfo
+        : SupportedFormat.inChI,
     );
   }
 
@@ -518,7 +550,7 @@ export class Ketcher {
       hasQueryAtoms = selection.atoms.some((atomId) => {
         const atom = structure.atoms.get(atomId);
         assert(atom);
-        const sGroupIds = Array.from(atom.sgs.values());
+        const sGroupIds = [...atom.sgs.values()];
         const isQueryComponentSGroup = sGroupIds.some((sGroupId) => {
           const sGroup = structure.sgroups.get(sGroupId);
           assert(sGroup);
@@ -546,10 +578,12 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
+    await macromoleculesEditor?.ensureDefaultMonomersLibraryLoaded();
+
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
 
@@ -564,9 +598,10 @@ export class Ketcher {
           this,
         );
 
-        const preserveCanvasPosition = options?.preserveCanvasPosition === true;
+        const shouldPreserveCanvasPosition =
+          options?.preserveCanvasPosition === true;
 
-        if (!preserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition) {
           struct.rescale();
         }
 
@@ -581,10 +616,10 @@ export class Ketcher {
         // Clean up initiallySelected flags after restoring selection
         this.editor.struct().disableInitiallySelected();
 
-        if (!preserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition) {
           this.editor.zoomAccordingContent(struct);
         }
-        if (x == null && y == null && !preserveCanvasPosition) {
+        if (x == null && y == null && !shouldPreserveCanvasPosition) {
           this.editor.centerStruct();
         }
       }
@@ -614,10 +649,12 @@ export class Ketcher {
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
+    await macromoleculesEditor?.ensureDefaultMonomersLibraryLoaded();
+
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         const isCanvasEmptyBeforeOpenStructure =
           !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
 
@@ -652,7 +689,7 @@ export class Ketcher {
     const editor = provideEditorInstance();
 
     await runAsyncAction<void>(async () => {
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         const ketSerializer = new KetSerializer();
         const serializedKet = ketSerializer.serialize(
           new Struct(),
@@ -683,7 +720,7 @@ export class Ketcher {
   }
 
   async layout(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Layout is not available in macro mode');
     }
 
@@ -698,7 +735,7 @@ export class Ketcher {
   }
 
   async aromatize(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Aromatize is not available in macro mode');
     }
 
@@ -712,7 +749,7 @@ export class Ketcher {
   }
 
   async dearomatize(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Dearomatize is not available in macro mode');
     }
 
@@ -726,7 +763,7 @@ export class Ketcher {
   }
 
   async calculate(options?: CalculateData): Promise<CalculateResult> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Calculate is not available in macro mode');
     }
     return await this._indigo.calculate(this.editor.struct(), options);
@@ -771,7 +808,7 @@ export class Ketcher {
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Recognize is not available in macro mode');
     }
     return this._indigo.recognize(image, { version });
@@ -779,27 +816,29 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = {
-      outputFormat: 'png',
-    },
+    options?: GenerateImageOptions,
   ): Promise<Blob> {
+    const { outputFormat = 'png', ...imageOptions } = (options ??
+      {}) as Partial<GenerateImageOptions>;
     let meta: string;
 
-    switch (options.outputFormat) {
-      case 'svg':
+    switch (outputFormat) {
+      case 'svg': {
         meta = 'image/svg+xml';
         break;
+      }
 
       case 'png':
-      default:
+      default: {
         meta = 'image/png';
-        options.outputFormat = 'png';
+      }
     }
     const serverSettings = this.editor.serverSettings;
 
     const base64 = await this.structService.generateImageAsBase64(data, {
       ...serverSettings,
-      ...options,
+      ...imageOptions,
+      outputFormat: outputFormat === 'svg' ? 'svg' : 'png',
     });
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
@@ -850,6 +889,7 @@ export class Ketcher {
           {
             ...serverSettings,
             outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+            'request-timeout': MONOMER_LIBRARY_CONVERT_TIMEOUT_MS,
           },
         );
 
@@ -902,6 +942,10 @@ export class Ketcher {
       );
     }
 
+    // A default load still in flight would otherwise resolve afterwards and
+    // overwrite this update with its own wholesale library replace.
+    await editor.ensureDefaultMonomersLibraryLoaded();
+
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
       params,
@@ -912,7 +956,11 @@ export class Ketcher {
       params,
     );
 
-    editor.updateMonomersLibrary(dataInKetFormat);
+    editor.updateMonomersLibrary(
+      dataInKetFormat,
+      undefined,
+      params?.shouldPersist,
+    );
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
@@ -935,6 +983,8 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    await editor.ensureDefaultMonomersLibraryLoaded();
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

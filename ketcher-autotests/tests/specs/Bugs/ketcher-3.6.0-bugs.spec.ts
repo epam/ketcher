@@ -55,17 +55,19 @@ import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBon
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();
@@ -105,8 +107,7 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
       );
     }
 
-    const WAIT_TIME_MS = 2000;
-    await page.waitForTimeout(WAIT_TIME_MS);
+    await page.waitForTimeout(2000);
 
     const allErrors = [...consoleErrors, ...pageErrors];
 
@@ -144,11 +145,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Set the ruler value to 210
      * 3. Verify that the ruler value is set to 210
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
+      {
+        disableChainLengthRuler: false,
+      },
     );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('210');
@@ -261,8 +262,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'KET/Bugs/structure-with-two-a.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheCanvas(page);
@@ -315,11 +317,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Set the ruler value to 1000
      * 3. Verify that the ruler value is set to 1000
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
+      {
+        disableChainLengthRuler: false,
+      },
     );
 
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
@@ -372,8 +374,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
@@ -574,8 +577,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'CHEM1{4aPEGMal]}$$$$V2.0',
     ];
     for (const helm of helmCases) {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -618,6 +620,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     );
     await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await keyboardPressOnCanvas(page, 'Backspace');
+    await page.waitForTimeout(1000);
     await CalculateVariablesPanel(page).setOligonucleotidesValue(
       '99999999999999999999999999999999999999999999999999',
     );

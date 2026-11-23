@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { render, fireEvent, screen } from '@testing-library/react';
 
 import ComboBox from './combobox';
@@ -10,7 +12,7 @@ describe('ComboBox component should be rendered correctly', () => {
       schema: {
         enumNames: ['Option1', 'Option2', 'Option3'],
       },
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<ComboBox {...comboboxProps} />);
@@ -19,7 +21,7 @@ describe('ComboBox component should be rendered correctly', () => {
   });
 
   it('should call onChange when a suggestion is clicked', () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     const comboboxProps = {
       value: 'Option1',
       type: 'text',
@@ -48,7 +50,7 @@ describe('ComboBox component should be rendered correctly', () => {
       schema: {
         enumNames: ['Option1', 'Option2', 'Option3'],
       },
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { container } = render(<ComboBox {...comboboxProps} />);
@@ -70,7 +72,7 @@ describe('ComboBox component should be rendered correctly', () => {
   });
 
   it('should update input value on change', () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     const comboboxProps = {
       value: '',
       schema: {

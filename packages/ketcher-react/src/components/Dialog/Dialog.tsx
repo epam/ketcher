@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,16 +18,20 @@ import {
   type FC,
   type PropsWithChildren,
   type ReactElement,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react';
 
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
+import { useSettingsPanelDrag } from '../../script/ui/views/modal/components/meta/Settings/useSettingsPanelDrag';
 
 interface DialogParamsCallProps {
   onCancel?: () => void;
@@ -81,6 +85,89 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     ...rest
   } = props;
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const { t } = useTranslation('common');
+  // `button` values are also semantic identifiers (see isButtonOk/exit below)
+  // and testids — only their *displayed* text is translated here, by default,
+  // for the well-known tokens. Anything else (or a buttonsNameMap override)
+  // is the caller's own text, untouched.
+  const defaultButtonLabels: Record<string, string> = {
+    OK: t('button.ok'),
+    Cancel: t('button.cancel'),
+    Save: t('button.save'),
+  };
+
+  // ---------------------------------------------------------------------------
+  // Drag & resize — reuses useSettingsPanelDrag so the behaviour is identical
+  // to the Settings floating panel. Enabled when the dialog is mounted inside a
+  // [data-draggable="true"] overlay (set by Modal.tsx for opted-in dialogs).
+  // parentElement check (not closest) so nested inline dialogs don't inherit it.
+  // ---------------------------------------------------------------------------
+  const [overlayElement, setOverlayElement] = useState<HTMLElement | null>(
+    null,
+  );
+
+  useLayoutEffect(() => {
+    const parent = dialogRef.current?.parentElement;
+    setOverlayElement(parent instanceof HTMLElement ? parent : null);
+  }, []);
+
+  const isDraggable = overlayElement?.dataset?.draggable === 'true';
+  const isResizable = overlayElement?.dataset?.resizable === 'true';
+
+  const {
+    rect,
+    setRect,
+    startDrag,
+    startResizeTop,
+    startResizeBottom,
+    getBounds,
+    setPreferredHeight,
+  } = useSettingsPanelDrag({
+    panelRef: dialogRef,
+    boundsElement: isDraggable ? overlayElement : null,
+    gutter: 0,
+  });
+
+  // Centre the dialog inside the overlay on first show. Fires when overlayElement
+  // is detected (once per mount).
+  useLayoutEffect(() => {
+    if (!isDraggable) return;
+    const dialog = dialogRef.current;
+    const bounds = getBounds();
+    if (!dialog || !bounds) return;
+
+    const width = dialog.offsetWidth;
+    const naturalHeight = dialog.scrollHeight;
+    const height = Math.min(naturalHeight, bounds.bottom - bounds.top);
+
+    setPreferredHeight(naturalHeight);
+    setRect({
+      left: bounds.left + (bounds.right - bounds.left - width) / 2,
+      top: bounds.top + (bounds.bottom - bounds.top - height) / 2,
+      width,
+      height,
+    });
+    // Only re-run when the overlay element reference changes (i.e., on mount).
+  }, [
+    overlayElement,
+    children,
+    isDraggable,
+    getBounds,
+    setPreferredHeight,
+    setRect,
+  ]);
+
+  // Wrap startDrag to skip interactive elements inside the header.
+  const handleHeaderPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (
+        (e.target as Element).closest('button,input,select,a,[role="button"]')
+      )
+        return;
+      startDrag(e);
+    },
+    [startDrag],
+  );
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
@@ -150,8 +237,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
       const { key } = event;
       const active = document.activeElement;
-      const activeTextarea = active?.tagName === 'TEXTAREA';
-      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+      const isActiveTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !isActiveTextarea)) {
         exit(key === 'Enter' ? 'OK' : 'Cancel');
         event.preventDefault();
         event.stopPropagation();
@@ -172,10 +259,34 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       data-testid={'info-modal-window'}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params?.className)}
+      style={
+        isDraggable
+          ? rect
+            ? {
+                position: 'absolute',
+                left: rect.left,
+                top: rect.top,
+                ...(isResizable && { height: rect.height }),
+              }
+            : { visibility: 'hidden' }
+          : undefined
+      }
       {...rest}
     >
+      {isDraggable && isResizable && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={startResizeTop}
+          data-testid="dialog-resize-top"
+        />
+      )}
       <header
-        className={clsx(styles.header, withDivider && styles.withDivider)}
+        className={clsx(
+          styles.header,
+          withDivider && styles.withDivider,
+          isDraggable && styles.draggableHeader,
+        )}
+        onPointerDown={isDraggable ? handleHeaderPointerDown : undefined}
       >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
@@ -200,9 +311,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           {footerContent}
           {buttons.length > 0 &&
             buttons.map((button) =>
-              typeof button !== 'string' ? (
-                button
-              ) : (
+              typeof button === 'string' ? (
                 <input
                   key={button}
                   type="button"
@@ -210,14 +319,27 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                     isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
-                  value={buttonsNameMap?.[button] ?? button}
+                  value={
+                    buttonsNameMap?.[button] ??
+                    defaultButtonLabels[button] ??
+                    button
+                  }
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
                   data-testid={button}
                 />
+              ) : (
+                button
               ),
             )}
         </footer>
+      )}
+      {isDraggable && isResizable && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={startResizeBottom}
+          data-testid="dialog-resize-bottom"
+        />
       )}
     </dialog>
   );

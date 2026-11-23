@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,24 +53,28 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { AnyAction } from 'redux';
+import type { StoreState } from 'src/script/ui/state/store.types';
+import type { CheckOption } from 'src/script/ui/state/options/types';
+import i18n from 'src/i18n/i18n';
 
 const saveSchema = {
-  title: 'Save',
+  title: i18n.t('dialogs:document.save.schemaTitle'),
   type: 'object',
   properties: {
     filename: {
-      title: 'File name:',
+      title: i18n.t('dialogs:document.save.filenameLabel'),
       type: 'string',
       maxLength: 128,
-      pattern: String.raw`^[^.<>:?"*\\|\/][^<>:?"*\\|\/]*$`,
+      pattern: '^[^.<>:?"*\\\\|\\/][^<>:?"*\\\\|\\/]*$',
       invalidMessage: (res) => {
-        if (!res) return 'Filename should contain at least one character';
-        if (res.length > 128) return 'Filename is too long';
-        return String.raw`A filename cannot contain characters: \ / : * ? " < > | and cannot start with '.'`;
+        if (!res) return i18n.t('dialogs:document.save.filenameEmptyError');
+        if (res.length > 128)
+          return i18n.t('dialogs:document.save.filenameTooLongError');
+        return i18n.t('dialogs:document.save.filenameInvalidCharsError');
       },
     },
     format: {
-      title: 'File format:',
+      title: i18n.t('dialogs:document.save.formatLabel'),
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
         (format) => formatProperties[format].name,
@@ -114,7 +118,7 @@ interface FormState {
 }
 
 interface CheckState {
-  checkOptions: unknown;
+  checkOptions: CheckOption[];
 }
 
 interface Editor {
@@ -136,7 +140,7 @@ interface SaveDialogProps {
   checkState: CheckState;
   ignoreChiralFlag: boolean;
   editor: Editor;
-  onCheck: (checkOptions: unknown) => void;
+  onCheck: (checkOptions: CheckOption[]) => void;
   onTmplSave: (struct: Struct) => void;
   onResetForm: (prevState: FormState) => void;
   onOk: (result?: unknown) => void;
@@ -220,7 +224,7 @@ const PreviewContent = ({
     <IconButton
       onClick={handleCopy}
       iconName="copy"
-      title="Copy to clipboard"
+      title={i18n.t('dialogs:document.save.copyToClipboard')}
       testId="copy-to-clipboard"
     />
   </div>
@@ -228,10 +232,10 @@ const PreviewContent = ({
 
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static readonly contextType = ErrorsContext;
-  declare context: ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
+  declare context: ContextType<typeof ErrorsContext>;
 
   constructor(props: SaveDialogProps) {
     super(props);
@@ -245,13 +249,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
-    const formats = !this.props.server
+    const formats = this.props.server
       ? [
-          SupportedFormat.ket,
-          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-          SupportedFormat.smiles,
-        ]
-      : [
           SupportedFormat.ket,
           this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
           this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
@@ -273,6 +272,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           SupportedFormat.cdxml,
           SupportedFormat.cdx,
           SupportedFormat.binaryCdx,
+        ]
+      : [
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          SupportedFormat.smiles,
         ];
 
     this.saveSchema = saveSchema;
@@ -293,11 +297,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   componentDidMount() {
     const { checkOptions } = this.props.checkState;
     this.props.onCheck(checkOptions);
-    this.changeType(
-      this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-    ).then(
-      (res) => res instanceof Error && this.setState({ disableControls: true }),
-    );
+    void (async () => {
+      const res = await this.changeType(
+        this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+      );
+      if (res instanceof Error) this.setState({ disableControls: true });
+    })();
   }
 
   isImageFormat = (format: string): format is OutputFormatType => {
@@ -313,7 +318,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return format !== SupportedFormat.mol && Object.keys(errors).length > 0;
   };
 
-  changeType = (
+  changeType = async (
     type: SupportedFormat | OutputFormatType,
   ): Promise<Error | void> => {
     const { struct, server, options, formState, ignoreChiralFlag } = this.props;
@@ -324,7 +329,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         tabIndex: 0,
         isLoading: false,
       });
-      return Promise.resolve();
+      return;
     }
 
     const errorHandler = this.context.errorHandler;
@@ -342,29 +347,30 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
       serverOptions.outputFormat = type;
 
-      return server
-        .generateImageAsBase64(structStr, serverOptions as GenerateImageOptions)
-        .then((base64) => {
-          this.setState({
-            disableControls: false,
-            tabIndex: 0,
-            imageSrc: base64,
-            isLoading: false,
-          });
-        })
-        .catch((e) => {
-          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          errorHandler(e);
-          this.props.onResetForm(formState);
-          return e;
+      try {
+        const base64 = await server.generateImageAsBase64(
+          structStr,
+          serverOptions as GenerateImageOptions,
+        );
+        this.setState({
+          disableControls: false,
+          tabIndex: 0,
+          imageSrc: base64,
+          isLoading: false,
         });
+      } catch (e) {
+        KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
+        errorHandler(e as string);
+        this.props.onResetForm(formState);
+        return e as Error;
+      }
     } else {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
       // temporary check if query properties are used
-      const queryPropertiesAreUsed = !!(
+      const hasQueryProperties = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).some(
+        [...struct.atoms].some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -377,7 +383,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       const service = factory.create(
         type,
         { ...options, ignoreChiralFlag },
-        queryPropertiesAreUsed,
+        hasQueryProperties,
         struct,
       );
       const getStructFromStringByType = () => {
@@ -396,27 +402,25 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         }
         return service.getStringFromStructureAsync(struct);
       };
-      return getStructFromStringByType()
-        .then(
-          (structStr) => {
-            this.setState({
-              tabIndex: 0,
-              structStr,
-            });
-          },
-          (e) => {
-            errorHandler(e.message);
-            this.props.onResetForm(formState);
-            return e;
-          },
-        )
-        .finally(() => {
-          this.setState({
-            disableControls: false,
-            tabIndex: 0,
-            isLoading: false,
-          });
+      let result: Error | void = undefined;
+      try {
+        const structStr = await getStructFromStringByType();
+        this.setState({
+          tabIndex: 0,
+          structStr,
         });
+      } catch (e) {
+        errorHandler((e as Error).message);
+        this.props.onResetForm(formState);
+        result = e as Error;
+      } finally {
+        this.setState({
+          disableControls: false,
+          tabIndex: 0,
+          isLoading: false,
+        });
+      }
+      return result;
     }
   };
 
@@ -427,9 +431,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   getWarnings = (format: SupportedFormat | OutputFormatType): string[] => {
     const { struct, moleculeErrors } = this.props;
     const warnings: string[] = [];
-    const structWarning =
-      'Structure contains errors, please check the data, otherwise you ' +
-      'can lose some properties or the whole structure after saving in this format.';
+    const structWarning = i18n.t(
+      'dialogs:document.save.structureContainsErrorsWarning',
+    );
     if (!this.isImageFormat(format)) {
       const saveWarning = structFormat.couldBeSaved(struct, format);
       const isStructInvalid = this.showStructWarningMessage(format);
@@ -482,19 +486,19 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       warnings.length === 0
         ? [
             {
-              caption: 'Preview',
+              caption: i18n.t('dialogs:document.save.previewTab'),
               component: this.renderSaveFile,
               tabIndex: 0,
             },
           ]
         : [
             {
-              caption: 'Preview',
+              caption: i18n.t('dialogs:document.save.previewTab'),
               component: this.renderSaveFile,
               tabIndex: 0,
             },
             {
-              caption: 'Warnings',
+              caption: i18n.t('dialogs:document.save.warningsTab'),
               component: this.renderWarnings,
               tabIndex: 1,
             },
@@ -518,6 +522,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             }}
             options={getSelectOptionsFromSchema(
               this.saveSchema.properties.format,
+              i18n.t,
             )}
             component={Select}
             className="file-format-list"
@@ -539,15 +544,15 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     if (!isClipboardAPIAvailable()) {
       this.props.editor.errorHandler(
-        'This feature is not available in your browser',
+        i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
       return;
     }
 
-    navigator.clipboard.writeText(structStr || '').catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    void navigator.clipboard.writeText(structStr || '').catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       this.props.editor.errorHandler(
-        'This feature is not available in your browser',
+        i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
     });
   };
@@ -592,7 +597,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     const warnings = this.getWarnings(format);
 
-    return warnings.length ? (
+    return warnings.length > 0 ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer} key={warning}>
@@ -614,14 +619,14 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     options.outputFormat = imageFormat;
 
     const savingStruct =
+      !isLoading &&
       this.isValidStringFormat(format) &&
-      this.isBinaryCdxFormat(format) &&
-      !isLoading
+      this.isBinaryCdxFormat(format)
         ? b64toBlob(structStr || '')
         : structStr;
 
     const isMoleculeContain =
-      this.props.struct.atoms.size && this.props.struct.bonds.size;
+      this.props.struct.atoms.size > 0 && this.props.struct.bonds.size > 0;
     const buttons = [
       <button
         key="save-tmpl"
@@ -630,7 +635,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         onClick={() => this.props.onTmplSave(this.props.struct)}
         data-testid="save-to-templates-button"
       >
-        Save to Templates
+        {i18n.t('dialogs:document.save.saveToTemplates')}
       </button>,
     ];
 
@@ -642,7 +647,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type="button"
         data-testid="cancel-button"
       >
-        Cancel
+        {i18n.t('common:button.cancel')}
       </button>,
     );
 
@@ -665,7 +670,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           }
           className={classes.ok}
         >
-          Save
+          {i18n.t('common:button.save')}
         </SaveButton>,
       );
     } else {
@@ -681,13 +686,13 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               : format.name)
           }
           key="save-file-button"
-          type={!this.isValidStringFormat(format) ? format.mime : undefined}
+          type={this.isValidStringFormat(format) ? undefined : format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
           className={classes.ok}
         >
-          Save
+          {i18n.t('common:button.save')}
         </SaveButton>,
       );
     }
@@ -699,7 +704,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return (
       <DialogComponent
         className={classes.dialog}
-        title="Save Structure"
+        title={i18n.t('dialogs:document.save.dialogTitle')}
         params={this.props}
         buttons={this.getButtons()}
         needMargin={false}
@@ -731,12 +736,26 @@ const mapStateToProps = (state: AppState) => ({
   editor: state.editor,
 });
 
+type SaveDialogDispatchProps = {
+  onCheck: (checkOptions: CheckOption[]) => void;
+  onTmplSave: (struct: Struct) => void;
+  onResetForm: (prevState: FormState) => void;
+};
+
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<AppState, undefined, AnyAction>,
-) => ({
-  onCheck: (checkOptions: unknown) => dispatch(check(checkOptions)),
-  onTmplSave: (struct: Struct) => dispatch(saveUserTmpl(struct)),
-  onResetForm: (prevState: FormState) => dispatch(updateFormState(prevState)),
+  dispatch: ThunkDispatch<StoreState, undefined, AnyAction>,
+): SaveDialogDispatchProps => ({
+  onCheck: (checkOptions: CheckOption[]) => {
+    dispatch(check(checkOptions));
+  },
+
+  onTmplSave: (struct: Struct) => {
+    dispatch(saveUserTmpl(struct));
+  },
+
+  onResetForm: (prevState: FormState) => {
+    dispatch(updateFormState(prevState));
+  },
 });
 
 export default connect(

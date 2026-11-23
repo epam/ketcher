@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { Page, test, expect } from '@fixtures';
 import {
   dragMouseTo,
@@ -1574,8 +1574,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
       await RotationTool(page).moveRotationHandleTo({ x: 950, y: 150 });
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await takeEditorScreenshot(page, {

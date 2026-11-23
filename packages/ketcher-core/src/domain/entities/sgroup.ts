@@ -100,6 +100,12 @@ type RenderableSGroupAtom =
       getVBoxObj?: (render: Render) => Box2Abs | null;
     };
 
+// Ordered mixture ("f") and unordered mixture (MIX)
+const MIXTURE_ABBREVIATIONS: Record<string, string> = {
+  FOR: 'f',
+  MIX: 'mix',
+};
+
 export class SGroup {
   static readonly TYPES = {
     SUP: 'SUP',
@@ -930,6 +936,19 @@ export class SGroup {
 
   static isCOPGroup(sGroup: SGroup): boolean {
     return sGroup.type === this.TYPES.COP;
+  }
+
+  static isMixtureSGroup(sGroup: Pick<SGroup, 'type'>): boolean {
+    return SGroup.getMixtureAbbreviation(sGroup) !== null;
+  }
+
+  /**
+   * The text drawn at the lower right of a mixture's closing bracket.
+   */
+  static getMixtureAbbreviation(sGroup: Pick<SGroup, 'type'>): string | null {
+    return Object.hasOwn(MIXTURE_ABBREVIATIONS, sGroup.type)
+      ? MIXTURE_ABBREVIATIONS[sGroup.type]
+      : null;
   }
 }
 

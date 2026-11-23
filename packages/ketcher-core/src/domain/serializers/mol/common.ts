@@ -102,6 +102,8 @@ const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
     DAT: prepareDatForSaving,
     GEN: prepareGenForSaving,
     COP: prepareCopForSaving,
+    MIX: prepareGenForSaving,
+    FOR: prepareGenForSaving,
     queryComponent: prepareQueryComponentForSaving,
   };
 
@@ -182,6 +184,8 @@ const saveToMolfile: Record<
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,
+  MIX: saveGenToMolfile,
+  FOR: saveGenToMolfile,
 };
 
 function saveMulToMolfile(

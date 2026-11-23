@@ -399,13 +399,16 @@
           "enumBlank": "<En blanco>",
           "enumRandom": "Aleatorio",
           "enumBlock": "Bloque",
-          "enumAlternating": "Alternante"
+          "enumAlternating": "Alternante",
+          "enumOrdered": "Ordenada",
+          "enumUnordered": "No ordenada"
         },
         "variantSuperatom": "Superátomo",
         "name": {
           "title": "Nombre",
           "invalidMessage": "Proporciona un nombre para el superátomo"
         },
+        "variantMixture": "Mezcla",
         "variantQueryComponent": "Componente de consulta",
         "variantNucleotideComponent": "Componente de nucleótido",
         "component": {

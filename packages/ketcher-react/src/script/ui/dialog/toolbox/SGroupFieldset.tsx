@@ -33,6 +33,7 @@ enum SGroupPropType {
   Connectivity = 'connectivity',
   Class = 'class',
   Subtype = 'subtype',
+  MixtureType = 'mixtureType',
 }
 
 const propMapping: Record<string, PropMappingValue> = {
@@ -49,7 +50,8 @@ const content = (type: string, t: TFunction): JSX.Element[] =>
       if (
         prop === SGroupPropType.Connectivity ||
         prop === SGroupPropType.Class ||
-        prop === SGroupPropType.Subtype
+        prop === SGroupPropType.Subtype ||
+        prop === SGroupPropType.MixtureType
       ) {
         return (
           <Field

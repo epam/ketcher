@@ -24,7 +24,7 @@ The central data model for the micromolecules domain. It is a graph that holds a
 
 ### SGroup (S-Group / Superatom / Query Component)
 
-A named group of atoms and bonds with a specific chemical meaning. The supported types are: superatom (an abbreviation or functional-group expansion), multiple group (a repeating fragment), structural repeating unit (a polymer bracket), data S-group (carrying arbitrary key/value data), generic group, and query component. A special subtype — the monomer micromolecule — represents a macromolecule monomer as an S-group inside a struct, serving as the serialization bridge between the two editor domains.
+A named group of atoms and bonds with a specific chemical meaning. The supported types are: superatom (an abbreviation or functional-group expansion), multiple group (a repeating fragment), structural repeating unit (a polymer bracket), data S-group (carrying arbitrary key/value data), copolymer, ordered mixture and unordered mixture (two separate types that group the structures of a mixture), generic group, and query component. A special subtype — the monomer micromolecule — represents a macromolecule monomer as an S-group inside a struct, serving as the serialization bridge between the two editor domains.
 
 ### FunctionalGroup
 

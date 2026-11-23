@@ -61,7 +61,8 @@ export default function (
         isAnalyzingFile: data,
       };
     }
-    default:
+    default: {
       return state;
+    }
   }
 }

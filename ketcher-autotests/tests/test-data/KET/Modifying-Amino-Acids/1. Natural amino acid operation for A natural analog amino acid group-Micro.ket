@@ -675,8 +675,7 @@
             "y": -1.25
         },
         "alias": "A",
-        "templateId": "A___Alanine",
-        "seqid": 2
+        "templateId": "A___Alanine"
     },
     "monomer2": {
         "type": "monomer",

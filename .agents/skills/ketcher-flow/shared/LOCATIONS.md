@@ -29,6 +29,6 @@ Every run works in worktrees and leaves the primary checkout on the branch it fo
 - **Ticket worktree**: one per implementer of a feature or refactor ticket, `git worktree add -b <branch>-<ticket> <root>/.ketcher-flow/worktrees/<id>-<ticket> <branch>`. It starts from the task branch's last commit, so commit a checkpoint there first.
 - **Detached worktree**: for work on `<base>` that commits nothing, such as a batch's baseline: `git worktree add --detach <root>/.ketcher-flow/worktrees/<name> <base>`.
 
-A fresh worktree has no `node_modules`. Run `npm install` from its root. On macOS, `cp -c -R <root>/node_modules <worktree>/` (and the same for each `packages/*/node_modules` and `ketcher-autotests/node_modules` that exists) is a copy-on-write clone and is faster. A ticket that changes `package.json` or the lockfile always runs `npm install`.
+A fresh worktree has no `node_modules`. Run `npm install` from its root. On macOS, `cp -c -R <root>/node_modules <worktree>/` (and the same for each `packages/*/node_modules` and `ketcher-autotests/node_modules` that exists) is a copy-on-write clone and is faster. A ticket that changes `package.json` or the lockfile always runs `npm install`. After a copy, run `npx husky` in the worktree so its git hooks run.
 
 Remove a ticket worktree when its merger reports. Remove the task worktree after the flow's final report, and keep its branch. A run that ends without a commit removes the task worktree and deletes its branch (`git branch -D <branch>`). Done when `git worktree list` shows none from this run.

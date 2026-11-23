@@ -52,8 +52,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 8.321134574890138,
-            "y": -7.8812500000000005
+            "x": 8.246134574890139,
+            "y": -7.78125
         },
         "alias": "Abu",
         "templateId": "Abu___L-2-aminobutyric acid",
@@ -215,8 +215,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 14.15113457489014,
-            "y": -11.881250000000001
+            "x": 14.076134574890137,
+            "y": -11.78125
         },
         "alias": "2Nal",
         "templateId": "2Nal___3-(2-naphthyl)-alanine",
@@ -530,8 +530,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 20.413134574890137,
-            "y": -11.881250000000001
+            "x": 20.338134574890137,
+            "y": -11.78125
         },
         "alias": "D-3Pal",
         "templateId": "D-3Pal___D-3-(3-pyridyl)-alanine",

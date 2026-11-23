@@ -185,42 +185,6 @@ export class SequenceMode extends BaseMode {
     super('sequence-layout-mode', previousMode);
   }
 
-  protected async writeToClipboard(
-    serializedKet: string,
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ): Promise<void> {
-    try {
-      const ketMimeType = `web ${ChemicalMimeType.KET}`;
-      const sequence = this.getSequenceForClipboard(
-        drawingEntitiesManager,
-        serializedKet,
-      );
-
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [ketMimeType]: new Blob([serializedKet], { type: ketMimeType }),
-          [PLAIN_TEXT_MIME_TYPE]: sequence.then(
-            (sequenceString) =>
-              new Blob([sequenceString ?? serializedKet], {
-                type: PLAIN_TEXT_MIME_TYPE,
-              }),
-          ),
-        }),
-      ]);
-    } catch (error) {
-      KetcherLogger.info(
-        'Cannot write multiple formats to the clipboard, falling back to KET only',
-        error,
-      );
-
-      try {
-        await navigator.clipboard.writeText(serializedKet);
-      } catch (writeError) {
-        KetcherLogger.error('SequenceMode.ts::writeToClipboard', writeError);
-      }
-    }
-  }
-
   private async getSequenceForClipboard(
     drawingEntitiesManager: DrawingEntitiesManager,
     serializedKet: string,
@@ -247,6 +211,66 @@ export class SequenceMode extends BaseMode {
     }
   }
 
+  private get needToEditSense() {
+    return this.isSyncEditMode || !this.isAntisenseEditMode;
+  }
+
+  private get needToEditAntisense() {
+    return this.isSyncEditMode || this.isAntisenseEditMode;
+  }
+
+  private turnOnAntisenseEditMode() {
+    this._isAntisenseEditMode = true;
+    this.initialize(false, false, false);
+  }
+
+  private turnOffAntisenseEditMode() {
+    this._isAntisenseEditMode = false;
+    this.initialize(false, false, false);
+  }
+
+  private setAntisenseEditMode(isAntisenseEditMode) {
+    this._isAntisenseEditMode = isAntisenseEditMode;
+    this.initialize(false, false, false);
+  }
+
+  protected async writeToClipboard(
+    serializedKet: string,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): Promise<void> {
+    try {
+      const ketMimeType = `web ${ChemicalMimeType.KET}`;
+      const sequence = this.getSequenceForClipboard(
+        drawingEntitiesManager,
+        serializedKet,
+      );
+      const plainText = (async () => {
+        const sequenceString = await sequence;
+        return new Blob([sequenceString ?? serializedKet], {
+          type: PLAIN_TEXT_MIME_TYPE,
+        });
+      })();
+
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [ketMimeType]: new Blob([serializedKet], { type: ketMimeType }),
+          [PLAIN_TEXT_MIME_TYPE]: plainText,
+        }),
+      ]);
+    } catch (error) {
+      KetcherLogger.info(
+        'Cannot write multiple formats to the clipboard, falling back to KET only',
+        error,
+      );
+
+      try {
+        await navigator.clipboard.writeText(serializedKet);
+      } catch (writeError) {
+        KetcherLogger.error('SequenceMode.ts::writeToClipboard', writeError);
+      }
+    }
+  }
+
   public get isEditMode() {
     return this._isEditMode;
   }
@@ -269,29 +293,6 @@ export class SequenceMode extends BaseMode {
 
   public get isSyncEditMode() {
     return this._isSyncEditMode;
-  }
-
-  private get needToEditSense() {
-    return this.isSyncEditMode || !this.isAntisenseEditMode;
-  }
-
-  private get needToEditAntisense() {
-    return this.isSyncEditMode || this.isAntisenseEditMode;
-  }
-
-  private turnOnAntisenseEditMode() {
-    this._isAntisenseEditMode = true;
-    this.initialize(false, false, false);
-  }
-
-  private turnOffAntisenseEditMode() {
-    this._isAntisenseEditMode = false;
-    this.initialize(false, false, false);
-  }
-
-  private setAntisenseEditMode(isAntisenseEditMode) {
-    this._isAntisenseEditMode = isAntisenseEditMode;
-    this.initialize(false, false, false);
   }
 
   public turnOnSyncEditMode() {
@@ -993,7 +994,7 @@ export class SequenceMode extends BaseMode {
         secondNodeToConnect instanceof Nucleoside ||
         (secondNodeToConnect instanceof MonomerSequenceNode &&
           secondNodeToConnect.monomer instanceof Phosphate &&
-          secondNodeToConnect.monomer.hydrogenBonds.length))
+          secondNodeToConnect.monomer.hydrogenBonds.length > 0))
     ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
@@ -1461,7 +1462,7 @@ export class SequenceMode extends BaseMode {
       const modelChanges = new Command();
       let nodesToDelete: TwoStrandedNodesSelection;
 
-      if (selections.length) {
+      if (selections.length > 0) {
         nodesToDelete = selections;
 
         const senseNodesToDelete = nodesToDelete.filter((selectionRange) =>
@@ -3642,7 +3643,7 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const selections = SequenceRenderer.selections;
 
-    if (selections.length) {
+    if (selections.length > 0) {
       selections.forEach((selectionRange) => {
         selectionRange.forEach((nodeSelection) => {
           modelChanges.merge(
@@ -3673,7 +3674,7 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const selections = SequenceRenderer.selections;
 
-    if (selections.length) {
+    if (selections.length > 0) {
       selections.forEach((selectionRange) => {
         selectionRange.forEach((nodeSelection) => {
           modelChanges.merge(

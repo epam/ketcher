@@ -25,7 +25,7 @@ Done when both hold:
 - A loop goes **red** on this bug, and you can run it on demand.
 - You can name the cause in one line and point at the file and line.
 
-If the loop stays green everywhere you can reach, the behavior is by design (check the [OpenSpec specs](../../../../openspec/specs/) and the [ADRs](../../../../.memory-bank/adr/)) or the description is about something else. Show what you ran. The flow that sent you here says what happens next.
+If the loop stays green everywhere you can reach, the behavior is by design (check the [feature files](../../../../.memory-bank/features/) and the [ADRs](../../../../.memory-bank/adr/)) or the description is about something else. Show what you ran. The flow that sent you here says what happens next.
 
 ## Turning it green
 

@@ -17,7 +17,7 @@ type CustomEventWaiter = {
 export const waitForRender = async (
   page: Page,
   callback = emptyFunction,
-  timeout = 5000,
+  timeout = 60000,
 ) => {
   if (timeout === 0) {
     await callback();

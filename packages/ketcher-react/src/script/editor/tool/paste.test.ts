@@ -142,4 +142,13 @@ describe('PasteTool on an atom of the canvas', () => {
     expect(molecule.atoms.size).toBe(2);
     expect(neighborLabels(molecule, targetAtomId)).toEqual(['O']);
   });
+
+  it('merges the pasted atom when the drag is shorter than a bond', () => {
+    tool.mousedown(pointerAt(targetPosition));
+    tool.mousemove(pointerAt(new Vec2(5.5, 5)));
+    tool.mouseup();
+
+    expect(molecule.atoms.size).toBe(2);
+    expect(neighborLabels(molecule, targetAtomId)).toEqual(['O']);
+  });
 });

@@ -323,28 +323,20 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select reaction arrow, cut and paste it onto the canvas', async () => {
-      await clickOnCanvas(page, point.x + 60, point.y, { from: 'pageTopLeft' });
+      await getArrowLocator(page, {}).click({ force: true });
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
 
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
-    test(
-      'Select reaction arrow, copy and paste it onto the canvas',
-      {
-        tag: ['@FlakyTest'],
-      },
-      async () => {
-        await clickOnCanvas(page, point.x + 60, point.y, {
-          from: 'pageTopLeft',
-        });
-        await copyToClipboardByKeyboard(page);
-        await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    test('Select reaction arrow, copy and paste it onto the canvas', async () => {
+      await getArrowLocator(page, {}).click({ force: true });
+      await copyToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
 
-        await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
-      },
-    );
+      await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
+    });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async () => {
       await copyAndPaste(page);
@@ -404,11 +396,9 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select reaction arrow, cut and paste it onto the canvas', async () => {
-      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y, {
-        from: 'pageTopLeft',
-      });
+      await getArrowLocator(page, {}).click({ force: true });
       await cutToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+      await pasteFromClipboardByKeyboard(page);
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 

@@ -17,6 +17,8 @@ import {
   legacyPaste,
   getSvgFromDrawnStructures,
   normalizeError,
+  notifyCopyCut,
+  notifyPasteCompleted,
   PLAIN_TEXT_MIME_TYPE,
   convertSvgToPng,
 } from 'utilities';
@@ -217,12 +219,15 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      this.writeToClipboard(serializedKet, drawingEntitiesManager);
+      void this.writeToClipboard(serializedKet, drawingEntitiesManager)
+        .then(notifyCopyCut)
+        .catch((error) => KetcherLogger.error('BaseMode.ts::onCopy', error));
     } else if (event) {
       legacyCopy(event.clipboardData, {
         [PLAIN_TEXT_MIME_TYPE]: serializedKet,
       });
       event.preventDefault();
+      notifyCopyCut();
     }
   }
 
@@ -295,8 +300,8 @@ export abstract class BaseMode {
   protected writeToClipboard(
     serializedKet: string,
     _drawingEntitiesManager: DrawingEntitiesManager,
-  ): void | Promise<void> {
-    navigator.clipboard.writeText(serializedKet);
+  ): Promise<void> {
+    return navigator.clipboard.writeText(serializedKet);
   }
 
   async onPaste(event?: ClipboardEvent): Promise<void> {
@@ -325,12 +330,13 @@ export abstract class BaseMode {
             editor.zoomToStructuresIfNeeded();
           }
         }
+        notifyPasteCompleted();
       })();
     } else if (event) {
       const clipboardData = legacyPaste(event.clipboardData, [
         PLAIN_TEXT_MIME_TYPE,
       ]);
-      this.pasteFromClipboard(clipboardData);
+      void this.pasteFromClipboard(clipboardData).then(notifyPasteCompleted);
       event.preventDefault();
 
       if (!isCanvasEmptyBeforePaste) {

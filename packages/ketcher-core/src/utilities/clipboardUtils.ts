@@ -78,6 +78,11 @@ export function notifyCopyCut() {
   globalThis.dispatchEvent(event);
 }
 
+export function notifyPasteCompleted() {
+  const event = new Event('pasteComplete');
+  globalThis.dispatchEvent(event);
+}
+
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {
   return Boolean(item && typeof item.getType === 'function');
 }

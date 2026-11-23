@@ -267,6 +267,7 @@ export class SequenceMode extends BaseMode {
         await navigator.clipboard.writeText(serializedKet);
       } catch (writeError) {
         KetcherLogger.error('SequenceMode.ts::writeToClipboard', writeError);
+        throw writeError;
       }
     }
   }

@@ -109,6 +109,11 @@ consumer check covers the standalone entries.
 
 Always use these aliases. Never use relative `../../` paths from test files.
 
+The keyboard clipboard helpers wait for `copyOrCutComplete` or `pasteComplete`
+when operating on the editor canvas in micro and macro modes. Native editing
+fields use the browser's clipboard handling instead. These events report that
+the handler finished, not that the pasted structure was valid.
+
 ---
 
 ## How to Run E2E Tests
@@ -380,10 +385,10 @@ await page.getByTestId('context-menu').getByText('Copy').click();
 | `waitForPageInit(page)`                | Navigate to `''`, wait for `window.ketcher`, wait for Indigo button enabled |
 | `waitForKetcherInit(page)`             | Wait for `window.ketcher` to exist                                          |
 | `waitForIndigoToLoad(page)`            | Wait for aromatize button to be enabled (Indigo WASM ready)                 |
-| `waitForRender(page, cb)`              | Run `cb`, then wait for `renderComplete` custom event (260 ms timeout)      |
+| `waitForRender(page, cb)`              | Listen before `cb`, then wait up to 260 ms after `cb` for `renderComplete`  |
 | `waitForCanvasModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for canvas switch completion for that editor and mode |
 | `waitForLayoutModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for Flex/Snake/Sequence switch completion for that editor and mode |
-| `waitForSpinnerFinishedWork(page, cb)` | Run `cb`, wait for all loading spinners to detach, then `waitForRender`     |
+| `waitForSpinnerFinishedWork(page, cb)` | Listen before `cb`; wait for `renderComplete` and all loading spinners to detach |
 
 Canvas and layout switch helpers resolve on their dedicated completion events,
 without a fixed render delay. They fail after 30 seconds if no matching event
@@ -479,7 +484,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Async / Timing
 
-1. **When it is needed wrap canvas-mutating actions in `waitForRender`** or use the higher-level utility functions that already do this. Never use raw `page.waitForTimeout` as a substitute.
+1. **Wrap canvas-mutating actions in `waitForRender` only when they are expected to emit `renderComplete`** or use a higher-level utility that already does this. For actions with a different completion signal, such as a ghost element becoming visible, wait for that signal instead of using a no-op `waitForRender` as a barrier.
 2. **Use `waitForSpinnerFinishedWork`** whenever the action triggers a loading spinner (file open, save, structure check).
 3. **Use `waitFor({ state: 'visible' })`** or `waitFor({ state: 'detached' })` to assert element presence/absence. Avoid polling with `waitForTimeout`.
 

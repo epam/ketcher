@@ -69,10 +69,15 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async erase() {
-      await waitForRender(page, async () => {
-        await locators.eraseButton.click();
-      });
+    // Set timeOut to zero if you are not expacting anything to be deleted once button is pressed
+    async erase({ timeOut }: { timeOut?: number } = {}) {
+      await waitForRender(
+        page,
+        async () => {
+          await locators.eraseButton.click();
+        },
+        timeOut,
+      );
     },
 
     async expandBondSelectionDropdown() {

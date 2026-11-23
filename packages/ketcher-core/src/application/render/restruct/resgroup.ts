@@ -112,6 +112,27 @@ class ReSGroup extends ReObject {
           }
           break;
         }
+        case 'GRA': {
+          const connectivity: string = sgroup.data.connectivity || 'eu';
+          SGroupdrawBracketsOptions.lowerIndexText = 'grf';
+          SGroupdrawBracketsOptions.upperIndexText =
+            connectivity === 'ht' ? '' : connectivity;
+          break;
+        }
+        case 'CRO': {
+          const connectivity: string = sgroup.data.connectivity || 'eu';
+          SGroupdrawBracketsOptions.lowerIndexText = 'xl';
+          SGroupdrawBracketsOptions.upperIndexText =
+            connectivity === 'ht' ? '' : connectivity;
+          break;
+        }
+        case 'MOD': {
+          const connectivity: string = sgroup.data.connectivity || 'eu';
+          SGroupdrawBracketsOptions.lowerIndexText = 'mod';
+          SGroupdrawBracketsOptions.upperIndexText =
+            connectivity === 'ht' ? '' : connectivity;
+          break;
+        }
         case 'SUP': {
           const superatomClass = sgroup.data.class as
             SUPERATOM_CLASS | undefined;
@@ -140,6 +161,9 @@ class ReSGroup extends ReObject {
         'SUP',
         'GEN',
         'COP',
+        'GRA',
+        'CRO',
+        'MOD',
         'queryComponent',
       ];
       if (

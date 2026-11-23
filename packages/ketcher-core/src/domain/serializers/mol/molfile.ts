@@ -547,7 +547,10 @@ export class Molfile {
       }
 
       // connectivity
-      if (['SRU', 'COP'].includes(sgroup.type) && sgroup.data.connectivity) {
+      if (
+        ['SRU', 'COP', 'GRA', 'CRO', 'MOD'].includes(sgroup.type) &&
+        sgroup.data.connectivity
+      ) {
         const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`;

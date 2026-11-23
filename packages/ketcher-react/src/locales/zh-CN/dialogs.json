@@ -394,6 +394,9 @@
           "enumEitherUnknown": "任意（未知）"
         },
         "variantCopolymer": "共聚物",
+        "variantGraft": "接枝 (grf)",
+        "variantCrosslink": "交联 (xl)",
+        "variantModification": "修饰 (mod)",
         "subtype": {
           "title": "子类型",
           "enumBlank": "<空白>",

@@ -506,6 +506,63 @@ const sgroup: Omit<StructSchema, 'properties'> & {
       required: ['connectivity'],
     },
     {
+      key: 'GRA',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantGraft',
+      type: 'object',
+      properties: {
+        type: { enum: ['GRA'] },
+        connectivity: {
+          title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
+          enum: ['ht', 'hh', 'eu'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
+          ],
+          default: 'ht',
+        },
+      },
+      required: ['connectivity'],
+    },
+    {
+      key: 'CRO',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantCrosslink',
+      type: 'object',
+      properties: {
+        type: { enum: ['CRO'] },
+        connectivity: {
+          title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
+          enum: ['ht', 'hh', 'eu'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
+          ],
+          default: 'ht',
+        },
+      },
+      required: ['connectivity'],
+    },
+    {
+      key: 'MOD',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantModification',
+      type: 'object',
+      properties: {
+        type: { enum: ['MOD'] },
+        connectivity: {
+          title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
+          enum: ['ht', 'hh', 'eu'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
+            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
+          ],
+          default: 'ht',
+        },
+      },
+      required: ['connectivity'],
+    },
+    {
       key: 'SUP',
       title: 'dialogs:toolbox.structSchema.sgroup.variantSuperatom',
       type: 'object',

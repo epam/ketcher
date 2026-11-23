@@ -22,7 +22,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { getOptionsWithConvertedUnits } from './options';
 import Raphael from './raphael-extension';
 import svgPath from 'svgpath';
-import utility from './util';
+import util from './util';
 import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { toFixed } from 'utilities';
 import { PathBuilder } from './pathBuilder';
@@ -1487,7 +1487,7 @@ function bondMark(
     'font-size': options.fontszsubInPx,
     fill: '#000',
   });
-  const rbb = utility.relBox(path.getBBox());
+  const rbb = util.relBox(path.getBBox());
   recenterText(path, rbb);
   return path;
 }

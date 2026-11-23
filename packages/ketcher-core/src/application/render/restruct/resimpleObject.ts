@@ -25,7 +25,7 @@ import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import utility from '../util';
+import util from '../util';
 import { toFixed } from 'utilities';
 import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 
@@ -455,7 +455,7 @@ class ReSimpleObject extends ReObject {
     const offset = options.offset;
     if (offset != undefined) path.translateAbs(offset.x, offset.y);
 
-    this.visel.add(path, Box2Abs.fromRelBox(utility.relBox(path.getBBox())));
+    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }
 }
 

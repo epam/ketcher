@@ -53,7 +53,7 @@ type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
   skip: ClosestSkip,
-  minDistribution: number,
+  minDistance: number,
 ) => ClosestAtom | null;
 type AtomForNewBondResult = {
   atom: number | AtomAttributes;

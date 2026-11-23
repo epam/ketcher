@@ -317,9 +317,9 @@ abstract class SelectBase implements BaseTool {
     }
 
     const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
-    const isChainSelectionModuleKey = isModKeyPressed && isSequenceItem;
+    const isChainSelectionModKey = isModKeyPressed && isSequenceItem;
 
-    if (!isShiftKeyPressed && !isChainSelectionModuleKey && !isAltKeyPressed) {
+    if (!isShiftKeyPressed && !isChainSelectionModKey && !isAltKeyPressed) {
       this.startMoveIfNeeded(renderer);
       if (!isSequenceItem && renderer.drawingEntity.selected) {
         return;
@@ -346,7 +346,7 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         );
       modelChanges.merge(selectModelChanges);
-    } else if (isChainSelectionModuleKey) {
+    } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
@@ -897,11 +897,11 @@ abstract class SelectBase implements BaseTool {
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
-    const moduleKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+    const modifierKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const externalConnectionsToSelection =
       this.editor.drawingEntitiesManager.externalConnectionsToSelection;
 
-    if (moduleKeyPressed || externalConnectionsToSelection.length === 0) {
+    if (modifierKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
 

@@ -272,7 +272,7 @@ function useLabelStyles(
   return { color, fill, stroke };
 }
 
-const utility = {
+const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
@@ -282,4 +282,4 @@ const utility = {
   useLabelStyles,
 };
 
-export default utility;
+export default util;

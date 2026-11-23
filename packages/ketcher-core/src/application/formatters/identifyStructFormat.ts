@@ -21,8 +21,8 @@ function isIdtString(s: string): boolean {
   // Phosphorothioate nucleotide sequence: A, C, G, T, U joined by *
   const idtBaseSeq = /^[ACGTUacgtu](\*[ACGTUacgtu])+$/;
   // IDT modification token: /3Name/, /5Name/, /iName/, /rName/
-  const idtModuleToken = /\/[35ir][A-Za-z0-9][A-Za-z0-9-]*\/?/;
-  return idtBaseSeq.test(s) || idtModuleToken.test(s);
+  const idtModificationToken = /\/[35ir][A-Za-z0-9][A-Za-z0-9-]*\/?/;
+  return idtBaseSeq.test(s) || idtModificationToken.test(s);
 }
 
 export function identifyStructFormat(

@@ -10,6 +10,9 @@ Spec: [openspec/specs/templates-and-groups/spec.md](../../openspec/specs/templat
 - _Aromatize_ / _Dearomatize_ do not apply to rings that are part of a functional group.
 - Individual atoms/bonds of an abbreviation are inaccessible until the abbreviation is removed.
 - A neighbouring fragment that itself contains further abbreviations is repositioned by an approximate row-based heuristic rather than by exact bond geometry, so expanding or contracting a chain of abbreviations can still distort the bonds between them.
+- A Mixture S-Group is not limited to whole structures: it covers exactly the selected atoms, like other bracketed S-Groups.
+- Brackets and abbreviations of nested S-Groups that share an edge are drawn on top of each other.
+- Molfile V3000 and the other Indigo-backed formats keep a Mixture S-Group only as far as the connected Indigo version supports it.
 - This is a **molecules-mode** feature.
 
 ## Related

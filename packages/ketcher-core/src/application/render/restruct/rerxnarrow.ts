@@ -221,7 +221,7 @@ class ReRxnArrow extends ReObject {
     }
 
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }

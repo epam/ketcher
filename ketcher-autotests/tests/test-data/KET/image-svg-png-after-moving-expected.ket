@@ -6,8 +6,8 @@
                 "type": "image",
                 "format": "image/svg+xml",
                 "boundingBox": {
-                    "x": 4.700000000000001,
-                    "y": 2.0249999999999995,
+                    "x": 4.625,
+                    "y": 2.125,
                     "z": 0,
                     "width": 20,
                     "height": 20
@@ -18,8 +18,8 @@
                 "type": "image",
                 "format": "image/png",
                 "boundingBox": {
-                    "x": 2.2750000000000004,
-                    "y": -9.975,
+                    "x": 2.125,
+                    "y": -9.775,
                     "z": 0,
                     "width": 2.85,
                     "height": 3.0500000000000003

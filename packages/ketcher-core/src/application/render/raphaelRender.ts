@@ -96,9 +96,9 @@ export type MonomerCreationState = {
 
 export class Render {
   private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
+  private oldCb: Box2Abs | undefined;
   private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
+  private resizeObserver: ResizeObserver | undefined;
   private _monomerCreationState: MonomerCreationState = null;
 
   public skipRaphaelInitialization = false;
@@ -119,11 +119,6 @@ export class Render {
     });
 
     this.resizeObserver.observe(this.paper.canvas);
-  };
-
-  unobserveCanvasResize = () => {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
   };
 
   constructor(
@@ -173,6 +168,11 @@ export class Render {
     const viewBoxY = fixedPoint.y - zoomedHeight / 2;
     return [viewBoxX, viewBoxY];
   }
+
+  unobserveCanvasResize = () => {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  };
 
   private zoomOnMouse(
     event: WheelEvent,

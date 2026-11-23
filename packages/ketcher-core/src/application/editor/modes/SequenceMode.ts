@@ -267,6 +267,7 @@ export class SequenceMode extends BaseMode {
         await navigator.clipboard.writeText(serializedKet);
       } catch (writeError) {
         KetcherLogger.error('SequenceMode.ts::writeToClipboard', writeError);
+        throw writeError;
       }
     }
   }
@@ -1889,10 +1890,10 @@ export class SequenceMode extends BaseMode {
               const lastNode = selectionRange.at(-1)?.node;
               const prevInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
-                : null;
+                : undefined;
               const nextInSameChain = lastNode
                 ? SequenceRenderer.getNextNodeInSameChain(lastNode)
-                : null;
+                : undefined;
               return (
                 !prevInSameChain &&
                 (!nextInSameChain ||
@@ -2623,7 +2624,7 @@ export class SequenceMode extends BaseMode {
       ? BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
           monomerItem.attachmentPoints,
         )
-      : null;
+      : undefined;
 
     for (const { strandType, selectionRange } of splitSelectionsIntoStrandRuns(
       selections,

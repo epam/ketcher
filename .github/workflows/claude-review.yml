@@ -40,7 +40,7 @@ jobs:
           git checkout origin/master -- scripts/review-panel.mjs || echo "::warning::scripts/review-panel.mjs is not on master yet; /review-pr cannot pick its panel"
 
       - name: PR Review with Progress Tracking
-        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
+        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
         env:
           CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'
         with:

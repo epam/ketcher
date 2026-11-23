@@ -1,6 +1,6 @@
 # Undo and redo
 
-A user reverts and reapplies edits with the toolbar buttons or the keyboard. Behavior is owned by [openspec/specs/undo-redo/spec.md](../../../../openspec/specs/undo-redo/spec.md).
+A user reverts and reapplies edits with the toolbar buttons or the keyboard. Behavior is owned by [.memory-bank/features/undo-redo.md](../../../../.memory-bank/features/undo-redo.md).
 
 ## Sub-features
 

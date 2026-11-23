@@ -44,7 +44,7 @@ import {
   Coordinates,
   Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
   fromDescriptorsAlign,
   fromMultipleMove,
@@ -3172,7 +3172,7 @@ class Editor implements KetcherEditor {
     }
 
     // Change the atom label using fromAtomsAttrs
-    const action = fromAtomsAttrs(
+    const action = fromAtomsAttributes(
       this.render.ctab,
       leavingAtomId,
       { label: newLeavingAtomLabel },

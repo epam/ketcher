@@ -10,16 +10,15 @@ type ElementType = 'text' | 'background' | 'spacer';
  * so we don't have to add handlers to each sequence item individually.
  */
 export class SequenceEventDelegationManager {
-  private static _instance: SequenceEventDelegationManager | null = null;
+  private static _instance: SequenceEventDelegationManager | undefined;
+  private canvas: D3SvgElementSelection<SVGGElement, void> | undefined;
+  private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
+    new Map();
 
   public static get instance() {
     this._instance ??= new SequenceEventDelegationManager();
     return this._instance;
   }
-
-  private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
-  private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
-    new Map();
 
   private attachHandler(
     eventType: string,
@@ -173,6 +172,6 @@ export class SequenceEventDelegationManager {
     });
 
     this.boundHandlers.clear();
-    this.canvas = null;
+    this.canvas = undefined;
   }
 }

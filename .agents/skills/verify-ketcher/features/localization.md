@@ -1,6 +1,6 @@
 # Localization
 
-In a multi-language build, a user picks the interface language in Settings. The interface changes at once, and the choice survives a reload. Behavior is owned by [openspec/specs/localization/spec.md](../../../../openspec/specs/localization/spec.md).
+In a multi-language build, a user picks the interface language in Settings. The interface changes at once, and the choice survives a reload. Behavior is owned by [.memory-bank/features/localization.md](../../../../.memory-bank/features/localization.md).
 
 ## Sub-features
 

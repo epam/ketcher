@@ -8,7 +8,7 @@ import {
 import {
   type IEditorEvents,
   editorEvents,
-  hotkeysConfiguration,
+  hotkeysConfig,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -519,10 +519,10 @@ export class CoreEditor {
           persistentMonomersLibrary = this._monomersLibrary;
           persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
         }
-      } catch (err) {
+      } catch (error) {
         KetcherLogger.error(
           'Editor::initializeMonomersLibrary failed to apply stored updates:',
-          err,
+          error,
         );
       }
     }
@@ -543,8 +543,8 @@ export class CoreEditor {
     try {
       const monomersDataRaw = await loadDefaultMonomersData();
       return this.setMonomersLibrary(monomersDataRaw);
-    } catch (err) {
-      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', err);
+    } catch (error) {
+      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', error);
       this.clearMonomersLibrary();
       this.events.openErrorModal.dispatch({
         errorMessage: 'Failed to load default monomers library',
@@ -681,26 +681,26 @@ export class CoreEditor {
 
     const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases): string[] =>
       [
-        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : null,
+        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : undefined,
         idtAliases?.modifications?.endpoint3
           ? `IDT 3' alias "${idtAliases.modifications.endpoint3}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.endpoint5
           ? `IDT 5' alias "${idtAliases.modifications.endpoint5}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.internal
           ? `IDT internal alias "${idtAliases.modifications.internal}"`
-          : null,
+          : undefined,
       ].filter(Boolean) as string[];
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
-          : null,
+          : undefined,
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
-          : null,
+          : undefined,
         ...formatIdtAliasDetails(monomer.props?.idtAliases),
       ]
         .filter(Boolean)
@@ -924,11 +924,11 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex],
         );
 
-        const existingMonomerRefIndex =
+        const existingMonomerReferenceIndex =
           monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
-        if (existingMonomerRefIndex === -1) {
+        if (existingMonomerReferenceIndex === -1) {
           // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
           KetcherLogger.error(
             'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
@@ -1290,7 +1290,7 @@ export class CoreEditor {
   private handleHotKeyEvents(event: KeyboardEvent) {
     if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
-    const keySettings = hotkeysConfiguration;
+    const keySettings = hotkeysConfig;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
@@ -1477,7 +1477,7 @@ export class CoreEditor {
           typeof document.elementsFromPoint === 'function' &&
           document
             .elementsFromPoint(event.clientX, event.clientY)
-            .some((el) => el.__data__?.drawingEntity?.selected)
+            .some((element) => element.__data__?.drawingEntity?.selected)
         ) {
           this.events.rightClickSelectedMonomers.dispatch([
             event,
@@ -2319,6 +2319,11 @@ export class CoreEditor {
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
+    globalThis.dispatchEvent(
+      new CustomEvent('layoutModeSwitchComplete', {
+        detail: { ketcherId: this.ketcherId, mode },
+      }),
+    );
   }
 
   private undoLatestSnakeLayout() {
@@ -2328,7 +2333,7 @@ export class CoreEditor {
         return (
           operation instanceof SelectLayoutModeOperation &&
           operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
+          operation.previousMode !== 'snake-layout-mode'
         );
       });
 
@@ -3041,7 +3046,7 @@ export class CoreEditor {
       this.micromoleculesEditor?.render?.options?.microModeScale;
     const macroModeScale = provideEditorSettings().macroModeScale;
 
-    if (microModeScale == null || microModeScale === macroModeScale) {
+    if (microModeScale === macroModeScale || microModeScale == undefined) {
       return 1;
     }
 

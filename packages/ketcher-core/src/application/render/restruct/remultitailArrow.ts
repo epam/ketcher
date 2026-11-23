@@ -399,7 +399,7 @@ export class ReMultitailArrow extends ReObject {
       LayerMap.data,
       this.visel,
       [path, header],
-      null,
+      undefined,
       true,
     );
     this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);

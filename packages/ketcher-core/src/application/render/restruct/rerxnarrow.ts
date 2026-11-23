@@ -19,7 +19,7 @@ import { type RxnArrowMode, RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
-import Raphael from '../raphael-ext';
+import Raphael from '../raphael-extension';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
@@ -221,7 +221,7 @@ class ReRxnArrow extends ReObject {
     }
 
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }

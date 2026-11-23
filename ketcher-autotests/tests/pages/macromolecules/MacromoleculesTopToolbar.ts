@@ -6,6 +6,7 @@ import {
   LayoutMode,
 } from '../constants/macromoleculesTopToolbar/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
+import { waitForLayoutModeSwitch } from '@utils/common/loaders/waitForLayoutModeSwitch';
 
 type MacromoleculesTopToolbarLocators = {
   arrangeAsRingButton: Locator;
@@ -155,13 +156,30 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         return;
       }
 
-      const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
+      const layoutOption = page.getByTestId(layoutMode);
+      const switchLayoutModeDropdown = page
+        .getByTestId('multi-tool-dropdown')
+        .filter({ has: layoutOption });
       const layoutModeButton = switchLayoutModeDropdown.getByTestId(layoutMode);
       if (!(await layoutModeButton.isVisible())) {
         await pageObject.expandSwitchLayoutModeDropdown();
       }
-      await layoutModeButton.click();
-      await switchLayoutModeDropdown.waitFor({ state: 'hidden' });
+      const ketcherId = await locators.switchLayoutModeDropdownButton.evaluate(
+        (element) =>
+          element
+            .closest('[data-ketcher-editor]')
+            ?.getAttribute('data-ketcher-id'),
+      );
+      if (!ketcherId) {
+        throw new Error('Cannot identify the active Ketcher editor.');
+      }
+      await waitForLayoutModeSwitch(
+        page,
+        () => layoutModeButton.click(),
+        layoutMode,
+        ketcherId,
+      );
+      await switchLayoutModeDropdown.waitFor({ state: 'detached' });
     },
 
     async getActiveLayoutMode(): Promise<LayoutMode | null> {

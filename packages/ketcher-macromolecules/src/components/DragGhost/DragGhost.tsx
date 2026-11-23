@@ -16,10 +16,10 @@ export const DragGhost = () => {
   const editor = useSelector(selectEditor);
 
   const [libraryItemDragData, setLibraryItemDragData] =
-    useState<LibraryItemDragState>(null);
+    useState<LibraryItemDragState>();
 
   const ghostWrapperRef = useRef<HTMLDivElement>(null);
-  const animateRef = useRef<number | null>(null);
+  const animateRef = useRef<number | undefined>(undefined);
   const canvasBBoxRef = useRef<DOMRect | null>(null);
 
   const transform = useZoomTransform();
@@ -79,7 +79,7 @@ export const DragGhost = () => {
     return () => {
       if (animateRef.current) {
         cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+        animateRef.current = undefined;
       }
     };
   }, [leftOffset, libraryItemDragData, topOffset, transform.k]);

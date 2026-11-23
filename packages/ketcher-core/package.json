@@ -68,7 +68,7 @@
     "ajv": "^8.18.0",
     "cross-env": "^7.0.3",
     "dpdm": "^4.3.0",
-    "eslint": "10.9.0",
+    "eslint": "10.15.0",
     "happy-dom": "^21.0.4",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",

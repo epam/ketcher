@@ -26,7 +26,7 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
-import util from 'application/render/util';
+import utility from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
   CANVAS_BACKGROUND_COLOR,
@@ -210,7 +210,7 @@ export class BondRenderer extends BaseRenderer {
 
       shiftValue = Math.max(
         shiftValue,
-        util.shiftRayBox(
+        utility.shiftRayBox(
           atomPositionInPixels,
           halfEdge.direction,
           absoluteLabelSymbolBox2Abs,
@@ -671,11 +671,11 @@ export class BondRenderer extends BaseRenderer {
         const firstLoop =
           firstHalfEdge && firstHalfEdge.loopId >= 0
             ? viewModel.loops.get(firstHalfEdge.loopId)
-            : null;
+            : undefined;
         const secondLoop =
           secondHalfEdge && secondHalfEdge.loopId >= 0
             ? viewModel.loops.get(secondHalfEdge.loopId)
-            : null;
+            : undefined;
         const isInConvexAromaticLoop =
           (firstLoop?.aromatic && firstLoop?.isConvex) ||
           (secondLoop?.aromatic && secondLoop?.isConvex);
@@ -747,7 +747,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let mark: string | null = null;
+    let mark: string | undefined;
 
     if (bondFromStruct.customQuery) {
       mark = bondFromStruct.customQuery;

@@ -538,7 +538,7 @@ export const RnaEditorExpanded = ({
             </button>
           </span>
         </Tooltip>
-        {isTriggerDisabled || shouldShowPhosphatePositionTooltip ? null : (
+        {isTriggerDisabled || shouldShowPhosphatePositionTooltip ? undefined : (
           <div className={styles.phosphatePositionSelector}>
             {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
             {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
@@ -810,7 +810,7 @@ export const RnaEditorExpanded = ({
             >
               {isPhosphateGroup
                 ? renderPhosphatePositionSelector(phosphatePosition)
-                : null}
+                : undefined}
             </GroupBlock>
           );
         })}

@@ -82,7 +82,7 @@ const RnaElementsTabsView = ({
             0,
           );
           const label = t(groupNameToTabLabelKey[groupName]);
-          const caption = isSelected ? `${label} (${quantity})` : null;
+          const caption = isSelected ? `${label} (${quantity})` : undefined;
 
           return (
             <RnaTabWrapper
@@ -104,7 +104,7 @@ const RnaElementsTabsView = ({
       {groupsData.map((groupData) => {
         const { groupName, groups } = groupData;
         if (groupName !== activeRnaBuilderItem) {
-          return null;
+          return;
         }
 
         const variantMonomers = selectAmbiguousMonomersInCategory(

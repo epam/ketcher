@@ -4,6 +4,7 @@ import {
   Fragment,
   Render,
   ReStruct,
+  SGroup,
   Struct,
   Vec2,
 } from 'ketcher-core';
@@ -120,6 +121,7 @@ describe('PasteTool on an atom of the canvas', () => {
     vi.clearAllTimers();
     vi.useRealTimers();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it('forms a bond to the pasted structure when the mouse is dragged away', () => {
@@ -141,6 +143,30 @@ describe('PasteTool on an atom of the canvas', () => {
 
     expect(molecule.atoms.size).toBe(2);
     expect(neighborLabels(molecule, targetAtomId)).toEqual(['O']);
+  });
+
+  it('does not bond a pasted salt or solvent', () => {
+    vi.spyOn(SGroup, 'isSaltOrSolvent').mockImplementation(
+      (name) => name === 'NaCl',
+    );
+    const salt = new Struct();
+    addMolecule(salt, [{ label: 'Na', pp: new Vec2(0, 0) }]);
+    const sgroup = new SGroup(SGroup.TYPES.SUP);
+    sgroup.data.name = 'NaCl';
+    sgroup.atoms = [0];
+    salt.sgroups.add(sgroup);
+    const saltTool = new PasteTool(editor, salt);
+    saltTool.mousemove(pointerAt(targetPosition));
+    saltTool.setMergeItems({
+      atoms: new Map([[findAtomByLabel(molecule, 'Na'), targetAtomId]]),
+      bonds: new Map(),
+      atomToFunctionalGroup: new Map(),
+    });
+
+    saltTool.mousedown(pointerAt(targetPosition));
+    saltTool.mousemove(pointerAt(new Vec2(8, 5)));
+
+    expect(neighborLabels(molecule, targetAtomId)).toEqual([]);
   });
 
   it('merges the pasted atom when the drag is shorter than a bond', () => {

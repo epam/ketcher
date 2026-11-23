@@ -487,6 +487,9 @@ function isMoleculeOnly(struct: Struct): boolean {
     struct.texts.size === 0 &&
     struct.images.size === 0 &&
     struct.multitailArrows.size === 0 &&
+    ![...struct.sgroups.values()].some((sgroup) =>
+      SGroup.isSaltOrSolvent(sgroup.data.name ?? ''),
+    ) &&
     ![...struct.atoms.keys()].some((aid) => struct.isAtomFromMacromolecule(aid))
   );
 }

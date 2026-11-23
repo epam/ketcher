@@ -11,33 +11,41 @@ const mockEditor = {
   isMonomerCreationWizardActive: false,
 };
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
-  atomGetAttr: jest.fn(),
+vi.mock('ketcher-core', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('ketcher-core')>()),
+  atomGetAttribute: vi.fn(),
   ketcherProvider: { getKetcher: () => ({ editor: mockEditor }) },
 }));
-jest.mock('src/hooks', () => ({
+vi.mock('src/hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test' }),
 }));
-jest.mock('src/script/ui/state/modal/atoms', () => ({
-  updateSelectedAtoms: jest.fn(),
+vi.mock('src/script/ui/state/modal/atoms', () => ({
+  updateSelectedAtoms: vi.fn(),
 }));
-jest.mock('../hooks/useAtomEdit', () => () => [jest.fn(), false]);
-jest.mock('../hooks/useAtomStereo', () => () => [jest.fn(), false]);
-jest.mock('../hooks/useDelete', () => () => jest.fn());
-jest.mock('../hooks/useMarkAs', () => () => ({
-  handler: jest.fn(),
-  isVisible: () => false,
-  isDisabled: () => false,
+vi.mock('../hooks/useAtomEdit', () => ({
+  default: () => [vi.fn(), false],
 }));
-jest.mock('../hooks/useMakeAttachmentPointMenuItems', () => () => null);
-jest.mock('./AttachmentGroupActionMenuItem', () => () => null);
-jest.mock('src/script/ui/action/highlightColors/HighlightColors', () => () => (
-  <button>Highlight</button>
-));
+vi.mock('../hooks/useAtomStereo', () => ({
+  default: () => [vi.fn(), false],
+}));
+vi.mock('../hooks/useDelete', () => ({ default: () => vi.fn() }));
+vi.mock('../hooks/useMarkAs', () => ({
+  default: () => ({
+    handler: vi.fn(),
+    isVisible: () => false,
+    isDisabled: () => false,
+  }),
+}));
+vi.mock('../hooks/useMakeAttachmentPointMenuItems', () => ({
+  default: () => null,
+}));
+vi.mock('./AttachmentGroupActionMenuItem', () => ({ default: () => null }));
+vi.mock('src/script/ui/action/highlightColors/HighlightColors', () => ({
+  default: () => <button>Highlight</button>,
+}));
 
 // Keep the menu's disabled boundary observable without its positioning/event machinery.
-jest.mock('react-contexify', () => ({
+vi.mock('react-contexify', () => ({
   Separator: () => <hr />,
   Submenu: ({
     children,

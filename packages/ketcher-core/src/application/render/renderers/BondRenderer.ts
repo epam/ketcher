@@ -26,7 +26,7 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
-import util from 'application/render/util';
+import utility from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
   CANVAS_BACKGROUND_COLOR,
@@ -210,7 +210,7 @@ export class BondRenderer extends BaseRenderer {
 
       shiftValue = Math.max(
         shiftValue,
-        util.shiftRayBox(
+        utility.shiftRayBox(
           atomPositionInPixels,
           halfEdge.direction,
           absoluteLabelSymbolBox2Abs,

@@ -1,4 +1,4 @@
-import { test as utils } from '../utilsFixtures';
+import { test as utils } from '../utilitiesFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { mergeTests, Page } from '@playwright/test';

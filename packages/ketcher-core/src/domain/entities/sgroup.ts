@@ -262,9 +262,9 @@ export class SGroup {
         contentBoxes.push(bba);
       });
 
-      const contentBB = contentBoxes.reduce<Box2Abs | null>(
+      const contentBB = contentBoxes.reduce<Box2Abs | undefined>(
         (contentBounds, bba) => {
-          let bbb: Box2Abs | null = null;
+          let bbb: Box2Abs | undefined;
           [bba.p0.x, bba.p1.x].forEach((x) => {
             [bba.p0.y, bba.p1.y].forEach((y) => {
               const v = new Vec2(x, y);
@@ -274,7 +274,7 @@ export class SGroup {
           assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
           return contentBounds ? Box2Abs.union(contentBounds, bbb) : bbb;
         },
-        null,
+        undefined,
       );
 
       assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
@@ -611,9 +611,9 @@ export class SGroup {
       const atom = getAtom(aid);
       if (!atom) return;
 
-      let structBoundingBox: Box2Abs | null = null;
+      let structBoundingBox: Box2Abs | undefined;
       if (render && 'getVBoxObj' in atom && atom.getVBoxObj) {
-        structBoundingBox = atom.getVBoxObj(render);
+        structBoundingBox = atom.getVBoxObj(render) ?? undefined;
       } else if (atom.pp) {
         const position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
@@ -629,7 +629,7 @@ export class SGroup {
     const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
@@ -795,7 +795,7 @@ export class SGroup {
 
     let xAtom1 = -1;
     let xAtom2 = -1;
-    let crossBond: Bond | null = null;
+    let crossBond: Bond | undefined;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
       assert(
@@ -834,7 +834,7 @@ export class SGroup {
         newBond.end = amap[newBond.end];
         mol.bonds.add(newBond);
       });
-      if (crossBond !== null) {
+      if (crossBond !== undefined) {
         const newCrossBond = crossBond.clone();
         newCrossBond.begin = tailAtom;
         newCrossBond.end = amap[xAtom1];

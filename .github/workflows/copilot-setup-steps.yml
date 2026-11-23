@@ -1,0 +1,42 @@
+name: Copilot Setup Steps
+
+# The Copilot coding agent runs the copilot-setup-steps job before it starts
+# work on a task. The push and pull_request triggers run it when this file
+# changes, so a change can be checked before it is merged.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+permissions: {}
+
+jobs:
+  # Copilot uses only a job with this name.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 24.20.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The unit tests, and the pre-push hook that runs them, need the built
+      # packages: ketcher-core tests need the generated KET schema, and the
+      # ketcher-react and ketcher-macromolecules tests import the built
+      # ketcher-core. CI builds them before its tests in the same way.
+      - name: Build the packages
+        run: npx cross-env CI=false npm run build:packages

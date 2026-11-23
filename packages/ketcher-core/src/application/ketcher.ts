@@ -109,7 +109,7 @@ const MONOMER_LIBRARY_CONVERT_TIMEOUT_MS = 5 * 60 * 1000;
 
 export class Ketcher {
   readonly #formatterFactory: FormatterFactory;
-  #editor: Editor | null = null;
+  #editor: Editor | undefined;
   readonly #eventBus: EventEmitter;
   readonly #settingsService?: ISettingsService;
   _id: string;
@@ -126,8 +126,8 @@ export class Ketcher {
     settingsService?: ISettingsService,
     disabledFunctionality?: DisabledFunctionalityConfig,
   ) {
-    assert(structService != null);
-    assert(formatterFactory != null);
+    assert(structService != undefined);
+    assert(formatterFactory != undefined);
     this._id = uniqueId();
     this.changeEvent = new Subscription();
     this.libraryUpdateEvent = new Subscription();
@@ -164,7 +164,7 @@ export class Ketcher {
 
   get editor(): Editor {
     // we should assign editor exactly after ketcher creation, so #editor
-    // being null here would indicate a programming error (accessing the
+    // being unset here would indicate a programming error (accessing the
     // editor before Ketcher has finished initializing), not a normal
     // runtime case
     if (!this.#editor) {
@@ -619,7 +619,7 @@ export class Ketcher {
         if (!shouldPreserveCanvasPosition) {
           this.editor.zoomAccordingContent(struct);
         }
-        if (x == null && y == null && !shouldPreserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition && x == undefined && y == undefined) {
           this.editor.centerStruct();
         }
       }

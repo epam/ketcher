@@ -95,12 +95,12 @@ abstract class SelectBase implements BaseTool {
   protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
+  protected rotationCenter: Vec2 | undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
+  protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
@@ -235,7 +235,8 @@ abstract class SelectBase implements BaseTool {
     this.mode = 'rotating';
     this.rotationCenter =
       this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter() ??
+      undefined;
 
     if (!this.rotationCenter) {
       this.mode = 'standby';
@@ -1458,8 +1459,8 @@ abstract class SelectBase implements BaseTool {
       Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
     ) {
       this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
+      this.rotationCenter = undefined;
+      this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
       this.updateRotationView();
@@ -1474,8 +1475,8 @@ abstract class SelectBase implements BaseTool {
     history.update(modelChanges);
 
     this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
+    this.rotationCenter = undefined;
+    this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
     this.updateRotationView();

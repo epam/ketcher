@@ -215,7 +215,7 @@ export class RemoteStructService implements StructService {
   private readonly apiPath: string;
   private readonly defaultOptions: StructServiceOptions;
   private readonly customHeaders?: Record<string, string>;
-  private ketcherId: string | null;
+  private ketcherId: string | undefined;
 
   constructor(
     apiPath: string,
@@ -225,7 +225,7 @@ export class RemoteStructService implements StructService {
     this.apiPath = apiPath;
     this.defaultOptions = defaultOptions;
     this.customHeaders = customHeaders;
-    this.ketcherId = null;
+    this.ketcherId = undefined;
   }
 
   private getStandardServerOptions(options?: StructServiceOptions) {
@@ -465,7 +465,7 @@ export class RemoteStructService implements StructService {
       request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
     const data = await req;
     const response = await pollDeferred(
-      status.bind(null, { id: data.upload_id }),
+      status.bind(undefined, { id: data.upload_id }),
       (statusResponse: ImagoStatusResponse) => {
         if (statusResponse.state === 'FAILURE')
           throw new Error(JSON.stringify(statusResponse));

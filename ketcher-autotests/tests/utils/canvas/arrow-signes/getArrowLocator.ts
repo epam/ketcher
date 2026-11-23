@@ -20,9 +20,9 @@ export function getArrowLocator(
     .map(([key, value]) => `[${key}="${value}"]`)
     .join('');
 
-  return page.locator(attributeSelectors);
+  return page.locator(attributeSelectors).filter({ visible: true });
 }
 
 export function getPlusLocator(page: Page) {
-  return page.getByTestId('rxn-plus');
+  return page.getByTestId('rxn-plus').filter({ visible: true });
 }

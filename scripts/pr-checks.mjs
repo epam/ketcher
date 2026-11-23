@@ -9,7 +9,11 @@ export const LSC_LABEL = 'large-scale-change';
 export const MAX_CHANGED_LINES = 400;
 export const MAX_FILE_LINES = 1000;
 
-const UNCOUNTED_FILES = [/(^|\/)package-lock\.json$/, /(^|\/)__snapshots__\//];
+// The size rule counts code only: a documentation or fixture line costs a
+// reviewer far less than a code line. Skill scripts under these folders are
+// agent tooling, not product code.
+const CODE_FILE = /\.(?:[cm]?[jt]sx?|css|less|scss)$/;
+const NON_PRODUCT_FOLDERS = /^\.(?:agents|claude|scratch)\//;
 const UNIT_TESTED_CODE = [
   /^packages\/ketcher-core\/src\/domain\//,
   /^packages\/ketcher-core\/src\/application\/editor\/operations\//,
@@ -112,13 +116,16 @@ function checkLinkedIssue({ linkedIssues }) {
 function checkSize({ files, labels }) {
   if (labels.includes(LSC_LABEL)) return [];
   const changed = files
-    .filter((file) => !UNCOUNTED_FILES.some((re) => re.test(file.path)))
+    .filter(
+      (file) =>
+        CODE_FILE.test(file.path) && !NON_PRODUCT_FOLDERS.test(file.path),
+    )
     .reduce((sum, file) => sum + file.additions + file.deletions, 0);
   if (changed <= MAX_CHANGED_LINES) return [];
   return [
     warn(
       'size',
-      `${changed} changed lines (lockfiles and snapshots not counted). Review quality drops above ${MAX_CHANGED_LINES}. Split the PR, or follow the large-scale change protocol in \`.memory-bank/review-workflow.md\`.`,
+      `${changed} changed code lines (documentation, agent skills, fixtures, lockfiles and snapshots not counted). Review quality drops above ${MAX_CHANGED_LINES}. Split the PR, or follow the large-scale change protocol in \`.memory-bank/review-workflow.md\`.`,
     ),
   ];
 }

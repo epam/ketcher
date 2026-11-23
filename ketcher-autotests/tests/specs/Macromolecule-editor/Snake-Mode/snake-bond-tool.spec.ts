@@ -6,7 +6,6 @@ import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
-  waitForRender,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
@@ -160,12 +159,10 @@ test.describe('Snake Bond Tool', () => {
     await expect(snakeModeButton).toHaveClass(/active/);
 
     await CommonTopLeftToolbar(page).undo();
-    await waitForRender(page);
     await expect(snakeModeButton).not.toBeVisible();
     await expect(flexModeButton).toHaveClass(/active/);
 
     await CommonTopLeftToolbar(page).redo();
-    await waitForRender(page);
     await expect(flexModeButton).not.toBeVisible();
     await expect(snakeModeButton).toHaveClass(/active/);
   });

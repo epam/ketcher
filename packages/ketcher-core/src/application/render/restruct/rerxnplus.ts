@@ -64,7 +64,7 @@ class ReRxnPlus extends ReObject {
     const centre = Scale.modelToCanvas(this.item.pp, options);
     const path = draw.plus(render.paper, centre, options);
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
     path.node?.setAttribute('data-testid', 'rxn-plus');
   }

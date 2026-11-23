@@ -24,6 +24,7 @@ import {
   isClipboardAPIAvailable,
   isSelectionOutsideElement,
   notifyCopyCut,
+  notifyPasteCompleted,
 } from 'ketcher-core';
 
 const ieCb: DataTransfer | undefined =
@@ -139,9 +140,9 @@ class ClipArea extends Component<ClipAreaProps> {
             if (!data) {
               return;
             }
-            await copy(data);
+            const copied = await copy(data);
             event.preventDefault();
-            notifyCopyCut();
+            if (copied) notifyCopyCut();
           })();
         } else {
           if (isSafariBrowser()) {
@@ -193,9 +194,9 @@ class ClipArea extends Component<ClipAreaProps> {
           void (async () => {
             const data = await this.props.onCut();
             if (!data) return;
-            await copy(data);
+            const copied = await copy(data);
             event.preventDefault();
-            notifyCopyCut();
+            if (copied) notifyCopyCut();
           })();
         } else {
           const data = this.props.onLegacyCut();
@@ -218,6 +219,7 @@ class ClipArea extends Component<ClipAreaProps> {
             await this.props.onPaste(data);
             event.preventDefault();
             notifyRequestCompleted();
+            notifyPasteCompleted();
           })();
         } else {
           if (event.clipboardData) {
@@ -308,7 +310,7 @@ function autoselect(cliparea: HTMLTextAreaElement): void {
   cliparea.select();
 }
 
-async function copy(data: ClipboardData): Promise<void> {
+async function copy(data: ClipboardData): Promise<boolean> {
   try {
     const clipboardItemData: Record<string, Promise<Blob>> = {};
     Object.keys(data).forEach((mimeType) => {
@@ -340,9 +342,10 @@ async function copy(data: ClipboardData): Promise<void> {
 
         await navigator.clipboard.writeText(textData);
 
-        return;
+        return true;
       } else {
         KetcherLogger.error('cliparea.tsx::copy', error);
+        return false;
       }
     }
 
@@ -357,13 +360,17 @@ async function copy(data: ClipboardData): Promise<void> {
         // Fallback to simple text copy
         const textData = data['text/plain'] || JSON.stringify(data);
         await navigator.clipboard.writeText(textData);
+      } else {
+        return false;
       }
     } else {
       await navigator.clipboard.write([clipboardItem]);
     }
+    return true;
   } catch (error) {
     KetcherLogger.error('cliparea.tsx::copy', error);
     console.info(`Could not write exact type ${JSON.stringify(data)}`);
+    return false;
   }
 }
 

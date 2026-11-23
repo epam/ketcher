@@ -255,7 +255,7 @@ export class DrawingEntitiesManager {
   }
 
   public get bottomRightMonomerPosition(): Vec2 {
-    let position: Vec2 | null = null;
+    let position: Vec2 | undefined;
 
     this.monomers.forEach((monomer) => {
       if (

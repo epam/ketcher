@@ -10,7 +10,7 @@ exports[`Save modal > renders correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root ez9a65g0 e1gf4okc0 MuiModal-root css-hd61di-MuiModal-root-MuiDialog-root-StyledDialog-StyledModal"
+      class="MuiDialog-root e89ny8p0 e1gf4okc0 MuiModal-root css-hd61di-MuiModal-root-MuiDialog-root-StyledDialog-StyledModal"
       role="presentation"
     >
       <div
@@ -92,7 +92,7 @@ exports[`Save modal > renders correctly 1`] = `
                   </label>
                 </div>
                 <div
-                  class="MuiFormControl-root e1mrd8ci2 e7v94we0 css-s28b7q-MuiFormControl-root-StyledFormControl-StyledDropdown"
+                  class="MuiFormControl-root e1mrd8ci2 eastnt70 css-s28b7q-MuiFormControl-root-StyledFormControl-StyledDropdown"
                 >
                   <label
                     for="fileformat"
@@ -100,7 +100,7 @@ exports[`Save modal > renders correctly 1`] = `
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl e7v94we1 css-1o09dki-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root-DropDownSelect"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl eastnt71 css-1o09dki-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root-DropDownSelect"
                     data-testid="file-format-list"
                   >
                     <div

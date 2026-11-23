@@ -54,7 +54,7 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      */
     await openFileAndAddToCanvasMacro(
       page,
-      'KET/two-monomers-connected-with-each-other.ket',
+      'KET/Chromium-popup/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode/two-monomers-connected-with-each-other.ket',
     );
     await selectAllStructuresOnCanvas(page);
 
@@ -74,7 +74,10 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      *
      * Version 3.14.0
      */
-    await openFileAndAddToCanvasMacro(page, 'KET/flipping-monomers.ket');
+    await openFileAndAddToCanvasMacro(
+      page,
+      'KET/Chromium-popup/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode/flipping-monomers.ket',
+    );
     await selectAllStructuresOnCanvas(page);
 
     const rotationTool = RotationTool(page);
@@ -295,7 +298,7 @@ test.describe('Introducing rotation of monomers in Macromolecules mode', () => {
      */
     await openFileAndAddToCanvasMacro(
       page,
-      'KET/two-monomers-connected-with-each-other.ket',
+      'KET/Chromium-popup/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode/two-monomers-connected-with-each-other.ket',
     );
     await selectAllStructuresOnCanvas(page);
 

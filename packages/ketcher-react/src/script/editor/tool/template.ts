@@ -68,6 +68,7 @@ class TemplateTool implements Tool {
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
+  private startItem: ClosestItemWithMap | undefined;
   public templatePreview: TemplatePreview | null;
 
   constructor(editor: Editor, tmpl: TemplateToolInput) {
@@ -95,7 +96,10 @@ class TemplateTool implements Tool {
     // identical runtime behaviour to the original parseInt() call.
     // Note: Number("") returns 0, but aid/bid values come from numeric SDF
     // fields and will never be an empty string in practice.
-    const aid = (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0;
+    const aid =
+      typeof tmpl.aid === 'number'
+        ? tmpl.aid
+        : ((Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0);
     const templateAtom = frag.atoms.get(aid);
 
     this.template = {
@@ -147,6 +151,9 @@ class TemplateTool implements Tool {
   }
 
   private get closestItem() {
+    if (this.startItem) {
+      return this.startItem;
+    }
     return this.editor.findItem(this.event as Event, [
       'atoms',
       'bonds',
@@ -203,8 +210,9 @@ class TemplateTool implements Tool {
     this.targetGroupsIds.length = 0;
   }
 
-  async mousedown(event: MouseEvent) {
-    const target = this.editor.findItem(event, this.findItems);
+  async mousedown(event: MouseEvent, startItem?: ClosestItemWithMap) {
+    this.startItem = startItem;
+    const target = startItem ?? this.editor.findItem(event, this.findItems);
     const struct = this.editor.struct();
 
     this.event = event;
@@ -248,7 +256,7 @@ class TemplateTool implements Tool {
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
-      item: this.editor.findItem(this.event, this.findItems),
+      item: target,
       sign1: 0,
       sign2: 0,
     };

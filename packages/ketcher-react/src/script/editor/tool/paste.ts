@@ -38,12 +38,20 @@ import { debounce } from 'lodash';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 import type { MergeItems } from './template.types';
 import type { SelectionMoveDragContext } from './select/select.types';
+import TemplateTool from './template';
 
 /**
  * Drag context stored while a single contracted group is dragged onto another group.
  */
 type PasteDragContext = SelectionMoveDragContext & {
   angle?: number;
+};
+
+type AtomPress = {
+  event: PointerEvent;
+  canvasAtomId: number;
+  pastedAtomId: number;
+  templateTool?: TemplateTool;
 };
 
 let isMovePreviewCalculationInProgress = false;
@@ -68,6 +76,8 @@ class PasteTool implements Tool {
   private readonly struct: Struct;
   private action?: Action | null;
   private dragCtx?: PasteDragContext;
+  private atomPress?: AtomPress;
+  private previewAtomIds: number[] = [];
   private mergeItems?: MergeItems;
   private readonly isSingleContractedGroup: boolean;
 
@@ -96,6 +106,7 @@ class PasteTool implements Tool {
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
+    this.previewAtomIds = pasteItems.atoms;
     this.editor.update(this.action, true);
 
     this.editor.update(this.action, true);
@@ -116,6 +127,7 @@ class PasteTool implements Tool {
       !this.isSingleContractedGroup ||
       SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
     ) {
+      this.atomPress = this.findAtomPress(event);
       return;
     }
 
@@ -154,6 +166,11 @@ class PasteTool implements Tool {
   }
 
   mousemove(event: PointerEvent) {
+    if (this.atomPress) {
+      this.dragFromAtom(event, this.atomPress);
+      return;
+    }
+
     this.mergeItems = null;
     this.editor.hover(null);
     if (isMovePreviewCalculationInProgress) {
@@ -238,6 +255,7 @@ class PasteTool implements Tool {
         CoordinateTransformation.pageToModel(event, this.editor.render),
       );
       this.action = action;
+      this.previewAtomIds = pasteItems.atoms;
       this.editor.update(this.action, true);
       const visiblePasteItems = filterNotInContractedSGroup(
         pasteItems,
@@ -252,7 +270,15 @@ class PasteTool implements Tool {
     });
   }
 
-  mouseup() {
+  mouseup(event?: Event) {
+    const templateTool = this.atomPress?.templateTool;
+    delete this.atomPress;
+    if (templateTool) {
+      templateTool.mouseup(event);
+      this.editor.tool('select');
+      return;
+    }
+
     const idsOfItemsMerged = this.mergeItems
       ? {
           ...(this.mergeItems.atoms && {
@@ -313,6 +339,67 @@ class PasteTool implements Tool {
     this.cancel();
   }
 
+  private findAtomPress(event: PointerEvent): AtomPress | undefined {
+    if (!this.mergeItems?.atoms.size || !isPlainMolecule(this.struct)) {
+      return undefined;
+    }
+
+    const pressPoint = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
+    const canvasStruct = this.editor.struct();
+    let closest: AtomPress | undefined;
+    let closestDistance = Infinity;
+
+    for (const [previewAtomId, canvasAtomId] of this.mergeItems.atoms) {
+      const canvasAtom = canvasStruct.atoms.get(canvasAtomId);
+      const pastedAtomId = [...this.struct.atoms.keys()][
+        this.previewAtomIds.indexOf(previewAtomId)
+      ];
+      if (!canvasAtom || pastedAtomId === undefined) {
+        continue;
+      }
+      const distance = Vec2.dist(canvasAtom.pp, pressPoint);
+      if (distance < closestDistance) {
+        closest = { event, canvasAtomId, pastedAtomId };
+        closestDistance = distance;
+      }
+    }
+
+    return closest;
+  }
+
+  private dragFromAtom(event: PointerEvent, atomPress: AtomPress) {
+    if (!atomPress.templateTool) {
+      const canvasAtom = this.editor.struct().atoms.get(atomPress.canvasAtomId);
+      const pointer = CoordinateTransformation.pageToModel(
+        event,
+        this.editor.render,
+      );
+      if (!canvasAtom || Vec2.dist(canvasAtom.pp, pointer) <= 1) {
+        return;
+      }
+
+      this.action?.perform(this.restruct);
+      this.action = null;
+      this.editor.hover(null);
+      const aidMap = new Map<number, number>();
+      const template = this.struct.clone(null, null, false, aidMap);
+      atomPress.templateTool = new TemplateTool(this.editor, {
+        struct: template,
+        aid: aidMap.get(atomPress.pastedAtomId),
+      });
+      void atomPress.templateTool.mousedown(atomPress.event, {
+        map: 'atoms',
+        id: atomPress.canvasAtomId,
+        dist: 0,
+      });
+    }
+
+    atomPress.templateTool.mousemove(event);
+  }
+
   mouseLeaveClientArea() {
     this.cancel();
   }
@@ -339,6 +426,22 @@ function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
     molecule,
     angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
   };
+}
+
+function isPlainMolecule(struct: Struct): boolean {
+  return (
+    struct.atoms.size > 0 &&
+    !struct.isRxn() &&
+    struct.attachmentGroups.size === 0 &&
+    struct.simpleObjects.size === 0 &&
+    struct.texts.size === 0 &&
+    struct.images.size === 0 &&
+    struct.multitailArrows.size === 0 &&
+    ![...struct.sgroups.values()].some((sgroup) =>
+      SGroup.isSaltOrSolvent(sgroup.data.name ?? ''),
+    ) &&
+    ![...struct.atoms.keys()].some((aid) => struct.isAtomFromMacromolecule(aid))
+  );
 }
 
 export default PasteTool;

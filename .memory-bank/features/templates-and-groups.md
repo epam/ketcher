@@ -134,6 +134,8 @@ Ketcher SHALL load the Molfile S-group types `MIX` (unordered mixture) and `FOR`
 - **WHEN** a KET file lists an unordered mixture before the ordered mixture that contains it, and the user opens it
 - **THEN** the canvas has the same atoms as the file, with no duplicates, and both mixtures
 
+Blocked by #12862: until that fix is merged, a file with the inner mixture listed first loads with duplicated atoms.
+
 ## User interaction
 
 - **Templates** — the _Templates_ toolbar and the _Structure Library_ (`Shift+t`) provide rings and predefined structures. Click canvas to place, click an atom for a fused structure, or click/drag on a bond for bond-to-bond fusion. Users can save custom templates (name + default attachment atom/bond) into _User Templates_.

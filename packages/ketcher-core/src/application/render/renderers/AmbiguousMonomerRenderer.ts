@@ -105,12 +105,12 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   private appendPreviewAttachmentPoint(
-    params: PreviewAttachmentPointParams,
+    parameters: PreviewAttachmentPointParams,
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
   ) {
     const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
-      params;
+      parameters;
     const attachmentPointParams = this.prepareAttachmentPointsParams(
       attachmentPointName,
       customAngle,
@@ -122,7 +122,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
         connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
       selected: selectedAttachmentPoint === attachmentPointName,
       usage,
-      canvas: params.canvas,
+      canvas: parameters.canvas,
       applyZoomForPositionCalculation: false,
     });
   }
@@ -188,8 +188,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     }
   }
 
-  public showExternal(params: PreviewAttachmentPointParams) {
-    this.rootElement = this.appendRootElement(params.canvas);
+  public showExternal(parameters: PreviewAttachmentPointParams) {
+    this.rootElement = this.appendRootElement(parameters.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
     this.drawModification();
@@ -198,7 +198,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.drawAttachmentPoints(
       (attachmentPointName: AttachmentPointName, customAngle?: number) =>
         this.appendPreviewAttachmentPoint(
-          params,
+          parameters,
           attachmentPointName,
           customAngle,
         ),

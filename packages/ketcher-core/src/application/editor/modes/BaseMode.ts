@@ -351,19 +351,19 @@ export abstract class BaseMode {
     }
   }
 
-  async isPasteContentValid(pastedStr: string): Promise<boolean> {
-    if (!pastedStr.trim()) {
+  async isPasteContentValid(pastedString: string): Promise<boolean> {
+    if (!pastedString.trim()) {
       return false;
     }
 
     try {
       const editor = provideEditorInstance();
-      const format = identifyStructFormat(pastedStr, true);
-      let ketStruct = pastedStr;
+      const format = identifyStructFormat(pastedString, true);
+      let ketStruct = pastedString;
 
       if (format !== SupportedFormat.ket) {
         const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
-        const convertedStruct = await indigo.convert(pastedStr, {
+        const convertedStruct = await indigo.convert(pastedString, {
           outputFormat: ChemicalMimeType.KET,
           sequenceType: editor.sequenceTypeEnterMode,
         });
@@ -389,16 +389,16 @@ export abstract class BaseMode {
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
     let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
-    const pastedStr = await getStructStringFromClipboardData(clipboardData);
-    if (!pastedStr?.trim()) {
+    const pastedString = await getStructStringFromClipboardData(clipboardData);
+    if (!pastedString?.trim()) {
       return;
     }
-    const format = identifyStructFormat(pastedStr, true);
+    const format = identifyStructFormat(pastedString, true);
     pasteOperations =
       format === SupportedFormat.ket
-        ? this.pasteKetFormatFragment(pastedStr)
+        ? this.pasteKetFormatFragment(pastedString)
         : await this.pasteWithIndigoConversion(
-            pastedStr,
+            pastedString,
             editor.sequenceTypeEnterMode,
           );
 
@@ -413,11 +413,11 @@ export abstract class BaseMode {
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string): Command | undefined {
+  pasteKetFormatFragment(pastedString: string): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
-      ketSerializer.deserializeToDrawingEntities(pastedStr);
+      ketSerializer.deserializeToDrawingEntities(pastedString);
     if (!deserialisedKet) {
       throw new Error('Error during parsing file');
     }
@@ -452,13 +452,13 @@ export abstract class BaseMode {
   }
 
   async pasteWithIndigoConversion(
-    pastedStr: string,
+    pastedString: string,
     sequenceType: SequenceType,
   ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
-      const ketStruct = await indigo.convert(pastedStr, {
+      const ketStruct = await indigo.convert(pastedString, {
         outputFormat: ChemicalMimeType.KET,
         sequenceType,
       });

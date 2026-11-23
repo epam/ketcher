@@ -24,7 +24,7 @@ import {
   Vec2,
   bondChangingAction,
   fromBondAddition,
-  fromBondsAttrs,
+  fromBondsAttributes,
   FunctionalGroup,
   SGroup,
   fromOneBondDeletion,
@@ -124,7 +124,7 @@ class BondTool implements Tool {
         return;
       }
 
-      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
+      const action = fromBondsAttributes(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;

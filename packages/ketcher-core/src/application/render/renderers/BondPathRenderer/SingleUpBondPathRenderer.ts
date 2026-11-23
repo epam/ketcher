@@ -65,14 +65,14 @@ function findIncomingStereoUpHalfEdge(
 // Compute the two endpoint offsets for one end of a bold-stereo parallelogram.
 // Mirrors stereoUpBondGetCoordinates from rebond.ts.
 function getBoldStereoEndpoints(
-  halfEdgeDir: Vec2,
-  neighborHalfEdgeDir: Vec2,
+  halfEdgeDirection: Vec2,
+  neighborHalfEdgeDirection: Vec2,
   atomPos: Vec2,
 ): [Vec2, Vec2] {
-  const cos = Vec2.dot(halfEdgeDir, neighborHalfEdgeDir);
-  const sin = Vec2.cross(halfEdgeDir, neighborHalfEdgeDir);
+  const cos = Vec2.dot(halfEdgeDirection, neighborHalfEdgeDirection);
+  const sin = Vec2.cross(halfEdgeDirection, neighborHalfEdgeDirection);
   const cosHalf = Math.sqrt(0.5 * (1 - cos));
-  const biss = neighborHalfEdgeDir.rotateSC(
+  const biss = neighborHalfEdgeDirection.rotateSC(
     (sin >= 0 ? -1 : 1) * cosHalf,
     Math.sqrt(0.5 * (1 + cos)),
   );

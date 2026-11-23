@@ -113,7 +113,9 @@ export interface Editor {
     eventName: string,
     subscriber: EditorSubscriber<T>,
   ) => void;
-  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
+  selection: (
+    argument?: EditorSelection | 'all' | null,
+  ) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
   historyStack: Action[];
@@ -123,7 +125,7 @@ export interface Editor {
   clearHistory: () => void;
   options(): RenderOptions;
   options(value: EditorOptions): void;
-  setOptions: (opts: string) => void;
+  setOptions: (options: string) => void;
   zoom: (value?: number) => number | undefined;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;

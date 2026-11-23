@@ -8,7 +8,7 @@ import {
 import {
   type IEditorEvents,
   editorEvents,
-  hotkeysConfiguration,
+  hotkeysConfig,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -518,10 +518,10 @@ export class CoreEditor {
           persistentMonomersLibrary = this._monomersLibrary;
           persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
         }
-      } catch (err) {
+      } catch (error) {
         KetcherLogger.error(
           'Editor::initializeMonomersLibrary failed to apply stored updates:',
-          err,
+          error,
         );
       }
     }
@@ -542,8 +542,8 @@ export class CoreEditor {
     try {
       const monomersDataRaw = await loadDefaultMonomersData();
       return this.setMonomersLibrary(monomersDataRaw);
-    } catch (err) {
-      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', err);
+    } catch (error) {
+      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', error);
       this.clearMonomersLibrary();
       this.events.openErrorModal.dispatch({
         errorMessage: 'Failed to load default monomers library',
@@ -919,11 +919,11 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex],
         );
 
-        const existingMonomerRefIndex =
+        const existingMonomerReferenceIndex =
           monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
-        if (existingMonomerRefIndex === -1) {
+        if (existingMonomerReferenceIndex === -1) {
           // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
           KetcherLogger.error(
             'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
@@ -1277,7 +1277,7 @@ export class CoreEditor {
   private handleHotKeyEvents(event: KeyboardEvent) {
     if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
-    const keySettings = hotkeysConfiguration;
+    const keySettings = hotkeysConfig;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
@@ -1464,7 +1464,7 @@ export class CoreEditor {
           typeof document.elementsFromPoint === 'function' &&
           document
             .elementsFromPoint(event.clientX, event.clientY)
-            .some((el) => el.__data__?.drawingEntity?.selected)
+            .some((element) => element.__data__?.drawingEntity?.selected)
         ) {
           this.events.rightClickSelectedMonomers.dispatch([
             event,
@@ -2316,7 +2316,7 @@ export class CoreEditor {
         return (
           operation instanceof SelectLayoutModeOperation &&
           operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
+          operation.previousMode !== 'snake-layout-mode'
         );
       });
 

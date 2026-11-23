@@ -892,11 +892,11 @@ abstract class SelectBase implements BaseTool {
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
-    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+    const modifierKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const externalConnectionsToSelection =
       this.editor.drawingEntitiesManager.externalConnectionsToSelection;
 
-    if (modKeyPressed || externalConnectionsToSelection.length === 0) {
+    if (modifierKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
 
@@ -1392,8 +1392,8 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const viewParams = this.buildRotationViewParams(center, bbox);
-    this.editor.transientDrawingView.showRotation(viewParams);
+    const viewParameters = this.buildRotationViewParams(center, bbox);
+    this.editor.transientDrawingView.showRotation(viewParameters);
     this.editor.transientDrawingView.update();
   }
 

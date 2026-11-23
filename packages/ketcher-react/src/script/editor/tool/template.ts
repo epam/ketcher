@@ -30,8 +30,8 @@ import {
   fromSgroupDeletion,
   Action,
   vectorUtils,
-  BondAttr,
-  AtomAttr,
+  BondAttribute,
+  AtomAttribute,
   MonomerMicromolecule,
   CoordinateTransformation,
 } from 'ketcher-core';
@@ -584,11 +584,11 @@ class TemplateTool implements Tool {
       }
     }
     for (const id of restruct.molecule.bonds.keys()) {
-      new BondAttr(id, 'isPreview', false).perform(restruct);
+      new BondAttribute(id, 'isPreview', false).perform(restruct);
     }
 
     for (const id of restruct.molecule.atoms.keys()) {
-      new AtomAttr(id, 'isPreview', false).perform(restruct);
+      new AtomAttribute(id, 'isPreview', false).perform(restruct);
     }
     const completeAction = dragCtx.action;
     if (completeAction && !completeAction.isDummy(restruct)) {

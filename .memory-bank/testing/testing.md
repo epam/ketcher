@@ -593,7 +593,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **Tests that depend on execution order** — each test in a suite must be independently executable. Use `beforeEach` / the canvas fixture for cleanup.
 - **Commented-out tests or `test.skip`** left indefinitely — use `test.skip` with a comment and a tracking issue reference; do not comment out code.
 - **Using an expected file as test input** — files named `*-expected.*` are outputs of other tests, and `GENERATE_DATA=true` can rewrite them. Add a separate input file.
-- **Inventing a test-data folder name** — put new input files for a feature in a folder named like the spec file, `<featureID>-<Feature-Name>` (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`).
+- **Test data outside the feature folder** — every file a feature spec uses, inputs and expected files, lives in a folder named like the spec file: `<Format>/Chromium-popup/<featureID>-<Feature-Name>/` for popup specs, `<Format>/<featureID>-<Feature-Name>/` for full-scale specs (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`). Copy a file from another folder there; do not reference it in its old folder. The Claude Implement Autotests workflow does this with `scripts/autotests/move-test-data.mjs`.
 - **Overly broad screenshots** — `takePageScreenshot` captures the entire page including the library panel, which is noisy. Prefer `takeEditorScreenshot` or `takeElementScreenshot`.
 - **Single giant test file** (>500 lines) — split by feature or connection rule type. The `connection-rules-for-*.spec.ts` pattern is the right approach.
 

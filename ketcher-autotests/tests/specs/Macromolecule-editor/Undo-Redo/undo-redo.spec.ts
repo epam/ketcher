@@ -13,8 +13,8 @@ import {
   takePageScreenshot,
   waitForPageInit,
   zoomWithMouseWheel,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectAllStructuresOnCanvas,
   undoByKeyboard,
   MacroFileType,
@@ -415,9 +415,9 @@ test.describe('Undo-Redo tests', () => {
       fromCenter: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await page.mouse.move(200, 200);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await CommonTopLeftToolbar(page).undo();

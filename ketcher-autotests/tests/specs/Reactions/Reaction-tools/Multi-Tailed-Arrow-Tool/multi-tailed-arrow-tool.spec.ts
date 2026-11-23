@@ -2,15 +2,15 @@ import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
   dragMouseTo,
   moveMouseAway,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectPartOfMolecules,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -350,7 +350,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await copyContentToClipboard(page, fileContent);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -567,8 +567,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -585,8 +585,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -602,8 +602,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -619,8 +619,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -722,8 +722,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -745,8 +745,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -766,8 +766,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -787,8 +787,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();

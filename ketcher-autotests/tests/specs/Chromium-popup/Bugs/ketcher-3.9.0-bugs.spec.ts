@@ -54,7 +54,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   clickOnCanvas,
   clickInTheMiddleOfTheCanvas,
-  copyToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   dragMouseTo,
   keyboardTypeOnCanvas,
   MacroFileType,
@@ -1210,7 +1210,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/Unable to copy.ket',
     );
     await getAbbreviationLocator(page, { id: '0' }).click();
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     expect(await ErrorMessageDialog(page).isVisible()).toBeFalsy();
   });
 

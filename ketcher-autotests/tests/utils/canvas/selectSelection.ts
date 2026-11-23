@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 import {
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
 } from './helpers';
 import { moveMouseAway } from '../moveMouseAway';
 import { waitForRender } from '../common/loaders/waitForRender';
@@ -15,8 +15,8 @@ export async function cutAndPaste(page: Page) {
   // to focus in Editor
   await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
-  await cutToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await cutFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
 }
 
 export async function copyAndPaste(page: Page) {
@@ -25,8 +25,8 @@ export async function copyAndPaste(page: Page) {
   await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
   await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
 }
 
 export async function selectAllStructuresOnCanvas(

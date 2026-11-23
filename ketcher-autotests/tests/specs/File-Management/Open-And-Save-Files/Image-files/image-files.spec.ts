@@ -7,7 +7,7 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   pasteFromClipboardAndAddToCanvas,
@@ -261,7 +261,7 @@ test.describe('Image files', () => {
      */
     const fileContent = await readFileContent('KET/images-png-svg.ket');
     await copyContentToClipboard(page, fileContent);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -303,7 +303,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-svg-together.cdxml',
     );
     await copyContentToClipboard(page, fileContent);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });

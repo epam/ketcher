@@ -1558,6 +1558,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/unsupported-s-group.mol',
+      true,
     );
     const warningMessage = await ConfirmMessageDialog(page).getQuestionText();
     expect(warningMessage).toContain(

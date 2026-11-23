@@ -79,7 +79,9 @@ export async function clickOnCanvas(
 ) {
   const {
     from = 'canvasTopLeft',
-    waitForRenderTimeOut,
+    waitForRenderTimeOut = options?.button !== 'left'
+      ? 0
+      : options?.waitForRenderTimeOut,
     ...clickOptions
   } = options ?? {};
 

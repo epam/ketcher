@@ -7,8 +7,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   takeElementScreenshot,
   copyContentToClipboard,
 } from '@utils';
@@ -437,9 +437,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'KET/Chromium-popup/Bugs/peptides-with-long-bond.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await page.mouse.move(500, 500);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -613,8 +613,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P.R(A)}|RNA2{R(T)P.R(T)}|RNA3{R(A)P}$RNA1,RNA2,5:pair-5:pair|RNA2,RNA3,2:pair-2:pair$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -725,7 +725,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
 
     await MacromoleculesTopToolbar(page).peptides();
     await copyContentToClipboard(page, 'GATYLIK');
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 });

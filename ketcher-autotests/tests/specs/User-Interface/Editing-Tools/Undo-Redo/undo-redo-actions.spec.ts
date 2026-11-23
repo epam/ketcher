@@ -4,8 +4,8 @@ import {
   clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
   undoByKeyboard,
   redoByKeyboard,
@@ -860,8 +860,8 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await undoByKeyboard(page);
     await undoByKeyboard(page);
   });

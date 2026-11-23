@@ -10,7 +10,7 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   dragMouseTo,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
   deleteByKeyboard,
   keyboardPressOnCanvas,
@@ -203,7 +203,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await MoleculesTopToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takePageScreenshot(page);
   });
@@ -221,7 +221,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

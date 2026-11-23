@@ -13,8 +13,8 @@ import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPoi
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -426,8 +426,8 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     });
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await page.mouse.move(300, 650, { steps: 30 });
     await page.mouse.move(800, 650, { steps: 30 });
     await page.mouse.move(300, 650, { steps: 30 });

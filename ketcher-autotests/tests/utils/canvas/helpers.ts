@@ -235,7 +235,7 @@ export async function addBondedMonomersToCanvas(
   return monomers;
 }
 
-export async function copyToClipboardByKeyboard(
+export async function copyFromCanvasToClipboardByKeyboard(
   page: Page,
   options?:
     | {
@@ -246,7 +246,7 @@ export async function copyToClipboardByKeyboard(
   await pressClipboardShortcut(page, 'KeyC', 'copyOrCutComplete', options);
 }
 
-export async function cutToClipboardByKeyboard(
+export async function cutFromCanvasToClipboardByKeyboard(
   page: Page,
   options?:
     | {
@@ -257,7 +257,7 @@ export async function cutToClipboardByKeyboard(
   await pressClipboardShortcut(page, 'KeyX', 'copyOrCutComplete', options);
 }
 
-export async function pasteFromClipboardByKeyboard(
+export async function pasteFromClipboardToCanvasByKeyboard(
   page: Page,
   options?:
     | {

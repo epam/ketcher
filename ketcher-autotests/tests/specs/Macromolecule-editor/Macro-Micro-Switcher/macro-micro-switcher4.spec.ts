@@ -2,8 +2,8 @@ import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   moveMouseToTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseAway,
@@ -555,12 +555,12 @@ test(`Verify that copying and pasting structures with all bond types in macromol
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await selectAllStructuresOnCanvas(page);
-  await cutToClipboardByKeyboard(page);
+  await cutFromCanvasToClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await moveMouseToTheMiddleOfTheScreen(page);
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await moveMouseAway(page);
 
   await takeEditorScreenshot(page);

@@ -6,8 +6,8 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   zoomOutByKeyboard,
   undoByKeyboard,
 } from '@utils';
@@ -789,9 +789,9 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await selectAllStructuresOnCanvas(page);
-      await copyToClipboardByKeyboard(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
       await page.mouse.move(500, 300);
-      await pasteFromClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
 
       await zoomWithMouseWheel(page, -600);
 

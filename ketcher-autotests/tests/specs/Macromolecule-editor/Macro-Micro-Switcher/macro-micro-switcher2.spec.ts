@@ -13,8 +13,8 @@ import {
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
-  pasteFromClipboardByKeyboard,
-  copyToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   takePageScreenshot,
   MacroFileType,
   MolFileFormat,
@@ -386,7 +386,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -646,9 +646,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       LayoutMode.Flex,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -1205,8 +1205,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       LayoutMode.Flex,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await takeEditorScreenshot(page, {

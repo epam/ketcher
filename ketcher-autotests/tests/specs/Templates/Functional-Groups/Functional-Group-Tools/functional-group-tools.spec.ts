@@ -5,9 +5,9 @@ import {
   dragMouseTo,
   takeEditorScreenshot,
   waitForRender,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-  copyToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   clickOnCanvas,
   getCachedBodyCenter,
   keyboardPressOnCanvas,
@@ -942,8 +942,8 @@ test.describe('Templates - Functional Group Tools3', () => {
         'Molfiles-V2000/functional-group-and-benzene.mol',
       );
       await getAbbreviationLocator(page, { name: 'Boc' }).click();
-      await copyToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await waitForItemsToMergeInitialization(page, async () => {
         await getAtomLocator(page, { atomLabel: 'C' }).first().click({
           force: true,
@@ -966,8 +966,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     await waitForRender(page, async () => {
       await getAbbreviationLocator(page, { name: 'Boc' }).click();
     });
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await waitForRender(page, async () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
         force: true,

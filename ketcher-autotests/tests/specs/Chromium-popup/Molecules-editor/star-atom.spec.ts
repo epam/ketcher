@@ -7,8 +7,8 @@ import {
   selectExtendedTableElement,
 } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import {
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectAllStructuresOnCanvas,
   redoByKeyboard,
   undoByKeyboard,
@@ -253,10 +253,10 @@ test('9. Verify the copy-paste functionality for structures containing the star 
   );
   await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
-  await cutToClipboardByKeyboard(page);
+  await cutFromCanvasToClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
 
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await takeEditorScreenshot(page);
 });
 

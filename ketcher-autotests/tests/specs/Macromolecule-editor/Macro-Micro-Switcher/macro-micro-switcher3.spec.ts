@@ -5,9 +5,9 @@ import {
   takeEditorScreenshot,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
   waitForRender,
   resetZoomLevelToDefault,
@@ -503,8 +503,8 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
   await getAbbreviationLocator(page, {
     name: copyableMonomer.monomerAlias,
   }).click({ force: true });
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 });
@@ -536,8 +536,8 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
     name: cutableMonomer.monomerAlias,
   }).click({ force: true });
 
-  await cutToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await cutFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 });
@@ -567,8 +567,8 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
   await getBondLocator(page, { bondId: 1 }).click({ force: true });
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
   await takeEditorScreenshot(page);
@@ -602,8 +602,8 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
   await getBondLocator(page, { bondId: 1 }).click({ force: true });
-  await cutToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await cutFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 

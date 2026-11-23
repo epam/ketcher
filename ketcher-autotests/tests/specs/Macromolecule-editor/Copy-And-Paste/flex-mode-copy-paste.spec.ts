@@ -5,8 +5,8 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   zoomWithMouseWheel,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   moveMouseAway,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
@@ -35,10 +35,10 @@ test.describe('Flex mode copy&paste', () => {
     page,
   }) => {
     await selectRectangleArea(page, startX, startY, endX, endY);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
 
     await page.mouse.move(200, 300);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await CommonTopLeftToolbar(page).undo();
@@ -54,10 +54,10 @@ test.describe('Flex mode copy&paste', () => {
     await getMonomerLocator(page, Chem.Test_6_Ch).first().click();
 
     await page.keyboard.up('Shift');
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
 
     await page.mouse.move(startX, startY);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 

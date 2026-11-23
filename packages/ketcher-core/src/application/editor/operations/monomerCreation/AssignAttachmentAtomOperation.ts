@@ -7,9 +7,10 @@ import type { AttachmentPointName } from 'domain/types';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
-  private attachmentPointName: AttachmentPointName | null = null;
+  private attachmentPointName: AttachmentPointName | undefined;
   private assignedAttachmentPoints: Map<AttachmentPointName, [number, number]> =
     new Map();
+  private potentialLeavingAtoms?: Set<number>;
 
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
@@ -48,6 +49,10 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
       this.attachmentAtomId,
       this.leavingAtomId,
     ]);
+    // Kept so that undo can offer these atoms as leaving groups again
+    this.potentialLeavingAtoms = potentialAttachmentPoints.get(
+      this.attachmentAtomId,
+    );
     potentialAttachmentPoints.delete(this.attachmentAtomId);
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
@@ -55,12 +60,12 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    assert(this.attachmentPointName !== null);
+    assert(this.attachmentPointName !== undefined);
 
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,
       this.attachmentPointName,
-      undefined,
+      this.potentialLeavingAtoms,
       this.assignedAttachmentPoints,
     );
   }

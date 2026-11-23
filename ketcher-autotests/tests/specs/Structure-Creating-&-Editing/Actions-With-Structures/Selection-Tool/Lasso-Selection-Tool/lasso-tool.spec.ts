@@ -191,6 +191,7 @@ test.describe('Lasso Selection tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectObjects(page, selectCoords.x, selectCoords.y);
     await getBondLocator(page, { bondId: 11 }).hover({ force: true });
+    await page.waitForTimeout(100);
     await dragMouseTo(page, 680, 250);
     await takeEditorScreenshot(page);
 

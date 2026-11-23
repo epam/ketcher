@@ -227,28 +227,28 @@ const selectTools = [
   ToolName.selectLasso,
   ToolName.selectStructure,
 ];
-let currentSelectToolIdx = 0;
+let currentSelectToolIndex = 0;
 
 // Bond tools require toolName in options to select the bond type.
 const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
   editor.events.selectTool.dispatch([toolName, { toolName }]);
 };
 
-export const hotkeysConfiguration = {
+export const hotkeysConfig = {
   RNASequenceType: {
-    shortcut: ['Mod+Alt+r'],
+    shortcut: ['Ctrl+Alt+r', 'Mod+Alt+r'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
     },
   },
   DNASequenceType: {
-    shortcut: ['Mod+Alt+d'],
+    shortcut: ['Ctrl+Alt+d', 'Mod+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.DNA);
     },
   },
   PEPTIDESequenceTYpe: {
-    shortcut: ['Mod+Alt+p'],
+    shortcut: ['Ctrl+Alt+p', 'Mod+Alt+p'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.PEPTIDE);
     },
@@ -256,7 +256,7 @@ export const hotkeysConfiguration = {
   exit: {
     shortcut: ['Escape'],
     handler: (editor: CoreEditor) => {
-      currentSelectToolIdx = 0;
+      currentSelectToolIndex = 0;
       editor.events.selectSelectionTool.dispatch();
       editor.cancelLibraryItemDrag();
     },
@@ -264,8 +264,9 @@ export const hotkeysConfiguration = {
   switchSelectTool: {
     shortcut: ['Shift+Tab'],
     handler: (editor: CoreEditor) => {
-      currentSelectToolIdx = (currentSelectToolIdx + 1) % selectTools.length;
-      editor.events.selectTool.dispatch([selectTools[currentSelectToolIdx]]);
+      currentSelectToolIndex =
+        (currentSelectToolIndex + 1) % selectTools.length;
+      editor.events.selectTool.dispatch([selectTools[currentSelectToolIndex]]);
       editor.cancelLibraryItemDrag();
     },
   },

@@ -8,7 +8,7 @@ import {
 
 describe('select helpers', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getNewSelectedItems', () => {

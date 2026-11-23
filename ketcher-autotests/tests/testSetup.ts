@@ -1,9 +1,9 @@
 import { test } from '@playwright/test';
 
 test.beforeEach(async ({ page }, testInfo) => {
-  page.on('console', (msg) => {
-    const type = msg.type();
-    const text = msg.text();
+  page.on('console', (message) => {
+    const type = message.type();
+    const text = message.text();
 
     if (type === 'warning') {
       console.warn(`[browser warn] [${testInfo.title}] ${text}`);

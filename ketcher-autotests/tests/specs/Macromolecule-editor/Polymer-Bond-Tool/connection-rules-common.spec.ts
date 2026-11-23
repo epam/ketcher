@@ -17,7 +17,7 @@ import {
   MacroFileType,
   MolFileFormat,
 } from '@utils';
-import { selectRectangleArea } from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
   AttachmentPoint,
@@ -63,8 +63,9 @@ test.describe('Common connection rules: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
   });
 
   test.afterEach(async () => {
@@ -144,9 +145,7 @@ test.describe('Common connection rules: ', () => {
     await waitForRender(page, async () => {
       await page.mouse.move(x, y);
     });
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
+    await page.mouse.up();
     await moveMouseAway(page);
   }
 
@@ -321,11 +320,13 @@ test.describe('Common connection rules: ', () => {
       'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
     );
 
-    // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
-    await selectRectangleArea(page, 100, 100, 800, 800);
+    // Check that 4 connected by Bond A6OH monomers can moving after using area selection.
+    // Ctrl+A is used instead of a drag-select rectangle to avoid accidentally triggering
+    // the auto-scroll feature: a drag ending near the canvas edge fires one extra RAF
+    // tick of scrollBy, shifting the exported monomer coordinates by ~0.125 units.
+    await selectAllStructuresOnCanvas(page);
     await grabSelectionAndMoveTo(page, Chem.A6OH, 200, 200);
     await moveMouseAway(page);
-    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       // Small anti-aliasing drift appears in CI on this post-drag frame.
@@ -335,14 +336,12 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
     await zoomInByKeyboard(page);
     await moveMouseAway(page);
-    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
     await zoomOutByKeyboard(page);
     await moveMouseAway(page);
-    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       maxDiffPixelRatio: a6ohScreenshotTolerance,
@@ -351,7 +350,6 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, Chem.A6OH);
     await moveMouseAway(page);
-    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       maxDiffPixelRatio: a6ohScreenshotTolerance,
@@ -505,8 +503,9 @@ test.describe('Common connection rules: ', () => {
       page,
       AbbreviationPreviewTooltip(page).abbreviationPreviewTooltipPicture,
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
   });
 
   test(`Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)`, async () => {

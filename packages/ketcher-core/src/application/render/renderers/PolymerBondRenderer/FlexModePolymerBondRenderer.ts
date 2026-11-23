@@ -38,21 +38,6 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     this.editorEvents = editorEvents;
   }
 
-  public get rootBBox(): DOMRect | undefined {
-    const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
-  }
-
-  public get width(): number {
-    return this.rootBBox?.width ?? 0;
-  }
-
-  public get height(): number {
-    return this.rootBBox?.height ?? 0;
-  }
-
   private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
@@ -68,6 +53,21 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  public get rootBBox(): DOMRect | undefined {
+    const rootNode = this.rootElement?.node();
+    if (!rootNode) return undefined;
+
+    return rootNode.getBBox();
+  }
+
+  public get width(): number {
+    return this.rootBBox?.width ?? 0;
+  }
+
+  public get height(): number {
+    return this.rootBBox?.height ?? 0;
   }
 
   public moveSelection(): void {
@@ -171,12 +171,12 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   private addCornerBasedOnDirection(
-    prevPoint: Vec2,
+    previousPoint: Vec2,
     cornerPoint: Vec2,
     nextPoint: Vec2,
   ) {
-    if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
-      if (prevPoint.x < cornerPoint.x) {
+    if (previousPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
+      if (previousPoint.x < cornerPoint.x) {
         if (cornerPoint.y < nextPoint.y) {
           this.path += generateCornerFromLeftToBottom();
         } else {
@@ -187,8 +187,11 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.path += generateCornerFromRightToTop();
       }
-    } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
-      if (prevPoint.y < cornerPoint.y) {
+    } else if (
+      previousPoint.y !== cornerPoint.y &&
+      cornerPoint.x !== nextPoint.x
+    ) {
+      if (previousPoint.y < cornerPoint.y) {
         if (cornerPoint.x < nextPoint.x) {
           this.path += generateCornerFromTopToRight();
         } else {

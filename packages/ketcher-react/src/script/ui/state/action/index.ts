@@ -48,7 +48,7 @@ type ExecuteParams = ActionParams & {
   action: UiActionAction;
 };
 
-type ActionStatus = {
+export type ActionStatus = {
   selected?: boolean;
   disabled?: boolean;
   hidden?: boolean;
@@ -190,20 +190,23 @@ export default function (
       );
     }
 
-    case 'UPDATE':
+    case 'UPDATE': {
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
         params as ActionParams,
       );
+    }
 
     // Opening or closing a dialog flips `isSettingsPanelOpen`, so the statuses
     // have to be recomputed on those actions as well.
     case 'MODAL_OPEN':
-    case 'MODAL_CLOSE':
+    case 'MODAL_CLOSE': {
       if (!state) return state;
       return buildStateWithStatuses(state.activeTool, params as ActionParams);
+    }
 
-    default:
+    default: {
       return state;
+    }
   }
 }

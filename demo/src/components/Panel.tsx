@@ -24,7 +24,7 @@ const selectAll = () => KetcherFunctions.selectAll();
 interface Props {
   printToTerminal: (string) => void;
   hiddenButtons: string[];
-  buttonsHideHandler: (arg: string[]) => void;
+  buttonsHideHandler: (argument: string[]) => void;
 }
 
 export const Panel = ({
@@ -32,12 +32,11 @@ export const Panel = ({
   hiddenButtons,
   buttonsHideHandler,
 }: Props) => {
-  const exportHandler = () => {
-    KetcherFunctions.exportCtab().then((str) => {
-      let message = 'Export content:' + str;
-      console.log(message);
-      printToTerminal(message);
-    });
+  const exportHandler = async () => {
+    const string_ = await KetcherFunctions.exportCtab();
+    const message = 'Export content:' + string_;
+    console.log(message);
+    printToTerminal(message);
   };
 
   const showAtomIds = () => {

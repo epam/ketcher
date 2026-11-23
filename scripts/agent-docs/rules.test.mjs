@@ -92,6 +92,14 @@ test('lint names its ESLint rule and counts as machine-enforced', () => {
   assert.deepEqual(rules[0].enforcedBy, { kind: 'lint', rule: 'no-alert' });
 });
 
+test('Danger counts as machine-enforced, so an active Danger rule is not rendered', () => {
+  const text = RULE_R1.replace('Enforced by: AI', 'Enforced by: Danger');
+  const { rules, findings } = parseRules(text, 'rules.md');
+  assert.deepEqual(findings, []);
+  assert.deepEqual(rules[0].enforcedBy, { kind: 'Danger' });
+  assert.equal(renderInstructions(rules, 'rules.md').size, 0);
+});
+
 test('renders only approved and active rules that a reviewer applies, grouped by Scope', () => {
   const text = [
     RULE_R1,

@@ -17,6 +17,8 @@ import {
   legacyPaste,
   getSvgFromDrawnStructures,
   normalizeError,
+  notifyCopyCut,
+  notifyPasteCompleted,
   PLAIN_TEXT_MIME_TYPE,
   convertSvgToPng,
 } from 'utilities';
@@ -43,14 +45,6 @@ export abstract class BaseMode {
     public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
 
-  public get isAntisenseEditMode(): boolean {
-    return false;
-  }
-
-  public get isSyncEditMode(): boolean {
-    return false;
-  }
-
   private changeMode(
     editor: CoreEditor,
     modeName: LayoutMode,
@@ -60,7 +54,70 @@ export abstract class BaseMode {
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo, false);
+    editor.mode.initialize(true, isUndo, false, false, true);
+  }
+
+  private async copyCanvasAsImage(): Promise<void> {
+    const editor = provideEditorInstance();
+    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
+
+    if (!svg) {
+      throw new Error('Cannot get drawn structures!');
+    }
+
+    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ [image.type]: image }),
+    ]);
+  }
+
+  private async convertKetToMol(ket: string): Promise<string> {
+    const editor = provideEditorInstance();
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const result = await ketcher.structService.convert(
+      { struct: ket, output_format: ChemicalMimeType.Mol },
+      { 'molfile-saving-mode': '3000' },
+    );
+
+    return result.struct;
+  }
+
+  private updateEntitiesPosition(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): void {
+    const newNodePosition = this.getNewNodePosition();
+    const firstEntityPosition =
+      drawingEntitiesManager.allEntities[0]?.[1].position;
+    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+
+    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
+      drawingEntitiesManager.moveDrawingEntityModelChange(
+        drawindEntity,
+        offset,
+      );
+    });
+  }
+
+  private checkIfTargetIsInput(event: Event): boolean {
+    return (
+      event.target instanceof HTMLElement &&
+      (event.target?.nodeName === 'INPUT' ||
+        event.target?.nodeName === 'TEXTAREA' ||
+        event.target.contentEditable === 'true')
+    );
+  }
+
+  private isSelectionOutsideCanvas(): boolean {
+    return isSelectionOutsideElement(provideEditorInstance().canvas);
+  }
+
+  public get isAntisenseEditMode(): boolean {
+    return false;
+  }
+
+  public get isSyncEditMode(): boolean {
+    return false;
   }
 
   public initialize(
@@ -68,6 +125,7 @@ export abstract class BaseMode {
     _isUndo = false,
     _shouldReArrangeChains = false,
     _shouldForceRecalculateAntisense = false,
+    _isHistoryReplay = false,
   ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
@@ -78,6 +136,15 @@ export abstract class BaseMode {
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
+        () => {
+          const currentEditor = provideEditorInstance();
+          if (
+            currentEditor.mode.modeName === 'snake-layout-mode' &&
+            currentEditor.drawingEntitiesManager.hasMonomers
+          ) {
+            currentEditor.scrollToTopLeftCorner();
+          }
+        },
       ),
     );
 
@@ -152,12 +219,15 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      this.writeToClipboard(serializedKet, drawingEntitiesManager);
+      void this.writeToClipboard(serializedKet, drawingEntitiesManager)
+        .then(notifyCopyCut)
+        .catch((error) => KetcherLogger.error('BaseMode.ts::onCopy', error));
     } else if (event) {
       legacyCopy(event.clipboardData, {
         [PLAIN_TEXT_MIME_TYPE]: serializedKet,
       });
       event.preventDefault();
+      notifyCopyCut();
     }
   }
 
@@ -223,32 +293,6 @@ export abstract class BaseMode {
    * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
    * exports it (monomers are drawn as they look on the canvas).
    */
-  private async copyCanvasAsImage(): Promise<void> {
-    const editor = provideEditorInstance();
-    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
-
-    if (!svg) {
-      throw new Error('Cannot get drawn structures!');
-    }
-
-    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
-
-    await navigator.clipboard.write([
-      new ClipboardItem({ [image.type]: image }),
-    ]);
-  }
-
-  private async convertKetToMol(ket: string): Promise<string> {
-    const editor = provideEditorInstance();
-    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
-    const result = await ketcher.structService.convert(
-      { struct: ket, output_format: ChemicalMimeType.Mol },
-      { 'molfile-saving-mode': '3000' },
-    );
-
-    return result.struct;
-  }
-
   /**
    * Puts the copied structure on the clipboard. By default only KET is written
    * as plain text; modes can override it to add other formats.
@@ -256,8 +300,8 @@ export abstract class BaseMode {
   protected writeToClipboard(
     serializedKet: string,
     _drawingEntitiesManager: DrawingEntitiesManager,
-  ): void | Promise<void> {
-    navigator.clipboard.writeText(serializedKet);
+  ): Promise<void> {
+    return navigator.clipboard.writeText(serializedKet);
   }
 
   async onPaste(event?: ClipboardEvent): Promise<void> {
@@ -276,20 +320,23 @@ export abstract class BaseMode {
       this._pasteIsInProgress = true;
 
       const clipboardData = await navigator.clipboard.read();
-      this.pasteFromClipboard(clipboardData).finally(() => {
-        this._pasteIsInProgress = false;
+      void (async () => {
+        try {
+          await this.pasteFromClipboard(clipboardData);
+        } finally {
+          this._pasteIsInProgress = false;
 
-        if (!isCanvasEmptyBeforePaste) {
-          return;
+          if (isCanvasEmptyBeforePaste) {
+            editor.zoomToStructuresIfNeeded();
+          }
         }
-
-        editor.zoomToStructuresIfNeeded();
-      });
+        notifyPasteCompleted();
+      })();
     } else if (event) {
       const clipboardData = legacyPaste(event.clipboardData, [
         PLAIN_TEXT_MIME_TYPE,
       ]);
-      this.pasteFromClipboard(clipboardData);
+      void this.pasteFromClipboard(clipboardData).then(notifyPasteCompleted);
       event.preventDefault();
 
       if (!isCanvasEmptyBeforePaste) {
@@ -304,19 +351,19 @@ export abstract class BaseMode {
     }
   }
 
-  async isPasteContentValid(pastedStr: string): Promise<boolean> {
-    if (!pastedStr.trim()) {
+  async isPasteContentValid(pastedString: string): Promise<boolean> {
+    if (!pastedString.trim()) {
       return false;
     }
 
     try {
       const editor = provideEditorInstance();
-      const format = identifyStructFormat(pastedStr, true);
-      let ketStruct = pastedStr;
+      const format = identifyStructFormat(pastedString, true);
+      let ketStruct = pastedString;
 
       if (format !== SupportedFormat.ket) {
         const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
-        const convertedStruct = await indigo.convert(pastedStr, {
+        const convertedStruct = await indigo.convert(pastedString, {
           outputFormat: ChemicalMimeType.KET,
           sequenceType: editor.sequenceTypeEnterMode,
         });
@@ -342,16 +389,16 @@ export abstract class BaseMode {
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
     let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
-    const pastedStr = await getStructStringFromClipboardData(clipboardData);
-    if (!pastedStr?.trim()) {
+    const pastedString = await getStructStringFromClipboardData(clipboardData);
+    if (!pastedString?.trim()) {
       return;
     }
-    const format = identifyStructFormat(pastedStr, true);
+    const format = identifyStructFormat(pastedString, true);
     if (format === SupportedFormat.ket) {
-      pasteOperations = this.pasteKetFormatFragment(pastedStr);
+      pasteOperations = this.pasteKetFormatFragment(pastedString);
     } else {
       pasteOperations = await this.pasteWithIndigoConversion(
-        pastedStr,
+        pastedString,
         editor.sequenceTypeEnterMode,
       );
     }
@@ -367,11 +414,11 @@ export abstract class BaseMode {
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string): Command | undefined {
+  pasteKetFormatFragment(pastedString: string): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
-      ketSerializer.deserializeToDrawingEntities(pastedStr);
+      ketSerializer.deserializeToDrawingEntities(pastedString);
     if (!deserialisedKet) {
       throw new Error('Error during parsing file');
     }
@@ -406,13 +453,13 @@ export abstract class BaseMode {
   }
 
   async pasteWithIndigoConversion(
-    pastedStr: string,
+    pastedString: string,
     sequenceType: SequenceType,
   ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
-      const ketStruct = await indigo.convert(pastedStr, {
+      const ketStruct = await indigo.convert(pastedString, {
         outputFormat: ChemicalMimeType.KET,
         sequenceType,
       });
@@ -428,41 +475,12 @@ export abstract class BaseMode {
     }
   }
 
-  private updateEntitiesPosition(
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ): void {
-    const newNodePosition = this.getNewNodePosition();
-    const firstEntityPosition =
-      drawingEntitiesManager.allEntities[0]?.[1].position;
-    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
-
-    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
-      drawingEntitiesManager.moveDrawingEntityModelChange(
-        drawindEntity,
-        offset,
-      );
-    });
-  }
-
   unsupportedSymbolsError(errorMessage: string): void {
     const editor = provideEditorInstance();
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
       errorMessage,
     });
-  }
-
-  private checkIfTargetIsInput(event: Event): boolean {
-    return (
-      event.target instanceof HTMLElement &&
-      (event.target?.nodeName === 'INPUT' ||
-        event.target?.nodeName === 'TEXTAREA' ||
-        event.target.contentEditable === 'true')
-    );
-  }
-
-  private isSelectionOutsideCanvas(): boolean {
-    return isSelectionOutsideElement(provideEditorInstance().canvas);
   }
 
   public destroy(): void {

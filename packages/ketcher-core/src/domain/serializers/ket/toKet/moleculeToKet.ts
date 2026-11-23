@@ -47,10 +47,9 @@ function assertCustomQueryLength(customQuery: string, context: string): void {
 function fromRlabel(rg: number): number[] {
   const res: number[] = [];
   let rgi;
-  let val;
   for (rgi = 0; rgi < 32; rgi++) {
     if (rg & (1 << rgi)) {
-      val = rgi + 1;
+      const val = rgi + 1;
       res.push(val); // push the string
     }
   }
@@ -74,19 +73,19 @@ export function moleculeToKet(
     }),
   };
 
-  if (struct.bonds.size !== 0) {
-    body.bonds = [...struct.bonds.values()].map(bondToKet);
+  if (struct.bonds.size > 0) {
+    body.bonds = Array.from(struct.bonds.values()).map(bondToKet);
   }
 
-  if (struct.sgroups.size !== 0) {
-    body.sgroups = [...struct.sgroups.values()].map((sGroup) =>
+  if (struct.sgroups.size > 0) {
+    body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
       sgroupToKet(struct, sGroup),
     );
   }
 
   const fragment = struct.frags.get(0);
   if (fragment) {
-    ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition);
     if (fragment.properties) {
       body.properties = fragment.properties;
     }
@@ -131,7 +130,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
   ifDef(result, 'cip', source.cip, '');
   ifDef(result, 'selected', source.getInitiallySelected());
   // stereo
-  ifDef(result, 'stereoLabel', source.stereoLabel, null);
+  ifDef(result, 'stereoLabel', source.stereoLabel);
   ifDef(result, 'stereoParity', source.stereoParity, 0);
   // query
   ifDef(result, 'ringBondCount', source.ringBondCount, 0);
@@ -218,7 +217,7 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       ifDef(
         result,
         'subtype',
-        source.data.subtype ? source.data.subtype.toUpperCase() : null,
+        source.data.subtype ? source.data.subtype.toUpperCase() : undefined,
       );
       ifDef(
         result,
@@ -252,8 +251,9 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
     }
     case 'GEN':
     case 'queryComponent':
-    default:
+    default: {
       break;
+    }
   }
 
   return result;

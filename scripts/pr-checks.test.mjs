@@ -91,6 +91,22 @@ test('no linked issue warns, and a plain title is then accepted', () => {
   assert.deepEqual(rules(findings, 'warn'), ['linked-issue']);
 });
 
+test('size: documentation, agent skills and fixtures are not counted', () => {
+  const findings = checkPullRequest(
+    pr({
+      files: [
+        file('packages/ketcher-react/src/a.ts', 100),
+        file('.memory-bank/review-workflow.md', 500),
+        file('openspec/changes/x/design.md', 500),
+        file('.agents/skills/ketcher-flow/SKILL.md', 500),
+        file('.agents/skills/verify-ketcher/scripts/drive.mjs', 500),
+        file('ketcher-autotests/tests/test-data/a.ket', 500),
+      ],
+    }),
+  );
+  assert.deepEqual(rules(findings, 'warn'), []);
+});
+
 test('size: over 400 lines warns; lockfiles and snapshots are not counted', () => {
   const big = checkPullRequest(
     pr({ files: [file('packages/ketcher-react/src/a.ts', 401)] }),
@@ -282,4 +298,18 @@ test('feature: no test warns, a unit or E2E test passes', () => {
     );
     assert.deepEqual(findings, [], test);
   }
+});
+
+test('file length: a source file pushed past 1,000 lines warns; one already over does not', () => {
+  const pushed = { ...file('packages/ketcher-core/src/a.ts', 20), lines: 1010 };
+  const alreadyOver = {
+    ...file('packages/ketcher-core/src/b.ts', 20),
+    lines: 1500,
+  };
+  const notRead = file('packages/ketcher-core/src/c.ts', 2000);
+  const findings = checkPullRequest(
+    pr({ files: [pushed, alreadyOver, notRead] }),
+  ).filter((finding) => finding.rule === 'file-length');
+  assert.equal(findings.length, 1);
+  assert.match(findings[0].message, /src\/a\.ts/);
 });

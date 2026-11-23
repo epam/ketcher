@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,15 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type ComponentType,
-  lazy,
-  Suspense,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { useTranslation } from 'react-i18next';
@@ -54,18 +45,14 @@ import {
   shouldPreserveStructure as hasStructureToPreserve,
 } from './miewStructMerge';
 
-const Viewer = lazy(() =>
-  import('miew-react').then((module) => ({
-    default: module.default as unknown as ComponentType<any>,
-  })),
-);
+const Viewer = lazy(() => import('miew-react'));
 
 type MiewDialogProps = {
-  miewOpts: any;
+  miewOpts: ReturnType<typeof createMiewOptions>;
   server: StructService;
   struct: Struct;
   onCancel: () => void;
-  onOk: (result: any) => void;
+  onOk: (result: unknown) => void;
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProps = {
@@ -174,18 +161,17 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
       const moleculeOnlyStruct = struct.clone(null, null, true);
 
-      service
-        .getStringFromStructureAsync(moleculeOnlyStruct)
-        .then((res) =>
-          miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
-        )
-        .then(() => {
+      void (async () => {
+        try {
+          const res =
+            await service.getStringFromStructureAsync(moleculeOnlyStruct);
+          await miew.load(res, { sourceType: 'immediate', fileType: 'cml' });
           miew.setOptions(miewOpts);
           setIsInitialized(true);
-        })
-        .catch((error) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
-        });
+        } catch (e) {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        }
+      })();
     },
     [miewOpts, server, struct],
   );

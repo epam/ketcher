@@ -7,6 +7,7 @@ import {
   SequenceModeType,
   takeEditorScreenshot,
 } from '@utils';
+import { exitFromEditMode } from '@utils/macromolecules/sequence';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -1430,10 +1431,6 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
       await MacromoleculesTopToolbar(page).rna();
       break;
   }
-}
-async function exitFromEditMode(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape');
-  await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
 }
 
 async function turnIntoEditModeAndPlaceCursorToThePosition(

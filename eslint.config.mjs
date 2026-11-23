@@ -4,7 +4,6 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jestPlugin from 'eslint-plugin-jest';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
@@ -17,6 +16,7 @@ import globals from 'globals';
 import { readFileSync } from 'node:fs';
 import {
   rules as invariantRules,
+  ALLOWED_HTML_SINKS,
   ALLOWED_MODEL_MUTATIONS,
 } from './scripts/eslint-invariants-rules.mjs';
 
@@ -80,7 +80,6 @@ const defaults = [
         ...sanitizeGlobals(globals.browser),
         ...sanitizeGlobals(globals.node),
         ...sanitizeGlobals(globals.es2024),
-        ...sanitizeGlobals(globals.jest),
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
@@ -98,7 +97,6 @@ const defaults = [
     plugins: {
       '@typescript-eslint': tseslint,
       import: importPlugin,
-      jest: jestPlugin,
       'jsx-a11y': jsxA11yPlugin,
       n: nPlugin,
       promise: promisePlugin,
@@ -137,7 +135,6 @@ const defaults = [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/preserve-manual-memoization': 'off',
-      'jest/expect-expect': 'off',
       'testing-library/no-container': 'off',
       'testing-library/no-node-access': 'off',
       'testing-library/no-unnecessary-act': 'off',
@@ -356,12 +353,34 @@ const defaults = [
 ];
 
 const coreDependencies = Object.keys(
-  JSON.parse(readFileSync(new URL('./packages/ketcher-core/package.json', import.meta.url))).dependencies ?? {},
+  JSON.parse(
+    readFileSync(
+      new URL('./packages/ketcher-core/package.json', import.meta.url),
+    ),
+  ).dependencies ?? {},
 );
 
 const invariantsPlugin = { rules: invariantRules };
 
 const invariantsBlocks = [
+  {
+    files: ['packages/*/src/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+    ],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/no-html-sinks': [
+        'error',
+        { allowedFiles: ALLOWED_HTML_SINKS },
+      ],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+    },
+  },
   {
     files: ['packages/ketcher-core/src/domain/**/*.{ts,tsx}'],
     plugins: { 'ketcher-invariants': invariantsPlugin },
@@ -375,7 +394,10 @@ const invariantsBlocks = [
     plugins: { 'ketcher-invariants': invariantsPlugin },
     rules: {
       'ketcher-invariants/ui-imports-in-core': 'error',
-      'ketcher-invariants/ui-deps-in-core': ['error', { forbiddenDeps: coreDependencies }],
+      'ketcher-invariants/ui-deps-in-core': [
+        'error',
+        { forbiddenDeps: coreDependencies },
+      ],
     },
   },
   {
@@ -390,7 +412,4 @@ const invariantsBlocks = [
   },
 ];
 
-export default [
-  ...defaults,
-  ...invariantsBlocks,
-];
+export default [...defaults, ...invariantsBlocks];

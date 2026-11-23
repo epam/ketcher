@@ -24,11 +24,11 @@ const ketRawTextPlugin = createRawTextPlugin({
   extension: '.ket',
 });
 
-// Rolldown rewrites the bare `require('raphael')` in raphael-ext.ts into a
+// Rolldown rewrites the bare `require('raphael')` in raphael-extension.ts into a
 // `__require('raphael')` helper call in ESM output. Consumer bundlers (Vite,
 // webpack) do not recognise that form, so Raphael is dropped and the call throws
 // at load time. The Rollup baseline emitted the plain `require`, so restore it
-// here. The call stays behind the `typeof window` guard in raphael-ext.ts, which
+// here. The call stays behind the `typeof window` guard in raphael-extension.ts, which
 // keeps SSR safe (a top-level import would throw under Node).
 const RAPHAEL_REQUIRE_HELPER_CALL = '__require("raphael")';
 const RAPHAEL_REQUIRE_HELPER_IMPORT =

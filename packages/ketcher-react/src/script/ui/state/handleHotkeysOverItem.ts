@@ -1,9 +1,9 @@
 import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
-  fromBondsAttrs,
+  fromBondsAttributes,
   fromFragmentDeletion,
   FunctionalGroup,
   Atom,
@@ -180,7 +180,7 @@ function handleAtomPropsDialog({
           dialog,
           convertedAtomForModal ?? undefined,
         );
-        const updatedAtom = fromAtomsAttrs(
+        const updatedAtom = fromAtomsAttributes(
           restruct,
           hoveredItemId,
           toAtom(res as ElementFormData),
@@ -221,7 +221,7 @@ function handleBondPropsDialog({
       const convertedBond = toBond(res as ReturnType<typeof fromBond>);
       if (!convertedBond) return;
 
-      const updatedBond = fromBondsAttrs(
+      const updatedBond = fromBondsAttributes(
         restruct,
         hoveredItemId,
         convertedBond,
@@ -305,7 +305,7 @@ function getToolHandler(itemType: string, toolName = '') {
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const atomProps = { ...(newAction.opts as Partial<AtomAttributes>) };
-  const updatedAtoms = fromAtomsAttrs(
+  const updatedAtoms = fromAtomsAttributes(
     editor.render.ctab,
     hoveredItemId,
     atomProps,
@@ -333,7 +333,12 @@ function handleSgroupsTool({
   );
   deleteFunctionalGroups([hoveredItemId], ctab, action);
   action.mergeWith(
-    fromAtomsAttrs(editor.render.ctab, SGroupPositionAtomId, atomProps, true),
+    fromAtomsAttributes(
+      editor.render.ctab,
+      SGroupPositionAtomId,
+      atomProps,
+      true,
+    ),
   );
   editor.update(action);
 }
@@ -366,7 +371,7 @@ function handleBondTypeChangeTool({
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
   if (existingAtom) {
-    const updatedAtom = fromAtomsAttrs(
+    const updatedAtom = fromAtomsAttributes(
       editor.render.ctab,
       hoveredItemId,
       {
@@ -413,7 +418,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       }
 
       editor.update(
-        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
+        fromAtomsAttributes(editor.render.ctab, hoveredItemId, element, false),
       );
     }
   } catch (error) {

@@ -536,16 +536,16 @@ const CopyServeConfigPlugin = () => {
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
-logger.warn = (msg, options) => {
+logger.warn = (message, options) => {
   if (
     // This warning occurs when entry html is not at the root path
-    msg
+    message
       .toLowerCase()
       .includes('files in the public directory are served at the root path.')
   ) {
     return;
   }
-  loggerWarn(msg, options);
+  loggerWarn(message, options);
 };
 
 const publicUrlBase = process.env.PUBLIC_URL

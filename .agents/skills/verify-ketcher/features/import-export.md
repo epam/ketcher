@@ -1,6 +1,6 @@
 # Import and export
 
-A user opens a structure by pasting text or choosing a file. They save or copy it in another format. Behavior is owned by [openspec/specs/import-export/spec.md](../../../../openspec/specs/import-export/spec.md).
+A user opens a structure by pasting text or choosing a file. They save or copy it in another format. Behavior is owned by [.memory-bank/features/import-export.md](../../../../.memory-bank/features/import-export.md).
 
 ## Sub-features
 

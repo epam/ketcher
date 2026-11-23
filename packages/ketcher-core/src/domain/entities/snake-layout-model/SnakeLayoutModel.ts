@@ -173,14 +173,19 @@ export class SnakeLayoutModel {
                 ),
               ];
             }, [] as BaseMonomer[]);
-          const firstSenseMonomerConnectedByHydrogenBond =
-            senseMonomersConnectedByHydrogenBond[0];
-          const twoStrandedSnakeLayoutNode =
-            firstSenseMonomerConnectedByHydrogenBond
-              ? this.monomerToTwoStrandedSnakeLayoutNode.get(
-                  firstSenseMonomerConnectedByHydrogenBond,
-                )
-              : undefined;
+          const senseNodesConnectedByHydrogenBond =
+            senseMonomersConnectedByHydrogenBond
+              .map((monomer) =>
+                this.monomerToTwoStrandedSnakeLayoutNode.get(monomer),
+              )
+              .filter(
+                (node): node is ITwoStrandedSnakeLayoutNode =>
+                  node !== undefined,
+              );
+          const twoStrandedSnakeLayoutNode = senseNodesConnectedByHydrogenBond
+            .map((node) => ({ node, index: this.nodes.indexOf(node) }))
+            .filter(({ index }) => index >= 0)
+            .sort((first, second) => first.index - second.index)[0]?.node;
           let twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
             ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
             : -1;
@@ -190,7 +195,7 @@ export class SnakeLayoutModel {
               : -1;
 
           if (
-            firstSenseMonomerConnectedByHydrogenBond &&
+            twoStrandedSnakeLayoutNode &&
             (!isNumber(lastTwoStrandedNodeWithHydrogenBondIndex) ||
               twoStrandedSnakeLayoutNodeIndex >
                 lastTwoStrandedNodeWithHydrogenBondIndex)

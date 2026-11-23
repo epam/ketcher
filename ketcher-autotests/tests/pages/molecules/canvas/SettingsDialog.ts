@@ -19,7 +19,6 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { TopRightToolbar } from '../TopRightToolbar';
-import { waitForRender } from '@utils/common';
 
 type GeneralSectionLocators = {
   resetToSelectToolCombobox: Locator;
@@ -335,9 +334,8 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async apply() {
-      await waitForRender(page, async () => {
-        await locators.applyButton.click();
-      });
+      await locators.applyButton.click();
+      await locators.window.waitFor({ state: 'hidden' });
     },
 
     async cancel() {
@@ -381,7 +379,7 @@ export const SettingsDialog = (page: Page) => {
   };
 };
 
-let cachedMap: Map<string, SettingsSection> | null = null;
+let cachedMap: Map<string, SettingsSection> | undefined;
 
 // The "*Setting" constant groups below no longer line up 1:1 with the
 // Settings dialog's accordion sections (fields were regrouped without

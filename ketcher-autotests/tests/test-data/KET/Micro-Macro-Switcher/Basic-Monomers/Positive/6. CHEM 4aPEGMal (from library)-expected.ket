@@ -17,8 +17,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 3.2345830258022286,
-            "y": -2.9259306701469683
+            "x": 3.1595830258022275,
+            "y": -2.825930670146967
         },
         "alias": "4aPEGMal",
         "templateId": "4aPEGMal___4-Arm PEG-Maleimide"

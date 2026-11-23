@@ -58,8 +58,9 @@ function languageLabel(
   code: string,
   overrides: Partial<Record<string, string>> = {},
 ): string {
-  if (overrides[code]) {
-    return overrides[code] as string;
+  const override = Object.hasOwn(overrides, code) ? overrides[code] : undefined;
+  if (override) {
+    return override;
   }
   try {
     return new Intl.DisplayNames([code], { type: 'language' }).of(code) ?? code;

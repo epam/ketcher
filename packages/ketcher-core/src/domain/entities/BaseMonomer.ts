@@ -74,7 +74,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     for (let i = 1; i <= maxAttachmentPointNumber; i++) {
       const attachmentPointLabel = getAttachmentPointLabel(i);
 
-      if (attachmentPointLabel in this.attachmentPointsToBonds) {
+      if (Object.hasOwn(this.attachmentPointsToBonds, attachmentPointLabel)) {
         attachmentPointList.push(attachmentPointLabel);
       }
     }
@@ -226,12 +226,12 @@ export abstract class BaseMonomer extends DrawingEntity {
       attachmentPointName: AttachmentPointName,
     ) => void,
   ) {
-    for (const attachmentPointName in this.attachmentPointsToBonds) {
-      if (this.attachmentPointsToBonds[attachmentPointName]) {
-        callback(
-          this.attachmentPointsToBonds[attachmentPointName],
-          attachmentPointName as AttachmentPointName,
-        );
+    for (const attachmentPointName of Object.keys(
+      this.attachmentPointsToBonds,
+    )) {
+      const bond = this.attachmentPointsToBonds[attachmentPointName];
+      if (bond) {
+        callback(bond, attachmentPointName as AttachmentPointName);
       }
     }
 
@@ -319,8 +319,8 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get hasBonds() {
     let hasBonds = false;
-    for (const bondName in this.attachmentPointsToBonds) {
-      if (this.attachmentPointsToBonds[bondName]) {
+    for (const bond of Object.values(this.attachmentPointsToBonds)) {
+      if (bond) {
         hasBonds = true;
       }
     }
@@ -633,10 +633,15 @@ export abstract class BaseMonomer extends DrawingEntity {
     const oldAttachmentPointsToBonds = this.attachmentPointsToBonds;
 
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
-    for (const attachmentPointName in this.attachmentPointsToBonds) {
-      if (oldAttachmentPointsToBonds[attachmentPointName]) {
-        this.attachmentPointsToBonds[attachmentPointName] =
-          oldAttachmentPointsToBonds[attachmentPointName];
+    for (const attachmentPointName of Object.keys(
+      this.attachmentPointsToBonds,
+    )) {
+      const bond = oldAttachmentPointsToBonds[attachmentPointName];
+      if (
+        Object.hasOwn(oldAttachmentPointsToBonds, attachmentPointName) &&
+        bond
+      ) {
+        this.attachmentPointsToBonds[attachmentPointName] = bond;
       }
     }
 

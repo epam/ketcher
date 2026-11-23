@@ -23,7 +23,7 @@ import {
 } from 'ketcher-core';
 import { AMINO_ACID_ONE_TO_THREE_LETTER_CODE } from 'src/constants';
 import { RootState } from 'state';
-import { selectFilteredMonomers } from './librarySlice';
+import { selectFilteredMonomers, selectMonomerGroups } from './librarySlice';
 
 const sortLabels = (labels: string[]) =>
   labels.sort((firstLabel, secondLabel) =>
@@ -177,6 +177,34 @@ const getMatchedAminoAcidLabels = (searchFilter: string) =>
         ? (item as AmbiguousMonomerType).label
         : (item as MonomerItemType).props.MonomerName,
     );
+
+describe('monomer dictionary lookups', () => {
+  it.each(['constructor', 'toString', '__proto__'])(
+    'groups monomers with the natural analogue code %s',
+    (code) => {
+      const monomer = createAminoAcid(code, 'Test');
+      expect(selectMonomerGroups([monomer])).toMatchObject([
+        { groupTitle: code, groupItems: [{ label: code }] },
+      ]);
+    },
+  );
+
+  it.each(['constructor', 'toString', '__proto__'])(
+    'does not treat an inherited favorite key %s as a favorite',
+    (id) => {
+      const monomer = { ...ambiguousAminoAcidB, id };
+      expect(
+        selectFilteredMonomers(buildState('', [monomer]))[0].favorite,
+      ).toBe(false);
+    },
+  );
+
+  it('does not treat a falsy own favorite value as a favorite', () => {
+    const state = buildState('', [ambiguousAminoAcidB]);
+    state.library.favorites[ambiguousAminoAcidB.id] = undefined as never;
+    expect(selectFilteredMonomers(state)[0].favorite).toBe(false);
+  });
+});
 
 describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   it.each([

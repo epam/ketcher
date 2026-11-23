@@ -59,9 +59,11 @@ export function filterLib(lib: Template[], filter: string): TemplateGroups {
           re.test(greekify(item.props.abbreviation))),
     ),
     reduce((res: TemplateGroups, item: Template) => {
-      if (res[item.props.group]) res[item.props.group].push(item);
-      else res[item.props.group] = [item];
-      return res;
+      if (Object.hasOwn(res, item.props.group)) {
+        res[item.props.group].push(item);
+        return res;
+      }
+      return { ...res, [item.props.group]: [item] };
     }, {} as TemplateGroups),
   )(lib);
 }
@@ -80,9 +82,11 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
   return flow(
     _filter((item: Template) => !trimmedFilter || searchFunction(item)),
     reduce((res: TemplateGroups, item: Template) => {
-      if (res[item.props.group]) res[item.props.group].push(item);
-      else res[item.props.group] = [item];
-      return res;
+      if (Object.hasOwn(res, item.props.group)) {
+        res[item.props.group].push(item);
+        return res;
+      }
+      return { ...res, [item.props.group]: [item] };
     }, {} as TemplateGroups),
   )(lib);
 }

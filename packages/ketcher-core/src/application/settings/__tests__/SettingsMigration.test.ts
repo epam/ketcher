@@ -20,6 +20,21 @@ describe('SettingsMigration', () => {
       expect(migrated).toEqual(flatFormat);
     });
 
+    it('ignores inherited category keys when detecting flat settings', () => {
+      const flatFormat = Object.assign(
+        Object.create({ editor: { rotationStep: 30 } }),
+        { resetToSelect: false },
+      );
+
+      expect(SettingsMigration.migrate(flatFormat)).toBe(flatFormat);
+    });
+
+    it('does not treat an inherited flat key as stored settings', () => {
+      const stored = Object.create({ resetToSelect: false });
+
+      expect(SettingsMigration.migrate(stored)).toEqual({});
+    });
+
     it('should migrate namespaced format to flat format', () => {
       const namespacedFormat = {
         editor: { resetToSelect: false, rotationStep: 30 },

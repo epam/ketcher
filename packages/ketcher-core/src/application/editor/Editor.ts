@@ -2346,25 +2346,25 @@ export class CoreEditor {
   }
 
   public getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() {
-    const grouped: Record<string, Set<string>> = {};
+    const grouped = new Map<string, Set<string>>();
 
     this.monomersLibrary.forEach((monomerItem) => {
-      const naturalAnalogue = monomerItem.props?.MonomerNaturalAnalogCode;
+      const naturalAnalogue = String(
+        monomerItem.props?.MonomerNaturalAnalogCode,
+      );
 
       if (monomerItem.props?.modificationTypes) {
-        if (!grouped[naturalAnalogue]) {
-          grouped[naturalAnalogue] = new Set<string>();
-        }
+        const types = grouped.get(naturalAnalogue) ?? new Set<string>();
+        grouped.set(naturalAnalogue, types);
 
         monomerItem.props.modificationTypes.forEach((modificationType) => {
-          grouped[naturalAnalogue].add(modificationType);
+          types.add(modificationType);
         });
       }
     });
 
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
-    const result: Record<string, string[]> = {};
-    Object.entries(grouped).forEach(([analogue, typesSet]) => {
+    const result = Array.from(grouped, ([analogue, typesSet]) => {
       const types = [...typesSet].sort((a, b) => {
         const aTitle = a.toLowerCase();
         const bTitle = b.toLowerCase();
@@ -2375,10 +2375,10 @@ export class CoreEditor {
 
         return aTitle.localeCompare(bTitle);
       });
-      result[analogue] = types;
+      return [analogue, types] as const;
     });
 
-    return result;
+    return Object.fromEntries(result);
   }
 
   private onModifyAminoAcids(
@@ -2642,7 +2642,7 @@ export class CoreEditor {
       return false;
     }
     const conditions = [
-      eventHandlerName in editorTool,
+      Reflect.has(editorTool, eventHandlerName),
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
     ];
 

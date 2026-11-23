@@ -16,6 +16,12 @@ const bondParams: BondAttributes = {
 
 describe('Bond', () => {
   describe('getAttrHash static function', () => {
+    it('keeps stereo zero but omits other falsy attributes', () => {
+      const bond = new Bond({ ...bondParams, topology: 0 });
+
+      expect(Bond.getAttrHash(bond)).toStrictEqual({ stereo: 0, type: 1 });
+    });
+
     it('should return attributes', () => {
       const bond = new Bond(bondParams);
       const attrs = {
@@ -29,6 +35,11 @@ describe('Bond', () => {
   });
 
   describe('attrGetDefault static function', () => {
+    it('ignores inherited property names', () => {
+      expect(Bond.attrGetDefault('constructor')).toBeUndefined();
+      expect(Bond.attrGetDefault('toString')).toBeUndefined();
+    });
+
     it('should return attribute value', () => {
       expect(Bond.attrGetDefault('stereo')).toBe(0);
       expect(Bond.attrGetDefault('topology')).toBe(0);

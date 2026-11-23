@@ -43,6 +43,25 @@ describe('AmbiguousMonomer.isModification', () => {
     resetEditorInstance();
   });
 
+  describe('monomer bond lookup', () => {
+    it('ignores inherited bonds and skips empty own attachment points', () => {
+      const monomer = new AmbiguousMonomer(
+        createAmbiguousMonomerItem('current', ['A']),
+        undefined,
+        false,
+      );
+      monomer.attachmentPointsToBonds = Object.assign(
+        Object.create({ R1: {} }),
+        { R2: null },
+      );
+      const callback = vi.fn();
+
+      expect(monomer.hasBonds).toBe(false);
+      monomer.forEachBond(callback);
+      expect(callback).not.toHaveBeenCalled();
+    });
+  });
+
   it('treats matching library options as the same regardless of option order', () => {
     setEditorInstance({
       monomersLibrary: [createAmbiguousMonomerItem('library', ['B', 'A'])],

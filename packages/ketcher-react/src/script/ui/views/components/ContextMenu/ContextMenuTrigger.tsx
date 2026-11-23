@@ -169,7 +169,8 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         ) {
           triggerType = ContextMenuTriggerType.Selection;
         } else {
-          if (selection[MULTITAIL_ARROW_KEY]) {
+          const multitailArrows = selection[MULTITAIL_ARROW_KEY];
+          if (multitailArrows) {
             triggerType = ContextMenuTriggerType.ClosestItem;
           } else {
             triggerType = ContextMenuTriggerType.None;

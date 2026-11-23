@@ -71,7 +71,7 @@ export interface FormState<TResult = Record<string, unknown>> {
 
 type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 
-function applySchemaDefaults<T extends Record<string, unknown>>(
+export function applySchemaDefaults<T extends Record<string, unknown>>(
   state: T,
   schema: FormSchema,
 ): T {
@@ -81,8 +81,13 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
     if (property !== null && typeof property === 'object') {
       const defaultValue = (property as SchemaProperty).default;
       // Only set default if key is completely missing from state
-      if (defaultValue !== undefined && !(name in defaultsApplied)) {
-        defaultsApplied[name] = defaultValue;
+      if (defaultValue !== undefined && !Object.hasOwn(defaultsApplied, name)) {
+        Object.defineProperty(defaultsApplied, name, {
+          value: defaultValue,
+          writable: true,
+          enumerable: true,
+          configurable: true,
+        });
       }
     }
   });
@@ -740,7 +745,7 @@ function serializeRewrite(
 
   const instanceObj = instance as Record<string, unknown>;
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instanceObj)
+    if (Object.hasOwn(instanceObj, p))
       res[p] = instanceObj[serializeMap[p]] ?? instanceObj[p];
   });
 
@@ -767,7 +772,15 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   errors.forEach((item) => {
     // jsonschema uses "instance.fieldName"; strip the "instance." prefix
     const field = item.property.replace(/^instance\./, '');
-    if (!errs[field]) errs[field] = getInvalidMessage(item);
+    const existingError = Object.hasOwn(errs, field) ? errs[field] : undefined;
+    if (!existingError) {
+      Object.defineProperty(errs, field, {
+        value: getInvalidMessage(item),
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
+    }
   });
 
   return errs;

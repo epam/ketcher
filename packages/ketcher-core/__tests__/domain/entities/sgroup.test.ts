@@ -68,6 +68,8 @@ describe('SGroup.superatomLabel getter', () => {
   it('returns an empty string when there is neither a name nor a known class', () => {
     expect(createSuperatomSGroup('', undefined).superatomLabel).toBe('');
     expect(createSuperatomSGroup('', 'UNKNOWN_CLASS').superatomLabel).toBe('');
+    expect(createSuperatomSGroup('', 'constructor').superatomLabel).toBe('');
+    expect(createSuperatomSGroup('', 'toString').superatomLabel).toBe('');
   });
 });
 

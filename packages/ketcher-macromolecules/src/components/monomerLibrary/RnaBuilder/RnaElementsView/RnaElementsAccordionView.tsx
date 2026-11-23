@@ -69,8 +69,9 @@ const RnaElementsAccordionView = ({
     presetPhosphateFilter?.noPhosphate,
   );
 
-  const [expandedAccordion, setExpandedAccordion] =
-    useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [expandedAccordion, setExpandedAccordion] = useState<
+    RnaBuilderItem | null | undefined
+  >(activeRnaBuilderItem);
   const [prevActiveRnaBuilderItem, setPrevActiveRnaBuilderItem] =
     useState(activeRnaBuilderItem);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -82,7 +83,7 @@ const RnaElementsAccordionView = ({
 
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
-      setExpandedAccordion(null);
+      setExpandedAccordion(undefined);
     } else {
       setExpandedAccordion(rnaBuilderItem);
       dispatch(

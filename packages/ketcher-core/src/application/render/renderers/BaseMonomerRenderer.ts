@@ -219,7 +219,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public drawAttachmentPoints(
-    appendFn?: (
+    appendFunction?: (
       apName: AttachmentPointName,
       customAngle?: number,
     ) => Pick<AttachmentPoint, 'getAngle'>,
@@ -228,13 +228,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return;
     }
 
-    const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
+    const appendFunctionToUse =
+      appendFunction ?? this.appendAttachmentPoint.bind(this);
     const hasDragTarget = this._dragTargetAttachmentPoint !== null;
 
     // draw used attachment points (hidden when a drag target is active)
     if (!hasDragTarget) {
       this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-        const attachmentPoint = appendFnToUse(item);
+        const attachmentPoint = appendFunctionToUse(item);
         const angle: number = attachmentPoint.getAngle();
 
         this.attachmentPoints.push(attachmentPoint as never);
@@ -259,7 +260,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
       // if this angle is free for unused att point, draw it
       if (this.freeSectorsList.includes(properAngleForFreeAttachmentPoint)) {
-        const attachmentPoint = appendFnToUse(
+        const attachmentPoint = appendFunctionToUse(
           item,
           properAngleForFreeAttachmentPoint,
         );
@@ -278,7 +279,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     unrenderedAtPoints.forEach((item) => {
       const customAngle = this.freeSectorsList.shift();
-      const attachmentPoint = appendFnToUse(item, customAngle);
+      const attachmentPoint = appendFunctionToUse(item, customAngle);
       this.attachmentPoints.push(attachmentPoint as never);
     });
   }

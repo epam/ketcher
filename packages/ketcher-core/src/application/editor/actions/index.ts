@@ -21,5 +21,5 @@ export * from './sgroup';
 export * from './simpleobject';
 export * from './template';
 export * from './text';
-export * from './utils';
+export * from './utilities';
 export * from './highlight';

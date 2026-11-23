@@ -7,7 +7,7 @@ import {
   RGroupAttachmentPointRemove,
 } from '../operations';
 import { Action } from './action';
-import { fromAtomsAttrs } from './atom';
+import { fromAtomsAttributes } from './atom';
 
 export function fromRGroupAttachmentPointUpdate(
   restruct: ReStruct,
@@ -93,7 +93,7 @@ export function fromRGroupAttachmentPointDeletion(
     restruct.molecule,
     id,
   );
-  const actionToUpdateAtomsAttrs = fromAtomsAttrs(
+  const actionToUpdateAtomsAttributes = fromAtomsAttributes(
     restruct,
     atomId,
     { attachmentPoints: newAttachmentPoints },
@@ -105,7 +105,7 @@ export function fromRGroupAttachmentPointDeletion(
 
   return actionToDeletePoint
     .perform(restruct)
-    .mergeWith(actionToUpdateAtomsAttrs);
+    .mergeWith(actionToUpdateAtomsAttributes);
 }
 
 function getNewAtomAttachmentPoints(

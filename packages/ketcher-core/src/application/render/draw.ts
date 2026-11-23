@@ -20,7 +20,7 @@ import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
 import { getOptionsWithConvertedUnits } from './options';
-import Raphael from './raphael-ext';
+import Raphael from './raphael-extension';
 import svgPath from 'svgpath';
 import util from './util';
 import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
@@ -316,7 +316,7 @@ function arrowEllipticalArcFilledBow(
 
   const length = direction * arrowHeadLength;
   const width = direction * arrowHeadWidth;
-  const attr = direction * arrowHeadAttr;
+  const attribute = direction * arrowHeadAttr;
 
   const endX = start.x + arrowLength;
   const path =
@@ -325,8 +325,8 @@ function arrowEllipticalArcFilledBow(
       endX,
     )},${toFixed(start.y)}` +
     `L${toFixed(endX - width)},${toFixed(start.y - length)}` +
-    `l${toFixed(width)},${toFixed(attr)}` +
-    `l${toFixed(width)},${toFixed(-attr)}` +
+    `l${toFixed(width)},${toFixed(attribute)}` +
+    `l${toFixed(width)},${toFixed(-attribute)}` +
     `l${toFixed(-width)},${length}`;
 
   const transformedPath = svgPath(path)
@@ -876,7 +876,7 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset, arrowHeadAttr } =
     getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
@@ -892,12 +892,12 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-    `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + unbalanceVal + arrowHeadLength)},${toFixed(
+    `M${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + unbalanceValue + arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${toFixed(start.x + unbalanceVal + arrowHeadLength - arrowHeadAttr)},${
+      `L${toFixed(start.x + unbalanceValue + arrowHeadLength - arrowHeadAttr)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -923,7 +923,7 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
@@ -936,10 +936,10 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+    `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
         start.y + arrowOffset + arrowHeadWidth,
       )}`,
   );
@@ -970,7 +970,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
     arrowOffset,
     arrowHeadAttr,
   } = getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   // Multiplying by 1.5 because it's large variant
   const arrowHeadWidth = arrowHeadWidthNormal * 1.5;
@@ -989,13 +989,13 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+    `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal)},${
+      `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr + unbalanceValue)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -1021,7 +1021,7 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
@@ -1035,13 +1035,13 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowOffset)}Z`,
-    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+    `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -1637,8 +1637,8 @@ function dashedPath(point1: Vec2, point2: Vec2, dash: number[]) {
   let i = 0;
 
   while (t0 < t1) {
-    const len = dash[i % dash.length];
-    const t2 = t0 + Math.min(len, t1 - t0);
+    const length_ = dash[i % dash.length];
+    const t2 = t0 + Math.min(length_, t1 - t0);
     if (isBlack) {
       path +=
         'M ' +
@@ -1646,7 +1646,7 @@ function dashedPath(point1: Vec2, point2: Vec2, dash: number[]) {
         ' L ' +
         point1.addScaled(d, t2).coordStr();
     }
-    t0 += len;
+    t0 += length_;
     isBlack = !isBlack;
     i++;
   }

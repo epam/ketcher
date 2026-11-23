@@ -169,7 +169,7 @@ SGroupDelete.InverseConstructor = SGroupCreate;
 
 export { SGroupCreate, SGroupDelete };
 export * from './sgroupAtom';
-export * from './SGroupAttr';
+export * from './SGroupAttribute';
 export * from './SGroupDataMove';
 export * from './sgroupHierarchy';
 export * from './sgroupAttachmentPoints';

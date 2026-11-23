@@ -2,23 +2,26 @@ import {
   AttachmentGroup,
   Atom,
   Bond,
+  Box2Abs,
   Render,
   ReStruct,
   Scale,
+  SGroup,
+  SGroupAttachmentPoint,
   Struct,
   Vec2,
   type RenderOptions,
 } from 'ketcher-core';
 import closest from './closest';
 
-function buildReStruct() {
+function buildReStruct(struct = new Struct()) {
   const options = {
     microModeScale: 20,
     width: 100,
     height: 100,
   } as RenderOptions;
   const render = new Render(document as unknown as HTMLElement, options);
-  return new ReStruct(new Struct(), render);
+  return new ReStruct(struct, render);
 }
 
 // Regression test for https://github.com/epam/ketcher/issues/346:
@@ -50,6 +53,144 @@ describe('closest.merge (findCloseMerge): stale bond references', () => {
         [],
       ),
     ).not.toThrow();
+  });
+});
+
+function buildOverlappingGroups() {
+  const struct = new Struct();
+  const [sourceAtomId, movingAtomId, stationaryAtomId] = Array.from(
+    { length: 3 },
+    () => struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+  );
+  const [movingGroupId, stationaryGroupId] = [
+    movingAtomId,
+    stationaryAtomId,
+  ].map((atomId, index) => {
+    const group = new SGroup(SGroup.TYPES.SUP);
+    group.data.name = index === 0 ? 'Unknown' : 'Stationary';
+    group.data.expanded = false;
+    group.id = struct.sgroups.add(group);
+    struct.atomAddToSGroup(group.id, atomId);
+    group.addAttachmentPoint(
+      new SGroupAttachmentPoint(atomId, undefined, undefined, 1),
+    );
+    return group.id;
+  });
+  struct.bindSGroupsToFunctionalGroups();
+
+  const restruct = buildReStruct(struct);
+  restruct.render.ctab = restruct;
+  restruct.recalculateVisibleAtomsAndBonds();
+  // The rendered labels overlap the source atom, as in the issue's KET.
+  for (const atom of restruct.atoms.values()) {
+    atom.visel.boundingBox = new Box2Abs(-5, -5, 5, 5);
+  }
+
+  return {
+    restruct,
+    sourceAtomId,
+    movingAtomId,
+    stationaryAtomId,
+    movingGroupId,
+    stationaryGroupId,
+  };
+}
+
+describe('closest: overlapping functional groups (#12091)', () => {
+  it('does not merge an atom into a group within the same selection', () => {
+    const { restruct, sourceAtomId, movingAtomId, stationaryAtomId } =
+      buildOverlappingGroups();
+
+    const result = closest.merge(
+      restruct,
+      { atoms: [sourceAtomId, movingAtomId, stationaryAtomId], bonds: [] },
+      restruct.render.options,
+      undefined,
+      [sourceAtomId, movingAtomId, stationaryAtomId],
+    );
+
+    expect(result.atomToFunctionalGroup).toEqual(new Map());
+  });
+
+  it.each([false, true])(
+    'finds an unselected group when it precedes the selected group: %s',
+    (stationaryFirst) => {
+      const { restruct, sourceAtomId, movingAtomId, stationaryGroupId } =
+        buildOverlappingGroups();
+      if (stationaryFirst) {
+        restruct.sgroups = new Map([...restruct.sgroups].reverse());
+      }
+
+      const result = closest.merge(
+        restruct,
+        { atoms: [sourceAtomId, movingAtomId], bonds: [] },
+        restruct.render.options,
+        undefined,
+        [sourceAtomId, movingAtomId],
+      );
+
+      expect(result.atomToFunctionalGroup).toEqual(
+        new Map([[sourceAtomId, stationaryGroupId]]),
+      );
+    },
+  );
+
+  it('preserves ordinary merge picking when no paste exclusions are supplied', () => {
+    const { restruct, sourceAtomId, movingAtomId, movingGroupId } =
+      buildOverlappingGroups();
+
+    const result = closest.merge(
+      restruct,
+      { atoms: [sourceAtomId, movingAtomId], bonds: [] },
+      restruct.render.options,
+    );
+
+    expect(result.atomToFunctionalGroup).toEqual(
+      new Map([[sourceAtomId, movingGroupId]]),
+    );
+  });
+
+  it('finds a functional group during ordinary picking', () => {
+    const { restruct, movingGroupId } = buildOverlappingGroups();
+
+    expect(
+      closest.item(
+        restruct,
+        new Vec2(0, 0),
+        ['functionalGroups'],
+        null,
+        restruct.render.options,
+      ),
+    ).toMatchObject({ map: 'functionalGroups', id: movingGroupId });
+  });
+
+  it('continues picking after a skipped functional group with ID zero', () => {
+    const { restruct, movingGroupId, stationaryGroupId } =
+      buildOverlappingGroups();
+
+    expect(
+      closest.item(
+        restruct,
+        new Vec2(0, 0),
+        ['functionalGroups'],
+        { map: 'functionalGroups', id: movingGroupId },
+        restruct.render.options,
+      ),
+    ).toMatchObject({ map: 'functionalGroups', id: stationaryGroupId });
+  });
+
+  it('keeps the closest atom when picking atoms and functional groups together', () => {
+    const { restruct, sourceAtomId } = buildOverlappingGroups();
+
+    expect(
+      closest.item(
+        restruct,
+        new Vec2(0, 0),
+        ['atoms', 'functionalGroups'],
+        null,
+        restruct.render.options,
+      ),
+    ).toMatchObject({ map: 'atoms', id: sourceAtomId });
   });
 });
 

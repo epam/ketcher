@@ -15,14 +15,61 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type Bond,
+  CoordinateTransformation,
   type ReStruct,
   type Struct,
   Vec2,
   vectorUtils,
 } from 'ketcher-core';
+import type Editor from '../Editor';
 import type { ClosestItemWithMap } from '../shared/closest.types';
-import type { Sign } from './template.types';
+import type { DragContext, Sign } from './template.types';
+
+export type TemplateDragState = Pick<
+  DragContext,
+  'action' | 'angle' | 'extra_bond'
+>;
+
+export function previewTemplateDrag(
+  editor: Editor,
+  dragCtx: TemplateDragState,
+  targetPos: Vec2,
+  event: MouseEvent,
+  hasExtraBond: boolean,
+  createAction: (angle: number) => Action | null,
+): void {
+  const eventPosition = CoordinateTransformation.pageToModel(
+    event,
+    editor.render,
+  );
+  let angle = vectorUtils.calcAngle(targetPos, eventPosition);
+  if (!event.ctrlKey) {
+    angle = vectorUtils.fracAngle(angle, null);
+  }
+  const degrees = vectorUtils.degrees(angle);
+  editor.event.message.dispatch({ info: degrees + 'º' });
+
+  if (
+    dragCtx.angle === degrees &&
+    (dragCtx.extra_bond === undefined || dragCtx.extra_bond === hasExtraBond)
+  ) {
+    return;
+  }
+
+  if (dragCtx.action) {
+    dragCtx.action.perform(editor.render.ctab);
+  }
+
+  dragCtx.angle = degrees;
+  dragCtx.extra_bond = hasExtraBond;
+  dragCtx.action = createAction(angle);
+
+  if (dragCtx.action) {
+    editor.update(dragCtx.action, true);
+  }
+}
 
 export function getSign(molecule: Struct, bond: Bond, v: Vec2): Sign {
   const begin = molecule.atoms.get(bond.begin)?.pp;

@@ -44,6 +44,7 @@ import {
   getAngleFromEvent,
   getBondFlipSign,
   getSign,
+  previewTemplateDrag,
 } from './template.helpers';
 import type {
   DragContext,
@@ -373,66 +374,35 @@ class TemplateTool implements Tool {
       return;
     }
 
-    // calc angle
-    let angle = vectorUtils.calcAngle(targetPos, eventPosition);
-
-    if (!event.ctrlKey) {
-      angle = vectorUtils.fracAngle(angle, null);
-    }
-
-    const degrees = vectorUtils.degrees(angle);
-    this.editor.event.message.dispatch({ info: degrees + 'º' });
-
-    // check if anything changed since last time
-    if (
-      // eslint-disable-next-line no-prototype-builtins
-      dragCtx.hasOwnProperty('angle') &&
-      dragCtx.angle === degrees &&
-      // eslint-disable-next-line no-prototype-builtins
-      (!dragCtx.hasOwnProperty('extra_bond') ||
-        dragCtx.extra_bond === hasExtraBond)
-    ) {
-      return;
-    }
-
-    // undo previous action
-    if (dragCtx.action) {
-      dragCtx.action.perform(this.editor.render.ctab);
-    }
-
-    // create new action
-    dragCtx.angle = degrees;
-    let action: Action | null = null;
-
-    if (!ci) {
-      const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size;
-      if (isAddingFunctionalGroup) {
-        // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
-        return;
-      }
-      [action] = fromTemplateOnCanvas(
-        this.editor.render.ctab,
-        this.template,
-        targetPos,
-        angle,
-      );
-    } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
-      const atomId = getTargetAtomId(this.struct, ci);
-      if (atomId === undefined) return;
-      [action] = fromTemplateOnAtom(
-        this.editor.render.ctab,
-        this.template,
-        atomId,
-        angle,
-        hasExtraBond,
-      );
-      dragCtx.extra_bond = hasExtraBond;
-    }
-    dragCtx.action = action;
-
-    if (dragCtx.action) {
-      this.editor.update(dragCtx.action, true);
-    }
+    const dragStart = targetPos;
+    previewTemplateDrag(
+      this.editor,
+      dragCtx,
+      dragStart,
+      event,
+      hasExtraBond,
+      (angle) => {
+        if (!ci) {
+          // s-groups are not rotated on canvas
+          if (this.template?.molecule?.sgroups.size) return null;
+          return fromTemplateOnCanvas(
+            this.editor.render.ctab,
+            this.template,
+            dragStart,
+            angle,
+          )[0];
+        }
+        const atomId = getTargetAtomId(this.struct, ci);
+        if (atomId === undefined) return null;
+        return fromTemplateOnAtom(
+          this.editor.render.ctab,
+          this.template,
+          atomId,
+          angle,
+          hasExtraBond,
+        )[0];
+      },
+    );
 
     // TODO: refactor after #2195 comes into effect
     if (this.targetGroupsIds.length > 0) this.targetGroupsIds.length = 0;

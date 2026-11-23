@@ -37,6 +37,10 @@ import type { Tool } from './Tool';
 import { debounce } from 'lodash';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 import type { MergeItems } from './template.types';
+import {
+  previewTemplateDrag,
+  type TemplateDragState,
+} from './template.helpers';
 import type { SelectionMoveDragContext } from './select/select.types';
 
 /**
@@ -50,12 +54,9 @@ type PasteDragContext = SelectionMoveDragContext & {
  * Drag context stored while the pasted structure is dragged away from the
  * canvas atom it was about to merge into, to attach it with a new bond.
  */
-type PasteBondDragContext = {
+type PasteBondDragContext = TemplateDragState & {
   targetAtomId: number;
   template: EditorTemplate;
-  action?: Action;
-  angle?: number;
-  hasExtraBond?: boolean;
 };
 
 let isMovePreviewCalculationInProgress = false;
@@ -412,44 +413,31 @@ class PasteTool implements Tool {
       this.editor.render,
     );
     const hasExtraBond = Vec2.dist(targetAtom.pp, cursor) > 1;
-    if (!dragCtx.action && !hasExtraBond) {
-      return;
-    }
-
-    let angle = vectorUtils.calcAngle(targetAtom.pp, cursor);
-    if (!event.ctrlKey) {
-      angle = vectorUtils.fracAngle(angle, null);
-    }
-    const degrees = vectorUtils.degrees(angle);
-    this.editor.event.message.dispatch({ info: degrees + 'º' });
-
-    if (
-      dragCtx.action &&
-      dragCtx.angle === degrees &&
-      dragCtx.hasExtraBond === hasExtraBond
-    ) {
-      return;
-    }
-
-    if (dragCtx.action) {
-      dragCtx.action.perform(this.restruct);
-    } else {
+    if (!dragCtx.action) {
+      if (!hasExtraBond) {
+        return;
+      }
       this.action?.perform(this.restruct);
       this.action = null;
       this.mergeItems = null;
       this.editor.hover(null);
     }
 
-    dragCtx.angle = degrees;
-    dragCtx.hasExtraBond = hasExtraBond;
-    [dragCtx.action] = fromTemplateOnAtom(
-      this.restruct,
-      dragCtx.template,
-      dragCtx.targetAtomId,
-      angle,
+    previewTemplateDrag(
+      this.editor,
+      dragCtx,
+      targetAtom.pp,
+      event,
       hasExtraBond,
+      (angle) =>
+        fromTemplateOnAtom(
+          this.restruct,
+          dragCtx.template,
+          dragCtx.targetAtomId,
+          angle,
+          hasExtraBond,
+        )[0],
     );
-    this.editor.update(dragCtx.action, true);
   }
 
   mouseLeaveClientArea() {

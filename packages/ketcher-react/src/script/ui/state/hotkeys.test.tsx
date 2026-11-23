@@ -4,7 +4,7 @@ import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
 import { LeftToolbarContainer } from '../views/toolbars';
 import { Provider } from 'react-redux';
 import createStore from '../state';
-import { initKeydownListener } from './hotkeys';
+import { initKeydownListener, removeKeydownListener } from './hotkeys';
 import { act } from 'react';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import type { Api } from 'src/script/api';
@@ -96,11 +96,87 @@ describe('Hot keys', () => {
     expect(update).not.toHaveBeenCalled();
     expect(struct.bonds.get(hapticBondId)?.type).toBe(Bond.PATTERN.TYPE.HAPTIC);
   });
+
+  // Regression tests for https://github.com/epam/ketcher/issues/2524:
+  // when the focused control inside Ketcher is removed (a context menu item,
+  // a dialog button), focus falls to <body>, outside the Ketcher root where the
+  // hotkey listener lives, and hotkeys stopped working until a canvas click.
+  describe('when focus has fallen out of Ketcher to the page body', () => {
+    let ketcherRoot: HTMLDivElement;
+    let cliparea: HTMLTextAreaElement;
+
+    beforeEach(() => {
+      ketcherRoot = document.createElement('div');
+      cliparea = document.createElement('textarea');
+      cliparea.className = 'cliparea';
+      ketcherRoot.appendChild(cliparea);
+      document.body.appendChild(ketcherRoot);
+    });
+
+    afterEach(() => {
+      ketcherRoot.remove();
+    });
+
+    it('handles the hotkey and returns focus to Ketcher while the mouse is over it', () => {
+      const { store } = renderWithMockStore(
+        <LeftToolbarContainer />,
+        ketcherRoot,
+      );
+      (document.activeElement as HTMLElement | null)?.blur();
+
+      act(() => {
+        fireEvent.mouseOver(ketcherRoot);
+        fireEvent.keyDown(document.body, { code: 'KeyN', key: 'n' });
+      });
+
+      expect(store.getState().actionState.activeTool).toEqual({
+        tool: 'atom',
+        opts: { label: 'N' },
+      });
+      expect(document.activeElement).toBe(cliparea);
+    });
+
+    it('leaves keys alone when the mouse is outside Ketcher', () => {
+      const { store } = renderWithMockStore(
+        <LeftToolbarContainer />,
+        ketcherRoot,
+      );
+      (document.activeElement as HTMLElement | null)?.blur();
+
+      act(() => {
+        fireEvent.mouseOver(ketcherRoot);
+        fireEvent.mouseLeave(ketcherRoot);
+        fireEvent.keyDown(document.body, { code: 'KeyN', key: 'n' });
+      });
+
+      expect(store.getState().actionState.activeTool.tool).not.toBe('atom');
+      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('stops handling page keys after the listener is removed', () => {
+      const { store } = renderWithMockStore(
+        <LeftToolbarContainer />,
+        ketcherRoot,
+      );
+      store.dispatch(removeKeydownListener(ketcherRoot));
+      (document.activeElement as HTMLElement | null)?.blur();
+
+      act(() => {
+        fireEvent.mouseOver(ketcherRoot);
+        fireEvent.keyDown(document.body, { code: 'KeyN', key: 'n' });
+      });
+
+      expect(store.getState().actionState.activeTool.tool).not.toBe('atom');
+    });
+  });
 });
 
-function renderWithMockStore(component) {
+function renderWithMockStore(
+  component,
+  keydownTarget: HTMLElement | Document = document,
+) {
   const store = createStore({}, {} as Api, () => null);
-  store.dispatch(initKeydownListener(document));
+  store.dispatch(initKeydownListener(keydownTarget));
   store.dispatch({
     type: 'INIT',
     editor: {

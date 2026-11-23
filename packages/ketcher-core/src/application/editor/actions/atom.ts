@@ -85,7 +85,7 @@ export function fromAtomsAttributes(
 
   aids.forEach((atomId) => {
     const atom = restruct.molecule.atoms.get(atomId);
-    assert(atom != null);
+    assert(atom != undefined);
 
     const resultingLabel =
       'label' in atomAttributes

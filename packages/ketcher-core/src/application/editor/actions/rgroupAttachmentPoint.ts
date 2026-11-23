@@ -97,7 +97,7 @@ export function fromRGroupAttachmentPointDeletion(
     restruct,
     atomId,
     { attachmentPoints: newAttachmentPoints },
-    null,
+    false,
   );
 
   const actionToDeletePoint = new Action();
@@ -115,7 +115,7 @@ function getNewAtomAttachmentPoints(
   const pointToDelete = struct.rgroupAttachmentPoints.get(
     rgroupAttachmentPointToDelete,
   );
-  assert(pointToDelete != null);
+  assert(pointToDelete != undefined);
   const attachedAtomId = pointToDelete.atomId;
   const attachedAtom = struct.atoms.get(attachedAtomId);
   const currentAttachmentPoints = attachedAtom?.attachmentPoints;

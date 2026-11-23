@@ -206,7 +206,7 @@ class ReRGroup extends ReObject {
         LayerMap.data,
         this.visel,
         data.shift(),
-        null,
+        undefined,
         true,
       );
     }

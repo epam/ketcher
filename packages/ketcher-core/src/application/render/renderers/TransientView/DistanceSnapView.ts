@@ -55,10 +55,10 @@ export class DistanceSnapView {
     sortedMonomers.forEach((monomer, index, monomers) => {
       const monomerPositionInPixels = Coordinates.modelToCanvas(monomer.center);
       const nextMonomer =
-        index < monomers.length - 1 ? monomers[index + 1] : null;
+        index < monomers.length - 1 ? monomers[index + 1] : undefined;
       const nextMonomerPositionInPixels = nextMonomer
         ? Coordinates.modelToCanvas(nextMonomer.center)
-        : null;
+        : undefined;
 
       if (alignment === 'horizontal') {
         transientLayer

@@ -51,7 +51,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmentPoint: AttachmentPointName | null = null;
+  private hoveredAttachmentPoint: AttachmentPointName | undefined;
   private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
@@ -166,7 +166,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
+    this.hoveredAttachmentPoint = undefined;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -177,7 +177,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public updateAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
+    this.hoveredAttachmentPoint = undefined;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {

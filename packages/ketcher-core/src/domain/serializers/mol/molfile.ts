@@ -193,7 +193,7 @@ export class Molfile {
         '\n';
       for (const component of all) {
         const saver = new Molfile();
-        const submol = molecule.clone(component, null, true);
+        const submol = molecule.clone(component, undefined, true);
         const molfile = saver.saveMolecule(submol, false, true);
         this.molfile += '$MOL\n' + molfile;
       }
@@ -359,7 +359,7 @@ export class Molfile {
     }[] = [];
     molecule.atoms.forEach((atom, id) => {
       let label = atom.label;
-      if (atom.atomList != null) {
+      if (atom.atomList != undefined) {
         label = 'L';
         atomsIds.push(id);
       } else if (atom.pseudo) {
@@ -415,7 +415,7 @@ export class Molfile {
       if (atom.radical !== 0) {
         radicalList.push([id, atom.radical]);
       }
-      if (atom.rglabel != null && atom.label === 'R#') {
+      if (atom.rglabel != undefined && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
           if (atom.rglabel & (1 << rgi)) {
@@ -423,7 +423,7 @@ export class Molfile {
           }
         }
       }
-      if (atom.attachmentPoints != null) {
+      if (atom.attachmentPoints != undefined) {
         aplabelList.push([id, atom.attachmentPoints]);
       }
       if (atom.ringBondCount !== 0) {

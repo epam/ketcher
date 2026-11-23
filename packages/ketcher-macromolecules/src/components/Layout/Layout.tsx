@@ -92,7 +92,7 @@ const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingInlineEnd: withPaddingRight ? '12px' : 0,
-    overflow: fullWidth ? 'hidden' : 'initial',
+    minWidth: fullWidth ? 0 : undefined,
   }),
 );
 

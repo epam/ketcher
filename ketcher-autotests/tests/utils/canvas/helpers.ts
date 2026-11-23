@@ -5,8 +5,10 @@ import {
   Locator,
 } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
-import { emptyFunction } from '../common/helpers';
-import { waitForRender } from '../common/loaders/waitForRender';
+import {
+  waitForCustomEvent,
+  waitForRender,
+} from '../common/loaders/waitForRender';
 import { waitForSpinnerFinishedWork } from '../common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
@@ -241,14 +243,7 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
-
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyC`, options),
-  );
+  await pressClipboardShortcut(page, 'KeyC', 'copyOrCutComplete', options);
 }
 
 export async function cutToClipboardByKeyboard(
@@ -259,14 +254,7 @@ export async function cutToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
-
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyX`, options),
-  );
+  await pressClipboardShortcut(page, 'KeyX', 'copyOrCutComplete', options);
 }
 
 export async function pasteFromClipboardByKeyboard(
@@ -277,14 +265,39 @@ export async function pasteFromClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. For ex. - select object on the screen can took time
-  await waitForRender(page, emptyFunction);
+  await pressClipboardShortcut(page, 'KeyV', 'pasteComplete', options);
+}
 
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),
-  );
+async function pressClipboardShortcut(
+  page: Page,
+  key: 'KeyC' | 'KeyX' | 'KeyV',
+  eventName: 'copyOrCutComplete' | 'pasteComplete',
+  options?: { delay?: number },
+) {
+  const isEditingText = await page.evaluate(() => {
+    const element = document.activeElement;
+    return (
+      element instanceof HTMLElement &&
+      !element.hasAttribute('data-cliparea') &&
+      (element instanceof HTMLTextAreaElement ||
+        (element instanceof HTMLInputElement &&
+          !['button', 'submit', 'reset'].includes(element.type)) ||
+        element.isContentEditable)
+    );
+  });
+  const press = async () =>
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await page.keyboard.press(`ControlOrMeta+${key}`, options),
+    );
+
+  if (isEditingText) {
+    await press();
+    return;
+  }
+
+  const eventReceived = await waitForCustomEvent(page, eventName, 5000, press);
+  expect(eventReceived, `${eventName} was not received`).toBe(true);
 }
 
 export async function undoByKeyboard(

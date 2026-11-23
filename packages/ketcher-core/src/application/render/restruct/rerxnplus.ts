@@ -20,7 +20,7 @@ import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import utility from '../util';
+import util from '../util';
 import type { Render } from '../raphaelRender';
 import type ReStruct from './restruct';
 import type { RenderOptions } from '../render.types';
@@ -64,8 +64,8 @@ class ReRxnPlus extends ReObject {
     const centre = Scale.modelToCanvas(this.item.pp, options);
     const path = draw.plus(render.paper, centre, options);
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
-    this.visel.add(path, Box2Abs.fromRelBox(utility.relBox(path.getBBox())));
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
+    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
     path.node?.setAttribute('data-testid', 'rxn-plus');
   }
 }

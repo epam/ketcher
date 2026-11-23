@@ -443,7 +443,7 @@ export function bondChangingAction(
   const loop =
     bondProps.type !== undefined && plainBondTypes.includes(bondProps.type)
       ? plainBondTypes
-      : null;
+      : undefined;
   if (
     loop &&
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&

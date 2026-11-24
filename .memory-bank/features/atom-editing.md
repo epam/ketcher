@@ -72,6 +72,7 @@ The system SHALL ensure that the atom's charge increases or decreases by one and
 
 - This is a **molecules-mode** feature. In macromolecules mode the equivalent is placing monomers (see [macromolecules](./macromolecules.md)); individual atoms of an abbreviated group / functional group cannot be edited until the abbreviation is removed.
 - Query atom features (lists, not-lists, generics) are meaningful only for query-capable export formats.
+- Where implicit hydrogens are drawn is decided by Ketcher's own rule. PNG and SVG images rendered by Indigo follow it only once epam/Indigo#4031 lands, so an exported image can differ from the canvas until then.
 
 ## Related
 

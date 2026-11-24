@@ -12,7 +12,7 @@ Dragging a library monomer or preset onto the canvas can already establish a bon
 **Attachment points**
 
 - The original monomers keep the attachment points of the bond being broken.
-- The new monomer's APs are chosen so both new bonds are default bonds (R1–R2 amino acids, sugar–phosphate, R3–R1 sugar–base, unsplit nucleotide rules, single-AP case, and R1–R2 fallback for everything else).
+- The new monomer's AP on each side is the complement of the original monomer's AP there (R1↔R2), except sugar–base bonds through R3 (sugar)–R1 (base); this is what makes R1–R2 the default for amino acids, sugar–phosphate, and unsplit-nucleotide bonds alike, since none of those reach the sugar/base case.
 - For a preset only the sugar and phosphate (if present) are used for the two new bonds.
 
 **Insertion not possible**
@@ -40,9 +40,13 @@ Dragging a library monomer or preset onto the canvas can already establish a bon
 
 - `drag-drop-monomer-insertion`: Bond-proximity indicator, drop-to-insert behaviour, AP resolution, the two error modals, the new *Select Attachment Points* dialog, and Flex/Snake layout rules for inserting a library monomer or preset into an existing polymer bond.
 
+### Modified Capabilities
+
+- `monomer-replacement-drag-drop` (req. 8): when a phosphate-containing preset replaces a single monomer in Flex mode and the new phosphate's external bond is part of a circular structure, that bond is extended (reusing insertion's bond-extension geometry) instead of shifting the downstream chain.
+
 ## Impact
 
-- **`ketcher-core`** — `LibraryItemDragDropHandler` gains a bond-proximity check (after the replacement and AP checks) and an insertion path; `DrawingEntitiesManager` gains an insert-on-bond command built from existing delete-bond / add-monomer / add-bond operations in one history entry; `replacementHelpers`/`DrawingEntitiesManager.replaceMonomer` reuse the new bond-extension geometry; default-bond resolution in `bondConnectionHelpers.ts` is reused with the sequence-mode R1–R2 fallback; `UsageInMacromolecule` gains a value dedicated to the new dialog's presentation so the existing *Select Attachment Points* / *Edit Attachment Points* dialogs keep their current look.
-- **`ketcher-macromolecules`** — a bond-hover circle (transient view) driven by drag state; two new error modals; the new `InsertionConnection` dialog; new strings in `macromoleculesDialogs.json`. The existing `MonomerConnections` (*Select Attachment Points* / *Edit Attachment Points*) dialog is not modified.
+- **`ketcher-core`** — `LibraryItemDragDropHandler` gains a bond-proximity check, racing by distance against the AP-proximity check once neither is beaten by an active replacement target, and an insertion path built in the handler (`executeInsertion`/`finishInsertion`) from pure helpers in `insertion.ts`/`insertionHelpers.ts` (delete-bond / add-monomer / add-bond operations in one history entry), not as a `DrawingEntitiesManager` method; `LibraryItemDragDropHandler`'s replacement path reuses the same bond-extension geometry for req. 8; default-AP resolution for insertion is its own table in `insertionHelpers.ts` (R1↔R2 complement, R3–R1 for sugar/base) — independent of `bondConnectionHelpers.ts`'s modal/preset-component logic and of `SequenceMode.ts`'s inline R1/R2 handling; `UsageInMacromolecule` gains a value dedicated to the new dialog's presentation so the existing *Select Attachment Points* / *Edit Attachment Points* dialogs keep their current look.
+- **`ketcher-macromolecules`** — a bond-hover circle (transient view) driven by drag state; two new error modals, titled via the hardcoded strings `INSERT_PRESET_ERROR_MESSAGE` / `INSERT_SINGLE_AP_ERROR_MESSAGE` in `ketcher-core` rather than `macromoleculesDialogs.json`; the new `InsertionConnection` dialog. The existing `MonomerConnections` (*Select Attachment Points* / *Edit Attachment Points*) dialog is not modified.
 - **`ketcher-autotests`** — new `data-testid`s and Playwright specs (to be planned per `testing.md`, user approval required before writing).
 - No public API changes, no format/serialization impact. Depends on the layout work in #7455 and relates to #7926.

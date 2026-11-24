@@ -12,21 +12,21 @@ Insertion is a third drop outcome. Everything it needs exists in pieces: default
 
 ## Decisions
 
-### Decision 1 — Check order: replacement > AP > bond
+### Decision 1 — Check order: replacement first, then AP vs. bond by distance
 
-A bond lies between two monomers, so the cursor is often near monomers too. Replacement and AP highlights keep priority; the bond indicator is shown only when neither is active. This keeps the three highlights mutually exclusive, consistent with the existing guarantee.
+A bond lies between two monomers, so the cursor is often near monomers too. Replacement keeps absolute priority — while a replacement target is active, neither the AP highlight nor the bond indicator shows. Below that, the AP highlight and the bond indicator are not a strict priority pair: both proximity checks run, and whichever target is geometrically closer to the cursor wins, suppressing the other. This keeps all highlights mutually exclusive without making the bond indicator unreachable whenever an AP happens to be nearby (true on dense or circular chains), at the cost of the indicator sometimes yielding to a farther-but-still-in-range AP highlight and vice versa.
 
-**Alternative:** bond first — rejected, it would make dropping near a monomer at the end of a bond ambiguous and change shipped behaviour.
+**Alternative (originally decided, not what shipped):** a strict replacement > AP > bond priority order, where any active AP highlight unconditionally suppresses the bond indicator — rejected during implementation because on circular or dense chains it made the indicator effectively unreachable near chain ends; the distance race was adopted instead. (`LibraryItemDragDropHandler.onLibraryItemDragOver`, replacement check then AP/bond distance race.)
 
-### Decision 2 — One resolver for default APs, shared with sequence-mode replacement
+### Decision 2 — Independent default-AP resolver (not shared with sequence-mode replacement)
 
-AP choice for the new monomer reuses the default-bond table in `bondConnectionHelpers.ts` (plus the R1–R2 fallback the ticket asks for). The resolver takes the two original monomers with their existing APs and returns the new monomer's pair of APs, or a failure reason (`no-default-preset` / `no-default-single-ap` / `no-default-multi-ap`) that selects the modal or dialog.
+AP choice for the new monomer is resolved by `resolveMonomerInsertion`/`resolvePresetInsertion` in `insertionHelpers.ts`: a sugar bonds to a base through R3 (sugar)–R1 (base); otherwise the new monomer's AP is the complement of the original AP (R1↔R2). This is a new, insertion-only implementation — it does not call into `bondConnectionHelpers.ts` (which only decides whether to show the bond-establishment modal and which preset component to bond, not a default-AP table) or into `SequenceMode.ts`'s own inline R1/R2 handling for sequence-mode replacement (#4878).
 
-**Alternative:** a separate insertion-only table — rejected: the ticket asks for consistency with #4878 and two tables would drift.
+**Originally decided:** one resolver shared with sequence-mode replacement, specifically to avoid two tables drifting apart. **What shipped instead:** a third, independent place encoding the same R1–R2-complement idea. The risk the original decision called out is real today — `bondConnectionHelpers.ts`, `SequenceMode.ts`, and `insertionHelpers.ts` each encode default-AP logic separately — but is accepted for now rather than refactored as part of this change; unifying them is follow-up work, not a blocker for this feature.
 
-### Decision 3 — Insertion is a single command in `DrawingEntitiesManager`
+### Decision 3 — Insertion command building lives in the handler, not `DrawingEntitiesManager`
 
-`insertMonomerOnBond` builds one `Command`: delete the original bond, add monomer(s), add two bonds, apply positional shifts. The handler pushes it to history once, so undo/redo is atomic. Dialog-driven insertion (after **Connect**) builds the same command with user-chosen APs.
+**Originally decided:** a `DrawingEntitiesManager.insertMonomerOnBond` method, mirroring how `replaceMonomer` owns replacement there. **What shipped instead:** `LibraryItemDragDropHandler.executeInsertion` (and its `finishInsertion` helper) builds the single `Command` — delete the original bond, add monomer(s), add two bonds, apply positional shifts — using the pure functions in `insertion.ts`/`insertionHelpers.ts`, and pushes it to history once so undo/redo is atomic. Dialog-driven insertion (after **Connect**) builds the same command with user-chosen APs. This is accepted as the shipped location rather than refactored into `DrawingEntitiesManager`: it keeps the orchestration next to the other drag-state handling (replacement, AP hover) it has to coordinate with, at the cost of being less consistent with `replaceMonomer`'s placement.
 
 ### Decision 4 — Geometry as pure functions
 
@@ -46,7 +46,7 @@ The circle is a transient SVG element attached to the bond renderer, with two si
 
 ### Decision 7 — Error modals reuse the existing modal infrastructure
 
-Two Close-only modals with strings in `macromoleculesDialogs.json`. The new `InsertionConnection` dialog is its own component with its own `UsageInMacromolecule` value, styled to match the existing `MonomerConnections` (*Select Attachment Points* / *Edit Attachment Points*) dialog's filled-blue-pill presentation; the separate enum value keeps the two dialogs' styling independently editable without the other one, but today they render identically.
+Two Close-only modals via the existing `openErrorModal` infrastructure. **Originally decided:** their strings would live in `macromoleculesDialogs.json`, like the rest of this dialog layer. **What shipped instead:** `INSERT_PRESET_ERROR_MESSAGE` / `INSERT_SINGLE_AP_ERROR_MESSAGE` are hardcoded English constants in `LibraryItemDragDropHandler.ts` (`ketcher-core`), bypassing i18n — accepted for now, pending product sign-off on whether that's an intentional exception. The new `InsertionConnection` dialog is its own component with its own `UsageInMacromolecule` value, styled to match the existing `MonomerConnections` (*Select Attachment Points* / *Edit Attachment Points*) dialog's filled-blue-pill presentation; the separate enum value keeps the two dialogs' styling independently editable without the other one, but today they render identically.
 
 ## Risks / Trade-offs
 

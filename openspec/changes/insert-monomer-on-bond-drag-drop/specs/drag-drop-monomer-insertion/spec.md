@@ -2,7 +2,7 @@
 
 ### Requirement: Bond insertion indicator
 
-While the user drags a library monomer or preset and the cursor is within the bond-proximity threshold of a polymer bond, the system SHALL show a circle on that bond. The circle SHALL be larger when the cursor is within the closer threshold. The indicator SHALL NOT be shown while a replacement-target or attachment-point highlight is active.
+While the user drags a library monomer or preset and the cursor is within the bond-proximity threshold of a polymer bond, the system SHALL show a circle on that bond. The circle SHALL be larger when the cursor is within the closer threshold. The indicator SHALL NOT be shown while a replacement target is active. When both the bond indicator and an attachment-point highlight are within range at the same time and no replacement target is active, the system SHALL show only whichever is geometrically closer to the cursor and suppress the other.
 
 #### Scenario: Indicator appears near a bond
 
@@ -19,10 +19,17 @@ While the user drags a library monomer or preset and the cursor is within the bo
 - **WHEN** the cursor leaves the outer threshold, the drag is cancelled, or the item is dropped
 - **THEN** the circle is removed
 
-#### Scenario: Replacement and AP highlights take priority
+#### Scenario: Replacement always takes priority
 
-- **WHEN** a replacement target or an attachment-point highlight is active
-- **THEN** no bond indicator is shown
+- **WHEN** a replacement target is active, regardless of its distance from the cursor
+- **THEN** no bond indicator and no attachment-point highlight is shown
+
+#### Scenario: AP highlight and bond indicator compete by distance
+
+- **WHEN** no replacement target is active
+- **AND** the cursor is within range of both a free attachment point and a polymer bond
+- **THEN** whichever of the two is geometrically closer to the cursor is shown
+- **AND** the other is suppressed
 
 ---
 
@@ -49,17 +56,17 @@ Dropping a library monomer or preset while the indicator is shown SHALL remove t
 
 ### Requirement: Default attachment points for the new monomer
 
-The new monomer's APs SHALL be chosen so both new bonds are default bonds: R1–R2 between amino acids; R1–R2 between sugars and phosphates; R3–R1 between sugars and bases; R1–R2 between unsplit nucleotides and sugars or phosphates; any AP when both monomers have exactly one available AP; otherwise R1–R2. For a preset, only the sugar and the phosphate (if present) SHALL be used for the two new bonds.
+On each side, the new monomer's AP SHALL be the complement of the original monomer's AP on that side (R1↔R2), except that a sugar bonds to a base through R3 (sugar)–R1 (base). This single rule is what makes R1–R2 the default between amino acids, between sugars and phosphates, and between unsplit nucleotides and sugars or phosphates — those pairings never reach the sugar/base case, so they always resolve through the R1↔R2 complement. If an original AP is neither R1 nor R2 (and the sugar/base case does not apply), or the resolved AP is not free on the new monomer, or both sides resolve to the same AP, no default connection exists for that side. For a preset, only the sugar and the phosphate (if present) SHALL be used for the two new bonds.
 
 #### Scenario: Amino acid between amino acids
 
 - **WHEN** an amino acid is dropped on an R2 (left) – R1 (right) bond between amino acids
 - **THEN** the bonds are R2 (left) – R1 (new) and R2 (new) – R1 (right)
 
-#### Scenario: Fallback to R1–R2
+#### Scenario: No default when the original AP is not R1, R2, or the sugar/base case
 
-- **WHEN** no listed default rule applies but R1–R2 can be established on both sides
-- **THEN** R1–R2 bonds are created
+- **WHEN** an original monomer is bonded through an AP other than R1 or R2, and the sugar/base R3–R1 case does not apply
+- **THEN** no default AP can be resolved for that side and the dialog opens instead
 
 #### Scenario: Preset uses sugar and phosphate
 
@@ -70,7 +77,7 @@ The new monomer's APs SHALL be chosen so both new bonds are default bonds: R1–
 
 ### Requirement: Select Attachment Points dialog when no default connection exists
 
-If no default connection exists and the dropped monomer has two or more APs, the system SHALL open a single *Select Attachment Points* dialog showing all three monomers (left original, new, right original). The new monomer SHALL show two AP drop-downs — one for each new bond. The two drop-downs SHALL never hold the same AP: picking an AP already assigned to the other drop-down SHALL move that drop-down's previous AP into the drop-down being changed, instead of being blocked. After the user picks both APs and clicks **Connect**, the monomer SHALL be inserted in one step.
+If no default connection exists and the dropped monomer has two or more APs, the system SHALL open a single *Select Attachment Points* dialog showing all three monomers (left original, new, right original). The new monomer SHALL show two AP button groups — one for each new bond. The two groups SHALL never have the same AP selected: picking an AP already selected in the other group SHALL move that group's previous selection into the group being changed, instead of being blocked. After the user picks both APs and clicks **Connect**, the monomer SHALL be inserted in one step.
 
 #### Scenario: Dialog opens
 
@@ -81,8 +88,8 @@ If no default connection exists and the dropped monomer has two or more APs, the
 
 - **WHEN** the dialog is open
 - **THEN** the left and right original monomers show their bond APs as fixed labels (not selectable)
-- **AND** the new monomer shows two drop-downs for choosing its left-side and right-side APs
-- **AND** a 50px-tall `#B4B9D6` separator line sits between the left-side and right-side drop-downs
+- **AND** the new monomer shows two AP button groups for choosing its left-side and right-side APs
+- **AND** a 50px-tall `#B4B9D6` separator line sits between the left-side and right-side AP button groups
 
 #### Scenario: AP presentation matches the existing dialogs
 
@@ -92,10 +99,10 @@ If no default connection exists and the dropped monomer has two or more APs, the
 
 #### Scenario: Swapping the new monomer's APs
 
-- **WHEN** the new monomer's left-side drop-down holds AP X and the right-side drop-down holds AP Y
-- **AND** the user picks AP Y in the left-side drop-down
-- **THEN** the left-side drop-down holds AP Y
-- **AND** the right-side drop-down holds AP X
+- **WHEN** the new monomer's left-side AP button group has AP X selected and the right-side group has AP Y selected
+- **AND** the user selects AP Y in the left-side group
+- **THEN** the left-side group has AP Y selected
+- **AND** the right-side group has AP X selected
 
 #### Scenario: Connect inserts the monomer
 

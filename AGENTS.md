@@ -27,7 +27,7 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 
 | Fact                                           | Owner                                            | Format                                                                                                              |
 | ---------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| Current product behavior (WHEN/THEN scenarios) | `.memory-bank/features/<name>.md`                | Requirements with SHALL text and scenarios, Limitations, Related. Archiving a change folds its deltas here by hand. |
+| Current product behavior (WHEN/THEN scenarios) | `.memory-bank/features/<name>.md`                | Requirements with SHALL text and scenarios, Limitations, Related. Archiving a change folds its deltas here by hand (see the archiving rule below — other owner files below are folded in the same way, not just this one). |
 | Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                                            |
 | Builds and toolchain                           | `.memory-bank/build.md`                          | Targets, build order, per-package pipelines, output contract, verification checks                                   |
 | Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                              |
@@ -49,7 +49,8 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 Rules for updating the memory bank:
 
 - The PR that changes a fact also updates the file that owns it (table above). An OpenSpec change in progress is the exception: it updates the memory bank when it is archived, not before.
-- The PR description names the memory-bank file it updated, or says "Memory bank: not needed".
+- Archiving updates every owner file the change made true or obsolete, not only `.memory-bank/features/`. A behavior change usually also touches a `modules/<name>.md` (responsibility, interfaces, dependencies), and sometimes `domain.md`, `glossary.md`, `invariants.md`, or `formats/`. Decide which from the diff and the feature delta, not from whether the change's `tasks.md` happens to list them.
+- The PR description names every memory-bank file it updated (features and any others), or says "Memory bank: not needed".
 - Features and `domain.md` name no functions, files, or variables. Put those in `modules/` or code comments.
 - Edit each file in the format its row above gives.
 

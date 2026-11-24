@@ -26,7 +26,7 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
-import util from 'application/render/util';
+import utility from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
   CANVAS_BACKGROUND_COLOR,
@@ -210,7 +210,7 @@ export class BondRenderer extends BaseRenderer {
 
       shiftValue = Math.max(
         shiftValue,
-        util.shiftRayBox(
+        utility.shiftRayBox(
           atomPositionInPixels,
           halfEdge.direction,
           absoluteLabelSymbolBox2Abs,
@@ -641,19 +641,17 @@ export class BondRenderer extends BaseRenderer {
       }
 
       case BondType.Double: {
-        if (this.bond.stereo === BondStereo.CisTrans) {
-          bondSVGPaths =
-            DoubleCisTransBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-          );
-        }
+        bondSVGPaths =
+          this.bond.stereo === BondStereo.CisTrans
+            ? DoubleCisTransBondPathRenderer.preparePaths(bondVectors)
+            : DoubleBondPathRenderer.preparePaths(
+                bondVectors,
+                this.getDoubleBondShift(
+                  viewModel,
+                  bondVectors.firstHalfEdge,
+                  bondVectors.secondHalfEdge,
+                ),
+              );
         break;
       }
 
@@ -671,30 +669,28 @@ export class BondRenderer extends BaseRenderer {
         const firstLoop =
           firstHalfEdge && firstHalfEdge.loopId >= 0
             ? viewModel.loops.get(firstHalfEdge.loopId)
-            : null;
+            : undefined;
         const secondLoop =
           secondHalfEdge && secondHalfEdge.loopId >= 0
             ? viewModel.loops.get(secondHalfEdge.loopId)
-            : null;
+            : undefined;
         const isInConvexAromaticLoop =
           (firstLoop?.aromatic && firstLoop?.isConvex) ||
           (secondLoop?.aromatic && secondLoop?.isConvex);
 
         // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
         // Otherwise, render as a dashed double bond
-        if (isInConvexAromaticLoop) {
-          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-            this.bond.type,
-          );
-        }
+        bondSVGPaths = isInConvexAromaticLoop
+          ? SingleBondPathRenderer.preparePaths(bondVectors)
+          : DoubleBondPathRenderer.preparePaths(
+              bondVectors,
+              this.getDoubleBondShift(
+                viewModel,
+                bondVectors.firstHalfEdge,
+                bondVectors.secondHalfEdge,
+              ),
+              this.bond.type,
+            );
         break;
       }
 
@@ -747,7 +743,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let mark: string | null = null;
+    let mark: string | undefined;
 
     if (bondFromStruct.customQuery) {
       mark = bondFromStruct.customQuery;

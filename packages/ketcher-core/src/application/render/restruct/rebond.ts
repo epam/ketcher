@@ -29,7 +29,7 @@ import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type {
   RelativeBox,
@@ -88,17 +88,15 @@ class ReBond extends ReObject {
     let p1: Vec2;
     let p2: Vec2;
 
-    if (sgroup1 !== sgroup2 && sgroup1?.isContracted()) {
-      p1 = sgroup1.getContractedPosition(restruct.molecule).position;
-    } else {
-      p1 = beginAtom.a.pp;
-    }
+    p1 =
+      sgroup1 !== sgroup2 && sgroup1?.isContracted()
+        ? sgroup1.getContractedPosition(restruct.molecule).position
+        : beginAtom.a.pp;
 
-    if (sgroup1 !== sgroup2 && sgroup2?.isContracted()) {
-      p2 = sgroup2.getContractedPosition(restruct.molecule).position;
-    } else {
-      p2 = endAtom.a.pp;
-    }
+    p2 =
+      sgroup1 !== sgroup2 && sgroup2?.isContracted()
+        ? sgroup2.getContractedPosition(restruct.molecule).position
+        : endAtom.a.pp;
 
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
@@ -329,9 +327,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, false);
-    if (!rect) return null;
-
-    return rect.attr(options.selectionStyle);
+    return !rect ? null : rect.attr(options.selectionStyle);
   }
 
   private readonly isPlateShouldBeHidden = (
@@ -381,8 +377,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, true);
-    if (!rect) return null;
-    return rect.attr(highlightStyle);
+    return !rect ? null : rect.attr(highlightStyle);
   }
 
   show(restruct: ReStruct, bid: number, options: RenderOptions): void {
@@ -417,8 +412,8 @@ class ReBond extends ReObject {
     const paper = render.paper;
     const hb1Id = this.b.hb1;
     const hb2Id = this.b.hb2;
-    const hb1 = hb1Id === undefined ? null : struct.halfBonds.get(hb1Id);
-    const hb2 = hb2Id === undefined ? null : struct.halfBonds.get(hb2Id);
+    const hb1 = hb1Id === undefined ? undefined : struct.halfBonds.get(hb1Id);
+    const hb2 = hb2Id === undefined ? undefined : struct.halfBonds.get(hb2Id);
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
@@ -426,13 +421,13 @@ class ReBond extends ReObject {
     if (hb1Id === undefined || hb2Id === undefined || !hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
-    this.rbb = util.relBox(this.path.getBBox());
+    this.rbb = utility.relBox(this.path.getBBox());
     // add layer for bond's skeleton:
     restruct.addReObjectPath(
       LayerMap.bondSkeleton,
       this.visel,
       this.path,
-      null,
+      undefined,
       true,
     );
     const reactingCenter: { path: Element | null; rbb?: RelativeBox } = {
@@ -440,12 +435,12 @@ class ReBond extends ReObject {
     };
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
-      reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
+      reactingCenter.rbb = utility.relBox(reactingCenter.path.getBBox());
       restruct.addReObjectPath(
         LayerMap.data,
         this.visel,
         reactingCenter.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -454,12 +449,12 @@ class ReBond extends ReObject {
     };
     topology.path = getBondMark(render, this, hb1, hb2);
     if (topology.path) {
-      topology.rbb = util.relBox(topology.path.getBBox());
+      topology.rbb = utility.relBox(topology.path.getBBox());
       restruct.addReObjectPath(
         LayerMap.data,
         this.visel,
         topology.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -548,7 +543,7 @@ class ReBond extends ReObject {
     }
 
     if (bond.cip) {
-      this.cip = util.drawCIPLabel({
+      this.cip = utility.drawCIPLabel({
         atomOrBond: bond,
         position: bond.center,
         restruct: render.ctab,
@@ -751,25 +746,18 @@ function findIncomingStereoUpBond(
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
     if (isSingleUp) {
-      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
-        return false;
-      }
-      return (
-        neibond.b.end === hb.begin ||
-        (neibond.boldStereo && shouldIncludeBoldStereoBond)
-      );
+      return Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)
+        ? false
+        : neibond.b.end === hb.begin ||
+            (neibond.boldStereo && shouldIncludeBoldStereoBond);
     }
 
-    if (
-      neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
+    return neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
       shouldIncludeBoldStereoBond &&
       neibond.boldStereo
-    ) {
-      return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
-    }
-
-    return false;
+      ? !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)
+      : false;
   });
 }
 
@@ -827,24 +815,17 @@ function getBondPath(
       switch (bond.b.stereo) {
         case Bond.PATTERN.STEREO.UP: {
           findIncomingUpBonds(hb1.bid, bond, restruct);
-          if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
-            path = getBondSingleStereoBoldPath(
-              render,
-              hb1,
-              hb2,
-              bond,
-              struct,
-              isSnapping,
-            );
-          } else
-            path = getBondSingleUpPath(
-              render,
-              hb1,
-              hb2,
-              bond,
-              struct,
-              isSnapping,
-            );
+          path =
+            bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0
+              ? getBondSingleStereoBoldPath(
+                  render,
+                  hb1,
+                  hb2,
+                  bond,
+                  struct,
+                  isSnapping,
+                )
+              : getBondSingleUpPath(render, hb1, hb2, bond, struct, isSnapping);
           break;
         }
         case Bond.PATTERN.STEREO.DOWN: {
@@ -885,32 +866,30 @@ function getBondPath(
     }
     case Bond.PATTERN.TYPE.DOUBLE: {
       findIncomingUpBonds(hb1.bid, bond, restruct);
-      if (
+      path =
         bond.b.stereo === Bond.PATTERN.STEREO.NONE &&
         bond.boldStereo &&
         bond.neihbid1 >= 0 &&
         bond.neihbid2 >= 0
-      ) {
-        path = getBondDoubleStereoBoldPath(
-          render,
-          hb1,
-          hb2,
-          bond,
-          struct,
-          shouldShiftA,
-          shouldShiftB,
-          isSnapping,
-        );
-      } else
-        path = getBondDoublePath(
-          render,
-          hb1,
-          hb2,
-          bond,
-          shouldShiftA,
-          shouldShiftB,
-          isSnapping,
-        );
+          ? getBondDoubleStereoBoldPath(
+              render,
+              hb1,
+              hb2,
+              bond,
+              struct,
+              shouldShiftA,
+              shouldShiftB,
+              isSnapping,
+            )
+          : getBondDoublePath(
+              render,
+              hb1,
+              hb2,
+              bond,
+              shouldShiftA,
+              shouldShiftB,
+              isSnapping,
+            );
       break;
     }
     case Bond.PATTERN.TYPE.TRIPLE: {
@@ -941,7 +920,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = getSingleOrDoublePath(
         render,
         newHalfBonds[0],
@@ -963,7 +942,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = getBondAromaticPath(
         render,
         newHalfBonds[0],
@@ -976,7 +955,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.ANY: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = draw.bondAny(
         render.paper,
         newHalfBonds[0],
@@ -987,7 +966,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.HYDROGEN: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = draw.bondHydrogen(
         render.paper,
         newHalfBonds[0],
@@ -1102,16 +1081,12 @@ function getStereoBondColor(
     stereoLabel = endAtomStereoLabel;
   }
 
-  if (
-    // if no stereolabel presents or presents in both then use default color
-    !stereoLabel ||
+  // if no stereolabel presents or presents in both then use default color
+  return !stereoLabel ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.LabelsOnly
-  ) {
-    return defaultColor;
-  }
-
-  return getColorFromStereoLabel(options, stereoLabel) ?? defaultColor;
+    ? defaultColor
+    : (getColorFromStereoLabel(options, stereoLabel) ?? defaultColor);
 }
 
 function getBondSingleStereoBoldPath(
@@ -1215,8 +1190,7 @@ function getBondDoubleStereoBoldPath(
 }
 
 export function getBondLineShift(cos: number, sin: number): number {
-  if (sin < 0 || Math.abs(cos) > 0.9) return 0;
-  return sin / (1 - cos);
+  return sin < 0 || Math.abs(cos) > 0.9 ? 0 : sin / (1 - cos);
 }
 
 function stereoUpBondGetCoordinates(
@@ -1607,7 +1581,7 @@ function getBondMark(
 ) {
   const options = render.options;
   let mark: string;
-  let tooltip: string | null = null;
+  let tooltip: string | undefined;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
     if (bond.b.customQuery.length > 8) {
@@ -1636,7 +1610,10 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   if (tooltip) {
-    path.node.firstChild.setAttribute('data-tooltip', util.escapeHtml(tooltip));
+    path.node.firstChild.setAttribute(
+      'data-tooltip',
+      utility.escapeHtml(tooltip),
+    );
   }
 
   return path;
@@ -1654,7 +1631,7 @@ function getIdsPath(
 ) {
   const pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
   const ipath = paper.text(pb.x, pb.y, bid.toString());
-  const irbb = util.relBox(ipath.getBBox());
+  const irbb = utility.relBox(ipath.getBBox());
   draw.recenterText(ipath, irbb);
   return ipath;
 }

@@ -9,6 +9,5 @@ displayed without slashes in the preview (e.g., "3Phos", "5Phos").
 export const removeSlashesFromIdtAlias = (
   alias: string | undefined,
 ): string | undefined => {
-  if (!alias) return alias;
-  return alias.replace(/^\/+/, '').replace(/\/+$/, '');
+  return !alias ? alias : alias.replace(/^\/+/, '').replace(/\/+$/, '');
 };

@@ -58,7 +58,7 @@ refactored in the future by:
 TODO: Remove this singleton and implement proper multi-instance support
 */
 export class SettingsService implements ISettingsService {
-  private static instance: SettingsService | null = null;
+  private static instance: SettingsService | undefined;
 
   /**
   Get the singleton instance of SettingsService.
@@ -85,7 +85,7 @@ export class SettingsService implements ISettingsService {
   Use with caution as this will affect all code using SettingsService.getInstance().
   */
   static resetInstance(): void {
-    SettingsService.instance = null;
+    SettingsService.instance = undefined;
   }
 
   private settings: Settings;
@@ -260,7 +260,7 @@ export class SettingsService implements ISettingsService {
   */
   exportSettings(): string {
     this.assertInitialized();
-    return JSON.stringify(this.settings, null, 2);
+    return JSON.stringify(this.settings, undefined, 2);
   }
 
   /**

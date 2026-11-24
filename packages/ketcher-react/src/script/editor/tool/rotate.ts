@@ -28,7 +28,7 @@ import {
   getItemsToFuse,
   isAttachmentBond,
   vectorUtils,
-  getRelSGroupsBySelection,
+  getRelatedSGroupsBySelection,
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
@@ -292,7 +292,7 @@ class RotateTool implements Tool {
       }
 
       if (this.selection?.atoms) {
-        const sGroups = getRelSGroupsBySelection(
+        const sGroups = getRelatedSGroupsBySelection(
           this.struct,
           this.selection?.atoms,
         );

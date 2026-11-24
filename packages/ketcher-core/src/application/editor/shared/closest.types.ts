@@ -47,7 +47,7 @@ export type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
   skip: ClosestSkipItem | null,
-  minDist: number | null,
+  minDistribution: number | null,
 ) => ClosestAtom | null;
 
 /**

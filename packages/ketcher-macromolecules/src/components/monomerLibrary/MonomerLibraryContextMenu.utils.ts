@@ -72,12 +72,11 @@ export const getReferencingCustomPresets = (
   );
   return customPresets.filter((preset) =>
     [preset.sugar, preset.base, preset.phosphate].some((component) => {
-      if (!component) return false;
-      return (
-        setMonomerTemplatePrefix(
-          component.props.id || getMonomerUniqueKey(component),
-        ) === ref
-      );
+      return !component
+        ? false
+        : setMonomerTemplatePrefix(
+            component.props.id || getMonomerUniqueKey(component),
+          ) === ref;
     }),
   );
 };
@@ -91,5 +90,5 @@ export const getDeleteConfirmation = (
   }
   if (isOnCanvas) return DELETE_CONFIRMATION.onCanvas;
   if (hasReferencingPresets) return DELETE_CONFIRMATION.inPreset;
-  return null;
+  return;
 };

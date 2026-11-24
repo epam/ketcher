@@ -293,7 +293,7 @@ export class Struct {
   }
 
   getFragment(fid: number | number[], aidMap?: Map<number, number>): Struct {
-    return this.clone(this.getFragmentIds(fid), null, true, aidMap);
+    return this.clone(this.getFragmentIds(fid), undefined, true, aidMap);
   }
 
   getFragmentOnly(
@@ -315,7 +315,7 @@ export class Struct {
     });
     return this.clone(
       atomSet,
-      null,
+      undefined,
       true,
       aidMap,
       new Pile(),
@@ -323,7 +323,7 @@ export class Struct {
       rgroupAttachmentPointSet,
       new Pile(),
       new Pile(),
-      null,
+      undefined,
       false,
       attachmentGroupSet,
     );
@@ -348,7 +348,7 @@ export class Struct {
     const atoms: Pile<number> = atomSet ?? new Pile<number>(this.atoms.keys());
     const requestedAttachmentGroups =
       attachmentGroupSet ??
-      (atomSet == null
+      (atomSet == undefined
         ? new Pile<number>(this.attachmentGroups.keys())
         : new Pile<number>());
     const attachmentGroups = requestedAttachmentGroups.filter((id) =>
@@ -592,8 +592,10 @@ export class Struct {
           break;
         }
         case Bond.PATTERN.TYPE.AROMATIC: {
-          if (atom.neighbors.length === 1) return [-1, true];
-          return [atom.neighbors.length, true];
+          return [
+            atom.neighbors.length === 1 ? -1 : atom.neighbors.length,
+            true,
+          ];
         }
         default: {
           return [-1, false];
@@ -903,7 +905,7 @@ export class Struct {
   }
 
   getCoordBoundingBox(atomSet?: Pile<number>): CoordBoundingBox {
-    let bb: CoordBoundingBox | null = null;
+    let bb: CoordBoundingBox | undefined;
     function extend(pp: Vec2 | Vec2[]) {
       const points = Array.isArray(pp) ? pp : [pp];
       if (points.length === 0) {
@@ -951,7 +953,7 @@ export class Struct {
   }
 
   getCoordBoundingBoxObj(): CoordBoundingBox {
-    let bb: CoordBoundingBox | null = null;
+    let bb: CoordBoundingBox | undefined;
     function extend(pp: Vec2) {
       if (bb) {
         bb.min = Vec2.min(bb.min, pp);
@@ -1561,7 +1563,7 @@ export class Struct {
     */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];
-    let arrowPos: number | null = null;
+    let arrowPos: number | undefined;
 
     this.rxnArrows.forEach((item) => {
       // there's just one arrow
@@ -1572,7 +1574,7 @@ export class Struct {
       barriers.push(item.pp.x);
     });
 
-    if (arrowPos !== null) barriers.push(arrowPos);
+    if (arrowPos !== undefined) barriers.push(arrowPos);
 
     barriers.sort((a, b) => a - b);
 
@@ -1721,10 +1723,7 @@ export class Struct {
 
   getBondIdByHalfBond(halfBondId: number) {
     const halfBond = this.halfBonds.get(halfBondId);
-    if (halfBond) {
-      return halfBond.bid;
-    }
-    return undefined;
+    return halfBond ? halfBond.bid : undefined;
   }
 
   /**

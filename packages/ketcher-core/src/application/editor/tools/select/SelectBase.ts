@@ -95,12 +95,12 @@ abstract class SelectBase implements BaseTool {
   protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
+  protected rotationCenter: Vec2 | undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
+  protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
@@ -142,11 +142,10 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
-      shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
-    } else {
-      shouldStartMove = true;
-    }
+    shouldStartMove =
+      this.editor.mode.modeName === 'sequence-layout-mode'
+        ? !(renderer instanceof BaseSequenceItemRenderer)
+        : true;
     if (shouldStartMove) this.mode = 'moving';
   }
 
@@ -236,7 +235,8 @@ abstract class SelectBase implements BaseTool {
     this.mode = 'rotating';
     this.rotationCenter =
       this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter() ??
+      undefined;
 
     if (!this.rotationCenter) {
       this.mode = 'standby';
@@ -348,11 +348,9 @@ abstract class SelectBase implements BaseTool {
     } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside || node instanceof Nucleotide) {
-            return node.monomers;
-          } else {
-            return node.monomer;
-          }
+          return node instanceof Nucleoside || node instanceof Nucleotide
+            ? node.monomers
+            : node.monomer;
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
@@ -869,21 +867,19 @@ abstract class SelectBase implements BaseTool {
       secondConnectedMonomer.center,
     );
 
-    if (!alignment) {
-      return this.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    return this.calculateInBetweenDistanceSnap(
-      cursorPosition,
-      initialMonomer,
-      connectedMonomer,
-      secondConnectedMonomer,
-      alignment,
-    );
+    return !alignment
+      ? this.calculateSideDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+        )
+      : this.calculateInBetweenDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+          secondConnectedMonomer,
+          alignment,
+        );
   }
 
   private tryToSnap(event: MouseEvent, movementDelta: Vec2) {
@@ -896,11 +892,11 @@ abstract class SelectBase implements BaseTool {
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
-    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+    const modifierKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const externalConnectionsToSelection =
       this.editor.drawingEntitiesManager.externalConnectionsToSelection;
 
-    if (modKeyPressed || externalConnectionsToSelection.length === 0) {
+    if (modifierKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
 
@@ -1396,8 +1392,8 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const viewParams = this.buildRotationViewParams(center, bbox);
-    this.editor.transientDrawingView.showRotation(viewParams);
+    const viewParameters = this.buildRotationViewParams(center, bbox);
+    this.editor.transientDrawingView.showRotation(viewParameters);
     this.editor.transientDrawingView.update();
   }
 
@@ -1463,8 +1459,8 @@ abstract class SelectBase implements BaseTool {
       Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
     ) {
       this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
+      this.rotationCenter = undefined;
+      this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
       this.updateRotationView();
@@ -1479,8 +1475,8 @@ abstract class SelectBase implements BaseTool {
     history.update(modelChanges);
 
     this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
+    this.rotationCenter = undefined;
+    this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
     this.updateRotationView();

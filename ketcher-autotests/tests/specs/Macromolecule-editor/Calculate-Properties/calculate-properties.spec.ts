@@ -183,7 +183,9 @@ test.describe('Calculate Properties tests', () => {
     await page.keyboard.up('Shift');
     await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Escape');
+    await waitForCalculateProperties(page, async () => {
+      await keyboardPressOnCanvas(page, 'Escape');
+    });
     await takePageScreenshot(page);
   });
 

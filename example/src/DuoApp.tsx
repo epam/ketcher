@@ -16,7 +16,7 @@ const DuoApp = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [structServiceProvider1, setStructServiceProvider1] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
     void (async () => {
       setStructServiceProvider1(await getStructServiceProvider());
@@ -24,7 +24,7 @@ const DuoApp = () => {
   }, []);
 
   const [structServiceProvider2, setStructServiceProvider2] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
     void (async () => {
       setStructServiceProvider2(await getStructServiceProvider());

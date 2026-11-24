@@ -52,10 +52,7 @@ export const getFullscreenElement = (): HTMLElement => {
         editorParent !== document.body &&
         editorParent !== document.documentElement
       ) {
-        if (editorParent.id === 'root') {
-          return editorParent;
-        }
-        return editorParent;
+        return editorParent.id === 'root' ? editorParent : editorParent;
       }
 
       const rootElement = editorRoot.closest('#root');

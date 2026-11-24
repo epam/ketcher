@@ -1,6 +1,6 @@
 # Templates
 
-A user places a ready-made ring or structure on the canvas, or fuses one onto an existing structure. Behavior is owned by [openspec/specs/templates-and-groups/spec.md](../../../../openspec/specs/templates-and-groups/spec.md).
+A user places a ready-made ring or structure on the canvas, or fuses one onto an existing structure. Behavior is owned by [.memory-bank/features/templates-and-groups.md](../../../../.memory-bank/features/templates-and-groups.md).
 
 ## Sub-features
 

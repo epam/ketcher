@@ -14,7 +14,7 @@ For features and high-risk changes. Only those need a spec.
 
 1. **Propose.** Add `openspec/changes/<change>/` with `proposal.md`, spec deltas, `design.md`, and `tasks.md`.
 2. **Implement.** Tick each task when it is done, one at a time.
-3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/`.
+3. **Archive.** Move the change to `openspec/changes/archive/`. Archive with `--skip-specs`, then fold the change's deltas into the owner of current behavior, `.memory-bank/features/<capability>.md`.
 
 Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI runs `openspec validate --all --strict` and `openspec validate --archived` on every PR.
 
@@ -49,17 +49,17 @@ Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `np
 
 `danger.yml` runs Danger on every PR to `master` and `release/**`. The rules are in `scripts/pr-checks.mjs`. A fail blocks the PR; a warning only shows in Danger's comment.
 
-| Rule         | Fails                                                                                                | Warns                                                                                       |
-| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Title        | No issue prefix while the PR links an issue. A `Backmerge: ` prefix is allowed                       | An issue in the title that the PR does not link                                             |
-| Branch       | Its name contains `#`                                                                                |                                                                                             |
-| Linked issue |                                                                                                      | The PR links no issue (`Closes #N`)                                                         |
-| Size         |                                                                                                      | Over 400 changed lines, lockfiles and snapshots not counted. Skipped on large-scale changes |
-| File length  |                                                                                                      | A package source file grows past 1,000 lines (R16). A file already over it is skipped       |
-| Unit test    |                                                                                                      | `ketcher-core` domain or operations code changed with no unit test change                   |
-| PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing | Bug fix or Feature without a test change                                                    |
-| Memory bank  |                                                                                                      | The body has no `Memory bank:` line (`not needed` is a valid answer). Backmerges skipped    |
-| Reviewers    |                                                                                                      | No requested reviewer or team. Draft PRs skipped                                            |
+| Rule         | Fails                                                                                                | Warns                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title        | No issue prefix while the PR links an issue. A `Backmerge: ` prefix is allowed                       | An issue in the title that the PR does not link                                                                                             |
+| Branch       | Its name contains `#`                                                                                |                                                                                                                                             |
+| Linked issue |                                                                                                      | The PR links no issue (`Closes #N`)                                                                                                         |
+| Size         |                                                                                                      | Over 400 changed code lines. Documentation, agent skills, fixtures, lockfiles and snapshots are not counted. Skipped on large-scale changes |
+| File length  |                                                                                                      | A package source file grows past 1,000 lines (R16). A file already over it is skipped                                                       |
+| Unit test    |                                                                                                      | `ketcher-core` domain or operations code changed with no unit test change                                                                   |
+| PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing | Bug fix or Feature without a test change                                                                                                    |
+| Memory bank  |                                                                                                      | The body has no `Memory bank:` line (`not needed` is a valid answer). Backmerges skipped                                                    |
+| Reviewers    |                                                                                                      | No requested reviewer or team. Draft PRs skipped                                                                                            |
 
 Planned:
 

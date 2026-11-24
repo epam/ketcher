@@ -10,16 +10,15 @@ This class handles all mouse events for sequence
 so we don't have to add handlers to each sequence item individually.
 */
 export class SequenceEventDelegationManager {
-  private static _instance: SequenceEventDelegationManager | null = null;
+  private static _instance: SequenceEventDelegationManager | undefined;
+  private canvas: D3SvgElementSelection<SVGGElement, void> | undefined;
+  private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
+    new Map();
 
   public static get instance() {
     this._instance ??= new SequenceEventDelegationManager();
     return this._instance;
   }
-
-  private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
-  private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
-    new Map();
 
   private attachHandler(
     eventType: string,
@@ -45,9 +44,7 @@ export class SequenceEventDelegationManager {
     if (!renderer) return null;
 
     const elementType = this.getElementType(target);
-    if (!elementType) return null;
-
-    return { renderer, elementType };
+    return !elementType ? null : { renderer, elementType };
   }
 
   private getElementType(target: SVGElement): ElementType | null {
@@ -64,14 +61,11 @@ export class SequenceEventDelegationManager {
     if (tagName === 'text') return 'text';
     if (tagName === 'rect') {
       const parentGroup = target.closest('g[data-element-type="spacer"]');
-      if (parentGroup) return 'spacer';
-      return 'background';
+      return parentGroup ? 'spacer' : 'background';
     }
-    if (tagName === 'g' && target.dataset.elementType !== undefined) {
-      return target.dataset.elementType as ElementType;
-    }
-
-    return null;
+    return tagName === 'g' && target.dataset.elementType !== undefined
+      ? (target.dataset.elementType as ElementType)
+      : null;
   }
 
   private handleMouseOver(event: MouseEvent): void {
@@ -173,6 +167,6 @@ export class SequenceEventDelegationManager {
     });
 
     this.boundHandlers.clear();
-    this.canvas = null;
+    this.canvas = undefined;
   }
 }

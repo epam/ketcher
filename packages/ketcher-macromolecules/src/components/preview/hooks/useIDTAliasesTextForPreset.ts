@@ -16,7 +16,7 @@ const useIDTAliasesTextForPreset = ({
 }: Props) => {
   return useMemo(() => {
     if (!presetName || !idtAliases) {
-      return null;
+      return;
     }
 
     if (presetName.includes('MOE')) {
@@ -36,10 +36,9 @@ const useIDTAliasesTextForPreset = ({
             internal,
             endpoint3,
           ].every((alias) => alias.includes(base));
-          if (isAllPositionsHaveSameBase) {
-            return base;
-          }
-          return `${endpoint5}, ${internal}`;
+          return isAllPositionsHaveSameBase
+            ? base
+            : `${endpoint5}, ${internal}`;
         }
         case PresetPosition.ChainStart: {
           return endpoint5;

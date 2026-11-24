@@ -140,6 +140,7 @@ export const ContextMenu = ({
   const dispatch = useAppDispatch();
   const isContextMenuActive = useAppSelector(isContextMenuActivated);
   const handleMenuItemClick = (params: ItemParams) => {
+    contextMenu.hideAll();
     dispatch(setContextMenuActive(false));
     handleMenuChange(params);
   };

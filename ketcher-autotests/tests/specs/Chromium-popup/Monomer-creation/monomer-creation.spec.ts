@@ -4015,7 +4015,7 @@ for (const monomerToCreate of monomersToCreate55) {
     });
     await expect(monomerOnMacro).toBeVisible();
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await monomerOnMacro.click();
     await expect(monomerOnMacro).not.toBeVisible();
   });

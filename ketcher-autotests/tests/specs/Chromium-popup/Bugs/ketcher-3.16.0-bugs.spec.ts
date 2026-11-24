@@ -9,31 +9,24 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  copyContentToClipboard,
   MonomerType,
   selectAllStructuresOnCanvas,
-  moveMouseAway,
+  deleteByKeyboard,
 } from '@utils';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { getStructure, macromoleculesFilesInputFormats } from 'ketcher-core';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import {
-  createRNAAntisenseChain,
-  getMonomerLocator,
-} from '@utils/macromolecules/monomer';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { expandMonomer } from '@utils/sgroup/helpers';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { collectPageErrors } from '@utils/common/collectPageErrors';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -54,13 +47,11 @@ test('Case 1: Copy/Paste action causes exception in log if done reasonably fast 
    * 3. Press Ctrl+C/Ctrl+V reasonably fast
    * Actual result: exception is thrown
    * Expected result: there are not errors in the console
+   * Version 3.16.0
    */
-  const consoleErrors: string[] = [];
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(msg.text());
-    }
-  });
+
+  const pageErrors = collectPageErrors(page);
+
   await openFileAndAddToCanvas(
     page,
     'KET/all-possible-query-features-with-out-custom-query.ket',
@@ -70,10 +61,11 @@ test('Case 1: Copy/Paste action causes exception in log if done reasonably fast 
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 0, 100, { from: 'pageCenter' });
-  const clipboardErrors = consoleErrors.filter((error) =>
-    error.includes('No valid data on clipboard'),
+  const relevantErrors = pageErrors.errors.filter((message) =>
+    message.includes('No valid data on clipboard'),
   );
-  expect(clipboardErrors.length).toBe(0);
+
+  expect(relevantErrors).toEqual([]);
 });
 
 test('Case 2: Aromatizing causes NULL in export to MDL Molfile V2000 format file', async () => {
@@ -87,13 +79,14 @@ test('Case 2: Aromatizing causes NULL in export to MDL Molfile V2000 format file
    * 3. Click Ctrl+S
    * Actual result: NULL appears in the beginning of the content (Molfile V2000)
    * Expected result: NULL is not present
+   * Version 3.16.0
    */
   await IndigoFunctionsToolbar(page).aromatize();
   await CommonTopLeftToolbar(page).saveButton.click();
-  const saveMolfilePreview = (
-    await SaveStructureDialog(page).saveStructureTextarea.allTextContents()
-  ).join();
-  expect(saveMolfilePreview).not.toMatch(/^null\b/i);
+  const saveMolfilePreview = SaveStructureDialog(page).saveStructureTextarea;
+  await expect(saveMolfilePreview).toHaveValue(/V2000/);
+  await expect(saveMolfilePreview).not.toHaveValue(/^null\b/i);
+  // expect(saveMolfilePreview).not.toMatch(/^null\b/i);
 });
 
 test('Case 3: Micro: S-Group brackets are drawn incorrectly for simple aromatic molecule', async () => {
@@ -107,6 +100,7 @@ test('Case 3: Micro: S-Group brackets are drawn incorrectly for simple aromatic 
    * 3. Check the S-Group brackets
    * Actual result: brackets are rotated and only include part of the molecule
    * Expected result: two vertical brackers are displayed at the left and right sides of the molecule
+   * Version 3.16.0
    */
   await openFileAndAddToCanvas(
     page,
@@ -126,6 +120,7 @@ test('Case 4: Adding hydrogens causes S-Group label positions far away from thei
    * 3. Click the Add/Remove explicit hydrogens button
    * Actual result: S-groups labels are displayed above the structures
    * Expected result: S-group labels stay near the structures
+   * Version 3.16.0
    */
   await openFileAndAddToCanvas(
     page,
@@ -135,7 +130,9 @@ test('Case 4: Adding hydrogens causes S-Group label positions far away from thei
   await takeEditorScreenshot(page);
 });
 
-test('Case 5: Establishing connection between ambiguous phosphate and sugar works wrong', async () => {
+test('Case 5: Establishing connection between ambiguous phosphate and sugar works wrong', async ({
+  FlexCanvas: _,
+}) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
    * Bug: https://github.com/epam/ketcher/issues/5470
@@ -147,9 +144,9 @@ test('Case 5: Establishing connection between ambiguous phosphate and sugar work
 
    * Actual result: Attachment points are not shown, In case of center-to-center way - Select Connection point dialog appears
    * Expected result: Attachment points are shown, Select Connection point dialog doesn't appear
+   * Version 3.16.0
    */
   const helmString = 'RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0';
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -184,6 +181,7 @@ test('Case 6: Copy/Cut/Paste operations works inconsistently with S-Groups (abbr
 
    * Actual result: System paste monomer in collapsed state
    * Expected result: System paste monomer in expanded state
+   * Version 3.16.0
    */
   await openFileAndAddToCanvas(
     page,
@@ -212,13 +210,10 @@ test("Case 7: Antisense creating doesn't work if ambiguous phosphate present in 
 
    * Actual result: Nothing happens, there is an error in console
    * Expected result: Antisense chain created. Phosphate in anti-sence chain should be natural P
+   * Version 3.16.0
    */
-  const consoleErrors: string[] = [];
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(msg.text());
-    }
-  });
+
+  const pageErrors = collectPageErrors(page);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -229,10 +224,11 @@ test("Case 7: Antisense creating doesn't work if ambiguous phosphate present in 
     page,
     getMonomerLocator(page, { monomerType: MonomerType.Phosphate }).first(),
   ).click(MonomerOption.CreateAntisenseRNAStrand);
-  const filteredErrors = consoleErrors.filter((error) =>
-    error.includes('Cannot read properties of undefined'),
+
+  const relevantErrors = pageErrors.errors.filter((message) =>
+    message.includes('Cannot read properties of undefined'),
   );
-  expect(filteredErrors.length).toBe(0);
+  expect(relevantErrors).toEqual([]);
   await takeEditorScreenshot(page);
 });
 
@@ -250,6 +246,7 @@ test("Case 8: Antisense creating doesn't work if ambiguous sugar present in the 
 
    * Actual result: Create Antisense Strand option is absent
    * Expected result: Create Antisense Strand option is present and works correct (antisense creation is possible)
+   * Version 3.16.0
    */
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -280,13 +277,10 @@ test("Case 9: Antisense creating doesn't work if ambiguous peptide present in th
 
    * Actual result: Nothing happens, there is an error in console
    * Expected result: Antisense chain created but with no monomers created for ambiguous monomer in antisence chain
+   * Version 3.16.0
    */
-  const consoleErrors: string[] = [];
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(msg.text());
-    }
-  });
+
+  const pageErrors = collectPageErrors(page);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -297,10 +291,11 @@ test("Case 9: Antisense creating doesn't work if ambiguous peptide present in th
     page,
     getMonomerLocator(page, { monomerType: MonomerType.Peptide }).first(),
   ).click(MonomerOption.CreateAntisenseRNAStrand);
-  const filteredErrors = consoleErrors.filter((error) =>
-    error.includes('Cannot read properties of undefined'),
+
+  const relevantErrors = pageErrors.errors.filter((message) =>
+    message.includes('Cannot read properties of undefined'),
   );
-  expect(filteredErrors.length).toBe(0);
+  expect(relevantErrors).toEqual([]);
   await takeEditorScreenshot(page);
 });
 
@@ -318,12 +313,13 @@ test('Case 10: Phosphate in antisense chain converted wrong', async ({
 
    * Actual result: Phosphate in antisense chain copied as it is (Ssp)
    * Expected result: Phosphate in antisense chain copied as it is P if it belongs to nucleotide
+   * Version 3.16.0
    */
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    'RNA1{[RSpabC](A)[Ssp]}$$$$V2.',
+    'RNA1{[RSpabC](A)[Ssp]}$$$$V2.0',
   );
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(
@@ -348,6 +344,7 @@ test('Case 11: It is possible to create antisense even if it is not allowed (whe
 
    * Actual result: System creates antisense chain for all bases
    * Expected result: Create Antisense Strand option is disabled
+   * Version 3.16.0
    */
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -369,7 +366,7 @@ test('Case 11: It is possible to create antisense even if it is not allowed (whe
   ).toBeDisabled();
 });
 
-test("Case 12: Export to Sequence (3-letter code) and export to IDT doesn't throws an error if user tries to save micromolecule structures", async ({
+test("Case 12.1: Export to Sequence (3-letter code) and export to IDT doesn't throws an error if user tries to save micromolecule structures (Sequence)", async ({
   FlexCanvas: _,
 }) => {
   /**
@@ -383,6 +380,7 @@ test("Case 12: Export to Sequence (3-letter code) and export to IDT doesn't thro
 
    * Actual result: System shows empty export result
    * Expected result: System shown error message: Convert error! Error during sequence type recognition(RNA, DNA or Peptide)
+   * Version 3.16.0
    */
   await openFileAndAddToCanvas(
     page,
@@ -392,8 +390,67 @@ test("Case 12: Export to Sequence (3-letter code) and export to IDT doesn't thro
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
-  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-  expect(errorMessage).toContain(
+  await expect(ErrorMessageDialog(page).errorMessageBody).toContainText(
     `Convert error! Sequence saver: Can't save micro-molecules to sequence format`,
   );
+});
+
+test("Case 12.2: Export to Sequence (3-letter code) and export to IDT doesn't throws an error if user tries to save micromolecule structures (IDT)", async ({
+  FlexCanvas: _,
+}) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6314
+   * Description: Export to Sequence (3-letter code) and export to IDT doesn't throws an error if user tries to save micromolecule structures
+   * Scenario:
+   * 1. Go to Macro - Flex mode
+   * 2. Load from file: All 16 types of bonds.zip
+   * 3. Save canvas to Sequence (3-letter code) or IDT
+
+   * Actual result: System shows empty export result
+   * Expected result: System shown error message: Convert error! Error during sequence type recognition(RNA, DNA or Peptide)
+   * Version 3.16.0
+   */
+  await openFileAndAddToCanvas(
+    page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
+  );
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.IDT,
+  );
+  await expect(ErrorMessageDialog(page).errorMessageBody).toContainText(
+    `Convert error! Error during sequence type recognition(RNA, DNA or Peptide)`,
+  );
+});
+
+test('Case 13: Undo of delete of micromolecule connected to monomer creates understructable separate atom', async ({
+  FlexCanvas: _,
+}) => {
+  /**
+   * Test task: https://github.com/epam/ketcher/issues/10502
+   * Bug: https://github.com/epam/ketcher/issues/6377
+   * Description: Undo of delete of micromolecule connected to monomer creates understructable separate atom
+   * Scenario:
+   * 1. Go to Macro - Flex
+   * 2. Load from file: Undo of delete of micromolecule connected to monomer creates undescructable separate atom.zip
+   * 3. Select molecule and bond and delete it
+   * 4. Press Undo button
+
+   * Actual result: System creates separate understructable atom
+   * Expected result: System recovers molecule and bond
+   * Version 3.16.0
+   */
+  await openFileAndAddToCanvas(
+    page,
+    'KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/Undo of delete of micromolecule connected to monomer creates undescructable separate atom.ket',
+  );
+  const carbonAtoms = getAtomLocator(page, { atomLabel: 'C' });
+  await expect(carbonAtoms).toHaveCount(6);
+  await selectRectangleArea(page, 630, 540, 400, 300); //structure is selected by coordinates since selecting atoms and bonds leaves hidden atoms on canvas - should be changed if possible
+  await takeEditorScreenshot(page);
+  await deleteByKeyboard(page);
+  await expect(carbonAtoms).toHaveCount(0);
+  await CommonTopLeftToolbar(page).undo();
+  await expect(carbonAtoms).toHaveCount(6);
 });

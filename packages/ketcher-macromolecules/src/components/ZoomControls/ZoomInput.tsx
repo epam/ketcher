@@ -49,10 +49,12 @@ export const ZoomInput = ({
       if (!zoomShortcuts.includes(event.key))
         event.nativeEvent.stopImmediatePropagation();
 
-      if (event.key === 'Enter') {
-        onZoomSubmit();
-        inputEl.select();
+      if (!(event.key === 'Enter')) {
+        return;
       }
+
+      onZoomSubmit();
+      inputEl.select();
     },
     [onZoomSubmit, inputRef],
   );
@@ -65,10 +67,12 @@ export const ZoomInput = ({
   // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
-    if (!isTouchDevice) {
-      inputEl?.focus();
-      inputEl?.select();
+    if (isTouchDevice) {
+      return;
     }
+
+    inputEl?.focus();
+    inputEl?.select();
   }, [inputRef]);
 
   return (

@@ -329,7 +329,7 @@ export const SequenceItemContextMenu = ({
             : [props.sequenceItemRenderer?.twoStrandedNode];
 
         selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
-          if (
+          if (!(
             selectedTwoStrandedNode.antisenseChain &&
             selectedTwoStrandedNode.antisenseNode &&
             !(
@@ -338,29 +338,31 @@ export const SequenceItemContextMenu = ({
               selectedTwoStrandedNode.antisenseNode instanceof
                 BackBoneSequenceNode
             )
-          ) {
-            if (
-              !antisenseChainToSelectedNodeMap.has(
-                selectedTwoStrandedNode.antisenseChain,
-              )
-            ) {
-              antisenseChainToSelectedNodeMap.set(
-                selectedTwoStrandedNode.antisenseChain,
-                new Set(),
-              );
-            }
-
-            const antisenseChainSelectedNodes =
-              antisenseChainToSelectedNodeMap.get(
-                selectedTwoStrandedNode.antisenseChain,
-              );
-
-            if (!antisenseChainSelectedNodes) {
-              return;
-            }
-
-            antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
+          )) {
+            return;
           }
+
+          if (
+            !antisenseChainToSelectedNodeMap.has(
+              selectedTwoStrandedNode.antisenseChain,
+            )
+          ) {
+            antisenseChainToSelectedNodeMap.set(
+              selectedTwoStrandedNode.antisenseChain,
+              new Set(),
+            );
+          }
+
+          const antisenseChainSelectedNodes =
+            antisenseChainToSelectedNodeMap.get(
+              selectedTwoStrandedNode.antisenseChain,
+            );
+
+          if (!antisenseChainSelectedNodes) {
+            return;
+          }
+
+          antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
         });
 
         let isGoingToDeleteAllHydrogenBondsForAnyChain = false;

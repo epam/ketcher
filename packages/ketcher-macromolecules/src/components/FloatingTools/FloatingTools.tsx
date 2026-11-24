@@ -97,10 +97,12 @@ export const FloatingTools = () => {
     const dx = Math.abs(viewPos.x - positionRef.current.x);
     const dy = Math.abs(viewPos.y - positionRef.current.y);
 
-    if (dx > POSITION_EPSILON || dy > POSITION_EPSILON) {
-      positionRef.current = viewPos;
-      setPosition(viewPos);
+    if (!(dx > POSITION_EPSILON || dy > POSITION_EPSILON)) {
+      return;
     }
+
+    positionRef.current = viewPos;
+    setPosition(viewPos);
   }, [editor]);
 
   useEffect(() => {

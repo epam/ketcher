@@ -53,11 +53,13 @@ function tmplName(tmpl: Template, i: number): string {
 
 function createKeyDownHandler(callback: () => void) {
   return (e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      callback();
+    if (!(e.key === 'Enter' || e.key === ' ')) {
+      return;
     }
+
+    e.preventDefault();
+    e.stopPropagation();
+    callback();
   };
 }
 

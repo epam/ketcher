@@ -40,16 +40,19 @@ export const PasteFromClipboardDialog = (page: Page) => {
     async selectContentType(contentType: MacroFileType) {
       const contentTypeOption = page.getByText(contentType, { exact: true });
       await locators.contentTypeSelector.waitFor({ state: 'visible' });
-      if (await contentTypeOption.isHidden()) {
-        await locators.contentTypeSelector.click();
-        const listbox = page.getByRole('listbox');
-        await listbox.waitFor({ state: 'visible' });
-        await contentTypeOption.click();
-        if (await listbox.isVisible()) {
-          // eslint-disable-next-line no-inline-comments
-          await contentTypeOption.click(); /* retry */
-        }
+      if (!(await contentTypeOption.isHidden())) {
+        return;
       }
+
+      await locators.contentTypeSelector.click();
+      const listbox = page.getByRole('listbox');
+      await listbox.waitFor({ state: 'visible' });
+      await contentTypeOption.click();
+      if (!(await listbox.isVisible())) {
+        return;
+      }
+      // eslint-disable-next-line no-inline-comments
+      await contentTypeOption.click(); /* retry */
     },
 
     async selectMonomerType(typeDropdownOption: SequenceMonomerType) {

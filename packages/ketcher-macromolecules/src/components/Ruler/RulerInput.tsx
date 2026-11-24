@@ -58,10 +58,12 @@ const RulerInput = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      event.currentTarget.blur();
+    if (!(event.key === 'Enter')) {
+      return;
     }
+
+    event.preventDefault();
+    event.currentTarget.blur();
   };
 
   return (

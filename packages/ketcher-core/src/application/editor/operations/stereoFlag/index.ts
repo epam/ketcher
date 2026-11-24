@@ -37,10 +37,12 @@ export class StereoFlagAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.stereoFlag) {
-      this.deleteStereoFlagChangeModel(this.stereoFlag);
-      renderersManager.deleteStereoFlag(this.stereoFlag);
+    if (!this.stereoFlag) {
+      return;
     }
+
+    this.deleteStereoFlagChangeModel(this.stereoFlag);
+    renderersManager.deleteStereoFlag(this.stereoFlag);
   }
 }
 

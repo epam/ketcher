@@ -26,6 +26,10 @@ class TestMode extends BaseMode {
     super(modeName);
   }
 
+  get keyboardEventHandlers() {
+    return {};
+  }
+
   getNewNodePosition() {
     return new Vec2(0, 0);
   }

@@ -2,6 +2,7 @@ import {
   type ReMultitailArrow,
   FunctionalGroup,
   getAttachmentGroupIdForHapticBondHalf,
+  IMAGE_KEY,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
   type Struct,
@@ -292,6 +293,15 @@ export function getMenuPropsForClosestItem(
 
 const IGNORED_MAPS_LIST = ['enhancedFlags'];
 
+const NON_STRUCTURE_SELECTION_KEYS: Array<keyof Selection> = [
+  MULTITAIL_ARROW_KEY,
+  IMAGE_KEY,
+  'rxnArrows',
+  'rxnPluses',
+  'texts',
+  'simpleObjects',
+];
+
 export function getMenuPropsForSelection(
   selection: Selection | null,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
@@ -300,6 +310,13 @@ export function getMenuPropsForSelection(
 ): ContextMenuProps | null {
   if (!selection) {
     return null;
+  }
+
+  if (NON_STRUCTURE_SELECTION_KEYS.some((key) => selection[key]?.length)) {
+    return {
+      id: CONTEXT_MENU_ID.FOR_SELECTION + ketcherId,
+      onlyDeleteAvailable: true,
+    };
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;

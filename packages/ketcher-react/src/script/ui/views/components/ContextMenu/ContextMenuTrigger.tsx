@@ -35,6 +35,7 @@ import {
   getMenuPropsForClosestItem,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
+import { onlyHasProperty } from './utils';
 import TemplateTool from 'src/script/editor/tool/template';
 
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
@@ -168,12 +169,15 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           selection.attachmentGroups
         ) {
           triggerType = ContextMenuTriggerType.Selection;
+        } else if (selection[MULTITAIL_ARROW_KEY]) {
+          const isSingleArrowSelected =
+            selection[MULTITAIL_ARROW_KEY].length === 1 &&
+            onlyHasProperty(selection, MULTITAIL_ARROW_KEY, ['enhancedFlags']);
+          triggerType = isSingleArrowSelected
+            ? ContextMenuTriggerType.ClosestItem
+            : ContextMenuTriggerType.Selection;
         } else {
-          if (selection[MULTITAIL_ARROW_KEY]) {
-            triggerType = ContextMenuTriggerType.ClosestItem;
-          } else {
-            triggerType = ContextMenuTriggerType.None;
-          }
+          triggerType = ContextMenuTriggerType.None;
         }
       } else {
         // closestItem is outside of selection

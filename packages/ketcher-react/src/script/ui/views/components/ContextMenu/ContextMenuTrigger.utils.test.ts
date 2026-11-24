@@ -55,16 +55,16 @@ describe('getMenuPropsForSelection', () => {
     });
   });
 
-  it('uses the selection menu when atoms and another drawing item are selected', () => {
+  it('offers only Delete when atoms and another drawing item are selected', () => {
     expect(
       getMenuPropsForSelection(
         { atoms: [1, 2], rxnArrows: [3] },
         new Map(),
         'test',
       ),
-    ).toMatchObject({
+    ).toEqual({
       id: CONTEXT_MENU_ID.FOR_SELECTION + 'test',
-      atomIds: [1, 2],
+      onlyDeleteAvailable: true,
     });
   });
 

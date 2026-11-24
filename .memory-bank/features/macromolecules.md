@@ -50,6 +50,18 @@ The system SHALL ensure that the dialog prefers a position above the attachment 
 
 The system SHALL ensure that R1-R2 backbone connections are established automatically (e.g. a peptide bond between amino acids).
 
+#### Scenario: RNA preset attachment point tooltips
+
+- **WHEN** the user hovers the R-labels of an RNA preset in the monomer creation wizard
+- **THEN** the sugar R1 label shows the tooltip 5' and the phosphate R2 label shows the tooltip 3'
+
+#### Scenario: Non-typical attachment points confirmation
+
+- **WHEN** the user submits an RNA preset in the monomer creation wizard and the sugar R1 leaving group is not H and/or the phosphate R2 leaving group is not O (hydroxyl)
+- **THEN** a _Non-typical attachment points_ confirmation is shown before the preset is saved
+- **AND** a single combined message is shown when both leaving groups differ
+- **AND** _Cancel_ is the default button; _OK_ saves the preset with the current attachment points
+
 #### Scenario: Default backbone connection
 
 - **WHEN** the user types or joins monomers within one sequence

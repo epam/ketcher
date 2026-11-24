@@ -1503,7 +1503,7 @@ test(`Case 5331. Replacing selected monomer with a monomer that lacks the requir
   await ErrorMessageDialog(page).close();
 });
 
-const sequencesShowsConfirmationOnReplacement: {
+const sequencesShowsConfirmationOnReplacementForCase17: {
   sequenceId: number;
   replaceMonomerId: number[];
 }[] = [
@@ -1765,6 +1765,25 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
   },
 ];
 
+/*
+  Case 17, 18, 19:
+  Check if the sequence requires confirmation on replacement for the given monomer.
+  This is determined by checking if the sequence ID and the monomer ID are present in the sequencesShowsConfirmationOnReplacement array.
+*/
+const shouldShowConfirmationOnReplacement = (
+  sequenceId: number,
+  replaceMonomerId: number,
+  confirmationSequences: { sequenceId: number; replaceMonomerId: number[] }[],
+) => {
+  return confirmationSequences.find(
+    (item) =>
+      item.sequenceId === sequenceId &&
+      item.replaceMonomerId.includes(replaceMonomerId),
+  )
+    ? true
+    : false;
+};
+
 for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   for (const sequence of twoSequences) {
     test(`Case 17-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} (view mode)`, async () => {
@@ -1786,18 +1805,12 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
 
-      /*
-        Check if the sequence requires confirmation on replacement for the given monomer.
-        This is determined by checking if the sequence ID and the monomer ID are present in the sequencesShowsConfirmationOnReplacement array.
-      */
       const showsConfirmationOnReplecement =
-        sequencesShowsConfirmationOnReplacement.find(
-          (item) =>
-            item.sequenceId === sequence.Id &&
-            item.replaceMonomerId.includes(replaceMonomer.Id),
-        )
-          ? true
-          : false;
+        shouldShowConfirmationOnReplacement(
+          sequence.Id,
+          replaceMonomer.Id,
+          sequencesShowsConfirmationOnReplacementForCase17,
+        );
 
       await selectAndReplaceSymbol(
         page,
@@ -1828,6 +1841,71 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   }
 }
 
+const sequencesShowsConfirmationOnReplacementForCase18: {
+  sequenceId: number;
+  replaceMonomerId: number[];
+}[] = [
+  {
+    sequenceId: 13,
+    replaceMonomerId: [11, 12, 16, 18, 19, 20],
+  },
+  {
+    sequenceId: 14,
+    replaceMonomerId: [11, 12, 16, 18, 19, 20],
+  },
+  {
+    sequenceId: 17,
+    replaceMonomerId: [11, 12, 16, 17, 19, 20],
+  },
+  {
+    sequenceId: 18,
+    replaceMonomerId: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 19,
+    replaceMonomerId: [11, 12, 16, 17, 19, 20],
+  },
+  {
+    sequenceId: 20,
+    replaceMonomerId: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 21,
+    replaceMonomerId: [11, 12, 16, 17, 19, 20],
+  },
+  {
+    sequenceId: 22,
+    replaceMonomerId: [11, 12, 16, 17, 18, 20],
+  },
+  {
+    sequenceId: 23,
+    replaceMonomerId: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 24,
+    replaceMonomerId: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 25,
+    replaceMonomerId: [16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 26,
+    replaceMonomerId: [16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 27,
+    replaceMonomerId: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 28,
+    replaceMonomerId: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  },
+  {
+    sequenceId: 29,
+    replaceMonomerId: [11, 12, 16, 17, 18, 19],
+  },
+];
 for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   for (const sequence of twoSequences) {
     test(`Case 18-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} (view mode)`, async () => {
@@ -1848,10 +1926,19 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       test.setTimeout(20000);
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+      const showsConfirmationOnReplecement =
+        shouldShowConfirmationOnReplacement(
+          sequence.Id,
+          replaceMonomer.Id,
+          sequencesShowsConfirmationOnReplacementForCase18,
+        );
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
-        sequence,
+        {
+          ...sequence,
+          ConfirmationOnReplecement: showsConfirmationOnReplecement,
+        },
         sequence.ReplacementPositions.Center,
       );
 

@@ -61,10 +61,10 @@ const entityToRenderer = new Map<
 ]);
 
 /**
- * Maps a concrete monomer library item to its entity class, renderer class,
- * and KetMonomerClass. Does not handle ambiguous monomers — use
- * monomerFactory for those.
- */
+Maps a concrete monomer library item to its entity class, renderer class,
+and KetMonomerClass. Does not handle ambiguous monomers — use
+monomerFactory for those.
+*/
 export const monomerRendererFactory = (
   monomer: MonomerItemType,
 ): [

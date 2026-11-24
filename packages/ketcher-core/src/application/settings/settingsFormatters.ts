@@ -1,7 +1,7 @@
 /**
- * Helpers for normalizing settings between SettingsService format and UI form
- * formats used by Ketcher packages.
- */
+Helpers for normalizing settings between SettingsService format and UI form
+formats used by Ketcher packages.
+*/
 
 import type { Settings } from './types';
 
@@ -84,9 +84,9 @@ function normalizeStereoLabelStyleForForm(
 }
 
 /**
- * Normalize settings collected from UI forms or legacy Redux state to the
- * canonical SettingsService format validated by ketcher-core.
- */
+Normalize settings collected from UI forms or legacy Redux state to the
+canonical SettingsService format validated by ketcher-core.
+*/
 export function normalizeSettingsForCore(
   settings: SettingsFormValue,
 ): Partial<Settings> {
@@ -118,9 +118,9 @@ export function normalizeSettingsForCore(
 }
 
 /**
- * Normalize SettingsService values for UI controls that still use legacy form
- * enum/string values.
- */
+Normalize SettingsService values for UI controls that still use legacy form
+enum/string values.
+*/
 export function normalizeSettingsForForm(
   settings: Partial<Settings>,
   options: NormalizeSettingsFromCoreOptions = {},

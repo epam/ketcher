@@ -286,7 +286,7 @@ export class LibraryItemDragDropHandler {
     const insertion = this.dragDropModalContext?.insertion;
     if (insertion) {
       // Nothing reached history yet: roll back what was applied on screen.
-      insertion.command.invert(this.deps.renderersContainer);
+      insertion.command.invert(this.dependencies.renderersContainer);
       insertion.ends.left.setPotentialSecondAttachmentPoint(null);
       insertion.ends.right.setPotentialSecondAttachmentPoint(null);
     }
@@ -622,9 +622,9 @@ export class LibraryItemDragDropHandler {
   // ---------------------------------------------------------------------------
 
   private getCursorCanvas(position: { x: number; y: number }): Vec2 | null {
-    const rootOffset = this.deps.getKetcherRootRect();
+    const rootOffset = this.dependencies.getKetcherRootRect();
     if (!rootOffset) return null;
-    const canvasOffset = this.deps.getCanvasOffset();
+    const canvasOffset = this.dependencies.getCanvasOffset();
     return Coordinates.viewToCanvas(
       new Vec2(
         position.x - (canvasOffset.left - rootOffset.left),
@@ -640,13 +640,13 @@ export class LibraryItemDragDropHandler {
     const cursorCanvas = this.getCursorCanvas(position);
     if (!cursorCanvas) return null;
     return findBondInsertionTarget(
-      this.deps.drawingEntitiesManager,
+      this.dependencies.drawingEntitiesManager,
       cursorCanvas,
       {
         outer: DRAG_INSERT_OUTER_THRESHOLD_PX,
         inner: DRAG_INSERT_INNER_THRESHOLD_PX,
       },
-      this.deps.getModeName() === 'snake-layout-mode',
+      this.dependencies.getModeName() === 'snake-layout-mode',
     );
   }
 
@@ -661,7 +661,7 @@ export class LibraryItemDragDropHandler {
       return;
     }
     this.dragInsertTarget = next;
-    const view = this.deps.getTransientDrawingView();
+    const view = this.dependencies.getTransientDrawingView();
     if (next) {
       view.showBondInsertionIndicator({
         position: next.indicatorPosition,
@@ -678,7 +678,7 @@ export class LibraryItemDragDropHandler {
   }
 
   private showInsertionError(message: string): void {
-    this.deps.events.openErrorModal.dispatch({
+    this.dependencies.events.openErrorModal.dispatch({
       errorMessage: message,
       errorTitle: 'Error Message',
     });
@@ -698,7 +698,7 @@ export class LibraryItemDragDropHandler {
       renderersContainer,
       getModeName,
       placeItemOnCanvas,
-    } = this.deps;
+    } = this.dependencies;
 
     const ends = getInsertionEnds(target.bond);
     if (!ends) return;
@@ -800,7 +800,7 @@ export class LibraryItemDragDropHandler {
     ends: InsertionEnds,
     layout: FlexInsertionLayout | null,
   ): Command {
-    const { drawingEntitiesManager } = this.deps;
+    const { drawingEntitiesManager } = this.dependencies;
     const command = new Command();
     const sugar = addedMonomers.find((m) => m instanceof Sugar);
     const phosphate = addedMonomers.find((m) => m instanceof Phosphate);
@@ -899,7 +899,7 @@ export class LibraryItemDragDropHandler {
       renderersContainer,
       getModeName,
       getEditor,
-    } = this.deps;
+    } = this.dependencies;
 
     const finishing = new Command();
     // Re-snap every bond touching a moved or new monomer.
@@ -931,7 +931,9 @@ export class LibraryItemDragDropHandler {
       EditorHistory.getInstance(getEditor()).update(command);
       renderersContainer.update(command);
     }
-    this.deps.calculateAndStoreNextAutochainPosition(addResult.lastMonomer);
+    this.dependencies.calculateAndStoreNextAutochainPosition(
+      addResult.lastMonomer,
+    );
   }
 
   private openInsertionDialog(
@@ -946,7 +948,7 @@ export class LibraryItemDragDropHandler {
       targetMonomer: session.ends.left,
       targetAP: session.ends.leftAp,
     };
-    this.deps.events.openInsertionConnectionModal.dispatch({
+    this.dependencies.events.openInsertionConnectionModal.dispatch({
       leftMonomer: session.ends.left,
       newMonomer,
       rightMonomer: session.ends.right,
@@ -964,7 +966,7 @@ export class LibraryItemDragDropHandler {
   ): void {
     const session = this.dragDropModalContext?.insertion;
     if (!session) return;
-    const { drawingEntitiesManager, renderersContainer } = this.deps;
+    const { drawingEntitiesManager, renderersContainer } = this.dependencies;
 
     const leftBondCmd = drawingEntitiesManager.createPolymerBond(
       payload.leftMonomer,
@@ -985,7 +987,7 @@ export class LibraryItemDragDropHandler {
     session.command.merge(rightBondCmd);
 
     this.isDragDropBondModalOpen = false;
-    this.dragDropModalContext = null;
+    this.dragDropModalContext = undefined;
 
     this.finishInsertion(
       session.command,
@@ -1491,7 +1493,9 @@ export class LibraryItemDragDropHandler {
   Whether any polymer bond of `monomer` lies on a cycle of polymer bonds.
   */
   private isInCircularStructure(monomer: BaseMonomer): boolean {
-    const edges = collectPolymerBondEdges(this.deps.drawingEntitiesManager);
+    const edges = collectPolymerBondEdges(
+      this.dependencies.drawingEntitiesManager,
+    );
     return monomer.polymerBonds.some(
       (bond) =>
         bond.secondMonomer !== undefined &&
@@ -1626,7 +1630,7 @@ export class LibraryItemDragDropHandler {
       }
     }
 
-    return { target: nearest, distance: nearest ? minDist : Infinity };
+    return { target: nearest, distance: nearest ? minDistribution : Infinity };
   }
 
   /**

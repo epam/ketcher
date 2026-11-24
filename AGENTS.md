@@ -67,9 +67,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 
 ## Git and commits
 
-- Work on a feature branch. Commit, push it, and open a PR without asking. `master` is protected, so every change lands through PR review.
-- Exception: the `/commit` skill and `prepare-release` show the staged diff and wait for approval before each commit. Their purpose is that review.
-- Do not commit to `master` or a release branch, force-push a branch someone else works on, or merge a PR.
+- **Never commit/push autonomously.** If a commit/push seems warranted, ask the user first and commit only after explicit approval. Staging (`git add`) is fine without asking.
 - Commit subjects and PR titles use the form in [coding-standards.md](.memory-bank/coding-standards.md#tooling-and-process).
 
 ## Skills and tool files

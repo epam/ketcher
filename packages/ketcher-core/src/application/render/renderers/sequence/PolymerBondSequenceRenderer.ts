@@ -124,7 +124,10 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   }
 
   public drawSelection() {
-    assert(this.rootElement);
+    // Not drawn, e.g. cleared on a layout switch before the new mode draws it
+    if (!this.rootElement) {
+      return;
+    }
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
       this.selectionElement = this.rootElement

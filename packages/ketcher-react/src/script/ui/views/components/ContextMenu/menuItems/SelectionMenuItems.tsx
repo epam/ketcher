@@ -67,6 +67,14 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
 
+  if (props.propsFromTrigger?.onlyDeleteAvailable) {
+    return (
+      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+        {t('common:delete')}
+      </Item>
+    );
+  }
+
   return (
     <>
       {showMarkAsMenu && (

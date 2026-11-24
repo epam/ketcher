@@ -56,6 +56,7 @@ export interface SelectionContextMenuProps
     > {
   id: string;
   attachmentGroupIds?: Array<number>;
+  onlyDeleteAvailable?: boolean;
 }
 
 export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {

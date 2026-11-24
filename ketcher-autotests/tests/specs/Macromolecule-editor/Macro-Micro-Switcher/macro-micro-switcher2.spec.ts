@@ -231,7 +231,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/one-attachment-point-with-oxygen.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
@@ -364,7 +364,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 10,
+    });
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -842,11 +844,11 @@ test.describe('Macro-Micro-Switcher2', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
+    await page.keyboard.press('ControlOrMeta+Alt+D');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
+    await page.keyboard.press('ControlOrMeta+Alt+P');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+R');
+    await page.keyboard.press('ControlOrMeta+Alt+R');
     await takeMonomerLibraryScreenshot(page);
   });
 

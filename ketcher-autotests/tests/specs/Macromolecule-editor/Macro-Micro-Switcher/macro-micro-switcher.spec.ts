@@ -118,9 +118,13 @@ async function zoomWithMouseWheel(page: Page, scrollValue: number) {
 }
 
 async function scrollHorizontally(page: Page, scrollValue: number) {
-  await waitForRender(page, async () => {
-    await page.mouse.wheel(scrollValue, 0);
-  });
+  await waitForRender(
+    page,
+    async () => {
+      await page.mouse.wheel(scrollValue, 0);
+    },
+    50,
+  );
 }
 
 let page: Page;
@@ -990,7 +994,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/structure-with-two-attachment-points.ket',
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     // R1 group is actually H atom
     await ContextMenu(
       page,
@@ -1429,7 +1433,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await getAbbreviationLocator(page, { name: data.monomer.alias }).click();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -1462,7 +1466,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getBondLocator(page, {}).nth(6).click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -1507,7 +1511,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
     await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await clickOnCanvas(page, 645, 318, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

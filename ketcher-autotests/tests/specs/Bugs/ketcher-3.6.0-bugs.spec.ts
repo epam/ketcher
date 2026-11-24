@@ -584,6 +584,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
         page,
         MacroFileType.HELM,
         helm,
+        true,
       );
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain(

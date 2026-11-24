@@ -134,7 +134,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       page,
       incorrectSmileString,
       // error expected
-      false,
+      true,
     );
 
     const convertErrorMessage =

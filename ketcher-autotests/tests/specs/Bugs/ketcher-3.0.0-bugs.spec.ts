@@ -286,8 +286,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     const symbolU = getSymbolLocator(page, { symbolAlias: 'U' }).first();
     await modifyInRnaBuilder(page, symbolU);
-    await keyboardPressOnCanvas(page, 'Enter');
-    await keyboardTypeOnCanvas(page, 'AAA');
+    await keyboardPressOnCanvas(page, 'Enter', { waitForRenderTimeOut: 50 });
+    await keyboardTypeOnCanvas(page, 'AAA', { waitForRenderTimeOut: 50 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

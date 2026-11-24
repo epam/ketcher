@@ -324,7 +324,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Flex,
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     // micro bonds in Macro mode accept the Erase click only when forced
     await getBondLocator(page, {}).first().click({ force: true });
     await expect(getBondLocator(page, {})).toHaveCount(5);
@@ -528,7 +528,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await CommonTopLeftToolbar(page).redo();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
     // nothing is left to redo
-    await CommonTopLeftToolbar(page).redo();
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
   });

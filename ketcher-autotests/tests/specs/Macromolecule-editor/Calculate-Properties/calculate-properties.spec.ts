@@ -80,7 +80,9 @@ test.describe('Calculate Properties tests', () => {
      * 2. Use shortcut Alt+C (Option+C for MacOS) to invoke the "Calculate Properties" window
      */
     await moveMouseAway(page);
-    await keyboardPressOnCanvas(page, 'Alt+C');
+    await waitForCalculateProperties(page, async () => {
+      await page.keyboard.press('Alt+C');
+    });
     await takePageScreenshot(page);
   });
 

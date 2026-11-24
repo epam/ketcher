@@ -401,7 +401,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
       force: true,
     });
-    await keyboardPressOnCanvas(page, 'n');
+    await page.keyboard.press('n');
     await takeEditorScreenshot(page);
   });
 

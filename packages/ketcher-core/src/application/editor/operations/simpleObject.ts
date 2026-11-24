@@ -48,7 +48,7 @@ export class SimpleObjectAdd extends Base<SimpleObjectAddData> {
     const item = new SimpleObject({ mode: this.data.mode });
 
     let itemId: number;
-    if (this.data.id == null) {
+    if (this.data.id == undefined) {
       itemId = struct.simpleObjects.add(item);
       this.data.id = itemId;
     } else {

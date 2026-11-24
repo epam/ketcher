@@ -68,11 +68,9 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public get labelTooltipText(): string | null {
-    if (this.sgroup.type !== SGroup.TYPES.DAT) {
-      return null;
-    }
-
-    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
+    return this.sgroup.type !== SGroup.TYPES.DAT
+      ? null
+      : `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
   }
 
   private addLabelElement<ElementType extends SVGElement>(
@@ -129,9 +127,10 @@ export class SGroupRenderer extends BaseRenderer {
 
     const options: DrawBracketsOptions = {};
     switch (this.sgroup.type) {
-      case SGroup.TYPES.MUL:
+      case SGroup.TYPES.MUL: {
         options.lowerIndexText = String(this.sgroup.data.mul);
         break;
+      }
       case SGroup.TYPES.SRU: {
         const connectivity =
           this.sgroup.data.connectivity === 'ht'
@@ -141,18 +140,21 @@ export class SGroupRenderer extends BaseRenderer {
         options.upperIndexText = connectivity;
         break;
       }
-      case SGroup.TYPES.COP:
+      case SGroup.TYPES.COP: {
         options.upperIndexText = this.sgroup.data.connectivity || 'eu';
         if (this.sgroup.data.subtype) {
           options.lowerIndexText = this.sgroup.data.subtype;
         }
         break;
-      case SGroup.TYPES.SUP:
+      }
+      case SGroup.TYPES.SUP: {
         options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
 
     this.drawBrackets(bracketBox, options);
@@ -267,9 +269,9 @@ export class SGroupRenderer extends BaseRenderer {
       );
     });
 
-    const bracketBox = contentBoxes.reduce<Box2Abs | null>(
+    const bracketBox = contentBoxes.reduce<Box2Abs | undefined>(
       (box, contentBox) => (box ? Box2Abs.union(box, contentBox) : contentBox),
-      null,
+      undefined,
     );
 
     if (!bracketBox) {
@@ -586,22 +588,20 @@ export class SGroupRenderer extends BaseRenderer {
   private getAtomHoverPath(atomRenderer: AtomRenderer): PaperPath {
     const contour = atomRenderer.getHoverContour();
 
-    if (contour.type === 'circle') {
-      return new paperjs.Path.Circle(
-        new paperjs.Point(contour.center.x, contour.center.y),
-        contour.radius,
-      );
-    }
-
-    return new paperjs.Path.Rectangle(
-      new paperjs.Rectangle(
-        contour.x,
-        contour.y,
-        contour.width,
-        contour.height,
-      ),
-      new paperjs.Size(contour.radius, contour.radius),
-    );
+    return contour.type === 'circle'
+      ? new paperjs.Path.Circle(
+          new paperjs.Point(contour.center.x, contour.center.y),
+          contour.radius,
+        )
+      : new paperjs.Path.Rectangle(
+          new paperjs.Rectangle(
+            contour.x,
+            contour.y,
+            contour.width,
+            contour.height,
+          ),
+          new paperjs.Size(contour.radius, contour.radius),
+        );
   }
 
   private getBondHoverPath(

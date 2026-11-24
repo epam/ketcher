@@ -1,6 +1,6 @@
 # Stereochemistry
 
-A user opens or draws a structure with stereocenters, labels them with Calculate CIP, and assigns enhanced stereo groups. Behavior is owned by [openspec/specs/stereochemistry/spec.md](../../../../openspec/specs/stereochemistry/spec.md).
+A user opens or draws a structure with stereocenters, labels them with Calculate CIP, and assigns enhanced stereo groups. Behavior is owned by [.memory-bank/features/stereochemistry.md](../../../../.memory-bank/features/stereochemistry.md).
 
 ## Sub-features
 

@@ -72,13 +72,11 @@ const disallowedModificationTypesSet = new Set<string>(
 export function getDisallowedModificationTypes(
   modificationTypes?: string[],
 ): string[] {
-  if (!Array.isArray(modificationTypes)) {
-    return [];
-  }
-
-  return modificationTypes.filter((type) =>
-    disallowedModificationTypesSet.has(type),
-  );
+  return !Array.isArray(modificationTypes)
+    ? []
+    : modificationTypes.filter((type) =>
+        disallowedModificationTypesSet.has(type),
+      );
 }
 
 const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;

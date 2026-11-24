@@ -51,12 +51,9 @@ export class ReMultitailArrow extends ReObject {
   }
 
   static getTailIdFromRefName(name: string): number | null {
-    if (name.startsWith(MultitailArrowRefName.TAILS)) {
-      return Number.parseInt(
-        name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
-      );
-    }
-    return null;
+    return name.startsWith(MultitailArrowRefName.TAILS)
+      ? Number.parseInt(name.replace(`${MultitailArrowRefName.TAILS}-`, ''))
+      : null;
   }
 
   static drawSingleLineHover(
@@ -399,7 +396,7 @@ export class ReMultitailArrow extends ReObject {
       LayerMap.data,
       this.visel,
       [path, header],
-      null,
+      undefined,
       true,
     );
     this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);

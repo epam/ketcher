@@ -8,7 +8,7 @@ import {
 import {
   type IEditorEvents,
   editorEvents,
-  hotkeysConfiguration,
+  hotkeysConfig,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -220,18 +220,22 @@ const getHelmAliasUniquenessScope = (
   monomerClass: KetMonomerClass | undefined,
 ) => {
   switch (monomerClass) {
-    case KetMonomerClass.AminoAcid:
+    case KetMonomerClass.AminoAcid: {
       return 'peptide';
+    }
     case KetMonomerClass.Sugar:
     case KetMonomerClass.Base:
     case KetMonomerClass.Phosphate:
-    case KetMonomerClass.RNA:
+    case KetMonomerClass.RNA: {
       return 'rna';
-    case KetMonomerClass.CHEM:
+    }
+    case KetMonomerClass.CHEM: {
       return 'chem';
-    default:
+    }
+    default: {
       // Unrecognised classes keep their own namespace rather than losing the check.
       return monomerClass;
+    }
   }
 };
 
@@ -514,10 +518,10 @@ export class CoreEditor {
           persistentMonomersLibrary = this._monomersLibrary;
           persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
         }
-      } catch (err) {
+      } catch (error) {
         KetcherLogger.error(
           'Editor::initializeMonomersLibrary failed to apply stored updates:',
-          err,
+          error,
         );
       }
     }
@@ -538,8 +542,8 @@ export class CoreEditor {
     try {
       const monomersDataRaw = await loadDefaultMonomersData();
       return this.setMonomersLibrary(monomersDataRaw);
-    } catch (err) {
-      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', err);
+    } catch (error) {
+      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', error);
       this.clearMonomersLibrary();
       this.events.openErrorModal.dispatch({
         errorMessage: 'Failed to load default monomers library',
@@ -654,15 +658,12 @@ export class CoreEditor {
       firstMonomer?: MonomerItemType,
       secondMonomer?: MonomerItemType,
     ) => {
-      if (!firstMonomer?.props || !secondMonomer?.props) {
-        return false;
-      }
-
-      return (
-        firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
-        firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
-        firstMonomer.props.hidden === secondMonomer.props.hidden
-      );
+      return !firstMonomer?.props || !secondMonomer?.props
+        ? false
+        : firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
+            firstMonomer.props.MonomerClass ===
+              secondMonomer.props.MonomerClass &&
+            firstMonomer.props.hidden === secondMonomer.props.hidden;
     };
     const getIdtAliasesList = (idtAliases?: IKetIdtAliases): string[] => {
       const base = idtAliases?.base;
@@ -676,26 +677,26 @@ export class CoreEditor {
 
     const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases): string[] =>
       [
-        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : null,
+        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : undefined,
         idtAliases?.modifications?.endpoint3
           ? `IDT 3' alias "${idtAliases.modifications.endpoint3}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.endpoint5
           ? `IDT 5' alias "${idtAliases.modifications.endpoint5}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.internal
           ? `IDT internal alias "${idtAliases.modifications.internal}"`
-          : null,
+          : undefined,
       ].filter(Boolean) as string[];
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
-          : null,
+          : undefined,
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
-          : null,
+          : undefined,
         ...formatIdtAliasDetails(monomer.props?.idtAliases),
       ]
         .filter(Boolean)
@@ -713,10 +714,9 @@ export class CoreEditor {
       const isBilnCollision =
         Boolean(incoming.props?.aliasBILN) &&
         conflicting.props?.aliasBILN === incoming.props?.aliasBILN;
-      if (isHelmCollision || isBilnCollision) {
-        return `Alias collision detected${detail}.`;
-      }
-      return `Duplicate IDT aliases detected${detail}. IDT aliases for 5', 3', internal and base positions must be unique.`;
+      return isHelmCollision || isBilnCollision
+        ? `Alias collision detected${detail}.`
+        : `Duplicate IDT aliases detected${detail}. IDT aliases for 5', 3', internal and base positions must be unique.`;
     };
 
     // handle monomer templates
@@ -919,11 +919,11 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex],
         );
 
-        const existingMonomerRefIndex =
+        const existingMonomerReferenceIndex =
           monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
-        if (existingMonomerRefIndex === -1) {
+        if (existingMonomerReferenceIndex === -1) {
           // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
           KetcherLogger.error(
             'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
@@ -968,12 +968,13 @@ export class CoreEditor {
 
       if (!monomerNameValidationResult.isValid) {
         switch (monomerNameValidationResult.error) {
-          case MonomerNameValidationErrorType.Empty:
+          case MonomerNameValidationErrorType.Empty: {
             reportValidationError(
               templateRef.$ref,
               `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
             );
             return;
+          }
           case MonomerNameValidationErrorType.TooLong: {
             const truncatedTemplateName = `${templateDefinition.name.slice(
               0,
@@ -984,11 +985,12 @@ export class CoreEditor {
             );
             return;
           }
-          case MonomerNameValidationErrorType.InvalidCharacters:
+          case MonomerNameValidationErrorType.InvalidCharacters: {
             KetcherLogger.error(
               `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
             );
             return;
+          }
         }
       }
 
@@ -1013,16 +1015,12 @@ export class CoreEditor {
               const existingTemplate =
                 monomersLibraryParsedJson[existingTemplateRef.$ref];
 
-              if (
-                (existingTemplate as IKetMonomerGroupTemplate)?.type !==
+              return (existingTemplate as IKetMonomerGroupTemplate)?.type !==
                 KetTemplateType.MONOMER_GROUP_TEMPLATE
-              ) {
-                return false;
-              }
-
-              return getIdtAliasesList(
-                (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
-              ).some((alias) => newTemplateIdtAliases.includes(alias));
+                ? false
+                : getIdtAliasesList(
+                    (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
+                  ).some((alias) => newTemplateIdtAliases.includes(alias));
             },
           );
 
@@ -1220,14 +1218,10 @@ export class CoreEditor {
 
   public checkIfBilnAliasExists(alias: string) {
     return this._monomersLibrary.some((monomerItem) => {
-      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
-        return false;
-      }
-
-      return (
-        hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
-        monomerItem.props.aliasBILN === alias
-      );
+      return isAmbiguousMonomerLibraryItem(monomerItem)
+        ? false
+        : hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
+            monomerItem.props.aliasBILN === alias;
     });
   }
 
@@ -1283,7 +1277,7 @@ export class CoreEditor {
   private handleHotKeyEvents(event: KeyboardEvent) {
     if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
-    const keySettings = hotkeysConfiguration;
+    const keySettings = hotkeysConfig;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
@@ -1470,7 +1464,7 @@ export class CoreEditor {
           typeof document.elementsFromPoint === 'function' &&
           document
             .elementsFromPoint(event.clientX, event.clientY)
-            .some((el) => el.__data__?.drawingEntity?.selected)
+            .some((element) => element.__data__?.drawingEntity?.selected)
         ) {
           this.events.rightClickSelectedMonomers.dispatch([
             event,
@@ -1705,17 +1699,12 @@ export class CoreEditor {
         new Vec2(1.5, 0),
       );
     } else if (this.drawingEntitiesManager.hasMonomers) {
-      if (
-        this.nextAutochainPosition &&
-        this.mode.modeName !== 'snake-layout-mode'
-      ) {
-        newMonomerPosition = this.nextAutochainPosition;
-      } else {
-        newMonomerPosition =
-          this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
-            new Vec2(0, 1.5),
-          );
-      }
+      newMonomerPosition =
+        this.nextAutochainPosition && this.mode.modeName !== 'snake-layout-mode'
+          ? this.nextAutochainPosition
+          : this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+              new Vec2(0, 1.5),
+            );
     } else {
       newMonomerPosition = Coordinates.canvasToModel(
         new Vec2(MONOMER_START_X_POSITION, MONOMER_START_Y_POSITION),
@@ -1931,8 +1920,9 @@ export class CoreEditor {
   ): IAutochainMonomerAddResult | undefined {
     const modelPosition = Coordinates.canvasToModel(position);
     if (isLibraryItemRnaPreset(item)) {
-      if (!item.sugar) return undefined;
-      return this.onPlaceRnaPresetOnCanvas(item, modelPosition);
+      return !item.sugar
+        ? undefined
+        : this.onPlaceRnaPresetOnCanvas(item, modelPosition);
     } else if (isAmbiguousMonomerLibraryItem(item)) {
       return this.onPlaceAmbiguousMonomerOnCanvas(item, modelPosition);
     } else {
@@ -2312,6 +2302,11 @@ export class CoreEditor {
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
+    globalThis.dispatchEvent(
+      new CustomEvent('layoutModeSwitchComplete', {
+        detail: { ketcherId: this.ketcherId, mode },
+      }),
+    );
   }
 
   private undoLatestSnakeLayout() {
@@ -2321,7 +2316,7 @@ export class CoreEditor {
         return (
           operation instanceof SelectLayoutModeOperation &&
           operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
+          operation.previousMode !== 'snake-layout-mode'
         );
       });
 
@@ -2739,8 +2734,7 @@ export class CoreEditor {
     } finally {
       this.monomerWizardMode = undefined;
       this._type = EditorType.Macromolecules;
-      this.micromoleculesEditor.clear();
-      this.micromoleculesEditor.clearHistory();
+      this.micromoleculesEditor.clear(true);
     }
 
     if (instanceReplacement) {
@@ -3035,7 +3029,7 @@ export class CoreEditor {
       this.micromoleculesEditor?.render?.options?.microModeScale;
     const macroModeScale = provideEditorSettings().macroModeScale;
 
-    if (microModeScale == null || microModeScale === macroModeScale) {
+    if (microModeScale === macroModeScale || microModeScale == undefined) {
       return 1;
     }
 

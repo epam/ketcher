@@ -102,17 +102,16 @@ function isDisabled(
   actObj: UiAction,
   { editor, server, options }: ActionParams,
 ): boolean {
-  if (typeof actObj.disabled === 'function')
-    return actObj.disabled(editor, server, options);
-  return false;
+  return typeof actObj.disabled === 'function'
+    ? actObj.disabled(editor, server, options)
+    : false;
 }
 
 function isHidden(
   actObj: UiAction,
   { options }: Pick<ActionParams, 'options'>,
 ): boolean {
-  if (typeof actObj.hidden === 'function') return actObj.hidden(options);
-  return false;
+  return typeof actObj.hidden === 'function' ? actObj.hidden(options) : false;
 }
 
 function status(
@@ -190,20 +189,24 @@ export default function (
       );
     }
 
-    case 'UPDATE':
+    case 'UPDATE': {
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
         params as ActionParams,
       );
+    }
 
     // Opening or closing a dialog flips `isSettingsPanelOpen`, so the statuses
     // have to be recomputed on those actions as well.
     case 'MODAL_OPEN':
-    case 'MODAL_CLOSE':
-      if (!state) return state;
-      return buildStateWithStatuses(state.activeTool, params as ActionParams);
+    case 'MODAL_CLOSE': {
+      return !state
+        ? state
+        : buildStateWithStatuses(state.activeTool, params as ActionParams);
+    }
 
-    default:
+    default: {
       return state;
+    }
   }
 }

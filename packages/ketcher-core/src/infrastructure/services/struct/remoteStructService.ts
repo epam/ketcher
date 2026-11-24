@@ -89,14 +89,11 @@ function parametrizeUrl(url: string, params: Record<string, string>) {
       }
 
       const key = segment.slice(1);
-      if (
-        Object.prototype.hasOwnProperty.call(params, key) &&
+      return Object.prototype.hasOwnProperty.call(params, key) &&
         params[key] !== undefined &&
         params[key] !== null
-      ) {
-        return String(params[key]);
-      }
-      return segment;
+        ? String(params[key])
+        : segment;
     })
     .join('');
 }
@@ -108,9 +105,10 @@ async function request<T = unknown>(
   headers?: Record<string, string>,
   responseHandler?: (promise: Promise<Response>) => Promise<T>,
 ): Promise<T> {
-  let requestUrl = url;
-  if (data && method === 'GET')
-    requestUrl = parametrizeUrl(url, data as Record<string, string>);
+  const requestUrl =
+    data && method === 'GET'
+      ? parametrizeUrl(url, data as Record<string, string>)
+      : url;
 
   const mergedHeaders = {
     Accept: 'application/json',
@@ -217,7 +215,7 @@ export class RemoteStructService implements StructService {
   private readonly apiPath: string;
   private readonly defaultOptions: StructServiceOptions;
   private readonly customHeaders?: Record<string, string>;
-  private ketcherId: string | null;
+  private ketcherId: string | undefined;
 
   constructor(
     apiPath: string,
@@ -227,7 +225,7 @@ export class RemoteStructService implements StructService {
     this.apiPath = apiPath;
     this.defaultOptions = defaultOptions;
     this.customHeaders = customHeaders;
-    this.ketcherId = null;
+    this.ketcherId = undefined;
   }
 
   private getStandardServerOptions(options?: StructServiceOptions) {
@@ -467,7 +465,7 @@ export class RemoteStructService implements StructService {
       request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
     const data = await req;
     const response = await pollDeferred(
-      status.bind(null, { id: data.upload_id }),
+      status.bind(undefined, { id: data.upload_id }),
       (statusResponse: ImagoStatusResponse) => {
         if (statusResponse.state === 'FAILURE')
           throw new Error(JSON.stringify(statusResponse));

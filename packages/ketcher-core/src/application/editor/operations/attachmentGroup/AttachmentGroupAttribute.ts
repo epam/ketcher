@@ -9,7 +9,7 @@ type Data = {
   value?: unknown;
 };
 
-export class AttachmentGroupAttr extends BaseOperation {
+export class AttachmentGroupAttribute extends BaseOperation {
   data: Data | null;
   data2: Data | null = null;
 
@@ -40,7 +40,7 @@ export class AttachmentGroupAttr extends BaseOperation {
   }
 
   invert() {
-    const inverted = new AttachmentGroupAttr();
+    const inverted = new AttachmentGroupAttribute();
     inverted.data = this.data2;
     inverted.data2 = this.data;
     return inverted;

@@ -165,12 +165,14 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.BILN;
       break;
     }
-    case ChemicalMimeType.RDF:
+    case ChemicalMimeType.RDF: {
       format = SupportedFormat.RDF;
       break;
-    case ChemicalMimeType.MonomerLibrary:
+    }
+    case ChemicalMimeType.MonomerLibrary: {
       format = SupportedFormat.MonomerLibrary;
       break;
+    }
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');
@@ -181,17 +183,13 @@ function convertMimeTypeToOutputFormat(
 }
 
 function mapCalculatedPropertyName(property: CalculateProps) {
-  if (property === 'gross-formula') {
-    return 'gross';
-  }
-  return property;
+  return property === 'gross-formula' ? 'gross' : property;
 }
 
 function mapWarningGroup(property: string) {
-  if (property === 'OVERLAP_BOND') {
-    return 'overlapping_bonds';
-  }
-  return property.toLowerCase();
+  return property === 'OVERLAP_BOND'
+    ? 'overlapping_bonds'
+    : property.toLowerCase();
 }
 
 // Timers of the calls of one service that still wait for a worker reply, keyed

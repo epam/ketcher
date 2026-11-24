@@ -18,7 +18,6 @@ import {
   StereoLabelStyleType,
   StereoColoringType,
   ShowHydrogenLabels,
-  ShowHydrogenLabelNames,
   defaultBondThickness,
 } from 'ketcher-core';
 import { type Schema, Validator } from 'jsonschema';
@@ -256,7 +255,13 @@ const render: {
   showHydrogenLabels: {
     title: `${f}showHydrogenLabels.title`,
     enum: Object.values(ShowHydrogenLabels),
-    enumNames: Object.values(ShowHydrogenLabelNames),
+    enumNames: [
+      `${f}showHydrogenLabels.enumOff`,
+      `${f}showHydrogenLabels.enumHetero`,
+      `${f}showHydrogenLabels.enumTerminal`,
+      `${f}showHydrogenLabels.enumTerminalAndHetero`,
+      `${f}showHydrogenLabels.enumOn`,
+    ],
     default: ShowHydrogenLabels.TerminalAndHetero,
   },
   // Bonds

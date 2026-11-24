@@ -105,12 +105,12 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   private appendPreviewAttachmentPoint(
-    params: PreviewAttachmentPointParams,
+    parameters: PreviewAttachmentPointParams,
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
   ) {
     const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
-      params;
+      parameters;
     const attachmentPointParams = this.prepareAttachmentPointsParams(
       attachmentPointName,
       customAngle,
@@ -122,16 +122,15 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
         connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
       selected: selectedAttachmentPoint === attachmentPointName,
       usage,
-      canvas: params.canvas,
+      canvas: parameters.canvas,
       applyZoomForPositionCalculation: false,
     });
   }
 
   public get textColor() {
-    if (this.monomer.isModification && this.modificationConfig) {
-      return 'white';
-    }
-    return super.textColor;
+    return this.monomer.isModification && this.modificationConfig
+      ? 'white'
+      : super.textColor;
   }
 
   protected appendBody(
@@ -189,8 +188,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     }
   }
 
-  public showExternal(params: PreviewAttachmentPointParams) {
-    this.rootElement = this.appendRootElement(params.canvas);
+  public showExternal(parameters: PreviewAttachmentPointParams) {
+    this.rootElement = this.appendRootElement(parameters.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
     this.drawModification();
@@ -199,7 +198,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.drawAttachmentPoints(
       (attachmentPointName: AttachmentPointName, customAngle?: number) =>
         this.appendPreviewAttachmentPoint(
-          params,
+          parameters,
           attachmentPointName,
           customAngle,
         ),
@@ -208,11 +207,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   protected get modificationConfig() {
     switch (this.monomer.monomerClass) {
-      case KetMonomerClass.AminoAcid:
+      case KetMonomerClass.AminoAcid: {
         return { backgroundId: '#modified-background', requiresFill: true };
-      case KetMonomerClass.Base:
+      }
+      case KetMonomerClass.Base: {
         return { backgroundId: '#rna-base-modified-background' };
-      case KetMonomerClass.Sugar:
+      }
+      case KetMonomerClass.Sugar: {
         // Ambiguous monomers render on a white body, so the default white sugar
         // band would be invisible — requiresFill drives the <use> fill to a dark
         // color here (the text color isn't #333333) to keep the band visible.
@@ -220,10 +221,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
           backgroundId: '#sugar-modified-background',
           requiresFill: true,
         };
-      case KetMonomerClass.Phosphate:
+      }
+      case KetMonomerClass.Phosphate: {
         return { backgroundId: '#phosphate-modified-background' };
-      default:
+      }
+      default: {
         return undefined;
+      }
     }
   }
 }

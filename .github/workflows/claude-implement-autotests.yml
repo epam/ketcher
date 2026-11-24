@@ -9,7 +9,12 @@ permissions:
   issues: write
   pull-requests: write
   id-token: write
- 
+
+# The model Claude runs on. Set the AUTOTEST_MODEL repository variable to
+# change it without a code change; the default applies when it is unset.
+env:
+  AUTOTEST_MODEL: ${{ vars.AUTOTEST_MODEL || 'claude-sonnet-5-5' }}
+
 jobs:
   implement-autotests:
     if: |
@@ -93,26 +98,43 @@ jobs:
             core.setOutput('spec_file_name', `${featureNumber}-${toFileNamePart(feature.title)}.spec.ts`);
             core.setOutput('version', version);
  
+      # Checks the branch before Claude runs, so a rerun does not spend the
+      # Claude run and then fail at the push. An open PR on the branch stops
+      # the job. A branch left from a closed PR is replaced at the push, with a
+      # lease on the commit seen here (empty when the branch does not exist).
       - name: Create branch for the autotests
         id: vars
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           BRANCH="autotests/${ISSUE_NUMBER}"
+          OPEN_PR=$(gh pr list --repo "$REPOSITORY" --head "$BRANCH" --state open \
+            --json url,isCrossRepository --jq '[.[] | select(.isCrossRepository | not)][0].url // ""')
+          if [ -n "$OPEN_PR" ]; then
+            echo "::error::Branch ${BRANCH} has an open PR: ${OPEN_PR}. Close that PR, or work on it, before running the workflow again."
+            exit 1
+          fi
+          REMOTE_SHA=$(git ls-remote --heads origin "refs/heads/${BRANCH}" | cut -f1)
+          if [ -n "$REMOTE_SHA" ]; then
+            echo "Branch ${BRANCH} exists at ${REMOTE_SHA} with no open PR. The push will replace it."
+          fi
           git checkout -b "$BRANCH"
           echo "branch_name=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "remote_sha=$REMOTE_SHA" >> "$GITHUB_OUTPUT"
  
       # The issue text is part of the prompt, so Claude gets only what writing
       # the spec needs: it can read the repository and write files under
       # ketcher-autotests/. It cannot run commands, commit, or push; the next
       # step does that. Read the issue text before adding the label.
       - name: Implement autotests with Claude
-        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
+        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           claude_args: |
-            --model claude-sonnet-4-6
+            --model ${{ env.AUTOTEST_MODEL }}
             --allowedTools "Read" "Glob" "Grep" "Edit(ketcher-autotests/**)" "Write(ketcher-autotests/**)"
           prompt: |
             Follow the generate-autotests skill (.agents/skills/generate-autotests/SKILL.md) to write a Playwright autotest for this Autotest Request.
@@ -130,8 +152,17 @@ jobs:
             - Write one test for each checklist item in AUTOTEST_REQUEST_DETAILS, in the same order. Start each test title with the item number, such as `Case 3 - ...`.
             - If a checklist item cannot be automated, do not leave it out. Add it as `test.skip` with the same title, and a comment that gives the reason and links AUTOTEST_REQUEST_URL.
             - The Version line of each comment block is KETCHER_VERSION.
+            - Keep every test-data file the spec uses in the feature folder that .memory-bank/testing/testing.md gives. Copy a file from another folder there; do not reference it in its old folder.
             - Do not run the tests, and do not commit or push. The workflow commits your changes under ketcher-autotests/ and opens the PR.
  
+      # A script, not the model, makes sure that every test-data file of the
+      # spec is in the feature folder: it copies files from other folders and
+      # rewrites the paths in the spec.
+      - name: Keep the test data in the feature folder
+        env:
+          SPEC_FILE_NAME: ${{ steps.issue.outputs.spec_file_name }}
+        run: node scripts/autotests/move-test-data.mjs "$SPEC_FILE_NAME" > "$RUNNER_TEMP/test-data.md"
+
       - name: Commit and push the autotests
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -139,6 +170,7 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
+          REMOTE_SHA: ${{ steps.vars.outputs.remote_sha }}
         run: |
           git add -- ketcher-autotests
           if git diff --cached --quiet; then
@@ -148,7 +180,9 @@ jobs:
           git -c user.name="github-actions[bot]" \
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -m "#${ISSUE_NUMBER} - ${ISSUE_TITLE}"
-          git push "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" "HEAD:refs/heads/${BRANCH_NAME}"
+          # An empty REMOTE_SHA makes the lease require that the branch does not exist yet.
+          git push --force-with-lease="refs/heads/${BRANCH_NAME}:${REMOTE_SHA}" \
+            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" "HEAD:refs/heads/${BRANCH_NAME}"
  
       # The PR body shows both counts, so a reviewer sees a missing test at once.
       - name: Create pull request
@@ -163,8 +197,8 @@ jobs:
           TEST_COUNT=$(git show --name-only --format= HEAD -- 'ketcher-autotests/*.spec.ts' \
             | xargs -r cat \
             | grep -cE '^\s*test(\.skip)?\(' || true)
-          BODY=$(printf 'Closes #%s\n\nChecklist items in the issue: %s. Tests in the spec, test.skip included: %s.\n' \
-            "$ISSUE_NUMBER" "$CHECKLIST_COUNT" "$TEST_COUNT")
+          BODY=$(printf 'Closes #%s\n\nChecklist items in the issue: %s. Tests in the spec, test.skip included: %s.\n\n%s\n' \
+            "$ISSUE_NUMBER" "$CHECKLIST_COUNT" "$TEST_COUNT" "$(cat "$RUNNER_TEMP/test-data.md")")
           PR_URL=$(gh pr create \
             --title "#${ISSUE_NUMBER} - ${ISSUE_TITLE}" \
             --body "$BODY" \

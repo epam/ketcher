@@ -16,12 +16,14 @@ npm install
 npm run build:packages            # the add-in uses the built packages
 cd office-addin
 npm run certs                     # once: trusted HTTPS certificate for localhost
-npm run dev                       # https://localhost:3000
+npm start                         # build, then serve on https://localhost:3000
 ```
+
+`npm run dev` does not work yet: the Vite dev server serves the built `ketcher-core` as is, and one of its modules calls `require`, which the browser does not have. PowerPoint needs the production build that `npm start` serves.
 
 Then load `manifest.xml` into PowerPoint:
 
-- **Mac**: `npm run sideload:mac`, restart PowerPoint, then **Insert > Add-ins > My Add-ins** (or the **Ketcher** button on the **Insert** tab).
+- **Mac**: `npm run sideload:mac`, restart PowerPoint, then **Home > Add-ins > Developer Add-ins > Ketcher**. After that, the **Chemical structure** button appears on the **Insert** tab for the rest of the session.
 - **Windows**: `npx office-addin-debugging start manifest.xml desktop --app powerpoint`.
 - **PowerPoint on the web**: **Insert > Add-ins > Upload My Add-in**, then pick `manifest.xml`.
 

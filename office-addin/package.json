@@ -9,6 +9,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "start": "vite build && vite preview",
     "sideload:mac": "node scripts/sideload-mac.mjs",
     "test": "run-s test:prettier test:types",
     "test:prettier": "prettier --check \"./**/*.{js,mjs,ts,tsx,json,css,html}\"",

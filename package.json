@@ -10,7 +10,8 @@
     "example",
     "example-ssr",
     "example-separate-editors",
-    "demo"
+    "demo",
+    "office-addin"
   ],
   "scripts": {
     "prepare": "husky",

@@ -24,6 +24,7 @@ Each module document answers:
 ### Apps
 
 - [example-app](./example-app.md) — the host app in `example/`: host pages, which page a change needs, dev vs production
+- [office-addin](./office-addin.md) — proof-of-concept PowerPoint add-in in `office-addin/`: task pane, editor dialog, KET kept in shape tags
 
 ### Cross-cutting subsystems (deep dives)
 

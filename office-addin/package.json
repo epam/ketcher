@@ -1,0 +1,35 @@
+{
+  "name": "ketcher-office-addin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Proof of concept: Ketcher as a PowerPoint add-in",
+  "type": "module",
+  "scripts": {
+    "certs": "npx --yes office-addin-dev-certs install",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "sideload:mac": "node scripts/sideload-mac.mjs",
+    "test": "run-s test:prettier test:types",
+    "test:prettier": "prettier --check \"./**/*.{js,mjs,ts,tsx,json,css,html}\"",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ketcher-core": "*",
+    "ketcher-macromolecules": "*",
+    "ketcher-react": "*",
+    "ketcher-standalone": "*",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/office-js": "^1.0.500",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "19.1.7",
+    "@vitejs/plugin-react": "^6.0.1",
+    "npm-run-all2": "^9.0.3",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "vite": "8.3.8"
+  }
+}

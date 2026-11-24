@@ -1,0 +1,80 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+.editor-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.editor-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e1e5ea;
+}
+
+.editor-title {
+  margin-right: auto;
+  font-weight: 600;
+}
+
+.editor-error {
+  color: #b3261e;
+}
+
+.editor-bar button {
+  padding: 6px 14px;
+  border: 1px solid #167788;
+  border-radius: 4px;
+  background: #167788;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editor-bar button.secondary {
+  background: #fff;
+  color: #167788;
+}
+
+.editor-bar button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.editor-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-preview {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  max-width: 320px;
+  padding: 12px;
+  border: 1px solid #e1e5ea;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 15%);
+}
+
+.editor-preview p {
+  margin: 0 0 8px;
+}
+
+.editor-preview img {
+  max-width: 100%;
+}

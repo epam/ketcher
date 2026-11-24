@@ -238,6 +238,13 @@ const defaults = [
     },
   },
   {
+    // Globals from office.js, which each add-in page loads from the Office CDN.
+    files: ['office-addin/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: { Office: 'readonly', PowerPoint: 'readonly' },
+    },
+  },
+  {
     files: [
       'example/**/__tests__/**/*.[jt]s?(x)',
       'example/**/*.{spec,test}.[jt]s?(x)',

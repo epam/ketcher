@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  color: #1f1f1f;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.pane h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.pane p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pane button {
+  padding: 8px 12px;
+  border: 1px solid #167788;
+  border-radius: 4px;
+  background: #167788;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pane button.secondary {
+  background: #fff;
+  color: #167788;
+}
+
+.pane button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.status.error {
+  color: #b3261e;
+}
+
+.status.done {
+  color: #1e6b2a;
+}

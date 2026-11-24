@@ -4,11 +4,12 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
 import { AtomLabel, type CoreAtomLabel } from 'domain/constants';
+import { vi } from 'vitest';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 // Shared setup for tests that draw real AtomRenderers into jsdom. A test file
 // mocks 'application/editor/editorSingleton' and 'application/ketcherProvider'
-// (jest.mock is hoisted, so it cannot live here), then calls
+// (vi.mock is hoisted, so it cannot live here), then calls
 // installEditorStub() and mockTextBoxes().
 
 interface Box {
@@ -44,7 +45,7 @@ export function createCanvas() {
  * so moving an atom or deleting a bond changes them.
  */
 export function installEditorStub() {
-  (provideEditorInstance as jest.Mock).mockReturnValue({
+  vi.mocked(provideEditorInstance).mockReturnValue({
     ketcherId: 'test',
     viewModel: {
       atomsToHalfEdges: {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import ReAtom from 'application/render/restruct/reatom';
 import ReStruct from 'application/render/restruct/restruct';
 import { ShowHydrogenLabels } from 'application/render/restruct/showHydrogenLabels';
@@ -76,7 +77,7 @@ function createPaper() {
     set: () => createShape(0, 0, small),
     circle: (x: number, y: number) => createShape(x, y, small),
     path: () => createShape(0, 0, small),
-    rect: jest.fn(),
+    rect: vi.fn(),
   };
 }
 
@@ -170,7 +171,7 @@ function showAtom({
   } as unknown as ReStruct;
 
   const reatom = new ReAtom(atom);
-  jest.spyOn(reatom, 'setHover').mockImplementation(() => undefined);
+  vi.spyOn(reatom, 'setHover').mockImplementation(() => undefined);
   reatom.show(restruct, aid, atomOptions);
 
   return {

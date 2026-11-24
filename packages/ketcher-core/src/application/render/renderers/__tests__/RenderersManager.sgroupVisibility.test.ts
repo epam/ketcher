@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { RenderersManager } from '../RenderersManager';
 import { AtomRenderer } from '../AtomRenderer';
 import { BondRenderer } from '../BondRenderer';
@@ -17,10 +18,10 @@ import {
 } from './atomRendererHarness';
 
 // The singleton needs a live canvas; the renderers only read its view model.
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
-jest.mock('application/ketcherProvider', () => ({
+vi.mock('application/ketcherProvider', () => ({
   ketcherProvider: {
     getKetcher: () => ({ settingsService: undefined }),
   },
@@ -39,12 +40,12 @@ describe('RenderersManager keeps what a collapsed S-group hides hidden', () => {
     restoreBoxes = mockTextBoxes();
     manager = new RenderersManager({ theme: {} });
     // The bonds have no half-edges here, which a bond renderer warns about.
-    jest.spyOn(KetcherLogger, 'warn').mockImplementation(() => undefined);
+    vi.spyOn(KetcherLogger, 'warn').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
     restoreBoxes();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   const isHidden = (element: Element | null | undefined) =>
@@ -60,9 +61,9 @@ describe('RenderersManager keeps what a collapsed S-group hides hidden', () => {
   // collapsed S-group of a monomer does in SGroupRenderer.
   function collapseSGroupOf(hiddenAtom: Atom, hiddenBond: Bond) {
     manager.sgroups.set(1, {
-      remove: jest.fn(),
-      show: jest.fn(),
-      moveLabelsToFront: jest.fn(),
+      remove: vi.fn(),
+      show: vi.fn(),
+      moveLabelsToFront: vi.fn(),
       applyExpandedStateToStructure: (
         atomRenderers: Map<number, AtomRenderer>,
         bondRenderers: Map<number, BondRenderer>,
@@ -191,7 +192,7 @@ describe('RenderersManager keeps what a collapsed S-group hides hidden', () => {
 
   it('does not touch the S-groups when no label was redrawn', () => {
     drawStructure();
-    const apply = jest.spyOn(
+    const apply = vi.spyOn(
       manager.sgroups.get(1) as SGroupRenderer,
       'applyExpandedStateToStructure',
     );

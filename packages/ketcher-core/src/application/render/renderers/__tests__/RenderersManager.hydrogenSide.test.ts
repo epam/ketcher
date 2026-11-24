@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { RenderersManager } from '../RenderersManager';
 import { AtomRenderer } from '../AtomRenderer';
 import { AtomCIP } from 'domain/entities/types';
@@ -21,10 +22,10 @@ import {
 } from './atomRendererHarness';
 
 // The singleton needs a live canvas; the renderers only read its view model.
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
-jest.mock('application/ketcherProvider', () => ({
+vi.mock('application/ketcherProvider', () => ({
   ketcherProvider: {
     getKetcher: () => ({ settingsService: undefined }),
   },
@@ -33,8 +34,8 @@ jest.mock('application/ketcherProvider', () => ({
 // The atoms are real and drawn by real AtomRenderers. A bond renderer needs
 // the whole view model, so a bond only records that it was trimmed again.
 function drawBond(bond: Bond) {
-  const move = jest.fn();
-  bond.renderer = { move, remove: jest.fn() } as unknown as Bond['renderer'];
+  const move = vi.fn();
+  bond.renderer = { move, remove: vi.fn() } as unknown as Bond['renderer'];
   return move;
 }
 
@@ -55,7 +56,7 @@ describe('RenderersManager hydrogen side of atom labels', () => {
 
   afterEach(() => {
     restoreBoxes();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // An N with bonds down-left and down-right puts its H on top. Taking the
@@ -161,7 +162,7 @@ describe('RenderersManager hydrogen side of atom labels', () => {
 
     it('checks each atom once for a drag that moves all of a molecule', () => {
       const { centre, flipping, lowerRight } = stereocentre();
-      const checkSide = jest.spyOn(
+      const checkSide = vi.spyOn(
         AtomRenderer.prototype,
         'redrawLabelIfHydrogenSideChanged',
       );
@@ -179,7 +180,7 @@ describe('RenderersManager hydrogen side of atom labels', () => {
       const { flipping } = stereocentre();
       manager.moveDrawingEntity(flipping);
       manager.runPostRenderMethods();
-      const checkSide = jest.spyOn(
+      const checkSide = vi.spyOn(
         AtomRenderer.prototype,
         'redrawLabelIfHydrogenSideChanged',
       );
@@ -246,10 +247,10 @@ describe('RenderersManager hydrogen side of atom labels', () => {
       const { monomer, moveTo, bondTo } = createMonomer(at(0, 2));
       const bond = bondTo(atom);
       drawAtom(atom);
-      const moveBond = jest.fn();
+      const moveBond = vi.fn();
       bond.renderer = {
         move: moveBond,
-        remove: jest.fn(),
+        remove: vi.fn(),
       } as unknown as MonomerToAtomBond['renderer'];
       return { atom, monomer, moveTo, moveBond };
     }
@@ -263,8 +264,8 @@ describe('RenderersManager hydrogen side of atom labels', () => {
       expect(drawnLabel(atom)).toEqual(H_LEFT);
       // A drag of a selected monomer goes through moveDrawingEntity.
       monomer.baseRenderer = {
-        moveSelection: jest.fn(),
-        drawSelection: jest.fn(),
+        moveSelection: vi.fn(),
+        drawSelection: vi.fn(),
       } as unknown as BaseRenderer;
 
       moveTo(at(180, 2));
@@ -278,8 +279,8 @@ describe('RenderersManager hydrogen side of atom labels', () => {
     it('puts H of the atom on the other side when the monomer is moved by a move operation', () => {
       const { atom, monomer, moveTo } = atomBondedToMonomerOnTheRight();
       monomer.renderer = {
-        move: jest.fn(),
-        drawSelection: jest.fn(),
+        move: vi.fn(),
+        drawSelection: vi.fn(),
       } as unknown as BaseMonomer['renderer'];
 
       moveTo(at(180, 2));
@@ -293,8 +294,8 @@ describe('RenderersManager hydrogen side of atom labels', () => {
       const { atom, monomer, moveTo, moveBond } =
         atomBondedToMonomerOnTheRight();
       monomer.renderer = {
-        move: jest.fn(),
-        drawSelection: jest.fn(),
+        move: vi.fn(),
+        drawSelection: vi.fn(),
       } as unknown as BaseMonomer['renderer'];
       const label = labelElementOf(atom);
 

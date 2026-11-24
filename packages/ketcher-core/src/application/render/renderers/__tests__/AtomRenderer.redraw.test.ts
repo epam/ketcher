@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { AtomRenderer } from '../AtomRenderer';
 import { AtomLabel } from 'domain/constants';
 import { AtomCIP } from 'domain/entities/types';
@@ -16,10 +17,10 @@ import {
 } from './atomRendererHarness';
 
 // The singleton needs a live canvas; the renderer only reads its view model.
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
-jest.mock('application/ketcherProvider', () => ({
+vi.mock('application/ketcherProvider', () => ({
   ketcherProvider: {
     getKetcher: () => ({ settingsService: undefined }),
   },
@@ -42,7 +43,7 @@ describe('AtomRenderer redraw for a new hydrogen side', () => {
 
   afterEach(() => {
     restoreBoxes();
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // An N with two bonds down-left and down-right puts its H on top; moving

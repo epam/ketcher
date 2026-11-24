@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { AtomRenderer } from '../AtomRenderer';
 import { MonomerToAtomBondRenderer } from '../MonomerToAtomBondRenderer';
 import { AtomLabel } from 'domain/constants';
@@ -14,10 +15,10 @@ import {
 } from './atomRendererHarness';
 
 // The singleton needs a live canvas; the renderers only read its view model.
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
-jest.mock('application/ketcherProvider', () => ({
+vi.mock('application/ketcherProvider', () => ({
   ketcherProvider: {
     getKetcher: () => ({ settingsService: undefined }),
   },

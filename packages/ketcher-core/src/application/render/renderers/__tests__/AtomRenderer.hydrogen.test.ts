@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { select, type Selection } from 'd3';
 import type { ImplicitHydrogenSide } from 'domain/helpers';
 import { AtomRenderer } from '../AtomRenderer';
@@ -10,8 +11,8 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 // The singleton needs a live canvas; the renderer only reads its viewModel.
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
 
 interface FakeAtom {
@@ -87,7 +88,7 @@ function bondToMonomer(atom: FakeAtom, visualDeg: number) {
 }
 
 function stubViewModel(atom: FakeAtom, bondAnglesDeg: number[]) {
-  (provideEditorInstance as jest.Mock).mockReturnValue({
+  vi.mocked(provideEditorInstance).mockReturnValue({
     viewModel: {
       atomsToHalfEdges: new Map([[atom, bondAnglesDeg.map(degToModelDir)]]),
     },

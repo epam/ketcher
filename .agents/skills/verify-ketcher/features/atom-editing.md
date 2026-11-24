@@ -1,6 +1,6 @@
 # Atom editing
 
-A user picks an atom tool and clicks the canvas to place an atom or change an existing one. The Atom Properties dialog edits one atom. Behavior is owned by [openspec/specs/atom-editing/spec.md](../../../../openspec/specs/atom-editing/spec.md).
+A user picks an atom tool and clicks the canvas to place an atom or change an existing one. The Atom Properties dialog edits one atom. Behavior is owned by [.memory-bank/features/atom-editing.md](../../../../.memory-bank/features/atom-editing.md).
 
 ## Sub-features
 

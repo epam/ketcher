@@ -7,35 +7,6 @@ import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { isSugarOrAmbiguousSugar } from 'domain/helpers/monomers';
 
 export class Phosphate extends BaseMonomer {
-  constructor(monomerItem: MonomerItemType, _position?: Vec2) {
-    super(monomerItem, _position);
-  }
-
-  public getValidSourcePoint(secondMonomer: BaseMonomer) {
-    if (!secondMonomer) {
-      return this.firstFreeAttachmentPoint;
-    }
-
-    return Phosphate.getValidPoint(
-      this,
-      secondMonomer,
-      secondMonomer.potentialSecondAttachmentPointForBond,
-    );
-  }
-
-  public getValidTargetPoint(firstMonomer: BaseMonomer) {
-    if (!firstMonomer) {
-      return this.firstFreeAttachmentPoint;
-    }
-
-    // same implementation for both source and target attachment points
-    return Phosphate.getValidPoint(
-      this,
-      firstMonomer,
-      firstMonomer.chosenFirstAttachmentPointForBond,
-    );
-  }
-
   private static getValidPoint(
     self: BaseMonomer,
     otherMonomer: BaseMonomer,
@@ -92,6 +63,35 @@ export class Phosphate extends BaseMonomer {
     }
 
     return undefined;
+  }
+
+  constructor(monomerItem: MonomerItemType, _position?: Vec2) {
+    super(monomerItem, _position);
+  }
+
+  public getValidSourcePoint(secondMonomer: BaseMonomer) {
+    if (!secondMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
+    return Phosphate.getValidPoint(
+      this,
+      secondMonomer,
+      secondMonomer.potentialSecondAttachmentPointForBond,
+    );
+  }
+
+  public getValidTargetPoint(firstMonomer: BaseMonomer) {
+    if (!firstMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
+    // same implementation for both source and target attachment points
+    return Phosphate.getValidPoint(
+      this,
+      firstMonomer,
+      firstMonomer.chosenFirstAttachmentPointForBond,
+    );
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

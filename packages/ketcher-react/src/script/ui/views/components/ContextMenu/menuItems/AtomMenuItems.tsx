@@ -21,7 +21,7 @@ import {
   type AtomQueryPropertiesName,
   type AtomQueryProperties,
   type AtomAllAttributeName,
-  atomGetAttr,
+  atomGetAttribute,
   Atom,
   ketcherProvider,
 } from 'ketcher-core';
@@ -134,15 +134,18 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     struct,
     props.propsFromTrigger?.atomIds ?? [],
   );
+  const hasCustomQuery = editableAtomIds.some((atomId) =>
+    Boolean(struct.atoms.get(atomId)?.queryProperties.customQuery),
+  );
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
     const { ctab } = editor.render;
     if (editableAtomIds.length > 0) {
       const atomId = editableAtomIds[0];
       if (properties.includes(key as AtomQueryPropertiesName)) {
-        return atomGetAttr(ctab, atomId, 'queryProperties')?.[key];
+        return atomGetAttribute(ctab, atomId, 'queryProperties')?.[key];
       } else {
-        return atomGetAttr(ctab, atomId, key as AtomAttributeName);
+        return atomGetAttribute(ctab, atomId, key as AtomAttributeName);
       }
     } else return null;
   };
@@ -294,7 +297,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         label={t('components:contextMenu.queryPropertiesMenu')}
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
-        disabled={disabledForMonomerCreation || editableAtomIds.length === 0}
+        disabled={
+          disabledForMonomerCreation ||
+          editableAtomIds.length === 0 ||
+          hasCustomQuery
+        }
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (

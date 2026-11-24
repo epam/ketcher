@@ -10,6 +10,7 @@ import {
   rnaTabPresetsSection,
 } from '../constants/library/Constants';
 import { ContextMenu } from '../common/ContextMenu';
+import { LibraryPresetOption } from '../constants/contextMenu/Constants';
 import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
 import { waitForRender } from '../../utils/common/loaders/waitForRender';
 import { moveMouseAway } from '../../utils/moveMouseAway';
@@ -230,42 +231,82 @@ export const Library = (page: Page) => {
       return getElement(monomer.testId);
     },
 
+    /** The three-dot ("Actions") button of a monomer card (absent for ambiguous monomers). */
+    getMonomerCardDotsButton(monomer: Monomer | PresetType): Locator {
+      return this.getMonomerLibraryCardLocator(monomer).locator('button.dots');
+    },
+
+    /** Locates a library card by its `${code}___${name}` testid (for cards created at runtime). */
+    getMonomerCardByCodeAndNameLocator(code: string, name: string): Locator {
+      return getElement(`${code}___${name}`);
+    },
+
+    /** Opens the three-dot menu of a monomer card. */
+    async openMonomerCardMenu(
+      monomer: Monomer | PresetType,
+      shouldSelectOnFavoritesTab = false,
+    ) {
+      if (shouldSelectOnFavoritesTab) {
+        await this.openTab(LibraryTab.Favorites);
+      } else {
+        await this.goToMonomerLibraryLocation(monomer);
+      }
+
+      const card = this.getMonomerLibraryCardLocator(monomer);
+      await expect(card).toBeVisible();
+      await this.getMonomerCardDotsButton(monomer).click();
+    },
+
+    /** An item of the open card three-dot menu. */
+    getCardMenuItemLocator(option: LibraryPresetOption): Locator {
+      return getElement(option).first();
+    },
+
+    /**
+     * Clicks an item of the open card three-dot menu. The menu eases into its
+     * final position after opening, so a regular click fails Playwright's
+     * stability check — the click event is dispatched directly instead.
+     */
+    async clickCardMenuItem(option: LibraryPresetOption) {
+      await this.getCardMenuItemLocator(option).dispatchEvent('click');
+    },
+
     getMonomerHELMAlias(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.helm ?? null,
+        (element) => element.dataset.helm,
       );
     },
 
     getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.axolabs ?? null,
+        (element) => element.dataset.axolabs,
       );
     },
 
     getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasBase ?? null,
+        (element) => element.dataset.idtaliasBase,
       );
     },
 
     getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint5 ?? null,
+        (element) => element.dataset.idtaliasModificationsEndpoint5,
       );
     },
     getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint3 ?? null,
+        (element) => element.dataset.idtaliasModificationsEndpoint3,
       );
     },
     getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsInternal ?? null,
+        (element) => element.dataset.idtaliasModificationsInternal,
       );
     },
     getMonomerModificationTypes(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.modificationtype ?? null,
+        (element) => element.dataset.modificationtype,
       );
     },
 
@@ -298,9 +339,9 @@ export const Library = (page: Page) => {
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
-      await btn.waitFor({ state: 'visible' });
-      await btn.hover();
+      const button = this.getMonomerAutochainButton(monomer);
+      await button.waitFor({ state: 'visible' });
+      await button.hover();
     },
 
     /**
@@ -312,9 +353,9 @@ export const Library = (page: Page) => {
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
-      await btn.waitFor({ state: 'visible' });
-      await btn.click();
+      const button = this.getMonomerAutochainButton(monomer);
+      await button.waitFor({ state: 'visible' });
+      await button.click();
     },
 
     async dragMonomerOnCanvas(

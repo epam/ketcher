@@ -1,0 +1,274 @@
+name: Update Autotest Snapshots
+
+# A person adds the `Update snapshots` label to a PR after reading its specs,
+# because the job runs the spec code. The job creates only the missing
+# screenshot baselines, in the same Playwright container as CI, and commits them.
+on:
+  pull_request:
+    types: [labeled]
+
+defaults:
+  run:
+    shell: bash
+
+permissions: {}
+
+concurrency:
+  group: update-autotest-snapshots-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+env:
+  # Warnings breaks build on CI
+  # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
+  CI: false
+  MODE: standalone
+  KETCHER_URL: http://127.0.0.1:4002
+  DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
+  CI_ENVIRONMENT: true
+  USE_SEPARATE_INDIGO_WASM: true
+
+jobs:
+  changed_specs:
+    if: >-
+      github.event.label.name == 'Update snapshots' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    outputs:
+      popup: ${{ steps.specs.outputs.popup }}
+      fullscale: ${{ steps.specs.outputs.fullscale }}
+    steps:
+      - name: List the spec files the PR changes
+        id: specs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mapfile -t specs < <(gh api --paginate "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" \
+            --jq '.[] | select(.status != "removed") | .filename' \
+            | grep -E '^ketcher-autotests/tests/specs/.+\.spec\.ts$' || true)
+          popup=()
+          fullscale=()
+          for spec in "${specs[@]}"; do
+            if [[ "$spec" == */Chromium-popup/* ]]; then
+              popup+=("${spec#ketcher-autotests/}")
+            else
+              fullscale+=("${spec#ketcher-autotests/}")
+            fi
+          done
+          echo "Popup specs: ${#popup[@]}, FullScale specs: ${#fullscale[@]}"
+          printf '  %s\n' "${popup[@]}" "${fullscale[@]}"
+          if [ "${#specs[@]}" -eq 0 ]; then
+            echo "The PR changes no spec file under ketcher-autotests/tests/specs/." >&2
+            exit 1
+          fi
+          # One path per line: some spec paths contain spaces.
+          write_list() {
+            echo "$1<<EOF_SPECS"
+            shift
+            if [ "$#" -gt 0 ]; then printf '%s\n' "$@"; fi
+            echo "EOF_SPECS"
+          }
+          {
+            write_list popup "${popup[@]}"
+            write_list fullscale "${fullscale[@]}"
+          } >> "$GITHUB_OUTPUT"
+
+  build_ketcher:
+    needs: changed_specs
+    runs-on: ubuntu-latest
+    container: node:24-trixie-slim
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Install dependencies
+        run: apt-get update -y && apt-get install -y git
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Git safe
+        run: git config --global --add safe.directory '*'
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build:packages && npm run build:example:standalone
+      - name: Upload artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ketcher-dist-snapshots
+          path: example/dist
+          retention-days: 1
+
+  # No secrets and read-only: this job runs the spec code.
+  create_snapshots:
+    needs: [changed_specs, build_ketcher]
+    runs-on: self-hosted-a
+    container: mcr.microsoft.com/playwright:v1.65.0-jammy
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Install dependencies
+        run: npm ci
+      - name: Create folder for dist
+        run: mkdir -p example/dist
+      - name: Download compiled ketcher
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ketcher-dist-snapshots
+          path: example/dist/
+      - name: Create env file
+        run: |
+          cat > ketcher-autotests/.env << EOF
+          DOCKER=true
+          KETCHER_URL=$KETCHER_URL
+          MODE=$MODE
+          IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
+          CI_ENVIRONMENT=$CI_ENVIRONMENT
+          USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          EOF
+      # A failing test does not stop the job: the missing baselines are still written.
+      - name: Run the changed specs and write missing baselines
+        env:
+          POPUP_SPECS: ${{ needs.changed_specs.outputs.popup }}
+          FULLSCALE_SPECS: ${{ needs.changed_specs.outputs.fullscale }}
+        run: |
+          cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
+          cd ketcher-autotests/
+          npx playwright install chromium
+          # Playwright reads each path as a regular expression, so escape it.
+          to_filters() {
+            if [ -n "$1" ]; then
+              # shellcheck disable=SC2001 # one sed escapes every metacharacter
+              sed 's/[][\\.^$*+?(){}|]/\\&/g' <<< "$1"
+            fi
+          }
+          mapfile -t popup < <(to_filters "$POPUP_SPECS")
+          mapfile -t fullscale < <(to_filters "$FULLSCALE_SPECS")
+          if [ "${#popup[@]}" -gt 0 ]; then
+            npx playwright test --project=chromium-popup --update-snapshots=missing "${popup[@]}" || true
+          fi
+          if [ "${#fullscale[@]}" -gt 0 ]; then
+            npx playwright test --project=chromium --update-snapshots=missing "${fullscale[@]}" || true
+          fi
+      - name: Collect the new baselines
+        run: |
+          git config --global --add safe.directory '*'
+          mkdir -p new-snapshots
+          # -z and quotePath=false keep file names with non-ASCII characters as they are.
+          while IFS= read -r -d '' file; do
+            if [[ "$file" =~ ^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$ ]]; then
+              mkdir -p "new-snapshots/$(dirname "$file")"
+              cp "$file" "new-snapshots/$file"
+            fi
+          done < <(git -c core.quotePath=false ls-files -z --others --exclude-standard -- ketcher-autotests)
+          echo "New baselines: $(find new-snapshots -name '*.png' | wc -l)"
+      - name: Upload the new baselines
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: new-snapshots
+          path: new-snapshots/
+          if-no-files-found: error
+          retention-days: 5
+
+  # Commits only PNG files under ketcher-autotests/tests/specs/**-snapshots/.
+  commit_snapshots:
+    needs: [changed_specs, create_snapshots]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Checkout the PR branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Download the new baselines
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: new-snapshots
+          path: ${{ runner.temp }}/new-snapshots
+      - name: Copy only PNG baselines into the checkout
+        env:
+          SOURCE: ${{ runner.temp }}/new-snapshots
+        run: |
+          cd "$SOURCE"
+          while IFS= read -r -d '' file; do
+            file="${file#./}"
+            if [[ ! "$file" =~ ^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$ ]] \
+              || [[ "$file" =~ (^|/)\.\.(/|$) ]]; then
+              echo "Not a baseline path: $file" >&2
+              exit 1
+            fi
+            if [ "$(head -c 8 "$file" | od -An -tx1 | tr -d ' \n')" != "89504e470d0a1a0a" ]; then
+              echo "Not a PNG file: $file" >&2
+              exit 1
+            fi
+            mkdir -p "$GITHUB_WORKSPACE/$(dirname "$file")"
+            cp "$file" "$GITHUB_WORKSPACE/$file"
+          done < <(find . -type f -print0)
+      - name: Commit and push
+        id: commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          git add -A -- ketcher-autotests/tests/specs
+          if git diff --cached --quiet; then
+            echo "No new baselines to commit."
+            exit 0
+          fi
+          git diff --cached --name-only
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "${PR_TITLE}" -m "Add the missing screenshot baselines."
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" "HEAD:refs/heads/${BRANCH_NAME}"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+      # The pull_request runs of a GITHUB_TOKEN push wait for approval, so start the test runs here.
+      - name: Start the test runs on the PR branch
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          POPUP_SPECS: ${{ needs.changed_specs.outputs.popup }}
+          FULLSCALE_SPECS: ${{ needs.changed_specs.outputs.fullscale }}
+        run: |
+          if [ -n "$POPUP_SPECS" ]; then
+            gh workflow run run-tests-popup.yml --repo "$REPOSITORY" --ref "$BRANCH_NAME"
+          fi
+          if [ -n "$FULLSCALE_SPECS" ]; then
+            gh workflow run run-tests.yml --repo "$REPOSITORY" --ref "$BRANCH_NAME"
+          fi
+
+  remove_label:
+    needs: [changed_specs, build_ketcher, create_snapshots, commit_snapshots]
+    if: always() && needs.changed_specs.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Remove the Update snapshots label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: gh pr edit "$PR_NUMBER" --repo "$REPOSITORY" --remove-label 'Update snapshots'

@@ -20,5 +20,5 @@ export function getImageLocator(
     .map(([key, value]) => `[${key}="${value}"]`)
     .join('');
 
-  return page.locator(attributeSelectors);
+  return page.locator(attributeSelectors).filter({ visible: true });
 }

@@ -2,7 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import { Struct } from 'ketcher-core';
 import TemplateTable, { type Template } from './TemplateTable';
 
-jest.mock('./TemplateItem', () => ({
+vi.mock('./TemplateItem', () => ({
   __esModule: true,
   default: ({ shouldRenderPreview }: { shouldRenderPreview: boolean }) => (
     <div
@@ -38,11 +38,11 @@ const getPreviewStates = () =>
 
 describe('TemplateTable', () => {
   let idleCallbacks: Array<() => void>;
-  let requestIdleCallback: jest.Mock;
+  let requestIdleCallback: Mock;
 
   beforeEach(() => {
     idleCallbacks = [];
-    requestIdleCallback = jest.fn((callback: () => void) => {
+    requestIdleCallback = vi.fn((callback: () => void) => {
       idleCallbacks.push(callback);
       return idleCallbacks.length;
     });
@@ -53,7 +53,7 @@ describe('TemplateTable', () => {
     });
     Object.defineProperty(globalThis, 'cancelIdleCallback', {
       configurable: true,
-      value: jest.fn(),
+      value: vi.fn(),
     });
   });
 
@@ -82,7 +82,7 @@ describe('TemplateTable', () => {
       <TemplateTable
         templates={createTemplates(10)}
         selected={null}
-        onSelect={jest.fn()}
+        onSelect={vi.fn()}
       />,
     );
 

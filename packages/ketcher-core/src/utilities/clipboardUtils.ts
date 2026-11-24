@@ -40,7 +40,7 @@ export function legacyCopy(
     return;
   }
 
-  let curFmt: string | null = null;
+  let curFmt: string | undefined;
   clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] || '');
   try {
     Object.entries(data).forEach(([fmt, value]) => {
@@ -75,6 +75,11 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
+  globalThis.dispatchEvent(event);
+}
+
+export function notifyPasteCompleted() {
+  const event = new Event('pasteComplete');
   globalThis.dispatchEvent(event);
 }
 

@@ -10,42 +10,14 @@ type ElementType = 'text' | 'background' | 'spacer';
  * so we don't have to add handlers to each sequence item individually.
  */
 export class SequenceEventDelegationManager {
-  private static _instance: SequenceEventDelegationManager | null = null;
-  private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
+  private static _instance: SequenceEventDelegationManager | undefined;
+  private canvas: D3SvgElementSelection<SVGGElement, void> | undefined;
   private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
     new Map();
 
   public static get instance() {
     this._instance ??= new SequenceEventDelegationManager();
     return this._instance;
-  }
-
-  public attachDelegatedEvents(
-    canvas: D3SvgElementSelection<SVGGElement, void>,
-  ): void {
-    if (this.canvas) {
-      this.removeDelegatedEvents();
-    }
-
-    this.canvas = canvas;
-
-    this.attachHandler('mouseover', this.handleMouseOver.bind(this));
-    this.attachHandler('mousemove', this.handleMouseMove.bind(this));
-    this.attachHandler('mouseout', this.handleMouseOut.bind(this));
-    this.attachHandler('mousedown', this.handleMouseDown.bind(this));
-    this.attachHandler('click', this.handleClick.bind(this));
-    this.attachHandler('dblclick', this.handleDblClick.bind(this));
-  }
-
-  public removeDelegatedEvents(): void {
-    if (!this.canvas) return;
-
-    this.boundHandlers.forEach((_, eventType) => {
-      this.canvas?.on(eventType, null);
-    });
-
-    this.boundHandlers.clear();
-    this.canvas = null;
   }
 
   private attachHandler(
@@ -173,5 +145,33 @@ export class SequenceEventDelegationManager {
     if (elementType === 'text' || elementType === 'background') {
       editorEvents.doubleClickOnSequenceItem.dispatch(event);
     }
+  }
+
+  public attachDelegatedEvents(
+    canvas: D3SvgElementSelection<SVGGElement, void>,
+  ): void {
+    if (this.canvas) {
+      this.removeDelegatedEvents();
+    }
+
+    this.canvas = canvas;
+
+    this.attachHandler('mouseover', this.handleMouseOver.bind(this));
+    this.attachHandler('mousemove', this.handleMouseMove.bind(this));
+    this.attachHandler('mouseout', this.handleMouseOut.bind(this));
+    this.attachHandler('mousedown', this.handleMouseDown.bind(this));
+    this.attachHandler('click', this.handleClick.bind(this));
+    this.attachHandler('dblclick', this.handleDblClick.bind(this));
+  }
+
+  public removeDelegatedEvents(): void {
+    if (!this.canvas) return;
+
+    this.boundHandlers.forEach((_, eventType) => {
+      this.canvas?.on(eventType, null);
+    });
+
+    this.boundHandlers.clear();
+    this.canvas = undefined;
   }
 }

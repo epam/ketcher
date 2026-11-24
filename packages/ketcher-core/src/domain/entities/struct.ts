@@ -1468,7 +1468,11 @@ export class Struct {
       atom,
       shouldIncludeAtomsInCollapsedSgroups,
     );
-    let correctConn = conn;
+    // calcConn counts the dative and hydrogen neighbours of an aromatic atom, the legacy path must not
+    const legacyConn = isAromatic
+      ? conn - this.countDativeAndHydrogenNeighbors(atom)
+      : conn;
+    let correctConn = legacyConn;
     atom.badConn = false;
 
     const dativeCounts = countDativeBonds(
@@ -1477,56 +1481,55 @@ export class Struct {
       atom,
       shouldIncludeAtomsInCollapsedSgroups,
     );
-    const hasDativeBond =
-      dativeCounts.donorCount + dativeCounts.acceptorCount > 0;
-
-    // Dative valence of an aromatic atom is calculated on a Kekulé structure.
-    // If that fails, the legacy path below is used.
-    if (
-      isAromatic &&
-      atom.explicitValence < 0 &&
+    const hasDativeCheck =
+      dativeCounts.donorCount + dativeCounts.acceptorCount > 0 &&
       !atom.isQuery() &&
-      !atom.attachmentPoints &&
-      hasDativeBond
-    ) {
-      const kekuleBondOrderSum = calcKekuleBondOrderSum(
-        this,
-        aid,
-        shouldIncludeAtomsInCollapsedSgroups,
-        kekulizationCache,
-      );
-      if (
-        kekuleBondOrderSum !== null &&
-        this.calcDativeImplicitHydrogen(atom, kekuleBondOrderSum, dativeCounts)
-      ) {
-        return;
-      }
-    }
+      !atom.attachmentPoints;
+    let dativeBadConn = false;
 
-    if (hasDativeBond && !atom.isQuery() && !atom.attachmentPoints) {
-      // Where no exact bond order sum is available, only a failure on a lower bound is flagged
-      atom.badConn = this.hasDativeCapacityLowerBoundError(
+    if (hasDativeCheck) {
+      if (atom.explicitValence < 0) {
+        const exactBondOrderSum = isAromatic
+          ? calcKekuleBondOrderSum(
+              this,
+              aid,
+              shouldIncludeAtomsInCollapsedSgroups,
+              kekulizationCache,
+            )
+          : conn;
+        if (
+          exactBondOrderSum !== null &&
+          exactBondOrderSum >= 0 &&
+          this.calcDativeImplicitHydrogen(atom, exactBondOrderSum, dativeCounts)
+        ) {
+          return;
+        }
+      }
+
+      // Without an exact bond order sum, only a failure on the lower bound is flagged
+      dativeBadConn = this.hasDativeCapacityLowerBoundError(
         atom,
         dativeCounts,
-        includeAtomsInCollapsedSgroups,
+        shouldIncludeAtomsInCollapsedSgroups,
       );
+      atom.badConn = dativeBadConn;
     }
 
     if (isAromatic) {
-      if (charge === 0 && atom.label === 'C') {
-        if (conn === 3) {
+      if (atom.label === 'C' && charge === 0) {
+        if (legacyConn === 3) {
           atom.implicitH = -radicalElectrons(atom.radical);
           return;
         }
-        if (conn === 2) {
+        if (legacyConn === 2) {
           atom.implicitH = 1 - radicalElectrons(atom.radical);
           return;
         }
       } else if (
-        (charge === 0 && atom.label === 'O') ||
-        (charge === 0 && conn === 3 && atom.label === 'N') ||
-        (charge === 1 && conn === 3 && atom.label === 'N') ||
-        (charge === 0 && conn === 3 && atom.label === 'S') ||
+        (atom.label === 'O' && charge === 0) ||
+        (atom.label === 'N' && charge === 0 && legacyConn === 3) ||
+        (atom.label === 'N' && charge === 1 && legacyConn === 3) ||
+        (atom.label === 'S' && charge === 0 && legacyConn === 3) ||
         !atom.implicitH
       ) {
         atom.implicitH = 0;
@@ -1541,14 +1544,6 @@ export class Struct {
       return;
     }
 
-    if (
-      !isAromatic &&
-      atom.explicitValence < 0 &&
-      this.calcDativeImplicitHydrogen(atom, correctConn, dativeCounts)
-    ) {
-      return;
-    }
-
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label);
       atom.implicitH = elem
@@ -1560,7 +1555,23 @@ export class Struct {
       }
     } else {
       atom.calcValence(correctConn);
+      if (hasDativeCheck) {
+        atom.badConn = dativeBadConn;
+      }
     }
+  }
+
+  private countDativeAndHydrogenNeighbors(atom: Atom): number {
+    return atom.neighbors.filter((neighborId) => {
+      const hb = this.halfBonds.get(neighborId);
+      assert(hb, `HalfBond ${neighborId} not found`);
+      const bond = this.bonds.get(hb.bid);
+      assert(bond, `Bond ${hb.bid} not found`);
+      return (
+        bond.type === Bond.PATTERN.TYPE.DATIVE ||
+        bond.type === Bond.PATTERN.TYPE.HYDROGEN
+      );
+    }).length;
   }
 
   private calcDativeImplicitHydrogen(
@@ -1637,7 +1648,7 @@ export class Struct {
       collectDativeAtomsToRecalculate(
         this,
         list,
-        includeAtomsInCollapsedSgroups,
+        shouldIncludeAtomsInCollapsedSgroups,
       ).forEach((aid) => {
         if (this.atoms.get(aid)) {
           this.calcImplicitHydrogen(

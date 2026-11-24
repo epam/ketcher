@@ -250,86 +250,46 @@ describe('Struct dative bond valence', () => {
         ],
       );
       const carbon = struct.atoms.get(ids[0]);
-      expect(carbon?.implicitH).toBeCloseTo(0);
+      expect(carbon?.implicitH).toBeCloseTo(1);
       expect(carbon?.badConn).toBe(false);
     });
   });
 
   describe('dative capacity when bond orders are not exact', () => {
-    it('underlines an aromatic carbon accepting three dative bonds when the ring has an unsupported element', () => {
-      const { struct, ids } = buildStruct(
-        [
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'Fe' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'N' },
-          { label: 'N' },
-          { label: 'N' },
-        ],
-        [
-          ...[0, 1, 2, 3, 4, 5].map((index) => ({
-            begin: index,
-            end: (index + 1) % 6,
-            type: AROMATIC,
-          })),
-          { begin: 6, end: 0, type: DATIVE },
-          { begin: 7, end: 0, type: DATIVE },
-          { begin: 8, end: 0, type: DATIVE },
-        ],
-      );
-      expect(struct.atoms.get(ids[0])?.badConn).toBe(true);
-    });
-
-    it('underlines an aromatic carbon accepting two dative bonds when the ring has an unsupported element', () => {
-      const { struct, ids } = buildStruct(
-        [
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'Fe' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'N' },
-          { label: 'N' },
-        ],
-        [
-          ...[0, 1, 2, 3, 4, 5].map((index) => ({
-            begin: index,
-            end: (index + 1) % 6,
-            type: AROMATIC,
-          })),
-          { begin: 6, end: 0, type: DATIVE },
-          { begin: 7, end: 0, type: DATIVE },
-        ],
-      );
-      expect(struct.atoms.get(ids[0])?.badConn).toBe(true);
-    });
-
-    it('does not underline an aromatic carbon accepting one dative bond when the ring has an unsupported element', () => {
-      const { struct, ids } = buildStruct(
-        [
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'Fe' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'N' },
-        ],
-        [
-          ...[0, 1, 2, 3, 4, 5].map((index) => ({
-            begin: index,
-            end: (index + 1) % 6,
-            type: AROMATIC,
-          })),
-          { begin: 6, end: 0, type: DATIVE },
-        ],
-      );
-      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
-    });
+    // Benzene-like ring with an Fe atom, so the ring cannot be kekulized; the acceptors bind C0
+    it.each([
+      { acceptorCount: 3, badConn: true },
+      { acceptorCount: 2, badConn: true },
+      { acceptorCount: 1, badConn: false },
+    ])(
+      'gives badConn $badConn to an aromatic carbon accepting $acceptorCount dative bonds when the ring has an unsupported element',
+      ({ acceptorCount, badConn }) => {
+        const { struct, ids } = buildStruct(
+          [
+            { label: 'C' },
+            { label: 'C' },
+            { label: 'Fe' },
+            { label: 'C' },
+            { label: 'C' },
+            { label: 'C' },
+            ...Array.from({ length: acceptorCount }, () => ({ label: 'N' })),
+          ],
+          [
+            ...[0, 1, 2, 3, 4, 5].map((index) => ({
+              begin: index,
+              end: (index + 1) % 6,
+              type: AROMATIC,
+            })),
+            ...Array.from({ length: acceptorCount }, (_, index) => ({
+              begin: 6 + index,
+              end: 0,
+              type: DATIVE,
+            })),
+          ],
+        );
+        expect(struct.atoms.get(ids[0])?.badConn).toBe(badConn);
+      },
+    );
 
     it('underlines a carbon with a query bond neighbour accepting three dative bonds', () => {
       const { struct, ids } = buildStruct(
@@ -360,6 +320,33 @@ describe('Struct dative bond valence', () => {
       );
       expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
     });
+
+    it('does not underline an aromatic carbon whose donor and acceptor cancel when the ring has an unsupported element', () => {
+      // Ring C0-C1-Fe-C3-C4; C0 also has a single bond to C5, donates to Ni and accepts from N
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'Fe' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'Ni' },
+          { label: 'N' },
+        ],
+        [
+          ...[0, 1, 2, 3, 4].map((index) => ({
+            begin: index,
+            end: (index + 1) % 5,
+            type: AROMATIC,
+          })),
+          { begin: 0, end: 5, type: SINGLE },
+          { begin: 0, end: 6, type: DATIVE },
+          { begin: 7, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
   });
 
   describe('aromatic atoms with dative bonds (req 1.1)', () => {
@@ -368,7 +355,7 @@ describe('Struct dative bond valence', () => {
       ringLabels: string[],
       partner: string,
       dativeDirection: 'donor' | 'acceptor',
-      ringAtom = 0,
+      ringAtoms = [0],
     ) {
       const size = ringLabels.length;
       const ringBonds = ringLabels.map((_label, index) => ({
@@ -376,13 +363,14 @@ describe('Struct dative bond valence', () => {
         end: (index + 1) % size,
         type: AROMATIC,
       }));
-      const dativeBond =
+      const dativeBonds = ringAtoms.map((ringAtom) =>
         dativeDirection === 'donor'
           ? { begin: ringAtom, end: size, type: DATIVE }
-          : { begin: size, end: ringAtom, type: DATIVE };
+          : { begin: size, end: ringAtom, type: DATIVE },
+      );
       return buildStruct(
         [...ringLabels.map((label) => ({ label })), { label: partner }],
-        [...ringBonds, dativeBond],
+        [...ringBonds, ...dativeBonds],
       );
     }
 
@@ -412,7 +400,7 @@ describe('Struct dative bond valence', () => {
         ['N', 'C', 'N', 'C', 'C'],
         'Ni',
         'donor',
-        2,
+        [2],
       );
       expect(struct.atoms.get(ids[2])?.implicitH).toBe(0);
       expect(struct.atoms.get(ids[2])?.badConn).toBe(false);
@@ -451,25 +439,11 @@ describe('Struct dative bond valence', () => {
 
     it('gives exactly one hydrogen to imidazole when both nitrogens donate', () => {
       // Ring order: N1, C2, N3, C4, C5; the partner Ni is atom 5
-      const ringBonds = [0, 1, 2, 3, 4].map((index) => ({
-        begin: index,
-        end: (index + 1) % 5,
-        type: AROMATIC,
-      }));
-      const { struct, ids } = buildStruct(
-        [
-          { label: 'N' },
-          { label: 'C' },
-          { label: 'N' },
-          { label: 'C' },
-          { label: 'C' },
-          { label: 'Ni' },
-        ],
-        [
-          ...ringBonds,
-          { begin: 0, end: 5, type: DATIVE },
-          { begin: 2, end: 5, type: DATIVE },
-        ],
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'N', 'C', 'C'],
+        'Ni',
+        'donor',
+        [0, 2],
       );
       const nitrogens = [ids[0], ids[2]].map((aid) => struct.atoms.get(aid));
       expect(nitrogens.filter((atom) => atom?.implicitH === 1)).toHaveLength(1);
@@ -481,7 +455,7 @@ describe('Struct dative bond valence', () => {
         ['N', 'C', 'N', 'C', 'C'],
         'Ni',
         'donor',
-        2,
+        [2],
       );
       const donor = struct.atoms.get(ids[2]) as Atom;
       const nitrogen = struct.atoms.get(ids[0]) as Atom;
@@ -498,6 +472,47 @@ describe('Struct dative bond valence', () => {
         implicitH: donor.implicitH,
         badConn: donor.badConn,
       });
+    });
+
+    it('recalculates the nitrogen donors after a bond to a ring substituent becomes ANY', () => {
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'N', 'C', 'C'],
+        'Ni',
+        'donor',
+        [0, 2],
+      );
+      // CH3 on C2 (ring index 1)
+      const methylId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(1, 1), fragment: 0 }),
+      );
+      const methylBondId = struct.bonds.add(
+        new Bond({ begin: ids[1], end: methylId, type: SINGLE }),
+      );
+      struct.initHalfBonds();
+      struct.initNeighbors();
+      struct.setImplicitHydrogen();
+
+      struct.bonds.set(
+        methylBondId,
+        new Bond({
+          begin: ids[1],
+          end: methylId,
+          type: Bond.PATTERN.TYPE.ANY,
+        }),
+      );
+
+      struct.setImplicitHydrogen([ids[1], methylId]);
+      const afterPartial = [ids[0], ids[2]].map((aid) => ({
+        implicitH: struct.atoms.get(aid)?.implicitH,
+        badConn: struct.atoms.get(aid)?.badConn,
+      }));
+
+      struct.setImplicitHydrogen();
+      const afterFull = [ids[0], ids[2]].map((aid) => ({
+        implicitH: struct.atoms.get(aid)?.implicitH,
+        badConn: struct.atoms.get(aid)?.badConn,
+      }));
+      expect(afterPartial).toEqual(afterFull);
     });
   });
 });

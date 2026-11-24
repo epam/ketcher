@@ -3,6 +3,7 @@ import { Elements } from 'domain/constants';
 import {
   DATIVE_IMPLICIT_HYDROGEN_LABELS,
   DATIVE_VALENCE_TABLE,
+  hasDativeImplicitHydrogen,
 } from 'domain/constants/dativeValence';
 import type { ElementLabel } from 'domain/constants/element.types';
 
@@ -96,9 +97,7 @@ describe('DATIVE_IMPLICIT_HYDROGEN_LABELS', () => {
   it.each(['He', 'Ne', 'Ar', 'Fe', 'Co', 'Ni', 'Pt', 'Be', 'Mg', 'La', 'Pr'])(
     'excludes %s, which is drawn without implicit hydrogens',
     (label) => {
-      expect(DATIVE_IMPLICIT_HYDROGEN_LABELS.has(label as ElementLabel)).toBe(
-        false,
-      );
+      expect(hasDativeImplicitHydrogen(label)).toBe(false);
     },
   );
 });

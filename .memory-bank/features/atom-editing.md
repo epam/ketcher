@@ -69,7 +69,17 @@ The system SHALL calculate implicit hydrogen counts and valence limits from dati
 #### Scenario: Dative donor and acceptor bonds
 
 - **WHEN** an atom has dative bonds
-- **THEN** starting bonds count as electron-pair donors and ending bonds count as empty-orbital acceptors
+- **THEN** a dative bond that starts on the atom (donor) uses an electron pair, and one that ends on it (acceptor) uses an empty orbital; the atom's implicit hydrogens are what its remaining electrons and orbitals allow
+
+#### Scenario: Dative limits exceeded
+
+- **WHEN** an atom has more donor bonds or more acceptor bonds than its valence electron pairs and empty orbitals allow
+- **THEN** the atom is underlined in red; for an atom without an explicit valence, the underline comes only from these donor/acceptor limits, not from covalent over-valence alone (atoms with an explicit valence are covered by their own scenario below)
+
+#### Scenario: Donor and acceptor on the same atom cancel
+
+- **WHEN** an atom has one donor bond and one acceptor bond
+- **THEN** the two cancel out and do not count against the limits
 
 #### Scenario: Dative bond on an aromatic atom
 
@@ -78,8 +88,23 @@ The system SHALL calculate implicit hydrogen counts and valence limits from dati
 
 #### Scenario: Dative bond on an aromatic atom without a Kekulé structure
 
-- **WHEN** an aromatic ring system cannot be assigned a Kekulé structure
-- **THEN** the atom follows the usual aromatic implicit-hydrogen rules and dative limits are checked independently
+- **WHEN** an aromatic atom has a dative bond but its ring system cannot be assigned a Kekulé structure (for example, it contains query atoms or query bonds, or elements outside the main-group s/p set)
+- **THEN** its implicit hydrogens follow the usual aromatic rules, and it is underlined only if the limits are exceeded even when each aromatic bond counts as one
+
+#### Scenario: Atom with explicit valence and dative bonds
+
+- **WHEN** an atom has an explicit valence and a dative bond
+- **THEN** its implicit hydrogens still follow the explicit valence, and it is underlined when it exceeds the donor/acceptor limits or when its explicit valence is below its covalent bond count
+
+#### Scenario: User-set implicit hydrogen count
+
+- **WHEN** the user has set an atom's implicit hydrogen count
+- **THEN** that count is kept as the implicit hydrogen count, and it is counted as covalent bonds when the electron and orbital limits are checked
+
+#### Scenario: Dative implicit hydrogens for listed elements only
+
+- **WHEN** an atom with a dative bond is an element outside H, Li, B, C, N, O, F, Na, Al, Si, P, S, Cl, K, Ga, Ge, As, Se, Br, Rb, In, Sn, Sb, Te, I, Cs, Tl, Pb, Bi, Po, At, Fr
+- **THEN** its implicit hydrogen count from the dative calculation is zero, unless the user has set a count
 ## Guarantees
 
 - Implicit hydrogen counts stay consistent with element, charge, isotope, and bond changes.

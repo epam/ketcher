@@ -1,6 +1,6 @@
 import {
-  DATIVE_IMPLICIT_HYDROGEN_LABELS,
   getDativeValenceConfig,
+  hasDativeImplicitHydrogen,
 } from 'domain/constants/dativeValence';
 
 export interface DativeValenceInput {
@@ -57,7 +57,7 @@ export function calcDativeValence(
     maxDonors,
     maxAcceptors,
     hasValenceError: donors > maxDonors || acceptors > maxAcceptors,
-    implicitHydrogenCount: DATIVE_IMPLICIT_HYDROGEN_LABELS.has(label)
+    implicitHydrogenCount: hasDativeImplicitHydrogen(label)
       ? calcImplicitHydrogen(remainingElectrons, remainingOrbitals)
       : 0,
   };

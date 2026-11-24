@@ -60,7 +60,7 @@ The system SHALL recalculate dative valence and implicit hydrogens consistently 
 #### Scenario: Flipping or retyping a bond with dative atoms
 
 - **WHEN** the user flips a dative bond or changes a bond's type
-- **THEN** implicit hydrogens are recalculated at both endpoints and at dative atoms in the same aromatic ring system
+- **THEN** implicit hydrogens are recalculated at both endpoints, and at every other dative atom in the same aromatic system (atoms joined by aromatic bonds), even when that system cannot be assigned a Kekulé structure
 ## Guarantees
 
 - Endpoint atoms and implicit hydrogen counts stay consistent with bond additions, removals, and type changes.

@@ -1,4 +1,4 @@
-import { fromAtomsAttrs } from 'application/editor/actions/atom';
+import { fromAtomsAttributes } from 'application/editor/actions/atom';
 import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 import { createReStruct } from './dativeTestUtils';
 
@@ -41,7 +41,7 @@ describe('editing an atom in an aromatic system with a dative bond', () => {
     const reStruct = createReStruct(struct);
     const donor = struct.atoms.get(donorId) as Atom;
 
-    fromAtomsAttrs(reStruct, ringIds[0], { charge: 1 }, false);
+    fromAtomsAttributes(reStruct, ringIds[0], { charge: 1 }, false);
 
     const afterEdit = {
       implicitH: donor.implicitH,

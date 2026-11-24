@@ -1,7 +1,7 @@
 import {
   bondChangingAction,
   fromBondFlipping,
-  fromBondsAttrs,
+  fromBondsAttributes,
 } from 'application/editor/actions/bond';
 import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 import { createReStruct } from './dativeTestUtils';
@@ -102,7 +102,7 @@ describe('flipping a dative bond', () => {
   });
 });
 
-describe('changing a bond type with fromBondsAttrs', () => {
+describe('changing a bond type with fromBondsAttributes', () => {
   it('recalculates implicit hydrogen on both ends when only the type is set to dative', () => {
     const struct = new Struct();
     const donorId = struct.atoms.add(
@@ -127,7 +127,7 @@ describe('changing a bond type with fromBondsAttrs', () => {
 
     const reStruct = createReStruct(struct);
 
-    fromBondsAttrs(reStruct, bondId, { type: Bond.PATTERN.TYPE.DATIVE });
+    fromBondsAttributes(reStruct, bondId, { type: Bond.PATTERN.TYPE.DATIVE });
 
     expect(struct.atoms.get(donorId)?.implicitH).toBe(3);
     expect(struct.atoms.get(acceptorId)?.implicitH).toBe(3);

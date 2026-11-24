@@ -40,4 +40,4 @@
 
 ## 7. Memory Bank (at archive)
 
-- [ ] 7.1 Add `.memory-bank/features/monomer-insertion-drag-drop.md`; update `modules/monomer-drag-and-drop.md`; remove the now-resolved req. 8 limitation if listed
+- [x] 7.1 Add `.memory-bank/features/monomer-insertion-drag-drop.md`; update `modules/monomer-drag-and-drop.md`; remove the now-resolved req. 8 limitation if listed (none was listed) — also updated `features/monomer-replacement-drag-drop.md` (req. 8 scenarios, priority wording) and `features/drag-drop-bond-establishment.md` (AP-vs-bond-indicator distance race), since both of this change's capabilities modified those existing feature docs, not just added a new one

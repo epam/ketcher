@@ -71,10 +71,12 @@ export class SideChainConnectionBondRendererUtility {
     const turnPointInternal = endOfPathPart;
 
     if (isHorizontal) {
+      // Vertical connections reserve their lane to the left of the routing cell.
+      // Dragging an endpoint can reverse the bend into that lane.
+      const laneDirection = connection.isVertical ? -1 : cos;
       endOfPathPart +=
         -(connection.yOffset || 0) * 3 +
-        cos * -connection.xOffset * 3 +
-        cos * (maxXOffset + 1) * 3 +
+        laneDirection * (maxXOffset + 1 - connection.xOffset) * 3 +
         (maxYOffset + 1) * 3;
     }
     let pathPart = '';

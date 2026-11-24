@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { type Mock, vi } from 'vitest';
 import {
   Atom,
   Bond,
@@ -27,8 +28,8 @@ import { Peptide } from 'domain/entities/Peptide';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { peptideMonomerItem } from '../../mock-data';
 
-jest.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
-  getAttachmentPointStereoBond: jest.fn(),
+vi.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
+  getAttachmentPointStereoBond: vi.fn(),
 }));
 
 const createExpandedMonomerSGroup = (struct: Struct, atomId: number) => {
@@ -65,7 +66,7 @@ const addAttachmentPoint = (
 
 describe('applyStereoBondsToExpandedMonomers', () => {
   afterEach(() => {
-    (getAttachmentPointStereoBond as jest.Mock).mockReset();
+    (getAttachmentPointStereoBond as Mock).mockReset();
   });
 
   it('draws the opposite stereo bond on the second attachment point of a chiral phosphate', () => {
@@ -117,7 +118,7 @@ describe('applyStereoBondsToExpandedMonomers', () => {
     addAttachmentPoint(struct, rightMonomerSGroupId, rightNeighborId, 1);
 
     const phosphateSGroup = struct.sgroups.get(phosphateSGroupId);
-    (getAttachmentPointStereoBond as jest.Mock).mockImplementation(
+    (getAttachmentPointStereoBond as Mock).mockImplementation(
       (sgroup, attachmentPoint) =>
         sgroup === phosphateSGroup &&
         attachmentPoint.attachmentPointNumber === 1

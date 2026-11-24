@@ -4,7 +4,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
 } from '@utils';
@@ -361,7 +360,6 @@ test.describe('Open and Save InChI file', () => {
     );
 
     const inChistring = await saveStructureTextarea.inputValue();
-    await copyToClipboardByKeyboard(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(page, inChistring);

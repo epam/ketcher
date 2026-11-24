@@ -746,8 +746,8 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await expect(rotationTool.rotationHandle).toBeVisible();
     await takeElementScreenshot(
       page,
-      getMonomerLocator(page, { monomerAlias: 'A' }),
-      { padding: 100 },
+      getMonomerLocator(page, { monomerAlias: 'C' }),
+      { paddingWidth: 100, paddingHeight: 40 },
     );
   });
 

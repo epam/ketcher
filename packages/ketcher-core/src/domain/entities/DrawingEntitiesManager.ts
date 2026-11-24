@@ -255,7 +255,7 @@ export class DrawingEntitiesManager {
   }
 
   public get bottomRightMonomerPosition(): Vec2 {
-    let position: Vec2 | null = null;
+    let position: Vec2 | undefined;
 
     this.monomers.forEach((monomer) => {
       if (
@@ -359,7 +359,7 @@ export class DrawingEntitiesManager {
   }
 
   public get hasDrawingEntities() {
-    return this.allEntities.length !== 0;
+    return this.allEntities.length > 0;
   }
 
   public get hasMonomers() {
@@ -369,7 +369,7 @@ export class DrawingEntitiesManager {
         isMonomerSgroupWithAttachmentPoints(monomer),
     );
 
-    return monomers.length !== 0;
+    return monomers.length > 0;
   }
 
   public get allBondsToMonomers() {
@@ -2115,7 +2115,6 @@ export class DrawingEntitiesManager {
 
     const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
-    let chainsCollection: ChainsCollection;
 
     command.merge(
       this.recalculateAntisenseChains(shouldRecalculateOldAntisense),
@@ -2147,7 +2146,7 @@ export class DrawingEntitiesManager {
         y: MONOMER_START_Y_POSITION,
       });
 
-      chainsCollection = ChainsCollection.fromMonomers([
+      const chainsCollection = ChainsCollection.fromMonomers([
         ...this.monomers.values(),
       ]);
       chainsCollection.rearrange();
@@ -2195,6 +2194,14 @@ export class DrawingEntitiesManager {
           hasAntisenseInRow = false;
           hasRnaInRow = false;
 
+          const maxMoleculeHeight = row.snakeLayoutModelItems.reduce(
+            (maxHeight, node) =>
+              node instanceof MoleculeSnakeLayoutNode
+                ? Math.max(maxHeight, getStructureBbox(node.molecule).height)
+                : maxHeight,
+            0,
+          );
+
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
               const moleculeBbox = getStructureBbox(
@@ -2204,7 +2211,9 @@ export class DrawingEntitiesManager {
                 Coordinates.canvasToModel(newSenseNodePosition),
                 new Vec2(
                   moleculeBbox.left + cellWidthInAngstroms / 4,
-                  moleculeBbox.top + cellWidthInAngstroms / 4,
+                  moleculeBbox.top +
+                    cellWidthInAngstroms / 4 -
+                    (maxMoleculeHeight - moleculeBbox.height) / 2,
                 ),
               );
 
@@ -2413,6 +2422,7 @@ export class DrawingEntitiesManager {
           ? targetDrawingEntitiesManager.addAmbiguousMonomer(
               {
                 ...monomer.variantMonomerItem,
+                seqId: monomer.monomerItem.seqId,
               },
               monomer.position,
             )
@@ -3179,6 +3189,7 @@ export class DrawingEntitiesManager {
           initialFirstMonomerAttachmentPoint: newFirstMonomerAttachmentPoint,
           initialSecondMonomerAttachmentPoint: newSecondMonomerAttachmentPoint,
         }),
+        polymerBond,
       ),
     );
 

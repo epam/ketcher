@@ -27,14 +27,14 @@ import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
-  #path: Element | null = null;
+  static isSelectable() {
+    return true;
+  }
+
+  #path: Element | undefined;
 
   constructor() {
     super('enhancedFlag');
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   hoverPath(render: Render): Element {
@@ -111,7 +111,7 @@ class ReEnhancedFlag extends ReObject {
       LayerMap.data,
       this.visel,
       this.#path,
-      null,
+      undefined,
       true,
     );
   }

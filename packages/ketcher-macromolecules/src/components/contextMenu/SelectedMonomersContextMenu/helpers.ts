@@ -306,7 +306,7 @@ export const getMonomersForAminoAcidModification = (
   const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
   let monomerCandidates: BaseMonomer[] = [];
 
-  if (selectedMonomers.length) {
+  if (selectedMonomers.length > 0) {
     monomerCandidates = selectedMonomers;
   } else if (clickedMonomer) {
     monomerCandidates = [clickedMonomer];
@@ -359,7 +359,7 @@ export const isCycleExistsForSelectedMonomers = (
 
   const hasCycleFromMonomer = (
     monomer: BaseMonomer,
-    parent: BaseMonomer | null,
+    parent?: BaseMonomer,
   ): boolean => {
     visited.add(monomer);
     inRecursionStack.add(monomer);
@@ -388,7 +388,7 @@ export const isCycleExistsForSelectedMonomers = (
 
   for (const monomer of selectedMonomers) {
     if (!visited.has(monomer)) {
-      if (hasCycleFromMonomer(monomer, null)) {
+      if (hasCycleFromMonomer(monomer)) {
         return true;
       }
     }

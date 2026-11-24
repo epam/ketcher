@@ -91,6 +91,22 @@ test('no linked issue warns, and a plain title is then accepted', () => {
   assert.deepEqual(rules(findings, 'warn'), ['linked-issue']);
 });
 
+test('size: documentation, agent skills and fixtures are not counted', () => {
+  const findings = checkPullRequest(
+    pr({
+      files: [
+        file('packages/ketcher-react/src/a.ts', 100),
+        file('.memory-bank/review-workflow.md', 500),
+        file('openspec/changes/x/design.md', 500),
+        file('.agents/skills/ketcher-flow/SKILL.md', 500),
+        file('.agents/skills/verify-ketcher/scripts/drive.mjs', 500),
+        file('ketcher-autotests/tests/test-data/a.ket', 500),
+      ],
+    }),
+  );
+  assert.deepEqual(rules(findings, 'warn'), []);
+});
+
 test('size: over 400 lines warns; lockfiles and snapshots are not counted', () => {
   const big = checkPullRequest(
     pr({ files: [file('packages/ketcher-react/src/a.ts', 401)] }),

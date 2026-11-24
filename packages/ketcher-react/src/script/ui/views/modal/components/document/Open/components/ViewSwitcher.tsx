@@ -43,14 +43,18 @@ export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
     return <AnalyzingFile fileName={props.fileName} />;
   } else {
     switch (props.currentState) {
-      case props.states.idle:
+      case props.states.idle: {
         return <OpenOptions {...props} />;
-      case props.states.textEditor:
+      }
+      case props.states.textEditor: {
         return <TextEditor {...props} testId="open-structure-textarea" />;
-      case props.states.presentationViewer:
+      }
+      case props.states.presentationViewer: {
         return <CDXStructuresViewer {...props} />;
-      default:
+      }
+      default: {
         return null;
+      }
     }
   }
 };

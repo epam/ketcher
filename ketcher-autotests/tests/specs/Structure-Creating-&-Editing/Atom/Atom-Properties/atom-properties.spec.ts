@@ -3,7 +3,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickInTheMiddleOfTheCanvas,
-  waitForRender,
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
@@ -133,9 +132,7 @@ test.describe('Atom Properties', () => {
     await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
       force: true,
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('/');
-    });
+    await page.keyboard.press('/');
     await takeEditorScreenshot(page);
   });
 

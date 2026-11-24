@@ -77,7 +77,6 @@ test.describe('Zoom Tool', () => {
       await button.locator.hover();
       expect(button.title).toBeTruthy();
     }
-    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into top left corner of canvas', async ({

@@ -208,7 +208,9 @@ test.describe('Templates - Functional Group Tools', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/expanded-fg-CO2Et.mol');
 
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 50,
+    });
     await EditAbbreviationDialog(page).removeAbbreviation();
     await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -331,7 +333,6 @@ test.describe('Templates - Functional Group Tools2', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheCanvas(page);
 
     await RotationTool(page).flipVertically();
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -380,7 +381,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
 
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -777,10 +778,10 @@ test.describe('Templates - Functional Group Tools3', () => {
       getAbbreviationLocator(page, { name: 'Boc' }),
     );
     await takeEditorScreenshot(page);
-    await selectAllStructuresOnCanvas(page);
+    // everything is selected
     await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
-    await selectAllStructuresOnCanvas(page);
+    // everything is selected
     await removeAbbreviation(
       page,
       getAbbreviationLocator(page, { name: 'CCl3' }),

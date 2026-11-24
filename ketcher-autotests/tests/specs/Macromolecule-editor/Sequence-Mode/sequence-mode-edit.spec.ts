@@ -46,6 +46,7 @@ import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constan
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { exitFromEditMode } from '@utils/macromolecules/sequence';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
@@ -146,7 +147,9 @@ test.describe('Sequence edit mode', () => {
      * Description: After entering, only letters allowed for RNA are present on the canvas.
      * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
      */
-    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
+    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc', {
+      waitForRenderTimeOut: 50,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -157,7 +160,9 @@ test.describe('Sequence edit mode', () => {
      * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
      */
     await MacromoleculesTopToolbar(page).dna();
-    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
+    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc', {
+      waitForRenderTimeOut: 50,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -167,7 +172,9 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, X, Z
     */
     await MacromoleculesTopToolbar(page).peptides();
-    await keyboardTypeOnCanvas(page, 'abcdefghijklmnopqrstuvwxyz');
+    await keyboardTypeOnCanvas(page, 'abcdefghijklmnopqrstuvwxyz', {
+      waitForRenderTimeOut: 50,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -195,8 +202,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
-    await keyboardPressOnCanvas(page, 'Escape');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -214,8 +220,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
-    await keyboardPressOnCanvas(page, 'Escape');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -251,7 +256,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
@@ -267,7 +272,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolU).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowRight');
-    await keyboardPressOnCanvas(page, 'a');
+    await keyboardPressOnCanvas(page, 'a', { waitForRenderTimeOut: 50 });
     await takeEditorScreenshot(page);
   });
 
@@ -736,7 +741,7 @@ test.describe('Sequence edit mode', () => {
      * 5. Take a screenshot
      */
     await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
+    await page.keyboard.press('ControlOrMeta+Alt+D');
     await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1429,8 +1434,7 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
-    await keyboardPressOnCanvas(page, 'Escape');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1499,8 +1503,7 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
-    await keyboardPressOnCanvas(page, 'Escape');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1538,8 +1541,7 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
-    await keyboardPressOnCanvas(page, 'Escape');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

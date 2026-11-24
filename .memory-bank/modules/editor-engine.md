@@ -31,6 +31,7 @@ Key capabilities:
 - **Selection** — get or set the current selection, including convenience modes like "select all" or "select descriptors".
 - **Update** — apply an Action, push it to history, and fire the change event so subscribers know the model changed.
 - **Hit testing** — given a DOM event, find the nearest canvas item at that position.
+- **Hover tracking** — merged hover targets stay tracked even when their renderers produce no combined outline, so the next hover change can clear the individual highlights.
 
 ### Tools
 

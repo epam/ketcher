@@ -199,7 +199,9 @@ test.describe('Hotkeys', () => {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
           LayoutMode.Sequence,
         );
-        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', {
+          waitForRenderTimeOut: 50,
+        });
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });

@@ -324,11 +324,9 @@ test.describe('Erase Tool', () => {
     );
     await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await CommonTopRightToolbar(page).selectZoomInTool(5);
-    await clickInTheMiddleOfTheCanvas(page);
     await getMonomerLocator(page, Peptide.Bal).click();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(8);
-    await clickInTheMiddleOfTheCanvas(page);
     await getMonomerLocator(page, Peptide.D_2Nal).click();
     await takeEditorScreenshot(page);
   });
@@ -349,7 +347,9 @@ test.describe('Erase Tool', () => {
       }
     });
     await CommonLeftToolbar(page).erase({ timeOut: 0 });
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 50,
+    });
   });
 
   test('Erasing some parts of monomer structure, save it to .ket file and then open it', async ({

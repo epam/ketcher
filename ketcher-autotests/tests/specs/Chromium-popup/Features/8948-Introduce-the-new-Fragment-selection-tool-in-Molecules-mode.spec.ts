@@ -15,7 +15,6 @@ import {
   clickInTheMiddleOfTheCanvas,
   getTooltipLocator,
   getVisibleCanvas,
-  keyboardPressOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';

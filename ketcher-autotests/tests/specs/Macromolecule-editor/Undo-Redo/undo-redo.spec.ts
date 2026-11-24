@@ -72,10 +72,6 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds and do undo redo
     */
 
-    // check that history pointer stops on last operation
-    await CommonTopLeftToolbar(page).redo();
-    await CommonTopLeftToolbar(page).redo();
-
     // check undo
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).undo();

@@ -462,7 +462,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(page, coordinatesWithShift, y);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
       force: true,
     });
@@ -602,9 +602,13 @@ test.describe('Atom Tool', () => {
       // Wait for AbbreviationLookup 1000ms timer from previous iteration to expire
       // before pressing the next shortcut key, otherwise the lookup popup intercepts it
       await page.waitForTimeout(1100);
-      await waitForRender(page, async () => {
-        await page.keyboard.press(labelKey);
-      });
+      await waitForRender(
+        page,
+        async () => {
+          await page.keyboard.press(labelKey);
+        },
+        50,
+      );
       await clickInTheMiddleOfTheCanvas(page);
       const atom = getAtomLocator(page, { atomLabel: labelKey });
       expect(await atom.count()).toEqual(1);

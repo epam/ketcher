@@ -10,6 +10,8 @@ import {
 import { Subscription } from 'subscription';
 import Editor from './Editor';
 
+vi.mock('paper', () => ({ default: { setup: vi.fn() } }));
+
 type MockBond = {
   begin: number;
   end: number;
@@ -320,6 +322,34 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
 });
 
 describe('Editor.hover', () => {
+  it('clears merged hover even when the renderers produce no combined outline', () => {
+    const groupRenderer = { setHover: vi.fn() };
+    const tool = {};
+    const render = {
+      ctab: {
+        sgroups: new Map([[1, groupRenderer]]),
+      },
+    };
+    const editor = Object.create(Editor.prototype) as Editor;
+    Reflect.set(editor, '_tool', tool);
+    Reflect.set(editor, 'render', render);
+    Reflect.set(editor, 'event', { showInfo: new Subscription() });
+    const target = {
+      map: 'merge' as const,
+      id: 'merged-group',
+      items: { sgroups: [1] },
+    };
+
+    editor.hover(target);
+    editor.hover(null);
+
+    expect(groupRenderer.setHover.mock.calls).toEqual([
+      [true, render, false],
+      [false, render, false],
+    ]);
+    expect(Reflect.get(tool, 'ci')).toBeUndefined();
+  });
+
   it('forwards Attachment Group hover to its renderer', () => {
     const attachmentGroupRenderer = {
       setHover: vi.fn(),

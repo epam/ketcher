@@ -278,7 +278,9 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async () => {
-      await copyAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100, {
         from: 'pageTopLeft',
       });
@@ -339,7 +341,9 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async () => {
-      await copyAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100, {
         from: 'pageTopLeft',
       });
@@ -391,7 +395,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the whole reaction and move it', async () => {
       await selectAllStructuresOnCanvas(page);
-      await moveMouseToTheMiddleOfTheScreen(page);
+      await getArrowLocator(page, {}).hover({ force: true });
       await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 

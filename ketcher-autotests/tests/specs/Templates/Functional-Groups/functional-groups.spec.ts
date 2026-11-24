@@ -563,7 +563,7 @@ test.describe('Functional Groups', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).hover({
       force: true,
     });
-    await keyboardPressOnCanvas(page, 'n');
+    await keyboardPressOnCanvas(page, 'n', { waitForRenderTimeOut: 50 });
     await takeEditorScreenshot(page);
   });
 
@@ -589,7 +589,7 @@ test.describe('Functional Groups', () => {
       .boundingBox();
     if (point) {
       await page.mouse.move(point.x, point.y);
-      await keyboardPressOnCanvas(page, 'n');
+      await keyboardPressOnCanvas(page, 'n', { waitForRenderTimeOut: 50 });
     }
     await takeEditorScreenshot(page);
   });

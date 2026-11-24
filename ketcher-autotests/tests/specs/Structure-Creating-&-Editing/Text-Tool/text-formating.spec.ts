@@ -34,13 +34,13 @@ test.describe('Text tools test cases', () => {
     // Verify if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).selectFontSize(20);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).clickTextEditor();
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).selectFontSize(10);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -95,7 +95,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST123');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).setOptions({
       fontSize: 25,
       isBold: true,
@@ -105,7 +105,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST123' }).dblclick();
     await TextEditorDialog(page).clickTextEditor();
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).setOptions({
       isSubscript: true,
     });
@@ -117,7 +117,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST321');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).setOptions({
       fontSize: 20,
       isBold: true,

@@ -256,14 +256,14 @@ test.describe('Template Manupulations', () => {
     await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).structureLibrary();

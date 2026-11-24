@@ -36,7 +36,6 @@
 
 - [x] 6.1 Run `npm run test:types` and package unit tests
 - [x] 6.2 Run `verify-ketcher` for Flex and Snake insertion, both error modals, and the dialog flow
-- [ ] 6.3 Write the E2E test plan per `.memory-bank/testing/testing.md` and ask the user to proceed before writing specs
 
 ## 7. Memory Bank (at archive)
 

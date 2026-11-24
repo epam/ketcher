@@ -544,7 +544,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
     bondType: MacroBondType.Hydrogen,
   }).first();
 
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   await hydrogenBond.click({ force: true });
 
   const leftEndSugarfR = getMonomerLocator(page, {
@@ -633,7 +633,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async ({
     bondType: MacroBondType.Hydrogen,
   }).first();
 
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   await hydrogenBond.click({ force: true });
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);

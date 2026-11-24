@@ -24,7 +24,12 @@ import {
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal, selectIsSettingsPanelOpen } from 'state/modal';
-import { BaseMonomer, shortcutStr } from 'ketcher-core';
+import {
+  BaseMonomer,
+  EditorHistory,
+  ketcherProvider,
+  shortcutStr,
+} from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -39,6 +44,20 @@ import { CalculateMacromoleculePropertiesButton } from 'components/macromolecule
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { useTranslation } from 'react-i18next';
 import { createMenuItemHandlers, MenuItemName } from './menuItemHandlers';
+
+export function getUndoRedoDisabledState(
+  history: EditorHistory | undefined,
+  isMenuDisabled: boolean,
+) {
+  if (isMenuDisabled || !history) {
+    return { undo: true, redo: true };
+  }
+
+  return {
+    undo: history.historyPointer === 0,
+    redo: history.historyPointer === history.historyStack.length,
+  };
+}
 
 export function TopMenuComponent() {
   const { t } = useTranslation('macromolecules');
@@ -61,6 +80,27 @@ export function TopMenuComponent() {
     selectLastSelectedSelectionMenuItem,
   );
   const isFlexMode = layoutMode === 'flex-layout-mode';
+  const [, setHistoryVersion] = useState(0);
+
+  useEffect(() => {
+    const updateHistoryState = () => {
+      setHistoryVersion((version) => version + 1);
+    };
+
+    const changeEvent =
+      editor && ketcherProvider.getKetcher(editor.ketcherId)?.changeEvent;
+
+    editor?.events.modelChange.add(updateHistoryState);
+    changeEvent?.add(updateHistoryState);
+
+    return () => {
+      editor?.events.modelChange.remove(updateHistoryState);
+      changeEvent?.remove(updateHistoryState);
+    };
+  }, [editor]);
+
+  const history = editor ? EditorHistory.getInstance(editor) : undefined;
+  const undoRedoDisabledState = getUndoRedoDisabledState(history, isDisabled);
 
   const selectedMonomers = selectedEntities.filter(
     (entity) => entity && typeof entity.forEachBond === 'function',
@@ -204,13 +244,13 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="undo"
           title={t('topMenu.undo', { shortcut: hotkeysShortcuts.undo })}
-          disabled={isDisabled}
+          disabled={undoRedoDisabledState.undo}
           testId="undo"
         />
         <Menu.Item
           itemId="redo"
           title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
-          disabled={isDisabled}
+          disabled={undoRedoDisabledState.redo}
           testId="redo"
         />
       </Menu.Group>

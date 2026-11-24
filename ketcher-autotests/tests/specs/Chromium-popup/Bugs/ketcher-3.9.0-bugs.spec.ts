@@ -125,7 +125,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       MacroFileType.HELM,
       'RNA1{[dR]([In])P.R(A)P.[dR]([In])P.R(A)P.[dR]([In])}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await selectAllStructuresOnCanvas(page);
     const dRMonomers = getMonomerLocator(page, Sugar.dR);
     const dRMonomerCount = await dRMonomers.count();
@@ -1121,6 +1121,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       page,
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       '12w12r23e32e33',
+      true,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain(

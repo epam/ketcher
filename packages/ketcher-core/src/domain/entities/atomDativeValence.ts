@@ -1,8 +1,7 @@
 import {
   DATIVE_IMPLICIT_HYDROGEN_LABELS,
-  DATIVE_VALENCE_TABLE,
+  getDativeValenceConfig,
 } from 'domain/constants/dativeValence';
-import type { ElementLabel } from 'domain/constants/element.types';
 
 export interface DativeValenceInput {
   label: string;
@@ -27,11 +26,10 @@ export function calcDativeValence(
   input: DativeValenceInput,
 ): DativeValenceResult | null {
   const { label, charge, radicalCount, bondOrderSum } = input;
-  if (!Object.hasOwn(DATIVE_VALENCE_TABLE, label)) {
+  const config = getDativeValenceConfig(label);
+  if (!config) {
     return null;
   }
-  const elementLabel = label as ElementLabel;
-  const config = DATIVE_VALENCE_TABLE[elementLabel];
 
   const eligibleElectrons =
     config.valenceElectrons - charge - bondOrderSum - radicalCount;
@@ -59,7 +57,7 @@ export function calcDativeValence(
     maxDonors,
     maxAcceptors,
     hasValenceError: donors > maxDonors || acceptors > maxAcceptors,
-    implicitHydrogenCount: DATIVE_IMPLICIT_HYDROGEN_LABELS.has(elementLabel)
+    implicitHydrogenCount: DATIVE_IMPLICIT_HYDROGEN_LABELS.has(label)
       ? calcImplicitHydrogen(remainingElectrons, remainingOrbitals)
       : 0,
   };

@@ -93,7 +93,7 @@ function stubViewModel(atom: FakeAtom, bondAnglesDeg: number[]) {
 
 // AtomRenderer's constructor needs a live canvas and editor, so the renderer
 // is built with Object.create and the private drawing steps (appendLabel,
-// appendCharge, ...) are called one by one the way show() calls them. The
+// appendAtomProperties, ...) are called one by one the way show() calls them. The
 // existing AtomRenderer.test.ts only calls public getters, which is not enough
 // to read back the drawn text.
 type RendererUnderTest = Pick<
@@ -105,8 +105,7 @@ type RendererUnderTest = Pick<
 > & {
   appendLabel: () => Selection<SVGTextElement, unknown, null, undefined>;
   appendExplicitIsotope: () => void;
-  appendCharge: () => void;
-  appendExplicitValence: () => void;
+  appendAtomProperties: () => void;
   appendBadValenceWarning: () => void;
   textElement: Selection<SVGTextElement, unknown, null, undefined>;
   computeHydrogenSide: () => ImplicitHydrogenSide;
@@ -287,8 +286,7 @@ describe('AtomRenderer charge and valence with stacked hydrogens', () => {
     bondAnglesDeg: number[],
   ) {
     const { renderer, textNode } = drawLabel(fakeAtom(options), bondAnglesDeg);
-    renderer.appendCharge();
-    renderer.appendExplicitValence();
+    renderer.appendAtomProperties();
     return tspansOf(textNode);
   }
 
@@ -310,7 +308,7 @@ describe('AtomRenderer charge and valence with stacked hydrogens', () => {
       fakeAtom({ hydrogenAmount: 2, charge: 1 }),
       [330, 210],
     );
-    renderer.appendCharge();
+    renderer.appendAtomProperties();
     const charge = textNode.querySelectorAll('tspan')[3];
 
     expect(charge.getAttribute('text-anchor')).toBe('start');
@@ -548,7 +546,7 @@ describe('AtomRenderer label layout stays what was drawn', () => {
 
     it('trims by the charge too, since it sits next to the symbol', () => {
       const { renderer } = drawStacked({ charge: 1 });
-      renderer.appendCharge();
+      renderer.appendAtomProperties();
 
       expect(renderer.bondTrimBBoxes).toContainEqual(boxes['+']);
     });

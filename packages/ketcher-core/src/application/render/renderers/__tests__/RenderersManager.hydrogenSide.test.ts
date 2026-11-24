@@ -1,151 +1,319 @@
 import { RenderersManager } from '../RenderersManager';
-import { Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { AtomRenderer } from '../AtomRenderer';
+import { AtomCIP } from 'domain/entities/types';
+import type { Atom } from 'domain/entities/CoreAtom';
+import type { Bond } from 'domain/entities/CoreBond';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { BaseRenderer } from '../BaseRenderer';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
-import { AtomLabel } from 'domain/constants';
-import type { AtomRenderer } from '../AtomRenderer';
-import type { BaseRenderer } from '../BaseRenderer';
-import type { BondRenderer } from '../BondRenderer';
-import type { MonomerToAtomBondRenderer } from '../MonomerToAtomBondRenderer';
+import {
+  connect,
+  createAtom,
+  createCanvas,
+  createMonomer,
+  disconnect,
+  drawnLabel,
+  installEditorStub,
+  labelElementOf,
+  mockTextBoxes,
+} from './atomRendererHarness';
 
-// The singleton needs a live canvas; the manager only forwards to renderers.
+// The singleton needs a live canvas; the renderers only read its view model.
 jest.mock('application/editor/editorSingleton', () => ({
   provideEditorInstance: jest.fn(),
 }));
+jest.mock('application/ketcherProvider', () => ({
+  ketcherProvider: {
+    getKetcher: () => ({ settingsService: undefined }),
+  },
+}));
 
-// An atom whose renderer reports whether its label was redrawn for a new
-// hydrogen side, and records the calls the manager makes.
-function atomWithRenderer(labelRedrawn: boolean) {
-  const atom = new Atom(new Vec2(0, 0), {} as BaseMonomer, 1, AtomLabel.N);
-  const renderer = {
-    redrawLabelIfHydrogenSideChanged: jest.fn(() => labelRedrawn),
-    moveSelection: jest.fn(),
-    drawSelection: jest.fn(),
-    move: jest.fn(),
-    remove: jest.fn(),
-  };
-  atom.renderer = renderer as unknown as AtomRenderer;
-  atom.baseRenderer = renderer as unknown as BaseRenderer;
-  return { atom, renderer };
+// Model coordinates, y down. Degrees are visual: 0 is right and 90 is up.
+const at = (deg: number, length = 1) =>
+  new Vec2(
+    Math.cos((deg * Math.PI) / 180) * length,
+    -Math.sin((deg * Math.PI) / 180) * length,
+  );
+
+// The atoms are real and drawn by real AtomRenderers. A bond renderer needs
+// the whole view model, so a bond only records that it was trimmed again.
+function drawBond(bond: Bond) {
+  const move = jest.fn();
+  bond.renderer = { move, remove: jest.fn() } as unknown as Bond['renderer'];
+  return move;
 }
 
-function bondBetween(first: Atom, second: Atom) {
-  const bond = new Bond(first, second, 1);
-  const renderer = { move: jest.fn(), remove: jest.fn() };
-  bond.renderer = renderer as unknown as BondRenderer;
-  return { bond, renderer };
-}
-
-function bondWithMonomer(atom: Atom) {
-  const monomer = { position: new Vec2(1, 0) } as BaseMonomer;
-  const bond = new MonomerToAtomBond(monomer, atom);
-  const renderer = { move: jest.fn(), remove: jest.fn() };
-  bond.renderer = renderer as unknown as MonomerToAtomBondRenderer;
-  return { monomer, bond, renderer };
+function drawAtom(atom: Atom) {
+  new AtomRenderer(atom).show();
 }
 
 describe('RenderersManager hydrogen side of atom labels', () => {
-  const createManager = () => new RenderersManager({ theme: {} });
+  let restoreBoxes: () => void;
+  let manager: RenderersManager;
 
-  describe('deleteBond', () => {
-    it('redraws the labels of both atoms of the deleted bond for their new bonds', () => {
-      const first = atomWithRenderer(false);
-      const second = atomWithRenderer(false);
-      const { bond } = bondBetween(first.atom, second.atom);
+  beforeEach(() => {
+    createCanvas();
+    installEditorStub();
+    restoreBoxes = mockTextBoxes();
+    manager = new RenderersManager({ theme: {} });
+  });
 
-      createManager().deleteBond(bond);
+  afterEach(() => {
+    restoreBoxes();
+    jest.restoreAllMocks();
+  });
 
-      expect(
-        first.renderer.redrawLabelIfHydrogenSideChanged,
-      ).toHaveBeenCalled();
-      expect(
-        second.renderer.redrawLabelIfHydrogenSideChanged,
-      ).toHaveBeenCalled();
+  // An N with bonds down-left and down-right puts its H on top. Taking the
+  // lower-left neighbour to the upper right frees the left side instead.
+  function stereocentre() {
+    const centre = createAtom(new Vec2(0, 0), {
+      cip: AtomCIP.R,
+      stereoLabel: '&1',
+    });
+    const lowerRight = createAtom(at(330));
+    const flipping = createAtom(at(210));
+    const bondToFlipping = connect(centre, flipping);
+    const bondToLowerRight = connect(centre, lowerRight);
+    [centre, flipping, lowerRight].forEach(drawAtom);
+    return {
+      centre,
+      flipping,
+      lowerRight,
+      bondToFlipping,
+      bondToLowerRight,
+      retrimmed: drawBond(bondToLowerRight),
+    };
+  }
+
+  const TOP = { anchor: 'middle', texts: ['H', 'N'] };
+  const LEFT = { anchor: 'end', texts: ['H', 'N'] };
+
+  describe('moveDrawingEntity', () => {
+    it('puts H of a neighbour on the new side once the update ran', () => {
+      const { centre, flipping } = stereocentre();
+      expect(drawnLabel(centre)).toEqual(TOP);
+
+      flipping.moveAbsolute(at(30));
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
+
+      expect(drawnLabel(centre)).toEqual(LEFT);
     });
 
-    it('re-trims the remaining bonds of an atom whose label was redrawn', () => {
-      const first = atomWithRenderer(true);
-      const second = atomWithRenderer(false);
-      const third = atomWithRenderer(false);
-      const fourth = atomWithRenderer(false);
-      const { bond } = bondBetween(first.atom, second.atom);
-      const redrawnNeighbour = bondBetween(first.atom, third.atom);
-      const untouchedNeighbour = bondBetween(second.atom, fourth.atom);
-      // The deleted bond is already out of the model when the manager runs.
-      first.atom.bonds = [redrawnNeighbour.bond];
-      second.atom.bonds = [untouchedNeighbour.bond];
+    it('puts H of the moved atom on the new side too', () => {
+      const { flipping } = stereocentre();
+      // Its only bond leaves to the upper right, so its two H go left.
+      expect(drawnLabel(flipping).anchor).toBe('end');
 
-      createManager().deleteBond(bond);
+      flipping.moveAbsolute(at(30));
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
 
-      expect(redrawnNeighbour.renderer.move).toHaveBeenCalled();
-      expect(untouchedNeighbour.renderer.move).not.toHaveBeenCalled();
+      // Now the bond leaves to the lower left.
+      expect(drawnLabel(flipping).anchor).toBe('start');
+    });
+
+    it('keeps the CIP and stereo labels of the atom whose side changed', () => {
+      const { centre, flipping } = stereocentre();
+
+      flipping.moveAbsolute(at(30));
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
+
+      expect(
+        document.querySelector(`#cip-atom-${centre.id} text`)?.textContent,
+      ).toBe('(R)');
+      expect(
+        document.querySelector(`#stereo-atom-${centre.id} text`)?.textContent,
+      ).toBe('&1');
+    });
+
+    it('leaves the label of an atom that is not next to a moved atom untouched', () => {
+      const { flipping } = stereocentre();
+      const far = createAtom(at(90, 10));
+      drawAtom(far);
+      const farLabel = labelElementOf(far);
+
+      flipping.moveAbsolute(at(30));
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
+
+      expect(farLabel).not.toBeNull();
+      expect(labelElementOf(far)).toBe(farLabel);
+    });
+
+    it('trims the bonds of an atom whose label was redrawn, once', () => {
+      const { flipping, retrimmed } = stereocentre();
+
+      flipping.moveAbsolute(at(30));
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
+
+      // moveDrawingEntity moves the moved atom's own bonds; the bond of the
+      // centre to the lower atom is only trimmed because the label changed.
+      expect(retrimmed).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not trim bonds of atoms whose label stayed', () => {
+      const { flipping, retrimmed } = stereocentre();
+
+      flipping.moveAbsolute(at(200));
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
+
+      expect(retrimmed).not.toHaveBeenCalled();
+    });
+
+    it('checks each atom once for a drag that moves all of a molecule', () => {
+      const { centre, flipping, lowerRight } = stereocentre();
+      const computeSide = jest.spyOn(
+        AtomRenderer.prototype as unknown as {
+          computeHydrogenSide: () => void;
+        },
+        'computeHydrogenSide',
+      );
+
+      [centre, flipping, lowerRight].forEach((atom) => {
+        atom.moveRelative(new Vec2(1, 1));
+        manager.moveDrawingEntity(atom);
+      });
+      manager.runPostRenderMethods();
+
+      expect(computeSide).toHaveBeenCalledTimes(3);
+    });
+
+    it('checks nothing the second time when nothing was scheduled', () => {
+      const { flipping } = stereocentre();
+      manager.moveDrawingEntity(flipping);
+      manager.runPostRenderMethods();
+      const computeSide = jest.spyOn(
+        AtomRenderer.prototype as unknown as {
+          computeHydrogenSide: () => void;
+        },
+        'computeHydrogenSide',
+      );
+
+      manager.runPostRenderMethods();
+
+      expect(computeSide).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteBond', () => {
+    it('puts H of both atoms of the deleted bond on the side the remaining bonds leave', () => {
+      const { centre, flipping, bondToFlipping } = stereocentre();
+      expect(drawnLabel(flipping).anchor).toBe('end');
+
+      disconnect(bondToFlipping);
+      manager.deleteBond(bondToFlipping);
+      manager.runPostRenderMethods();
+
+      // Left with one bond down-right, the centre has two H on its left.
+      expect(drawnLabel(centre)).toEqual({
+        anchor: 'end',
+        texts: ['H', '2', 'N'],
+      });
+      // Without bonds the other N draws its three H on the right.
+      expect(drawnLabel(flipping)).toEqual({
+        anchor: 'start',
+        texts: ['N', 'H', '3'],
+      });
+    });
+
+    it('trims the remaining bonds of an atom whose label was redrawn', () => {
+      const { bondToFlipping, retrimmed } = stereocentre();
+
+      disconnect(bondToFlipping);
+      manager.deleteBond(bondToFlipping);
+      manager.runPostRenderMethods();
+
+      expect(retrimmed).toHaveBeenCalledTimes(1);
     });
 
     it('leaves a removed atom alone', () => {
-      const first = atomWithRenderer(false);
-      const second = atomWithRenderer(false);
-      second.atom.renderer = undefined;
-      const { bond } = bondBetween(first.atom, second.atom);
+      const { centre, flipping, bondToFlipping } = stereocentre();
+      manager.deleteAtom(flipping);
 
-      expect(() => createManager().deleteBond(bond)).not.toThrow();
+      disconnect(bondToFlipping);
+      manager.deleteBond(bondToFlipping);
+      expect(() => manager.runPostRenderMethods()).not.toThrow();
+
+      // Nothing of the removed atom came back, and the other atom followed
+      // its new bonds.
+      expect(labelElementOf(flipping)).toBeNull();
+      expect(
+        document.querySelector(`[data-atomid="${flipping.id}"]`),
+      ).toBeNull();
+      expect(drawnLabel(centre).texts).toEqual(['H', '2', 'N']);
     });
   });
 
-  describe('moveDrawingEntity', () => {
-    it('redraws the label of the moved atom and of its bonded atoms, and of no other atom', () => {
-      const moved = atomWithRenderer(false);
-      const neighbour = atomWithRenderer(false);
-      const farAtom = atomWithRenderer(false);
-      moved.atom.bonds = [bondBetween(moved.atom, neighbour.atom).bond];
+  describe('a monomer bonded to an atom', () => {
+    // An NH2 bonded only to a monomer on its right: the H go left.
+    function atomBondedToMonomerOnTheRight() {
+      const atom = createAtom(new Vec2(0, 0));
+      const { monomer, moveTo, bondTo } = createMonomer(at(0, 2));
+      const bond = bondTo(atom);
+      drawAtom(atom);
+      const moveBond = jest.fn();
+      bond.renderer = {
+        move: moveBond,
+        remove: jest.fn(),
+      } as unknown as MonomerToAtomBond['renderer'];
+      return { atom, monomer, moveTo, moveBond };
+    }
 
-      createManager().moveDrawingEntity(moved.atom);
+    const H_LEFT = { anchor: 'end', texts: ['H', '2', 'N'] };
+    const H_RIGHT = { anchor: 'start', texts: ['N', 'H', '2'] };
 
-      expect(
-        moved.renderer.redrawLabelIfHydrogenSideChanged,
-      ).toHaveBeenCalled();
-      expect(
-        neighbour.renderer.redrawLabelIfHydrogenSideChanged,
-      ).toHaveBeenCalled();
-      expect(
-        farAtom.renderer.redrawLabelIfHydrogenSideChanged,
-      ).not.toHaveBeenCalled();
+    it('puts H of the atom on the other side when the monomer is dragged across it', () => {
+      const { atom, monomer, moveTo, moveBond } =
+        atomBondedToMonomerOnTheRight();
+      expect(drawnLabel(atom)).toEqual(H_LEFT);
+      // A drag of a selected monomer goes through moveDrawingEntity.
+      monomer.baseRenderer = {
+        moveSelection: jest.fn(),
+        drawSelection: jest.fn(),
+      } as unknown as BaseRenderer;
+
+      moveTo(at(180, 2));
+      manager.moveDrawingEntity(monomer);
+      manager.runPostRenderMethods();
+
+      expect(drawnLabel(atom)).toEqual(H_RIGHT);
+      expect(moveBond).toHaveBeenCalledTimes(1);
     });
 
-    it('re-trims the bonds of a bonded atom whose label was redrawn', () => {
-      const moved = atomWithRenderer(false);
-      const neighbour = atomWithRenderer(true);
-      const other = atomWithRenderer(false);
-      const moving = bondBetween(moved.atom, neighbour.atom);
-      const behind = bondBetween(neighbour.atom, other.atom);
-      moved.atom.bonds = [moving.bond];
-      neighbour.atom.bonds = [moving.bond, behind.bond];
+    it('puts H of the atom on the other side when the monomer is moved by a move operation', () => {
+      const { atom, monomer, moveTo } = atomBondedToMonomerOnTheRight();
+      monomer.renderer = {
+        move: jest.fn(),
+        drawSelection: jest.fn(),
+      } as unknown as BaseMonomer['renderer'];
 
-      createManager().moveDrawingEntity(moved.atom);
+      moveTo(at(180, 2));
+      manager.moveMonomer(monomer);
+      manager.runPostRenderMethods();
 
-      expect(behind.renderer.move).toHaveBeenCalled();
+      expect(drawnLabel(atom)).toEqual(H_RIGHT);
     });
-  });
 
-  describe('moveMonomer', () => {
-    it('redraws the label of an atom bonded to the moved monomer', () => {
-      const bonded = atomWithRenderer(false);
-      const { monomer, bond, renderer } = bondWithMonomer(bonded.atom);
-      bonded.atom.bonds = [bond];
-      Object.assign(monomer, {
-        monomerToAtomBonds: [bond],
-        renderer: { move: jest.fn(), drawSelection: jest.fn() },
-      });
-      bonded.renderer.redrawLabelIfHydrogenSideChanged.mockReturnValue(true);
+    it('keeps the label of the atom while the monomer stays on the same side', () => {
+      const { atom, monomer, moveTo, moveBond } =
+        atomBondedToMonomerOnTheRight();
+      monomer.renderer = {
+        move: jest.fn(),
+        drawSelection: jest.fn(),
+      } as unknown as BaseMonomer['renderer'];
+      const label = labelElementOf(atom);
 
-      createManager().moveMonomer(monomer);
+      moveTo(at(10, 3));
+      manager.moveMonomer(monomer);
+      manager.runPostRenderMethods();
 
-      expect(
-        bonded.renderer.redrawLabelIfHydrogenSideChanged,
-      ).toHaveBeenCalled();
-      // The label moved, so the monomer bond is trimmed again.
-      expect(renderer.move).toHaveBeenCalled();
+      expect(labelElementOf(atom)).toBe(label);
+      expect(moveBond).not.toHaveBeenCalled();
     });
   });
 });

@@ -69,11 +69,9 @@ export const getMonomerTemplateRefFromMonomerItem = (
 ) => {
   const { props } = monomerItem;
 
-  if (props.id) {
-    return setMonomerTemplatePrefix(props.id);
-  }
-
-  return setMonomerTemplatePrefix(getMonomerUniqueKey(monomerItem));
+  return setMonomerTemplatePrefix(
+    props.id ? props.id : getMonomerUniqueKey(monomerItem),
+  );
 };
 
 export const getHELMClassByKetMonomerClass = (
@@ -122,13 +120,13 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
 };
 
 /**
- *
- * System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
- * It needs to rotate them by 180 degrees in y-axis.
- *
- * @param position - coordinates of the structure
- *
- */
+
+System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+It needs to rotate them by 180 degrees in y-axis.
+
+@param position - coordinates of the structure
+
+*/
 export const switchIntoChemistryCoordSystem = (position: Vec2) => {
   return rotateCoordAxisBy180Degrees(position, Axis.y);
 };

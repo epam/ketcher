@@ -233,11 +233,7 @@ export class SGroup {
 
   isExpanded(): boolean {
     // flag ".data.expanded" exists only for the SuperAtom
-    if (SGroup.isSuperAtom(this)) {
-      return Boolean(this.data.expanded);
-    } else {
-      return true;
-    }
+    return SGroup.isSuperAtom(this) ? Boolean(this.data.expanded) : true;
   }
 
   isContracted(): boolean {
@@ -358,12 +354,12 @@ export class SGroup {
   }
 
   /**
-   * Connection point - is not! the same as Attachment point.
-   * Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
-   * So it doesn't matter how it happens (connection atom).
-   * When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
-   * But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
-   */
+  Connection point - is not! the same as Attachment point.
+  Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
+  So it doesn't matter how it happens (connection atom).
+  When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
+  But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
+  */
   private getConnectionPointsCount(struct: Struct): number {
     const connectionAtoms = new Set<number>();
     for (const atomId of this.atoms) {
@@ -383,24 +379,24 @@ export class SGroup {
   }
 
   /**
-   * Why only one?
-   * Currently other parts of application don't support several attachment points for sgroup.
-   * So to support it - it's required to refactor almost every peace of code with sgroups.
-   *
-   *
-   * Why return 'undefined' without fallback?
-   * If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
-   */
+  Why only one?
+  Currently other parts of application don't support several attachment points for sgroup.
+  So to support it - it's required to refactor almost every peace of code with sgroups.
+
+
+  Why return 'undefined' without fallback?
+  If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
+  */
   getAttachmentAtomId(): number | undefined {
     return this.attachmentPoints[0]?.atomId;
   }
 
   /**
-   * WHY? atomId drives which atom renders the sgroup label; position is the visual
-   * center used for movement, hit-testing and rendering. Keeping them separate lets
-   * the label always float at the geometric center of all atoms regardless of which
-   * atom happens to be the attachment point.
-   */
+  WHY? atomId drives which atom renders the sgroup label; position is the visual
+  center used for movement, hit-testing and rendering. Keeping them separate lets
+  the label always float at the geometric center of all atoms regardless of which
+  atom happens to be the attachment point.
+  */
   getContractedPosition(struct: Struct): {
     atomId: number;
     position: Vec2;
@@ -446,16 +442,15 @@ export class SGroup {
     }
 
     const superatomClass = this.data.class;
-    if (isSuperatomClass(superatomClass)) {
-      return SUPERATOM_CLASS_TEXT[superatomClass];
-    }
-
-    return '';
+    return isSuperatomClass(superatomClass)
+      ? SUPERATOM_CLASS_TEXT[superatomClass]
+      : '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup?.pp || !sgroup.bracketBox) return null;
-    return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
+    return !sgroup?.pp || !sgroup.bracketBox
+      ? null
+      : Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
   }
 
   static isSaltOrSolvent(moleculeName: string): boolean {
@@ -599,10 +594,7 @@ export class SGroup {
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
     const getAtom = (aid: number): RenderableSGroupAtom | undefined => {
-      if (remol && render) {
-        return remol.atoms.get(aid);
-      }
-      return mol.atoms.get(aid);
+      return remol && render ? remol.atoms.get(aid) : mol.atoms.get(aid);
     };
 
     sGroup.bracketDirection = new Vec2(1, 0);
@@ -906,10 +898,7 @@ export class SGroup {
   }
 
   static isSuperAtom(sGroup?: SGroup): boolean {
-    if (!sGroup) {
-      return false;
-    }
-    return sGroup?.type === this.TYPES.SUP;
+    return !sGroup ? false : sGroup?.type === this.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {

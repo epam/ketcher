@@ -37,17 +37,11 @@ export function selMerge(selection, add, isReversible: boolean) {
 }
 
 export function getSelectedAtoms(selection, molecule) {
-  if (selection?.atoms) {
-    return mapAtomIdsToAtoms(selection?.atoms, molecule);
-  }
-  return [];
+  return selection?.atoms ? mapAtomIdsToAtoms(selection?.atoms, molecule) : [];
 }
 
 export function getSelectedBonds(selection, molecule) {
-  if (selection?.bonds) {
-    return mapBondIdsToBonds(selection?.bonds, molecule);
-  }
-  return [];
+  return selection?.bonds ? mapBondIdsToBonds(selection?.bonds, molecule) : [];
 }
 
 export function canOpenAtomProperties(molecule: Struct, atomId: number) {
@@ -105,17 +99,17 @@ export function getFragSelection(
 }
 
 /**
- * Returns true when the given closest item is part of the current selection.
- *
- * The micro-mode selection model only stores primitive items
- * (`atoms`, `bonds`, `rxnArrows`, `rxnPluses`, `simpleObjects`, `texts`,
- * `enhancedFlags`, images, multitail arrows, `sgroupData`). For composite
- * items (`sgroups`, `functionalGroups`, `rgroups`, `frags`) "selected" is
- * defined as: every atom that the item expands to is already in
- * `selection.atoms`. Without this expansion a multi-selection of
- * sgroup-rendered items (e.g. monomers in molecules mode) collapses to the
- * single clicked item on mousedown, breaking multi-drag.
- */
+Returns true when the given closest item is part of the current selection.
+
+The micro-mode selection model only stores primitive items
+(`atoms`, `bonds`, `rxnArrows`, `rxnPluses`, `simpleObjects`, `texts`,
+`enhancedFlags`, images, multitail arrows, `sgroupData`). For composite
+items (`sgroups`, `functionalGroups`, `rgroups`, `frags`) "selected" is
+defined as: every atom that the item expands to is already in
+`selection.atoms`. Without this expansion a multi-selection of
+sgroup-rendered items (e.g. monomers in molecules mode) collapses to the
+single clicked item on mousedown, breaking multi-drag.
+*/
 export function isItemSelected(
   selection: Selection | null | undefined,
   ci: ClosestItem,

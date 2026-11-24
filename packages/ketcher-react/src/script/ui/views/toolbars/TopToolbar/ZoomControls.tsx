@@ -84,10 +84,7 @@ const ShortcutLabel = styled('span')`
 
 const getIntegerFromString = (zoomInput: string | undefined): number => {
   const zoomNumber = Number.parseInt(zoomInput ?? '');
-  if (Number.isNaN(zoomNumber)) {
-    return 0;
-  }
-  return zoomNumber;
+  return Number.isNaN(zoomNumber) ? 0 : zoomNumber;
 };
 
 const getValidZoom = (zoom: number, currentZoom: number): number => {

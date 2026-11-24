@@ -49,11 +49,10 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
               const field = m[1];
               const valueArr = pc.split('\n').slice(1, -1);
               let value: string;
-              if (valueArr.length > 1) {
-                value = valueArr.join(',');
-              } else {
-                value = pc.split('\n')[1].trim();
-              }
+              value =
+                valueArr.length > 1
+                  ? valueArr.join(',')
+                  : pc.split('\n')[1].trim();
 
               acc[field] = Number.isFinite(value) ? +value : value.toString();
             }

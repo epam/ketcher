@@ -142,11 +142,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     const { ctab } = editor.render;
     if (editableAtomIds.length > 0) {
       const atomId = editableAtomIds[0];
-      if (properties.includes(key as AtomQueryPropertiesName)) {
-        return atomGetAttribute(ctab, atomId, 'queryProperties')?.[key];
-      } else {
-        return atomGetAttribute(ctab, atomId, key as AtomAttributeName);
-      }
+      return properties.includes(key as AtomQueryPropertiesName)
+        ? atomGetAttribute(ctab, atomId, 'queryProperties')?.[key]
+        : atomGetAttribute(ctab, atomId, key as AtomAttributeName);
     } else return null;
   };
 

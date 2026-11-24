@@ -66,7 +66,7 @@ interface IRnaPresetTabsProps {
   phosphatePosition: PhosphatePosition | undefined;
   onPhosphatePositionChange: (position: PhosphatePosition) => void;
   /** User-overridden leaving atom labels for connection APs, keyed by
-   * "<componentKey>:<apName>". Persists across tab switches. */
+  "<componentKey>:<apName>". Persists across tab switches. */
   connectionLeavingAtoms?: Map<string, AtomLabel>;
   onConnectionLeavingAtomChange?: (
     apName: AttachmentPointName,

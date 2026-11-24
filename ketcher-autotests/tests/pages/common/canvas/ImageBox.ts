@@ -13,10 +13,9 @@ type ImageBoxLocators = {
 };
 
 export const ImageBox = async (page: Page, imageBox?: Locator) => {
-  let imageBoxId: string | undefined;
-  if (imageBox) {
-    imageBoxId = (await imageBox.getAttribute('data-image-id')) ?? undefined;
-  }
+  const imageBoxId = imageBox
+    ? ((await imageBox.getAttribute('data-image-id')) ?? undefined)
+    : undefined;
   const locators: ImageBoxLocators = {
     imageBoxBody:
       imageBoxId === undefined

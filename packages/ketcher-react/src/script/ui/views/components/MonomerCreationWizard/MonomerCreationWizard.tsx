@@ -120,18 +120,16 @@ const initialWizardState: WizardState = getInitialWizardState();
 
 /** "R2", "R2 and R3", "R1, R2 and R3" — for preset requirement messages. */
 const formatAttachmentPoints = (points: AttachmentPointName[]): string => {
-  if (points.length <= 1) {
-    return points[0] ?? '';
-  }
-
-  return `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
+  return points.length <= 1
+    ? (points[0] ?? '')
+    : `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
 };
 
 /**
- * Builds initial wizard state seeded with values from an existing monomer
- * being edited. When `initialValues` is undefined returns the default empty
- * wizard state.
- */
+Builds initial wizard state seeded with values from an existing monomer
+being edited. When `initialValues` is undefined returns the default empty
+wizard state.
+*/
 type MonomerCreationWizardInitialState = {
   initialValues?: MonomerCreationInitialValues;
   hasDefaultAttachmentPoints?: boolean;
@@ -593,11 +591,11 @@ const rnaPresetWizardReducer = (
 };
 
 /**
- * Checks if all mandatory properties required for a non-hidden monomer are filled.
- * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
- * @param values - The wizard form values to check
- * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
- */
+Checks if all mandatory properties required for a non-hidden monomer are filled.
+Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
+@param values - The wizard form values to check
+@returns true if Code (symbol) is filled and Natural analogue is filled (when required)
+*/
 const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   const { type, symbol, naturalAnalogue } = values;
 
@@ -992,10 +990,10 @@ const MonomerCreationWizardInternal = ({
     '3' | '5' | undefined
   >();
   /**
-   * Stores user-overridden leaving atom labels for connection (readonly)
-   * attachment points, keyed by "<componentKey>:<apName>" to handle cases
-   * where two components share the same AP name (e.g. base R1 / phosphate R1).
-   */
+  Stores user-overridden leaving atom labels for connection (readonly)
+  attachment points, keyed by "<componentKey>:<apName>" to handle cases
+  where two components share the same AP name (e.g. base R1 / phosphate R1).
+  */
   const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
     Map<string, AtomLabel>
   >(new Map());
@@ -1286,18 +1284,14 @@ const MonomerCreationWizardInternal = ({
   // `handleSubmit`/`handleDiscard`), so every recompute — including one that
   // resolves to an empty set — is always synced to the editor.
   const problematicAtomIds = useMemo(() => {
-    if (
-      !isRnaPresetType ||
+    return !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors ||
       !editor?.render?.monomerCreationState
-    ) {
-      return null;
-    }
-
-    return getRnaPresetStructureValidationResult(
-      editor.struct(),
-      rnaPresetComponentStructures,
-    ).problematicAtomIds;
+      ? null
+      : getRnaPresetStructureValidationResult(
+          editor.struct(),
+          rnaPresetComponentStructures,
+        ).problematicAtomIds;
   }, [
     editor,
     isRnaPresetType,
@@ -1862,20 +1856,12 @@ const MonomerCreationWizardInternal = ({
     monomersToSave: WizardState[],
     localWizardState?: WizardState,
   ) => {
-    if (isRnaPresetType) {
-      return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
-    } else {
-      /**
-       * For non-RNA preset, we need to use the local wizardState that has the
-       * structure. We prefer the explicitly passed localWizardState to avoid
-       * fragile array indexing.
-       */
-      const stateToValidate = localWizardState || monomersToSave[0];
-      return validateMonomerWizard(
-        assignedAttachmentPointsByMonomer,
-        stateToValidate,
-      );
-    }
+    return isRnaPresetType
+      ? validateRnaPresetWizard(assignedAttachmentPointsByMonomer)
+      : validateMonomerWizard(
+          assignedAttachmentPointsByMonomer,
+          localWizardState || monomersToSave[0],
+        );
   };
 
   const finishMonomerCreation = async (
@@ -2147,13 +2133,12 @@ const MonomerCreationWizardInternal = ({
         const shouldBeHidden = isRnaPresetType;
 
         // Auto-assign properties for hidden monomers
-        let valuesToSave = monomerToSave.values;
-        if (shouldBeHidden) {
-          valuesToSave = autoAssignPropertiesForHiddenMonomer(
-            monomerToSave.values,
-            rnaPresetWizardState.preset.name,
-          );
-        }
+        const valuesToSave = shouldBeHidden
+          ? autoAssignPropertiesForHiddenMonomer(
+              monomerToSave.values,
+              rnaPresetWizardState.preset.name,
+            )
+          : monomerToSave.values;
 
         const result = editor.saveNewMonomer({
           type: valuesToSave.type as KetMonomerClass,
@@ -2444,12 +2429,12 @@ const MonomerCreationWizardInternal = ({
 };
 
 /**
- * Outer wrapper that gates the wizard on the Redux `monomerCreationState`.
- * The internal component is mounted only while the wizard is active, which
- * lets it receive `monomerCreationState` (including `editInstanceInitialValues`
- * used to prefill the form when editing an existing monomer) as a prop and
- * seed its initial reducer state synchronously on mount.
- */
+Outer wrapper that gates the wizard on the Redux `monomerCreationState`.
+The internal component is mounted only while the wizard is active, which
+lets it receive `monomerCreationState` (including `editInstanceInitialValues`
+used to prefill the form when editing an existing monomer) as a prop and
+seed its initial reducer state synchronously on mount.
+*/
 const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 

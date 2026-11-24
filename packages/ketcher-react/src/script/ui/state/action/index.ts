@@ -38,9 +38,9 @@ type ActionParams = {
     buttons?: Record<string, { hidden?: boolean }>;
   };
   /**
-   * The Settings window is non-modal: the canvas stays visible, so every toolbar
-   * button has to be reported disabled for as long as the window is open.
-   */
+  The Settings window is non-modal: the canvas stays visible, so every toolbar
+  button has to be reported disabled for as long as the window is open.
+  */
   isSettingsPanelOpen?: boolean;
 };
 
@@ -102,17 +102,16 @@ function isDisabled(
   actObj: UiAction,
   { editor, server, options }: ActionParams,
 ): boolean {
-  if (typeof actObj.disabled === 'function')
-    return actObj.disabled(editor, server, options);
-  return false;
+  return typeof actObj.disabled === 'function'
+    ? actObj.disabled(editor, server, options)
+    : false;
 }
 
 function isHidden(
   actObj: UiAction,
   { options }: Pick<ActionParams, 'options'>,
 ): boolean {
-  if (typeof actObj.hidden === 'function') return actObj.hidden(options);
-  return false;
+  return typeof actObj.hidden === 'function' ? actObj.hidden(options) : false;
 }
 
 function status(
@@ -129,11 +128,11 @@ function status(
 }
 
 /**
- * Builds the state object with action statuses for all actions
- * @param activeTool - The currently active tool
- * @param params - Additional parameters for status computation
- * @returns State object containing active tool and action statuses
- */
+Builds the state object with action statuses for all actions
+@param activeTool - The currently active tool
+@param params - Additional parameters for status computation
+@returns State object containing active tool and action statuses
+*/
 function buildStateWithStatuses(
   activeTool: UiActionAction | null | undefined,
   params: ActionParams,
@@ -201,8 +200,9 @@ export default function (
     // have to be recomputed on those actions as well.
     case 'MODAL_OPEN':
     case 'MODAL_CLOSE': {
-      if (!state) return state;
-      return buildStateWithStatuses(state.activeTool, params as ActionParams);
+      return !state
+        ? state
+        : buildStateWithStatuses(state.activeTool, params as ActionParams);
     }
 
     default: {

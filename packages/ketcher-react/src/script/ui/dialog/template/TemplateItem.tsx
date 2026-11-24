@@ -32,23 +32,17 @@ const isFunctionalGroupTemplate = (template: Template) =>
   template.props.group === 'Functional Groups';
 
 function getTemplateTitle(template: Template, index: number): string {
-  if (isSaltOrSolventTemplate(template)) {
-    return template.props.name;
-  }
-  return (
-    template.struct.name || `${template.props.group} template ${index + 1}`
-  );
+  return isSaltOrSolventTemplate(template)
+    ? template.props.name
+    : template.struct.name || `${template.props.group} template ${index + 1}`;
 }
 
 function tmplName(tmpl: Template, i: number): string {
-  if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation ?? '';
-  }
-  return (
-    tmpl.props.abbreviation ??
-    tmpl.struct.name ??
-    `${tmpl.props.group} template ${i + 1}`
-  );
+  return isSaltOrSolventTemplate(tmpl)
+    ? (tmpl.props.abbreviation ?? '')
+    : (tmpl.props.abbreviation ??
+        tmpl.struct.name ??
+        `${tmpl.props.group} template ${i + 1}`);
 }
 
 function createKeyDownHandler(callback: () => void) {
@@ -62,9 +56,9 @@ function createKeyDownHandler(callback: () => void) {
 }
 
 /**
- * Memoized individual template item component
- * Prevents unnecessary re-renders when parent selection changes
- */
+Memoized individual template item component
+Prevents unnecessary re-renders when parent selection changes
+*/
 export interface TemplateItemProps {
   tmpl: Template;
   index: number;

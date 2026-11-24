@@ -46,7 +46,7 @@ export interface HydrogenLayout {
 const INDEX_DROP = 0.2;
 
 function layoutRight(input: HydrogenLayoutInput): HydrogenLayout {
-  const { hydrogenWidth, indexWidth, labelHeight, delta, zoom } = input;
+  const { hydrogenWidth, indexWidth, labelHeight, delta } = input;
   let { rightMargin } = input;
   const hydrogen = {
     x: rightMargin + 0.35 * hydrogenWidth + delta,
@@ -56,7 +56,7 @@ function layoutRight(input: HydrogenLayoutInput): HydrogenLayout {
   let index: HydrogenOffset | null = null;
   if (indexWidth !== null) {
     index = {
-      x: rightMargin + 0.15 * indexWidth * Math.min(zoom, 1) + delta,
+      x: rightMargin + 0.15 * indexWidth + delta,
       y: INDEX_DROP * labelHeight,
     };
     rightMargin += indexWidth + delta;
@@ -65,7 +65,7 @@ function layoutRight(input: HydrogenLayoutInput): HydrogenLayout {
 }
 
 function layoutLeft(input: HydrogenLayoutInput): HydrogenLayout {
-  const { hydrogenWidth, indexWidth, labelHeight, delta, zoom } = input;
+  const { hydrogenWidth, indexWidth, labelHeight, delta } = input;
   let { leftMargin } = input;
   let index: HydrogenOffset | null = null;
   if (indexWidth !== null) {
@@ -76,10 +76,7 @@ function layoutLeft(input: HydrogenLayoutInput): HydrogenLayout {
     leftMargin -= indexWidth + delta;
   }
   const hydrogen = {
-    x:
-      leftMargin -
-      0.4 * hydrogenWidth * (indexWidth !== null && zoom < 1 ? zoom : 1) -
-      delta,
+    x: leftMargin - 0.4 * hydrogenWidth - delta,
     y: 0,
   };
   leftMargin -= hydrogenWidth + delta;

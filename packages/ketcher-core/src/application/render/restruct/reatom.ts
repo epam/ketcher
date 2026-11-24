@@ -488,11 +488,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     // A wide/multi-part label (e.g. an atom list, or several combined
     // properties like isotope+charge+valence) can otherwise compute a shift
-    // larger than the bond itself, pushing the endpoint past the other atom
-    // and making the bond look detached from the structure (#3508). Never
-    // consume more than half the bond, so the two endpoints can't cross.
+    // larger than the bond, pushing the endpoint past the other atom and
+    // making the bond look detached from the structure (#3508). Leave at
+    // least a line width at the opposite end, while allowing a wide label
+    // such as CH2 to remain clear of the bond.
     if (bondLen) {
-      const maxShift = Math.max(bondLen / 2 - 3 * renderOptions.lineWidth, 0);
+      const maxShift = Math.max(bondLen - 6 * renderOptions.lineWidth, 0);
       atomSymbolShift = Math.min(atomSymbolShift, maxShift);
     }
 

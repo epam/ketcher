@@ -54,11 +54,9 @@ export function addCustomColor(
 ): string[] {
   const normalizedColor = normalizeHexColor(color);
 
-  if (isPresetColor(normalizedColor)) {
-    return sanitizeCustomColors(colors);
-  }
-
-  return sanitizeCustomColors([normalizedColor, ...colors]);
+  return isPresetColor(normalizedColor)
+    ? sanitizeCustomColors(colors)
+    : sanitizeCustomColors([normalizedColor, ...colors]);
 }
 
 export function hexToHsl(hex: string): { h: number; s: number; l: number } {

@@ -21,52 +21,46 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
 }
 
 /**
- * Wraps an event handler so it only fires when the macromolecules (polymer) editor is active.
- *
- * Both micro and macro editors coexist in the DOM simultaneously (one is visually hidden).
- * Use this guard on any window- or document-level event handler registered by macromolecules
- * editor components to prevent them from intercepting events while the micromolecules editor
- * is active.
- *
- * @example
- * const handler = guardForMacromoleculesEditor((e: KeyboardEvent) => { ... });
- * window.addEventListener('keydown', handler);
- * // cleanup:
- * window.removeEventListener('keydown', handler);
- */
+Wraps an event handler so it only fires when the macromolecules (polymer) editor is active.
+
+Both micro and macro editors coexist in the DOM simultaneously (one is visually hidden).
+Use this guard on any window- or document-level event handler registered by macromolecules
+editor components to prevent them from intercepting events while the micromolecules editor
+is active.
+
+@example
+const handler = guardForMacromoleculesEditor((e: KeyboardEvent) => { ... });
+window.addEventListener('keydown', handler);
+// cleanup:
+window.removeEventListener('keydown', handler);
+*/
 export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => TResult,
 ): (...args: TArgs) => TResult | undefined {
   return (...args: TArgs) => {
-    if (globalThis.isPolymerEditorTurnedOn) {
-      return handler(...args);
-    }
-    return undefined;
+    return globalThis.isPolymerEditorTurnedOn ? handler(...args) : undefined;
   };
 }
 
 /**
- * Wraps an event handler so it only fires when the micromolecules (small molecule) editor is active.
- *
- * Both micro and macro editors coexist in the DOM simultaneously (one is visually hidden).
- * Use this guard on any window- or document-level event handler registered by micromolecules
- * editor components to prevent them from intercepting events while the macromolecules editor
- * is active.
- *
- * @example
- * const handler = guardForMicromoleculesEditor((e: KeyboardEvent) => { ... });
- * window.addEventListener('keydown', handler);
- * // cleanup:
- * window.removeEventListener('keydown', handler);
- */
+Wraps an event handler so it only fires when the micromolecules (small molecule) editor is active.
+
+Both micro and macro editors coexist in the DOM simultaneously (one is visually hidden).
+Use this guard on any window- or document-level event handler registered by micromolecules
+editor components to prevent them from intercepting events while the macromolecules editor
+is active.
+
+@example
+const handler = guardForMicromoleculesEditor((e: KeyboardEvent) => { ... });
+window.addEventListener('keydown', handler);
+// cleanup:
+window.removeEventListener('keydown', handler);
+*/
 export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => TResult,
 ): (...args: TArgs) => TResult | undefined {
   return (...args: TArgs) => {
-    if (!globalThis.isPolymerEditorTurnedOn) {
-      return handler(...args);
-    }
-    return undefined;
+    return !globalThis.isPolymerEditorTurnedOn ? handler(...args) : undefined;
   };
 }
 
@@ -82,8 +76,7 @@ export function isSelectionOutsideElement(
     return false;
   }
   const selection = document.getSelection();
-  if (!selection || selection.isCollapsed || !selection.anchorNode) {
-    return false;
-  }
-  return !containerEl.contains(selection.anchorNode);
+  return !selection || selection.isCollapsed || !selection.anchorNode
+    ? false
+    : !containerEl.contains(selection.anchorNode);
 }

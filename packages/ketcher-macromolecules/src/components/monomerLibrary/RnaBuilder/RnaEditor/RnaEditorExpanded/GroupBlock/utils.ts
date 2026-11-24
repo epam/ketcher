@@ -17,11 +17,11 @@
 import { MonomerGroups } from 'src/constants';
 
 /**
- * Values are macromoleculesDialogs translation-key suffixes, not display
- * text - MonomerGroups itself must stay untranslated (its values are used
- * as Redux state keys across state/library and state/rna-builder), so
- * callers resolve these through t() rather than rendering them directly.
- */
+Values are macromoleculesDialogs translation-key suffixes, not display
+text - MonomerGroups itself must stay untranslated (its values are used
+as Redux state keys across state/library and state/rna-builder), so
+callers resolve these through t() rather than rendering them directly.
+*/
 export const groupNameToRnaEditorItemLabelKey = {
   [MonomerGroups.SUGARS]: 'monomerLibrary.groupLabelSugar',
   [MonomerGroups.BASES]: 'monomerLibrary.groupLabelBase',

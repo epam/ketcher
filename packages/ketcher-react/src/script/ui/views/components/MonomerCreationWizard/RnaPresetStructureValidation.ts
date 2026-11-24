@@ -80,9 +80,9 @@ const hasBondBetweenComponents = (
 };
 
 /**
- * RNA preset component connections allow only a single bond with none, up, or
- * down stereo, matching Ketcher's attachment-point bond rules.
- */
+RNA preset component connections allow only a single bond with none, up, or
+down stereo, matching Ketcher's attachment-point bond rules.
+*/
 const isValidConnectionBond = (
   bond: Pick<Bond, 'begin' | 'end'> & Partial<Pick<Bond, 'type' | 'stereo'>>,
 ) => {

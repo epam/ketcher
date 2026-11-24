@@ -1562,44 +1562,47 @@ function isLabelVisible(
 
   if (labelVisibilityCondition) return true;
 
-  if (visibleNeighbors.length === 2) {
-    const nei1 = visibleNeighbors[0];
-    const nei2 = visibleNeighbors[1];
-    const hb1 = restruct.molecule.halfBonds.get(nei1);
-    const hb2 = restruct.molecule.halfBonds.get(nei2);
-    if (!hb1 || !hb2) return false;
-    const bond1 = restruct.bonds.get(hb1.bid);
-    const bond2 = restruct.bonds.get(hb2.bid);
-    if (!bond1 || !bond2) return false;
-
-    const hasSameNonStereoBonds =
-      bond1.b.type === bond2.b.type &&
-      bond1.b.stereo === Bond.PATTERN.STEREO.NONE &&
-      bond2.b.stereo === Bond.PATTERN.STEREO.NONE;
-
-    if (hasSameNonStereoBonds && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2) {
-      return true;
-    }
-  }
-
-  return false;
+  return isCarbonDrawnAsHeteroatom(restruct.molecule, atom);
 }
 
-function shouldDisplayHydrogen(
+// A carbon whose two same-type, non-stereo bonds are (nearly) collinear has no
+// bend to show it, so it is labelled like a heteroatom.
+function isCarbonDrawnAsHeteroatom(struct: Struct, atom: ReAtom): boolean {
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+  if (visibleNeighbors.length !== 2) return false;
+
+  const hb1 = struct.halfBonds.get(visibleNeighbors[0]);
+  const hb2 = struct.halfBonds.get(visibleNeighbors[1]);
+  if (!hb1 || !hb2) return false;
+  const bond1 = struct.bonds.get(hb1.bid);
+  const bond2 = struct.bonds.get(hb2.bid);
+  if (!bond1 || !bond2) return false;
+
+  const hasSameNonStereoBonds =
+    bond1.type === bond2.type &&
+    bond1.stereo === Bond.PATTERN.STEREO.NONE &&
+    bond2.stereo === Bond.PATTERN.STEREO.NONE;
+
+  return hasSameNonStereoBonds && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2;
+}
+
+export function shouldDisplayHydrogen(
   struct: Struct,
   atom: ReAtom,
   hydrogenLabels: ShowHydrogenLabels,
 ) {
   const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+  const isHetero =
+    atom.label?.text.toLowerCase() !== 'c' ||
+    isCarbonDrawnAsHeteroatom(struct, atom);
 
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&
       visibleNeighbors.length < 2) ||
-    (hydrogenLabels === ShowHydrogenLabels.Hetero &&
-      atom.label?.text.toLowerCase() !== 'c') ||
+    (hydrogenLabels === ShowHydrogenLabels.Hetero && isHetero) ||
     (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
-      (visibleNeighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
+      (visibleNeighbors.length < 2 || isHetero))
   );
 }
 

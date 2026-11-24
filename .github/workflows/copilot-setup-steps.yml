@@ -18,7 +18,10 @@ jobs:
   # Copilot uses only a job with this name.
   copilot-setup-steps:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # The setup steps and Copilot's work on the task run in one Actions job,
+    # so this limits the whole Copilot session, not only the setup. Copilot
+    # code review uses this file too. 59 is the maximum Copilot accepts.
+    timeout-minutes: 59
     permissions:
       contents: read
     steps:

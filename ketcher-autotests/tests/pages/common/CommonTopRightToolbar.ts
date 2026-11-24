@@ -1,5 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
+import { waitForCanvasModeSwitch } from '@utils/common/loaders';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
@@ -52,6 +53,13 @@ export const CommonTopRightToolbar = (page: Page) => {
     zoomInButton: page.getByTestId('zoom-in'),
     zoomDefaultButton: page.getByTestId('zoom-default'),
   };
+
+  const waitForModeMenuToClose = (option: Locator) =>
+    // The invisible backdrop can still intercept clicks during the exit animation.
+    page
+      .locator('.MuiPopover-root')
+      .filter({ has: option })
+      .waitFor({ state: 'hidden' });
 
   return {
     ...locators,
@@ -125,14 +133,27 @@ export const CommonTopRightToolbar = (page: Page) => {
       const macromoleculesCanvas = getCanvasByMode(page, 'macromolecules');
 
       if (!(await macromoleculesCanvas.isVisible())) {
-        await waitForRender(page, async () => {
-          await switcher.waitFor({ state: 'visible' });
-          await switcher.click();
-          await macroOption.waitFor({ state: 'visible' });
-          await macroOption.click();
-        });
-        // Wait for a short time to ensure the mode switch is fully rendered
-        await page.waitForTimeout(100);
+        await switcher.waitFor({ state: 'visible' });
+        const ketcherId = await switcher.evaluate((element) =>
+          element
+            .closest('[data-ketcher-editor]')
+            ?.getAttribute('data-ketcher-id'),
+        );
+        if (!ketcherId) {
+          throw new Error('Cannot identify the active Ketcher editor.');
+        }
+
+        await waitForCanvasModeSwitch(
+          page,
+          async () => {
+            await switcher.click();
+            await macroOption.waitFor({ state: 'visible' });
+            await macroOption.click();
+          },
+          'macromolecules',
+          ketcherId,
+        );
+        await waitForModeMenuToClose(macroOption);
       }
 
       await MacromoleculesTopToolbar(
@@ -151,18 +172,41 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
     },
 
+    // Unlike turnOn*Editor, clicks the option even when the mode is active
+    async selectModeOption(mode: Mode) {
+      const option = page.getByTestId(mode);
+      await locators.ketcherModeSwitcherCombobox.click();
+      await option.click();
+      await option.waitFor({ state: 'hidden' });
+    },
+
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
       const moleculesCanvas = getCanvasByMode(page, 'molecules');
 
       if (!(await moleculesCanvas.isVisible())) {
-        await waitForRender(page, async () => {
-          await switcher.waitFor({ state: 'visible' });
-          await switcher.click();
-          await microOption.waitFor({ state: 'visible' });
-          await microOption.click();
-        });
+        await switcher.waitFor({ state: 'visible' });
+        const ketcherId = await switcher.evaluate((element) =>
+          element
+            .closest('[data-ketcher-editor]')
+            ?.getAttribute('data-ketcher-id'),
+        );
+        if (!ketcherId) {
+          throw new Error('Cannot identify the active Ketcher editor.');
+        }
+
+        await waitForCanvasModeSwitch(
+          page,
+          async () => {
+            await switcher.click();
+            await microOption.waitFor({ state: 'visible' });
+            await microOption.click();
+          },
+          'molecules',
+          ketcherId,
+        );
+        await waitForModeMenuToClose(microOption);
       }
     },
   };

@@ -16,10 +16,10 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1" BoundingBox="235.417664 257.437500 287.379211 197.437500">
+    <page HeightPages="1" WidthPages="1" BoundingBox="233.167679 252.937485 285.129211 192.937500">
         <fragment id="4">
-            <n id="5" NodeType="GenericNickname" GenericNickname="*" p="25.980778 -0.000000">
-                <t p="25.980778 -0.000000" LabelJustification="Left">
+            <n id="5" NodeType="GenericNickname" GenericNickname="*" p="25.980749 -0.000000">
+                <t p="25.980749 -0.000000" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>
                 </t>
             </n>
@@ -29,7 +29,7 @@
                     <s font="3" size="10" face="96">*</s>
                 </t>
             </n>
-            <n id="8" p="25.980778 60.000000"/>
+            <n id="8" p="25.980749 59.999985"/>
             <n id="9" NodeType="GenericNickname" GenericNickname="*" p="51.961525 45.000000">
                 <t p="51.961525 45.000000" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>

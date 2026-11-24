@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "3.23.0-dev.1",
+  "version": "3.23.0-dev.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "https://lifescience.opensource.epam.com/ketcher/",
@@ -68,7 +68,7 @@
     "ajv": "^8.18.0",
     "cross-env": "^7.0.3",
     "dpdm": "^4.3.0",
-    "eslint": "10.9.0",
+    "eslint": "10.15.0",
     "happy-dom": "^21.0.4",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",

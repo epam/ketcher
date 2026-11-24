@@ -24,7 +24,7 @@ import {
   Vec2,
   bondChangingAction,
   fromBondAddition,
-  fromBondsAttrs,
+  fromBondsAttributes,
   FunctionalGroup,
   SGroup,
   fromOneBondDeletion,
@@ -124,7 +124,7 @@ class BondTool implements Tool {
         return;
       }
 
-      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
+      const action = fromBondsAttributes(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;
@@ -227,10 +227,9 @@ class BondTool implements Tool {
       return true;
     }
     if (this.dragCtx) {
-      if (!this.isDragStartThresholdReached(event, this.dragCtx)) {
-        return true;
-      }
-      return this.handleDragMove(event);
+      return !this.isDragStartThresholdReached(event, this.dragCtx)
+        ? true
+        : this.handleDragMove(event);
     }
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
@@ -272,10 +271,9 @@ class BondTool implements Tool {
     const degrees = vectorUtils.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-    if (!hasItem || this.isBondEndpoint(dragCtx.item)) {
-      return this.handleBondDrag(event, dragCtx, hasItem);
-    }
-    return undefined;
+    return !hasItem || this.isBondEndpoint(dragCtx.item)
+      ? this.handleBondDrag(event, dragCtx, hasItem)
+      : undefined;
   }
 
   private handleBondDrag(

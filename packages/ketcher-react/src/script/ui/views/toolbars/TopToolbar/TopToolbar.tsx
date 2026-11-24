@@ -83,8 +83,9 @@ const ControlsPanel = styled('div')`
   justify-content: space-between;
   gap: 0px;
   height: 36px;
-  padding: 0px 22px;
+  padding: 0px;
   background-color: #ffffff;
+  border-radius: 4px;
   box-shadow: 0px 2px 5px rgba(103, 104, 132, 0.15);
 
   .group {
@@ -95,24 +96,6 @@ const ControlsPanel = styled('div')`
 
   & * {
     box-sizing: border-box;
-  }
-
-  @media only screen {
-    @container (min-width: 1024px) {
-      height: 40px;
-      gap: 0px;
-      padding-bottom: 0;
-      .group {
-        gap: 4px;
-      }
-    }
-  }
-
-  @media only screen {
-    @container (min-width: 1920px) {
-      height: 64px;
-      gap: 12px;
-    }
   }
 `;
 
@@ -209,6 +192,7 @@ export const TopToolbar = ({
           hiddenButtons={hiddenButtons}
           disabledButtons={disabledButtons}
         />
+        <Divider />
         <ClipboardControls
           onCopy={onCopy}
           onCopyMol={onCopyMol}

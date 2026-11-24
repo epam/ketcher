@@ -2,6 +2,15 @@ import { render, screen } from '@testing-library/react';
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import AttachmentGroupMenuItems from './AttachmentGroupMenuItems';
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'rgroup.removeAttachmentGroup': 'Remove attachment group',
+      })[key] ?? key,
+  }),
+}));
+
 vi.mock('react-contexify', () => ({
   Item: ({
     children,

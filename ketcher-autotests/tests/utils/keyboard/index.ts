@@ -1,5 +1,6 @@
-import { Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import * as os from 'node:os';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { waitForRender } from '../common/loaders/waitForRender';
 
 let cachedAltModifier: string | null = null;
@@ -18,9 +19,8 @@ export async function arrangeAsARingByKeyboard(page: Page) {
 }
 
 export async function resetZoomLevelToDefault(page: Page) {
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`ControlOrMeta+0`);
-  });
+  await page.keyboard.press(`ControlOrMeta+0`);
+  await expect(CommonTopRightToolbar(page).zoomSelector).toContainText('100%');
 }
 
 export async function zoomOutByKeyboard(

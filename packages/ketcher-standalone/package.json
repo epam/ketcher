@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "3.23.0-dev.1",
+  "version": "3.23.0-dev.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "https://lifescience.opensource.epam.com/ketcher/",
@@ -53,7 +53,7 @@
     "@rollup/plugin-strip": "^2.0.0",
     "@types/node": "^16.11.12",
     "cross-env": "^7.0.3",
-    "eslint": "10.9.0",
+    "eslint": "10.15.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",

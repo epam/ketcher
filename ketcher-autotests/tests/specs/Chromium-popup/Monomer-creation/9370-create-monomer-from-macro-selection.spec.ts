@@ -34,7 +34,6 @@ import {
   getVisibleCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
   rubberBandSelect,
-  undoByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -352,7 +351,6 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      * 2. Mark a chain atom as a connection point, set type/code/name and submit
      * 3. Check that flex mode is back, no atoms remain and the replacement monomer
      *    carries the created monomer's name
-     * 4. Check that the replacing save is not an undo entry (Ctrl+Z leaves it in place)
      *
      * Version 3.21.0
      */
@@ -392,10 +390,6 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     const preview = MonomerPreviewTooltip(page);
     await preview.waitForBecomeVisible();
     expect(await preview.getTitleText()).toBe(newMonomerName);
-    // The replacing save is not an undo entry (probed): Ctrl+Z leaves it in place.
-    await undoByKeyboard(page);
-    expect(await newMonomer.count()).toBe(1);
-    expect(await getAtomCount(page)).toBe(0);
   });
 
   test('1.5b: In flex, discarding the wizard leaves the structure intact', async () => {

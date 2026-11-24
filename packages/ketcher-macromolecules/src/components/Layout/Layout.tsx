@@ -92,7 +92,7 @@ const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingInlineEnd: withPaddingRight ? '12px' : 0,
-    overflow: fullWidth ? 'hidden' : 'initial',
+    minWidth: fullWidth ? 0 : undefined,
   }),
 );
 
@@ -230,7 +230,7 @@ const Top = (
         </StyledTopInnerDiv>
         <span ref={endRef}></span>
       </StyledTop>
-      {startInView && endInView ? null : (
+      {startInView && endInView ? undefined : (
         <StyledArrowScrollWrapper>
           <ArrowScroll
             startInView={startInView}
@@ -263,14 +263,7 @@ export const Layout = ({ children }: LayoutProps) => {
     [setCanvasElement],
   );
 
-  const subcomponents: Record<LayoutSection, JSX.Element | null> = {
-    Left: null,
-    Main: null,
-    Right: null,
-    Top: null,
-    Bottom: null,
-    InsideRoot: null,
-  };
+  const subcomponents: Partial<Record<LayoutSection, JSX.Element>> = {};
   React.Children.forEach(children, (child) => {
     if (child.type === Left) {
       subcomponents.Left = child;
@@ -294,7 +287,7 @@ export const Layout = ({ children }: LayoutProps) => {
         >,
         { ref: canvasCallbackRef },
       )
-    : null;
+    : undefined;
 
   return (
     <RowMain

@@ -235,20 +235,20 @@ function AttachmentPointSelectionPanel({
     () => getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
   );
 
-  const getLeavingGroup = (attachmentPoint): string | null => {
+  const getLeavingGroup = (attachmentPoint): string | undefined => {
     const MonomerCaps = monomer.monomerCaps;
     const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
     if (!MonomerCaps) {
-      return isAmbiguousMonomer ? null : 'H';
+      return isAmbiguousMonomer ? undefined : 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return leavingGroup ?? null;
+    return leavingGroup;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
     const selectedBond = selectedAttachmentPoint
       ? monomer.attachmentPointsToBonds[selectedAttachmentPoint]
-      : null;
+      : undefined;
     if (selectedAttachmentPoint && selectedBond) {
       monomer.removeBond(selectedBond);
     }
@@ -311,7 +311,7 @@ function getDefaultAttachmentPoint(monomer: BaseMonomer): string | null {
     return monomer.chosenSecondAttachmentPointForBond;
   const possibleAttachmentPoints = Object.entries(
     monomer.attachmentPointsToBonds,
-  ).filter(([_, bond]) => bond == null);
+  ).filter(([_, bond]) => bond == undefined);
 
   if (possibleAttachmentPoints.length === 1) {
     const [attachmentPointName] = possibleAttachmentPoints[0];

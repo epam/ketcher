@@ -71,26 +71,22 @@ export class PolymerBond extends BaseBond {
     const firstMonomerAttachmentPoint = this.firstMonomerAttachmentPoint;
     const secondMonomerAttachmentPoint = this.secondMonomerAttachmentPoint;
 
-    if (!firstMonomerAttachmentPoint || !secondMonomerAttachmentPoint) {
-      return false;
-    }
-
-    return (
-      (!(
-        PolymerBond.backBoneChainAttachmentPoints.includes(
-          firstMonomerAttachmentPoint,
-        ) &&
-        PolymerBond.backBoneChainAttachmentPoints.includes(
-          secondMonomerAttachmentPoint,
-        )
-      ) ||
-        (isMonomerConnectedToR2RnaBase(this.firstMonomer) &&
-          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer)) ||
-        (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
-          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer)) ||
-        firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
-      !isBondBetweenSugarAndBaseOfRna(this)
-    );
+    return !firstMonomerAttachmentPoint || !secondMonomerAttachmentPoint
+      ? false
+      : (!(
+          PolymerBond.backBoneChainAttachmentPoints.includes(
+            firstMonomerAttachmentPoint,
+          ) &&
+          PolymerBond.backBoneChainAttachmentPoints.includes(
+            secondMonomerAttachmentPoint,
+          )
+        ) ||
+          (isMonomerConnectedToR2RnaBase(this.firstMonomer) &&
+            isRnaBaseOrAmbiguousRnaBase(this.secondMonomer)) ||
+          (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
+            isRnaBaseOrAmbiguousRnaBase(this.firstMonomer)) ||
+          firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
+          !isBondBetweenSugarAndBaseOfRna(this);
   }
 
   get firstEndEntity(): BaseMonomer {
@@ -106,24 +102,16 @@ export class PolymerBond extends BaseBond {
   }
 
   public get isHorizontal() {
-    if (!this.secondMonomer) {
-      return false;
-    }
-
-    return (
-      Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
-      HalfMonomerSize
-    );
+    return !this.secondMonomer
+      ? false
+      : Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
+          HalfMonomerSize;
   }
 
   public get isVertical() {
-    if (!this.secondMonomer) {
-      return false;
-    }
-
-    return (
-      Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
-      HalfMonomerSize
-    );
+    return !this.secondMonomer
+      ? false
+      : Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
+          HalfMonomerSize;
   }
 }

@@ -90,8 +90,9 @@ function hasSelectedNonMonomerStructure(
   if (selection?.bonds?.length) {
     return selection.bonds.some((bondId) => {
       const bond = struct.bonds.get(bondId);
-      if (!bond) return false;
-      return !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
+      return !bond
+        ? false
+        : !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
     });
   }
 
@@ -133,18 +134,21 @@ export const isItemInSelection = ({
   }
 
   switch (item.map) {
-    case 'sgroups':
+    case 'sgroups': {
       return selectedSGroupsIds.has(item.id);
+    }
 
-    case 'functionalGroups':
+    case 'functionalGroups': {
       return [...selectedFunctionalGroups.keys()].includes(item.id);
+    }
 
-    default:
+    default: {
       return (
         item.map in selection &&
         Array.isArray(selection[item.map]) &&
         selection[item.map].includes(item.id)
       );
+    }
   }
 };
 
@@ -223,11 +227,12 @@ export function getMenuPropsForClosestItem(
       }
     }
 
-    case 'attachmentGroups':
+    case 'attachmentGroups': {
       return {
         id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
         attachmentGroupIds: [closestItem.id],
       };
+    }
 
     case 'sgroups':
     case 'functionalGroups': {
@@ -280,8 +285,9 @@ export function getMenuPropsForClosestItem(
       };
     }
 
-    default:
+    default: {
       return null;
+    }
   }
 }
 

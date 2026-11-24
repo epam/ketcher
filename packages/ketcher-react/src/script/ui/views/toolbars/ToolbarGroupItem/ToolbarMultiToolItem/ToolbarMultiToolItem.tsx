@@ -23,8 +23,12 @@ import type {
   GroupDescriptor,
   MultiToolVariant,
 } from './variants/variants.types';
-import type { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
-import action, { type UiAction, type UiActionAction } from '../../../../action';
+import type {
+  ToolbarItem,
+  ToolbarItemVariant,
+  ToolbarStatus,
+} from '../../toolbar.types';
+import action, { type UiActionAction } from '../../../../action';
 
 import { useRef } from 'react';
 import clsx from 'clsx';
@@ -41,9 +45,7 @@ interface ToolbarMultiToolItemProps {
   options: ToolbarItem[];
   groups?: GroupDescriptor[];
   variant?: MultiToolVariant;
-  status: {
-    [key in string]?: UiAction;
-  };
+  status: ToolbarStatus;
   opened: string | null;
   disableableButtons: string[];
   indigoVerification: boolean;
@@ -104,7 +106,7 @@ const ToolbarMultiToolItem = (props: Props) => {
     areAllInnerItemsHidden || currentStatus?.hidden
   );
 
-  if (!currentStatus && options.length) {
+  if (!currentStatus && options.length > 0) {
     const savedSelectionTool = SettingsManager.getSelectionTool('micro');
     const savedSelectionToolId = savedSelectionTool
       ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`

@@ -30,7 +30,7 @@ describe('Rotate controller', () => {
       {},
     );
     const tool = () => new SelectTool(mockEditor, 'rectangle');
-    const paper = jest.fn();
+    const paper = vi.fn();
     const selection = () => null;
     const visibleAtoms = [1];
     const editor = {
@@ -74,7 +74,7 @@ describe('Rotate controller', () => {
       {},
     );
     const NonSelectTool = new RotateTool(editor, undefined);
-    const paper = jest.fn();
+    const paper = vi.fn();
     const visibleAtoms = [0, 1];
     const controller = new RotateController({
       selection: () => null,
@@ -108,7 +108,7 @@ describe('Rotate controller', () => {
       {},
       {},
     );
-    editor.rotateController.rerender = jest.fn();
+    editor.rotateController.rerender = vi.fn();
 
     editor.zoom(2);
 
@@ -121,7 +121,7 @@ describe('Rotate controller', () => {
    */
   it('can be only dragged by left mouse button', () => {
     const controller = new RotateController({ selection: () => null } as any);
-    const changeCrossColor = jest.fn();
+    const changeCrossColor = vi.fn();
     controller.cross = {
       attr: changeCrossColor,
     } as unknown as RaphaelSet;
@@ -203,24 +203,24 @@ describe('Rotate controller', () => {
 
   it('adds test id to rotation center handle hitbox', () => {
     const cross = {
-      attr: jest.fn().mockReturnThis(),
+      attr: vi.fn().mockReturnThis(),
     };
     const circle = {
-      attr: jest.fn().mockReturnThis(),
+      attr: vi.fn().mockReturnThis(),
       node: { dataset: {} as DOMStringMap },
     };
     const crossSet = {
-      push: jest.fn(),
-      translate: jest.fn(),
+      push: vi.fn(),
+      translate: vi.fn(),
     };
 
     const controller = new RotateController({ selection: () => null } as any);
     controller.originalCenter = new Vec2(1, 1);
     controller.editor.render = {
       paper: {
-        path: jest.fn().mockReturnValue(cross),
-        circle: jest.fn().mockReturnValue(circle),
-        set: jest.fn().mockReturnValue(crossSet),
+        path: vi.fn().mockReturnValue(cross),
+        circle: vi.fn().mockReturnValue(circle),
+        set: vi.fn().mockReturnValue(crossSet),
       },
       options: {
         microModeScale: 1,
@@ -306,9 +306,9 @@ describe('Rotate controller', () => {
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
     editor.rotateController.rotateTool.dragCtx = {
       action: { operations: [], perform: () => undefined },
-    };
+    } as unknown as RotateTool['dragCtx'];
     editor.rotateController.isRotating = true;
-    const updateRender = jest.spyOn(editor.render, 'update');
+    const updateRender = vi.spyOn(editor.render, 'update');
 
     editor.rotateController.revert();
     const selectTool = new SelectTool(editor, 'rectangle');

@@ -93,16 +93,21 @@ const isMonomerClassCompatible = (
   monomerType: ChainMonomerType,
 ): boolean => {
   switch (monomerType) {
-    case 'Peptide':
+    case 'Peptide': {
       return monomer.monomerClass === KetMonomerClass.AminoAcid;
-    case 'Phosphate':
+    }
+    case 'Phosphate': {
       return monomer.monomerClass === KetMonomerClass.Phosphate;
-    case 'Sugar':
+    }
+    case 'Sugar': {
       return monomer.monomerClass === KetMonomerClass.Sugar;
-    case 'UnsplitNucleotide':
+    }
+    case 'UnsplitNucleotide': {
       return monomer.monomerClass === KetMonomerClass.RNA;
-    default:
+    }
+    default: {
       return false;
+    }
   }
 };
 
@@ -165,13 +170,10 @@ export function isChemMonomer(monomer: BaseMonomer): boolean {
 }
 
 export function isLinearChem(monomer?: BaseMonomer): boolean {
-  if (!monomer) {
-    return false;
-  }
-
-  return (
-    isChemMonomer(monomer) && monomer.usedAttachmentPointsNamesList.length <= 2
-  );
+  return !monomer
+    ? false
+    : isChemMonomer(monomer) &&
+        monomer.usedAttachmentPointsNamesList.length <= 2;
 }
 
 function getOrientedChemNeighbors(chem: BaseMonomer): {

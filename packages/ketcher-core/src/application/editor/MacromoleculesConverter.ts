@@ -80,10 +80,9 @@ export class MacromoleculesConverter {
   public static convertAttachmentPointNameToNumber(
     attachmentPointName: AttachmentPointName,
   ) {
-    if (attachmentPointName === 'hydrogen') {
-      return 0;
-    }
-    return Number(attachmentPointName?.replace('R', ''));
+    return attachmentPointName === 'hydrogen'
+      ? 0
+      : Number(attachmentPointName?.replace('R', ''));
   }
 
   public static findAttachmentPointAtom(
@@ -182,7 +181,14 @@ export class MacromoleculesConverter {
 
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         const atomIdMap = new Map<number, number>();
-        monomerStruct.mergeInto(struct, null, null, false, false, atomIdMap);
+        monomerStruct.mergeInto(
+          struct,
+          undefined,
+          undefined,
+          false,
+          false,
+          atomIdMap,
+        );
         monomerToAtomIdMap.set(monomer, atomIdMap);
       } else {
         const atomIdsMap = new Map<number, number>();
@@ -405,7 +411,10 @@ export class MacromoleculesConverter {
     const monomerAdditionCommand =
       monomerMicromolecule.monomer instanceof AmbiguousMonomer
         ? drawingEntitiesManager.addAmbiguousMonomer(
-            monomerMicromolecule.monomer.variantMonomerItem,
+            {
+              ...monomerMicromolecule.monomer.variantMonomerItem,
+              seqId: monomerMicromolecule.monomer.monomerItem.seqId,
+            },
             monomerMicromolecule.monomer.position,
           )
         : drawingEntitiesManager.addMonomer(

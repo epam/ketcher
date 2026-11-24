@@ -108,8 +108,7 @@
             "y": -1.25
         },
         "alias": "E",
-        "templateId": "E___Glutamic acid",
-        "seqid": 1
+        "templateId": "E___Glutamic acid"
     },
     "monomerTemplate-E___Glutamic acid": {
         "type": "monomerTemplate",

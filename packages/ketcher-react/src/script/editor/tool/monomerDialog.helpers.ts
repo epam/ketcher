@@ -35,10 +35,9 @@ export function getMonomerVariant(
   const struct = editor.render.ctab.molecule;
   const labels = monomerFgIds.map((id) => {
     const sg = struct.sgroups.get(id);
-    if (sg instanceof MonomerMicromolecule) {
-      return sg.monomer.monomerItem.label ?? '';
-    }
-    return '';
+    return sg instanceof MonomerMicromolecule
+      ? (sg.monomer.monomerItem.label ?? '')
+      : '';
   });
 
   const allIdentical = labels.every((l) => l === labels[0]);
@@ -61,7 +60,7 @@ export function dispatchMonomerOrGroupDialog(
   editor: Editor,
   fgIds: number[],
 ): void {
-  if (!fgIds.length) return;
+  if (fgIds.length === 0) return;
 
   const struct = editor.render.ctab.molecule;
   const monomerIds: number[] = [];

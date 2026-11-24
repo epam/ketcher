@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
@@ -41,44 +42,22 @@ export class StereoFlagRenderer extends BaseRenderer {
 
   private get flagLabel(): string {
     switch (this.stereoFlag.flagType) {
-      case StereoFlagEnum.Abs:
+      case StereoFlagEnum.Abs: {
         return 'ABS';
-      case StereoFlagEnum.And:
+      }
+      case StereoFlagEnum.And: {
         return 'AND Enantiomer';
-      case StereoFlagEnum.Or:
+      }
+      case StereoFlagEnum.Or: {
         return 'OR Enantiomer';
-      case StereoFlagEnum.Mixed:
+      }
+      case StereoFlagEnum.Mixed: {
         return 'Mixed';
-      default:
+      }
+      default: {
         return '';
+      }
     }
-  }
-
-  public show() {
-    if (!this.shouldDisplayStereoFlag()) {
-      return;
-    }
-
-    this.rootElement = this.canvas
-      .insert('g', `.monomer`)
-      .data([this])
-      .attr('data-testid', 'stereo-flag')
-      .attr('pointer-events', 'all')
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
-
-    this.textElement = this.rootElement
-      .append('text')
-      .attr('font-family', 'Arial')
-      .attr('font-size', '13px')
-      .attr('fill', '#000')
-      .attr('y', 4)
-      .text(this.flagLabel);
-
-    this.appendHoverAreaElement();
-    this.drawSelection();
   }
 
   private shouldDisplayStereoFlag(): boolean {
@@ -117,6 +96,33 @@ export class StereoFlagRenderer extends BaseRenderer {
       .attr('width', bbox.width + HOVER_PADDING * 2)
       .attr('height', bbox.height + HOVER_PADDING * 2)
       .attr('rx', 4);
+  }
+
+  public show() {
+    if (!this.shouldDisplayStereoFlag()) {
+      return;
+    }
+
+    this.rootElement = this.canvas
+      .insert('g', `.monomer`)
+      .data([this])
+      .attr('data-testid', 'stereo-flag')
+      .attr('pointer-events', 'all')
+      .attr(
+        'transform',
+        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    this.textElement = this.rootElement
+      .append('text')
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('fill', '#000')
+      .attr('y', 4)
+      .text(this.flagLabel);
+
+    this.appendHoverAreaElement();
+    this.drawSelection();
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
@@ -195,8 +201,8 @@ export class StereoFlagRenderer extends BaseRenderer {
 
     this.selectionElement = this.canvas
       ?.insert('rect', ':first-child')
-      .attr('fill', '#57ff8f')
-      .attr('stroke', '#57ff8f')
+      .attr('fill', SELECTION_COLOR)
+      .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');
 
     this.setSelectionContourAttributes(

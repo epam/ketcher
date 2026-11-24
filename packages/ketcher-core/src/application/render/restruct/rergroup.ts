@@ -24,12 +24,16 @@ import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../util';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);
 
 class ReRGroup extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
   public labelBox: Box2Abs | null;
   public item: RGroup;
 
@@ -37,10 +41,6 @@ class ReRGroup extends ReObject {
     super('rgroup');
     this.labelBox = null;
     this.item = rgroup;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   getAtoms(render: Render): number[] {
@@ -124,7 +124,7 @@ class ReRGroup extends ReObject {
         fill: 'black',
       });
 
-    const labelBox = util.relBox(label.getBBox());
+    const labelBox = utility.relBox(label.getBBox());
     label.translateAbs(-labelBox.width / 2 - options.lineWidth, 0);
 
     labelSet.push(label);
@@ -141,7 +141,7 @@ class ReRGroup extends ReObject {
       const logicPath = render.paper
         .text(p0.x, (p0.y + p1.y) / 2, logicItem)
         .attr(logicStyle);
-      const logicBox = util.relBox(logicPath.getBBox());
+      const logicBox = utility.relBox(logicPath.getBBox());
       shift += logicBox.height / 2;
       logicPath.translateAbs(
         -logicBox.width / 2 - 6 * options.lineWidth,
@@ -206,7 +206,7 @@ class ReRGroup extends ReObject {
         LayerMap.data,
         this.visel,
         data.shift(),
-        null,
+        undefined,
         true,
       );
     }

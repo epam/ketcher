@@ -14,36 +14,37 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 
 - Install: `npm install`. Run it only from the root.
 - Build the packages and the example app: `npm run build`.
-- Dev server for the example app: `cd example && npm run dev:standalone`.
+- Dev server for the example app: `cd example && npm run dev:standalone`. It serves only `index.html`. The host pages for two editors on one page, Show/Hide, and a popup need a production build: [example-app.md](.memory-bank/modules/example-app.md) says which page a change needs.
 - Checks for the four packages: `npm test`. It runs each package's `test` script.
-- Unit tests in one package: `cd packages/<name> && npm run test:unit`. Unit tests use Jest.
+- Unit tests in one package: `cd packages/<name> && npm run test:unit`. Unit tests use Vitest.
 - Types in all workspaces: `npm run test:types`.
+- Build output checks, after `npm run build`: `npm run check:package-metadata` and `node scripts/check-standalone-consumer.mjs`. Run them before a PR that touches a `vite.config.mjs`, `build-config/`, a package's `exports`, or a build script. [build.md](.memory-bank/build.md#verification) lists all four.
 - E2E tests: `cd ketcher-autotests && npm test`. Playwright. Conventions are in `.memory-bank/testing/testing.md`.
 
 ## Where knowledge lives
 
 `.memory-bank/` is the knowledge base. Read it before any non-trivial task: before implementing, fixing, refactoring, writing tests, or designing a change, and whenever architecture, domain terms, or invariants are unclear. Each fact has one owner file. Other files link to it and do not restate it.
 
-| Fact                                           | Owner                                            | Format                                                                                                 |
-| ---------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| Current product behavior (WHEN/THEN scenarios) | `openspec/specs/<capability>/spec.md`            | Requirements with SHALL text and scenarios. Archiving a change merges its deltas here.                 |
-| Feature summary and limitations                | `.memory-bank/features/<name>.md`                | Title, problem, link to the spec, Limitations, Related. No second copy of behavior.                    |
-| Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                               |
-| Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                 |
-| Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                                   |
-| Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                                              |
-| Non-negotiable rules                           | `.memory-bank/invariants.md`                     | Labeled IDs (D1, A1, B1, ...), each a rule that must never break                                       |
-| Architecture decisions                         | `.memory-bank/adr/YYYY-MM-DD-<title>.md`         | Decision, Context, Alternatives considered, Rationale, Consequences                                    |
-| File formats (KET, MOL)                        | `.memory-bank/formats/`                          | Format specifications and their index                                                                  |
-| E2E testing strategy                           | `.memory-bank/testing/testing.md`                | Levels, locations, how to run, selector and fixture rules                                              |
-| Plan for a new E2E spec file                   | `.memory-bank/testing/e2e-test-plan-template.md` | Plan structure, approved before spec code                                                              |
-| Review rules                                   | `.memory-bank/review-rules.md`                   | `### R<n>` blocks with Scope, Severity, Enforced by, Status, Why, Source                               |
-| Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                                  |
-| Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                                    |
-| PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                                  |
-| Public API reference                           | `packages/ketcher-core/docs/`                    | Generated TypeDoc output. It is committed and not regenerated, so check the source before you trust it |
-| Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                                               |
-| Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                                   |
+| Fact                                           | Owner                                            | Format                                                                                                              |
+| ---------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Current product behavior (WHEN/THEN scenarios) | `.memory-bank/features/<name>.md`                | Requirements with SHALL text and scenarios, Limitations, Related. Archiving a change folds its deltas here by hand. |
+| Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                                            |
+| Builds and toolchain                           | `.memory-bank/build.md`                          | Targets, build order, per-package pipelines, output contract, verification checks                                   |
+| Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                              |
+| Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                                                |
+| Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                                                           |
+| Non-negotiable rules                           | `.memory-bank/invariants.md`                     | Labeled IDs (D1, A1, B1, ...), each a rule that must never break                                                    |
+| Architecture decisions                         | `.memory-bank/adr/YYYY-MM-DD-<title>.md`         | Decision, Context, Alternatives considered, Rationale, Consequences                                                 |
+| File formats (KET, MOL)                        | `.memory-bank/formats/`                          | Format specifications and their index                                                                               |
+| E2E testing strategy                           | `.memory-bank/testing/testing.md`                | Levels, locations, how to run, selector and fixture rules                                                           |
+| Plan for a new E2E spec file                   | `.memory-bank/testing/e2e-test-plan-template.md` | Plan structure, approved before spec code                                                                           |
+| Review rules                                   | `.memory-bank/review-rules.md`                   | `### R<n>` blocks with Scope, Severity, Enforced by, Status, Why, Source                                            |
+| Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                                               |
+| Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                                                 |
+| PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                                               |
+| Public API reference                           | `packages/ketcher-core/docs/`                    | Generated TypeDoc output. It is committed and not regenerated, so check the source before you trust it              |
+| Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                                                            |
+| Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                                                |
 
 Rules for updating the memory bank:
 

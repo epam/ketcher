@@ -19,7 +19,7 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import type { RaphaelPaper } from 'raphael';
 
-import Raphael from './raphael-ext';
+import Raphael from './raphael-extension';
 import ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
@@ -95,6 +95,12 @@ export type MonomerCreationState = {
 } | null;
 
 export class Render {
+  private userOpts: Partial<RenderOptions>;
+  private oldCb: Box2Abs | undefined;
+  private scrollbar: ScrollbarContainer;
+  private resizeObserver: ResizeObserver | undefined;
+  private _monomerCreationState: MonomerCreationState = null;
+
   public skipRaphaelInitialization = false;
   public readonly clientArea: HTMLElement;
   public readonly paper: RaphaelPaper;
@@ -105,11 +111,15 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
-  private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
-  private _monomerCreationState: MonomerCreationState = null;
+
+  observeCanvasResize = () => {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.sz = this.getCanvasSizeVector();
+      this.resizeViewBox();
+    });
+
+    this.resizeObserver.observe(this.paper.canvas);
+  };
 
   constructor(
     clientArea: HTMLElement,
@@ -143,32 +153,44 @@ export class Render {
     });
   }
 
-  observeCanvasResize = () => {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.sz = this.getCanvasSizeVector();
-      this.resizeViewBox();
-    });
+  private getCanvasSizeVector() {
+    return this.userOpts.width
+      ? new Vec2(this.userOpts.width, this.userOpts.height)
+      : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  }
 
-    this.resizeObserver.observe(this.paper.canvas);
-  };
+  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
+    const fixedPoint = new Vec2(
+      this.viewBox.minX + this.viewBox.width / 2,
+      this.viewBox.minY + this.viewBox.height / 2,
+    );
+    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
+    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
+    return [viewBoxX, viewBoxY];
+  }
 
   unobserveCanvasResize = () => {
     this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
+    this.resizeObserver = undefined;
   };
 
-  /**
-   * The options this render was asked for, without the values defaultOptions
-   * derives from them. This is the right base for building a render with
-   * changed options: the derived values get recomputed instead of carried over.
-   */
-  get userOptions(): Partial<RenderOptions> {
-    return this.userOpts;
+  private zoomOnMouse(
+    event: WheelEvent,
+    zoomedWidth: number,
+    zoomedHeight: number,
+  ) {
+    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
+    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
+    const heightRatio =
+      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
+    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
+    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
+    return [viewBoxX, viewBoxY];
   }
 
-  updateOptions(opts: string) {
+  updateOptions(options: string) {
     try {
-      const passedOptions = JSON.parse(opts);
+      const passedOptions = JSON.parse(options);
       if (passedOptions && typeof passedOptions === 'object') {
         this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
@@ -216,54 +238,34 @@ export class Render {
     this.options.zoom = zoom;
   }
 
-  private getCanvasSizeVector() {
-    return this.userOpts.width
-      ? new Vec2(this.userOpts.width, this.userOpts.height)
-      : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
   }
 
   resizeViewBox() {
     this.sz = this.getCanvasSizeVector();
     const newWidth = this.sz.x / this.options.zoom;
     const newHeight = this.sz.y / this.options.zoom;
-    this.setViewBox((prev) => ({
-      ...prev,
+    this.setViewBox((previous) => ({
+      ...previous,
       width: newWidth,
       height: newHeight,
     }));
   }
 
-  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
-    const fixedPoint = new Vec2(
-      this.viewBox.minX + this.viewBox.width / 2,
-      this.viewBox.minY + this.viewBox.height / 2,
-    );
-    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
-    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
-    return [viewBoxX, viewBoxY];
-  }
-
-  private zoomOnMouse(
-    event: WheelEvent,
-    zoomedWidth: number,
-    zoomedHeight: number,
-  ) {
-    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
-    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
-    const heightRatio =
-      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
-    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
-    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
-    return [viewBoxX, viewBoxY];
-  }
-
   /**
    * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
    */
-  setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
+  setViewBox(function_: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;
-  setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
-    const newViewBox = typeof arg === 'function' ? arg(this.viewBox) : arg;
+  setViewBox(argument: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
+    const newViewBox =
+      typeof argument === 'function' ? argument(this.viewBox) : argument;
     this.viewBox = newViewBox;
     this.paper.canvas.setAttribute(
       'viewBox',

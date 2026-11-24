@@ -7,7 +7,7 @@ The **bug** kind of [SKILL.md](../SKILL.md): the path from one bug, in prose or 
 Stop, say what you found and what you need, and wait, when:
 
 - **Green everywhere.** The loop stays green everywhere you can reach (RED.md). Show what you ran. Nothing is filed.
-- **Design decision.** The fix needs a choice that `openspec/specs/` and `.memory-bank/adr/` do not make: molecules mode and macromolecules mode model one concept differently, and the bug is the mismatch. Name both models and the one you would pick. The user picks.
+- **Design decision.** The fix needs a choice that `.memory-bank/features/` and `.memory-bank/adr/` do not make: molecules mode and macromolecules mode model one concept differently, and the bug is the mismatch. Name both models and the one you would pick. The user picks.
 - **Product change.** The fix changes what a user sees beyond the **Acceptance** lines of the report.
 - **Unexplained screenshot.** A reference screenshot changes in a way no **Acceptance** line of the report says ([SNAPSHOTS.md](../shared/SNAPSHOTS.md)).
 - **Stuck.** A fix attempt fails the same check twice, and the **premise** both attempts shared (_Premise_ in [QUALITY.md](../shared/QUALITY.md)) fails when you test it directly.

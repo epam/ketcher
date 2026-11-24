@@ -24,8 +24,9 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
   });
 
   test('Check Clear Canvas (Ctrl+Del) Shortcut', async ({ page }) => {

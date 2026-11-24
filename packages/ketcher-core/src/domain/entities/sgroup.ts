@@ -233,11 +233,7 @@ export class SGroup {
 
   isExpanded(): boolean {
     // flag ".data.expanded" exists only for the SuperAtom
-    if (SGroup.isSuperAtom(this)) {
-      return Boolean(this.data.expanded);
-    } else {
-      return true;
-    }
+    return SGroup.isSuperAtom(this) ? Boolean(this.data.expanded) : true;
   }
 
   isContracted(): boolean {
@@ -262,9 +258,9 @@ export class SGroup {
         contentBoxes.push(bba);
       });
 
-      const contentBB = contentBoxes.reduce<Box2Abs | null>(
+      const contentBB = contentBoxes.reduce<Box2Abs | undefined>(
         (contentBounds, bba) => {
-          let bbb: Box2Abs | null = null;
+          let bbb: Box2Abs | undefined;
           [bba.p0.x, bba.p1.x].forEach((x) => {
             [bba.p0.y, bba.p1.y].forEach((y) => {
               const v = new Vec2(x, y);
@@ -274,7 +270,7 @@ export class SGroup {
           assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
           return contentBounds ? Box2Abs.union(contentBounds, bbb) : bbb;
         },
-        null,
+        undefined,
       );
 
       assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
@@ -446,16 +442,15 @@ export class SGroup {
     }
 
     const superatomClass = this.data.class;
-    if (isSuperatomClass(superatomClass)) {
-      return SUPERATOM_CLASS_TEXT[superatomClass];
-    }
-
-    return '';
+    return isSuperatomClass(superatomClass)
+      ? SUPERATOM_CLASS_TEXT[superatomClass]
+      : '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup?.pp || !sgroup.bracketBox) return null;
-    return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
+    return !sgroup?.pp || !sgroup.bracketBox
+      ? null
+      : Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
   }
 
   static isSaltOrSolvent(moleculeName: string): boolean {
@@ -599,10 +594,7 @@ export class SGroup {
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
     const getAtom = (aid: number): RenderableSGroupAtom | undefined => {
-      if (remol && render) {
-        return remol.atoms.get(aid);
-      }
-      return mol.atoms.get(aid);
+      return remol && render ? remol.atoms.get(aid) : mol.atoms.get(aid);
     };
 
     sGroup.bracketDirection = new Vec2(1, 0);
@@ -611,9 +603,9 @@ export class SGroup {
       const atom = getAtom(aid);
       if (!atom) return;
 
-      let structBoundingBox: Box2Abs | null = null;
+      let structBoundingBox: Box2Abs | undefined;
       if (render && 'getVBoxObj' in atom && atom.getVBoxObj) {
-        structBoundingBox = atom.getVBoxObj(render);
+        structBoundingBox = atom.getVBoxObj(render) ?? undefined;
       } else if (atom.pp) {
         const position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
@@ -629,7 +621,7 @@ export class SGroup {
     const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
@@ -789,13 +781,13 @@ export class SGroup {
       }
     });
 
-    if (xBonds.length !== 0 && xBonds.length !== 2) {
+    if (xBonds.length > 0 && xBonds.length !== 2) {
       throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
     let xAtom2 = -1;
-    let crossBond: Bond | null = null;
+    let crossBond: Bond | undefined;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
       assert(
@@ -834,7 +826,7 @@ export class SGroup {
         newBond.end = amap[newBond.end];
         mol.bonds.add(newBond);
       });
-      if (crossBond !== null) {
+      if (crossBond !== undefined) {
         const newCrossBond = crossBond.clone();
         newCrossBond.begin = tailAtom;
         newCrossBond.end = amap[xAtom1];
@@ -906,10 +898,7 @@ export class SGroup {
   }
 
   static isSuperAtom(sGroup?: SGroup): boolean {
-    if (!sGroup) {
-      return false;
-    }
-    return sGroup?.type === this.TYPES.SUP;
+    return !sGroup ? false : sGroup?.type === this.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {

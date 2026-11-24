@@ -1,3 +1,4 @@
+import { type MockInstance, vi } from 'vitest';
 import {
   type ReStruct,
   type ReAtom,
@@ -14,7 +15,6 @@ import {
   Vec2,
 } from 'domain/entities';
 import { restruct } from '../../../mock-data';
-import { mockFn } from 'jest-mock-extended';
 import type { RenderOptions } from 'application/render/render.types';
 
 describe('resgroup should draw brackets with attachment points correctly', () => {
@@ -86,7 +86,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
   ];
   let reSgroup: ReSGroup;
   let sGroup: SGroup;
-  let attachmentsSpy: jest.SpyInstance;
+  let attachmentsSpy: MockInstance;
   beforeEach(() => {
     const primaryAttachmentPoint = new RGroupAttachmentPoint(2, 'primary');
     restruct.molecule.rgroupAttachmentPoints.add(primaryAttachmentPoint);
@@ -110,9 +110,9 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     (restruct as unknown as { render: Render }).render = render;
     sGroup = new SGroup('MUL');
     reSgroup = new ReSGroup(sGroup);
-    sGroup.isNotContractible = mockFn().mockReturnValue(false);
+    sGroup.isNotContractible = vi.fn().mockReturnValue(false);
     SGroup.addAtom(sGroup, 2, restruct.molecule as unknown as Struct);
-    attachmentsSpy = jest.spyOn(
+    attachmentsSpy = vi.spyOn(
       render.ctab,
       'getRGroupAttachmentPointsVBoxByAtomIds',
     );
@@ -142,8 +142,9 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       z: 0,
     });
     restruct.rgroupAttachmentPoints.set(1, reRGroupAttachmentPoint);
-    restruct.molecule.getRGroupAttachmentPointsByAtomId =
-      mockFn().mockReturnValue([0, 1]);
+    restruct.molecule.getRGroupAttachmentPointsByAtomId = vi
+      .fn()
+      .mockReturnValue([0, 1]);
     reSgroup.draw(restruct as unknown as ReStruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
@@ -162,7 +163,8 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     });
     restruct.rgroupAttachmentPoints.set(1, reRGroupAttachmentPoint);
     SGroup.addAtom(sGroup, 3, restruct.molecule as unknown as Struct);
-    restruct.molecule.getRGroupAttachmentPointsByAtomId = mockFn()
+    restruct.molecule.getRGroupAttachmentPointsByAtomId = vi
+      .fn()
       .mockReturnValue([0])
       .mockReturnValueOnce([1]);
     reSgroup.draw(restruct as unknown as ReStruct, sGroup);

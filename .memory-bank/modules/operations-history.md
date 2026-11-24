@@ -57,6 +57,7 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - An instance per CoreEditor, released on teardown.
 - In the combined editor, `EditorHistoryAction` adapts Command inversion/execution to the micro editor's Action stack. Macro-only core consumers retain a local Command stack.
 - **update** — either merges into the latest Command or inserts at the pointer, shifting out the oldest when over the cap.
+- Sequence edits append a reversible `SequenceIdsResetOperation` to the same Command. It clears imported sequence IDs on the affected covalently connected monomers, while newly imported independent sequences and non-sequence changes retain their IDs.
 - **undo** — decrements the pointer, inverts the Command, unselects all entities, and re-renders. **The same Command object is re-invoked** — unlike micro, which swaps in the inverse Action.
 - **redo** — the mirror, re-executing the Command.
 
@@ -65,6 +66,14 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - A transition is one `EditorHistoryAction`, restoring the original micro Struct, macro DrawingEntitiesManager, and layout mode rather than converting them again.
 - Micro-to-macro conversion works on a clone so scaling and conversion cannot invalidate earlier micro operations. Restored macro commands retain their original model references.
 - `CoreEditor` sets the restored editor type before notifying the UI, making the resulting mode-switch effect a no-op instead of a second conversion/history entry.
+
+**Monomer wizard saves**:
+
+- The molecules editor merges the wizard result into a detached clone of the unselected structure, remapping external bond endpoints to the clone's atom IDs.
+- The clone explicitly includes attachment groups whose member atoms survive. Their endpoint IDs share the atom-ID mapping so haptic bonds remain connected after cloning.
+- The final canvas-load action swaps from the untouched original `Struct` to the merged result. Keeping the original instance intact preserves both the wizard's undo step and earlier history entries.
+- Before loading the merged clone, fragment stereo-atom lists are refreshed from atom stereo labels so imported stereocenters retain their flags without resetting flag positions.
+- Returning from a macro wizard session clears the temporary molecules canvas without adding a history entry or clearing the shared history.
 
 **Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the editor's history adapter, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
 

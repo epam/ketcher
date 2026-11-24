@@ -28,7 +28,6 @@ import {
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
-  deleteHydrogenBond,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';

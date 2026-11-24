@@ -41,10 +41,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
-import {
-  keyboardPressOnCanvas,
-  keyboardTypeOnCanvas,
-} from '@utils/keyboard/index';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';

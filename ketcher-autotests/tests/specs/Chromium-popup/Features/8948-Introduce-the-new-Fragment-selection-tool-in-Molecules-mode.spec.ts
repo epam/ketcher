@@ -364,7 +364,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       SelectionToolType.Fragment,
       SelectionToolType.Rectangle,
     ]) {
-      await keyboardPressOnCanvas(page, 'Shift+Tab');
+      await page.keyboard.press('Shift+Tab');
       await expect(SelectionTypePanel(page).currentToolButton).toHaveAttribute(
         'data-testid',
         toolType,

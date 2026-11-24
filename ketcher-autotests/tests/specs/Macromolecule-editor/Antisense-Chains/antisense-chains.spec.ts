@@ -14,7 +14,7 @@ import {
   moveMouseAway,
   MonomerType,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   clickOnCanvas,
   keyboardPressOnCanvas,
 } from '@utils';
@@ -3697,7 +3697,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
   );
 
   await selectAllStructuresOnCanvas(page);
-  await deleteByKeyboard(page);
+  await deleteByKeyboardOnCanvas(page);
   await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {

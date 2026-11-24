@@ -9,7 +9,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -224,7 +224,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -241,7 +241,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -496,7 +496,7 @@ test.describe('Erase Tool', () => {
 
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Base.RNA_N).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await takeEditorScreenshot(page);
   });
@@ -527,7 +527,7 @@ test.describe('Erase Tool', () => {
 
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Base.RNA_N).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await takeEditorScreenshot(page);
   });

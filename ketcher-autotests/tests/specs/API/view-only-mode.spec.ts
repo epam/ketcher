@@ -12,7 +12,7 @@ import {
   dragMouseTo,
   pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   keyboardPressOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
@@ -376,7 +376,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
       force: true,
     });
@@ -397,7 +397,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
       force: true,
     });

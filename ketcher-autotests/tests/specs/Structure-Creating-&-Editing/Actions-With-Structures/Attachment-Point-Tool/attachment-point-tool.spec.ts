@@ -7,7 +7,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragTo,
 } from '@utils';
 import {
@@ -620,10 +620,10 @@ test.describe('Attachment Point Tool', () => {
 
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomId: 2 }).hover();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await getAtomLocator(page, { atomId: 6 }).hover();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await takeEditorScreenshot(page);
 

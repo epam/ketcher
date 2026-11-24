@@ -11,7 +11,7 @@ import {
   moveMouseAway,
   zoomOutByKeyboard,
   RxnFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -264,7 +264,7 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'R#' }).click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

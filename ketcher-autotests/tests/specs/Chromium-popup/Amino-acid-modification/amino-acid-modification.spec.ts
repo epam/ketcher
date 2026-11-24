@@ -233,7 +233,7 @@ test.describe('Allow modifying amino acids on canvas', () => {
     await expect(SerPO3Locator).toBeVisible();
     await expect(CitLocator).toBeVisible();
     await expect(meCLocator).toBeVisible();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await dALocator.click();
     await expect(dALocator).not.toBeVisible();
     await SerPO3Locator.click();

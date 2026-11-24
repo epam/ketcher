@@ -456,7 +456,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await expect(CommonTopRightToolbar(page).zoomOutButton).toContainText(
       'Ctrl+Minus',
     );
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 0,
+    });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).zoomSelector.click();
     await CommonTopRightToolbar(page).zoomOutButton.waitFor({
@@ -465,7 +467,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await expect(CommonTopRightToolbar(page).zoomOutButton).toContainText(
       'Ctrl+Minus',
     );
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 0,
+    });
   });
 
   test('Case 15 — After clicking the "Clear Canvas" button multiple times, a user has to click the "Undo" button multiple times to return the structure', async ({

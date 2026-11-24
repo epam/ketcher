@@ -19,7 +19,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   ArrowType,
 } from '@utils';
 import {
@@ -522,7 +522,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -546,7 +546,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

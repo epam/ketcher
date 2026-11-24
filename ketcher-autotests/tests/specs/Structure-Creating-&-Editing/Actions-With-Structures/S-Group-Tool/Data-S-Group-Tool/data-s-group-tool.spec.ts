@@ -7,7 +7,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   waitForRender,
   moveMouseAway,
 } from '@utils';
@@ -434,7 +434,7 @@ test.describe('Data S-Group tool', () => {
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

@@ -10,7 +10,7 @@ import {
   clickOnCanvas,
   zoomInByKeyboard,
   zoomOutByKeyboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -123,7 +123,7 @@ test.describe('Action on simples objects', () => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

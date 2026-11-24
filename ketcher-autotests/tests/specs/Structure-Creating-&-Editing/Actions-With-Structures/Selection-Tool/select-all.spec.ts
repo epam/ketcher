@@ -1,7 +1,7 @@
 import { test } from '@fixtures';
 import {
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
@@ -76,7 +76,7 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await commonLeftToolbar.handTool();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -7,7 +7,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   getCachedBodyCenter,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
   readFileContent,
@@ -635,7 +635,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -655,7 +655,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });

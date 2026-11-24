@@ -9,7 +9,7 @@ import {
   clickOnCanvas,
   zoomInByKeyboard,
   zoomOutByKeyboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -85,7 +85,7 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas(page, 'KET/text-object-for-test.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getTextLabelLocator(page, { text: 'TEXT' }).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -101,7 +101,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).cancel();
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).selectAllText();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -203,7 +203,7 @@ test.describe('Text tools test cases', () => {
     await getTextLabelLocator(page, {
       text: 'Ketcher is a cool tool',
     }).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -223,7 +223,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();

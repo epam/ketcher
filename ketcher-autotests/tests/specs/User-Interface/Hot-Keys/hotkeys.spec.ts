@@ -7,7 +7,7 @@ import {
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   takeLeftToolbarScreenshot,
 } from '@utils';
 import {
@@ -636,7 +636,7 @@ test.describe('Hot key Del', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await page.mouse.move(100, 100);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);

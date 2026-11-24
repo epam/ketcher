@@ -297,7 +297,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     // to awoid flakiness - following two lines moves edit triangle to exact plave
     await keyboardTypeOnCanvas(page, 'A');
-    await keyboardTypeOnCanvas(page, 'Backspace');
+    await keyboardPressOnCanvas(page, 'Backspace');
 
     await MacromoleculesTopToolbar(page).expandSwitchLayoutModeDropdown();
     await takeElementScreenshot(

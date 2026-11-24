@@ -6,7 +6,7 @@ import {
   waitForPageInit,
   mapTwoAtoms,
   RxnFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragTo,
   getKet,
 } from '@utils';
@@ -147,7 +147,7 @@ test.describe('Mapping Tools', () => {
         ReactionMappingType.ReactionMapping,
       );
       await getAtomLocator(page, { atomLabel: 'CEL' }).click();
-      await deleteByKeyboard(page);
+      await deleteByKeyboardOnCanvas(page);
       await takeEditorScreenshot(page);
 
       await CommonTopLeftToolbar(page).undo();

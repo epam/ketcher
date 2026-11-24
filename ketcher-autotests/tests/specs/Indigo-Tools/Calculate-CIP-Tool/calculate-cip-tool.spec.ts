@@ -8,7 +8,7 @@ import {
   waitForRender,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   moveMouseAway,
 } from '@utils';
 import {
@@ -311,7 +311,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForRender(page, async () => {
       await getBondLocator(page, { bondId: 2 }).click({ force: true });
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await takeEditorScreenshot(page);
 

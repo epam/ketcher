@@ -14,7 +14,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   moveMouseAway,
   takeElementScreenshot,
   waitForRender,
@@ -756,7 +756,7 @@ test.describe('Image files', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -772,7 +772,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -788,7 +788,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

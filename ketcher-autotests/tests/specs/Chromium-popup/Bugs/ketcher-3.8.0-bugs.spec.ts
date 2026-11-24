@@ -582,7 +582,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       page,
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(1),
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'O', atomId: 4 }).click({
       force: true,
     });

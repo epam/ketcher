@@ -6,7 +6,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -250,7 +250,7 @@ test.describe('Open Ketcher', () => {
     await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -269,7 +269,7 @@ test.describe('Open Ketcher', () => {
     await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

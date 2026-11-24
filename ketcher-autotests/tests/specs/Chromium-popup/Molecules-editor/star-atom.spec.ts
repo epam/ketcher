@@ -276,7 +276,7 @@ test('10. Verify deletion of the star atom from the canvas using the delete opti
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   const atomToDelete = getAtomLocator(page, { atomLabel: '*' });
   await atomToDelete.click();
   await takeEditorScreenshot(page);

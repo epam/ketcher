@@ -42,21 +42,25 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 
 ## Key Files
 
-| File                                                            | Role                                    |
-| --------------------------------------------------------------- | --------------------------------------- |
-| `src/application/ketcher.ts`                                    | Public Ketcher API                      |
-| `src/application/editor/Editor.ts`                              | CoreEditor — macro editor controller    |
-| `src/domain/entities/DrawingEntitiesManager.ts`                 | Macro canvas model orchestrator              |
-| `src/domain/entities/struct.ts`                                 | Micromolecule data model                |
-| `src/application/render/renderers/RenderersManager.ts`          | D3/SVG renderer orchestrator            |
-| `src/application/render/renderers/sequence/SequenceRenderer.ts` | Sequence-mode renderer                  |
-| `src/application/render/restruct/restruct.ts`                   | Raphael re-renderer for micromolecules  |
-| `src/application/render/raphaelRender.ts`                       | Raphael canvas host                     |
-| `src/application/editor/EditorHistory.ts`                       | Undo/redo stack (max 32 steps)          |
-| `src/application/editor/MacromoleculesConverter.ts`             | Converts between macro and micro models |
-| `src/domain/serializers/ket/ketSerializer.ts`                   | KET format serializer/deserializer      |
-| `src/application/formatters/formatterFactory.ts`                | Multi-format formatter registry         |
-| `src/application/indigo.ts`                                     | StructService wrapper (chemistry ops)   |
+| File                                                            | Role                                                                                        |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/application/ketcher.ts`                                    | Public Ketcher API                                                                          |
+| `src/application/editor/Editor.ts`                              | CoreEditor — macro editor controller                                                        |
+| `src/domain/entities/DrawingEntitiesManager.ts`                 | Macro canvas model orchestrator                                                             |
+| `src/domain/entities/struct.ts`                                 | Micromolecule data model                                                                    |
+| `src/domain/constants/dativeValence.ts`                         | Valence electrons/orbitals per element; dative implicit-H element list                      |
+| `src/domain/entities/atomDativeValence.ts`                      | Pure dative valence calculation (donor/acceptor limits, implicit H)                         |
+| `src/domain/entities/aromaticKekulization.ts`                   | In-memory Kekulé solver for aromatic rings with dative atoms                                |
+| `src/domain/helpers/dativeValence.ts`                           | Dative bond counts, aromatic-system collection, and which atoms to recalculate for `Struct` |
+| `src/application/render/renderers/RenderersManager.ts`          | D3/SVG renderer orchestrator                                                                |
+| `src/application/render/renderers/sequence/SequenceRenderer.ts` | Sequence-mode renderer                                                                      |
+| `src/application/render/restruct/restruct.ts`                   | Raphael re-renderer for micromolecules                                                      |
+| `src/application/render/raphaelRender.ts`                       | Raphael canvas host                                                                         |
+| `src/application/editor/EditorHistory.ts`                       | Undo/redo stack (max 32 steps)                                                              |
+| `src/application/editor/MacromoleculesConverter.ts`             | Converts between macro and micro models                                                     |
+| `src/domain/serializers/ket/ketSerializer.ts`                   | KET format serializer/deserializer                                                          |
+| `src/application/formatters/formatterFactory.ts`                | Multi-format formatter registry                                                             |
+| `src/application/indigo.ts`                                     | StructService wrapper (chemistry ops)                                                       |
 
 ## Assumptions & Constraints
 

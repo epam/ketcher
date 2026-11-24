@@ -62,6 +62,24 @@ The system SHALL ensure that the atom's charge increases or decreases by one and
 - **Type-to-edit** — click an atom with the _Selection tool_ and start typing to change its label.
 - **Atom Properties dialog** — double-click an atom (or press `/`) to edit element, charge, isotope, valence, radical, and query features.
 
+### Requirement: Dative bond valence
+
+The system SHALL calculate implicit hydrogen counts and valence limits from dative donor and acceptor bonds, including in aromatic ring systems.
+
+#### Scenario: Dative donor and acceptor bonds
+
+- **WHEN** an atom has dative bonds
+- **THEN** starting bonds count as electron-pair donors and ending bonds count as empty-orbital acceptors
+
+#### Scenario: Dative bond on an aromatic atom
+
+- **WHEN** an aromatic atom has a dative bond and its ring system can be assigned a Kekulé structure
+- **THEN** implicit hydrogens use the Kekulé bond orders, and a donor-heavy ring atom is preferred for the double bond
+
+#### Scenario: Dative bond on an aromatic atom without a Kekulé structure
+
+- **WHEN** an aromatic ring system cannot be assigned a Kekulé structure
+- **THEN** the atom follows the usual aromatic implicit-hydrogen rules and dative limits are checked independently
 ## Guarantees
 
 - Implicit hydrogen counts stay consistent with element, charge, isotope, and bond changes.
@@ -72,6 +90,7 @@ The system SHALL ensure that the atom's charge increases or decreases by one and
 
 - This is a **molecules-mode** feature. In macromolecules mode the equivalent is placing monomers (see [macromolecules](./macromolecules.md)); individual atoms of an abbreviated group / functional group cannot be edited until the abbreviation is removed.
 - Query atom features (lists, not-lists, generics) are meaningful only for query-capable export formats.
+- Dative-bond valence in aromatic rings uses a simplified Kekulé model: element-specific cases such as hypervalent S/Se or N(V) are not modelled.
 
 ## Related
 

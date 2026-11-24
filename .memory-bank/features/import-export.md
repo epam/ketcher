@@ -61,6 +61,14 @@ The system SHALL ensure that results are shown immediately and the chosen check 
 - **Calculated Values** (`Alt+c`) — display computed molecular properties.
 - **Aromatize** (`Alt+a`) / **Dearomatize** (`Ctrl+Alt+a`), **Layout** (`Mod+l`), and **Clean Up** (`Mod+Shift+l`) prepare a structure for viewing/export.
 
+### Requirement: Repeated Molfile V2000 atom property lines
+
+The system SHALL merge repeated atom-property lines when importing a V2000 molfile.
+
+#### Scenario: Repeated Molfile V2000 atom property lines
+
+- **WHEN** a V2000 molfile repeats an `M  CHG`, `M  RAD`, `M  ISO`, `M  RBC`, `M  UNS`, or `M  APO` line
+- **THEN** every line is read, and a later entry for the same atom wins
 ## Guarantees
 
 - **Molecules mode** supports: KET, MDL Molfile V2000/V3000, SDF V2000/V3000, RDF V2000/V3000, Daylight SMILES, Extended SMILES, CML, InChI / InChI AuxInfo / InChIKey, SVG, PNG, CDXML, Base64 CDX, and CDX.

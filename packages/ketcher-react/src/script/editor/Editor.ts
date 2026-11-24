@@ -2731,13 +2731,8 @@ class Editor implements KetcherEditor {
     // Build new AP → attach atom ID map from the final assignedAttachmentPoints state.
     const finalAssignedAttachmentPoints = new Map<
       AttachmentPointName,
-      number
-    >();
-    this.monomerCreationState?.assignedAttachmentPoints.forEach(
-      ([attachAtomId], apName) => {
-        finalAssignedAttachmentPoints.set(apName, attachAtomId);
-      },
-    );
+      [number, number]
+    >(this.monomerCreationState?.assignedAttachmentPoints);
 
     this.closeMonomerCreationWizard(false, false);
     const remainingAtomIdMap = new Map<number, number>();
@@ -2974,7 +2969,7 @@ class Editor implements KetcherEditor {
       AttachmentPointName,
       [number, number]
     >,
-    finalAssignedAttachmentPoints: Map<AttachmentPointName, number>,
+    finalAssignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
     struct: Struct,
     bond: Bond,
     newAtomIdMap: Map<number, number>,
@@ -2994,9 +2989,19 @@ class Editor implements KetcherEditor {
       selectedWizardAtomId,
     );
 
-    const newAttachmentAtomId = oldAttachmentPointName
-      ? finalAssignedAttachmentPoints.get(oldAttachmentPointName)
+    const oldAtomPair = oldAttachmentPointName
+      ? attachmentAtomIdsWithExternalBonds.get(oldAttachmentPointName)
       : undefined;
+    const isRenamedOrKept = [...finalAssignedAttachmentPoints.values()].some(
+      ([attachmentAtomId, leavingAtomId]) =>
+        attachmentAtomId === oldAtomPair?.[0] &&
+        leavingAtomId === oldAtomPair?.[1],
+    );
+    const newAttachmentAtomId = isRenamedOrKept
+      ? selectedWizardAtomId
+      : oldAttachmentPointName
+        ? finalAssignedAttachmentPoints.get(oldAttachmentPointName)?.[0]
+        : undefined;
 
     // The attachment point that carried this bond no longer exists: drop it.
     if (!isNumber(newAttachmentAtomId)) {

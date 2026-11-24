@@ -2,6 +2,8 @@ import { Page, Locator } from '@playwright/test';
 
 type ImageLocatorOptions = {
   id?: string | number;
+  /** Only images drawn as the broken-image placeholder */
+  placeholder?: boolean;
 };
 
 export function getImageLocator(
@@ -14,6 +16,10 @@ export function getImageLocator(
 
   if (options.id !== undefined) {
     attributes['data-image-id'] = String(options.id);
+  }
+
+  if (options.placeholder) {
+    attributes['data-image-placeholder'] = 'true';
   }
 
   const attributeSelectors = Object.entries(attributes)

@@ -9,15 +9,65 @@ import type {
 } from 'domain/entities/image';
 import type { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
+import { isImageBitmapCorrupted } from 'domain/helpers/imageIntegrity';
 import type { RaphaelPaper, RaphaelSet } from 'raphael';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import draw from 'application/render/draw';
-import { IMAGE_KEY } from 'domain/constants';
+import { BROKEN_IMAGE_PLACEHOLDER, IMAGE_KEY } from 'domain/constants';
 import type { Render } from 'application/render/raphaelRender';
 
 type GetReferencePositions = ReturnType<Image['getReferencePositions']>;
 const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;
+
+type BitmapDecodeStatus = 'pending' | 'decoded' | 'broken';
+
+interface BitmapDecodeResult {
+  bitmap: string;
+  status: BitmapDecodeStatus;
+  listeners: Array<(status: BitmapDecodeStatus) => void>;
+}
+
+// Keyed by entity so results are dropped together with the image
+const bitmapDecodeResults = new WeakMap<Image, BitmapDecodeResult>();
+
+function getBitmapDecodeResult(image: Image): BitmapDecodeResult {
+  const cached = bitmapDecodeResults.get(image);
+  if (cached && cached.bitmap === image.bitmap) {
+    return cached;
+  }
+
+  const result: BitmapDecodeResult = {
+    bitmap: image.bitmap,
+    status: 'pending',
+    listeners: [],
+  };
+  bitmapDecodeResults.set(image, result);
+
+  // Browsers draw a damaged PNG partially and report it as loaded
+  if (isImageBitmapCorrupted(image.bitmap)) {
+    result.status = 'broken';
+    return result;
+  }
+
+  // No DOM (e.g. headless rendering): leave the bitmap as is
+  if (globalThis.Image === undefined) {
+    result.status = 'decoded';
+    return result;
+  }
+
+  const settle = (status: BitmapDecodeStatus) => {
+    result.status = status;
+    result.listeners.forEach((listener) => listener(status));
+    result.listeners = [];
+  };
+  const probe = new globalThis.Image();
+  probe.onload = () => settle('decoded');
+  probe.onerror = () => settle('broken');
+  probe.src = image.bitmap;
+
+  return result;
+}
 
 interface ClosestReferencePosition {
   distance: number;
@@ -224,8 +274,11 @@ export class ReImage extends ReObject {
     const dimensions = this.getDimensions(renderOptions);
     this.drawSelectionPoints(restruct, restruct.render.paper, renderOptions);
 
+    const decodeResult = getBitmapDecodeResult(this.image);
     const image = restruct.render.paper.image(
-      this.image.bitmap,
+      decodeResult.status === 'broken'
+        ? BROKEN_IMAGE_PLACEHOLDER
+        : this.image.bitmap,
       scaledTopLeftWithOffset.x,
       scaledTopLeftWithOffset.y,
       dimensions.x,
@@ -235,6 +288,17 @@ export class ReImage extends ReObject {
     image.node.dataset.imageId = String(
       restruct.molecule.images.keyOf(this.image),
     );
+    if (decodeResult.status === 'broken') {
+      image.node.dataset.imagePlaceholder = 'true';
+    } else if (decodeResult.status === 'pending') {
+      decodeResult.listeners.push((status) => {
+        // The element may have been redrawn or removed meanwhile
+        if (status === 'broken' && image.node.isConnected) {
+          image.attr({ src: BROKEN_IMAGE_PLACEHOLDER });
+          image.node.dataset.imagePlaceholder = 'true';
+        }
+      });
+    }
     restruct.addReObjectPath(LayerMap.images, this.visel, image);
 
     if (nextPath) {

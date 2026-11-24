@@ -51,6 +51,8 @@ import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/Reactio
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getImageLocator } from '@utils/canvas/image/getImageLocator';
+import { getKet } from '@utils/formats';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -409,6 +411,144 @@ test.describe('Image files', () => {
     expect(errorMessage).toContain('Cannot deserialize input JSON.');
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).closeWindow();
+  });
+
+  test('Verify that PNG image with corrupted pixel data from .cdxml file is displayed as a placeholder', async () => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5446
+     * Description: A PNG image with broken pixel data is shown as a broken-image placeholder,
+     * a valid PNG image from the same file is shown as is
+     * Scenario:
+     * 1. Open a .cdxml file with one corrupted and one valid PNG image
+     * 2. Verify that both images are on the Canvas
+     * 3. Verify that only one of them is shown as a placeholder
+     *
+     * Version 3.21.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/image-png-corrupted-pixel-data.cdxml',
+    );
+    await expect(getImageLocator(page, {})).toHaveCount(2);
+    await expect(getImageLocator(page, { placeholder: true })).toHaveCount(1);
+  });
+
+  test('Verify that truncated PNG image from .ket file is displayed as a placeholder', async () => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5146
+     * Description: A PNG image whose data is cut off is shown as a broken-image placeholder
+     * Scenario:
+     * 1. Open a .ket file with a truncated PNG image
+     * 2. Verify that the image is shown as a placeholder
+     *
+     * Version 3.21.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/image-png-corrupted-truncated-data.ket',
+    );
+    await expect(getImageLocator(page, {})).toHaveCount(1);
+    await expect(getImageLocator(page, { placeholder: true })).toHaveCount(1);
+  });
+
+  test('Verify that truncated SVG image from .ket file is displayed as a placeholder', async () => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5146
+     * Description: An SVG image whose markup is cut off is shown as a broken-image placeholder
+     * Scenario:
+     * 1. Open a .ket file with a truncated SVG image
+     * 2. Verify that the image is shown as a placeholder
+     *
+     * Version 3.21.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/image-svg-corrupted-truncated-data.ket',
+    );
+    await expect(getImageLocator(page, {})).toHaveCount(1);
+    await expect(getImageLocator(page, { placeholder: true })).toHaveCount(1);
+  });
+
+  test('Verify that valid PNG and SVG images from .ket file are not displayed as placeholders', async () => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5446
+     * Description: Valid images are shown as is, without the broken-image placeholder
+     * Scenario:
+     * 1. Open a .ket file with valid PNG and SVG images
+     * 2. Verify that the images are on the Canvas
+     * 3. Verify that none of them is shown as a placeholder
+     *
+     * Version 3.21.0
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/images-png-svg.ket');
+    await expect(getImageLocator(page, {}).first()).toBeVisible();
+    await expect(getImageLocator(page, { placeholder: true })).toHaveCount(0);
+  });
+
+  test('Verify that corrupted image placeholder can be moved, deleted and restored by Undo', async () => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5446
+     * Description: A placeholder behaves like any image: it can be moved and deleted,
+     * and Undo brings it back as a placeholder
+     * Scenario:
+     * 1. Open a .ket file with a truncated PNG image
+     * 2. Drag the placeholder to a new position
+     * 3. Verify that it moved and is still a placeholder
+     * 4. Select it and press Delete
+     * 5. Verify that the image is removed
+     * 6. Press Undo
+     * 7. Verify that the image is back as a placeholder
+     *
+     * Version 3.21.0
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/image-png-corrupted-truncated-data.ket',
+    );
+    const placeholder = getImageLocator(page, { placeholder: true });
+    const before = await placeholder.boundingBox();
+    if (!before) {
+      throw new Error('Placeholder has no bounding box');
+    }
+    const centerX = before.x + before.width / 2;
+    const centerY = before.y + before.height / 2;
+
+    await page.mouse.move(centerX, centerY);
+    await dragMouseTo(page, centerX + 100, centerY + 50);
+    const after = await placeholder.boundingBox();
+    expect(after?.x).toBeGreaterThan(before.x);
+    expect(after?.y).toBeGreaterThan(before.y);
+
+    await clickOnCanvas(page, centerX + 100, centerY + 50, {
+      from: 'pageTopLeft',
+    });
+    await deleteByKeyboard(page);
+    await expect(getImageLocator(page, {})).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getImageLocator(page, { placeholder: true })).toHaveCount(1);
+  });
+
+  test('Verify that corrupted image data is saved to .ket file unchanged', async () => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5446
+     * Description: The placeholder is only drawn on the Canvas: the saved .ket file keeps
+     * the original corrupted image data
+     * Scenario:
+     * 1. Open a .ket file with a truncated PNG image
+     * 2. Verify that the image is shown as a placeholder
+     * 3. Read the structure back as KET
+     * 4. Verify that the image data equals the data in the opened file
+     *
+     * Version 3.21.0
+     */
+    const fileName = 'KET/image-png-corrupted-truncated-data.ket';
+    await openFileAndAddToCanvasAsNewProject(page, fileName);
+    await expect(getImageLocator(page, { placeholder: true })).toHaveCount(1);
+
+    const source = JSON.parse(await readFileContent(fileName));
+    const saved = JSON.parse(await getKet(page));
+    expect(saved.root.nodes[0].data).toBe(source.root.nodes[0].data);
   });
 
   test('Verify adding SVG and PNG images with the canvas zoomed to 400%. After placing the images, zoom out to 20% and then press the 100% zoom button', async () => {

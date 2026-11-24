@@ -90,18 +90,18 @@ export function mergeMapOfItemsToSet(items: Map<number, number>): Set<number> {
 }
 
 /**
- * @param struct
- * @param closestMap {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>,
- *    atomToFunctionalGroup: Map<number, number>
- * }}
- * @return {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>,
- *    atomToFunctionalGroup: Map<number, number>
- * }}
- */
+@param struct
+@param closestMap {{
+		atoms: Map<number, number>,
+		bonds: Map<number, number>,
+   atomToFunctionalGroup: Map<number, number>
+}}
+@return {{
+		atoms: Map<number, number>,
+		bonds: Map<number, number>,
+   atomToFunctionalGroup: Map<number, number>
+}}
+*/
 function closestToMerge(struct, closestMap) {
   const mergeMap = {
     atoms: new Map<number, number>(closestMap.atoms),
@@ -140,15 +140,11 @@ function closestToMerge(struct, closestMap) {
     }
   });
 
-  if (
-    mergeMap.atoms.size === 0 &&
+  return mergeMap.atoms.size === 0 &&
     mergeMap.bonds.size === 0 &&
     mergeMap.atomToFunctionalGroup.size === 0
-  ) {
-    return null;
-  }
-
-  return mergeMap;
+    ? null
+    : mergeMap;
 }
 
 function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {

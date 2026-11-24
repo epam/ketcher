@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 /**
- * Shared helpers for deciding whether the "Select Attachment Points" connection
- * modal should be invoked when two monomers are about to be bonded.
- *
- * Extracted from `Bond.ts` so that both the Bond tool path and the
- * drag-drop placement path in `Editor.ts` can call the same logic without
- * duplication.
- */
+Shared helpers for deciding whether the "Select Attachment Points" connection
+modal should be invoked when two monomers are about to be bonded.
+
+Extracted from `Bond.ts` so that both the Bond tool path and the
+drag-drop placement path in `Editor.ts` can call the same logic without
+duplication.
+*/
 
 import {
   AmbiguousMonomer,
@@ -38,21 +38,21 @@ import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'application/formatters';
 
 /**
- * Determines whether the "Select Attachment Points" modal should be shown
- * when connecting `firstMonomer` to `secondMonomer`.
- *
- * Returns `true` (show modal), `false` (auto-connect, no modal), or
- * `undefined` (hydrogen bond — modal not applicable).
- *
- * @param firstMonomer  The source monomer (the one initiating the bond).
- * @param secondMonomer The target monomer.
- * @param checkForPotentialBonds  When `true`, returns `true` if either monomer
- *   has no potential bonds pre-computed (i.e. `hasPotentialBonds()` is false).
- *   Set to `false` on the drag-drop path where potential bonds are not
- *   pre-computed.
- * @param isHydrogenBond  When `true`, returns `undefined` immediately (no modal
- *   for hydrogen bonds).
- */
+Determines whether the "Select Attachment Points" modal should be shown
+when connecting `firstMonomer` to `secondMonomer`.
+
+Returns `true` (show modal), `false` (auto-connect, no modal), or
+`undefined` (hydrogen bond — modal not applicable).
+
+@param firstMonomer  The source monomer (the one initiating the bond).
+@param secondMonomer The target monomer.
+@param checkForPotentialBonds  When `true`, returns `true` if either monomer
+  has no potential bonds pre-computed (i.e. `hasPotentialBonds()` is false).
+  Set to `false` on the drag-drop path where potential bonds are not
+  pre-computed.
+@param isHydrogenBond  When `true`, returns `undefined` immediately (no modal
+  for hydrogen bonds).
+*/
 export function shouldInvokeConnectionModal(
   firstMonomer: BaseMonomer,
   secondMonomer: BaseMonomer,
@@ -176,10 +176,10 @@ export function shouldInvokeConnectionModal(
 }
 
 /**
- * Returns true when the two attachment point names belong to the same group
- * (e.g. both are "R1", both are "R2", etc.) — i.e. a non-standard same-group
- * bond is being formed.
- */
+Returns true when the two attachment point names belong to the same group
+(e.g. both are "R1", both are "R2", etc.) — i.e. a non-standard same-group
+bond is being formed.
+*/
 export function isNonStandardSameGroupBond(
   sourceAP: AttachmentPointName,
   targetAP: AttachmentPointName,
@@ -188,20 +188,20 @@ export function isNonStandardSameGroupBond(
 }
 
 /**
- * For a preset (RNA nucleotide: sugar + optional base + optional phosphate) being
- * dropped onto a target attachment point, find the best component within the preset
- * to form the bond.
- *
- * Implements requirements 3.1–3.3 from drag-drop-bond-establishment:
- * - R1 target → preset component with free R2
- * - R2 target → preset component with free R1
- * - Otherwise (Rn, n>2) → sugar if it has any free AP, then phosphate, then base
- * - All exhausted → `undefined` (bond is silently skipped; preset is placed without bonding)
- *
- * @param addedMonomers  The monomers that were just added to the canvas as part of the preset.
- * @param targetAP       The attachment point name on the canvas monomer that is being targeted.
- * @returns The preset component to bond, or `undefined` if none can be resolved.
- */
+For a preset (RNA nucleotide: sugar + optional base + optional phosphate) being
+dropped onto a target attachment point, find the best component within the preset
+to form the bond.
+
+Implements requirements 3.1–3.3 from drag-drop-bond-establishment:
+- R1 target → preset component with free R2
+- R2 target → preset component with free R1
+- Otherwise (Rn, n>2) → sugar if it has any free AP, then phosphate, then base
+- All exhausted → `undefined` (bond is silently skipped; preset is placed without bonding)
+
+@param addedMonomers  The monomers that were just added to the canvas as part of the preset.
+@param targetAP       The attachment point name on the canvas monomer that is being targeted.
+@returns The preset component to bond, or `undefined` if none can be resolved.
+*/
 export function findPresetMonomerForBonding(
   addedMonomers: BaseMonomer[],
   targetAP: AttachmentPointName,

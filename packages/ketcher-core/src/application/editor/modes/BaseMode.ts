@@ -290,13 +290,13 @@ export abstract class BaseMode {
   }
 
   /**
-   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
-   * exports it (monomers are drawn as they look on the canvas).
-   */
+  Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+  exports it (monomers are drawn as they look on the canvas).
+  */
   /**
-   * Puts the copied structure on the clipboard. By default only KET is written
-   * as plain text; modes can override it to add other formats.
-   */
+  Puts the copied structure on the clipboard. By default only KET is written
+  as plain text; modes can override it to add other formats.
+  */
   protected writeToClipboard(
     serializedKet: string,
     _drawingEntitiesManager: DrawingEntitiesManager,
@@ -394,14 +394,13 @@ export abstract class BaseMode {
       return;
     }
     const format = identifyStructFormat(pastedString, true);
-    if (format === SupportedFormat.ket) {
-      pasteOperations = this.pasteKetFormatFragment(pastedString);
-    } else {
-      pasteOperations = await this.pasteWithIndigoConversion(
-        pastedString,
-        editor.sequenceTypeEnterMode,
-      );
-    }
+    pasteOperations =
+      format === SupportedFormat.ket
+        ? this.pasteKetFormatFragment(pastedString)
+        : await this.pasteWithIndigoConversion(
+            pastedString,
+            editor.sequenceTypeEnterMode,
+          );
 
     if (!pasteOperations || pasteOperations.operations.length === 0) {
       return;

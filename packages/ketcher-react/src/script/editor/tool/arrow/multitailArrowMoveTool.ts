@@ -37,21 +37,19 @@ export class MultitailArrowMoveTool
     const offset = current.sub(originalPosition);
     const ref = closestItem.ref;
     if (ref && ref.name !== MultitailArrowRefName.SPINE) {
-      if (ref.isLine) {
-        return fromMultitailArrowHeadTailMove(
-          this.reStruct,
-          closestItem.id,
-          ref,
-          offset.y,
-        );
-      } else {
-        return fromMultitailArrowHeadTailsResize(
-          this.reStruct,
-          dragContext.closestItem.id,
-          ref,
-          offset.x,
-        );
-      }
+      return ref.isLine
+        ? fromMultitailArrowHeadTailMove(
+            this.reStruct,
+            closestItem.id,
+            ref,
+            offset.y,
+          )
+        : fromMultitailArrowHeadTailsResize(
+            this.reStruct,
+            dragContext.closestItem.id,
+            ref,
+            offset.x,
+          );
     } else {
       return fromMultitailArrowMove(this.reStruct, closestItem.id, offset);
     }

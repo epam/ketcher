@@ -684,10 +684,9 @@ export function fromSgroupDeletion(
                 bondBegin === attachmentAtomId
                   ? beginSuperatomAttachmentPointNumber
                   : endSuperatomAttachmentPointNumber;
-              if (isNumber(bondApNumber) && isNumber(apNumber)) {
-                return bondApNumber === apNumber;
-              }
-              return true;
+              return isNumber(bondApNumber) && isNumber(apNumber)
+                ? bondApNumber === apNumber
+                : true;
             }
             return false;
           },
@@ -747,13 +746,11 @@ export function fromSgroupAddition(
 
   sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();
 
-  if (type === 'SUP') {
-    action.addOp(
-      new SGroupCreate(sgid, type, pp, expanded, name, oldSgroup, monomer),
-    );
-  } else {
-    action.addOp(new SGroupCreate(sgid, type, pp));
-  }
+  action.addOp(
+    type === 'SUP'
+      ? new SGroupCreate(sgid, type, pp, expanded, name, oldSgroup, monomer)
+      : new SGroupCreate(sgid, type, pp),
+  );
 
   atoms.forEach((atom) => {
     action.addOp(new SGroupAtomAdd(sgid, atom));
@@ -1052,10 +1049,7 @@ function getAtomsBondIds(struct: Struct, atoms: number[]): number[] {
 
   return [...struct.bonds.keys()].filter((bid) => {
     const bond = struct.bonds.get(bid);
-    if (!bond) {
-      return false;
-    }
-    return atomSet.has(bond.begin) && atomSet.has(bond.end);
+    return !bond ? false : atomSet.has(bond.begin) && atomSet.has(bond.end);
   });
 }
 

@@ -1503,7 +1503,7 @@ test(`Case 5331. Replacing selected monomer with a monomer that lacks the requir
   await ErrorMessageDialog(page).close();
 });
 
-const sequencesShowsConfirmationOnReplacementForCase17: {
+const sequencesShowsConfirmationOnReplacementForCase17and20: {
   sequenceId: number;
   replaceMonomerId: number[];
 }[] = [
@@ -1809,7 +1809,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         shouldShowConfirmationOnReplacement(
           sequence.Id,
           replaceMonomer.Id,
-          sequencesShowsConfirmationOnReplacementForCase17,
+          sequencesShowsConfirmationOnReplacementForCase17and20,
         );
 
       await selectAndReplaceSymbol(
@@ -2096,10 +2096,19 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+      const showsConfirmationOnReplecement =
+        shouldShowConfirmationOnReplacement(
+          sequence.Id,
+          replaceMonomer.Id,
+          sequencesShowsConfirmationOnReplacementForCase17and20,
+        );
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
-        sequence,
+        {
+          ...sequence,
+          ConfirmationOnReplecement: showsConfirmationOnReplecement,
+        },
         sequence.ReplacementPositions.LeftEnd,
       );
 

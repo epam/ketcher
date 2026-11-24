@@ -84,9 +84,13 @@ export function shouldInvokeConnectionModal(
     return true;
   }
 
-  // No Modal: Both monomers have only 1 attachment point
+  // No Modal: Both monomers have only 1 possible attachment point (a chosen
+  // first attachment point, i.e. a drag from a point, counts as the only one)
+  const firstMonomerHasSingleOption =
+    firstMonomer.chosenFirstAttachmentPointForBond !== null ||
+    firstMonomer.unUsedAttachmentPointsNamesList.length === 1;
   if (
-    firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
+    firstMonomerHasSingleOption &&
     secondMonomer.unUsedAttachmentPointsNamesList.length === 1
   ) {
     return false;

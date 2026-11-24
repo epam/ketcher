@@ -1888,14 +1888,14 @@ export class SequenceMode extends BaseMode {
             selectionsBeforeDeletion.every((selectionRange) => {
               const firstNode = selectionRange[0]?.node;
               const lastNode = selectionRange.at(-1)?.node;
-              const prevInSameChain = firstNode
+              const previousInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
-                : null;
+                : undefined;
               const nextInSameChain = lastNode
                 ? SequenceRenderer.getNextNodeInSameChain(lastNode)
-                : null;
+                : undefined;
               return (
-                !prevInSameChain &&
+                !previousInSameChain &&
                 (!nextInSameChain ||
                   nextInSameChain.senseNode instanceof EmptySequenceNode)
               );
@@ -1952,21 +1952,21 @@ export class SequenceMode extends BaseMode {
             senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
-          const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
-          const prevAntisense =
+          const previousSense = previousTwoStrandedNodeInSameChain?.senseNode;
+          const previousAntisense =
             previousTwoStrandedNodeInSameChain?.antisenseNode;
-          const currSense = currentTwoStrandedNode?.senseNode;
-          const currAntisense = currentTwoStrandedNode?.antisenseNode;
+          const currentSense = currentTwoStrandedNode?.senseNode;
+          const currentAntisense = currentTwoStrandedNode?.antisenseNode;
 
           const hasPrevRealSenseAndAntisense =
-            !!prevSense &&
-            !(prevSense instanceof EmptySequenceNode) &&
-            !!prevAntisense;
+            !!previousSense &&
+            !(previousSense instanceof EmptySequenceNode) &&
+            !!previousAntisense;
 
           const hasCurrAntisenseWithNonEmptyContent =
-            !!currAntisense &&
-            (!(currSense instanceof EmptySequenceNode) ||
-              !(currAntisense instanceof EmptySequenceNode));
+            !!currentAntisense &&
+            (!(currentSense instanceof EmptySequenceNode) ||
+              !(currentAntisense instanceof EmptySequenceNode));
 
           const shouldEditAntisenseInSyncMode =
             hasPrevRealSenseAndAntisense || hasCurrAntisenseWithNonEmptyContent;
@@ -2624,7 +2624,7 @@ export class SequenceMode extends BaseMode {
       ? BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
           monomerItem.attachmentPoints,
         )
-      : null;
+      : undefined;
 
     for (const { strandType, selectionRange } of splitSelectionsIntoStrandRuns(
       selections,

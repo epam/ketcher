@@ -29,7 +29,7 @@ import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type {
   RelativeBox,
@@ -417,8 +417,8 @@ class ReBond extends ReObject {
     const paper = render.paper;
     const hb1Id = this.b.hb1;
     const hb2Id = this.b.hb2;
-    const hb1 = hb1Id === undefined ? null : struct.halfBonds.get(hb1Id);
-    const hb2 = hb2Id === undefined ? null : struct.halfBonds.get(hb2Id);
+    const hb1 = hb1Id === undefined ? undefined : struct.halfBonds.get(hb1Id);
+    const hb2 = hb2Id === undefined ? undefined : struct.halfBonds.get(hb2Id);
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
@@ -426,13 +426,13 @@ class ReBond extends ReObject {
     if (hb1Id === undefined || hb2Id === undefined || !hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
-    this.rbb = util.relBox(this.path.getBBox());
+    this.rbb = utility.relBox(this.path.getBBox());
     // add layer for bond's skeleton:
     restruct.addReObjectPath(
       LayerMap.bondSkeleton,
       this.visel,
       this.path,
-      null,
+      undefined,
       true,
     );
     const reactingCenter: { path: Element | null; rbb?: RelativeBox } = {
@@ -440,12 +440,12 @@ class ReBond extends ReObject {
     };
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
-      reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
+      reactingCenter.rbb = utility.relBox(reactingCenter.path.getBBox());
       restruct.addReObjectPath(
         LayerMap.data,
         this.visel,
         reactingCenter.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -454,12 +454,12 @@ class ReBond extends ReObject {
     };
     topology.path = getBondMark(render, this, hb1, hb2);
     if (topology.path) {
-      topology.rbb = util.relBox(topology.path.getBBox());
+      topology.rbb = utility.relBox(topology.path.getBBox());
       restruct.addReObjectPath(
         LayerMap.data,
         this.visel,
         topology.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -548,7 +548,7 @@ class ReBond extends ReObject {
     }
 
     if (bond.cip) {
-      this.cip = util.drawCIPLabel({
+      this.cip = utility.drawCIPLabel({
         atomOrBond: bond,
         position: bond.center,
         restruct: render.ctab,
@@ -941,7 +941,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = getSingleOrDoublePath(
         render,
         newHalfBonds[0],
@@ -963,7 +963,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = getBondAromaticPath(
         render,
         newHalfBonds[0],
@@ -976,7 +976,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.ANY: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = draw.bondAny(
         render.paper,
         newHalfBonds[0],
@@ -987,7 +987,7 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.HYDROGEN: {
-      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
+      newHalfBonds = utility.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = draw.bondHydrogen(
         render.paper,
         newHalfBonds[0],
@@ -1607,7 +1607,7 @@ function getBondMark(
 ) {
   const options = render.options;
   let mark: string;
-  let tooltip: string | null = null;
+  let tooltip: string | undefined;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
     if (bond.b.customQuery.length > 8) {
@@ -1636,7 +1636,10 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   if (tooltip) {
-    path.node.firstChild.setAttribute('data-tooltip', util.escapeHtml(tooltip));
+    path.node.firstChild.setAttribute(
+      'data-tooltip',
+      utility.escapeHtml(tooltip),
+    );
   }
 
   return path;
@@ -1654,7 +1657,7 @@ function getIdsPath(
 ) {
   const pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
   const ipath = paper.text(pb.x, pb.y, bid.toString());
-  const irbb = util.relBox(ipath.getBBox());
+  const irbb = utility.relBox(ipath.getBBox());
   draw.recenterText(ipath, irbb);
   return ipath;
 }

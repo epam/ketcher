@@ -20,7 +20,7 @@ const ButtonsBox = styled('div')`
 
 type ButtonSelectProps = {
   hiddenButtons: string[];
-  setHiddenButtons: (arg: string[]) => void;
+  setHiddenButtons: (argument: string[]) => void;
 };
 
 export const ButtonsSelect = ({

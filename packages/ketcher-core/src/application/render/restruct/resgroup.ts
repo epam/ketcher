@@ -29,7 +29,7 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
-import BracketParams from '../bracket-params';
+import BracketParams from '../bracket-parameters';
 import type {
   Element as RaphaelElement,
   RaphaelPaper,
@@ -325,7 +325,7 @@ class ReSGroup extends ReObject {
         LayerMap.data,
         this.visel,
         path,
-        null,
+        undefined,
         shouldIncludeInBoundingBox,
       );
       this.setHover(this.hover, render); // TODO: fix this

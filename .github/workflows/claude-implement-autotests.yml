@@ -129,7 +129,7 @@ jobs:
       # ketcher-autotests/. It cannot run commands, commit, or push; the next
       # step does that. Read the issue text before adding the label.
       - name: Implement autotests with Claude
-        uses: anthropics/claude-code-action@d535f5172dec02b204866b393d6b20b9b2aaf98d # v1.0.266
+        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -152,8 +152,17 @@ jobs:
             - Write one test for each checklist item in AUTOTEST_REQUEST_DETAILS, in the same order. Start each test title with the item number, such as `Case 3 - ...`.
             - If a checklist item cannot be automated, do not leave it out. Add it as `test.skip` with the same title, and a comment that gives the reason and links AUTOTEST_REQUEST_URL.
             - The Version line of each comment block is KETCHER_VERSION.
+            - Keep every test-data file the spec uses in the feature folder that .memory-bank/testing/testing.md gives. Copy a file from another folder there; do not reference it in its old folder.
             - Do not run the tests, and do not commit or push. The workflow commits your changes under ketcher-autotests/ and opens the PR.
  
+      # A script, not the model, makes sure that every test-data file of the
+      # spec is in the feature folder: it copies files from other folders and
+      # rewrites the paths in the spec.
+      - name: Keep the test data in the feature folder
+        env:
+          SPEC_FILE_NAME: ${{ steps.issue.outputs.spec_file_name }}
+        run: node scripts/autotests/move-test-data.mjs "$SPEC_FILE_NAME" > "$RUNNER_TEMP/test-data.md"
+
       - name: Commit and push the autotests
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -188,8 +197,8 @@ jobs:
           TEST_COUNT=$(git show --name-only --format= HEAD -- 'ketcher-autotests/*.spec.ts' \
             | xargs -r cat \
             | grep -cE '^\s*test(\.skip)?\(' || true)
-          BODY=$(printf 'Closes #%s\n\nChecklist items in the issue: %s. Tests in the spec, test.skip included: %s.\n' \
-            "$ISSUE_NUMBER" "$CHECKLIST_COUNT" "$TEST_COUNT")
+          BODY=$(printf 'Closes #%s\n\nChecklist items in the issue: %s. Tests in the spec, test.skip included: %s.\n\n%s\n' \
+            "$ISSUE_NUMBER" "$CHECKLIST_COUNT" "$TEST_COUNT" "$(cat "$RUNNER_TEMP/test-data.md")")
           PR_URL=$(gh pr create \
             --title "#${ISSUE_NUMBER} - ${ISSUE_TITLE}" \
             --body "$BODY" \

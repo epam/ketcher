@@ -149,6 +149,15 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+Install Docker Desktop for the host OS as the [autotests README](../../ketcher-autotests/README.md) says (macOS, Windows, Linux), and create `ketcher-autotests/.env` from `.env.example`, which has `DOCKER=true`. Where Docker Desktop cannot run (it needs an admin password and a window, and a headless agent session has neither), Colima gives the same Docker on macOS: `brew install colima docker docker-compose`, then `colima start --vm-type vz --cpu 6 --memory 12 --disk 60`. The scripts call the `docker-compose` binary.
+
+Containers run on the host's architecture, and Chromium does not survive amd64 emulation on an arm64 host: QEMU crashes it (`rcu_read_unlock` assertion), and Rosetta may be missing (`arch -x86_64` fails with "Bad CPU type"). CI runners are amd64. Leave `DOCKER_DEFAULT_PLATFORM` unset.
+
+- On an amd64 host the images should match CI's.
+- On an arm64 host (Apple Silicon) the images are arm64. On the spec checked they drew the same differing-pixel counts as CI (36 and 19 pixels). Run one failing spec on `<base>` and on the branch before you regenerate a batch.
+
+`npm run docker:update file_name:N` regenerates one spec. To regenerate a list, call `docker-compose run --rm autotests bash /app/test_run.sh --project=<project> --update-snapshots=changed` with the specs as arguments, and check the count first with `--list`. This avoids `GENERATE_DATA=true`, which `npm run docker:update` sets and which rewrites files under `tests/test-data/`.
+
 Docker tests use the standalone build served inside the container at
 `http://127.0.0.1:4002`, a secure context for clipboard access. Set
 `DOCKER_KETCHER_URL` to test an external deployment instead; clipboard tests
@@ -593,7 +602,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **Tests that depend on execution order** — each test in a suite must be independently executable. Use `beforeEach` / the canvas fixture for cleanup.
 - **Commented-out tests or `test.skip`** left indefinitely — use `test.skip` with a comment and a tracking issue reference; do not comment out code.
 - **Using an expected file as test input** — files named `*-expected.*` are outputs of other tests, and `GENERATE_DATA=true` can rewrite them. Add a separate input file.
-- **Inventing a test-data folder name** — put new input files for a feature in a folder named like the spec file, `<featureID>-<Feature-Name>` (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`).
+- **Test data outside the feature folder** — every file a feature spec uses, inputs and expected files, lives in a folder named like the spec file: `<Format>/Chromium-popup/<featureID>-<Feature-Name>/` for popup specs, `<Format>/<featureID>-<Feature-Name>/` for full-scale specs (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`). Copy a file from another folder there; do not reference it in its old folder. The Claude Implement Autotests workflow does this with `scripts/autotests/move-test-data.mjs`.
 - **Overly broad screenshots** — `takePageScreenshot` captures the entire page including the library panel, which is noisy. Prefer `takeEditorScreenshot` or `takeElementScreenshot`.
 - **Single giant test file** (>500 lines) — split by feature or connection rule type. The `connection-rules-for-*.spec.ts` pattern is the right approach.
 

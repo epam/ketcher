@@ -1,6 +1,6 @@
 # Macromolecules
 
-A user switches to the macromolecules editor and works with peptides, RNA, DNA, and CHEM monomers: loads them, types sequences, inserts monomers from the library, and changes the layout. Behavior is owned by [openspec/specs/macromolecules/spec.md](../../../../openspec/specs/macromolecules/spec.md).
+A user switches to the macromolecules editor and works with peptides, RNA, DNA, and CHEM monomers: loads them, types sequences, inserts monomers from the library, and changes the layout. Behavior is owned by [.memory-bank/features/macromolecules.md](../../../../.memory-bank/features/macromolecules.md).
 
 ## Sub-features
 

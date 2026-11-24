@@ -45,7 +45,7 @@ import draw, {
   AP_WAVE_HALF_PERP,
   AP_WAVE_FAR_ALONG,
 } from '../draw';
-import util from '../util';
+import utility from '../util';
 import { assert, toFixed } from 'utilities';
 import type {
   RelativeBox,
@@ -99,6 +99,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     rectangle: Element;
   };
 
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private expandedMonomerAttachmentPoints?: Element | null;
 
   // Number of visel.boxes entries that belong to the atom's own label
@@ -122,10 +126,6 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     this.color = '#000000';
     this.component = -1;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
@@ -485,7 +485,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const ratio = this.getRatio(renderOptions, bondLen);
     for (const ext of exts) {
       const box = ext.translate(atomPosition);
-      const shiftRayBox = util.shiftRayBox(atomPosition, direction, box);
+      const shiftRayBox = utility.shiftRayBox(atomPosition, direction, box);
       const shift = shiftRayBox * ratio;
       atomSymbolShift = Math.max(atomSymbolShift, shift);
     }
@@ -589,7 +589,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     let implh = 0;
     let isHydrogen = false;
     let label: ElemAttr | undefined;
-    let index: ElemAttr | null = null;
+    let index: ElemAttr | undefined;
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -625,7 +625,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         'font-size': options.fontszsubInPx,
         fill: '#070',
       });
-      const rbb = util.relBox(path.getBBox());
+      const rbb = utility.relBox(path.getBBox());
       draw.recenterText(path, rbb);
       index = { text, path, rbb };
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps);
@@ -701,7 +701,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           ps,
           true,
         );
-        if (hydroIndex != null) {
+        if (hydroIndex != undefined) {
           restruct.addReObjectPath(
             LayerMap.data,
             this.visel,
@@ -1133,17 +1133,17 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
         aamPath.node.firstChild.setAttribute('fill-opacity', opacity);
       }
-      const aamBox = util.relBox(aamPath.getBBox());
+      const aamBox = utility.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;
       let t = 3;
       let dir = this.bisectLargestSector(restruct.molecule);
       // estimate the shift to clear the atom label
       for (const ext of visel.exts) {
-        t = Math.max(t, util.shiftRayBox(ps, dir, ext.translate(ps)));
+        t = Math.max(t, utility.shiftRayBox(ps, dir, ext.translate(ps)));
       }
       // estimate the shift backwards to account for the size of the aam/query text box itself
-      t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+      t += utility.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
 
       let perpShift = new Vec2(0, 0);
 
@@ -1229,19 +1229,19 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
       const cipGroup = paper.set();
       cipGroup.push(rect, cipText);
-      const cipGroupRelBox = util.relBox(cipGroup.getBBox());
+      const cipGroupRelBox = utility.relBox(cipGroup.getBBox());
 
       let baseDistance = 3;
       const direction = this.bisectLargestSector(render.ctab.molecule);
       for (const ext of this.visel.exts) {
         baseDistance = Math.max(
           baseDistance,
-          util.shiftRayBox(ps, direction, ext.translate(ps)),
+          utility.shiftRayBox(ps, direction, ext.translate(ps)),
         );
       }
       const shiftDistance =
         baseDistance +
-        util.shiftRayBox(
+        utility.shiftRayBox(
           ps,
           direction.negated(),
           Box2Abs.fromRelBox(cipTextBBox),
@@ -1457,14 +1457,18 @@ export function getColorFromStereoLabel(
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
 
   switch (stereoLabelType) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return options.colorOfAndCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Or:
+    }
+    case StereoLabel.Or: {
       return options.colorOfOrCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Abs:
+    }
+    case StereoLabel.Abs: {
       return options.colorOfAbsoluteCenters;
-    default:
+    }
+    default: {
       return DEFAULT_STEREO_COLOR;
+    }
   }
 }
 
@@ -1502,20 +1506,25 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereoLabelStyleType.Off:
+    case StereoLabelStyleType.Off: {
       return false;
-    case StereoLabelStyleType.On:
+    }
+    case StereoLabelStyleType.On: {
       return true;
-    case StereoLabelStyleType.Classic:
+    }
+    case StereoLabelStyleType.Classic: {
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereoLabelStyleType.IUPAC:
+    }
+    case StereoLabelStyleType.IUPAC: {
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }
 
@@ -1658,7 +1667,7 @@ function addTooltip(node: SVGElement, text: string) {
   const tooltip = text.split(/(?<=[;,])/).join(' ');
   (node.firstChild as SVGElement).setAttribute(
     'data-tooltip',
-    util.escapeHtml(tooltip),
+    utility.escapeHtml(tooltip),
   );
 }
 
@@ -1667,11 +1676,11 @@ function addTooltip(node: SVGElement, text: string) {
 // without hinting so the layout matches the one drawn at 100%.
 function getTextRelBox(path: Element, options: RenderOptions) {
   if (options.zoom >= 1) {
-    return util.relBox(path.getBBox());
+    return utility.relBox(path.getBBox());
   }
 
   path.node.setAttribute('text-rendering', 'geometricPrecision');
-  const rbb = util.relBox(path.getBBox());
+  const rbb = utility.relBox(path.getBBox());
   path.node.removeAttribute('text-rendering');
   return rbb;
 }
@@ -1715,7 +1724,7 @@ function buildLabel(
   const isMonomerAttachmentPointUsed =
     connectedMonomerAttachmentPoints?.includes(text) ?? false;
 
-  const { color, fill, stroke } = util.useLabelStyles(
+  const { color, fill, stroke } = utility.useLabelStyles(
     isMonomerAttachmentPointSelected,
     isMonomerAttachmentPointUsed,
     usageInMacromolecule ?? UsageInMacromolecule.MonomerConnectionsModal,
@@ -1877,7 +1886,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
   let path = paper.set();
   let hshift: number;
   switch (atom.a.radical) {
-    case 1:
+    case 1: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1886,12 +1895,14 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('fill', atom.color);
       break;
-    case 2:
+    }
+    case 2: {
       path = paper.set();
       path.push(draw.radicalBullet(paper, ps, options));
       path.attr('fill', atom.color);
       break;
-    case 3:
+    }
+    case 3: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1900,10 +1911,12 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('stroke', atom.color);
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
-  const rbb = util.relBox(path.getBBox());
+  const rbb = utility.relBox(path.getBBox());
   const labelHeight = atom.label?.rbb.height ?? 0;
   let vshift = -0.5 * (labelHeight + rbb.height);
   if (atom.a.radical === 3) vshift -= options.lineWidth / 2;
@@ -2064,7 +2077,7 @@ function showHydrogen(
     }
   }
   if (isHydrogenOnLeft) {
-    if (hydroIndex != null) {
+    if (hydroIndex != undefined) {
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,
@@ -2109,7 +2122,7 @@ function showWarning(
     )
     .attr(render.options.lineattr)
     .attr({ stroke: '#F00' });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = utility.relBox(path.getBBox());
   return { path, rbb };
 }
 

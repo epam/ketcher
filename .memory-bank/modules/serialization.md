@@ -24,6 +24,7 @@ The **central** serializer — the only one that handles **both** micro `Struct`
 
 - **Micro:** deserialization parses the JSON, validates it against a schema, and dispatches each node to the matching "from KET" converter; serialization prepares the structure and emits each node via its "to KET" converter, tagging the document with a KET version.
 - **Macro:** parse-and-validate, then deserialize macromolecules entities converting into drawing entities (there is also a path to deserialize straight into a `Struct`); serialization emits nodes, connections, and templates.
+- Imported monomer `seqid` values are preserved in KET exports and used for amino-acid and base numbering. Sequence edits remove the affected sequence's IDs, restoring positional numbering; undo restores the imported IDs. Moving monomers or switching layouts does not reset them.
 
 ### MOL
 

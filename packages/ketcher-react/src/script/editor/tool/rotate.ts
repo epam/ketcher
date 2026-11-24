@@ -28,7 +28,7 @@ import {
   getItemsToFuse,
   isAttachmentBond,
   vectorUtils,
-  getRelSGroupsBySelection,
+  getRelatedSGroupsBySelection,
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
@@ -188,10 +188,10 @@ class RotateTool implements Tool {
     const { texts, rxnArrows, rxnPluses } = this.selection;
     if (
       !center &&
-      (visibleAtoms.length ||
-        texts?.length ||
-        rxnArrows?.length ||
-        rxnPluses?.length)
+      (visibleAtoms.length > 0 ||
+        (texts?.length ?? 0) > 0 ||
+        (rxnArrows?.length ?? 0) > 0 ||
+        (rxnPluses?.length ?? 0) > 0)
     ) {
       center = this.reStruct.getSelectionBoxCenter({
         atoms: visibleAtoms,
@@ -292,7 +292,7 @@ class RotateTool implements Tool {
       }
 
       if (this.selection?.atoms) {
-        const sGroups = getRelSGroupsBySelection(
+        const sGroups = getRelatedSGroupsBySelection(
           this.struct,
           this.selection?.atoms,
         );

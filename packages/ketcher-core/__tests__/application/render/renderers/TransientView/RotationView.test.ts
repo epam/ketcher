@@ -1,5 +1,4 @@
-/** @jest-environment jsdom */
-
+import { vi } from 'vitest';
 import {
   type RotationViewParams,
   RotationView,
@@ -43,16 +42,16 @@ const findAngleText = (
 
 describe('RotationView', () => {
   beforeEach(() => {
-    jest
-      .spyOn(Coordinates, 'canvasToView')
-      .mockImplementation((position) => position);
-    jest
-      .spyOn(Coordinates, 'viewToCanvas')
-      .mockImplementation((position) => position);
+    vi.spyOn(Coordinates, 'canvasToView').mockImplementation(
+      (position) => position,
+    );
+    vi.spyOn(Coordinates, 'viewToCanvas').mockImplementation(
+      (position) => position,
+    );
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('renders current angle label at the starting position and arc from start to current angle', () => {

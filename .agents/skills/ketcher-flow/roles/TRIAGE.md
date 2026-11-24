@@ -2,7 +2,7 @@
 
 You are a **task orchestrator** at its first step (_Dispatched by a batch_ in [SKILL.md](../SKILL.md)). You get one **task** (an issue number, or a task file `<batch run dir>/tasks/<id>.md` for a task given in prose), your task worktree, and your **task run directory**. You end with exactly one **outcome**, written to `<task run dir>/triage.md`. Leave the tracker unchanged: draft any comment the outcome needs in `<task run dir>/comment.md`, starting with the line from [TRACKER.md](../shared/TRACKER.md).
 
-Before exploring, read `.memory-bank/glossary.md`, the `.memory-bank/modules/` doc of the task's area, and its `openspec/specs/` capability. Use their terms.
+Before exploring, read `.memory-bank/glossary.md`, the `.memory-bank/modules/` doc of the task's area, and its `.memory-bank/features/` file. Use their terms.
 
 ## Freshness
 

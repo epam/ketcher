@@ -37,7 +37,10 @@ const AtomElement = ({
     props: object,
     onChange: ChangeFunction,
   ) => {
-    openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
+    void openDialog(dispatch, modalName, {
+      ...props,
+      isNestedModal: true,
+    }).then(
       (result) => {
         const el = result as { values?: string[]; label: string };
         onChange(el.values?.join(',') || el.label);

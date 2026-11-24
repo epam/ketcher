@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, assert, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import {
+  Atom,
+  assert,
+  fromAtomsAttributes,
+  FunctionalGroup,
+} from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
@@ -27,6 +32,13 @@ class ChargeTool implements Tool {
     this.editor = editor;
     this.editor.selection(null);
     this.charge = charge;
+  }
+
+  private isChargeableAtom(atom: Atom): boolean {
+    // An atom can have a charge if it's not an atom list or R-group label
+    // This allows charges on regular periodic table elements (C, N, O, etc.)
+    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
+    return !atom.atomList && !atom.rglabel;
   }
 
   mousemove(event: PointerEvent) {
@@ -52,7 +64,7 @@ class ChargeTool implements Tool {
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -92,7 +104,7 @@ class ChargeTool implements Tool {
       if (atom && this.isChargeableAtom(atom)) {
         this.editor.hover(ci);
         this.editor.update(
-          fromAtomsAttrs(
+          fromAtomsAttributes(
             rnd.ctab,
             ci.id,
             {
@@ -104,13 +116,6 @@ class ChargeTool implements Tool {
       }
     }
     return true;
-  }
-
-  private isChargeableAtom(atom: Atom): boolean {
-    // An atom can have a charge if it's not an atom list or R-group label
-    // This allows charges on regular periodic table elements (C, N, O, etc.)
-    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
-    return !atom.atomList && !atom.rglabel;
   }
 }
 

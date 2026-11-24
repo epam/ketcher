@@ -172,7 +172,7 @@ export class SelectLayoutModeOperation implements Operation {
     public _onExecute: () => void,
     public _onInvert: () => void,
     public mode: LayoutMode,
-    public prevMode,
+    public previousMode,
     private readonly onChangeComplete?: () => void,
   ) {
     this.onExecute = _onExecute;
@@ -197,10 +197,10 @@ export class SelectLayoutModeOperation implements Operation {
 }
 
 export class ReconnectPolymerBondOperation implements Operation {
-  public polymerBond;
   constructor(
     private readonly reconnectPolymerBondModelChange: () => PolymerBond,
     private readonly revertReconnectPolymerBondModelChange: () => PolymerBond,
+    public polymerBond: PolymerBond,
   ) {}
 
   public execute(renderersManager: RenderersManager) {

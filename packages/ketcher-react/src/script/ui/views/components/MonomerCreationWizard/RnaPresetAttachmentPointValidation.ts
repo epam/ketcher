@@ -16,16 +16,20 @@ export const getLeavingAtomForAttachmentPoint = (
   attachmentPointName: AttachmentPointName,
 ): AtomLabel => {
   switch (componentType) {
-    case KetMonomerClass.Base:
+    case KetMonomerClass.Base: {
       return AtomLabel.H;
-    case KetMonomerClass.Sugar:
+    }
+    case KetMonomerClass.Sugar: {
       return attachmentPointName === AttachmentPointName.R3
         ? AtomLabel.O
         : AtomLabel.H;
-    case KetMonomerClass.Phosphate:
+    }
+    case KetMonomerClass.Phosphate: {
       return AtomLabel.O;
-    default:
+    }
+    default: {
       return AtomLabel.H;
+    }
   }
 };
 

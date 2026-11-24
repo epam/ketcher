@@ -239,16 +239,14 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
-    if (this.hoverElement) {
-      return this.hoverElement;
-    }
-
-    return this.appendSelectionContour()
-      ?.attr('stroke', '#0097a8')
-      .attr('stroke-width', '1.2')
-      .attr('fill', 'none')
-      .attr('opacity', '0')
-      .attr('class', 'dynamic-element');
+    return this.hoverElement
+      ? this.hoverElement
+      : this.appendSelectionContour()
+          ?.attr('stroke', '#0097a8')
+          .attr('stroke-width', '1.2')
+          .attr('fill', 'none')
+          .attr('opacity', '0')
+          .attr('class', 'dynamic-element');
   }
 
   /**
@@ -308,10 +306,9 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
-    if (this.atom.properties.atomList) {
-      return this.atom.properties.atomList.label();
-    }
-    return this.atom.properties.alias ?? this.atom.label;
+    return this.atom.properties.atomList
+      ? this.atom.properties.atomList.label()
+      : (this.atom.properties.alias ?? this.atom.label);
   }
 
   /**
@@ -333,10 +330,9 @@ export class AtomRenderer extends BaseRenderer {
   */
   public get displayLabelText() {
     const text = this.labelText;
-    if (text.length > MAX_LABEL_LENGTH) {
-      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
-    }
-    return text;
+    return text.length > MAX_LABEL_LENGTH
+      ? `${text.substring(0, MAX_LABEL_LENGTH)}...`
+      : text;
   }
 
   /**

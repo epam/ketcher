@@ -91,14 +91,12 @@ export class HapticBondToolHelper {
     beginAtomOrProps: AtomValidationInput,
     endAtomOrProps: AtomValidationInput,
   ) {
-    if (!this.isHapticBondType()) {
-      return true;
-    }
-
-    return isHapticBondPairAllowed(
-      this.getAtomForValidation(molecule, beginAtomOrProps),
-      this.getAtomForValidation(molecule, endAtomOrProps),
-    );
+    return !this.isHapticBondType()
+      ? true
+      : isHapticBondPairAllowed(
+          this.getAtomForValidation(molecule, beginAtomOrProps),
+          this.getAtomForValidation(molecule, endAtomOrProps),
+        );
   }
 
   getBondPairValidationFailure(

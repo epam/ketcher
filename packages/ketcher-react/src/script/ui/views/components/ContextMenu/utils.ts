@@ -121,13 +121,11 @@ export function getEditableAtomIds(struct: Struct, atomIds: number[]) {
 export function getEditableBondIds(struct: Struct, bondIds: number[]) {
   return bondIds.filter((bondId) => {
     const bond = struct.bonds.get(bondId);
-    if (!bond || bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
-      return true;
-    }
-
-    return ![bond.begin, bond.end].some((endpointId) =>
-      struct.attachmentGroups.has(endpointId),
-    );
+    return !bond || bond.type !== Bond.PATTERN.TYPE.HAPTIC
+      ? true
+      : ![bond.begin, bond.end].some((endpointId) =>
+          struct.attachmentGroups.has(endpointId),
+        );
   });
 }
 

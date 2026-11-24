@@ -42,7 +42,7 @@ const side = getImplicitHydrogenSide(visibleBondDirections, atom.radical !== 0);
 The function's rules:
 
 - At most one direction: terminal. Right when there is no bond or the bond is within a small tolerance (0.5°) of vertical; left when the bond's x component points right (cos > 0); right otherwise.
-- Two or more directions: internal. Mark each quadrant that holds a bond (`[start, end)` intervals, with `start` inclusive) and the top quadrant when `hasRadical`. Return the first free in the order right, left, top, bottom; when none is free, return right.
+- Two or more directions: internal. Mark each quadrant that holds a bond (`[start, end)` intervals, with `start` inclusive) and the top quadrant when `hasRadical`. Return the first free in the order right, left, top, bottom, except that when that is top and bottom is also free, return bottom if the unit bond directions point up on balance (vertical sum above 0.01) and top otherwise, so the hydrogens sit away from the bonds; when none is free, return right. The user chose this exception after the first review round: the issue's text gives top first, but its hexane picture draws the hydrogens of a zigzag valley atom below, and the existing amino-acid previews showed the hydrogen crowding two upward bonds.
 
 ### 2. `hydrogenOnTheLeft: boolean` becomes `hydrogenSide`
 

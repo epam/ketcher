@@ -46,17 +46,17 @@ describe('Rotate controller', () => {
       },
     };
     const controller = new RotateController(editor as any);
-    controller.rotateTool.getCenter = () => new Vec2();
+    controller['rotateTool'].getCenter = () => new Vec2();
     expect(tool()).toBeInstanceOf(SelectTool);
     expect(selection()).toBe(null);
 
-    controller.show();
+    controller['show']();
     expect(paper).toHaveBeenCalledTimes(0);
 
     visibleAtoms.push(2);
-    controller.rotateTool.getCenter = () => new Vec2();
+    controller['rotateTool'].getCenter = () => new Vec2();
     expect(() => {
-      controller.show();
+      controller['show']();
     }).toThrow();
   });
 
@@ -88,10 +88,10 @@ describe('Rotate controller', () => {
         },
       },
     } as any);
-    controller.rotateTool.getCenter = () => new Vec2();
+    controller['rotateTool'].getCenter = () => new Vec2();
     expect(visibleAtoms.length).toBeGreaterThan(1);
 
-    controller.show();
+    controller['show']();
 
     expect(paper).toHaveBeenCalledTimes(0);
   });
@@ -122,11 +122,11 @@ describe('Rotate controller', () => {
   it('can be only dragged by left mouse button', () => {
     const controller = new RotateController({ selection: () => null } as any);
     const changeCrossColor = vi.fn();
-    controller.cross = {
+    controller['cross'] = {
       attr: changeCrossColor,
     } as unknown as RaphaelSet;
 
-    controller.dragStart({
+    controller['dragStart']({
       buttons: 2, // Right button
       stopPropagation: () => null,
     } as unknown as MouseEvent);
@@ -141,16 +141,16 @@ describe('Rotate controller', () => {
    */
   test('center changes with `scale` and `offset`', () => {
     const controller = new RotateController({ selection: () => null } as any);
-    controller.originalCenter = new Vec2(1, 1);
-    controller.editor.render = {
+    controller['originalCenter'] = new Vec2(1, 1);
+    controller['editor'].render = {
       options: {
         microModeScale: 2,
         offset: new Vec2(1, 1),
       },
     } as any;
 
-    expect(controller.center.x).toBe(3);
-    expect(controller.center.y).toBe(3);
+    expect(controller['center'].x).toBe(3);
+    expect(controller['center'].y).toBe(3);
   });
 
   it('rotates a fully selected structure with an attachment group', () => {
@@ -215,8 +215,8 @@ describe('Rotate controller', () => {
     };
 
     const controller = new RotateController({ selection: () => null } as any);
-    controller.originalCenter = new Vec2(1, 1);
-    controller.editor.render = {
+    controller['originalCenter'] = new Vec2(1, 1);
+    controller['editor'].render = {
       paper: {
         path: vi.fn().mockReturnValue(cross),
         circle: vi.fn().mockReturnValue(circle),
@@ -228,7 +228,7 @@ describe('Rotate controller', () => {
       } as any,
     } as Render;
 
-    controller.drawCross();
+    controller['drawCross']();
 
     expect(circle.node.dataset.testid).toBe('rotation-center-handle');
     expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
@@ -304,7 +304,7 @@ describe('Rotate controller', () => {
       {},
     );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
-    editor.rotateController.rotateTool.dragCtx = {
+    editor.rotateController['rotateTool'].dragCtx = {
       action: { operations: [], perform: () => undefined },
     } as unknown as RotateTool['dragCtx'];
     editor.rotateController.isRotating = true;

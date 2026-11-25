@@ -139,7 +139,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Peptide._2Nal, centerOfTheCanvas);
-    await CommonLeftToolbar(page).areaSelectionTool();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -214,14 +214,13 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Go to Library - RNA tab
      * 3. Select h456UR and e6A monomers
      */
-    await CommonTopLeftToolbar(page).clearCanvas();
     await Library(page).hoverMonomer(Base.h456UR);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
     );
-    await CommonLeftToolbar(page).areaSelectionTool();
+    await moveMouseAway(page);
     await Library(page).hoverMonomer(Base.e6A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
@@ -797,7 +796,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, centerOfTheCanvas);
-    await CommonLeftToolbar(page).areaSelectionTool();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

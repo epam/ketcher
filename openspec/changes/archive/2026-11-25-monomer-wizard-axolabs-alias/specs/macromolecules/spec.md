@@ -36,7 +36,7 @@ The system SHALL show an optional AxoLabs alias field in the collapsible _Aliase
 
 ### Requirement: AxoLabs alias format validation
 
-On _Submit_, the system SHALL reject an AxoLabs alias that contains anything other than letters, digits, `(`, and `)`; that has `(` anywhere but first or `)` anywhere but last; or that is empty or longer than 6 characters without its brackets. Each failure SHALL show its own error message in the wizard's error area, and the monomer SHALL NOT be saved.
+On _Submit_, the system SHALL reject an AxoLabs alias that contains anything other than letters, digits, `(`, and `)`; that has `(` anywhere but first or `)` anywhere but last; or that has no characters, or more than 6 characters, between its brackets (an empty field is still allowed). Each failure SHALL show its own error message in the wizard's error area, and the monomer SHALL NOT be saved.
 
 #### Scenario: Characters outside the allowed set
 

@@ -194,9 +194,9 @@ describe('hasAxoLabsAliasCollision', () => {
       aliasAxoLabs,
     },
   });
-  const emptyJson = {
-    root: { templates: [] },
-  } as unknown as IKetMacromoleculesContent;
+  const emptyJson: IKetMacromoleculesContent = {
+    root: { nodes: [], connections: [], templates: [] },
+  };
   const parsedJson = {
     root: { templates: [{ $ref: 'monomerGroupTemplate-X' }] },
     'monomerGroupTemplate-X': {

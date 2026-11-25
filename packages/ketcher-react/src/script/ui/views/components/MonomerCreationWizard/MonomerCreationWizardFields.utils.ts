@@ -2,7 +2,7 @@ import {
   type IKetMacromoleculesContent,
   isAmbiguousMonomerLibraryItem,
   KetTemplateType,
-  stripAxoLabsAliasBrackets,
+  areAxoLabsAliasesEqual,
   KetMonomerClass,
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -139,9 +139,8 @@ export const hasAxoLabsAliasCollision = (
   monomersLibraryParsedJson: IKetMacromoleculesContent,
   alias: string,
 ) => {
-  const stripped = stripAxoLabsAliasBrackets(alias);
   const matches = (other: string | undefined) =>
-    other !== undefined && stripAxoLabsAliasBrackets(other) === stripped;
+    other !== undefined && areAxoLabsAliasesEqual(other, alias);
 
   return (
     library.some(({ props }) => matches(props.aliasAxoLabs)) ||

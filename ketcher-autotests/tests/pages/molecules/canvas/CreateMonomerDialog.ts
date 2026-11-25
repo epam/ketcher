@@ -60,6 +60,7 @@ type AliasesSectionLocators = {
   bilnAliasEditbox: Locator;
   bilnAliasEditboxClearButton: Locator;
   axolabsAliasEditbox: Locator;
+  axolabsAliasInput: Locator;
   axolabsAliasEditboxClearButton: Locator;
 };
 
@@ -230,6 +231,9 @@ export const CreateMonomerDialog = (page: Page) => {
         .getByTestId('biln-alias-input')
         .getByTestId('CloseIcon'),
       axolabsAliasEditbox: page.getByTestId('axolabs-alias-input'),
+      axolabsAliasInput: page
+        .getByTestId('axolabs-alias-input')
+        .locator('input'),
       axolabsAliasEditboxClearButton: page
         .getByTestId('axolabs-alias-input')
         .getByTestId('CloseIcon'),
@@ -518,16 +522,9 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.keyboard.type(axolabsAlias);
     },
 
-    async getAxoLabsAlias() {
-      await this.expandAliasesSection();
-      return await aliasesSection.axolabsAliasEditbox
-        .locator('input')
-        .inputValue();
-    },
-
     async isAxoLabsAliasInvalid() {
       await this.expandAliasesSection();
-      const input = aliasesSection.axolabsAliasEditbox.locator('input');
+      const input = aliasesSection.axolabsAliasInput;
       return (await input.getAttribute('aria-invalid')) === 'true';
     },
 

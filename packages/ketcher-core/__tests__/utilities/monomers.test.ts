@@ -7,6 +7,7 @@ import {
   isValidHelmAliasLength,
   isValidModificationTypes,
   MODIFICATION_TYPES_MAX_LENGTH,
+  areAxoLabsAliasesEqual,
   normalizeAxoLabsAliasForSave,
   stripAxoLabsAliasBrackets,
   wrapAxoLabsAlias,
@@ -74,6 +75,25 @@ describe('monomers utilities', () => {
     it('wraps an alias in brackets once', () => {
       expect(wrapAxoLabsAlias('abc')).toBe('(abc)');
       expect(wrapAxoLabsAlias('(abc)')).toBe('(abc)');
+    });
+  });
+
+  describe('areAxoLabsAliasesEqual', () => {
+    it('ignores brackets', () => {
+      expect(areAxoLabsAliasesEqual('(p)', 'p')).toBe(true);
+      expect(areAxoLabsAliasesEqual('p', '(p)')).toBe(true);
+      expect(areAxoLabsAliasesEqual('(p)', '(p)')).toBe(true);
+    });
+
+    it('is case and value sensitive', () => {
+      expect(areAxoLabsAliasesEqual('p', 'P')).toBe(false);
+      expect(areAxoLabsAliasesEqual('p', 'q')).toBe(false);
+    });
+
+    it('treats two missing aliases as equal and one missing as different', () => {
+      expect(areAxoLabsAliasesEqual(undefined, undefined)).toBe(true);
+      expect(areAxoLabsAliasesEqual('p', undefined)).toBe(false);
+      expect(areAxoLabsAliasesEqual(undefined, 'p')).toBe(false);
     });
   });
 

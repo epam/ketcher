@@ -8,7 +8,7 @@ Users can create and edit library monomers in the Monomer Creation Wizard, but t
 
 - The wizard's attributes panel shows an optional **AxoLabs** alias field for Nucleotide, CHEM, and Phosphate monomers, in the collapsible _Aliases_ section next to the HELM and BILN aliases.
 - On _Submit_, the wizard validates the alias: allowed characters, bracket placement, length without brackets, and uniqueness across the whole library, including RNA presets. Each failed check shows its own error message from the issue, and the field stays highlighted until the next _Submit_.
-- The alias is saved wrapped in brackets, even when the user typed it without them.
+- The alias is saved wrapped in brackets, even when the user typed it without them, except an alias left unchanged from the one loaded for _Edit_, which is saved as stored.
 - Changing the monomer type to one without an AxoLabs alias clears the field and hides it.
 - _Edit_ of a library monomer loads its stored AxoLabs alias. Flows that load copied attributes with the `_Copy` suffix start with an empty AxoLabs alias, because the suffix is not a valid AxoLabs alias and the copy would collide with the original.
 - **Not included:** the 5' / internal / 3' position checkboxes from the issue. The alias stays one value that applies to every position, as the library format and AxoLabs import and export store it today. Positions need a storage format change in Ketcher and Indigo and are left for a follow-up, as the analysis comment on the issue describes. The issue's own attribute section defines `"aliasAxoLabs": "[String]"`, and the AxoLabs format in Indigo (epam/Indigo#3152) states that AxoLabs symbols have no position indicators.

@@ -136,6 +136,18 @@ export function wrapAxoLabsAlias(alias: string) {
 }
 
 /*
+ * The one equality rule for AxoLabs aliases: brackets are not part of the
+ * identity, so `(p)` equals `p`. Two missing aliases are equal; a missing and
+ * a present one are not. Callers trim typed input before comparing.
+ */
+export function areAxoLabsAliasesEqual(a?: string, b?: string): boolean {
+  if (a === undefined || b === undefined) {
+    return a === b;
+  }
+  return stripAxoLabsAliasBrackets(a) === stripAxoLabsAliasBrackets(b);
+}
+
+/*
  * The single place that turns what the user typed into the alias to save.
  * Blank means no alias; a value equal (brackets ignored) to the alias the form
  * was loaded with keeps that alias as stored; anything else gets the brackets.
@@ -150,8 +162,7 @@ export function normalizeAxoLabsAliasForSave(
   }
   if (
     loadedAlias !== undefined &&
-    stripAxoLabsAliasBrackets(trimmed) ===
-      stripAxoLabsAliasBrackets(loadedAlias)
+    areAxoLabsAliasesEqual(trimmed, loadedAlias)
   ) {
     return loadedAlias;
   }

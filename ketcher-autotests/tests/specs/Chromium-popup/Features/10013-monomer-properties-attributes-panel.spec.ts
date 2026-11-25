@@ -847,7 +847,10 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     await expect(axolabsAliasEditbox).not.toBeVisible();
 
     await createMonomerDialog.selectType(MonomerType.Phosphate);
-    expect(await createMonomerDialog.getAxoLabsAlias()).toBe('');
+    await createMonomerDialog.expandAliasesSection();
+    await expect(
+      createMonomerDialog.aliasesSection.axolabsAliasInput,
+    ).toHaveValue('');
 
     await createMonomerDialog.discard();
   });
@@ -916,7 +919,10 @@ test.describe('AxoLabs alias in the monomer library: ', () => {
 
     const createMonomerDialog = CreateMonomerDialog(page);
     await expect(createMonomerDialog.window).toBeVisible();
-    expect(await createMonomerDialog.getAxoLabsAlias()).toBe('(invdA)');
+    await createMonomerDialog.expandAliasesSection();
+    await expect(
+      createMonomerDialog.aliasesSection.axolabsAliasInput,
+    ).toHaveValue('(invdA)');
 
     await createMonomerDialog.discard();
   });

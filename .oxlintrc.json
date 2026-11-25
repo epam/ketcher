@@ -1,0 +1,397 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "packages/ketcher-core/docs/**",
+    "example/public/**",
+    "example/build/**",
+    "example/config/**",
+    "ketcher-autotests/playwright-report/**",
+    "ketcher-autotests/test-results/**",
+    "ketcher-autotests/tests/utils/**",
+    "ketcher-autotests/build/**",
+    "packages/ketcher-core/src/domain/serializers/ket/compiledSchema.js",
+    "**/*.d.ts",
+    "**/*.test.{ts,tsx,js,jsx}",
+    "**/*.spec.{ts,tsx,js,jsx}",
+    "**/setupTests.{ts,tsx,js,jsx}",
+    "**/testMocks/**",
+    "**/__tests__/**"
+  ],
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["**/*.{js,cjs,mjs,jsx,ts,tsx}"],
+      "rules": {
+        "constructor-super": "error",
+        "for-direction": "error",
+        "getter-return": "error",
+        "no-async-promise-executor": "error",
+        "no-case-declarations": "error",
+        "no-class-assign": "error",
+        "no-compare-neg-zero": "error",
+        "no-cond-assign": "error",
+        "no-const-assign": "error",
+        "no-constant-binary-expression": "error",
+        "no-constant-condition": [
+          "error",
+          {
+            "checkLoops": false
+          }
+        ],
+        "no-control-regex": "error",
+        "no-debugger": "error",
+        "no-delete-var": "error",
+        "no-dupe-class-members": "error",
+        "no-dupe-else-if": "error",
+        "no-dupe-keys": "error",
+        "no-duplicate-case": "error",
+        "no-empty": "error",
+        "no-empty-character-class": "error",
+        "no-empty-pattern": "error",
+        "no-empty-static-block": "error",
+        "no-ex-assign": "error",
+        "no-extra-boolean-cast": "error",
+        "no-fallthrough": "error",
+        "no-func-assign": "error",
+        "no-global-assign": "error",
+        "no-import-assign": "error",
+        "no-invalid-regexp": "error",
+        "no-irregular-whitespace": "error",
+        "no-loss-of-precision": "error",
+        "no-misleading-character-class": "error",
+        "no-new-native-nonconstructor": "error",
+        "no-nonoctal-decimal-escape": "error",
+        "no-obj-calls": "error",
+        "no-prototype-builtins": "error",
+        "no-redeclare": "error",
+        "no-regex-spaces": "error",
+        "no-self-assign": "error",
+        "no-setter-return": "error",
+        "no-shadow-restricted-names": "error",
+        "no-sparse-arrays": "error",
+        "no-this-before-super": "error",
+        "no-unassigned-vars": "error",
+        "no-unreachable": "error",
+        "no-unsafe-finally": "error",
+        "no-unsafe-negation": "error",
+        "no-unsafe-optional-chaining": "error",
+        "no-unused-labels": "error",
+        "no-unused-private-class-members": "error",
+        "no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "no-useless-backreference": "error",
+        "no-useless-catch": "error",
+        "no-useless-escape": "error",
+        "no-with": "error",
+        "preserve-caught-error": "error",
+        "require-yield": "error",
+        "use-isnan": "error",
+        "valid-typeof": "error",
+        "object-shorthand": "error",
+        "no-duplicate-imports": "error",
+        "no-alert": "error",
+        "jest/expect-expect": "off",
+        "testing-library/no-container": "off",
+        "testing-library/no-node-access": "off",
+        "testing-library/no-unnecessary-act": "off",
+        "react-you-might-not-need-an-effect/no-chain-state-updates": "off",
+        "react-you-might-not-need-an-effect/no-event-handler": "off",
+        "no-empty-function": "off",
+        "no-use-before-define": [
+          "error",
+          {
+            "functions": false,
+            "typedefs": false
+          }
+        ],
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "error",
+        "react/preserve-manual-memoization": "off",
+        "typescript/no-non-null-assertion": "error",
+        "typescript/no-explicit-any": "error",
+        "no-undef": "error",
+        "no-useless-assignment": "error"
+      },
+      "plugins": ["typescript", "react", "jest"],
+      "jsPlugins": [
+        "eslint-plugin-testing-library",
+        "eslint-plugin-react-you-might-not-need-an-effect"
+      ],
+      "env": {
+        "browser": true,
+        "node": true,
+        "jest": true,
+        "es2024": true,
+        "commonjs": true
+      },
+      "globals": {
+        "JSX": "readonly",
+        "React": "readonly",
+        "VoidFunction": "readonly",
+        "ClipboardItem": "readonly",
+        "withThemeProvider": "readonly",
+        "withThemeAndStoreProvider": "readonly"
+      }
+    },
+    {
+      "files": ["ketcher-autotests/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "no-duplicate-imports": "error",
+        "react/rules-of-hooks": "off",
+        "react/exhaustive-deps": "off",
+        "react/set-state-in-effect": "off",
+        "react/static-components": "off",
+        "react/use-memo": "off",
+        "react/immutability": "off",
+        "react/preserve-manual-memoization": "off",
+        "react/refs": "off"
+      },
+      "plugins": ["typescript", "react"]
+    },
+    {
+      "files": ["**/*.{js,cjs,mjs,jsx}"],
+      "rules": {
+        "no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "no-dupe-class-members": "error"
+      },
+      "plugins": ["typescript"]
+    },
+    {
+      "files": [
+        "packages/ketcher-react/**/*.{ts,tsx,js,jsx}",
+        "packages/ketcher-macromolecules/**/*.{ts,tsx,js,jsx}"
+      ],
+      "rules": {
+        "jsx-a11y/label-has-associated-control": "warn",
+        "jsx-a11y/no-static-element-interactions": "warn",
+        "jsx-a11y/no-autofocus": "warn",
+        "jsx-a11y/no-noninteractive-element-interactions": "warn",
+        "jsx-a11y/alt-text": "warn",
+        "jsx-a11y/click-events-have-key-events": "warn",
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "assert",
+                "message": "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead."
+              }
+            ]
+          }
+        ],
+        "react-you-might-not-need-an-effect/no-chain-state-updates": "error",
+        "react-you-might-not-need-an-effect/no-event-handler": "error",
+        "react/set-state-in-effect": "error",
+        "react/static-components": "error",
+        "react/use-memo": "error",
+        "react/immutability": "error",
+        "react/preserve-manual-memoization": "error",
+        "react/refs": "error"
+      },
+      "jsPlugins": ["eslint-plugin-react-you-might-not-need-an-effect"],
+      "plugins": ["jsx-a11y", "react"]
+    },
+    {
+      "files": ["packages/ketcher-react/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "typescript/consistent-type-imports": [
+          "error",
+          {
+            "prefer": "type-imports",
+            "fixStyle": "separate-type-imports"
+          }
+        ]
+      },
+      "plugins": ["typescript"]
+    },
+    {
+      "files": ["example/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "jsx-a11y/label-has-associated-control": "warn",
+        "jsx-a11y/no-static-element-interactions": "warn",
+        "jsx-a11y/no-autofocus": "warn",
+        "jsx-a11y/no-noninteractive-element-interactions": "warn",
+        "jsx-a11y/alt-text": "warn",
+        "jsx-a11y/click-events-have-key-events": "warn",
+        "typescript/ban-ts-comment": "warn"
+      },
+      "plugins": ["typescript", "jsx-a11y"]
+    },
+    {
+      "files": [
+        "example/**/__tests__/**/*.[jt]s?(x)",
+        "example/**/*.{spec,test}.[jt]s?(x)"
+      ],
+      "rules": {
+        "testing-library/no-container": "warn",
+        "testing-library/no-node-access": "warn"
+      },
+      "jsPlugins": ["eslint-plugin-testing-library"]
+    },
+    {
+      "files": ["ketcher-autotests/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "max-depth": ["error", 3],
+        "no-else-return": [
+          "error",
+          {
+            "allowElseIf": true
+          }
+        ],
+        "no-magic-numbers": "off",
+        "no-nested-ternary": "error",
+        "prefer-template": "error",
+        "no-implicit-coercion": "error",
+        "no-inline-comments": "error",
+        "no-lonely-if": "error",
+        "no-multi-assign": "error",
+        "no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "no-duplicate-imports": "error",
+        "react/rules-of-hooks": "off",
+        "react/exhaustive-deps": "off",
+        "react/set-state-in-effect": "off",
+        "react/static-components": "off",
+        "react/use-memo": "off",
+        "react/immutability": "off",
+        "react/preserve-manual-memoization": "off",
+        "react/refs": "off",
+        "no-restricted-exports": [
+          "error",
+          {
+            "restrictDefaultExports": {
+              "direct": true
+            }
+          }
+        ]
+      },
+      "plugins": ["typescript", "react"]
+    },
+    {
+      "files": ["packages/ketcher-core/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "assert",
+                "message": "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'utilities'` instead."
+              }
+            ]
+          }
+        ],
+        "no-empty-function": "off",
+        "typescript/consistent-type-imports": [
+          "error",
+          {
+            "prefer": "type-imports",
+            "fixStyle": "separate-type-imports"
+          }
+        ]
+      },
+      "plugins": ["typescript"]
+    },
+    {
+      "files": ["packages/ketcher-standalone/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "assert",
+                "message": "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/*/src/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "ketcher-invariants/no-html-sinks": "error",
+        "no-eval": "error",
+        "no-implied-eval": "error",
+        "no-new-func": "error"
+      },
+      "jsPlugins": ["./scripts/oxlint-invariants-plugin.mjs"]
+    },
+    {
+      "files": ["packages/ketcher-core/src/domain/**/*.{ts,tsx}"],
+      "rules": {
+        "ketcher-invariants/domain-no-application-imports": "error",
+        "ketcher-invariants/ui-imports-in-core": "error"
+      },
+      "jsPlugins": ["./scripts/oxlint-invariants-plugin.mjs"]
+    },
+    {
+      "files": ["packages/ketcher-core/src/**/*.{ts,tsx}"],
+      "rules": {
+        "ketcher-invariants/ui-imports-in-core": "error",
+        "ketcher-invariants/ui-deps-in-core": "error"
+      },
+      "jsPlugins": ["./scripts/oxlint-invariants-plugin.mjs"]
+    },
+    {
+      "files": ["packages/ketcher-core/src/application/render/**/*.{ts,tsx}"],
+      "rules": {
+        "ketcher-invariants/renderer-no-model-mutations": "error"
+      },
+      "jsPlugins": ["./scripts/oxlint-invariants-plugin.mjs"]
+    },
+    // Oxlint's react/immutability reports a variable that is local to an
+    // effect and reassigned in a callback inside it. React Compiler allows
+    // that, and the ESLint rule did not report these two files.
+    {
+      "files": [
+        "packages/ketcher-react/src/hooks/useRequestAnimationFrame.ts",
+        "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx"
+      ],
+      "plugins": ["react"],
+      "rules": {
+        "react/immutability": "off"
+      }
+    }
+  ],
+  "options": {
+    "reportUnusedDisableDirectives": "error"
+  }
+}

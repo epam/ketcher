@@ -1,5 +1,6 @@
 import {
   isAmbiguousMonomerLibraryItem,
+  stripAxoLabsAliasBrackets,
   KetMonomerClass,
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -25,13 +26,21 @@ export const getMonomerPropertyVisibility = (
     type === KetMonomerClass.CHEM;
   const shouldDisplayBilnAlias =
     type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
+  const shouldDisplayAxoLabsAlias =
+    type === KetMonomerClass.RNA ||
+    type === KetMonomerClass.CHEM ||
+    type === KetMonomerClass.Phosphate;
 
   return {
     displayNaturalAnalogue: shouldDisplayNaturalAnalogue,
     displayModificationTypes: shouldDisplayModificationTypes,
-    displayAliases: shouldDisplayHelmAlias || shouldDisplayBilnAlias,
+    displayAliases:
+      shouldDisplayHelmAlias ||
+      shouldDisplayBilnAlias ||
+      shouldDisplayAxoLabsAlias,
     displayHelmAlias: shouldDisplayHelmAlias,
     displayBilnAlias: shouldDisplayBilnAlias,
+    displayAxoLabsAlias: shouldDisplayAxoLabsAlias,
   };
 };
 
@@ -120,6 +129,36 @@ export const hasMonomerFieldCollision = (
       (props.MonomerName === value || props.aliasHELM === value)
     );
   });
+};
+
+type MonomersLibraryTemplates = {
+  [templateRef: string]: unknown;
+};
+
+/*
+ * An AxoLabs alias is unique across the whole library, brackets ignored,
+ * and every position it can be written in (monomer or RNA preset) counts.
+ * The caller passes the library without the monomer being edited.
+ */
+export const hasAxoLabsAliasCollision = (
+  library: MonomerItemType[],
+  monomersLibraryParsedJson: MonomersLibraryTemplates | null | undefined,
+  alias: string,
+) => {
+  const stripped = stripAxoLabsAliasBrackets(alias);
+  const matches = (other: string | undefined) =>
+    other !== undefined && stripAxoLabsAliasBrackets(other) === stripped;
+
+  return (
+    library.some(({ props }) => matches(props.aliasAxoLabs)) ||
+    Object.values(monomersLibraryParsedJson ?? {}).some((template) => {
+      const { type, aliasAxoLabs } = (template ?? {}) as {
+        type?: string;
+        aliasAxoLabs?: string;
+      };
+      return type === 'monomerGroupTemplate' && matches(aliasAxoLabs);
+    })
+  );
 };
 
 export const isValidMonomerName = (name: string, initialName?: string) =>

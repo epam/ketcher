@@ -70,6 +70,7 @@
     "deleteModificationTypeTitle": "Eliminar tipo de modificación",
     "helmLabel": "HELM",
     "bilnLabel": "BILN",
+    "axolabsLabel": "AxoLabs",
     "modificationAccordionTitle": "Modificación",
     "addModificationTypeButton": "Añadir tipo de modificación",
     "aliasesAccordionTitle": "Alias",

@@ -533,6 +533,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                     readonlyComponentAttachmentPoints[rnaComponentKey]
                   }
                   showNaturalAnalogue={rnaComponentKey === 'base'}
+                  showAxoLabsAlias={false}
                   attachmentPointsExtra={
                     rnaComponentKey === 'phosphate' ? (
                       <AttributeField

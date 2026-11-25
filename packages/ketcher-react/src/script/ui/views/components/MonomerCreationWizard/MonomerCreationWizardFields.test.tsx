@@ -49,6 +49,7 @@ describe('library modification types', () => {
             naturalAnalogue: 'A',
             aliasHELM: '',
             aliasBILN: '',
+            aliasAxoLabs: '',
           },
           notifications: new Map(),
           errors: {},
@@ -73,5 +74,62 @@ describe('library modification types', () => {
       target: { value: 'Additional' },
     });
     expect(onChange).toHaveBeenLastCalledWith(['Modified', 'Additional']);
+  });
+});
+
+describe('AxoLabs alias field', () => {
+  const renderFields = (
+    type: KetMonomerClass,
+    showAxoLabsAlias?: boolean,
+    aliasAxoLabs = '',
+  ) =>
+    render(
+      <MonomerCreationWizardFields
+        wizardState={{
+          values: {
+            type,
+            symbol: 'A',
+            name: 'Alanine',
+            naturalAnalogue: 'A',
+            aliasHELM: '',
+            aliasBILN: '',
+            aliasAxoLabs,
+          },
+          notifications: new Map(),
+          errors: {},
+        }}
+        assignedAttachmentPoints={new Map()}
+        showAxoLabsAlias={showAxoLabsAlias}
+        onFieldChange={vi.fn()}
+      />,
+    );
+
+  it.each([
+    KetMonomerClass.RNA,
+    KetMonomerClass.CHEM,
+    KetMonomerClass.Phosphate,
+  ])('is shown for %s', (type) => {
+    renderFields(type);
+    expect(screen.getByTestId('axolabs-alias-input')).toBeInTheDocument();
+  });
+
+  it.each([
+    KetMonomerClass.AminoAcid,
+    KetMonomerClass.Sugar,
+    KetMonomerClass.Base,
+  ])('is hidden for %s', (type) => {
+    renderFields(type);
+    expect(screen.queryByTestId('axolabs-alias-input')).not.toBeInTheDocument();
+  });
+
+  it('is hidden when showAxoLabsAlias is false, keeping HELM for phosphate', () => {
+    renderFields(KetMonomerClass.Phosphate, false);
+    expect(screen.queryByTestId('axolabs-alias-input')).not.toBeInTheDocument();
+    expect(screen.getByTestId('helm-alias-input')).toBeInTheDocument();
+  });
+
+  it('drops the whole Aliases section for RNA when the field is hidden', () => {
+    renderFields(KetMonomerClass.RNA, false);
+    expect(screen.queryByTestId('aliases-accordion')).not.toBeInTheDocument();
   });
 });

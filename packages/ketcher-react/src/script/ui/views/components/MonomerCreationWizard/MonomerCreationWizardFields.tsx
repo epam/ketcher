@@ -53,6 +53,7 @@ interface IMonomerCreationWizardFieldsProps {
     newLeavingAtomLabel: AtomLabel,
   ) => void;
   showNaturalAnalogue?: boolean;
+  showAxoLabsAlias?: boolean;
   attachmentPointsExtra?: ReactNode;
 }
 
@@ -79,7 +80,15 @@ const MonomerCreationWizardFields = (
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
+  const {
+    type,
+    symbol,
+    name,
+    naturalAnalogue,
+    aliasHELM,
+    aliasBILN,
+    aliasAxoLabs,
+  } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >(() => initialModificationTypes.map((value, id) => ({ id, value })));
@@ -150,7 +159,12 @@ const MonomerCreationWizardFields = (
     displayAliases,
     displayHelmAlias,
     displayBilnAlias,
+    displayAxoLabsAlias: isAxoLabsAliasAvailable,
   } = getMonomerPropertyVisibility(type);
+  const displayAxoLabsAlias =
+    props.showAxoLabsAlias !== false && isAxoLabsAliasAvailable;
+  const hasAliasFields =
+    displayHelmAlias || displayBilnAlias || displayAxoLabsAlias;
 
   return (
     <div>
@@ -342,7 +356,7 @@ const MonomerCreationWizardFields = (
         </>
       )}
 
-      {displayAliases && (
+      {displayAliases && hasAliasFields && (
         <>
           <div className={styles.divider} />
 
@@ -413,6 +427,33 @@ const MonomerCreationWizardFields = (
                             errors.aliasBILN && styles.error,
                           )}
                           error={Boolean(errors.aliasBILN)}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
+                {displayAxoLabsAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>
+                      {t('components:monomerCreationWizard.axolabsLabel')}
+                    </p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasAxoLabs}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasAxoLabs', newValue)
+                      }
+                      data-testid="axolabs-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasAxoLabs && styles.error,
+                          )}
+                          error={Boolean(errors.aliasAxoLabs)}
                         />
                       )}
                     />

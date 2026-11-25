@@ -110,6 +110,7 @@ const getInitialWizardState = (
     naturalAnalogue,
     aliasHELM: '',
     aliasBILN: '',
+    aliasAxoLabs: '',
   },
   errors: {},
   notifications: new Map(),
@@ -167,6 +168,7 @@ const getInitialWizardStateForEdit = ({
       naturalAnalogue: initialValues.naturalAnalogue,
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
+      aliasAxoLabs: initialValues.aliasAxoLabs ?? '',
     },
   };
 

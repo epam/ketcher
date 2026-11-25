@@ -70,6 +70,7 @@
     "deleteModificationTypeTitle": "删除修饰类型",
     "helmLabel": "HELM",
     "bilnLabel": "BILN",
+    "axolabsLabel": "AxoLabs",
     "modificationAccordionTitle": "修饰",
     "addModificationTypeButton": "添加修饰类型",
     "aliasesAccordionTitle": "别名",

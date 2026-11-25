@@ -8,6 +8,7 @@ import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BASE_MODIFICATION_DISABLED_IN_SYNC_MODE } from 'domain/helpers/antisenseBaseSync';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -24,6 +25,9 @@ const createNucleotideNode = (base: string, position: Vec2) => {
 };
 
 const testRenderTheme = {
+  peptide: {
+    color: {},
+  },
   monomer: {
     color: {
       X: { regular: 'yellow' },
@@ -253,5 +257,55 @@ describe('SequenceMode base-carrying refusal (task 19.1-19.4)', () => {
     );
 
     dispatchSpy.mockRestore();
+  });
+
+  it('asks before replacing a side-connected RNA base with a peptide monomer', () => {
+    const nucleotides = ['U', 'U'].map((base, index) =>
+      createNucleotideNode(base, new Vec2(index * 1.6, 0)),
+    );
+    editor.drawingEntitiesManager.createPolymerBond(
+      nucleotides[0].rnaBase,
+      nucleotides[1].rnaBase,
+      AttachmentPointName.R3,
+      AttachmentPointName.R3,
+    );
+    rerenderSequence(editor);
+    editor.drawingEntitiesManager.selectDrawingEntities(
+      nucleotides[0].monomers,
+    );
+
+    const cysteine = editor.monomersLibrary.find(
+      (item) =>
+        item.label === 'C' &&
+        item.props.MonomerClass === KetMonomerClass.AminoAcid,
+    );
+    if (!cysteine) {
+      throw new Error('Cysteine peptide template not found');
+    }
+
+    const confirmationSpy = vi.spyOn(
+      editor.events.openConfirmationDialog,
+      'dispatch',
+    );
+
+    mode.insertMonomerFromLibrary(cysteine);
+
+    expect(confirmationSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        confirmationText:
+          'Side chain connections will be deleted during replacement. Do you want to proceed?',
+      }),
+    );
+    expect(
+      editor.drawingEntitiesManager.monomers.get(nucleotides[0].rnaBase.id),
+    ).toBe(nucleotides[0].rnaBase);
+
+    confirmationSpy.mock.calls[0][0].onConfirm();
+
+    expect(
+      editor.drawingEntitiesManager.monomers.get(nucleotides[0].rnaBase.id),
+    ).not.toBe(nucleotides[0].rnaBase);
+
+    confirmationSpy.mockRestore();
   });
 });

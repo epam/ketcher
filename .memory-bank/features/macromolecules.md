@@ -105,6 +105,22 @@ The system SHALL ensure that a "Deletion of bonds" modal is shown before proceed
 - **WHEN** any bond of the original monomer or preset cannot be re-established on the replacement
 - **THEN** a "Deletion of bonds" modal is shown before proceeding; Cancel aborts, Yes proceeds
 
+### Requirement: Confirmation before replacing a side-connected monomer with a different type
+
+The system SHALL ask for confirmation before replacing a monomer with an item of a different monomer type when that monomer has a side connection.
+
+#### Scenario: Different-type library replacement in sequence mode
+
+- **WHEN** a selected sequence monomer has a side connection and the library item is of a different monomer type
+- **THEN** the _Confirm Your Action_ dialog warns that side-chain connections will be deleted
+- **AND** the replacement occurs only after the user confirms
+
+#### Scenario: Different-type library replacement in Flex mode
+
+- **WHEN** a monomer with a side connection is replaced by dragging a library item of a different monomer type onto it
+- **THEN** the _Confirm Your Action_ dialog warns that side-chain connections may be affected
+- **AND** the replacement occurs only after the user confirms
+
 ### Requirement: Preset placed without bonding (open canvas drop) — unchanged
 
 The system SHALL ensure that the monomer is placed at the drop position without any bond being created.

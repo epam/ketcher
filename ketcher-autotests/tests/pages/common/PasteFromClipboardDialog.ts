@@ -48,7 +48,7 @@ export const PasteFromClipboardDialog = (page: Page) => {
       const listbox = page.getByRole('listbox');
       await listbox.waitFor({ state: 'visible' });
       await contentTypeOption.click();
-      if (!(await listbox.isVisible())) {
+      if (await listbox.isHidden()) {
         return;
       }
       // eslint-disable-next-line no-inline-comments

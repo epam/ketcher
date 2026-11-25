@@ -7,12 +7,11 @@ import {
   clickOnCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -154,7 +153,9 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEXT001');
     await TextEditorDialog(page).apply();
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 250, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -166,7 +167,9 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas(page, 'KET/two-text-objects.ket');
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();

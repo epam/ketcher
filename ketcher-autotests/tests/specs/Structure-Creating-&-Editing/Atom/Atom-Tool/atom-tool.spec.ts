@@ -16,12 +16,11 @@ import {
   RxnFileFormat,
   MolFileFormat,
   dragTo,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -284,7 +283,9 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -298,7 +299,9 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

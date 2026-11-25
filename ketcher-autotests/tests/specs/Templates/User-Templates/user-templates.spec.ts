@@ -7,8 +7,11 @@ import {
   waitForPageInit,
   getEditorScreenshot,
   clickOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -170,7 +173,9 @@ test.describe('Click User Templates on canvas', () => {
     Description: Template is copied and pasted as expected.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -183,7 +188,9 @@ test.describe('Click User Templates on canvas', () => {
     Description: Template is cut and pasted as expected.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });

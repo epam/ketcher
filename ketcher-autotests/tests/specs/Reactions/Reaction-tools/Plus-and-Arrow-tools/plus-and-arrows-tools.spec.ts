@@ -15,11 +15,7 @@ import {
   resetZoomLevelToDefault,
   ArrowType,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   saveStructureWithReaction,
   selectRectangleArea,
@@ -147,11 +143,15 @@ test.describe('Plus and Arrows tools ', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 100, y + 100);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -814,7 +814,9 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -832,7 +834,9 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });

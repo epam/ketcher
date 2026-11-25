@@ -9,11 +9,10 @@ import {
   clickOnCanvas,
   deleteByKeyboardOnCanvas,
   takeLeftToolbarScreenshot,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -605,7 +604,9 @@ test.describe('Hot keys', () => {
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

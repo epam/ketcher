@@ -8,12 +8,11 @@ import {
   MolFileFormat,
   keyboardPressOnCanvas,
   moveMouseAway,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -220,7 +219,9 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
@@ -234,7 +235,9 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });

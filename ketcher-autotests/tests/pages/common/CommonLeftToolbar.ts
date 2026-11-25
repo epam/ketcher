@@ -60,6 +60,11 @@ export const CommonLeftToolbar = (page: Page) => {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
         await locators.areaSelectionDropdownExpandButton.click();
         await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .waitFor({ state: 'visible', timeout: bondToolbarActionTimeout });
+        await page
           .getByTestId(toolType)
           .filter({ has: page.locator(':visible') })
           .first()

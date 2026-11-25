@@ -5,8 +5,10 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   undoByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
 } from '@utils';
-import { copyAndPaste } from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   GeneralSetting,
   MeasurementUnit,
@@ -52,7 +54,9 @@ test.describe('General Settings', () => {
       ResetToSelectToolOption.Off,
     );
     await drawBenzeneRing(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);

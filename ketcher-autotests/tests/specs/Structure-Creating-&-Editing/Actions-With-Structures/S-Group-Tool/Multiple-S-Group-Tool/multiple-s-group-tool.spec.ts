@@ -6,12 +6,11 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -204,7 +203,9 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to copy and paste structure with Multiple S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 500, {
       from: 'pageTopLeft',
     });
@@ -217,7 +218,9 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to cut and paste structure with Multiple S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });

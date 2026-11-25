@@ -7,12 +7,11 @@ import {
   clickOnCanvas,
   MolFileFormat,
   deleteByKeyboardOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -309,7 +308,9 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/r1-several-structures.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -322,7 +323,9 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/r1-several-structures.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

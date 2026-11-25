@@ -9,12 +9,11 @@ import {
   clickOnCanvas,
   waitForRender,
   RdfFileFormat,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -876,7 +875,9 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await copyAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -916,7 +917,9 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await cutAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await cutFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -1772,7 +1775,9 @@ test.describe('Cascade Reactions', () => {
             await takeEditorScreenshot(page);
             await CommonTopLeftToolbar(page).undo();
             await takeEditorScreenshot(page);
-            await copyAndPaste(page);
+            await selectAllStructuresOnCanvas(page);
+            await copyFromCanvasToClipboardByKeyboard(page);
+            await pasteFromClipboardToCanvasByKeyboard(page);
             await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
             await takeEditorScreenshot(page);
             await CommonTopLeftToolbar(page).undo();

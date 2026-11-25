@@ -10,12 +10,11 @@ import {
   clickOnCanvas,
   deleteByKeyboardOnCanvas,
   moveMouseAway,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
@@ -134,7 +133,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -150,7 +151,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

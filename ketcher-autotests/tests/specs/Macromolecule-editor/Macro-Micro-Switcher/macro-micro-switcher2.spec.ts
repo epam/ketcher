@@ -23,10 +23,7 @@ import {
   takeElementScreenshot,
   getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
-import {
-  copyAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -638,7 +635,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/single-atom-properties.ket',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(

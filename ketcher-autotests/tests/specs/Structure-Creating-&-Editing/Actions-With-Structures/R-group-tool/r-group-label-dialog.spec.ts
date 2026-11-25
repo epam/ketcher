@@ -12,12 +12,11 @@ import {
   zoomOutByKeyboard,
   RxnFileFormat,
   deleteByKeyboardOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -350,7 +349,9 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to Copy/Paste structure with R-group label.
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -361,7 +362,9 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to Cut/Paste the structure with R-group label.
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

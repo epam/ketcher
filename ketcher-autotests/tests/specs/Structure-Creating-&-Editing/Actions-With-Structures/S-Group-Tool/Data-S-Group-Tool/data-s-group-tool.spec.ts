@@ -10,12 +10,11 @@ import {
   deleteByKeyboardOnCanvas,
   waitForRender,
   moveMouseAway,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -165,7 +164,9 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to copy and paste structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
@@ -178,7 +179,9 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to cut and paste structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });

@@ -6,11 +6,10 @@ import {
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
@@ -1535,7 +1534,9 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/all-possible-atoms-properties.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });

@@ -19,7 +19,11 @@ import {
   getNextConnectedNode,
   getPreviousConnectedNode,
 } from 'domain/helpers/chains';
-import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
+import {
+  isPhosphateOrAmbiguousPhosphate,
+  isRnaBaseApplicableForAntisense,
+  isSugarOrAmbiguousSugar,
+} from 'domain/helpers/monomers';
 import { SettingsManager } from 'utilities';
 
 interface IForEachNodeParams {
@@ -81,6 +85,15 @@ export class SequenceViewModel {
     });
   }
 
+  private isNucleicAcidNode(node: SubChainNode) {
+    return node.monomers.some(
+      (monomer) =>
+        isRnaBaseApplicableForAntisense(monomer) ||
+        isSugarOrAmbiguousSugar(monomer) ||
+        isPhosphateOrAmbiguousPhosphate(monomer),
+    );
+  }
+
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
@@ -92,6 +105,8 @@ export class SequenceViewModel {
       antisenseMonomer: BaseMonomer,
       senseMonomer: BaseMonomer,
     ) =>
+      (antisenseMonomer.monomerItem.isAntisense &&
+        senseMonomer.monomerItem.isSense) ||
       (isRnaBaseApplicableForAntisense(antisenseMonomer) &&
         isRnaBaseApplicableForAntisense(senseMonomer)) ||
       editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
@@ -161,6 +176,41 @@ export class SequenceViewModel {
           },
           [] as BaseMonomer[],
         );
+        const pairedSenseNodesBeforeLastHydrogenBond =
+          senseMonomersConnectedByHydrogenBond
+            .map((monomer) =>
+              this.monomerToTwoStrandedSnakeLayoutNode.get(monomer),
+            )
+            .filter((twoStrandedNode) => {
+              const twoStrandedNodeIndex = twoStrandedNode
+                ? this.nodes.indexOf(twoStrandedNode)
+                : -1;
+              const lastTwoStrandedNodeWithHydrogenBondIndex =
+                lastTwoStrandedNodeWithHydrogenBond
+                  ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+                  : -1;
+
+              return (
+                twoStrandedNode &&
+                lastTwoStrandedNodeWithHydrogenBond &&
+                twoStrandedNodeIndex >= 0 &&
+                twoStrandedNodeIndex < lastTwoStrandedNodeWithHydrogenBondIndex
+              );
+            }) as ITwoStrandedChainItem[];
+
+        if (pairedSenseNodesBeforeLastHydrogenBond.length) {
+          const currentTwoStrandedSnakeLayoutNode =
+            pairedSenseNodesBeforeLastHydrogenBond[0];
+
+          if (!currentTwoStrandedSnakeLayoutNode.antisenseNode) {
+            currentTwoStrandedSnakeLayoutNode.antisenseNode = node;
+            currentTwoStrandedSnakeLayoutNode.antisenseChain = chain;
+          }
+
+          handledChainNodes.add(node);
+          return;
+        }
+
         const firstSenseMonomerConnectedByHydrogenBond =
           senseMonomersConnectedByHydrogenBond[0];
         const twoStrandedSnakeLayoutNode =
@@ -262,7 +312,12 @@ export class SequenceViewModel {
         lastTwoStrandedNodeWithHydrogenBond &&
         nodesBeforeHydrogenConnectionToBase.length > 0
       ) {
-        for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
+        const trailingNucleicAcidNodes =
+          nodesBeforeHydrogenConnectionToBase.filter((node) =>
+            this.isNucleicAcidNode(node),
+          );
+
+        for (let i = 0; i < trailingNucleicAcidNodes.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
             lastTwoStrandedNodeWithHydrogenBond
               ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
@@ -272,8 +327,7 @@ export class SequenceViewModel {
           const currentTwoStrandedSnakeLayoutNode:
             ITwoStrandedChainItem | undefined =
             this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
-          const currentAntisenseSnakeLayoutNode =
-            nodesBeforeHydrogenConnectionToBase[i];
+          const currentAntisenseSnakeLayoutNode = trailingNucleicAcidNodes[i];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
             lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
           const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
@@ -379,6 +433,21 @@ export class SequenceViewModel {
         antisenseNodeIndex++;
       }
 
+      if (
+        antisenseNode &&
+        !(antisenseNode instanceof BackBoneSequenceNode) &&
+        !(antisenseNode instanceof EmptySequenceNode) &&
+        node.antisenseChain
+      ) {
+        const antisenseNodeIndexInChain =
+          node.antisenseChain.nodes.indexOf(antisenseNode);
+
+        if (antisenseNodeIndexInChain !== -1) {
+          node.antisenseNodeIndex =
+            node.antisenseChain.length - 1 - antisenseNodeIndexInChain;
+        }
+      }
+
       const isRealSenseNode =
         senseNode &&
         !(senseNode instanceof BackBoneSequenceNode) &&
@@ -460,11 +529,31 @@ export class SequenceViewModel {
       sequenceViewModelItems: [],
     };
     let previousSenseNodeChain: Chain;
+    let previousSequenceModelItem: ITwoStrandedChainItem | undefined;
 
     this.nodes.forEach((sequenceModelItem) => {
       const currentSenseChain = sequenceModelItem.chain;
+      const isConnectedBySameAntisenseChain =
+        previousSequenceModelItem?.antisenseChain &&
+        previousSequenceModelItem.antisenseChain ===
+          sequenceModelItem.antisenseChain;
 
-      if (previousSenseNodeChain !== currentSenseChain) {
+      if (
+        previousSenseNodeChain !== currentSenseChain &&
+        isConnectedBySameAntisenseChain &&
+        previousSequenceModelItem
+      ) {
+        currentSequenceModelRow.sequenceViewModelItems[0].showAntisenseCounterInRow = true;
+        previousSequenceModelItem.isFollowedByConnectedSenseChain = true;
+        sequenceModelItem.startsNewSenseChainInRow = true;
+        sequenceModelItem.hideAntisenseCounterInRow = true;
+        sequenceModelItem.senseNodeIndex = currentIndexInSequenceModelChain;
+      }
+
+      if (
+        previousSenseNodeChain !== currentSenseChain &&
+        !isConnectedBySameAntisenseChain
+      ) {
         currentSequenceModelChain = new SequenceViewModelChain();
         this.chains.push(currentSequenceModelChain);
         currentIndexInSequenceModelChain = 0;
@@ -480,6 +569,7 @@ export class SequenceViewModel {
       currentSequenceModelRow.sequenceViewModelItems.push(sequenceModelItem);
 
       previousSenseNodeChain = currentSenseChain;
+      previousSequenceModelItem = sequenceModelItem;
       currentIndexInSequenceModelChain++;
     });
 

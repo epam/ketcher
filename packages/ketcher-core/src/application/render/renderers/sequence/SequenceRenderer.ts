@@ -194,6 +194,10 @@ export class SequenceRenderer {
         hasAntisenseInRow = false;
 
         row.sequenceViewModelItems.forEach((chainItem) => {
+          if (chainItem.startsNewSenseChainInRow) {
+            currentMonomerIndexInChain += 0.5;
+          }
+
           const node = chainItem.senseNode;
 
           if (node && handledNodes.has(node)) {

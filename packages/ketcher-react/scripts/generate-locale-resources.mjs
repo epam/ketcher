@@ -7,16 +7,16 @@ locale). Keeps imports static (required for Rollup to tree-shake unused
 locales out of the English-only default build) while removing the need
 to hand-edit i18n.ts every time a locale is added or removed — adding a
 language is "drop files under src/locales/<code>/, rerun this script."
-
-A locale missing any of the six namespace files is skipped with a
-warning rather than included half-translated (i18next would silently
-fall back to English per-key, which is a worse failure mode than just
-not offering the language yet).
-*/
+ *
+ * A locale missing any of the six namespace files is skipped with a
+ * warning rather than included half-translated (i18next would silently
+ * fall back to English per-key, which is a worse failure mode than just
+ * not offering the language yet).
+ */
 import { existsSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { format, resolveConfig } from 'prettier';
+import { formatGeneratedSource } from '../../../build-config/format-generated-source.mjs';
 
 const NAMESPACES = [
   'common',
@@ -117,11 +117,7 @@ for (const locale of extraLocales) {
 lines.push('} as const satisfies Record<string, typeof BASE_RESOURCES>;');
 lines.push('');
 
-const prettierConfig = await resolveConfig(outFile, { editorconfig: true });
-const formattedSource = await format(lines.join('\n'), {
-  ...prettierConfig,
-  filepath: outFile,
-});
+const formattedSource = await formatGeneratedSource(outFile, lines.join('\n'));
 writeFileSync(outFile, formattedSource);
 console.log(
   `generate-locale-resources: wrote ${path.relative(process.cwd(), outFile)} — base "en" + extra [${extraLocales.join(', ') || 'none'}]`,

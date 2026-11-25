@@ -114,7 +114,8 @@ class ReSGroup extends ReObject {
         }
         case 'SUP': {
           const superatomClass = sgroup.data.class as
-            SUPERATOM_CLASS | undefined;
+            | SUPERATOM_CLASS
+            | undefined;
           SGroupdrawBracketsOptions.lowerIndexText = sgroup.superatomLabel;
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };

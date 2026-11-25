@@ -82,7 +82,11 @@ declare module 'ketcher-react' {
   export const SettingsAccordion: React.ComponentType<SettingsAccordionProps>;
 
   export type SettingsFieldLayout =
-    'toggle' | 'measure' | 'measure-stacked' | 'select' | 'color';
+    | 'toggle'
+    | 'measure'
+    | 'measure-stacked'
+    | 'select'
+    | 'color';
 
   export interface PanelRect {
     left: number;

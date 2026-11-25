@@ -1,8 +1,6 @@
 {
-  "*.{js,jsx,ts,tsx,mjs,cjs}": [
-    "prettier --write",
-    "eslint --quiet --no-warn-ignored"
+  "*.{js,jsx,ts,tsx,json,mjs,cjs}": [
+    "oxfmt --no-error-on-unmatched-pattern"
   ],
-  "*.json": ["prettier --write"],
   "*.{css,less}": ["stylelint --formatter verbose --fix --allow-empty-input"]
 }

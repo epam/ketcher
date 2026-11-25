@@ -17,7 +17,11 @@ export interface AttachmentGroupHoverHost {
 }
 
 export type AttachmentGroupMarkerState =
-  'default' | 'selected' | 'hovered' | 'connectedSelected' | 'connectedHovered';
+  | 'default'
+  | 'selected'
+  | 'hovered'
+  | 'connectedSelected'
+  | 'connectedHovered';
 
 function getMarkerScale(render: Render, viewBoxSize: number) {
   return (render.options.atomSelectionPlateRadius * 2) / viewBoxSize;

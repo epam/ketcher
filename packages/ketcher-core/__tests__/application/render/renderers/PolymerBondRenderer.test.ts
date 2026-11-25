@@ -8,7 +8,8 @@ import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { getFinishedPolymerBond } from '../../../mock-data';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 
 // TODO: Split to two test files.
 describe('Polymer Bond Renderer', () => {

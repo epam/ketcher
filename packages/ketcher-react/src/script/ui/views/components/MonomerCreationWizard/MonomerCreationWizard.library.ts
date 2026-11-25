@@ -27,7 +27,8 @@ export const saveLibraryMonomer = async (
     throw new Error('The original monomer is no longer available for editing.');
   }
   const editedMonomerTemplate = editedTemplate as
-    IKetMonomerTemplate | undefined;
+    | IKetMonomerTemplate
+    | undefined;
   const { root: _root, ...createdTemplate } = data.monomerTemplate;
 
   /*

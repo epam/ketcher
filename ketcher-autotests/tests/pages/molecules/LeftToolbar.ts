@@ -14,7 +14,7 @@ type LeftToolbarLocators = {
   createMonomerButton: Locator;
   reactionPlusToolButton: Locator;
   arrowToolsButton: Locator;
-  reactionMappingToolsButton: Locator;
+  reactionMappingToolButton: Locator;
   shapeToolsButton: Locator;
   addTextButton: Locator;
   addImageButton: Locator;
@@ -31,7 +31,7 @@ export const LeftToolbar = (page: Page) => {
     createMonomerButton: page.getByTestId('create-monomer'),
     reactionPlusToolButton: page.getByTestId('reaction-plus'),
     arrowToolsButton: page.getByTestId('arrows-drop-down-button'),
-    reactionMappingToolsButton: page.getByTestId(
+    reactionMappingToolButton: page.getByTestId(
       'reaction-mapping-tools-drop-down-button',
     ),
     shapeToolsButton: page.getByTestId('shapes-drop-down-button'),
@@ -121,7 +121,7 @@ export const LeftToolbar = (page: Page) => {
     async expandReactionMappingToolsDropdown() {
       const reactionMappingToolbar = page.getByTestId('multi-tool-dropdown');
 
-      await locators.reactionMappingToolsButton
+      await locators.reactionMappingToolButton
         .getByTestId('dropdown-expand')
         .click();
       await reactionMappingToolbar.waitFor({ state: 'visible' });
@@ -130,8 +130,67 @@ export const LeftToolbar = (page: Page) => {
     async selectReactionMappingTool(
       reactionMappingType: ReactionMappingType = ReactionMappingType.ReactionMapping,
     ) {
-      await this.expandReactionMappingToolsDropdown();
-      await page.getByTestId(reactionMappingType).first().click();
+      if (
+        (await this.isReactionMappingToolActive()) &&
+        (await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        return;
+      }
+
+      if (
+        !(await this.isReactionMappingToolActive()) &&
+        (await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        await locators.reactionMappingToolButton.click();
+        return;
+      }
+
+      if (
+        (await this.isReactionMappingToolActive()) &&
+        !(await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        await locators.reactionMappingToolButton.click();
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'visible', timeout: 5000 });
+        await page
+          .getByTestId(reactionMappingType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'detached', timeout: 5000 });
+        return;
+      }
+
+      if (
+        !(await this.isReactionMappingToolActive()) &&
+        !(await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        await locators.reactionMappingToolButton.click();
+        await locators.reactionMappingToolButton.click();
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'visible', timeout: 5000 });
+        await page
+          .getByTestId(reactionMappingType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'detached', timeout: 5000 });
+        return;
+      }
     },
 
     async expandShapeToolsDropdown() {
@@ -152,6 +211,23 @@ export const LeftToolbar = (page: Page) => {
 
     async image() {
       await locators.addImageButton.click();
+    },
+
+    async isReactionMappingToolActive() {
+      return !(await locators.reactionMappingToolButton.isVisible())
+        ? false
+        : (await locators.reactionMappingToolButton.getAttribute(
+            'data-is-selected',
+          )) === 'true';
+    },
+
+    async isReactionMappingToolSelected(
+      reactionMappingType: ReactionMappingType,
+    ) {
+      const ccc = await locators.reactionMappingToolButton
+        .getByTestId(reactionMappingType)
+        .isVisible();
+      return ccc;
     },
   };
 };

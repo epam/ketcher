@@ -604,7 +604,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/chain-attachment-list.mol',
     );
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomId: 2 }).click();
     await getAtomLocator(page, { atomId: 6 }).click();
     await takeEditorScreenshot(page);
@@ -625,7 +625,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/chain-attachment-list.mol',
     );
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomId: 2 }).hover();
     await deleteByKeyboardOnCanvas(page);
 

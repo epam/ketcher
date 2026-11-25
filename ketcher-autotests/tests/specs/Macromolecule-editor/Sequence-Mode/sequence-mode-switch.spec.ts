@@ -37,7 +37,9 @@ test.describe('Sequence edit mode', () => {
       await MacromoleculesTopToolbar(page).rna();
       await takeTopToolbarScreenshot(page);
 
-      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', {
+        waitForRenderTimeOut: 50,
+      });
       await takeEditorScreenshot(page);
     });
 
@@ -57,7 +59,9 @@ test.describe('Sequence edit mode', () => {
       await MacromoleculesTopToolbar(page).dna();
       await takeTopToolbarScreenshot(page);
 
-      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', {
+        waitForRenderTimeOut: 50,
+      });
       await takeEditorScreenshot(page);
     });
 

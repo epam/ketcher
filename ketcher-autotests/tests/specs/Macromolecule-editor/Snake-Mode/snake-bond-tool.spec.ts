@@ -730,7 +730,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getMonomerLocator(page, Peptide.DHis1B).click();
     await takeEditorScreenshot(page);
   });
@@ -747,7 +747,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getMonomerLocator(page, Peptide.meR).click();
     await takeEditorScreenshot(page);
   });

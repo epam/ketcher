@@ -70,7 +70,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST');
     await TextEditorDialog(page).apply();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getTextLabelLocator(page, { text: 'TEST' }).click();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -187,7 +187,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getTextLabelLocator(page, { text: '&&&' }).dblclick();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();

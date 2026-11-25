@@ -503,7 +503,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None },

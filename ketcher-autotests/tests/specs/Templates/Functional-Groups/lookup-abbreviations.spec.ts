@@ -10,7 +10,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 test.describe('Lookup Abbreviations tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -78,7 +77,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15529
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.type('xyz');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await page.keyboard.press('Backspace');
     await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
@@ -110,7 +109,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15532
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.type('xyz');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await page.keyboard.press('Backspace');
     await page.keyboard.type('bro');
     await expect(AbbreviationLookup(page).window).toBeVisible();

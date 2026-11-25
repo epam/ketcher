@@ -106,7 +106,7 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await waitForRender(page, async () => {
       await getAtomLocator(page, { atomLabel: 'R#' }).click({
         force: true,

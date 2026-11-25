@@ -440,7 +440,7 @@ test.fail(
         expect(leftToolbar.createMonomerButton).toBeDisabled(),
         expect(leftToolbar.reactionPlusToolButton).toBeDisabled(),
         expect(leftToolbar.arrowToolsButton).toBeDisabled(),
-        expect(leftToolbar.reactionMappingToolsButton).toBeDisabled(),
+        expect(leftToolbar.reactionMappingToolButton).toBeDisabled(),
         expect(leftToolbar.shapeToolsButton).toBeDisabled(),
         expect(leftToolbar.addTextButton).toBeDisabled(),
         expect(leftToolbar.addImageButton).toBeDisabled(),

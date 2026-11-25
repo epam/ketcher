@@ -75,7 +75,6 @@ test.describe('Click User Templates on canvas', () => {
     );
     await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await clickInTheMiddleOfTheCanvas(page);
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
@@ -241,7 +240,6 @@ test.describe('Create and Save Templates', () => {
     );
     await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await clickInTheMiddleOfTheCanvas(page);
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();

@@ -483,7 +483,7 @@ test.describe('Atom Tool', () => {
     Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
     */
     await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'N' }).first().click({
       force: true,
     });

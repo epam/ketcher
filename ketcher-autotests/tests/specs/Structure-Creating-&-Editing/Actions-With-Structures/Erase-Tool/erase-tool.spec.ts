@@ -28,7 +28,7 @@ test.describe('Erase Tool', () => {
       'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
   });
 
   test('Erase atom and bond', async ({ page }) => {

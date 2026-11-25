@@ -1766,7 +1766,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
 ];
 
 /*
-  Case 17, 18, 19:
+  Case 17, 18, 19, 20, 21, 22:
   Check if the sequence requires confirmation on replacement for the given monomer.
   This is determined by checking if the sequence ID and the monomer ID are present in the sequencesShowsConfirmationOnReplacement array.
 */
@@ -1961,7 +1961,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   }
 }
 
-const sequencesShowsConfirmationOnReplacementForCase19: {
+const sequencesShowsConfirmationOnReplacementForCase19and22: {
   sequenceId: number;
   replaceMonomerId: number[];
 }[] = [
@@ -2047,7 +2047,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         shouldShowConfirmationOnReplacement(
           sequence.Id,
           replaceMonomer.Id,
-          sequencesShowsConfirmationOnReplacementForCase19,
+          sequencesShowsConfirmationOnReplacementForCase19and22,
         );
       await selectAndReplaceSymbol(
         page,
@@ -2200,10 +2200,19 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
             8. Add info to log if known bugs exist and skip test
           */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+      const showsConfirmationOnReplecement =
+        shouldShowConfirmationOnReplacement(
+          sequence.Id,
+          replaceMonomer.Id,
+          sequencesShowsConfirmationOnReplacementForCase19and22,
+        );
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
-        sequence,
+        {
+          ...sequence,
+          ConfirmationOnReplecement: showsConfirmationOnReplecement,
+        },
         sequence.ReplacementPositions.RightEnd,
       );
 

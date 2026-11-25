@@ -138,7 +138,8 @@ export function wrapAxoLabsAlias(alias: string) {
 /*
  * The one equality rule for AxoLabs aliases: brackets are not part of the
  * identity, so `(p)` equals `p`. Two missing aliases are equal; a missing and
- * a present one are not. Callers trim typed input before comparing.
+ * a present one are not. It does not trim: pass trimmed or format-validated
+ * input.
  */
 export function areAxoLabsAliasesEqual(a?: string, b?: string): boolean {
   if (a === undefined || b === undefined) {
@@ -160,10 +161,7 @@ export function normalizeAxoLabsAliasForSave(
   if (!trimmed) {
     return undefined;
   }
-  if (
-    loadedAlias !== undefined &&
-    areAxoLabsAliasesEqual(trimmed, loadedAlias)
-  ) {
+  if (areAxoLabsAliasesEqual(trimmed, loadedAlias)) {
     return loadedAlias;
   }
   return wrapAxoLabsAlias(trimmed);

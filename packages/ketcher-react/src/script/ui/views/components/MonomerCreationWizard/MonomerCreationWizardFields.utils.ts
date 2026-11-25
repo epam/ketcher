@@ -140,7 +140,7 @@ export const hasAxoLabsAliasCollision = (
   alias: string,
 ) => {
   const matches = (other: string | undefined) =>
-    other !== undefined && areAxoLabsAliasesEqual(other, alias);
+    areAxoLabsAliasesEqual(other, alias);
 
   return (
     library.some(({ props }) => matches(props.aliasAxoLabs)) ||

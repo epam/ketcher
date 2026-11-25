@@ -1723,11 +1723,20 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        const connectionTemplate = this.findGroupTemplateConnection(
-          connections || [],
-          previousMonomer.monomerItem,
-          monomer.monomerItem,
-        );
+        // Sequence insertion uses the standard 3′ bond when the preset
+        // supports it, regardless of the orientation saved in the library.
+        const canUseThreePrimePhosphate =
+          previousMonomer === sugarMonomer &&
+          monomer === phosphateMonomer &&
+          previousMonomer.hasAttachmentPoint(AttachmentPointName.R2) &&
+          monomer.hasAttachmentPoint(AttachmentPointName.R1);
+        const connectionTemplate = canUseThreePrimePhosphate
+          ? undefined
+          : this.findGroupTemplateConnection(
+              connections || [],
+              previousMonomer.monomerItem,
+              monomer.monomerItem,
+            );
         let attPointStart;
         let attPointEnd;
         if (connectionTemplate) {

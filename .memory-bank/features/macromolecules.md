@@ -6,6 +6,16 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 
 ## Requirements
 
+### Requirement: Place a library preset’s phosphate at 3′ in Sequence mode
+
+When an RNA preset supports a 3′ sugar–phosphate bond, Sequence mode SHALL use that bond when inserting the preset from the Monomer Library.
+
+#### Scenario: Insert a saved 5′ preset on an empty Sequence canvas
+
+- **WHEN** the user selects a saved 5′ preset with sugar 25mo3r, base A, and phosphate P from the Monomer Library on an empty Sequence canvas
+- **THEN** the inserted structure bonds the sugar’s R2 to the phosphate’s R1 and displays `Ap`
+- **AND** the saved preset retains its 5′ phosphate position for use in Flex and Snake modes
+
 ### Requirement: Center small molecules within Snake layout rows
 
 In Snake mode, the system SHALL vertically center all small molecules in each molecule row on the horizontal axis through the center of the tallest molecule's bounding box. This SHALL apply to connected and unconnected small molecules. When the ruler causes wrapping, each resulting row SHALL use its own tallest molecule while retaining the space reserved for that row.

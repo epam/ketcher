@@ -665,6 +665,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         options.usageInMacromolecule === UsageInMacromolecule.BondPreview ||
         options.usageInMacromolecule ===
           UsageInMacromolecule.MonomerConnectionsModal ||
+        options.usageInMacromolecule ===
+          UsageInMacromolecule.InsertionConnectionsModal ||
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =

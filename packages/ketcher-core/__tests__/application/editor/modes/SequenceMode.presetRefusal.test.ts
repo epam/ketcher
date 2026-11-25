@@ -12,6 +12,7 @@ import { BASE_MODIFICATION_DISABLED_IN_SYNC_MODE } from 'domain/helpers/antisens
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
+import { buildRnaPresetConnections } from 'application/editor/tools/rnaPresetConnections';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -165,7 +166,7 @@ const selectSenseRowAtPositionZero = (
   );
 };
 
-describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
+describe('SequenceMode library preset insertion and replacement', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
   let mode: SequenceMode;
@@ -198,6 +199,49 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
 
   afterEach(() => {
     canvas.remove();
+  });
+
+  it('inserts a library preset with a 3′ phosphate while preserving its saved 5′ bond', () => {
+    rerenderSequence(editor);
+    const sugar = getRnaPartLibraryItem(
+      editor,
+      '25mo3r',
+      KetMonomerClass.Sugar,
+    );
+    const preset: IRnaPreset = {
+      ...buildPreset(editor, 'A'),
+      sugar,
+      phosphatePosition: 'left',
+    };
+    expect(sugar).toBeDefined();
+    preset.connections = buildRnaPresetConnections(preset, 'left');
+    const savedConnections = structuredClone(preset.connections);
+
+    editor.events.selectPreset.dispatch(preset);
+
+    expect(
+      [...canvas.querySelectorAll('text[font-family="Courier New"]')]
+        .map((label) => label.textContent)
+        .join(''),
+    ).toBe('Ap');
+    const monomers = [...editor.drawingEntitiesManager.monomers.values()];
+    expect(monomers.map((monomer) => monomer.label)).toEqual([
+      'A',
+      '25mo3r',
+      'P',
+    ]);
+    const [base, insertedSugar, phosphate] = monomers;
+    const phosphateBond = insertedSugar.attachmentPointsToBonds.R2;
+    expect(phosphateBond?.getAnotherEntity(insertedSugar)).toBe(phosphate);
+    expect(phosphate.attachmentPointsToBonds.R1).toBe(phosphateBond);
+    expect(
+      insertedSugar.isAttachmentPointExistAndFree(AttachmentPointName.R1),
+    ).toBe(true);
+    expect(
+      insertedSugar.attachmentPointsToBonds.R3?.getAnotherEntity(insertedSugar),
+    ).toBe(base);
+    expect(preset.phosphatePosition).toBe('left');
+    expect(preset.connections).toEqual(savedConnections);
   });
 
   it('replaces the sense nucleotides and reports nothing, for a one-strand selection on a duplex', () => {

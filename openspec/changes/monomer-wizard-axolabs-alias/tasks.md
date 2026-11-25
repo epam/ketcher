@@ -2,8 +2,8 @@
 
 ## 1. AxoLabs alias rules in ketcher-core
 
-- [ ] 1.1 Add the AxoLabs alias message constants, the maximum length of 6, the format-check function (characters, then bracket placement, then length), the bracket-stripping function, and the bracket-wrapping function to the core monomer alias utilities, and export them; verify with unit tests for `p`, `dA`, `ABCDEF`, `(invdA)` (valid), `a b`, `a-b` (characters), `a(b`, `ab)c` (brackets), `ABCDEFG`, `(ABCDEFG)`, `()` (length), and wrapping of `dA` and `(dA)` to `(dA)`
-- [ ] 1.2 Add the AxoLabs alias to the wizard's initial-values type in ketcher-core and verify `npm run test:types` in ketcher-core passes
+- [x] 1.1 Add the AxoLabs alias message constants, the maximum length of 6, the format-check function (characters, then bracket placement, then length), the bracket-stripping function, and the bracket-wrapping function to the core monomer alias utilities, and export them; verify with unit tests for `p`, `dA`, `ABCDEF`, `(invdA)` (valid), `a b`, `a-b` (characters), `a(b`, `ab)c` (brackets), `ABCDEFG`, `(ABCDEFG)`, `()` (length), and wrapping of `dA` and `(dA)` to `(dA)`
+- [x] 1.2 Add the AxoLabs alias to the wizard's initial-values type in ketcher-core and verify `npm run test:types` in ketcher-core passes
 
 ## 2. Wizard field, validation, and save
 

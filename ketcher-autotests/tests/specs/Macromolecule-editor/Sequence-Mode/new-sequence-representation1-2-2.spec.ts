@@ -10,6 +10,7 @@ import {
   SequenceModeType,
   takeEditorScreenshot,
 } from '@utils';
+import { exitFromEditMode } from '@utils/macromolecules/sequence';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
@@ -1448,11 +1449,6 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
       await MacromoleculesTopToolbar(page).rna();
       break;
   }
-}
-
-async function exitFromEditMode(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape');
-  await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
 }
 
 async function turnIntoEditModeAndPlaceCursorToThePosition(

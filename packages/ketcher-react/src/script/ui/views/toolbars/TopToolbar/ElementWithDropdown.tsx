@@ -43,12 +43,11 @@ const DropDownContent = styled('div')`
 const DropDownButton = styled(IconButton)`
   position: absolute;
   padding: 0;
-  right: 0;
-  bottom: 0;
+  inset-inline-end: 2px;
+  bottom: 2px;
 
   &.disabled {
     cursor: not-allowed;
-    opacity: 0.5;
     background-color: initial;
     color: #333;
     pointer-events: auto;

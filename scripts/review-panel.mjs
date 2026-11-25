@@ -39,7 +39,9 @@ export const TRIGGERS = [
     lens: 'performance',
     paths: [
       /^packages\/[^/]+\/package\.json$/,
-      /^packages\/[^/]+\/rollup\.config\.mjs$/,
+      /^packages\/[^/]+\/vite\.config\.mjs$/,
+      /^packages\/ketcher-standalone\/(build-variants|scripts\/build)\.mjs$/,
+      /^build-config\//,
     ],
     sourcePaths: [
       /^packages\/ketcher-core\/src\/application\/render\//,

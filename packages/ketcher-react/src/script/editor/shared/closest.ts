@@ -104,11 +104,9 @@ function calculateDistanceToText(
   const clampedX = clampCoordinate(cursorPosition.x, minX, maxX);
   const clampedY = clampCoordinate(cursorPosition.y, minY, maxY);
 
-  if (clampedX === cursorPosition.x && clampedY === cursorPosition.y) {
-    return SELECTION_WITHIN_TEXT;
-  }
-
-  return Vec2.dist(new Vec2(clampedX, clampedY), cursorPosition);
+  return clampedX === cursorPosition.x && clampedY === cursorPosition.y
+    ? SELECTION_WITHIN_TEXT
+    : Vec2.dist(new Vec2(clampedX, clampedY), cursorPosition);
 }
 
 function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
@@ -449,10 +447,10 @@ function findClosestRGroup(
 }
 
 /**
- * @param {ReStruct} restruct
- * @param {Vec2} cursorPosition
- * @param {number} minDistToOtherItems
- */
+@param {ReStruct} restruct
+@param {Vec2} cursorPosition
+@param {number} minDistToOtherItems
+*/
 function findClosestRgroupAttachmentPoints(
   restruct: ReStruct,
   cursorPosition: Vec2,
@@ -646,16 +644,16 @@ function findClosestItem(
 }
 
 /**
- * @param restruct { ReStruct }
- * @param selected { object }
- * @param maps { Array<string> }
- * @param options { RenderOption }
- * @return {{
- * 		atoms: Map<number, number>?
- * 		bonds: Map<number, number>?
- *    atomToFunctionalGroup: Map<number, number>?
- * }}
- */
+@param restruct { ReStruct }
+@param selected { object }
+@param maps { Array<string> }
+@param options { RenderOption }
+@return {{
+		atoms: Map<number, number>?
+		bonds: Map<number, number>?
+   atomToFunctionalGroup: Map<number, number>?
+}}
+*/
 function findCloseMerge(
   restruct: ReStruct,
   selected: SelectedItems,
@@ -754,12 +752,12 @@ function mergeAtomToAtom(
 }
 
 /**
- * @param atomId { number }
- * @param restruct { ReStruct }
- * @param atomPosition { Vec2 }
- * @param result { Object } Mutating arguments!!!
- * @return {boolean}
- */
+@param atomId { number }
+@param restruct { ReStruct }
+@param atomPosition { Vec2 }
+@param result { Object } Mutating arguments!!!
+@return {boolean}
+*/
 function didMergeAtomToFunctionalGroup(
   atomId: number,
   restruct: ReStruct,
@@ -835,10 +833,9 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
         renderOptions,
         maxDistance,
       );
-      if (distance <= maxDistance && (!acc || acc.dist > distance)) {
-        return { id, dist: distance / renderOptions.microModeScale, ref };
-      }
-      return acc;
+      return distance <= maxDistance && (!acc || acc.dist > distance)
+        ? { id, dist: distance / renderOptions.microModeScale, ref }
+        : acc;
     },
     null,
   );

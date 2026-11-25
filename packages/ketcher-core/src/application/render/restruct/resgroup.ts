@@ -29,7 +29,7 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
-import BracketParams from '../bracket-params';
+import BracketParams from '../bracket-parameters';
 import type {
   Element as RaphaelElement,
   RaphaelPaper,
@@ -51,9 +51,13 @@ interface SGroupdrawBracketsOptions {
 }
 
 class ReSGroup extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
+  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
   public item: SGroup | undefined;
   public render!: Render;
-  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
 
   constructor(sgroup: SGroup) {
     super('sgroup');
@@ -63,15 +67,11 @@ class ReSGroup extends ReObject {
     this.item = sgroup;
   }
 
-  static isSelectable(): boolean {
-    return false;
-  }
-
   /**
-   * @param remol {ReStruct}
-   * @param sgroup {SGroup}
-   * @returns {*}
-   */
+  @param remol {ReStruct}
+  @param sgroup {SGroup}
+  @returns {*}
+  */
   draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
@@ -128,8 +128,9 @@ class ReSGroup extends ReObject {
         }
         case 'queryComponent':
         case 'GEN':
-        default:
+        default: {
           break;
+        }
       }
 
       // DAT S-Groups do not have brackets
@@ -324,7 +325,7 @@ class ReSGroup extends ReObject {
         LayerMap.data,
         this.visel,
         path,
-        null,
+        undefined,
         shouldIncludeInBoundingBox,
       );
       this.setHover(this.hover, render); // TODO: fix this
@@ -607,10 +608,10 @@ function getBracketParameters(bracketBox: Box2Abs, direction: Vec2) {
 }
 
 /**
- * @param sgroup {SGroup}
- * @param render {Render}
- * @returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
- */
+@param sgroup {SGroup}
+@param render {Render}
+@returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
+*/
 function getHighlighPathInfo(
   sgroup: SGroup,
   render: Render,

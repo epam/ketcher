@@ -87,11 +87,9 @@ export function deserialize(value: string): AtomLabelData | null {
   const radical = match[3] ? ({ ':': 1, '.': 2, '^^': 3 }[match[3]] ?? 0) : 0;
   const charge: number | null = match[4] ? parseCharge(match[4]) : null;
 
-  if (VALID_GENERIC_LABELS.has(label) || Elements.get(label)) {
-    return { label, charge, isotope, radical };
-  }
-
-  return null;
+  return VALID_GENERIC_LABELS.has(label) || Elements.get(label)
+    ? { label, charge, isotope, radical }
+    : null;
 }
 
 function LabelEdit(props: Readonly<LabelEditProps>) {

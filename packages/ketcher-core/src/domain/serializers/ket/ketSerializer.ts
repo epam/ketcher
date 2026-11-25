@@ -218,13 +218,14 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
       imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
-    default:
+    default: {
       break;
+    }
   }
 }
 
 export class KetSerializer implements Serializer<Struct> {
-  private static _monomerFactory: MonomerFactoryFn | null = null;
+  private static _monomerFactory: MonomerFactoryFn | undefined;
 
   public static setMonomerFactory(factory: MonomerFactoryFn): void {
     KetSerializer._monomerFactory = factory;
@@ -371,11 +372,13 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push(imageToKet(item));
           break;
         }
-        case MULTITAIL_ARROW_SERIALIZE_KEY:
+        case MULTITAIL_ARROW_SERIALIZE_KEY: {
           result.root.nodes.push(multitailArrowToKet(item));
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
     });
 
@@ -389,11 +392,11 @@ export class KetSerializer implements Serializer<Struct> {
       originalAtomToKetLocation,
       attachmentGroupLocations,
     );
-    if (connections.length) {
+    if (connections.length > 0) {
       result.root.connections = connections;
     }
 
-    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
+    return JSON.stringify({ ket_version: '2.0.0', ...result }, undefined, 4);
   }
 
   private validateMonomerNodeTemplate(
@@ -622,8 +625,9 @@ export class KetSerializer implements Serializer<Struct> {
           command.merge(monomerAdditionCommand);
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
     const fileContentForMicromolecules =
@@ -769,8 +773,9 @@ export class KetSerializer implements Serializer<Struct> {
 
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
 
@@ -924,16 +929,16 @@ export class KetSerializer implements Serializer<Struct> {
 
         monomerItem.struct.mergeInto(
           struct,
-          null,
-          null,
+          undefined,
+          undefined,
           false,
           false,
           atomIdMap,
-          null,
-          null,
-          null,
-          null,
-          null,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
           bondIdMap,
         );
         monomerToAtomIdMap.set(monomer, atomIdMap);
@@ -1254,7 +1259,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     return JSON.stringify(
       fileContent,
-      null,
+      undefined,
       isBeautified ? 4 : undefined,
     ) as unknown as string;
   }

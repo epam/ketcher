@@ -45,7 +45,7 @@ import draw, {
   AP_WAVE_HALF_PERP,
   AP_WAVE_FAR_ALONG,
 } from '../draw';
-import util from '../util';
+import utility from '../util';
 import { assert, toFixed } from 'utilities';
 import type {
   RelativeBox,
@@ -99,6 +99,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     rectangle: Element;
   };
 
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private expandedMonomerAttachmentPoints?: Element | null;
 
   // Number of visel.boxes entries that belong to the atom's own label
@@ -124,15 +128,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     this.component = -1;
   }
 
-  static isSelectable(): boolean {
-    return true;
-  }
-
   getVBoxObj(render: Render): Box2Abs | null {
-    if (this.visel.boundingBox) {
-      return ReObject.prototype.getVBoxObj.call(this, render);
-    }
-    return new Box2Abs(this.a.pp, this.a.pp);
+    return this.visel.boundingBox
+      ? ReObject.prototype.getVBoxObj.call(this, render)
+      : new Box2Abs(this.a.pp, this.a.pp);
   }
 
   drawHover(render: Render, shouldDrawOutline = true) {
@@ -381,11 +380,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   ) => {
     const atom = this.a;
     const { render } = restruct;
-    if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
-    }
-
-    return this.getSelectionContour(render, highlightPadding).attr(style);
+    return this.isPlateShouldBeHidden(atom, render)
+      ? null
+      : this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
   makeHoverPlate(render: Render, shouldDrawOutline = true) {
@@ -407,10 +404,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const { render } = restruct;
     const { options } = render;
 
-    if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
-    }
-    return this.getSelectionContour(render).attr(options.selectionStyle);
+    return this.isPlateShouldBeHidden(atom, render)
+      ? null
+      : this.getSelectionContour(render).attr(options.selectionStyle);
   }
 
   // Keep atom available in DOM for tests even when the label is hidden
@@ -466,10 +462,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   /**
-   * if atom is rendered as Abbreviation: O, NH, ...
-   * In this case we need to shift the bond render start position to free space for Atom,
-   * same for the Attachment point
-   */
+  if atom is rendered as Abbreviation: O, NH, ...
+  In this case we need to shift the bond render start position to free space for Atom,
+  same for the Attachment point
+  */
   getShiftedSegmentPosition(
     renderOptions: RenderOptions,
     direction: Vec2,
@@ -485,7 +481,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const ratio = this.getRatio(renderOptions, bondLen);
     for (const ext of exts) {
       const box = ext.translate(atomPosition);
-      const shiftRayBox = util.shiftRayBox(atomPosition, direction, box);
+      const shiftRayBox = utility.shiftRayBox(atomPosition, direction, box);
       const shift = shiftRayBox * ratio;
       atomSymbolShift = Math.max(atomSymbolShift, shift);
     }
@@ -500,14 +496,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       atomSymbolShift = Math.min(atomSymbolShift, maxShift);
     }
 
-    if (atomSymbolShift > 0) {
-      return atomPosition.addScaled(
-        direction,
-        atomSymbolShift + 3 * renderOptions.lineWidth,
-      );
-    } else {
-      return atomPosition;
-    }
+    return atomSymbolShift > 0
+      ? atomPosition.addScaled(
+          direction,
+          atomSymbolShift + 3 * renderOptions.lineWidth,
+        )
+      : atomPosition;
   }
 
   hasAttachmentPoint(): boolean {
@@ -589,7 +583,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     let implh = 0;
     let isHydrogen = false;
     let label: ElemAttr | undefined;
-    let index: ElemAttr | null = null;
+    let index: ElemAttr | undefined;
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -625,7 +619,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         'font-size': options.fontszsubInPx,
         fill: '#070',
       });
-      const rbb = util.relBox(path.getBBox());
+      const rbb = utility.relBox(path.getBBox());
       draw.recenterText(path, rbb);
       index = { text, path, rbb };
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps);
@@ -701,7 +695,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           ps,
           true,
         );
-        if (hydroIndex != null) {
+        if (hydroIndex != undefined) {
           restruct.addReObjectPath(
             LayerMap.data,
             this.visel,
@@ -1098,11 +1092,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       fragment?.enhancedStereoFlag,
     );
 
-    let text = '';
-
-    if (shouldShowStereoLabel) {
-      text = `${stereoLabel}\n`;
-    }
+    let text = shouldShowStereoLabel ? `${stereoLabel}\n` : '';
 
     if (shortenCustomQueryText.length > 0) {
       text += `${shortenCustomQueryText}\n`;
@@ -1133,17 +1123,17 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
         aamPath.node.firstChild.setAttribute('fill-opacity', opacity);
       }
-      const aamBox = util.relBox(aamPath.getBBox());
+      const aamBox = utility.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;
       let t = 3;
       let dir = this.bisectLargestSector(restruct.molecule);
       // estimate the shift to clear the atom label
       for (const ext of visel.exts) {
-        t = Math.max(t, util.shiftRayBox(ps, dir, ext.translate(ps)));
+        t = Math.max(t, utility.shiftRayBox(ps, dir, ext.translate(ps)));
       }
       // estimate the shift backwards to account for the size of the aam/query text box itself
-      t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+      t += utility.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
 
       let perpShift = new Vec2(0, 0);
 
@@ -1229,19 +1219,19 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
       const cipGroup = paper.set();
       cipGroup.push(rect, cipText);
-      const cipGroupRelBox = util.relBox(cipGroup.getBBox());
+      const cipGroupRelBox = utility.relBox(cipGroup.getBBox());
 
       let baseDistance = 3;
       const direction = this.bisectLargestSector(render.ctab.molecule);
       for (const ext of this.visel.exts) {
         baseDistance = Math.max(
           baseDistance,
-          util.shiftRayBox(ps, direction, ext.translate(ps)),
+          utility.shiftRayBox(ps, direction, ext.translate(ps)),
         );
       }
       const shiftDistance =
         baseDistance +
-        util.shiftRayBox(
+        utility.shiftRayBox(
           ps,
           direction.negated(),
           Box2Abs.fromRelBox(cipTextBBox),
@@ -1439,15 +1429,11 @@ function getStereoAtomColor(
   options: RenderOptions,
   stereoLabel: string | null | undefined,
 ): string | undefined {
-  if (
-    !stereoLabel ||
+  return !stereoLabel ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
-  ) {
-    return DEFAULT_STEREO_COLOR;
-  }
-
-  return getColorFromStereoLabel(options, stereoLabel);
+    ? DEFAULT_STEREO_COLOR
+    : getColorFromStereoLabel(options, stereoLabel);
 }
 
 export function getColorFromStereoLabel(
@@ -1457,29 +1443,30 @@ export function getColorFromStereoLabel(
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
 
   switch (stereoLabelType) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return options.colorOfAndCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Or:
+    }
+    case StereoLabel.Or: {
       return options.colorOfOrCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Abs:
+    }
+    case StereoLabel.Abs: {
       return options.colorOfAbsoluteCenters;
-    default:
+    }
+    default: {
       return DEFAULT_STEREO_COLOR;
+    }
   }
 }
 
 function getStereoAtomOpacity(options: RenderOptions, stereoLabel: string) {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
   const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '');
-  if (
-    !options.autoFadeOfStereoLabels ||
+  return !options.autoFadeOfStereoLabels ||
     stereoLabelType === StereoLabel.Abs ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
-  ) {
-    return 1;
-  }
-  return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity);
+    ? 1
+    : Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity);
 }
 
 function shouldDisplayStereoLabel(
@@ -1502,20 +1489,25 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereoLabelStyleType.Off:
+    case StereoLabelStyleType.Off: {
       return false;
-    case StereoLabelStyleType.On:
+    }
+    case StereoLabelStyleType.On: {
       return true;
-    case StereoLabelStyleType.Classic:
+    }
+    case StereoLabelStyleType.Classic: {
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereoLabelStyleType.IUPAC:
+    }
+    case StereoLabelStyleType.IUPAC: {
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }
 
@@ -1658,8 +1650,22 @@ function addTooltip(node: SVGElement, text: string) {
   const tooltip = text.split(/(?<=[;,])/).join(' ');
   (node.firstChild as SVGElement).setAttribute(
     'data-tooltip',
-    util.escapeHtml(tooltip),
+    utility.escapeHtml(tooltip),
   );
+}
+
+// Below 100% zoom, browsers round text metrics to whole screen pixels, which
+// inflates the measured size of labels drawn while zoomed out. Measure them
+// without hinting so the layout matches the one drawn at 100%.
+function getTextRelBox(path: Element, options: RenderOptions) {
+  if (options.zoom >= 1) {
+    return utility.relBox(path.getBBox());
+  }
+
+  path.node.setAttribute('text-rendering', 'geometricPrecision');
+  const rbb = utility.relBox(path.getBBox());
+  path.node.removeAttribute('text-rendering');
+  return rbb;
 }
 
 function buildLabel(
@@ -1701,7 +1707,7 @@ function buildLabel(
   const isMonomerAttachmentPointUsed =
     connectedMonomerAttachmentPoints?.includes(text) ?? false;
 
-  const { color, fill, stroke } = util.useLabelStyles(
+  const { color, fill, stroke } = utility.useLabelStyles(
     isMonomerAttachmentPointSelected,
     isMonomerAttachmentPointUsed,
     usageInMacromolecule ?? UsageInMacromolecule.MonomerConnectionsModal,
@@ -1750,10 +1756,10 @@ function buildLabel(
     addTooltip(path.node, tooltip);
   }
 
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
-  let rightMargin = (rbb.width / 2) * Math.min(options.zoom, 1);
-  let leftMargin = (-rbb.width / 2) * Math.min(options.zoom, 1);
+  let rightMargin = rbb.width / 2;
+  let leftMargin = -rbb.width / 2;
 
   if (atom.a.atomList !== null) {
     const xShift =
@@ -1842,7 +1848,7 @@ function showHydroIndex(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
   const labelHeight = atom.label?.rbb.height ?? 0;
 
@@ -1863,7 +1869,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
   let path = paper.set();
   let hshift: number;
   switch (atom.a.radical) {
-    case 1:
+    case 1: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1872,12 +1878,14 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('fill', atom.color);
       break;
-    case 2:
+    }
+    case 2: {
       path = paper.set();
       path.push(draw.radicalBullet(paper, ps, options));
       path.attr('fill', atom.color);
       break;
-    case 3:
+    }
+    case 3: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1886,10 +1894,12 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('stroke', atom.color);
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
-  const rbb = util.relBox(path.getBBox());
+  const rbb = utility.relBox(path.getBBox());
   const labelHeight = atom.label?.rbb.height ?? 0;
   let vshift = -0.5 * (labelHeight + rbb.height);
   if (atom.a.radical === 3) vshift -= options.lineWidth / 2;
@@ -1911,7 +1921,7 @@ function showIsotope(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1944,7 +1954,7 @@ function showCharge(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1975,7 +1985,7 @@ function showExplicitValence(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -2014,7 +2024,7 @@ function showHydrogen(
     'font-size': options.fontszInPx,
     fill: atom.color,
   });
-  const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
+  const hydrogenRbb = getTextRelBox(hydrogenPath, options);
   draw.recenterText(hydrogenPath, hydrogenRbb);
   if (!isHydrogenOnLeft) {
     pathAndRBoxTranslate(
@@ -2032,7 +2042,7 @@ function showHydrogen(
       'font-size': options.fontszsubInPx,
       fill: atom.color,
     });
-    const hydroIndexRbb = util.relBox(hydroIndexPath.getBBox());
+    const hydroIndexRbb = getTextRelBox(hydroIndexPath, options);
     draw.recenterText(hydroIndexPath, hydroIndexRbb);
     hydroIndex = {
       text: hydroIndexText,
@@ -2043,16 +2053,14 @@ function showHydrogen(
       pathAndRBoxTranslate(
         hydroIndexPath,
         hydroIndexRbb,
-        data.rightMargin +
-          0.15 * hydroIndexRbb.width * Math.min(options.zoom, 1) +
-          delta,
+        data.rightMargin + 0.15 * hydroIndexRbb.width + delta,
         0.2 * (atom.label?.rbb.height ?? 0),
       );
       data.rightMargin += hydroIndexRbb.width + delta;
     }
   }
   if (isHydrogenOnLeft) {
-    if (hydroIndex != null) {
+    if (hydroIndex != undefined) {
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,
@@ -2064,11 +2072,7 @@ function showHydrogen(
     pathAndRBoxTranslate(
       hydrogenPath,
       hydrogenRbb,
-      data.leftMargin -
-        0.4 *
-          hydrogenRbb.width *
-          (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
-        delta,
+      data.leftMargin - 0.4 * hydrogenRbb.width - delta,
       0,
     );
     data.leftMargin -= hydrogenRbb.width + delta;
@@ -2101,7 +2105,7 @@ function showWarning(
     )
     .attr(render.options.lineattr)
     .attr({ stroke: '#F00' });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = utility.relBox(path.getBBox());
   return { path, rbb };
 }
 
@@ -2173,11 +2177,11 @@ function getSubstitutionCountAttrText(value: number) {
 type AtomCustomQueryValue = string | number | boolean;
 
 /**
- * Minimum shape required by getAtomCustomQuery.
- * Satisfied by both a full Atom instance (query-specific fields nested
- * under queryProperties) and the flat Redux form state produced by the
- * Atom dialog (those fields hoisted to top level by fromAtom).
- */
+Minimum shape required by getAtomCustomQuery.
+Satisfied by both a full Atom instance (query-specific fields nested
+under queryProperties) and the flat Redux form state produced by the
+Atom dialog (those fields hoisted to top level by fromAtom).
+*/
 type AtomQueryInput = Partial<
   Pick<
     Atom,
@@ -2195,9 +2199,9 @@ type AtomQueryInput = Partial<
 } & Partial<AtomQueryProperties>; // flat query fields (form state path)
 
 /**
- * Maps atom properties and SMARTS/query-specific atom fields to the textual
- * Molfile query attributes rendered by getAtomCustomQuery().
- */
+Maps atom properties and SMARTS/query-specific atom fields to the textual
+Molfile query attributes rendered by getAtomCustomQuery().
+*/
 type AtomCustomQueryPropertyName =
   | 'aromaticity'
   | 'charge'
@@ -2471,10 +2475,10 @@ function countExtOverlaps(
 }
 
 /**
- * Returns the perpendicular shift that moves a property label clear of the AP
- * wave glyph when the label's proposed placement overlaps the nominal AP area
- * (#3268).  Returns Vec2(0,0) when no shift is needed.
- */
+Returns the perpendicular shift that moves a property label clear of the AP
+wave glyph when the label's proposed placement overlaps the nominal AP area
+(#3268).  Returns Vec2(0,0) when no shift is needed.
+*/
 function computeLateralApLabelShift(
   atomPos: Vec2,
   apDir: Vec2,

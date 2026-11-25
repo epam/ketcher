@@ -123,17 +123,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   editorRef: RefObject<HTMLDivElement | null>;
   logRef: RefObject<HTMLDivElement | null>;
   private zoomDeltaAccumulator = 0;
-
-  constructor(props: StructEditorProps) {
-    super(props);
-    this.state = {
-      enableCursor: false,
-      tooltip: '',
-    };
-    this.editorRef = createRef();
-    this.logRef = createRef();
-  }
-
   handleWheel = (event: WheelEvent) => {
     if (event.ctrlKey) {
       event.preventDefault();
@@ -164,10 +153,20 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     }
   };
 
+  constructor(props: StructEditorProps) {
+    super(props);
+    this.state = {
+      enableCursor: false,
+      tooltip: '',
+    };
+    this.editorRef = createRef();
+    this.logRef = createRef();
+  }
+
   // TODO https://github.com/epam/ketcher/issues/3472
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   scrollCanvas(event: WheelEvent) {
     if (event.shiftKey) {
       this.handleHorizontalScroll(event);
@@ -177,8 +176,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   handleHorizontalScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
@@ -192,9 +191,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * For mouse wheel and touchpad
-   * @param {WheelEvent} event
-   */
+  For mouse wheel and touchpad
+  @param {WheelEvent} event
+  */
   handleScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
@@ -322,8 +321,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     });
 

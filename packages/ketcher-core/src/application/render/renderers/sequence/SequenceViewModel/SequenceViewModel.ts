@@ -8,7 +8,6 @@ import {
   type SubChainNode,
   EmptySequenceNode,
   BackBoneSequenceNode,
-  RNABase,
 } from 'domain/entities';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
@@ -33,13 +32,14 @@ interface IForEachNodeParams {
 
 export class SequenceViewModel {
   private readonly nodes: ITwoStrandedChainItem[] = [];
-  public chains: SequenceViewModelChain[] = [];
   private readonly monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     ITwoStrandedChainItem
   > = new Map();
 
   private readonly chainToHasAntisense: Map<Chain, boolean> = new Map();
+
+  public chains: SequenceViewModelChain[] = [];
 
   constructor(public chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
@@ -85,9 +85,36 @@ export class SequenceViewModel {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
     const editor = provideEditorInstance();
+    const antisenseChains = new Set(
+      chainsCollection.chains.filter((chain) => chain.isAntisense),
+    );
+    const isAntisenseConnection = (
+      antisenseMonomer: BaseMonomer,
+      senseMonomer: BaseMonomer,
+    ) =>
+      (isRnaBaseApplicableForAntisense(antisenseMonomer) &&
+        isRnaBaseApplicableForAntisense(senseMonomer)) ||
+      editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+        antisenseMonomer,
+      )?.firstMonomer === monomerToChain.get(senseMonomer)?.firstMonomer;
+    const hasValidAntisenseConnection = (
+      twoStrandedNode: ITwoStrandedChainItem | undefined,
+    ) =>
+      twoStrandedNode?.senseNode?.monomers.some((monomer) =>
+        monomer.hydrogenBonds.some((hydrogenBond) => {
+          const partner = hydrogenBond.getAnotherMonomer(monomer);
+          const partnerChain = partner && monomerToChain.get(partner);
+          return (
+            partner &&
+            partnerChain &&
+            antisenseChains.has(partnerChain) &&
+            isAntisenseConnection(partner, monomer)
+          );
+        }),
+      );
 
     chainsCollection.chains.forEach((chain) => {
-      if (!chain.isAntisense) {
+      if (!antisenseChains.has(chain)) {
         return;
       }
       let nodesBeforeHydrogenConnectionToBase: SubChainNode[] = [];
@@ -118,15 +145,10 @@ export class SequenceViewModel {
                   const monomerConnectedByHydrogenBond =
                     hydrogenBond.getAnotherMonomer(monomer);
                   return monomerConnectedByHydrogenBond &&
-                    ((isRnaBaseApplicableForAntisense(
+                    isAntisenseConnection(
+                      monomer,
                       monomerConnectedByHydrogenBond,
-                    ) &&
-                      isRnaBaseApplicableForAntisense(monomer)) ||
-                      editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
-                        monomer,
-                      )?.firstMonomer ===
-                        monomerToChain.get(monomerConnectedByHydrogenBond)
-                          ?.firstMonomer)
+                    )
                     ? [
                         ...foundMonomersConnectedHydrogenBonds,
                         monomerConnectedByHydrogenBond,
@@ -191,6 +213,9 @@ export class SequenceViewModel {
                 monomerToChain.get(
                   firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
                 );
+            const hasAnotherAntisenseConnection =
+              i > 0 &&
+              hasValidAntisenseConnection(currentTwoStrandedSnakeLayoutNode);
 
             lastSenseNodeIndex =
               currentTwoStrandedSnakeLayoutNodeIndex > 0
@@ -202,6 +227,7 @@ export class SequenceViewModel {
             if (
               currentTwoStrandedSnakeLayoutNode &&
               isNodeInSameChain &&
+              !hasAnotherAntisenseConnection &&
               !currentTwoStrandedSnakeLayoutNode.antisenseNode
             ) {
               currentTwoStrandedSnakeLayoutNode.antisenseNode =
@@ -234,7 +260,7 @@ export class SequenceViewModel {
 
       if (
         lastTwoStrandedNodeWithHydrogenBond &&
-        nodesBeforeHydrogenConnectionToBase.length
+        nodesBeforeHydrogenConnectionToBase.length > 0
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
@@ -261,15 +287,9 @@ export class SequenceViewModel {
               monomerToChain.get(
                 firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
               );
-          const hasAnotherAntisenseConnection =
-            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
-              (monomer) => {
-                return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
-                );
-              },
-            );
+          const hasAnotherAntisenseConnection = hasValidAntisenseConnection(
+            currentTwoStrandedSnakeLayoutNode,
+          );
 
           if (
             currentTwoStrandedSnakeLayoutNode &&

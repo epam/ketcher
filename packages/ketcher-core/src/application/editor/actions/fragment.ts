@@ -16,7 +16,7 @@
 
 import {
   AtomMove,
-  AttachmentGroupAttr,
+  AttachmentGroupAttribute,
   BondMove,
   EnhancedFlagMove,
   FragmentAdd,
@@ -38,8 +38,8 @@ import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { fromAtomsFragmentAttr } from './atom';
-import { getRelSGroupsBySelection } from './utils';
+import { fromAtomsFragmentAttribute } from './atom';
+import { getRelatedSGroupsBySelection } from './utilities';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
@@ -53,7 +53,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists.atoms) {
     const atomSet = new Pile<number>(lists.atoms);
     const bondlist: Array<number> = [];
-    const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
+    const relatedSgroups = getRelatedSGroupsBySelection(struct, lists.atoms);
 
     restruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
@@ -177,24 +177,26 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
 }
 
 /**
- * @param restruct { ReStruct }
- * @param aid { number }
- * @param frid { number }
- * @param newfrid { number }
- * @returns { Action }
- */
+@param restruct { ReStruct }
+@param aid { number }
+@param frid { number }
+@param newfrid { number }
+@returns { Action }
+*/
 function processAtom(restruct, aid, frid, newfrid) {
   const struct = restruct.molecule;
   const atomIds = struct
     .findConnectedComponent(aid)
     .filter((id) => struct.atoms.get(id).fragment === frid);
-  const atomAction = fromAtomsFragmentAttr(restruct, atomIds, newfrid);
+  const atomAction = fromAtomsFragmentAttribute(restruct, atomIds, newfrid);
   const action = new Action();
 
   struct.attachmentGroups.forEach((group, groupId) => {
     if (group.atomIds.some((id) => atomIds.has(id))) {
       action.addOp(
-        new AttachmentGroupAttr(groupId, 'fragment', newfrid).perform(restruct),
+        new AttachmentGroupAttribute(groupId, 'fragment', newfrid).perform(
+          restruct,
+        ),
       );
     }
   });
@@ -205,12 +207,16 @@ function processAtom(restruct, aid, frid, newfrid) {
 }
 
 /**
- * @param restruct { ReStruct }
- * @param frid { number }
- * @param rgForRemove
- * @return { Action }
- */
-// TODO [RB] the thing is too tricky :) need something else in future
+Gives each connected component of fragment `frid` its own new fragment,
+moving its atoms, attachment groups and R-group membership. Unless `frid`
+is -1, the old fragment is then removed from its R-group and deleted.
+Called after atoms or bonds are erased, when a fragment may fall apart.
+The operations are reversed at the end (see processAtom).
+@param restruct { ReStruct }
+@param frid { number }
+@param rgForRemove
+@return { Action }
+*/
 export function fromFragmentSplit(
   restruct,
   frid,

@@ -72,7 +72,7 @@ function getExpandGroupsInMergeAction(
 ): Action {
   const action = new Action();
   const groupsInMerge = getGroupIdsFromItemMaps(restruct.molecule, mergeItems);
-  if (groupsInMerge.length) {
+  if (groupsInMerge.length > 0) {
     groupsInMerge.forEach((groupId) => {
       action.mergeWith(setExpandSGroup(restruct, groupId, { expanded: true }));
     });
@@ -82,16 +82,16 @@ function getExpandGroupsInMergeAction(
 }
 
 /**
- * @example
- * const mergeItems = {
- *   atomToFunctionalGroup: { 3 => 1 } // Drag atom-3 and drop on functional-group-1
- * }
- * // Given functional-group-1's attachment atom is atom-0
- * const [
- *   newMergeItems, // { atoms: { 3 => 0 } }
- *   action // action to remove non-attachment atoms and that S-Group
- * ] = extractAttachmentAtom(mergeItems)
- */
+@example
+const mergeItems = {
+  atomToFunctionalGroup: { 3 => 1 } // Drag atom-3 and drop on functional-group-1
+}
+// Given functional-group-1's attachment atom is atom-0
+const [
+  newMergeItems, // { atoms: { 3 => 0 } }
+  action // action to remove non-attachment atoms and that S-Group
+] = extractAttachmentAtom(mergeItems)
+*/
 function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
   const struct = editor.struct();
   const reStruct = editor.render.ctab;

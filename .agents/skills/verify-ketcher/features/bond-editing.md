@@ -1,6 +1,6 @@
 # Bond editing
 
-A user picks a bond tool and clicks the canvas to draw a bond, attach a bond to an atom, or change an existing bond. The Bond Properties dialog edits one bond. Behavior is owned by [openspec/specs/bond-editing/spec.md](../../../../openspec/specs/bond-editing/spec.md).
+A user picks a bond tool and clicks the canvas to draw a bond, attach a bond to an atom, or change an existing bond. The Bond Properties dialog edits one bond. Behavior is owned by [.memory-bank/features/bond-editing.md](../../../../.memory-bank/features/bond-editing.md).
 
 ## Sub-features
 

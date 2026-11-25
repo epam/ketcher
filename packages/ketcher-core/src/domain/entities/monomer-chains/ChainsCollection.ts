@@ -91,13 +91,10 @@ export class ChainsCollection {
           X_COORDINATE_REDUCTION_FACTOR +
         (chain2.firstNode?.monomer.position.y ?? 0);
 
-      if (chain1Weight !== chain2Weight) {
-        return chain1Weight - chain2Weight;
-      }
-      return (
-        (chain1.firstNode?.monomer.id ?? 0) -
-        (chain2.firstNode?.monomer.id ?? 0)
-      );
+      return chain1Weight !== chain2Weight
+        ? chain1Weight - chain2Weight
+        : (chain1.firstNode?.monomer.id ?? 0) -
+            (chain2.firstNode?.monomer.id ?? 0);
     });
 
     const reorderedChains = new Set<Chain>();
@@ -108,7 +105,7 @@ export class ChainsCollection {
       chain.forEachNode(({ node }) => {
         node.monomers.forEach((monomer) => {
           const sideConnections = monomer.sideConnections;
-          if (sideConnections.length) {
+          if (sideConnections.length > 0) {
             sideConnections.forEach((sideConnection) => {
               const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
               const anotherChain =
@@ -159,7 +156,7 @@ export class ChainsCollection {
     const firstMonomersInMiddleOfChains =
       this.getFirstMonomersInMiddleOfChains(filteredMonomers);
 
-    if (firstMonomersInMiddleOfChains.length) {
+    if (firstMonomersInMiddleOfChains.length > 0) {
       firstMonomersInMiddleOfChains.forEach(
         (firstMonomerInMiddleOfChain: BaseMonomer) => {
           chainsCollection.add(new Chain(firstMonomerInMiddleOfChain));
@@ -331,14 +328,10 @@ export class ChainsCollection {
     const monomerListShallowCopy = [...monomerList];
 
     monomerListShallowCopy.sort((monomer1, monomer2) => {
-      if (
-        monomer2.position.x + monomer2.position.y >
+      return monomer2.position.x + monomer2.position.y >
         monomer1.position.x + monomer1.position.y
-      ) {
-        return -1;
-      } else {
-        return 1;
-      }
+        ? -1
+        : 1;
     });
 
     const monomerWithLowerCoords = monomerListShallowCopy[0];
@@ -577,7 +570,7 @@ export class ChainsCollection {
     const monomerToChain = this.monomerToChain;
     const monomerToNode = this.monomerToNode;
 
-    while (chains.length) {
+    while (chains.length > 0) {
       const { group, chain } = chains.pop() as GrouppedChain;
       const chainNodes = chain.nodes;
 

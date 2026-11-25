@@ -1,6 +1,6 @@
 # Drag-drop bond establishment
 
-In the macromolecules editor, in flex or snake layout, a user drags a monomer card from the library onto a free attachment point of a monomer on the canvas. Free attachment points show while dragging. On release, a default bond (for example R1 to R2) forms without a dialog. Behavior is owned by [openspec/specs/drag-drop-bond-establishment/spec.md](../../../../openspec/specs/drag-drop-bond-establishment/spec.md).
+In the macromolecules editor, in flex or snake layout, a user drags a monomer card from the library onto a free attachment point of a monomer on the canvas. Free attachment points show while dragging. On release, a default bond (for example R1 to R2) forms without a dialog. Behavior is owned by [.memory-bank/features/drag-drop-bond-establishment.md](../../../../.memory-bank/features/drag-drop-bond-establishment.md).
 
 ## Sub-features
 

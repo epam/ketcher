@@ -15,6 +15,7 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
 } from 'react';
 import type {
   RnaPresetWizardAction,
@@ -49,7 +50,7 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
-  getConnectionAttachmentPointAtomIdsForComponent,
+  getConnectionAttachmentPointAtomIdsForRnaPreset,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
@@ -62,10 +63,10 @@ interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
-  phosphatePosition: '3' | '5' | undefined;
-  onPhosphatePositionChange: (position: '3' | '5') => void;
+  phosphatePosition: PhosphatePosition | undefined;
+  onPhosphatePositionChange: (position: PhosphatePosition) => void;
   /** User-overridden leaving atom labels for connection APs, keyed by
-   * "<componentKey>:<apName>". Persists across tab switches. */
+  "<componentKey>:<apName>". Persists across tab switches. */
   connectionLeavingAtoms?: Map<string, AtomLabel>;
   onConnectionLeavingAtomChange?: (
     apName: AttachmentPointName,
@@ -92,11 +93,17 @@ const RNA_COMPONENT_HINTS = {
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const { t } = useTranslation(['components', 'common']);
   const [selectedTab, setSelectedTab] = useState(0);
+  // Latest selectedTab, readable inside effects/callbacks without making
+  // selectedTab itself a reactive trigger for them (the tab-click handler
+  // already applies its own effects directly - see handleChange below).
+  const selectedTabRef = useRef(selectedTab);
+  useEffect(() => {
+    selectedTabRef.current = selectedTab;
+  });
   const structureSelection = useSelector(selectionSelector);
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
-  const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
   const {
     phosphatePosition,
     onPhosphatePositionChange,
@@ -140,19 +147,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       wizardState,
       struct,
       'base',
-      phosphatePosition as PhosphatePosition | undefined,
+      phosphatePosition,
     ),
     sugar: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
       struct,
       'sugar',
-      phosphatePosition as PhosphatePosition | undefined,
+      phosphatePosition,
     ),
     phosphate: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
       struct,
       'phosphate',
-      phosphatePosition as PhosphatePosition | undefined,
+      phosphatePosition,
     ),
   };
   const readonlyComponentAttachmentPoints = {
@@ -205,9 +212,31 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     [editor, wizardState],
   );
 
+  // Keep all inter-component connection points visible while editing any tab.
+  const syncConnectionAttachmentPoints = useCallback(() => {
+    editor.setVisibleAssignedAttachmentPoints(undefined);
+    editor.setConnectionAttachmentPoints(
+      getConnectionAttachmentPointAtomIdsForRnaPreset(
+        wizardState,
+        struct,
+        phosphatePosition,
+      ),
+    );
+  }, [editor, struct, wizardState, phosphatePosition]);
+
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
     applyHighlights(newValue);
+    syncConnectionAttachmentPoints();
+
+    // Clearing the canvas selection when switching to a tab whose component
+    // already has a structure is part of the tab-switch action itself, so it
+    // runs here directly instead of in a effect keyed off selectedTab.
+    const newTabStructure =
+      wizardState[RNA_COMPONENT_KEYS[newValue - 1]]?.structure;
+    if (newTabStructure) {
+      editor.selection(null);
+    }
   };
 
   const handleFieldChange = (
@@ -235,7 +264,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     [editor],
   );
 
-  const handlePhosphatePositionChange = (position: '3' | '5') => {
+  const handlePhosphatePositionChange = (position: PhosphatePosition) => {
     onPhosphatePositionChange(position);
   };
 
@@ -257,39 +286,31 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     editor.removeAttachmentPoint(name);
   };
 
-  const currentTabStructure = currentTabState?.structure;
-
+  // Re-syncs highlights/selection when the active component's structure is
+  // assigned asynchronously (the Editor marks atoms as a component, then
+  // notifies the wizard through a window event handled by the parent, which
+  // flows back down here as an updated `wizardState` prop on a later render).
+  // Tab switching itself is handled directly in handleChange above, so the
+  // active tab is read from the ref rather than depending on `selectedTab`.
   useEffect(() => {
-    if (!currentTabStructure) {
+    const activeTabStructure =
+      wizardState[RNA_COMPONENT_KEYS[selectedTabRef.current - 1]]?.structure;
+
+    if (!activeTabStructure) {
       return;
     }
 
-    applyHighlights(selectedTab);
+    applyHighlights(selectedTabRef.current);
     editor.selection(null);
-  }, [applyHighlights, currentTabStructure, editor, selectedTab]);
+  }, [applyHighlights, editor, wizardState]);
 
-  // Sync connection (readonly) attachment points with the canvas whenever the
-  // active RNA component tab or the wizard state changes. All assigned APs
-  // (R-labels) stay visible on every tab so users can see the full attachment-
-  // point picture while editing a single component.
+  // Re-syncs connection attachment points when wizard state, struct, or
+  // phosphate position change for reasons other than a tab switch (e.g. a
+  // component structure or the phosphate position updating asynchronously).
+  // Tab switching itself is handled directly in handleChange above.
   useEffect(() => {
-    editor.setVisibleAssignedAttachmentPoints(undefined);
-
-    const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
-
-    if (!activeComponentKey) {
-      editor.setConnectionAttachmentPoints(new Map());
-      return;
-    }
-
-    const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
-      wizardState,
-      struct,
-      activeComponentKey,
-      phosphatePosition as PhosphatePosition | undefined,
-    );
-    editor.setConnectionAttachmentPoints(connectionAtomIds);
-  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
+    syncConnectionAttachmentPoints();
+  }, [syncConnectionAttachmentPoints]);
 
   useEffect(() => {
     return () => {

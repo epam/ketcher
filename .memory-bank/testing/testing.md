@@ -532,7 +532,7 @@ A spec file that covers a feature is named `<featureID>-<Feature-Name>.spec.ts`,
 - popup mode: `ketcher-autotests/tests/specs/Chromium-popup/Features/`;
 - full-screen mode: `ketcher-autotests/tests/specs/Features/`.
 
-Tests for the fixed bugs of one release, asked for by an autotest issue titled `Autotests for Ketcher <version> bugs - Part N`, go into one file per release: `ketcher-autotests/tests/specs/Chromium-popup/Bugs/ketcher-<version>-bugs.spec.ts`. A new test is numbered on from the last case in the file, in the title style of the file, such as `Case 26 — <bug title>`. Its new test-data files go under `<Format>/Chromium-popup/Bugs/ketcher-<version>-bugs/`; the older tests keep their paths.
+Tests for the fixed bugs of one release, asked for by an autotest issue titled `Autotests for Ketcher <version> bugs - Part N`, go into one file per release: `ketcher-autotests/tests/specs/Chromium-popup/Bugs/ketcher-<version>-bugs.spec.ts`. A new test is numbered on from the highest case in the file, in the title style of the file, such as `Case 26 — <bug title>`. Its new test-data files go under `<Format>/Chromium-popup/Bugs/ketcher-<version>-bugs/`; the older tests keep their paths.
 
 Each `test()` title is a plain English sentence that starts with the serial number from the checklist item, such as `Case 1 - ...` or `1. ...`, matching the style of the target file.
 

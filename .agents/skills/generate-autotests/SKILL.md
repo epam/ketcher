@@ -34,6 +34,8 @@ An Autotest Request titled "Autotests for Ketcher <version> bugs" (usually with 
 - Take the scenario from the text of the bug: the workflow gives it as BUG_DETAILS, and in an interactive run you read the bug issue. `Description` is the bug title.
 - When the text gives no steps you can automate, add a `test.skip` with the same kind of title, and a comment that gives the reason and links the bug.
 
+In the `claude-implement-autotests.yml` workflow, CASE_PLAN gives the start of each new title, and `scripts/autotests/bug-spec.mjs` checks the result after you: a change to a test that was already in the file, or to an existing test-data file, stops the run.
+
 ## Output
 
 - The spec file path, and the path of every page object or helper you created.

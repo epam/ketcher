@@ -4,6 +4,7 @@ import {
   FormatterFactory,
   SupportedFormat,
   identifyStructFormat,
+  isMolfileWithQueryFeatures,
 } from './formatters';
 import type { Ketcher } from './ketcher';
 import type { StructService } from 'domain/services';
@@ -40,10 +41,14 @@ export function parseStruct(
   const factory = new FormatterFactory(structService);
   const options = ketcherInstance.editor.options();
 
-  const service = factory.create(format, {
-    'dearomatize-on-load': options['dearomatize-on-load'],
-    ignoreChiralFlag: options.ignoreChiralFlag,
-  });
+  const service = factory.create(
+    format,
+    {
+      'dearomatize-on-load': options['dearomatize-on-load'],
+      ignoreChiralFlag: options.ignoreChiralFlag,
+    },
+    isMolfileWithQueryFeatures(format, structStr),
+  );
   return service.getStructureFromStringAsync(structStr);
 }
 

@@ -22,7 +22,7 @@
 
 ## 4. E2E tests (only if approved at the proposal gate)
 
-- [ ] 4.1 Add the AxoLabs alias input to the Create Monomer dialog page object and Playwright cases to the monomer attributes panel spec for visibility per type, the four errors with the highlight, and saving with brackets; verify the touched specs pass locally
+- [x] 4.1 Add the AxoLabs alias input to the Create Monomer dialog page object and Playwright cases to the monomer attributes panel spec for visibility per type, the four errors with the highlight, and saving with brackets; verify the touched specs pass locally
 
 ## Workflow follow-up
 

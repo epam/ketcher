@@ -51,7 +51,7 @@ import {
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
-import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
+import { concreteMonomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
@@ -428,7 +428,7 @@ export class DrawingEntitiesManager {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
       return new AmbiguousMonomer(monomerItem, position, shouldGenerateId);
     } else {
-      const [Monomer] = monomerEntityFactory(monomerItem);
+      const [Monomer] = concreteMonomerEntityFactory(monomerItem);
 
       return new Monomer(monomerItem, position, {
         generateId: shouldGenerateId,

@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
+import type { MonomerItemType, MonomerOrAmbiguousType } from 'domain/types';
 import {
   AmbiguousMonomer,
   Chem,
@@ -62,14 +61,6 @@ domain entity class and KetMonomerClass enum value.
 This is a pure domain helper — it has no renderer imports.
 */
 export function monomerEntityFactory(
-  monomer: MonomerItemType,
-): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
   monomer: MonomerOrAmbiguousType,
 ): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
@@ -79,6 +70,16 @@ export function monomerEntityFactory(
     ];
   }
 
+  return concreteMonomerEntityFactory(monomer);
+}
+
+/**
+ * Maps a concrete monomer library item to its domain entity class and
+ * KetMonomerClass enum value.
+ */
+export function concreteMonomerEntityFactory(
+  monomer: MonomerItemType,
+): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass] {
   if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA

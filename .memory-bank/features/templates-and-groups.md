@@ -8,6 +8,24 @@ Drawing common rings, reusable fragments, functional groups, Markush (R-Group) s
 
 Inserting a template or group produces a well-formed structure; abbreviated groups behave as single units until expanded.
 
+### Requirement: Runtime template configuration
+
+The system SHALL let an embedding application add named molecular templates to a library group during an editor session without changing the drawing canvas.
+
+#### Scenario: Adding a template to the library
+
+- **WHEN** an embedding application supplies a supported structure string, a non-empty name, and an optional group
+- **THEN** the parsed structure is added to that library group, defaulting to _User Templates_
+- **AND** the canvas stays unchanged until the user selects and places the template
+- **AND** the template survives library loading and reinitialization during the session
+
+#### Scenario: Configuring the bottom toolbar
+
+- **WHEN** the library contains templates in the _DB Templates_ group
+- **THEN** those templates replace the default bottom-toolbar templates in insertion order
+- **AND** the toolbar scrolls horizontally when necessary while the _Structure Library_ button remains visible
+- **AND** the default toolbar templates remain available when the group is empty
+
 ### Requirement: Fusing a ring onto an atom
 
 The system SHALL ensure that the ring is fused to the structure through that atom.
@@ -78,6 +96,10 @@ The system SHALL ensure that the fragment becomes an R-Group member linked to th
 
 ## Limitations
 
+- Runtime templates last only for the current editor session and are not automatically persisted across reloads; embedding applications must reload them from their data source. Repeated additions can create duplicates.
+- Runtime configuration does not provide a UI for choosing bottom-toolbar templates or remap the built-in template shortcuts.
+- Editors sharing a browser window receive the same runtime template additions. Separate frames are required for independent runtime libraries.
+- Database-template previews require the embedding application to expose its initialized editor instance through the browser-window integration described in [the API guide](../../documentation/add-template.md).
 - The set of built-in functional groups is fixed and not user-editable.
 - _Aromatize_ / _Dearomatize_ do not apply to rings that are part of a functional group.
 - Individual atoms/bonds of an abbreviation are inaccessible until the abbreviation is removed.

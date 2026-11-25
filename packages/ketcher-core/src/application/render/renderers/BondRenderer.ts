@@ -194,7 +194,7 @@ export class BondRenderer extends BaseRenderer {
       return position;
     }
 
-    const atomLabelBBoxes = atom.renderer?.labelBBoxes;
+    const atomLabelBBoxes = atom.renderer?.bondTrimBBoxes;
     const atomPositionInPixels = atom.renderer.scaledPosition;
     let shiftValue = 0;
 

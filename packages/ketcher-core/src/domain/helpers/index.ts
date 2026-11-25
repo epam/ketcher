@@ -20,6 +20,7 @@ export * from './functionalGroupsProvider';
 export * from './saltsAndSolventsProvider';
 export * from './isGenericAtom';
 export * from './hapticBond';
+export * from './implicitHydrogenSide';
 export {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,

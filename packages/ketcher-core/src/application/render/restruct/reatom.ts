@@ -39,7 +39,14 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
+import {
+  Scale,
+  getImplicitHydrogenSide,
+  isLabelAnchoredLeft,
+  isAttachmentGroupWithHapticBond,
+  isStackedSide,
+  type ImplicitHydrogenSide,
+} from 'domain/helpers';
 import draw, {
   AP_PATH_SCALE,
   AP_WAVE_HALF_PERP,
@@ -61,6 +68,7 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
 import type { ReBondEndpoint } from './rebondEndpoint';
+import { HYDROGEN_LAYOUT } from './reatomHydrogenLayout';
 
 interface ElemAttr {
   text: string;
@@ -87,7 +95,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   a: Atom;
   showLabel: boolean;
   showInfoLabel: boolean;
-  hydrogenOnTheLeft: boolean;
+  hydrogenSide: ImplicitHydrogenSide;
+  // For the labels that hydrogens do not split: the atom list and the atom id.
+  labelAnchoredLeft: boolean;
   color: string;
   component: number;
   label?: ElemAttr;
@@ -116,13 +126,20 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   // (e.g. dragging a fragment) without a full atom redraw.
   private labelBoxCount = 0;
 
+  // The entries of visel.exts that bond trimming ignores: the boxes of
+  // stacked hydrogens. Label placement still reads them from visel.exts.
+  // Identity is what matters, so the set holds the Box2Abs objects pushed to
+  // visel.exts, and show() rebuilds it together with the visel.
+  private bondTrimSkippedExts = new Set<Box2Abs>();
+
   constructor(atom: Atom) {
     super('atom');
     this.a = atom; // TODO rename a to item
     this.showLabel = false;
     this.showInfoLabel = false;
 
-    this.hydrogenOnTheLeft = false;
+    this.hydrogenSide = 'right';
+    this.labelAnchoredLeft = false;
 
     this.color = '#000000';
     this.component = -1;
@@ -480,6 +497,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const exts = this.visel.exts;
     const ratio = this.getRatio(renderOptions, bondLen);
     for (const ext of exts) {
+      if (this.bondTrimSkippedExts.has(ext)) continue;
       const box = ext.translate(atomPosition);
       const shiftRayBox = utility.shiftRayBox(atomPosition, direction, box);
       const shift = shiftRayBox * ratio;
@@ -514,6 +532,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     if (!atom) {
       return;
     }
+    this.bondTrimSkippedExts.clear();
     const sgroups = struct.sgroups;
     const functionalGroups = struct.functionalGroups;
     const render = restruct.render;
@@ -573,7 +592,16 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return;
     }
 
-    this.hydrogenOnTheLeft = shouldHydrogenBeOnLeft(restruct.molecule, this);
+    const bondDirections = getVisibleBondDirections(restruct.molecule, this);
+    this.hydrogenSide = getImplicitHydrogenSide(
+      bondDirections,
+      this.a.radical !== 0,
+    );
+    this.labelAnchoredLeft = isLabelAnchoredLeft({
+      side: this.hydrogenSide,
+      visibleBondCount: bondDirections.length,
+      label: this.a.label,
+    });
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
 
@@ -608,7 +636,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     if (options.showAtomIds) {
       const text = aid.toString();
-      let idPos = this.hydrogenOnTheLeft
+      let idPos = this.labelAnchoredLeft
         ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
         : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
       if (this.showLabel) {
@@ -688,6 +716,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         hydroIndex = data.hydroIndex;
         rightMargin = data.rightMargin;
         leftMargin = data.leftMargin;
+        // Stacked hydrogens stay in visel.exts, which label placement (aam,
+        // query, stereo, CIP, attachment points) clears. Bond trimming skips
+        // them: a bond never points into the free quadrant that holds them,
+        // and a box wider than the symbol would shorten a bond that only
+        // passes near it. Their boxes still count for hover and selection.
+        const extsBefore = this.visel.exts.length;
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
@@ -703,6 +737,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             ps,
             true,
           );
+        }
+        if (isStackedSide(this.hydrogenSide)) {
+          this.visel.exts
+            .slice(extsBefore)
+            .forEach((ext) => this.bondTrimSkippedExts.add(ext));
         }
       }
       if (this.a.charge === 0) {
@@ -1603,27 +1642,13 @@ function shouldDisplayHydrogen(
   );
 }
 
-function shouldHydrogenBeOnLeft(struct: Struct, atom: ReAtom) {
-  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
-
-  if (visibleNeighbors.length === 0) {
-    if (atom.a.label === 'D' || atom.a.label === 'T') {
-      return false;
-    } else {
-      const element = Elements.get(atom.a.label);
-      return !element || Boolean(element.leftH);
-    }
-  }
-
-  if (visibleNeighbors.length === 1) {
-    const neighbor = visibleNeighbors[0];
-    const neighborHalfBond = struct.halfBonds.get(neighbor);
-    const neighborDirX = neighborHalfBond?.dir.x ?? 0;
-
-    return neighborDirX > 0;
-  }
-
-  return false;
+function getVisibleBondDirections(struct: Struct, atom: ReAtom): Vec2[] {
+  return getVisibleNeighborHalfBondIds(struct, atom).flatMap(
+    (neighborHalfBondId) => {
+      const halfBond = struct.halfBonds.get(neighborHalfBondId);
+      return halfBond ? [halfBond.dir] : [];
+    },
+  );
 }
 
 function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
@@ -1763,7 +1788,7 @@ function buildLabel(
 
   if (atom.a.atomList !== null) {
     const xShift =
-      ((atom.hydrogenOnTheLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
+      ((atom.labelAnchoredLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
     pathAndRBoxTranslate(path, rbb, xShift, 0);
     rightMargin += xShift;
     leftMargin += xShift;
@@ -2014,10 +2039,8 @@ function showHydrogen(
   leftMargin: number;
 } {
   let hydroIndex: ElemAttr | null = data.hydroIndex;
-  const isHydrogenOnLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
-  const delta = 0.5 * options.lineWidth;
   const hydrogenText = 'H';
   const hydrogenPath = render.paper.text(ps.x, ps.y, hydrogenText).attr({
     font: options.font,
@@ -2026,15 +2049,6 @@ function showHydrogen(
   });
   const hydrogenRbb = getTextRelBox(hydrogenPath, options);
   draw.recenterText(hydrogenPath, hydrogenRbb);
-  if (!isHydrogenOnLeft) {
-    pathAndRBoxTranslate(
-      hydrogenPath,
-      hydrogenRbb,
-      data.rightMargin + 0.35 * hydrogenRbb.width + delta,
-      0,
-    );
-    data.rightMargin += hydrogenRbb.width + delta;
-  }
   if (implh > 1) {
     const hydroIndexText = implh.toString();
     const hydroIndexPath = render.paper.text(ps.x, ps.y, hydroIndexText).attr({
@@ -2049,34 +2063,34 @@ function showHydrogen(
       path: hydroIndexPath,
       rbb: hydroIndexRbb,
     };
-    if (!isHydrogenOnLeft) {
-      pathAndRBoxTranslate(
-        hydroIndexPath,
-        hydroIndexRbb,
-        data.rightMargin + 0.15 * hydroIndexRbb.width + delta,
-        0.2 * (atom.label?.rbb.height ?? 0),
-      );
-      data.rightMargin += hydroIndexRbb.width + delta;
-    }
   }
-  if (isHydrogenOnLeft) {
-    if (hydroIndex != undefined) {
-      pathAndRBoxTranslate(
-        hydroIndex.path,
-        hydroIndex.rbb,
-        data.leftMargin - 0.4 * hydroIndex.rbb.width - delta,
-        0.2 * (atom.label?.rbb.height ?? 0),
-      );
-      data.leftMargin -= hydroIndex.rbb.width + delta;
-    }
+
+  const layout = HYDROGEN_LAYOUT[atom.hydrogenSide]({
+    hydrogenWidth: hydrogenRbb.width,
+    indexWidth: hydroIndex?.rbb.width ?? null,
+    labelHeight: atom.label?.rbb.height ?? 0,
+    delta: 0.5 * options.lineWidth,
+    zoom: options.zoom,
+    rightMargin: data.rightMargin,
+    leftMargin: data.leftMargin,
+  });
+  pathAndRBoxTranslate(
+    hydrogenPath,
+    hydrogenRbb,
+    layout.hydrogen.x,
+    layout.hydrogen.y,
+  );
+  if (hydroIndex && layout.index) {
     pathAndRBoxTranslate(
-      hydrogenPath,
-      hydrogenRbb,
-      data.leftMargin - 0.4 * hydrogenRbb.width - delta,
-      0,
+      hydroIndex.path,
+      hydroIndex.rbb,
+      layout.index.x,
+      layout.index.y,
     );
-    data.leftMargin -= hydrogenRbb.width + delta;
   }
+  data.rightMargin = layout.rightMargin;
+  data.leftMargin = layout.leftMargin;
+
   const hydrogen: ElemAttr = {
     text: hydrogenText,
     path: hydrogenPath,

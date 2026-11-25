@@ -40,7 +40,7 @@ export const PasteFromClipboardDialog = (page: Page) => {
     async selectContentType(contentType: MacroFileType) {
       const contentTypeOption = page.getByText(contentType, { exact: true });
       await locators.contentTypeSelector.waitFor({ state: 'visible' });
-      if (!(await contentTypeOption.isHidden())) {
+      if (await contentTypeOption.isVisible()) {
         return;
       }
 

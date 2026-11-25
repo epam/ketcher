@@ -18,7 +18,7 @@
 ## 3. Integration checks
 
 - [x] 3.1 Run the repository checks (`npm test` at the root and `npx openspec validate --all --strict`) and verify they add no failure the `origin/master` baseline lacks
-- [ ] 3.2 Verify in the app with the `verify-ketcher` skill: create a nucleotide with AxoLabs alias `Xq`, see `(Xq)` in its preview, export the canvas to AxoLabs and import it back; record the verdict for the PR
+- [x] 3.2 Verify in the app with the `verify-ketcher` skill: create a nucleotide with AxoLabs alias `Xq`, see `(Xq)` in its preview, export the canvas to AxoLabs and import it back; record the verdict for the PR
 
 ## 4. E2E tests (only if approved at the proposal gate)
 

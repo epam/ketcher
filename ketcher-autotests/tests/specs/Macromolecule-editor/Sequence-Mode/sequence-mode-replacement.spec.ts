@@ -1841,7 +1841,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   }
 }
 
-const sequencesShowsConfirmationOnReplacementForCase18: {
+const sequencesShowsConfirmationOnReplacementForCase18and21: {
   sequenceId: number;
   replaceMonomerId: number[];
 }[] = [
@@ -1930,7 +1930,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         shouldShowConfirmationOnReplacement(
           sequence.Id,
           replaceMonomer.Id,
-          sequencesShowsConfirmationOnReplacementForCase18,
+          sequencesShowsConfirmationOnReplacementForCase18and21,
         );
       await selectAndReplaceSymbol(
         page,
@@ -2148,10 +2148,19 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
+      const showsConfirmationOnReplecement =
+        shouldShowConfirmationOnReplacement(
+          sequence.Id,
+          replaceMonomer.Id,
+          sequencesShowsConfirmationOnReplacementForCase18and21,
+        );
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
-        sequence,
+        {
+          ...sequence,
+          ConfirmationOnReplecement: showsConfirmationOnReplecement,
+        },
         sequence.ReplacementPositions.Center,
       );
 

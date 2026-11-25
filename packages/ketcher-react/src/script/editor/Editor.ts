@@ -258,6 +258,7 @@ type SaveNewMonomerData = {
   modificationTypes?: string[];
   aliasHELM: string;
   aliasBILN: string;
+  aliasAxoLabs?: string;
   hidden?: boolean;
   structure: Struct;
   attachmentPoints: Map<AttachmentPointName, [number, number]>;
@@ -2056,6 +2057,7 @@ class Editor implements KetcherEditor {
       modificationTypes,
       aliasHELM,
       aliasBILN,
+      aliasAxoLabs,
       hidden,
     } = data;
 
@@ -2105,6 +2107,7 @@ class Editor implements KetcherEditor {
       modificationTypes,
       aliasHELM,
       aliasBILN,
+      aliasAxoLabs,
       // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,

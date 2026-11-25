@@ -45,13 +45,14 @@ describe('getEditInstanceInitialValues', () => {
       naturalAnalogue: 'C',
       aliasHELM: 'C_Copy',
       aliasBILN: 'C_Copy',
+      aliasAxoLabs: '',
       editMode: 'instance',
       originalType: KetMonomerClass.AminoAcid,
       originalSymbol: 'C',
     });
   });
 
-  it('does not load natural analogue, AxoLabs alias, or modification types for a phosphate', () => {
+  it('starts a phosphate copy without natural analogue, AxoLabs alias, or modification types', () => {
     const values = getEditInstanceInitialValues(
       createMonomer(
         {
@@ -75,6 +76,7 @@ describe('getEditInstanceInitialValues', () => {
       naturalAnalogue: '',
       aliasHELM: 'sp_Copy',
       aliasBILN: '',
+      aliasAxoLabs: '',
       editMode: 'instance',
       originalType: KetMonomerClass.Phosphate,
       originalSymbol: 'sP',
@@ -124,13 +126,30 @@ describe('library editing initial values', () => {
     });
     expect(values).not.toHaveProperty('originalMonomerItem');
     expect(values).not.toHaveProperty('modificationTypes');
-    expect(values).not.toHaveProperty('aliasAxoLabs');
+    expect(values.aliasAxoLabs).toBe('');
     expect(values).not.toHaveProperty('idtAliases');
+  });
+
+  it('loads the stored AxoLabs alias when editing a library monomer whose type shows the field', () => {
+    const chem = createMonomer({
+      MonomerClass: KetMonomerClass.CHEM,
+      MonomerCode: 'X',
+      MonomerName: 'X',
+      Name: 'Chem X',
+      aliasAxoLabs: '(invdA)',
+    }).monomerItem;
+
+    expect(getLibraryEditInitialValues(chem).aliasAxoLabs).toBe('(invdA)');
+    expect(getEditInstanceInitialValues(chem).aliasAxoLabs).toBe('');
+  });
+
+  it('leaves the AxoLabs alias empty when the type has no AxoLabs alias field', () => {
+    expect(getLibraryEditInitialValues(item).aliasAxoLabs).toBe('');
   });
 });
 
 describe('getEditAllInstancesInitialValues', () => {
-  it('loads existing monomer fields unchanged without AxoLabs or IDT aliases', () => {
+  it('loads existing monomer fields with copied aliases and no AxoLabs or IDT aliases', () => {
     const values = getEditAllInstancesInitialValues(
       createMonomer({
         MonomerClass: KetMonomerClass.AminoAcid,
@@ -154,6 +173,7 @@ describe('getEditAllInstancesInitialValues', () => {
       naturalAnalogue: 'C',
       aliasHELM: 'C_Copy',
       aliasBILN: 'C_Copy',
+      aliasAxoLabs: '',
       editMode: 'all',
       originalType: KetMonomerClass.AminoAcid,
       originalSymbol: 'C',

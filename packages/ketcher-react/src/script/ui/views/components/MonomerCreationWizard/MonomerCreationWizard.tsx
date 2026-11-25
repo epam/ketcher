@@ -16,6 +16,7 @@ import {
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
+  getAxoLabsAliasFormatError,
   isValidBilnAlias,
   isValidHelmAlias,
   KetcherLogger,
@@ -25,6 +26,7 @@ import {
   MonomerCreationComponentStructureUpdateEvent,
   NO_NATURAL_ANALOGUE,
   provideEditorInstance,
+  wrapAxoLabsAlias,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import {
@@ -94,6 +96,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from 'src/i18n/i18n';
 import {
   getOtherLibraryMonomers,
+  hasAxoLabsAliasCollision,
   hasMonomerFieldCollision,
   isValidMonomerName,
 } from './MonomerCreationWizardFields.utils';
@@ -203,8 +206,11 @@ const getInitialWizardStateForEdit = ({
   return { ...state, notifications };
 };
 
-// BILN alias errors remain visible until the next submit attempt.
-const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
+// BILN and AxoLabs alias errors remain visible until the next submit attempt.
+const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>([
+  'aliasBILN',
+  'aliasAxoLabs',
+]);
 
 const keepInfoNotifications = (notifications: WizardNotifications) =>
   new Map(
@@ -629,7 +635,14 @@ const autoAssignPropertiesForHiddenMonomer = (
   };
 };
 
-const validateInputs = (
+const AXOLABS_FORMAT_ERROR_NOTIFICATIONS = {
+  characters: 'invalidAxoLabsAlias',
+  brackets: 'axoLabsAliasBracket',
+  length: 'axoLabsAliasTooLong',
+} as const;
+
+// Exported for tests.
+export const validateInputs = (
   values: WizardValues,
   shouldSkipUniquenessChecks = false,
   shouldSkipMandatoryCheck = false,
@@ -643,7 +656,12 @@ const validateInputs = (
   );
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
-  const optionalFields = new Set(['aliasHELM', 'aliasBILN', 'name']);
+  const optionalFields = new Set([
+    'aliasHELM',
+    'aliasBILN',
+    'aliasAxoLabs',
+    'name',
+  ]);
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
@@ -757,6 +775,35 @@ const validateInputs = (
         notifications.set('notUniqueBILNAlias', {
           type: 'error',
           message: NotificationMessages.notUniqueBILNAlias,
+        });
+      }
+    }
+
+    if (key === 'aliasAxoLabs') {
+      const formatError = getAxoLabsAliasFormatError(value);
+      if (formatError) {
+        const notificationId = AXOLABS_FORMAT_ERROR_NOTIFICATIONS[formatError];
+        errors[key as WizardFormFieldId] = true;
+        notifications.set(notificationId, {
+          type: 'error',
+          message: NotificationMessages[notificationId],
+        });
+
+        return;
+      }
+
+      if (
+        !shouldSkipUniquenessChecks &&
+        hasAxoLabsAliasCollision(
+          library,
+          editor.monomersLibraryParsedJson,
+          value,
+        )
+      ) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('notUniqueAxoLabsAlias', {
+          type: 'error',
+          message: NotificationMessages.notUniqueAxoLabsAlias,
         });
       }
     }
@@ -963,7 +1010,15 @@ const MonomerCreationWizardInternal = ({
     notifications: monomerWizardNotifications,
     errors,
   } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
+  const {
+    type,
+    symbol,
+    name,
+    naturalAnalogue,
+    aliasHELM,
+    aliasBILN,
+    aliasAxoLabs,
+  } = values;
   const originalMonomerItem =
     monomerCreationState.editInstanceInitialValues?.originalMonomerItem;
   const libraryOnly =
@@ -1156,6 +1211,11 @@ const MonomerCreationWizardInternal = ({
       wizardStateDispatch({
         type: 'SetFieldValue',
         fieldId: 'aliasBILN',
+        value: '',
+      });
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasAxoLabs',
         value: '',
       });
     }
@@ -2151,6 +2211,9 @@ const MonomerCreationWizardInternal = ({
             modificationTypes.length > 0 ? modificationTypes : undefined,
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
+          aliasAxoLabs: valuesToSave.aliasAxoLabs
+            ? wrapAxoLabsAlias(valuesToSave.aliasAxoLabs)
+            : undefined,
           structure,
           attachmentPoints: remappedAttachmentPoints as Map<
             AttachmentPointName,
@@ -2388,6 +2451,9 @@ const MonomerCreationWizardInternal = ({
                         : undefined,
                     aliasHELM,
                     aliasBILN,
+                    aliasAxoLabs: aliasAxoLabs
+                      ? wrapAxoLabsAlias(aliasAxoLabs)
+                      : undefined,
                     attachmentPoints: assignedAttachmentPoints,
                     structure,
                   });

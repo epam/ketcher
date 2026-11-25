@@ -52,13 +52,14 @@ export const saveLibraryMonomer = async (
     ...(originalMonomerTemplate ? { id: originalMonomerTemplate.id } : {}),
   };
   if (originalMonomerTemplate) {
-    const { displayHelmAlias, displayBilnAlias } = getMonomerPropertyVisibility(
-      template.class,
-    );
+    const { displayHelmAlias, displayBilnAlias, displayAxoLabsAlias } =
+      getMonomerPropertyVisibility(template.class);
     if (!displayHelmAlias)
       template.aliasHELM = originalMonomerTemplate.aliasHELM;
     if (!displayBilnAlias)
       template.aliasBILN = originalMonomerTemplate.aliasBILN;
+    if (!displayAxoLabsAlias)
+      template.aliasAxoLabs = originalMonomerTemplate.aliasAxoLabs;
   } else {
     /*
      * Saving as a new entry keeps the original in the library, so the new
@@ -71,6 +72,9 @@ export const saveLibraryMonomer = async (
     }
     if (template.aliasBILN === editedMonomerTemplate?.aliasBILN) {
       delete template.aliasBILN;
+    }
+    if (template.aliasAxoLabs === editedMonomerTemplate?.aliasAxoLabs) {
+      delete template.aliasAxoLabs;
     }
   }
   const ref = originalRef ?? data.monomerRef;

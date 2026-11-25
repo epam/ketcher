@@ -112,6 +112,56 @@ describe('saving library wizard changes', () => {
     expect(dispatch).toHaveBeenCalledWith('sdf');
   });
 
+  it('keeps the original AxoLabs alias of a CHEM entry on a new entry only when the user changed it', async () => {
+    const chemTemplate = {
+      ...template,
+      class: KetMonomerClass.CHEM,
+      alias: 'A',
+    };
+    (provideEditorInstance as Mock).mockReturnValue({
+      monomersLibraryParsedJson: {
+        'monomerTemplate-original': {
+          ...chemTemplate,
+          id: 'original',
+          aliasAxoLabs: '(old)',
+        },
+      },
+      checkIfMonomerSymbolClassPairExists: () => false,
+      updateMonomersLibrary: update,
+      monomersLibrary: [savedItem],
+      scheduleMonomerWizardInstanceReplacement: scheduleReplacement,
+    });
+    const chemOriginal = {
+      ...original,
+      props: { ...original.props, MonomerClass: KetMonomerClass.CHEM },
+    };
+
+    await saveLibraryMonomer(
+      ketcher,
+      {
+        monomerTemplate: { ...chemTemplate, alias: 'B', aliasAxoLabs: '(old)' },
+        monomerRef: 'monomerTemplate-new-id',
+      },
+      chemOriginal,
+    );
+    await saveLibraryMonomer(
+      ketcher,
+      {
+        monomerTemplate: { ...chemTemplate, alias: 'B', aliasAxoLabs: '(new)' },
+        monomerRef: 'monomerTemplate-new-id',
+      },
+      chemOriginal,
+    );
+
+    expect(
+      JSON.parse(update.mock.calls[0][0])['monomerTemplate-new-id'],
+    ).not.toHaveProperty('aliasAxoLabs');
+    expect(
+      JSON.parse(update.mock.calls[1][0])['monomerTemplate-new-id']
+        .aliasAxoLabs,
+    ).toBe('(new)');
+  });
+
   it('adds a distinct monomer when the code changed, leaving the original alone', async () => {
     await saveLibraryMonomer(
       ketcher,

@@ -100,7 +100,7 @@
       "impureStructure": "La estructura del monómero no puede contener grupos S, grupos R, átomos especiales ni otras propiedades de consulta.",
       "notUniqueHELMAlias": "El alias HELM debe ser único entre los monómeros de péptido o ARN.",
       "notUniqueBILNAlias": "El alias BILN debe ser único entre los monómeros de péptido y CHEM.",
-      "notUniqueAxoLabsAlias": "El alias AxoLabs debe ser único entre los monómeros de nucleótido, CHEM y fosfato y los presets de ARN.",
+      "notUniqueAxoLabsAlias": "El alias AxoLabs debe ser único para cada posición.",
       "invalidRnaPresetStructure": "La estructura del componente del preajuste de ARN contiene problemas. Ajusta la estructura.",
       "rnaPresetAtomsOutsideComponents": "Algunos átomos no pertenecen a ningún componente del nucleótido (azúcar, base o fosfato).",
       "rnaPresetAtomsInMultipleComponents": "Algunos átomos pertenecen a varios componentes del nucleótido.",

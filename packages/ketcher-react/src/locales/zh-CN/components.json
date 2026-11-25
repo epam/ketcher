@@ -100,7 +100,7 @@
       "impureStructure": "单体结构不能包含 S-基团、R-基团、特殊原子或其他任何查询属性。",
       "notUniqueHELMAlias": "HELM 别名在肽或 RNA 单体中必须唯一。",
       "notUniqueBILNAlias": "BILN 别名在肽和 CHEM 单体中必须唯一。",
-      "notUniqueAxoLabsAlias": "AxoLabs 别名在核苷酸、CHEM 和磷酸单体以及 RNA 预设中必须唯一。",
+      "notUniqueAxoLabsAlias": "每个位置的 AxoLabs 别名必须唯一。",
       "invalidRnaPresetStructure": "RNA 预设组件的结构存在问题，请调整该结构。",
       "rnaPresetAtomsOutsideComponents": "部分原子不属于任何核苷酸组件（糖、碱基或磷酸）。",
       "rnaPresetAtomsInMultipleComponents": "部分原子属于多个核苷酸组件。",

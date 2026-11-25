@@ -60,7 +60,7 @@ On _Submit_, the system SHALL reject an AxoLabs alias that contains anything oth
 
 ### Requirement: AxoLabs alias uniqueness
 
-On _Submit_, the system SHALL reject an AxoLabs alias that another library monomer or RNA preset already uses, comparing the aliases without their brackets and with case taken into account. The error "The AxoLabs alias must be unique amongst nucleotide, CHEM and phosphate monomers and RNA presets." SHALL be shown, and the monomer SHALL NOT be saved. Editing a library monomer without changing its alias SHALL NOT report a collision with itself.
+On _Submit_, the system SHALL reject an AxoLabs alias that another library monomer or RNA preset already uses, comparing the aliases without their brackets and with case taken into account. The error "The AxoLabs alias for every position must be unique." SHALL be shown, and the monomer SHALL NOT be saved. Editing a library monomer without changing its alias SHALL NOT report a collision with itself.
 
 #### Scenario: Alias used by a library monomer
 

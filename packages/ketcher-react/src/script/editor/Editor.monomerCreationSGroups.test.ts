@@ -155,10 +155,10 @@ describe('Monomer creation from a selection with S-groups (#7637)', () => {
     expect(isMonomerCreationEnabled(editor)).toBe(true);
     editor.openMonomerCreationWizard();
 
-    const [wizardStruct] = vi
+    const wizardStruct = vi
       .mocked(editor.struct)
       .mock.calls.map(([value]) => value)
-      .filter((value) => value instanceof Struct);
+      .find((value) => value instanceof Struct);
     assert(wizardStruct, 'the wizard was not given a structure');
     expect(wizardStruct.atoms.size).toBe(4);
     expect(wizardStruct.bonds.size).toBe(3);

@@ -641,7 +641,6 @@ const AXOLABS_FORMAT_ERROR_NOTIFICATIONS = {
   length: 'axoLabsAliasTooLong',
 } as const;
 
-// Exported for tests.
 export const validateInputs = (
   values: WizardValues,
   shouldSkipUniquenessChecks = false,

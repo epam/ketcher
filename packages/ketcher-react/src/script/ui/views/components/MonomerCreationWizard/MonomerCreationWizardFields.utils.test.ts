@@ -1,30 +1,43 @@
-import { KetMonomerClass, type MonomerItemType, Struct } from 'ketcher-core';
+import {
+  type IKetMacromoleculesContent,
+  KetMonomerClass,
+  type MonomerItemType,
+  Struct,
+} from 'ketcher-core';
 import {
   getMonomerPropertyVisibility,
   getOtherLibraryMonomers,
+  hasAxoLabsAliasCollision,
   hasMonomerFieldCollision,
   isValidMonomerName,
 } from './MonomerCreationWizardFields.utils';
 
 describe('getMonomerPropertyVisibility', () => {
   it.each`
-    type                         | naturalAnalogue | modificationTypes | helmAlias | bilnAlias
-    ${KetMonomerClass.CHEM}      | ${false}        | ${false}          | ${true}   | ${true}
-    ${KetMonomerClass.AminoAcid} | ${true}         | ${true}           | ${true}   | ${true}
-    ${KetMonomerClass.Sugar}     | ${false}        | ${false}          | ${true}   | ${false}
-    ${KetMonomerClass.Base}      | ${true}         | ${false}          | ${true}   | ${false}
-    ${KetMonomerClass.Phosphate} | ${false}        | ${false}          | ${true}   | ${false}
-    ${KetMonomerClass.RNA}       | ${true}         | ${false}          | ${false}  | ${false}
-    ${'rnaPreset'}               | ${false}        | ${false}          | ${false}  | ${false}
+    type                         | naturalAnalogue | modificationTypes | helmAlias | bilnAlias | axoLabsAlias
+    ${KetMonomerClass.CHEM}      | ${false}        | ${false}          | ${true}   | ${true}   | ${true}
+    ${KetMonomerClass.AminoAcid} | ${true}         | ${true}           | ${true}   | ${true}   | ${false}
+    ${KetMonomerClass.Sugar}     | ${false}        | ${false}          | ${true}   | ${false}  | ${false}
+    ${KetMonomerClass.Base}      | ${true}         | ${false}          | ${true}   | ${false}  | ${false}
+    ${KetMonomerClass.Phosphate} | ${false}        | ${false}          | ${true}   | ${false}  | ${true}
+    ${KetMonomerClass.RNA}       | ${true}         | ${false}          | ${false}  | ${false}  | ${true}
+    ${'rnaPreset'}               | ${false}        | ${false}          | ${false}  | ${false}  | ${false}
   `(
     'returns supported properties for $type',
-    ({ type, naturalAnalogue, modificationTypes, helmAlias, bilnAlias }) => {
+    ({
+      type,
+      naturalAnalogue,
+      modificationTypes,
+      helmAlias,
+      bilnAlias,
+      axoLabsAlias,
+    }) => {
       expect(getMonomerPropertyVisibility(type)).toEqual({
         displayNaturalAnalogue: naturalAnalogue,
         displayModificationTypes: modificationTypes,
-        displayAliases: helmAlias || bilnAlias,
         displayHelmAlias: helmAlias,
         displayBilnAlias: bilnAlias,
+        displayAxoLabsAlias: axoLabsAlias,
       });
     },
   );
@@ -166,5 +179,56 @@ describe('library edit field uniqueness', () => {
     expect(getOtherLibraryMonomers([original, other], { ...original })).toEqual(
       [other],
     );
+  });
+});
+
+describe('hasAxoLabsAliasCollision', () => {
+  const monomer = (aliasAxoLabs?: string): MonomerItemType => ({
+    label: 'A',
+    struct: new Struct(),
+    props: {
+      Name: 'Alanine',
+      MonomerNaturalAnalogCode: 'A',
+      MonomerName: 'A',
+      MonomerClass: KetMonomerClass.CHEM,
+      aliasAxoLabs,
+    },
+  });
+  const emptyJson: IKetMacromoleculesContent = {
+    root: { nodes: [], connections: [], templates: [] },
+  };
+  const parsedJson = {
+    root: { templates: [{ $ref: 'monomerGroupTemplate-X' }] },
+    'monomerGroupTemplate-X': {
+      type: 'monomerGroupTemplate',
+      aliasAxoLabs: 'preset1',
+    },
+    'monomerTemplate-Y': { type: 'monomerTemplate', aliasAxoLabs: 'notPreset' },
+  } as unknown as IKetMacromoleculesContent;
+
+  it('finds a monomer with the same alias, ignoring brackets', () => {
+    expect(hasAxoLabsAliasCollision([monomer('abc')], emptyJson, '(abc)')).toBe(
+      true,
+    );
+    expect(hasAxoLabsAliasCollision([monomer('(abc)')], emptyJson, 'abc')).toBe(
+      true,
+    );
+  });
+
+  it('finds a preset with the same alias', () => {
+    expect(hasAxoLabsAliasCollision([], parsedJson, '(preset1)')).toBe(true);
+  });
+
+  it('is case-sensitive', () => {
+    expect(hasAxoLabsAliasCollision([monomer('abc')], emptyJson, 'ABC')).toBe(
+      false,
+    );
+    expect(hasAxoLabsAliasCollision([], parsedJson, 'PRESET1')).toBe(false);
+  });
+
+  it('reports no collision for unused aliases and monomers without one', () => {
+    expect(
+      hasAxoLabsAliasCollision([monomer(), monomer('x')], parsedJson, 'abc'),
+    ).toBe(false);
   });
 });

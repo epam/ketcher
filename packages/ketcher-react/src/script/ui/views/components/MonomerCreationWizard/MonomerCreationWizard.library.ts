@@ -7,6 +7,7 @@ import {
   type MonomerItemType,
   provideEditorInstance,
   SettingsManager,
+  areAxoLabsAliasesEqual,
 } from 'ketcher-core';
 import type { FinishNewMonomersCreationData } from '../../../../editor/Editor';
 import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utils';
@@ -52,13 +53,14 @@ export const saveLibraryMonomer = async (
     ...(originalMonomerTemplate ? { id: originalMonomerTemplate.id } : {}),
   };
   if (originalMonomerTemplate) {
-    const { displayHelmAlias, displayBilnAlias } = getMonomerPropertyVisibility(
-      template.class,
-    );
+    const { displayHelmAlias, displayBilnAlias, displayAxoLabsAlias } =
+      getMonomerPropertyVisibility(template.class);
     if (!displayHelmAlias)
       template.aliasHELM = originalMonomerTemplate.aliasHELM;
     if (!displayBilnAlias)
       template.aliasBILN = originalMonomerTemplate.aliasBILN;
+    if (!displayAxoLabsAlias)
+      template.aliasAxoLabs = originalMonomerTemplate.aliasAxoLabs;
   } else {
     /*
      * Saving as a new entry keeps the original in the library, so the new
@@ -71,6 +73,16 @@ export const saveLibraryMonomer = async (
     }
     if (template.aliasBILN === editedMonomerTemplate?.aliasBILN) {
       delete template.aliasBILN;
+    }
+    // Brackets are not part of the alias identity, so `(p)` equals stored `p`.
+    if (
+      template.aliasAxoLabs !== undefined &&
+      areAxoLabsAliasesEqual(
+        template.aliasAxoLabs,
+        editedMonomerTemplate?.aliasAxoLabs,
+      )
+    ) {
+      delete template.aliasAxoLabs;
     }
   }
   const ref = originalRef ?? data.monomerRef;

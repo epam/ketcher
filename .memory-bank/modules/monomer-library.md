@@ -21,7 +21,7 @@ Load, cache, validate, merge, and serve monomer templates and RNA presets so use
 
 ## Data model
 
-- **Monomer item** — the template form of a monomer: a label, a `Struct`, optional attachment points, and a props bag (monomer name, monomer class, natural-analogue code, HELM/BILN/IDT aliases, modification types, and flags such as `isMicromoleculeFragment` and `hidden`).
+- **Monomer item** — the template form of a monomer: a label, a `Struct`, optional attachment points, and a props bag (monomer name, monomer class, natural-analogue code, HELM/BILN/IDT/AxoLabs aliases, modification types, and flags such as `isMicromoleculeFragment` and `hidden`).
 - **Ambiguous monomer** — an id plus a set of member monomers, a subtype, options, and an `isAmbiguous` flag.
 - **Attachment points** — named `R1`–`R8`. Each name maps to either a polymer bond, a monomer-to-atom bond, or nothing.
 

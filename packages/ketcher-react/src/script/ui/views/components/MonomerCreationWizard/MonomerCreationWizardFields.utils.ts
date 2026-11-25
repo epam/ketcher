@@ -1,5 +1,8 @@
 import {
+  type IKetMacromoleculesContent,
   isAmbiguousMonomerLibraryItem,
+  KetTemplateType,
+  areAxoLabsAliasesEqual,
   KetMonomerClass,
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -25,13 +28,17 @@ export const getMonomerPropertyVisibility = (
     type === KetMonomerClass.CHEM;
   const shouldDisplayBilnAlias =
     type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
+  const shouldDisplayAxoLabsAlias =
+    type === KetMonomerClass.RNA ||
+    type === KetMonomerClass.CHEM ||
+    type === KetMonomerClass.Phosphate;
 
   return {
     displayNaturalAnalogue: shouldDisplayNaturalAnalogue,
     displayModificationTypes: shouldDisplayModificationTypes,
-    displayAliases: shouldDisplayHelmAlias || shouldDisplayBilnAlias,
     displayHelmAlias: shouldDisplayHelmAlias,
     displayBilnAlias: shouldDisplayBilnAlias,
+    displayAxoLabsAlias: shouldDisplayAxoLabsAlias,
   };
 };
 
@@ -120,6 +127,29 @@ export const hasMonomerFieldCollision = (
       (props.MonomerName === value || props.aliasHELM === value)
     );
   });
+};
+
+/*
+ * An AxoLabs alias is unique across the whole library, brackets ignored,
+ * and every position it can be written in (monomer or RNA preset) counts.
+ * The caller passes the library without the monomer being edited.
+ */
+export const hasAxoLabsAliasCollision = (
+  library: MonomerItemType[],
+  monomersLibraryParsedJson: IKetMacromoleculesContent,
+  alias: string,
+) => {
+  const matches = (other: string | undefined) =>
+    areAxoLabsAliasesEqual(other, alias);
+
+  return (
+    library.some(({ props }) => matches(props.aliasAxoLabs)) ||
+    Object.values(monomersLibraryParsedJson).some(
+      (template) =>
+        template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        matches(template.aliasAxoLabs),
+    )
+  );
 };
 
 export const isValidMonomerName = (name: string, initialName?: string) =>

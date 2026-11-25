@@ -46,6 +46,7 @@ export type MonomerCreationInitialValues = {
   naturalAnalogue: string;
   aliasHELM: string;
   aliasBILN: string;
+  aliasAxoLabs: string;
   position?: Vec2;
   editMode?: 'instance' | 'all';
   libraryOnly?: boolean;

@@ -323,9 +323,11 @@ describe('History across molecule and macromolecule modes', () => {
         naturalAnalogue: '',
         aliasHELM: '',
         aliasBILN: '',
+        aliasAxoLabs: '(AxoX)',
         structure,
         attachmentPoints: monomerCreationState.assignedAttachmentPoints,
       });
+      expect(monomerData.monomerTemplate.aliasAxoLabs).toBe('(AxoX)');
       micro.finishNewMonomersCreation([
         {
           ...monomerData,

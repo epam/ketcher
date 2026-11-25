@@ -38,7 +38,7 @@ const getInitialValues = (
     'position' in monomer && monomer.position
       ? { position: new Vec2(monomer.position) }
       : {};
-  const { displayHelmAlias, displayBilnAlias } =
+  const { displayHelmAlias, displayBilnAlias, displayAxoLabsAlias } =
     getMonomerPropertyVisibility(type);
 
   return {
@@ -48,6 +48,10 @@ const getInitialValues = (
     naturalAnalogue,
     aliasHELM: displayHelmAlias ? getValue(props.aliasHELM) : '',
     aliasBILN: displayBilnAlias ? getValue(props.aliasBILN) : '',
+    aliasAxoLabs:
+      displayAxoLabsAlias && !shouldAppendCopySuffix
+        ? (props.aliasAxoLabs ?? '')
+        : '',
     originalType: type,
     originalSymbol: symbol,
     ...position,

@@ -718,7 +718,11 @@ test(`14. Check that the option + Add HELM alias appears only after monomer type
   await createMonomerDialog.selectType(MonomerType.Phosphate);
   await expect(createMonomerDialog.aliasesSection).toBeVisible();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+  // Nucleotide shows the Aliases section for its AxoLabs alias (#7929), but no HELM alias
+  await createMonomerDialog.expandAliasesSection();
+  await expect(
+    createMonomerDialog.aliasesSection.helmAliasEditbox,
+  ).not.toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
   await expect(createMonomerDialog.aliasesSection).toBeVisible();
   await createMonomerDialog.discard();
@@ -956,7 +960,10 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+  await createMonomerDialog.expandAliasesSection();
+  await expect(
+    createMonomerDialog.aliasesSection.helmAliasEditbox,
+  ).not.toBeVisible();
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await createMonomerDialog.submit({ ignoreWarning: true });
 

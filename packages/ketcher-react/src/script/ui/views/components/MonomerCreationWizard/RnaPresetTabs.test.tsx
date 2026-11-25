@@ -61,7 +61,9 @@ vi.mock('./MonomerCreationWizardFields', () => ({
     assignedAttachmentPoints,
     readonlyAttachmentPoints,
     attachmentPointsExtra,
+    showAxoLabsAlias,
   }: {
+    showAxoLabsAlias?: boolean;
     assignedAttachmentPoints?: Map<string, [number, number]>;
     readonlyAttachmentPoints?: Array<{ name: string }>;
     attachmentPointsExtra?: ReactNode;
@@ -74,6 +76,7 @@ vi.mock('./MonomerCreationWizardFields', () => ({
           ...(readonlyAttachmentPoints?.map(({ name }) => name) ?? []),
         ].join(',')}
       </div>
+      <div data-testid="show-axolabs-alias">{String(showAxoLabsAlias)}</div>
       {attachmentPointsExtra}
     </div>
   ),
@@ -175,6 +178,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
       naturalAnalogue: '',
       aliasHELM: '',
       aliasBILN: '',
+      aliasAxoLabs: '',
     },
     errors: {},
     notifications: new Map(),
@@ -188,6 +192,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
       naturalAnalogue: '',
       aliasHELM: '',
       aliasBILN: '',
+      aliasAxoLabs: '',
     },
     errors: {},
     notifications: new Map(),
@@ -201,6 +206,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
       naturalAnalogue: '',
       aliasHELM: '',
       aliasBILN: '',
+      aliasAxoLabs: '',
     },
     errors: {},
     notifications: new Map(),
@@ -905,6 +911,31 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
     expect(screen.queryByText('R1')).not.toBeInTheDocument();
     expect(screen.queryByText('R3')).not.toBeInTheDocument();
+  });
+
+  it('hides the AxoLabs alias on the component tabs', () => {
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    [
+      'nucleotide-sugar-tab',
+      'nucleotide-base-tab',
+      'nucleotide-phosphate-tab',
+    ].forEach((tabId) => {
+      fireEvent.click(screen.getByTestId(tabId));
+      expect(screen.getByTestId('show-axolabs-alias')).toHaveTextContent(
+        'false',
+      );
+    });
   });
 });
 

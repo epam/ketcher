@@ -48,6 +48,11 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
 
 let page: Page;
 
@@ -979,5 +984,57 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 21 }), {
       padding: 200,
     });
+  });
+
+  test('Case 26 — Refactor: Replace draft-js and draft-js-custom-styles package with lexical package', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/9109
+     * Description: Refactor: Replace draft-js and draft-js-custom-styles package with lexical package
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Select the Text tool and click on the canvas to open the text editor dialog
+     * 3. Type some text, apply bold formatting
+     * 4. Apply italic formatting
+     * 5. Apply superscript formatting
+     * 6. Apply subscript formatting
+     * 7. Change font size
+     * 8. Apply and verify the text with formatting is rendered on the canvas
+     * 9. Double-click the text label to reopen the editor and verify the dialog opens without errors
+     *
+     * Version 3.15.0
+     */
+    await addTextBoxToCanvas(page);
+    const dialog = TextEditorDialog(page);
+
+    await dialog.clickTextBoldButton();
+    await dialog.addText('Bold');
+    await dialog.clickTextBoldButton();
+
+    await dialog.clickTextItalicButton();
+    await dialog.addText('Italic');
+    await dialog.clickTextItalicButton();
+
+    await dialog.clickTextSuperscriptButton();
+    await dialog.addText('Super');
+    await dialog.clickTextSuperscriptButton();
+
+    await dialog.clickTextSubscriptButton();
+    await dialog.addText('Sub');
+    await dialog.clickTextSubscriptButton();
+
+    await dialog.selectFontSize(24);
+    await dialog.apply();
+
+    const textLabel = getTextLabelLocator(page, {}).first();
+    await expect(textLabel).toBeVisible();
+    await takeEditorScreenshot(page);
+
+    await textLabel.dblclick();
+    await expect(dialog.textEditor).toBeVisible();
+    await dialog.cancel();
   });
 });

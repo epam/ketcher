@@ -8,10 +8,10 @@ export const BILN_ALIAS_FORMAT_ERROR_MESSAGE =
   'The BILN alias must consist only of uppercase and lowercase letters, numbers, hyphens (`-`), underscores (`_`), and asterisks (`*`).';
 
 export const AXOLABS_ALIAS_FORMAT_ERROR_MESSAGE =
-  'The AxoLabs alias must consist of uppercase and lowercase letters, numbers, and brackets (( and )) (spaces prohibited).';
+  'The AxoLabs alias must consist of uppercase and lowercase letters, numbers, and brackets (`(` and `)`) (spaces prohibited).';
 
 export const AXOLABS_ALIAS_BRACKET_ERROR_MESSAGE =
-  'The open bracket (() can only be the first and the closed bracket ()) last character of an AxoLabs alias.';
+  'The open bracket (`(`) can only be the first and the closed bracket (`)`) last character of an AxoLabs alias.';
 
 export const AXOLABS_ALIAS_MAX_LENGTH = 6;
 

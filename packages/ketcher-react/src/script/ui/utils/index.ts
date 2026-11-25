@@ -42,7 +42,9 @@ type EnumSchemaLike = { enum?: unknown; enumNames?: unknown };
 export function greekify(str: string): string {
   return str
     .split(/\b/)
-    .map((part) => GREEK_SIMBOLS[part] ?? part)
+    .map((part) =>
+      Object.hasOwn(GREEK_SIMBOLS, part) ? GREEK_SIMBOLS[part] : part,
+    )
     .join('');
 }
 
@@ -58,11 +60,14 @@ export function filterLib(lib: Template[], filter: string): TemplateGroups {
         (!!item.props.abbreviation &&
           re.test(greekify(item.props.abbreviation))),
     ),
-    reduce((res: TemplateGroups, item: Template) => {
-      if (res[item.props.group]) res[item.props.group].push(item);
-      else res[item.props.group] = [item];
-      return res;
-    }, {} as TemplateGroups),
+    reduce(
+      (res: TemplateGroups, item: Template) => {
+        if (res[item.props.group]) res[item.props.group].push(item);
+        else res[item.props.group] = [item];
+        return res;
+      },
+      Object.create(null) as TemplateGroups,
+    ),
   )(lib);
 }
 
@@ -79,11 +84,14 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
   };
   return flow(
     _filter((item: Template) => !trimmedFilter || searchFunction(item)),
-    reduce((res: TemplateGroups, item: Template) => {
-      if (res[item.props.group]) res[item.props.group].push(item);
-      else res[item.props.group] = [item];
-      return res;
-    }, {} as TemplateGroups),
+    reduce(
+      (res: TemplateGroups, item: Template) => {
+        if (res[item.props.group]) res[item.props.group].push(item);
+        else res[item.props.group] = [item];
+        return res;
+      },
+      Object.create(null) as TemplateGroups,
+    ),
   )(lib);
 }
 

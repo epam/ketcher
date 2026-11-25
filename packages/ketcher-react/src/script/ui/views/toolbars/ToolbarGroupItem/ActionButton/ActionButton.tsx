@@ -12,8 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ***************************************************************************/
+ ****************************************************************************/
 
+import type { ReactNode } from 'react';
 import type { UiAction, UiActionAction } from '../../../../action';
 import { resolveActionTitle } from '../../../../action/resolveActionTitle';
 
@@ -35,6 +36,9 @@ interface ActionButtonProps {
   indigoVerification: boolean;
   className?: string;
   dataTestId?: string;
+  showShortcut?: boolean;
+  title?: string;
+  customIcon?: ReactNode;
 }
 
 interface ActionButtonCallProps {
@@ -54,6 +58,9 @@ const ActionButton = (props: Props) => {
     className,
     onAction,
     dataTestId,
+    customIcon,
+    showShortcut = true,
+    title: titleOverride,
   } = props;
   const { t } = useTranslation();
 
@@ -61,11 +68,12 @@ const ActionButton = (props: Props) => {
     return null;
   }
 
-  const shortcut = shortcutStr(action?.shortcut);
+  const shortcut = showShortcut ? shortcutStr(action?.shortcut) : '';
+
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
-  const title = resolveActionTitle(t, action);
+  const title = titleOverride ?? resolveActionTitle(t, action);
 
   const handleClick = () => {
     if (action?.action) {
@@ -87,7 +95,8 @@ const ActionButton = (props: Props) => {
         className,
       )}
     >
-      <Icon name={name} />
+      {customIcon ?? <Icon name={name} />}
+
       <kbd>{shortcut}</kbd>
     </button>
   );

@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ***************************************************************************/
+ ****************************************************************************/
 
 import {
   type BottomToolbarCallProps,
@@ -27,6 +27,7 @@ import { onAction } from '../../../state';
 
 type StateProps = Omit<BottomToolbarProps, 'className'>;
 type OwnProps = Pick<BottomToolbarProps, 'className'>;
+
 const disableableButtons = [];
 
 const mapStateToProps = (state): StateProps => ({
@@ -35,10 +36,17 @@ const mapStateToProps = (state): StateProps => ({
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,
+
+  /*
+   * Pass the current Ketcher template library
+   * to the BottomToolbar.
+   */
+  templates: state.templates?.lib ?? [],
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): BottomToolbarCallProps => ({
   onAction: (action) => dispatch(onAction(action)),
+
   onOpen: (menuName, isSelected) =>
     dispatch({
       type: 'OPENED',

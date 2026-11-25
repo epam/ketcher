@@ -24,8 +24,23 @@
   padding: 0 6px 6px;
   overflow: visible;
 
+  .group {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .templates {
+    .scrollbar();
+
+    display: flex;
+    min-width: 0;
+    margin-bottom: 0;
+    overflow: auto hidden;
+  }
+
   // TODO: change action button style, when all button will have same styling
   button {
+    flex-shrink: 0;
     margin: 4px;
     width: 28px;
     height: 28px;

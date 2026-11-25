@@ -5,6 +5,7 @@
 
 import { Octokit } from '@octokit/rest';
 import { execa } from 'execa';
+import { LINKED_ISSUES_QUERY, linkedIssueRefs } from '../linked-issues.mjs';
 import { redact, secretValues } from './redact.mjs';
 
 /**
@@ -18,25 +19,7 @@ import { redact, secretValues } from './redact.mjs';
  * @property {string[]} labels
  */
 
-/**
- * An issue that the pull request closes, with its GitHub issue type.
- * @typedef {{ number: number, type: string | null }} LinkedIssueRef
- */
-
-/**
- * The same query as dangerfile.ts, so the hub and Danger agree on the link.
- * REST has no field for the issues a pull request closes.
- */
-const LINKED_ISSUES = `
-  query ($owner: String!, $repo: String!, $number: Int!) {
-    repository(owner: $owner, name: $repo) {
-      pullRequest(number: $number) {
-        closingIssuesReferences(first: 20) {
-          nodes { number issueType { name } }
-        }
-      }
-    }
-  }`;
+/** @typedef {import('../linked-issues.mjs').LinkedIssueRef} LinkedIssueRef */
 
 /**
  * The token for the GitHub API: GITHUB_TOKEN in CI, or the token of the
@@ -123,16 +106,16 @@ export function createGitHub({
      * @returns {Promise<LinkedIssueRef[]>}
      */
     async linkedIssues(number) {
-      const data = await octokit.graphql(LINKED_ISSUES, {
+      const data = await octokit.graphql(LINKED_ISSUES_QUERY, {
         owner,
         repo,
         number,
       });
-      const { nodes } = data.repository.pullRequest.closingIssuesReferences;
-      return nodes.map((issue) => ({
-        number: issue.number,
-        type: issue.issueType?.name ?? null,
-      }));
+      return linkedIssueRefs(
+        /** @type {import('../linked-issues.mjs').LinkedIssuesResponse} */ (
+          data
+        ),
+      );
     },
 
     /**

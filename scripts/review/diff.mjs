@@ -13,13 +13,15 @@ import { formatPatch, parsePatch } from 'diff';
  *   binary: boolean,
  *   additions: number,
  *   deletions: number,
+ *   added: string[],
  *   commentableLines: Set<number>,
  *   patch: string,
  * }} DiffFile
- * `commentableLines` holds the lines of the new version that GitHub takes a
- * review comment on: added and context lines inside a hunk. `patch` is the
- * file's part of the diff as text, so the hub can pass on a diff without the
- * skipped files.
+ * `added` holds the text of the added lines, without the `+`: the review panel
+ * matches its triggers against it. `commentableLines` holds the lines of the
+ * new version that GitHub takes a review comment on: added and context lines
+ * inside a hunk. `patch` is the file's part of the diff as text, so the hub
+ * can pass on a diff without the skipped files.
  */
 
 // Helpers
@@ -38,16 +40,21 @@ function fileStatus(patch) {
   return 'modified';
 }
 
-/** Counts added and removed lines, and collects the commentable lines. */
+/**
+ * Counts added and removed lines, and collects the added text and the
+ * commentable lines.
+ */
 function countLines(hunks) {
   let additions = 0;
   let deletions = 0;
+  const added = [];
   const commentableLines = new Set();
   for (const hunk of hunks) {
     let newLine = hunk.newStart;
     for (const line of hunk.lines) {
       if (line.startsWith('+')) {
         additions++;
+        added.push(line.slice(1));
         commentableLines.add(newLine++);
       } else if (line.startsWith('-')) {
         deletions++;
@@ -56,7 +63,7 @@ function countLines(hunks) {
       }
     }
   }
-  return { additions, deletions, commentableLines };
+  return { additions, deletions, added, commentableLines };
 }
 
 /** @returns {DiffFile} */

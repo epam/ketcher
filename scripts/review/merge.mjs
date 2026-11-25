@@ -198,15 +198,3 @@ export function rankAndCap(findings, limit = MAX_VERIFIED_FINDINGS) {
   );
   return { toVerify: ranked.slice(0, limit), overflow: ranked.slice(limit) };
 }
-
-/**
- * The findings of one round, ready for verification.
- * @param {LensFinding[]} findings every finding of every finder pass
- * @param {{ posted?: string[], limit?: number }} [options]
- *   `posted`: fingerprints from the marker of earlier rounds;
- *   `limit`: at most this many go to verification
- */
-export function prepareFindings(findings, { posted = [], limit } = {}) {
-  const { fresh, noScenario, alreadyPosted } = freshFindings(findings, posted);
-  return { ...rankAndCap(fresh, limit), noScenario, alreadyPosted };
-}

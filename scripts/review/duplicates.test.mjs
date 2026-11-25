@@ -47,6 +47,18 @@ test('only close findings in the same file become pairs, up to the cap', () => {
   assert.equal(candidatePairs(findings, { cap: 2 }).length, 2);
 });
 
+test('pairs of two findings compared before are not asked again', () => {
+  const findings = [
+    finding({ line: 10 }),
+    finding({ line: 11 }),
+    finding({ line: 12 }),
+  ];
+  assert.deepEqual(candidatePairs(findings, { known: 2 }), [
+    { first: 0, second: 2 },
+    { first: 1, second: 2 },
+  ]);
+});
+
 test('the input numbers the findings from 1 and marks them as data', () => {
   const input = duplicatesInput([xss, xssAgain], [{ first: 0, second: 1 }]);
   assert.equal(input, fixture('duplicates-input.md').trimEnd());

@@ -8,7 +8,7 @@ const diffOf = (path, added = []) =>
     'index 1111111..2222222 100644',
     `--- a/${path}`,
     `+++ b/${path}`,
-    '@@ -1,1 +1,2 @@',
+    `@@ -1,1 +1,${1 + added.length} @@`,
     ' unchanged',
     ...added.map((line) => `+${line}`),
   ].join('\n');
@@ -29,6 +29,26 @@ test('parseDiff keeps the new path of a rename and only lines added in hunks', (
     '+after',
   ].join('\n');
   assert.deepEqual(parseDiff(diff), [{ path: 'new.ts', added: ['after'] }]);
+});
+
+test('a source file whose name git quotes gets its lenses', () => {
+  // git quotes a path with non-ASCII characters and escapes them in octal.
+  const diff = [
+    'diff --git "a/packages/ketcher-core/src/\\303\\251.ts" "b/packages/ketcher-core/src/\\303\\251.ts"',
+    'index 1111111..2222222 100644',
+    '--- "a/packages/ketcher-core/src/\\303\\251.ts"',
+    '+++ "b/packages/ketcher-core/src/\\303\\251.ts"',
+    '@@ -1 +1,2 @@',
+    ' unchanged',
+    '+const label = atom.label;',
+  ].join('\n');
+  assert.deepEqual(parseDiff(diff), [
+    {
+      path: 'packages/ketcher-core/src/é.ts',
+      added: ['const label = atom.label;'],
+    },
+  ]);
+  assert.deepEqual(lensesFor(diff), ['correctness', 'reuse', 'code-quality']);
 });
 
 test('a diff of skills and docs outside the memory bank gets no lens', () => {

@@ -97,7 +97,7 @@ export const Library = (page: Page) => {
     },
 
     async showLibrary() {
-      if (!(await locators.showLibraryButton.isVisible())) {
+      if (await locators.showLibraryButton.isHidden()) {
         return;
       }
 

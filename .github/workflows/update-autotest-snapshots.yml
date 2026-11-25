@@ -2,7 +2,8 @@ name: Update Autotest Snapshots
 
 # A person adds the `Update snapshots` label to a PR after reading its specs,
 # because the job runs the spec code. The job creates only the missing
-# screenshot baselines, in the same Playwright container as CI, and commits them.
+# screenshot baselines and the missing expected files of the specs, in the same
+# Playwright container as CI, and commits them.
 on:
   pull_request:
     types: [labeled]
@@ -27,6 +28,11 @@ env:
   IGNORE_UNSTABLE_TESTS: true
   CI_ENVIRONMENT: true
   USE_SEPARATE_INDIGO_WASM: true
+  # The paths a run may commit. The expected file extensions are the ones the
+  # specs use: the FileType values in
+  # ketcher-autotests/tests/utils/files/receiveFileComparisonData.ts.
+  BASELINE_PATTERN: '^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$'
+  EXPECTED_FILE_PATTERN: '^ketcher-autotests/tests/test-data/.+\.(ket|cdx|cdxml|smarts|smi|cxsmi|mol|rxn|cml|sdf|inchi|rdf|idt|seq|fasta)$'
 
 jobs:
   changed_specs:
@@ -139,8 +145,8 @@ jobs:
           CI_ENVIRONMENT=$CI_ENVIRONMENT
           USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
           EOF
-      # A failing test does not stop the job: the missing baselines are still written.
-      - name: Run the changed specs and write missing baselines
+      # A failing test does not stop the job: the missing baselines and expected files are still written.
+      - name: Run the changed specs and write missing baselines and expected files
         env:
           POPUP_SPECS: ${{ needs.changed_specs.outputs.popup }}
           FULLSCALE_SPECS: ${{ needs.changed_specs.outputs.fullscale }}
@@ -163,18 +169,23 @@ jobs:
           if [ "${#fullscale[@]}" -gt 0 ]; then
             npx playwright test --project=chromium --update-snapshots=missing "${fullscale[@]}" || true
           fi
-      - name: Collect the new baselines
+      # Only untracked files: saveToFile also rewrites the existing expected
+      # files, and those must stay as they are.
+      - name: Collect the new baselines and expected files
         run: |
           git config --global --add safe.directory '*'
           mkdir -p new-snapshots
           # -z and quotePath=false keep file names with non-ASCII characters as they are.
           while IFS= read -r -d '' file; do
-            if [[ "$file" =~ ^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$ ]]; then
+            if [[ "$file" =~ $BASELINE_PATTERN || "$file" =~ $EXPECTED_FILE_PATTERN ]]; then
               mkdir -p "new-snapshots/$(dirname "$file")"
               cp "$file" "new-snapshots/$file"
+            elif [[ "$file" == ketcher-autotests/tests/test-data/* ]]; then
+              echo "Skipped, not an expected file type: $file"
             fi
           done < <(git -c core.quotePath=false ls-files -z --others --exclude-standard -- ketcher-autotests)
-          echo "New baselines: $(find new-snapshots -name '*.png' | wc -l)"
+          echo "New baselines: $(find new-snapshots -path 'new-snapshots/ketcher-autotests/tests/specs/*' -type f | wc -l)"
+          echo "New expected files: $(find new-snapshots -path 'new-snapshots/ketcher-autotests/tests/test-data/*' -type f | wc -l)"
       - name: Upload the new baselines
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -183,7 +194,8 @@ jobs:
           if-no-files-found: error
           retention-days: 5
 
-  # Commits only PNG files under ketcher-autotests/tests/specs/**-snapshots/.
+  # Commits only new PNG files under ketcher-autotests/tests/specs/**-snapshots/
+  # and new expected files under ketcher-autotests/tests/test-data/.
   commit_snapshots:
     needs: [changed_specs, create_snapshots]
     runs-on: ubuntu-latest
@@ -203,20 +215,32 @@ jobs:
         with:
           name: new-snapshots
           path: ${{ runner.temp }}/new-snapshots
-      - name: Copy only PNG baselines into the checkout
+      # The files come from a job that runs the PR's spec code, so check each one.
+      - name: Copy only baselines and expected files into the checkout
         env:
           SOURCE: ${{ runner.temp }}/new-snapshots
         run: |
+          # An empty pattern matches every path, so stop if one is missing.
+          : "${BASELINE_PATTERN:?}" "${EXPECTED_FILE_PATTERN:?}"
           cd "$SOURCE"
           while IFS= read -r -d '' file; do
             file="${file#./}"
-            if [[ ! "$file" =~ ^ketcher-autotests/tests/specs/.+-snapshots/[^/]+\.png$ ]] \
-              || [[ "$file" =~ (^|/)\.\.(/|$) ]]; then
-              echo "Not a baseline path: $file" >&2
+            if [[ "$file" =~ (^|/)\.\.(/|$) ]]; then
+              echo "Not a baseline or expected file path: $file" >&2
               exit 1
             fi
-            if [ "$(head -c 8 "$file" | od -An -tx1 | tr -d ' \n')" != "89504e470d0a1a0a" ]; then
-              echo "Not a PNG file: $file" >&2
+            if [[ "$file" =~ $BASELINE_PATTERN ]]; then
+              if [ "$(head -c 8 "$file" | od -An -tx1 | tr -d ' \n')" != "89504e470d0a1a0a" ]; then
+                echo "Not a PNG file: $file" >&2
+                exit 1
+              fi
+            elif [[ "$file" =~ $EXPECTED_FILE_PATTERN ]]; then
+              if [ -e "$GITHUB_WORKSPACE/$file" ]; then
+                echo "The expected file already exists on the PR branch: $file" >&2
+                exit 1
+              fi
+            else
+              echo "Not a baseline or expected file path: $file" >&2
               exit 1
             fi
             mkdir -p "$GITHUB_WORKSPACE/$(dirname "$file")"
@@ -230,15 +254,15 @@ jobs:
           BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          git add -A -- ketcher-autotests/tests/specs
+          git add -A -- ketcher-autotests/tests/specs ketcher-autotests/tests/test-data
           if git diff --cached --quiet; then
-            echo "No new baselines to commit."
+            echo "No new baselines or expected files to commit."
             exit 0
           fi
           git diff --cached --name-only
           git -c user.name="github-actions[bot]" \
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -m "${PR_TITLE}" -m "Add the missing screenshot baselines."
+            commit -m "${PR_TITLE}" -m "Add the missing screenshot baselines and expected files."
           git push "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" "HEAD:refs/heads/${BRANCH_NAME}"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
       # The pull_request runs of a GITHUB_TOKEN push wait for approval, so start the test runs here.

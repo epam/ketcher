@@ -22,7 +22,7 @@ See proposal.md for the motivation and specs/macromolecules/spec.md for the beha
 - Position checkboxes (5', internal, 3') and a per-position storage format.
 - Validating `aliasAxoLabs` when an external monomer library is loaded. The editor's library-update validation is left as it is.
 - AxoLabs aliases in the wizard's RNA preset mode, on the preset or on its components. #8248 lists them as optional, and they are left for a follow-up.
-- Searching the library by a new AxoLabs alias. Library search already matches preset AxoLabs aliases and is unchanged.
+- Searching the library by a new AxoLabs alias. Library search already matches the AxoLabs aliases of monomers and presets and is unchanged.
 
 ## Decisions
 
@@ -39,7 +39,7 @@ The alias stays a single string that applies to every position.
 The field sits next to HELM and BILN. An empty field means no alias, and clearing it removes the alias.
 
 - **Why:** the issue's UX section is "TBD", and the HELM and BILN aliases already use plain fields. A plain field satisfies add, remove, and collapse with no new control.
-- **Evidence:** the IDT alias PR #10510 (#7863, whose requirements also ask for an `+ Add` button and a collapsible section) aligned with the design by placing plain IDT fields inside the _Aliases_ section, as its screenshots show. The AxoLabs field goes below the IDT fields.
+- **Evidence:** the IDT alias PR #10510 (#7863, whose requirements also ask for an `+ Add` button and a collapsible section) aligned with the design by placing plain IDT fields inside the _Aliases_ section, as its screenshots show. The AxoLabs field goes after the BILN field.
 - **Alternative:** an add button that reveals the field. Kept as a markup-only change if UX asks for it later.
 
 ### Field hidden on RNA preset component tabs
@@ -52,10 +52,11 @@ The preset tabs render the same fields component as the single-monomer wizard, s
 
 Add to the alias utilities, next to the HELM and BILN ones:
 
-- the three message constants and the maximum length of 6;
+- the three format message constants (the uniqueness message is an i18n string in the wizard) and the maximum length of 6;
 - a function that returns which format rule an alias breaks, checked in the order characters, bracket placement, length;
 - a function that strips one leading `(` and one trailing `)`;
-- a function that wraps the stripped value in brackets.
+- a function that wraps the stripped value in brackets;
+- a function that normalizes the typed value for saving, used by both save paths.
 
 An alias of only brackets, such as `()`, breaks the length rule, because its value without brackets is empty.
 
@@ -70,7 +71,7 @@ The wizard collects the stripped AxoLabs aliases of every library monomer except
 
 ### Brackets added on save
 
-The wizard passes the bracket-wrapped value to the editor's save call. The field keeps what the user typed until then.
+The wizard passes the normalized value to the editor's save call. The field keeps what the user typed until then. The normalization trims the value; a blank value means no alias; a value equal, brackets ignored, to the alias the form was loaded with keeps that alias as stored, so editing the default phosphate `P` keeps `p` and does not rewrite it to `(p)`; any other value is wrapped in brackets.
 
 - **Why:** requirement 1.7 of the issue. The bracketed form is always a single AxoLabs token. Indigo parses symbols without brackets only from a fixed list (epam/Indigo#3152, requirement 5) and loads an unknown bracketed symbol as an unresolved monomer, so a custom alias is readable only in brackets. The analysis comment on the issue asks whether to add brackets only when needed. If the product owner chooses that, only the wrapping function changes.
 
@@ -82,7 +83,7 @@ The initial values for flows that append `_Copy` leave the AxoLabs alias empty. 
 
 ### Save path follows BILN
 
-When the edited library entry is kept (same code and type) and the new type has no AxoLabs field, the original alias is kept. When the save creates a new entry, an alias equal to the original's is dropped.
+When the edited library entry is kept (same code and type) and the new type has no AxoLabs field, the original alias is kept. When the save creates a new entry, an alias equal to the original's, brackets ignored, is dropped.
 
 ## Risks / Trade-offs
 

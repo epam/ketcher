@@ -25,7 +25,7 @@ None.
 
 ## Impact
 
-- **`packages/ketcher-react`**: the Monomer Creation Wizard's attributes panel, its validation on _Submit_, its initial values for edit and duplicate flows, and the save path to the library. Error message strings in the `en`, `es`, and `zh-CN` locales.
+- **`packages/ketcher-react`**: the Monomer Creation Wizard's attributes panel, its validation on _Submit_, its initial values for edit and duplicate flows, and the save path to the library. The AxoLabs label and the uniqueness error message in the `en`, `es`, and `zh-CN` locales.
 - **`packages/ketcher-core`**: AxoLabs alias format checks and bracket normalization next to the existing HELM and BILN alias utilities. The wizard's initial-values type gains the AxoLabs alias.
 - No change to the KET format, the monomer library file, the public `Ketcher` API, or Indigo. AxoLabs import and export already read `aliasAxoLabs` from the monomer library Ketcher passes to Indigo.
 - Overlaps the files of the open IDT alias PR #10510 (#7863). Whichever merges second resolves the conflicts.

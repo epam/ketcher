@@ -4,7 +4,7 @@
 
 ### Requirement: AxoLabs alias field in the monomer creation wizard
 
-The system SHALL show an optional AxoLabs alias field in the collapsible _Aliases_ section of the wizard's attributes panel only while the selected monomer type is Nucleotide, CHEM, or Phosphate. Changing the type to any other type SHALL clear the field and hide it, so that no AxoLabs alias is saved. The field SHALL NOT be shown on the component tabs of the RNA preset mode.
+The system SHALL show an optional AxoLabs alias field in the collapsible _Aliases_ section of the wizard's attributes panel only while the selected monomer type is Nucleotide, CHEM, or Phosphate. Any change of the monomer type SHALL clear the field, and the field is hidden for types that do not have it, so that no AxoLabs alias is saved for them. The field SHALL NOT be shown on the component tabs of the RNA preset mode.
 
 #### Scenario: Field shown for monomer types that have an AxoLabs alias
 
@@ -31,12 +31,12 @@ The system SHALL show an optional AxoLabs alias field in the collapsible _Aliase
 
 #### Scenario: Alias left empty or removed
 
-- **WHEN** the user leaves the AxoLabs alias field empty, or clears an alias that was loaded, and submits a valid monomer
+- **WHEN** the user leaves the AxoLabs alias field empty or containing only blank spaces, or clears an alias that was loaded, and submits a valid monomer
 - **THEN** the monomer is saved without an AxoLabs alias and no AxoLabs error is shown
 
 ### Requirement: AxoLabs alias format validation
 
-On _Submit_, the system SHALL reject an AxoLabs alias that contains anything other than letters, digits, `(`, and `)`; that has `(` anywhere but first or `)` anywhere but last; or that is longer than 6 characters without its brackets. Each failure SHALL show its own error message in the wizard's error area, and the monomer SHALL NOT be saved.
+On _Submit_, the system SHALL reject an AxoLabs alias that contains anything other than letters, digits, `(`, and `)`; that has `(` anywhere but first or `)` anywhere but last; or that is empty or longer than 6 characters without its brackets. Each failure SHALL show its own error message in the wizard's error area, and the monomer SHALL NOT be saved.
 
 #### Scenario: Characters outside the allowed set
 
@@ -50,17 +50,17 @@ On _Submit_, the system SHALL reject an AxoLabs alias that contains anything oth
 
 #### Scenario: Alias too long
 
-- **WHEN** the user submits the AxoLabs alias `ABCDEFG` or `(ABCDEFG)`
+- **WHEN** the user submits the AxoLabs alias `ABCDEFG`, `(ABCDEFG)`, or `()`
 - **THEN** the error "The maximum number of characters of an AxoLabs alias without brackets is 6." is shown
 
 #### Scenario: Valid aliases
 
-- **WHEN** the user submits the AxoLabs alias `p`, `dA`, `ABCDEF`, or `(invdA)` and it is unique
+- **WHEN** the user submits the AxoLabs alias `Xq`, `dA`, `ABCDEF`, or `(invdA)` and it is unique
 - **THEN** no AxoLabs error is shown
 
 ### Requirement: AxoLabs alias uniqueness
 
-On _Submit_, the system SHALL reject an AxoLabs alias that another library monomer or RNA preset already uses, comparing the aliases without their brackets and with case taken into account. The error "The AxoLabs alias for every position must be unique." SHALL be shown, and the monomer SHALL NOT be saved. Editing a library monomer without changing its alias SHALL NOT report a collision with itself.
+On _Submit_, the system SHALL reject an AxoLabs alias that another library monomer or RNA preset already uses, comparing the aliases without their brackets and with case taken into account. The error "The AxoLabs alias must be unique amongst nucleotide, CHEM and phosphate monomers and RNA presets." SHALL be shown, and the monomer SHALL NOT be saved. Editing a library monomer without changing its alias SHALL NOT report a collision with itself.
 
 #### Scenario: Alias used by a library monomer
 
@@ -99,7 +99,7 @@ The system SHALL highlight the AxoLabs alias field in red while any AxoLabs alia
 
 ### Requirement: AxoLabs alias saved with brackets
 
-The system SHALL save the AxoLabs alias wrapped in `(` and `)`, adding the brackets when the user did not type them and not doubling them when the user did.
+The system SHALL save the AxoLabs alias wrapped in `(` and `)`, adding the brackets when the user did not type them and not doubling them when the user did. An alias left unchanged from the one loaded for _Edit_, brackets ignored, SHALL be saved as stored. An alias that is empty or only blank spaces SHALL be saved as no alias.
 
 #### Scenario: Brackets added
 
@@ -111,6 +111,16 @@ The system SHALL save the AxoLabs alias wrapped in `(` and `)`, adding the brack
 
 - **WHEN** the user saves a monomer with the AxoLabs alias `(Xq)`
 - **THEN** the library monomer's AxoLabs alias is `(Xq)`
+
+#### Scenario: Unchanged alias saved as stored
+
+- **WHEN** the user chooses _Edit_ on the default phosphate `P`, whose AxoLabs alias is `p`, and saves it with the alias unchanged
+- **THEN** the library monomer's AxoLabs alias stays `p`
+
+#### Scenario: Alias of blank spaces
+
+- **WHEN** the user saves a monomer with an AxoLabs alias of only blank spaces
+- **THEN** the monomer is saved without an AxoLabs alias
 
 #### Scenario: Alias works in AxoLabs import and export
 
@@ -131,6 +141,12 @@ The system SHALL load a library monomer's stored AxoLabs alias when the user ope
 
 - **WHEN** the user opens a monomer with an AxoLabs alias through _Duplicate and Edit_, _Edit Monomer_, or _Edit All_ on the canvas
 - **THEN** the AxoLabs alias field is empty
+
+#### Scenario: New library entry drops the original's alias
+
+- **WHEN** the user saves an edited library monomer as a new library entry (its code or type changed) and the AxoLabs alias is unchanged from the original, brackets ignored
+- **THEN** the new entry has no AxoLabs alias
+- **AND** the original keeps its alias
 
 #### Scenario: Alias kept for a type without the field
 

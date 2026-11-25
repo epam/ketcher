@@ -88,7 +88,7 @@ export const Library = (page: Page) => {
     rnaBuilder,
 
     async hideLibrary() {
-      if (!(await locators.hideLibraryButton.isVisible())) {
+      if (await locators.hideLibraryButton.isHidden()) {
         return;
       }
 

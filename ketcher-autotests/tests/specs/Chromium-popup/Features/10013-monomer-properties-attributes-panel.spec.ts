@@ -809,16 +809,20 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
       page,
       ErrorMessage.invalidAxoLabsAlias,
     );
+    const axolabsAliasInput =
+      createMonomerDialog.aliasesSection.axolabsAliasInput;
     await expect(banner.notificationMessageBanner).toBeVisible();
-    expect(await createMonomerDialog.isAxoLabsAliasInvalid()).toBe(true);
+    await createMonomerDialog.expandAliasesSection();
+    await expect(axolabsAliasInput).toHaveAttribute('aria-invalid', 'true');
 
     await createMonomerDialog.setAxoLabsAlias('ab');
-    expect(await createMonomerDialog.isAxoLabsAliasInvalid()).toBe(true);
+    await expect(axolabsAliasInput).toHaveValue('ab');
+    await expect(axolabsAliasInput).toHaveAttribute('aria-invalid', 'true');
     await expect(banner.notificationMessageBanner).toBeVisible();
 
     await createMonomerDialog.submit();
     await expect(banner.notificationMessageBanner).not.toBeVisible();
-    expect(await createMonomerDialog.isAxoLabsAliasInvalid()).toBe(false);
+    await expect(axolabsAliasInput).not.toHaveAttribute('aria-invalid', 'true');
 
     await createMonomerDialog.discard();
   });

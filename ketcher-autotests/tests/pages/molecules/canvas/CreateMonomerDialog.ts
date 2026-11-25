@@ -517,15 +517,9 @@ export const CreateMonomerDialog = (page: Page) => {
 
     async setAxoLabsAlias(axolabsAlias: string) {
       await this.expandAliasesSection();
-      await this.clearAxoLabsAlias();
-      await aliasesSection.axolabsAliasEditbox.click();
-      await page.keyboard.type(axolabsAlias);
-    },
-
-    async isAxoLabsAliasInvalid() {
-      await this.expandAliasesSection();
-      const input = aliasesSection.axolabsAliasInput;
-      return (await input.getAttribute('aria-invalid')) === 'true';
+      const axolabsAliasInput = aliasesSection.axolabsAliasInput;
+      await axolabsAliasInput.fill(axolabsAlias);
+      await expect(axolabsAliasInput).toHaveValue(axolabsAlias);
     },
 
     async waitForTerminalIndicatorTooltip(

@@ -95,11 +95,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
     const updateContainerSize = (width: number, height: number) => {
       setContainerSize((previousSize) => {
-        if (previousSize?.width === width && previousSize.height === height) {
-          return previousSize;
-        }
-
-        return { width, height };
+        return previousSize?.width === width && previousSize.height === height
+          ? previousSize
+          : { width, height };
       });
     };
 

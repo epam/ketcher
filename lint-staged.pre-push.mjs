@@ -1,6 +1,6 @@
 // lint-staged config for the pre-push hook (.husky/pre-push). The hook runs it
-// on the files the branch changes against origin/master, and it runs the Jest
-// tests related to them, one Jest run per package.
+// on the files the branch changes against origin/master, and it runs the Vitest
+// tests related to them, one Vitest run per package.
 import path from 'node:path';
 
 const root = import.meta.dirname;
@@ -13,7 +13,7 @@ const relatedTests = (files) => {
   }
   return [...byPackage].map(
     ([pkg, pkgFiles]) =>
-      `npm run test:unit -w packages/${pkg} -- --passWithNoTests --findRelatedTests ${pkgFiles.join(' ')}`,
+      `npm run test:related -w packages/${pkg} -- ${pkgFiles.join(' ')}`,
   );
 };
 

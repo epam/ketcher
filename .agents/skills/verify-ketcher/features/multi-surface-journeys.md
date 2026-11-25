@@ -1,6 +1,6 @@
 # Multi-surface journeys
 
-A user's work often crosses several features: a structure moves between the two editors, or a reaction goes from paste through auto-mapping to the Save dialog. These journeys prove the hand-offs between features. Behavior is owned by the specs of each feature involved: [macromolecules](../../../../openspec/specs/macromolecules/spec.md), [reactions](../../../../openspec/specs/reactions/spec.md), [import-export](../../../../openspec/specs/import-export/spec.md), and [undo-redo](../../../../openspec/specs/undo-redo/spec.md).
+A user's work often crosses several features: a structure moves between the two editors, or a reaction goes from paste through auto-mapping to the Save dialog. These journeys prove the hand-offs between features. Behavior is owned by the specs of each feature involved: [macromolecules](../../../../.memory-bank/features/macromolecules.md), [reactions](../../../../.memory-bank/features/reactions.md), [import-export](../../../../.memory-bank/features/import-export.md), and [undo-redo](../../../../.memory-bank/features/undo-redo.md).
 
 ## Sub-features
 

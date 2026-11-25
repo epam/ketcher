@@ -99,9 +99,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
+    return !rootNode ? undefined : rootNode.getBBox();
   }
 
   public get width(): number {
@@ -242,10 +240,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       (cells.length === 2 ||
         cells.reduce(
           (isStraight: boolean, cell: Cell, index: number): boolean => {
-            if (!isStraight || index === 0 || index === cells.length - 1) {
-              return isStraight;
-            }
-            return cell.x === firstCell.x && !cell.monomer;
+            return !isStraight || index === 0 || index === cells.length - 1
+              ? isStraight
+              : cell.x === firstCell.x && !cell.monomer;
           },
           true,
         )) &&
@@ -886,7 +883,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', SELECTION_COLOR)
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
           .attr('d', this.path)

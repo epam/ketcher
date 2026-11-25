@@ -1,13 +1,13 @@
 /**
- * Settings schema with defaults, validation schema, and presets
- * Migrated from ketcher-react options-schema.ts
- */
+Settings schema with defaults, validation schema, and presets
+Migrated from ketcher-react options-schema.ts
+*/
 
 import type { Settings, DeepPartial } from './types';
 
 /**
- * Complete default settings in flat format
- */
+Complete default settings in flat format
+*/
 export const DEFAULT_SETTINGS: Settings = {
   // Editor settings
   resetToSelect: 'paste', // true, 'paste', or false
@@ -96,20 +96,20 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Get default settings
- */
+Get default settings
+*/
 export function getDefaultSettings(): Settings {
   return { ...DEFAULT_SETTINGS };
 }
 
 /**
- * Settings presets
- */
+Settings presets
+*/
 export const PRESETS: Record<string, DeepPartial<Settings>> = {
   /**
-   * American Chemical Society (ACS) style preset
-   * Based on ACS guidelines for chemical structure drawings
-   */
+  American Chemical Society (ACS) style preset
+  Based on ACS guidelines for chemical structure drawings
+  */
   acs: {
     atomColoring: false,
     font: '30px Arial',
@@ -133,9 +133,9 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
 };
 
 /**
- * JSON Schema for settings validation
- * This is used by SchemaValidator
- */
+JSON Schema for settings validation
+This is used by SchemaValidator
+*/
 export const SCHEMA = {
   title: 'Settings',
   type: 'object',

@@ -1775,13 +1775,11 @@ const shouldShowConfirmationOnReplacement = (
   replaceMonomerId: number,
   confirmationSequences: { sequenceId: number; replaceMonomerId: number[] }[],
 ) => {
-  return confirmationSequences.find(
+  return confirmationSequences.some(
     (item) =>
       item.sequenceId === sequenceId &&
       item.replaceMonomerId.includes(replaceMonomerId),
-  )
-    ? true
-    : false;
+  );
 };
 
 for (const replaceMonomer of withSideConnectionReplaceMonomers) {

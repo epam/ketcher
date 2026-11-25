@@ -10,14 +10,14 @@
 - [x] 2.1 Add the AxoLabs alias to the wizard's form field ids, values, initial state, and notification ids, with the four error messages and their `error` types, and the new strings in the `en`, `es`, and `zh-CN` component locales; verify `npm run test:types` in ketcher-react passes
 - [x] 2.2 Add the AxoLabs alias visibility flag for Nucleotide, CHEM, and Phosphate to the wizard's property visibility helper, include it in the _Aliases_ section flag, and add the uniqueness helper that compares stripped, case-sensitive aliases of library monomers (except the edited one) and of RNA preset templates; verify with unit tests for visibility per type, a collision with a monomer (`p`), with a preset (`dA`), between `dA` and `(dA)`, no collision for a different case, and no collision when the edited monomer keeps its alias
 - [x] 2.3 Render the AxoLabs alias field in the _Aliases_ section with the test id `axolabs-alias-input` and the error highlight, following the BILN field, and add a fields-component flag, like the natural analogue one, that the RNA preset tabs use to hide it; verify with component tests that the field shows for Nucleotide, CHEM, and Phosphate only and not on the preset Phosphate tab
-- [ ] 2.4 Validate the AxoLabs alias on _Submit_ (format, then uniqueness), keep its errors until the next _Submit_, treat it as optional, and clear it on type change; verify with tests that each of the four errors appears for its input and that a type change clears the value
-- [ ] 2.5 Pass the bracket-wrapped AxoLabs alias, or nothing when empty, from both wizard save paths to the editor's save call and into the saved monomer template; verify with a test that saving `Xq` stores `(Xq)` and saving an empty field stores no alias
-- [ ] 2.6 Load the stored AxoLabs alias for _Edit_ from the library and leave it empty for every flow that appends `_Copy`; update the existing initial-values tests that assert the alias is not loaded, and verify the new expectations pass
-- [ ] 2.7 Keep the original AxoLabs alias on save when the type hides the field, and drop an unchanged alias when the save creates a new library entry, following BILN; verify with library save tests for both cases
+- [x] 2.4 Validate the AxoLabs alias on _Submit_ (format, then uniqueness), keep its errors until the next _Submit_, treat it as optional, and clear it on type change; verify with tests that each of the four errors appears for its input and that a type change clears the value
+- [x] 2.5 Pass the bracket-wrapped AxoLabs alias, or nothing when empty, from both wizard save paths to the editor's save call and into the saved monomer template; verify with a test that saving `Xq` stores `(Xq)` and saving an empty field stores no alias
+- [x] 2.6 Load the stored AxoLabs alias for _Edit_ from the library and leave it empty for every flow that appends `_Copy`; update the existing initial-values tests that assert the alias is not loaded, and verify the new expectations pass
+- [x] 2.7 Keep the original AxoLabs alias on save when the type hides the field, and drop an unchanged alias when the save creates a new library entry, following BILN; verify with library save tests for both cases
 
 ## 3. Integration checks
 
-- [ ] 3.1 Run the repository checks (`npm test` at the root and `npx openspec validate --all --strict`) and verify they add no failure the `origin/master` baseline lacks
+- [x] 3.1 Run the repository checks (`npm test` at the root and `npx openspec validate --all --strict`) and verify they add no failure the `origin/master` baseline lacks
 - [ ] 3.2 Verify in the app with the `verify-ketcher` skill: create a nucleotide with AxoLabs alias `Xq`, see `(Xq)` in its preview, export the canvas to AxoLabs and import it back; record the verdict for the PR
 
 ## 4. E2E tests (only if approved at the proposal gate)

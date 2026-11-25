@@ -34,8 +34,8 @@ Checked for every PR, whatever flow the author used. The author ticks nothing: t
 | ----------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Bug fix                       | Linked issue, a regression test                                  | AI review brief. Danger warns when the PR changes no unit or E2E test                                                                                                   |
 | Feature                       | An OpenSpec change (or a spec in the same format), tests         | `openspec validate --all --strict` in CI. Danger fails the PR without a file in `openspec/changes/`, and warns when it changes no unit or E2E test (backmerges skipped) |
-| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                                                                         |
-| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                                                                         |
+| Refactor                      | Tests that pin today's behavior, committed before the code moves | `/review-pr` brief. The CI hub's brief does not name this type: no file list shows whether behavior changes                                                             |
+| Small change                  | No behavior change; existing tests and the type check hold it    | `/review-pr` brief. The CI hub's brief does not name this type: no file list shows whether behavior changes                                                             |
 | Large-scale change            | The large-scale change protocol sections                         | Danger fails the PR when a section is missing or still holds the template text. Planned: the codemod replay check (Phase 3, task 3.8)                                   |
 | Archive of an OpenSpec change | No unchecked tasks                                               | `openspec validate --archived` in CI                                                                                                                                    |
 
@@ -74,18 +74,18 @@ Planned:
 
 ### AI review
 
-The `Run Claude Review` label starts `claude-review.yml`, which runs the review hub, `scripts/review/`. The hub is deterministic code, not an agent: it decides every step, and each model run is an isolated, read-only `claude -p` call that answers with a JSON schema. The prompts and the rules come from the base branch, so a PR cannot change its own review.
+The `Run Claude Review` label starts `claude-review.yml`, which runs the review hub, `scripts/review/`. The `Claude Review: Opus` label starts it too and runs both roles on the stronger model. The hub is deterministic code, not an agent: it decides every step, and each model run is an isolated, read-only `claude -p` call that answers with a JSON schema. The prompts and the rules come from the base branch, so a PR cannot change its own review.
 
 1. **Panel.** `scripts/review-panel.mjs` picks the code-review lenses the diff needs from its changed paths and the lines it adds to source code. A diff that no lens applies to gets only the linked-issue check and the brief.
 2. **Finders.** One run per lens on the panel reads the diff, without the PR description, with a suspicion stance.
 3. **Merge and duplicates.** Findings of the same file and rule close to each other are merged in code. Findings that describe the same defect in different words are merged by one model run, and only when it answers with high confidence.
-4. **Verifier.** Each finding is checked against the code before it is posted, and is confirmed, dropped or re-rated. When the verifier asks for it, one extra pass per round deepens the security or the reuse lens.
+4. **Verifier.** Each finding is checked against the code before it is posted, and is confirmed, dropped or re-rated. When the verifier asks for it, an extra pass deepens the security or the reuse lens: at most one per lens per round, so at most two. The extra findings go through the same merge and duplicates step, and one that repeats a finding of the round is dropped.
 5. **Linked issue.** One run answers whether the diff fixes the issue the PR links.
 6. **Output.** At most ten verified findings, at most ten inline comments, and the review brief as one top-level comment. Every finding follows the [output contract](#output-contract).
 
-Rounds are manual. The hub removes the label when the run ends, so a new round needs the label again, and that round comments only on what the earlier rounds did not. After three rounds the hub posts the round-limit comment and runs no model.
+Rounds are manual. The hub removes the label when the run ends, so a new round needs the label again, and that round comments only on what the earlier rounds did not. A later round reviews only the new commits. It reviews the whole pull request again when the branch was force-pushed or the base branch was merged into it, because then the new commits are no longer the pull request's alone. After three rounds the hub posts the round-limit comment and runs no model.
 
-Both roles run on `claude-opus-5-5`. The `REVIEW_FINDER_MODEL` and `REVIEW_VERIFIER_MODEL` repository variables change a model without a pull request.
+Both roles run on `claude-opus-5-5`. The finder model runs the lens passes; the verifier model runs the verifier, the duplicates and the linked-issue runs. The `REVIEW_FINDER_MODEL` and `REVIEW_VERIFIER_MODEL` repository variables change a role's model without a pull request, and `REVIEW_STRONG_MODEL` changes the model the `Claude Review: Opus` label sets.
 
 `/review-pr` is the same review by hand, for local and agent runs. It shares the panel script, the lens files and the role prompts with the hub, and it posts nothing without approval.
 

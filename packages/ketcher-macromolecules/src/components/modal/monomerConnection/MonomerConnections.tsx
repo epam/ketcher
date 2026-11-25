@@ -154,8 +154,6 @@ const MonomerConnection = ({
       onClose={cancelBondCreationAndClose}
       showExpandButton
       modalWidth="358px"
-      isDraggable
-      isResizable={false}
       expanded={isModalExpanded}
       setExpanded={setIsModalExpanded}
       testId="monomer-connection-modal"

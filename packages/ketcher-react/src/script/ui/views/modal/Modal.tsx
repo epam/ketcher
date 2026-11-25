@@ -70,6 +70,9 @@ const DRAGGABLE_DIALOGS = new Set([
   'sgroup',
   'text',
   'info-modal',
+  'removeFG',
+  'editMonomer',
+  'confirm',
 ]);
 
 // No dialog rendered through this file is resizable — only the Settings panel

@@ -120,8 +120,8 @@ export const Modal = ({
   setExpanded = EmptyFunction,
   testId,
   hideHeaderBorder,
-  isDraggable = false,
-  isResizable = true,
+  isDraggable = true,
+  isResizable = false,
   repositionKey,
 }: ModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');

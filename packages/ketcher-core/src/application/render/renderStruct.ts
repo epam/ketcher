@@ -72,7 +72,7 @@ export class RenderStruct {
     struct: Struct | null,
     options: RenderStructOptions = {},
   ) {
-    if (!(wrapperElement && struct)) {
+    if (!wrapperElement || !struct) {
       return;
     }
 

@@ -122,7 +122,7 @@ const FileDrop = ({
   ) as React.CSSProperties;
 
   const handleKeyDown = (event) => {
-    if (!(event.key === 'Enter' || event.key === ' ')) {
+    if (event.key !== 'Enter' && event.key !== ' ') {
       return;
     }
 

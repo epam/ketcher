@@ -74,7 +74,7 @@ export class SequenceEventDelegationManager {
 
     const { renderer, elementType } = result;
 
-    if (!(elementType === 'text' || elementType === 'background')) {
+    if (elementType !== 'text' && elementType !== 'background') {
       return;
     }
 

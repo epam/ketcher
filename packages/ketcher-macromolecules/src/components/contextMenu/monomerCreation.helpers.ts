@@ -46,7 +46,7 @@ export const canCreateMonomer = (
     first: BaseMonomer | CoreAtom,
     second?: BaseMonomer | CoreAtom,
   ) => {
-    if (!(second && nodes.has(first) && nodes.has(second))) {
+    if (!second || !nodes.has(first) || !nodes.has(second)) {
       return;
     }
 

@@ -131,7 +131,7 @@ function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
 }
 
 function postLoadDat(sgroup: SGroup, mol?: Struct): void {
-  if (!(mol && !sgroup.data.absolute)) {
+  if (!mol || sgroup.data.absolute) {
     return;
   }
 

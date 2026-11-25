@@ -1169,15 +1169,15 @@ export class KetSerializer implements Serializer<Struct> {
         SGroupAttachmentPoint
       > = new Map();
       attachmentPoints.forEach((attachmentPoint) => {
-        if (!(
-          isNumber(attachmentPoint.leaveAtomId) &&
-          Atom.isHiddenLeavingGroupAtom(
+        if (
+          !isNumber(attachmentPoint.leaveAtomId) ||
+          !Atom.isHiddenLeavingGroupAtom(
             struct,
             attachmentPoint.leaveAtomId,
             true,
             true,
           )
-        )) {
+        ) {
           return;
         }
 

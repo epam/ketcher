@@ -58,7 +58,7 @@ class Tabs extends Component<TabsProps, TabsState> {
   }
 
   handleKeyDown(ev: KeyboardEvent, index: number) {
-    if (!(ev.key === 'Enter' || ev.key === ' ')) {
+    if (ev.key !== 'Enter' && ev.key !== ' ') {
       return;
     }
 

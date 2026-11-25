@@ -787,7 +787,7 @@ export class Ketcher {
 
   setMode(mode: SupportedModes) {
     const editor = provideEditorInstance();
-    if (!(editor && mode)) {
+    if (!editor || !mode) {
       return;
     }
 

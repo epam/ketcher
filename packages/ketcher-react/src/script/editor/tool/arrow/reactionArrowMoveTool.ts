@@ -19,7 +19,7 @@ export class ReactionArrowMoveTool
     closestItem: ReactionArrowClosestItem,
     isResizing: boolean,
   ) {
-    if (!(closestItem.map === 'rxnArrows')) {
+    if (closestItem.map !== 'rxnArrows') {
       return;
     }
 

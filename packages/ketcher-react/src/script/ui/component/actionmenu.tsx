@@ -162,7 +162,7 @@ function ActionButton({
   const title = resolveActionTitle(t, action);
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!(!status.selected || isMenuOpened(menuRef.current))) {
+    if (status.selected && !isMenuOpened(menuRef.current)) {
       return;
     }
 
@@ -272,7 +272,7 @@ function ActionMenu({
   const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);
   const handleMenuItemKeyDown = (event: KeyboardEvent) => {
-    if (!(event.key === 'Enter' || event.key === ' ')) {
+    if (event.key !== 'Enter' && event.key !== ' ') {
       return;
     }
 

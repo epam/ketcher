@@ -226,7 +226,7 @@ export function fromFragmentSplit(
   const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
   restruct.molecule.atoms.forEach((atom, aid) => {
-    if (!(atom.fragment === frid)) {
+    if (atom.fragment !== frid) {
       return;
     }
 

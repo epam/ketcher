@@ -36,7 +36,7 @@ export function findHapticBondAttachmentGroupTarget(
 
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
     const distance = Vec2.dist(pointerPosition, attachmentGroup.a.pp);
-    if (!(distance <= closestDistance)) {
+    if (distance > closestDistance) {
       return;
     }
 

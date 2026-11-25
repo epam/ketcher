@@ -20,7 +20,7 @@ export abstract class DrawingEntity {
     },
   ) {
     this._position = _position || new Vec2(0, 0);
-    if (!(this.config?.generateId === true)) {
+    if (this.config?.generateId !== true) {
       return;
     }
 

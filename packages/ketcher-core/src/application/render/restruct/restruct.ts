@@ -587,10 +587,10 @@ class ReStruct {
     });
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
-      if (!(
-        shouldForce ||
-        attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
-      )) {
+      if (
+        !shouldForce &&
+        !attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
+      ) {
         return;
       }
 

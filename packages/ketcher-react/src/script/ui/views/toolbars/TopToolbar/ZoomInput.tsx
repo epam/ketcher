@@ -98,7 +98,7 @@ export const ZoomInput = ({
         event.nativeEvent.stopImmediatePropagation();
       }
 
-      if (!(event.key === 'Enter')) {
+      if (event.key !== 'Enter') {
         return;
       }
 

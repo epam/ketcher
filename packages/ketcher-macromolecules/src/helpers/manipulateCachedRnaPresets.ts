@@ -56,7 +56,7 @@ export const toggleCachedCustomRnaPresetFavorites = (presetName?: string) => {
   const cachedPresets = getCachedCustomRnaPresets();
   const presetIndexInCachedList = getPresetIndexInList(presetName);
 
-  if (!(cachedPresets && presetIndexInCachedList > -1)) {
+  if (!cachedPresets || presetIndexInCachedList <= -1) {
     return;
   }
 

@@ -329,16 +329,14 @@ export const SequenceItemContextMenu = ({
             : [props.sequenceItemRenderer?.twoStrandedNode];
 
         selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
-          if (!(
-            selectedTwoStrandedNode.antisenseChain &&
-            selectedTwoStrandedNode.antisenseNode &&
-            !(
-              selectedTwoStrandedNode.antisenseNode instanceof
-                EmptySequenceNode ||
-              selectedTwoStrandedNode.antisenseNode instanceof
-                BackBoneSequenceNode
-            )
-          )) {
+          if (
+            !selectedTwoStrandedNode.antisenseChain ||
+            !selectedTwoStrandedNode.antisenseNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              EmptySequenceNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              BackBoneSequenceNode
+          ) {
             return;
           }
 

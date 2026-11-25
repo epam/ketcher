@@ -645,7 +645,7 @@ export class DrawingEntitiesManager {
   }
 
   private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
-    if (!(offset && drawingEntity.monomerItem.props.isMicromoleculeFragment)) {
+    if (!offset || !drawingEntity.monomerItem.props.isMicromoleculeFragment) {
       return;
     }
 
@@ -1163,7 +1163,7 @@ export class DrawingEntitiesManager {
       const shouldBeSelected =
         relatedMonomer.selected || allMonomerAtomsSelected;
 
-      if (!(stereoFlag.selected !== shouldBeSelected)) {
+      if (stereoFlag.selected === shouldBeSelected) {
         return;
       }
 
@@ -2905,9 +2905,7 @@ export class DrawingEntitiesManager {
       // Check overlap against ALL monomers, not just the moved ones
       polymerBond.isOverlappedByMonomer =
         this.checkBondForOverlapsByMonomers(polymerBond);
-      if (
-        !(polymerBond.isOverlappedByMonomer !== previousIsOverlappedByMonomer)
-      ) {
+      if (polymerBond.isOverlappedByMonomer === previousIsOverlappedByMonomer) {
         return;
       }
 
@@ -3035,12 +3033,12 @@ export class DrawingEntitiesManager {
       const monomer = entity as BaseMonomer;
       if (shouldSelectConnectedBonds && monomer.hasBonds) {
         monomer.forEachBond((polymerBond) => {
-          if (!(
-            !selectedDrawingEntities?.includes(polymerBond) &&
-            !drawingEntities.includes(polymerBond) &&
-            polymerBond instanceof PolymerBond &&
-            polymerBond.getAnotherMonomer(monomer)?.selected
-          )) {
+          if (
+            selectedDrawingEntities?.includes(polymerBond) ||
+            drawingEntities.includes(polymerBond) ||
+            !(polymerBond instanceof PolymerBond) ||
+            !polymerBond.getAnotherMonomer(monomer)?.selected
+          ) {
             return;
           }
 

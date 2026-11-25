@@ -271,7 +271,7 @@ export function fromBondsAttributes(
       if (key === 'type') {
         shouldRecalculateImplicitH = true;
       }
-      if (!(key === 'stereo' && key in attributes)) {
+      if (key !== 'stereo' || !(key in attributes)) {
         return;
       }
 
@@ -497,7 +497,7 @@ export function removeAttachmentPointFromSuperatom(
   restruct: ReStruct,
 ) {
   (sgroup.item?.atoms as number[]).forEach((atomId) => {
-    if (!(beginAtomId === atomId || endAtomId === atomId)) {
+    if (beginAtomId !== atomId && endAtomId !== atomId) {
       return;
     }
 

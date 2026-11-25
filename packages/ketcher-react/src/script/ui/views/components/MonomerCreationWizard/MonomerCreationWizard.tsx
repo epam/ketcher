@@ -730,7 +730,7 @@ const validateInputs = (
       }
     }
 
-    if (!(key === 'aliasBILN')) {
+    if (key !== 'aliasBILN') {
       return;
     }
 
@@ -744,16 +744,16 @@ const validateInputs = (
       return;
     }
 
-    if (!(
-      !shouldSkipUniquenessChecks &&
-      hasMonomerFieldCollision(
+    if (
+      shouldSkipUniquenessChecks ||
+      !hasMonomerFieldCollision(
         library,
         'aliasBILN',
         value,
         values.type,
         originalMonomerItem,
       )
-    )) {
+    ) {
       return;
     }
 
@@ -890,7 +890,7 @@ const validateModificationTypes = (
       (type) => type === modificationType,
     ).length;
 
-    if (!(occurrences > 1)) {
+    if (occurrences <= 1) {
       return;
     }
 
@@ -1839,7 +1839,7 @@ const MonomerCreationWizardInternal = ({
       }
 
       const structureNotifications = validateStructure(structure, editor);
-      if (!(structureNotifications.size > 0)) {
+      if (structureNotifications.size === 0) {
         return;
       }
 

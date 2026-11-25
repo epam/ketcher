@@ -189,7 +189,7 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBars(shouldForceHide = false) {
-    if (!(this.canvas.node() && this.canvasWrapper.node())) {
+    if (!this.canvas.node() || !this.canvasWrapper.node()) {
       return;
     }
 

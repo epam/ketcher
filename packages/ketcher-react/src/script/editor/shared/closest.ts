@@ -119,7 +119,7 @@ function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
       text.getReferencePoints(),
     );
 
-    if (!(dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist))) {
+    if (dist >= SELECTION_DISTANCE_COEFFICIENT || (ret && dist >= minDist)) {
       return;
     }
 
@@ -140,7 +140,7 @@ function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
       restruct.render.options.microModeScale,
     );
 
-    if (!(dist.minDist < 0.3 && (!ret || dist.minDist < minDist))) {
+    if (dist.minDist >= 0.3 || (ret && dist.minDist >= minDist)) {
       return;
     }
 
@@ -184,7 +184,7 @@ function findClosestAtom(
 
     const dist = Vec2.dist(pos, atom.a.pp);
 
-    if (!(dist < effectiveMinDist)) {
+    if (dist >= effectiveMinDist) {
       return;
     }
 
@@ -216,10 +216,10 @@ function findClosestAttachmentGroup(
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
     if (id === skipId) return;
     const dist = Vec2.dist(pos, attachmentGroup.a.pp);
-    if (!(
-      dist < effectiveMinDist ||
-      (minDist !== null && dist === effectiveMinDist)
-    )) {
+    if (
+      dist >= effectiveMinDist &&
+      (minDist === null || dist !== effectiveMinDist)
+    ) {
       return;
     }
 
@@ -345,7 +345,7 @@ function findClosestEnhancedFlag(
 
     const dist = Math.abs(pos.y - p.y);
 
-    if (!(dist < 0.3 && (!ret || dist < minDist))) {
+    if (dist >= 0.3 || (ret && dist >= minDist)) {
       return;
     }
 
@@ -451,13 +451,13 @@ function findClosestRGroup(
   const skipId = skip?.map === 'rgroups' ? skip.id : null;
 
   restruct.rgroups.forEach((rgroup, rgid) => {
-    if (!(rgid !== skipId && rgroup.labelBox?.contains(pos, 0.5))) {
+    if (rgid === skipId || !rgroup.labelBox?.contains(pos, 0.5)) {
       return;
     }
 
     const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
 
-    if (!(!ret || dist < effectiveMinDist)) {
+    if (ret && dist >= effectiveMinDist) {
       return;
     }
 
@@ -522,7 +522,7 @@ function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
       restruct.render.options.microModeScale,
     );
 
-    if (!(dist.minDist < 0.3 && (!ret || dist.minDist < minDist))) {
+    if (dist.minDist >= 0.3 || (ret && dist.minDist >= minDist)) {
       return;
     }
 
@@ -542,7 +542,7 @@ function findClosestRxnPlus(restruct: ReStruct, pos: Vec2) {
     const p = plus.item.pp;
     const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
 
-    if (!(dist < 0.3 && (!ret || dist < minDist))) {
+    if (dist >= 0.3 || (ret && dist >= minDist)) {
       return;
     }
 
@@ -590,7 +590,7 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         Math.abs(box.p1.x - pg.x),
       );
 
-      if (!(isInBox && (ret === null || xDist < minDist))) {
+      if (!isInBox || (ret !== null && xDist >= minDist)) {
         return;
       }
 

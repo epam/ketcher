@@ -402,7 +402,7 @@ class SGroupTool implements Tool {
       struct.sgroups.get(actualSgroupId)?.item,
     );
 
-    if (!(atom === sgroupAtoms[0])) {
+    if (atom !== sgroupAtoms[0]) {
       return;
     }
 

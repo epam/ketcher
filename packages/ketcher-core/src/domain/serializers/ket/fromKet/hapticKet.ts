@@ -250,7 +250,7 @@ export function addHapticConnectionsToStruct(
       return;
     }
 
-    if (!(endpoint1.type === 'attachmentGroup' && endpoint2.type === 'atom')) {
+    if (endpoint1.type !== 'attachmentGroup' || endpoint2.type !== 'atom') {
       return;
     }
 

@@ -49,7 +49,7 @@ export const ZoomInput = ({
       if (!zoomShortcuts.includes(event.key))
         event.nativeEvent.stopImmediatePropagation();
 
-      if (!(event.key === 'Enter')) {
+      if (event.key !== 'Enter') {
         return;
       }
 

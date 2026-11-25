@@ -93,7 +93,7 @@ function setupEditor(
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (!(props[eventName] !== oldProps[eventName])) {
+    if (props[eventName] === oldProps[eventName]) {
       return;
     }
 
@@ -106,7 +106,7 @@ function setupEditor(
     }
   });
 
-  if (!(struct !== oldProps.struct || haveOptionsChanged)) {
+  if (struct === oldProps.struct && !haveOptionsChanged) {
     return;
   }
 

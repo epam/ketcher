@@ -42,7 +42,7 @@ class UpdateIfThen extends BaseOperation {
     const struct = restruct.molecule;
 
     struct.rgroups.forEach((rg, rgid) => {
-      if (!(rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid))) {
+      if (rg.ifthen !== this.rgid_old || this.skipRgids.includes(rgid)) {
         return;
       }
 

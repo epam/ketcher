@@ -184,7 +184,7 @@ export function fromAtomsFragmentAttribute(
 
     action.addOp(new AtomAttribute(aid, 'fragment', newfrid));
 
-    if (!(atom.stereoLabel !== null)) {
+    if (atom.stereoLabel === null) {
       return;
     }
 

@@ -125,11 +125,11 @@ export class Molfile {
           shouldIgnoreError = true;
         }
 
-        if (!(
-          shouldIgnoreError ||
-          (!shouldPreserveIndigoDesc &&
-            /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
-        )) {
+        if (
+          !shouldIgnoreError &&
+          (shouldPreserveIndigoDesc ||
+            !/^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
+        ) {
           return;
         }
 
@@ -440,7 +440,7 @@ export class Molfile {
 
     if (rgroups) {
       rgroups.forEach((rg, rgid) => {
-        if (!(rg.resth || rg.ifthen > 0 || rg.range.length > 0)) {
+        if (!rg.resth && rg.ifthen <= 0 && rg.range.length === 0) {
           return;
         }
 

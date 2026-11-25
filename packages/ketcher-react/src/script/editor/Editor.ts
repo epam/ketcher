@@ -584,10 +584,10 @@ class Editor implements KetcherEditor {
 
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
     const isViewOnlyEnabled = this.render.options.viewOnlyMode;
-    if (!(
-      (!wasViewOnlyEnabled && isViewOnlyEnabled === true) ||
-      (wasViewOnlyEnabled && isViewOnlyEnabled === false)
-    )) {
+    if (
+      (wasViewOnlyEnabled || isViewOnlyEnabled !== true) &&
+      (!wasViewOnlyEnabled || isViewOnlyEnabled !== false)
+    ) {
       return;
     }
 
@@ -1392,10 +1392,10 @@ class Editor implements KetcherEditor {
       });
     });
     [...struct.sgroups.entries()].forEach(([id, group]) => {
-      if (!(
-        group.isMonomer &&
-        group.atoms.every((atomId) => selectedAtoms.has(atomId))
-      )) {
+      if (
+        !group.isMonomer ||
+        !group.atoms.every((atomId) => selectedAtoms.has(atomId))
+      ) {
         return;
       }
 

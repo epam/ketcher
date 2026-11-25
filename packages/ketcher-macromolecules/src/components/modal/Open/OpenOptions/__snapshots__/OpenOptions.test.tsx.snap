@@ -26,7 +26,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
           data-testid="open-from-file-button"
         >
           <button
-            class="css-1e3isln-DropzoneButton ey7n9jh2"
+            class="css-1e3isln-DropzoneButton ey3inqe2"
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
             tabindex="0"
             type="button"
@@ -38,11 +38,11 @@ exports[`OpenOptions component > should render correctly 1`] = `
               type="file"
             />
             <svg
-              class="css-8ctlu6-StyledIcon ey7n9jh0"
+              class="css-8ctlu6-StyledIcon ey3inqe0"
               name="open-window-upload-icon"
             />
             <div
-              class="css-jm0alk-ButtonContainer ey7n9jh1"
+              class="css-jm0alk-ButtonContainer ey3inqe1"
             >
               <span>
                 or drag file here
@@ -60,7 +60,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
           data-testid="open-from-image-button"
         >
           <button
-            class="css-1e3isln-DropzoneButton ey7n9jh2"
+            class="css-1e3isln-DropzoneButton ey3inqe2"
             disabled=""
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
             tabindex="-1"
@@ -74,7 +74,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
               type="file"
             />
             <svg
-              class="css-1yp754b-StyledIcon ey7n9jh0"
+              class="css-1yp754b-StyledIcon ey3inqe0"
               disabled=""
               name="image-frame"
             />
@@ -110,7 +110,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
         data-testid="open-from-file-button"
       >
         <button
-          class="css-1e3isln-DropzoneButton ey7n9jh2"
+          class="css-1e3isln-DropzoneButton ey3inqe2"
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
           tabindex="0"
           type="button"
@@ -122,11 +122,11 @@ exports[`OpenOptions component > should render correctly 1`] = `
             type="file"
           />
           <svg
-            class="css-8ctlu6-StyledIcon ey7n9jh0"
+            class="css-8ctlu6-StyledIcon ey3inqe0"
             name="open-window-upload-icon"
           />
           <div
-            class="css-jm0alk-ButtonContainer ey7n9jh1"
+            class="css-jm0alk-ButtonContainer ey3inqe1"
           >
             <span>
               or drag file here
@@ -144,7 +144,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
         data-testid="open-from-image-button"
       >
         <button
-          class="css-1e3isln-DropzoneButton ey7n9jh2"
+          class="css-1e3isln-DropzoneButton ey3inqe2"
           disabled=""
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
           tabindex="-1"
@@ -158,7 +158,7 @@ exports[`OpenOptions component > should render correctly 1`] = `
             type="file"
           />
           <svg
-            class="css-1yp754b-StyledIcon ey7n9jh0"
+            class="css-1yp754b-StyledIcon ey3inqe0"
             disabled=""
             name="image-frame"
           />

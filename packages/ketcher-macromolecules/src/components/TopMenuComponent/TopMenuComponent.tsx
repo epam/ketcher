@@ -79,10 +79,10 @@ export function TopMenuComponent() {
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
       setSelectedEntities(selectedEntities);
-      if (!(
-        selectedEntities.length > 0 &&
-        !isAntisenseCreationDisabled(selectedEntities)
-      )) {
+      if (
+        selectedEntities.length === 0 ||
+        isAntisenseCreationDisabled(selectedEntities)
+      ) {
         return;
       }
 

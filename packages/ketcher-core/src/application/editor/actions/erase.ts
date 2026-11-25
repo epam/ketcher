@@ -56,7 +56,7 @@ function fromBondDeletion(
 
   if (restruct.sgroups?.size > 0) {
     restruct.sgroups.forEach((sgroup) => {
-      if (!(sgroup.item?.type && sgroup.item?.type === 'SUP')) {
+      if (sgroup.item?.type !== 'SUP') {
         return;
       }
 

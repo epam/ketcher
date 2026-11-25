@@ -229,7 +229,7 @@ export const Editor = (props: Props) => {
   }, [isMacromoleculesEditorTurnedOn]);
 
   useLayoutEffect(() => {
-    if (!(!isMacromoleculesEditorEnabled && macromoleculesEditor)) {
+    if (isMacromoleculesEditorEnabled || !macromoleculesEditor) {
       return;
     }
 
@@ -390,11 +390,11 @@ export const Editor = (props: Props) => {
     // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
     // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
     // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
-    if (!(
-      onInit &&
-      ketcherProvider.getIndexById(ketcher.id) !== -1 &&
-      initializedKetcherRef.current !== ketcher
-    )) {
+    if (
+      !onInit ||
+      ketcherProvider.getIndexById(ketcher.id) === -1 ||
+      initializedKetcherRef.current === ketcher
+    ) {
       return;
     }
 

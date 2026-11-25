@@ -36,7 +36,7 @@ class ReactionPlusTool implements Tool {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 
-    if (!(ci?.map === 'rxnPluses')) {
+    if (ci?.map !== 'rxnPluses') {
       return;
     }
 

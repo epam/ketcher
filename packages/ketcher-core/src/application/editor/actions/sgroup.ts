@@ -608,10 +608,10 @@ export function fromSgroupDeletion(
     );
 
     sG.neiAtoms.forEach((aid) => {
-      if (!(
-        atomGetAttribute(restruct, aid, 'label') === '*' &&
-        !endsOfOtherPolymers.has(aid)
-      )) {
+      if (
+        atomGetAttribute(restruct, aid, 'label') !== '*' ||
+        endsOfOtherPolymers.has(aid)
+      ) {
         return;
       }
 
@@ -780,7 +780,7 @@ export function fromSgroupAddition(
     restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
       const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
 
-      if (!(plainCarbon && atomGetDegree(restruct, aid) === 1)) {
+      if (!plainCarbon || atomGetDegree(restruct, aid) !== 1) {
         return;
       }
 

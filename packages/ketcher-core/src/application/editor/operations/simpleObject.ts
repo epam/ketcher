@@ -211,7 +211,7 @@ function handleRectangleChangeWithAnchor(
     item.pos[0].x = anchor.x = current.x;
     current.x = previousPos0.x;
   }
-  if (!(toFixed(anchor.y) === toFixed(item.pos[0].y))) {
+  if (toFixed(anchor.y) !== toFixed(item.pos[0].y)) {
     return;
   }
 

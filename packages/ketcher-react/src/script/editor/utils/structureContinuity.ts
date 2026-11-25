@@ -40,7 +40,7 @@ export function isStructureContinuous(
     }
 
     const { begin, end } = bond;
-    if (!(adjacencyList.has(begin) && adjacencyList.has(end))) {
+    if (!adjacencyList.has(begin) || !adjacencyList.has(end)) {
       return;
     }
 

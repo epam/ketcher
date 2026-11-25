@@ -1148,11 +1148,11 @@ export class Struct {
 
     const components: ConnectedComponent[] = [];
     this.atoms.forEach((atom, aid) => {
-      if (!(
-        (shouldDiscardExistingFragments || atom.fragment < 0) &&
-        !addedAtoms.has(aid) &&
-        !this.isAtomFromMacromolecule(aid)
-      )) {
+      if (
+        (!shouldDiscardExistingFragments && atom.fragment >= 0) ||
+        addedAtoms.has(aid) ||
+        this.isAtomFromMacromolecule(aid)
+      ) {
         return;
       }
 
@@ -1515,7 +1515,7 @@ export class Struct {
     shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     this.sgroups.forEach((item) => {
-      if (!(item.data.fieldName === 'MRV_IMPLICIT_H')) {
+      if (item.data.fieldName !== 'MRV_IMPLICIT_H') {
         return;
       }
 
@@ -2037,7 +2037,7 @@ export class Struct {
 
     this.bondInitHalfBonds(bondId);
     const newBondObj = this.bonds.get(bondId);
-    if (!(newBondObj?.hb1 && newBondObj?.hb2)) {
+    if (!newBondObj?.hb1 || !newBondObj?.hb2) {
       return;
     }
 

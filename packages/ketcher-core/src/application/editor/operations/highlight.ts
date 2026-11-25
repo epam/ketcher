@@ -118,7 +118,7 @@ export class HighlightDelete extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    if (!(typeof this.data.highlightId === 'number')) {
+    if (typeof this.data.highlightId !== 'number') {
       return;
     }
 

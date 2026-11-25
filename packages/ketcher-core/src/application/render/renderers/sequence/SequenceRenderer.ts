@@ -637,10 +637,10 @@ export class SequenceRenderer {
   ) {
     const monomers: BaseMonomer[] = [];
     this.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
-      if (!(
-        startCaretPosition <= nodeIndexOverall &&
-        nodeIndexOverall < (endCaretPosition ?? this.caretPosition)
-      )) {
+      if (
+        startCaretPosition > nodeIndexOverall ||
+        nodeIndexOverall >= (endCaretPosition ?? this.caretPosition)
+      ) {
         return;
       }
 
@@ -1291,10 +1291,10 @@ export class SequenceRenderer {
         );
         twoStrandedNode.senseNode.renderer?.removeSelection();
       }
-      if (!(
-        twoStrandedNode.antisenseNode instanceof EmptySequenceNode ||
-        twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
-      )) {
+      if (
+        !(twoStrandedNode.antisenseNode instanceof EmptySequenceNode) &&
+        !(twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode)
+      ) {
         return;
       }
 
@@ -1398,10 +1398,10 @@ export class SequenceRenderer {
     let rendererToReturn: BaseSequenceItemRenderer | undefined;
 
     this.forEachNode(({ twoStrandedNode }) => {
-      if (!(
-        twoStrandedNode.senseNode?.monomers.includes(monomer) ||
-        twoStrandedNode.antisenseNode?.monomers.includes(monomer)
-      )) {
+      if (
+        !twoStrandedNode.senseNode?.monomers.includes(monomer) &&
+        !twoStrandedNode.antisenseNode?.monomers.includes(monomer)
+      ) {
         return;
       }
 

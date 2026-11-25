@@ -237,7 +237,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       const { key } = event;
       const active = document.activeElement;
       const isActiveTextarea = active?.tagName === 'TEXTAREA';
-      if (!(key === 'Escape' || (key === 'Enter' && !isActiveTextarea))) {
+      if (key !== 'Escape' && (key !== 'Enter' || isActiveTextarea)) {
         return;
       }
 

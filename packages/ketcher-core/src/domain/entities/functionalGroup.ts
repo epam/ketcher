@@ -240,7 +240,7 @@ export class FunctionalGroup {
       }
     } else {
       functionalGroups.forEach((fg) => {
-        if (!(fg.relatedSGroupId === sgroup)) {
+        if (fg.relatedSGroupId !== sgroup) {
           return;
         }
 

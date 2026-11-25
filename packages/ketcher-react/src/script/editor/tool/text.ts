@@ -44,7 +44,7 @@ class TextTool implements Tool {
 
     this.editor.selection(null);
 
-    if (!(closestItem?.map === 'texts')) {
+    if (closestItem?.map !== 'texts') {
       return;
     }
 

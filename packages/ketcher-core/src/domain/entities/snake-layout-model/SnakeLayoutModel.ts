@@ -263,10 +263,10 @@ export class SnakeLayoutModel {
         handledChainNodes.add(node);
       });
 
-      if (!(
-        lastTwoStrandedNodeWithHydrogenBond &&
-        nodesBeforeHydrogenConnectionToBase.length > 0
-      )) {
+      if (
+        !lastTwoStrandedNodeWithHydrogenBond ||
+        nodesBeforeHydrogenConnectionToBase.length === 0
+      ) {
         return;
       }
 

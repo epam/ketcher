@@ -223,7 +223,7 @@ function drawGroupAtomsHover(
   });
 
   render.ctab.bonds.forEach((rebond) => {
-    if (!(atomIds.has(rebond.b.begin) && atomIds.has(rebond.b.end))) {
+    if (!atomIds.has(rebond.b.begin) || !atomIds.has(rebond.b.end)) {
       return;
     }
 

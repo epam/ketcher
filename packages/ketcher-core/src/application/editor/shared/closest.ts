@@ -51,7 +51,7 @@ function findClosestAtom(
 
     const distance = Vec2.dist(pos, atom.a.pp);
 
-    if (!(distance < effectiveMinDistance)) {
+    if (distance >= effectiveMinDistance) {
       return;
     }
 

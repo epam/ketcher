@@ -63,9 +63,10 @@ export class Chain {
 
   private recalculateNodes() {
     // TODO if node.monomers change somewhere else, we will have incorrect cache
-    if (!(
-      this.nodesChanged || this.subChains.some((subChain) => subChain.modified)
-    )) {
+    if (
+      !this.nodesChanged &&
+      !this.subChains.some((subChain) => subChain.modified)
+    ) {
       return;
     }
 

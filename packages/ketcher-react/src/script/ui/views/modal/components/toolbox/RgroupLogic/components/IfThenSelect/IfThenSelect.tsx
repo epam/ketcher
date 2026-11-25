@@ -35,7 +35,7 @@ const IfThenSelect = (props: Props) => {
   };
 
   rgroupLabels.forEach((rgroupLabel) => {
-    if (!(label !== rgroupLabel)) {
+    if (label === rgroupLabel) {
       return;
     }
 

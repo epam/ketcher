@@ -44,7 +44,7 @@ class ReactionMapTool implements Tool {
 
     const closestItem = this.editor.findItem(event, ['atoms']);
 
-    if (!(closestItem?.map === 'atoms')) {
+    if (closestItem?.map !== 'atoms') {
       return;
     }
 

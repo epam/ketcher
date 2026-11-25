@@ -21,7 +21,7 @@ export function useMacromoleculesHotkeys() {
       if (isEditableTarget) return;
 
       const isQuestionHotkey = e.key === '?' || (e.key === '/' && e.shiftKey);
-      if (!(isQuestionHotkey && !e.repeat)) {
+      if (!isQuestionHotkey || e.repeat) {
         return;
       }
 

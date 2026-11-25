@@ -47,7 +47,7 @@ function tmplName(tmpl: Template, i: number): string {
 
 function createKeyDownHandler(callback: () => void) {
   return (e: KeyboardEvent) => {
-    if (!(e.key === 'Enter' || e.key === ' ')) {
+    if (e.key !== 'Enter' && e.key !== ' ') {
       return;
     }
 

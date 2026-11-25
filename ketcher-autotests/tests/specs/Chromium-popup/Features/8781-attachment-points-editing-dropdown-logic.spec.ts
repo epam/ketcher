@@ -1,6 +1,7 @@
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   AttachmentPointOption,
@@ -9,6 +10,7 @@ import {
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { clickOnCanvas, selectAllStructuresOnCanvas } from '@utils';
+import { dragMouseTo } from '@utils/clicks';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
@@ -67,86 +69,6 @@ async function getVisibleAttachmentPointAtomOptionTexts() {
     }
 
     const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
-    if (text) {
-      optionTexts.push(text);
-    }
-  }
-
-  return optionTexts;
-}
-
-function getAttachmentPointAtomLabel(atom: AttachmentPointAtom) {
-  switch (atom) {
-    case AttachmentPointAtom.OH:
-      return 'OH';
-    case AttachmentPointAtom.NH2:
-      return 'NH2';
-    case AttachmentPointAtom.CH3:
-      return 'CH3';
-    default:
-      return atom.replace(/-option$/, '');
-  }
-}
-
-async function expectAttachmentPointAtomOptionSelected(
-  atom: AttachmentPointAtom,
-) {
-  const option = page.getByTestId(atom).first();
-  await expect(option).toBeVisible();
-
-  const ariaSelected = await option.getAttribute('aria-selected');
-  const className = (await option.getAttribute('class')) ?? '';
-  expect(
-    ariaSelected === 'true' ||
-      className.includes('Mui-selected') ||
-      className.includes('selected'),
-  ).toBeTruthy();
-}
-
-async function openCreateMonomerDialogWithChemType(smiles: string) {
-  await pasteFromClipboardAndOpenAsNewProject(page, smiles);
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-
-  const leftToolbar = LeftToolbar(page);
-  await expect(leftToolbar.createMonomerButton).toBeVisible();
-  await leftToolbar.createMonomer();
-
-  const createMonomerDialog = CreateMonomerDialog(page);
-  await expect(createMonomerDialog.window).toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.CHEM);
-
-  return createMonomerDialog;
-}
-
-async function markAtomAsConnectionPoint(atomLabel: string, atomIndex = 0) {
-  const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
-  await ContextMenu(page, atom).click(
-    ConnectionPointOption.MarkAsConnectionPoint,
-  );
-  return atom;
-}
-
-async function markAtomAsLeavingGroup(atomLabel: string, atomIndex = 0) {
-  const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
-  await ContextMenu(page, atom).click(ConnectionPointOption.MarkAsLeavingGroup);
-  return atom;
-}
-
-async function getVisibleAttachmentPointAtomOptionTexts() {
-  await expect(page.getByTestId(AttachmentPointAtom.H).first()).toBeVisible();
-
-  const allOptions = page.getByRole('option');
-  const count = await allOptions.count();
-  const optionTexts: string[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const option = allOptions.nth(i);
-    if (!(await option.isVisible())) {
-      continue;
-    }
-
-    const text = (await option.textContent())?.replaceAll('\u200b', '').trim();
     if (text) {
       optionTexts.push(text);
     }

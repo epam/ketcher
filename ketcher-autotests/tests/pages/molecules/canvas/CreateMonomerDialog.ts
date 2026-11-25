@@ -59,6 +59,8 @@ type AliasesSectionLocators = {
   helmAliasEditboxClearButton: Locator;
   bilnAliasEditbox: Locator;
   bilnAliasEditboxClearButton: Locator;
+  axolabsAliasEditbox: Locator;
+  axolabsAliasEditboxClearButton: Locator;
 };
 
 type CreateMonomerDialogLocators = {
@@ -226,6 +228,10 @@ export const CreateMonomerDialog = (page: Page) => {
       bilnAliasEditbox: page.getByTestId('biln-alias-input'),
       bilnAliasEditboxClearButton: page
         .getByTestId('biln-alias-input')
+        .getByTestId('CloseIcon'),
+      axolabsAliasEditbox: page.getByTestId('axolabs-alias-input'),
+      axolabsAliasEditboxClearButton: page
+        .getByTestId('axolabs-alias-input')
         .getByTestId('CloseIcon'),
     },
   );
@@ -498,6 +504,26 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.waitForTimeout(0.3 * 1000);
     },
 
+    async clearAxoLabsAlias() {
+      await this.expandAliasesSection();
+      const axolabsAliasEditbox = aliasesSection.axolabsAliasEditbox;
+      await axolabsAliasEditbox.click();
+      await aliasesSection.axolabsAliasEditboxClearButton.click();
+    },
+
+    async setAxoLabsAlias(axolabsAlias: string) {
+      await this.expandAliasesSection();
+      await this.clearAxoLabsAlias();
+      await aliasesSection.axolabsAliasEditbox.click();
+      await page.keyboard.type(axolabsAlias);
+    },
+
+    async isAxoLabsAliasInvalid() {
+      await this.expandAliasesSection();
+      const input = aliasesSection.axolabsAliasEditbox.locator('input');
+      return (await input.getAttribute('aria-invalid')) === 'true';
+    },
+
     async waitForTerminalIndicatorTooltip(
       options: { state?: 'visible' | 'hidden' } = {},
     ) {
@@ -540,6 +566,7 @@ export async function createMonomer(
         }
     )[];
     HELMAlias?: string;
+    AxoLabsAlias?: string;
   },
   shouldIgnoreWarning = true,
 ) {
@@ -558,6 +585,9 @@ export async function createMonomer(
   }
   if (options.HELMAlias) {
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
+  }
+  if (options.AxoLabsAlias) {
+    await createMonomerDialog.setAxoLabsAlias(options.AxoLabsAlias);
   }
   await createMonomerDialog.submit({ ignoreWarning: shouldIgnoreWarning });
 }

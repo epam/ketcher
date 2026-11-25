@@ -1030,6 +1030,8 @@ class Editor implements KetcherEditor {
       return false;
     }
 
+    const atomsToProcessSet = new Set(atomsToProcess);
+
     const selectionInvalid = atomsToProcess.some((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
@@ -1039,7 +1041,18 @@ class Editor implements KetcherEditor {
 
       const { sgs, attachmentPoints, rglabel, neighbors, label } = atom;
 
-      const isInSGroup = sgs.size > 0;
+      // Other S-groups load into the wizard as plain chemistry, but only
+      // whole ones: saving removes an S-group from every atom it held
+      const isInUnsupportedSGroup = [...sgs].some((sgroupId) => {
+        const sgroup = currentStruct.sgroups.get(sgroupId);
+        return (
+          !sgroup ||
+          sgroup.isMonomer ||
+          sgroup.atoms.some(
+            (sgroupAtomId) => !atomsToProcessSet.has(sgroupAtomId),
+          )
+        );
+      });
       const isAttachmentPoint = attachmentPoints !== null;
       const isNonTerminalRGroupLabel = rglabel !== null && neighbors.length > 1;
       const isTerminalRGroupCandidate =
@@ -1055,7 +1068,7 @@ class Editor implements KetcherEditor {
       const isExtendedTableAtom = genericsList.includes(label);
 
       return (
-        isInSGroup ||
+        isInUnsupportedSGroup ||
         isAttachmentPoint ||
         isNonTerminalRGroupLabel ||
         hasUnsupportedTerminalRGroupBond ||
@@ -1076,7 +1089,6 @@ class Editor implements KetcherEditor {
       return atom?.rglabel !== null && atom?.neighbors.length === 1;
     });
 
-    const atomsToProcessSet = new Set(atomsToProcess);
     const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
       return (
         (atomsToProcessSet.has(bond.begin) &&
@@ -1574,11 +1586,14 @@ class Editor implements KetcherEditor {
     this.originalSelection = selection;
     const selectedStruct = this.structSelected(selection);
 
+    // Only the chemistry of S-groups enters the wizard, so abbreviations
+    // show their atoms (#7637)
+    selectedStruct.functionalGroups.clear();
+    [...selectedStruct.sgroups.keys()].forEach((sgid) => {
+      selectedStruct.sGroupDelete(sgid);
+    });
+
     if (editInstanceInitialValues) {
-      selectedStruct.functionalGroups.clear();
-      [...selectedStruct.sgroups.keys()].forEach((sgid) => {
-        selectedStruct.sGroupDelete(sgid);
-      });
       this.terminalRGroupAtoms = [];
       this.potentialLeavingAtomsForAutoAssignment = [];
       this.potentialLeavingAtomsForManualAssignment = [];

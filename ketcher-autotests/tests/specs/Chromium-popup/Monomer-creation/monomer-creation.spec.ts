@@ -9,6 +9,7 @@ import {
 } from '@utils/files/readFile';
 import {
   MacroFileType,
+  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -170,6 +171,11 @@ const eligableMolecules: IMoleculesForMonomerCreation[] = [
       '[#6]-[#6](-[#6])-[#6](-[#6])-[#6](-[#6])-[#6](-[#6])-[#6](-[#6])-[#6](-[#6])-[#6]-[#6]',
     AtomIDsToExclude: ['0', '2', '4', '6', '8', '10', '12', '14'],
   },
+  {
+    testDescription: '4. Chemical structure contains a whole data S-group',
+    MoleculeSMARTS: 'CCCC |SgD:1,2:aaa:aaa::: :|',
+    AtomIDsToExclude: ['0'],
+  },
 ];
 
 for (const eligableMolecule of eligableMolecules) {
@@ -280,14 +286,9 @@ const nonEligableMolecules: IMoleculesForMonomerCreation[] = [
     AtomIDsToExclude: ['2'],
   },
   {
-    testDescription: '17. Chemical structure contain any S-groups',
+    testDescription: '17. Chemical structure contains part of an S-group',
     MoleculeSMARTS: 'CCCC |SgD:1,2:aaa:aaa::: :|',
-    AtomIDsToExclude: ['0'],
-  },
-  {
-    testDescription: '18. Chemical structure contain any S-groups',
-    MoleculeSMARTS: 'CCCC |SgD:1,2:aaa:aaa::: :|',
-    AtomIDsToExclude: ['0'],
+    AtomIDsToExclude: ['0', '1'],
   },
   {
     testDescription: '19. Chemical structure contain any R-groups',
@@ -354,6 +355,63 @@ test(`4. Check that when user clicks on the "Create monomer" button the structur
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`4.1 Check that a contracted abbreviation is loaded expanded in the monomer creation wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7637
+   * Description: Check that when the selection contains a contracted functional group,
+   *              only its chemical structure is loaded into the wizard, expanded
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load CH3 bonded to a contracted Tos abbreviation
+   *      3. Select whole structure
+   *      4. Press "Create monomer" button
+   *      5. Validate that the wizard shows the atoms of Tos instead of the abbreviation
+   *
+   * Version 3.23
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/Chromium-popup/Create-monomer/methyl-tosyl-contracted.ket',
+  );
+  await selectAllStructuresOnCanvas(page);
+
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  await expect(getAbbreviationLocator(page, { name: 'Tos' })).toHaveCount(0);
+  await expect(getAtomLocator(page, { atomLabel: 'S' })).toHaveCount(1);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`4.2 Check that several contracted abbreviations are loaded expanded in the monomer creation wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7637
+   * Description: Check that when the selection contains several contracted functional groups,
+   *              only their chemical structure is loaded into the wizard, expanded
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load aspirin drawn with contracted OAc and CO2H abbreviations
+   *      3. Select whole structure
+   *      4. Press "Create monomer" button
+   *      5. Validate that the wizard shows the atoms of OAc and CO2H instead of the abbreviations
+   *
+   * Version 3.23
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/Chromium-popup/Create-monomer/aspirin-with-abbreviations.ket',
+  );
+  await selectAllStructuresOnCanvas(page);
+
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  await expect(getAbbreviationLocator(page, { name: 'OAc' })).toHaveCount(0);
+  await expect(getAbbreviationLocator(page, { name: 'CO2H' })).toHaveCount(0);
+  await expect(getAtomLocator(page, { atomLabel: 'O' })).toHaveCount(4);
   await CreateMonomerDialog(page).discard();
 });
 

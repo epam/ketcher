@@ -1,0 +1,256 @@
+{
+    "ket_version": "2.0.0",
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    12.375,
+                    -7.875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.875,
+                    -7.008975,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    12.375,
+                    -6.14295,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.875,
+                    -7.008975,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.375,
+                    -7.875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.875,
+                    -8.741026,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.375,
+                    -9.607051,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.375,
+                    -9.607051,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.875,
+                    -8.741025,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.375,
+                    -7.875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.875,
+                    -7.008974,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    15.375,
+                    -6.142949,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    16.875,
+                    -7.008975,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    9,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    12
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3
+                ],
+                "name": "OAc",
+                "expanded": false,
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 3,
+                        "attachmentId": "1"
+                    }
+                ]
+            },
+            {
+                "type": "SUP",
+                "atoms": [
+                    10,
+                    11,
+                    12
+                ],
+                "name": "CO2H",
+                "expanded": false,
+                "id": 1,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 10,
+                        "attachmentId": "1"
+                    }
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.875,
+            "y": 5.142949,
+            "z": 0
+        }
+    }
+}

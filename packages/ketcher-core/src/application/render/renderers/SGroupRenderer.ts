@@ -12,6 +12,7 @@ import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { editorEvents } from 'application/editor/editorEvents';
+import { notifyRenderComplete } from 'application/render/notifyRenderComplete';
 import paperjs from 'paper';
 
 type PaperPath = InstanceType<typeof paperjs.Path>;
@@ -669,6 +670,7 @@ export class SGroupRenderer extends BaseRenderer {
 
     this.setHoverRectAttributes(hoverRect);
     this.hoverElement = hoverGroup;
+    notifyRenderComplete();
 
     return this.hoverElement;
   }

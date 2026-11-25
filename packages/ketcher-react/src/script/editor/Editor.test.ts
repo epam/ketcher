@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import {
   Bond,
   ketcherProvider,
+  notifyRenderComplete,
   resetEditorInstance,
   setEditorInstance,
   type CoreEditor,
@@ -322,6 +323,68 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
 });
 
 describe('Editor.hover', () => {
+  describe('S-group render completion', () => {
+    const onRenderComplete = vi.fn();
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      notifyRenderComplete.cancel();
+      window.addEventListener('renderComplete', onRenderComplete);
+    });
+
+    afterEach(() => {
+      window.removeEventListener('renderComplete', onRenderComplete);
+      notifyRenderComplete.cancel();
+      vi.useRealTimers();
+    });
+
+    it.each([
+      { map: 'sgroupData' as const, type: 'DAT' },
+      { map: 'sgroups' as const, type: 'DAT' },
+      { map: 'sgroups' as const, type: 'SRU' },
+    ])('notifies after highlighting $map of type $type', ({ map, type }) => {
+      const group = { item: { type }, setHover: vi.fn() };
+      const data = { setHover: vi.fn() };
+      const render = {
+        ctab: {
+          sgroups: new Map([[1, group]]),
+          sgroupData: new Map([[1, data]]),
+        },
+      };
+      const editor = Object.create(Editor.prototype) as Editor;
+      Reflect.set(editor, '_tool', {});
+      Reflect.set(editor, 'render', render);
+
+      editor.hover({ map, id: 1 });
+      expect(group.setHover).toHaveBeenCalledWith(true, render);
+      if (type === 'DAT') {
+        expect(data.setHover).toHaveBeenCalledWith(true, render);
+      }
+      expect(onRenderComplete).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(250);
+      expect(onRenderComplete).toHaveBeenCalledTimes(1);
+
+      editor.hover({ map, id: 1 });
+      vi.advanceTimersByTime(250);
+      expect(onRenderComplete).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not notify for an unrelated hover', () => {
+      const render = {
+        ctab: { atoms: new Map([[1, { setHover: vi.fn() }]]) },
+      };
+      const editor = Object.create(Editor.prototype) as Editor;
+      Reflect.set(editor, '_tool', {});
+      Reflect.set(editor, 'render', render);
+
+      editor.hover({ map: 'atoms', id: 1 });
+      vi.advanceTimersByTime(250);
+
+      expect(onRenderComplete).not.toHaveBeenCalled();
+    });
+  });
+
   it('clears merged hover even when the renderers produce no combined outline', () => {
     const groupRenderer = { setHover: vi.fn() };
     const tool = {};

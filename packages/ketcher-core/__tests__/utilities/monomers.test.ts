@@ -1,13 +1,81 @@
 import {
+  AXOLABS_ALIAS_MAX_LENGTH,
   DISALLOWED_MONOMER_MODIFICATION_TYPES,
+  getAxoLabsAliasFormatError,
   getDisallowedModificationTypes,
   HELM_ALIAS_MAX_LENGTH,
   isValidHelmAliasLength,
   isValidModificationTypes,
   MODIFICATION_TYPES_MAX_LENGTH,
+  stripAxoLabsAliasBrackets,
+  wrapAxoLabsAlias,
 } from '../../src/utilities/monomers';
 
 describe('monomers utilities', () => {
+  describe('getAxoLabsAliasFormatError', () => {
+    it.each([
+      '',
+      'p',
+      '(p)',
+      'Ab12',
+      '(Ab12)',
+      '(abcdef)',
+      'abcdef',
+      '(a',
+      'a)',
+    ])('accepts %j', (alias) => {
+      expect(getAxoLabsAliasFormatError(alias)).toBeUndefined();
+    });
+
+    it.each(['a b', 'a-b', 'a_b', '(a*)', 'é'])(
+      'reports characters for %j',
+      (alias) => {
+        expect(getAxoLabsAliasFormatError(alias)).toBe('characters');
+      },
+    );
+
+    it.each(['a(b)', '(a)b', '((a))', '(a))', ')a('])(
+      'reports brackets for %j',
+      (alias) => {
+        expect(getAxoLabsAliasFormatError(alias)).toBe('brackets');
+      },
+    );
+
+    it('reports length for an alias over the maximum without brackets', () => {
+      expect(
+        getAxoLabsAliasFormatError('a'.repeat(AXOLABS_ALIAS_MAX_LENGTH + 1)),
+      ).toBe('length');
+      expect(
+        getAxoLabsAliasFormatError(
+          `(${'a'.repeat(AXOLABS_ALIAS_MAX_LENGTH + 1)})`,
+        ),
+      ).toBe('length');
+    });
+
+    it('reports length for empty brackets', () => {
+      expect(getAxoLabsAliasFormatError('()')).toBe('length');
+    });
+
+    it('checks characters before brackets and brackets before length', () => {
+      expect(getAxoLabsAliasFormatError('a(b c')).toBe('characters');
+      expect(getAxoLabsAliasFormatError('a(bcdefgh')).toBe('brackets');
+    });
+  });
+
+  describe('AxoLabs alias brackets', () => {
+    it('strips one leading and one trailing bracket', () => {
+      expect(stripAxoLabsAliasBrackets('(abc)')).toBe('abc');
+      expect(stripAxoLabsAliasBrackets('abc')).toBe('abc');
+      expect(stripAxoLabsAliasBrackets('(abc')).toBe('abc');
+      expect(stripAxoLabsAliasBrackets('abc)')).toBe('abc');
+    });
+
+    it('wraps an alias in brackets once', () => {
+      expect(wrapAxoLabsAlias('abc')).toBe('(abc)');
+      expect(wrapAxoLabsAlias('(abc)')).toBe('(abc)');
+    });
+  });
+
   describe('isValidHelmAliasLength', () => {
     it('allows HELM aliases up to the maximum length', () => {
       expect(isValidHelmAliasLength('A'.repeat(HELM_ALIAS_MAX_LENGTH))).toBe(

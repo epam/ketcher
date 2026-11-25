@@ -7,6 +7,19 @@ export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
 export const BILN_ALIAS_FORMAT_ERROR_MESSAGE =
   'The BILN alias must consist only of uppercase and lowercase letters, numbers, hyphens (`-`), underscores (`_`), and asterisks (`*`).';
 
+export const AXOLABS_ALIAS_FORMAT_ERROR_MESSAGE =
+  'The AxoLabs alias must consist of uppercase and lowercase letters, numbers, and brackets (( and )) (spaces prohibited).';
+
+export const AXOLABS_ALIAS_BRACKET_ERROR_MESSAGE =
+  'The open bracket (() can only be the first and the closed bracket ()) last character of an AxoLabs alias.';
+
+export const AXOLABS_ALIAS_MAX_LENGTH = 6;
+
+export const AXOLABS_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an AxoLabs alias without brackets is ${AXOLABS_ALIAS_MAX_LENGTH}.`;
+
+export const AXOLABS_ALIAS_NOT_UNIQUE_ERROR_MESSAGE =
+  'The AxoLabs alias for every position must be unique.';
+
 export const HELM_ALIAS_MAX_LENGTH = 23;
 
 export const HELM_ALIAS_LENGTH_ERROR_MESSAGE = `The HELM alias must be no more than ${HELM_ALIAS_MAX_LENGTH} symbols long.`;
@@ -80,6 +93,7 @@ export function getDisallowedModificationTypes(
 }
 
 const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
+const AXOLABS_ALIAS_REGEX = /^[A-Za-z0-9()]+$/;
 const BILN_ALIAS_REGEX = /^[A-Za-z0-9_*-]+$/;
 
 /**
@@ -112,6 +126,38 @@ export function getTooLongIdtAliasEntries(
       Boolean(entry.value),
     )
     .filter(({ value }) => !isValidIdtAliasLength(value));
+}
+
+export type AxoLabsAliasFormatError = 'characters' | 'brackets' | 'length';
+
+export function stripAxoLabsAliasBrackets(alias: string) {
+  return alias.replace(/^\(/, '').replace(/\)$/, '');
+}
+
+export function wrapAxoLabsAlias(alias: string) {
+  return `(${stripAxoLabsAliasBrackets(alias)})`;
+}
+
+export function getAxoLabsAliasFormatError(
+  alias: string,
+): AxoLabsAliasFormatError | undefined {
+  if (alias === '') {
+    return undefined;
+  }
+  if (!AXOLABS_ALIAS_REGEX.test(alias)) {
+    return 'characters';
+  }
+  const withoutBrackets = stripAxoLabsAliasBrackets(alias);
+  if (/[()]/.test(withoutBrackets)) {
+    return 'brackets';
+  }
+  if (
+    withoutBrackets.length === 0 ||
+    withoutBrackets.length > AXOLABS_ALIAS_MAX_LENGTH
+  ) {
+    return 'length';
+  }
+  return undefined;
 }
 
 export function isValidHelmAlias(alias: string) {

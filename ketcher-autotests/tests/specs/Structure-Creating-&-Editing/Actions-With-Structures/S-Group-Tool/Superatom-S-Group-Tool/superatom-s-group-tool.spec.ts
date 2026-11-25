@@ -6,7 +6,6 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
-  keyboardPressOnCanvas,
   moveMouseAway,
   copyFromCanvasToClipboardByKeyboard,
   pasteFromClipboardToCanvasByKeyboard,
@@ -131,7 +130,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
     });
@@ -206,7 +205,7 @@ test.describe('Superatom S-Group tool', () => {
       force: true,
     });
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await keyboardPressOnCanvas(page, 'o');
+    await page.keyboard.press('o');
     await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);

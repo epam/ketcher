@@ -126,9 +126,6 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
           force: true,
         });
         await takeEditorScreenshot(page);
-        await CommonLeftToolbar(page).areaSelectionTool(
-          SelectionToolType.Rectangle,
-        );
         await LeftToolbar(page).selectReactionMappingTool(
           ReactionMappingType.ReactionAutoMapping,
         );

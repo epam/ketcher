@@ -173,6 +173,7 @@ export const LeftToolbar = (page: Page) => {
         !(await this.isReactionMappingToolSelected(reactionMappingType))
       ) {
         await locators.reactionMappingToolButton.click();
+        await page.waitForTimeout(50);
         await locators.reactionMappingToolButton.click();
         await page
           .getByTestId('multi-tool-dropdown')

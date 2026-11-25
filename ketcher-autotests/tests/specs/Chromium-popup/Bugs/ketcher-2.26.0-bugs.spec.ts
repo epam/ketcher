@@ -1650,11 +1650,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       MoleculesFileFormatType.MDLRxnfileV3000,
     );
     await SaveStructureDialog(page).copyToClipboard();
+    await page.waitForTimeout(500);
     await SaveStructureDialog(page).cancel();
     await page.waitForTimeout(500);
     await pasteFromClipboardToCanvasByKeyboard(page);
     await page.waitForTimeout(500);
     await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
     await takeEditorScreenshot(page);
   });
 

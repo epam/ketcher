@@ -292,9 +292,13 @@ test.describe('Data S-Group tool', () => {
       FieldValue: 'Qw@!23#$%',
       PropertyLabelType: PropertyLabelType.Absolute,
     });
-    await waitForRender(page, async () => {
-      await moveMouseToTheMiddleOfTheScreen(page);
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await page.getByText('Qw@!23#$%').hover();
+      },
+      50,
+    );
     await takeEditorScreenshot(page);
   });
 

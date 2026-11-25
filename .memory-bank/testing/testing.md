@@ -430,7 +430,7 @@ All screenshot functions accept `maxDiffPixelRatio` and `maxDiffPixels` options 
 | `openFileAndAddToCanvasMacro(page, filename, structureFormat)` | Open file with explicit format selection                                     |
 | `verifyFileExport(page, expectedFilename, fileType)`           | Export from Ketcher API, compare to stored expected file                     |
 | `receiveFileComparisonData(...)`                               | Low-level: get file content from Ketcher API + read expected file            |
-| `saveToFile(filename, data)`                                   | Write expected file (only when `GENERATE_DATA=true` or `--update-snapshots`) |
+| `saveToFile(filename, data)`                                   | Write expected file (only when `GENERATE_DATA=true`; `--update-snapshots` alone does not reach the Playwright workers) |
 
 All test data files live in `tests/test-data/`. Paths passed to these helpers are **relative to that directory**.
 

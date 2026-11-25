@@ -150,6 +150,9 @@ jobs:
         env:
           POPUP_SPECS: ${{ needs.changed_specs.outputs.popup }}
           FULLSCALE_SPECS: ${{ needs.changed_specs.outputs.fullscale }}
+          # saveToFile writes the expected files only with this: the Playwright
+          # workers that run the tests do not get the --update-snapshots flag.
+          GENERATE_DATA: true
         run: |
           cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
           cd ketcher-autotests/

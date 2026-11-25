@@ -25,7 +25,7 @@ export const CommonLeftToolbar = (page: Page) => {
       .getByTestId('hand')
       .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownButton: page
-      .getByTestId('select-rectangle')
+      .getByTestId('select-drop-down-button')
       .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownExpandButton: page
       .getByTestId('select-drop-down-button')
@@ -57,24 +57,71 @@ export const CommonLeftToolbar = (page: Page) => {
     async areaSelectionTool(
       toolType: SelectionToolType = SelectionToolType.Rectangle,
     ) {
-      if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
-        await locators.areaSelectionDropdownExpandButton.click();
+      if (
+        (await this.isAreaSelectionToolActive()) &&
+        (await this.isAreaSelectionToolSelected(toolType))
+      ) {
+        return;
+      }
+
+      if (
+        !(await this.isAreaSelectionToolActive()) &&
+        (await this.isAreaSelectionToolSelected(toolType))
+      ) {
+        await locators.areaSelectionDropdownButton.click();
+        return;
+      }
+
+      if (
+        (await this.isAreaSelectionToolActive()) &&
+        !(await this.isAreaSelectionToolSelected(toolType))
+      ) {
+        await locators.areaSelectionDropdownButton.click();
         await page
           .getByTestId('multi-tool-dropdown')
-          .filter({ has: page.locator(':visible') })
+          .filter({ visible: true })
           .first()
-          .waitFor({ state: 'visible', timeout: bondToolbarActionTimeout });
+          .waitFor({ state: 'visible', timeout: 5000 });
         await page
           .getByTestId(toolType)
           .filter({ has: page.locator(':visible') })
           .first()
           .click();
-      } else {
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'detached', timeout: 5000 });
+        return;
+      }
+
+      if (
+        !(await this.isAreaSelectionToolActive()) &&
+        !(await this.isAreaSelectionToolSelected(toolType))
+      ) {
         await locators.areaSelectionDropdownButton.click();
+        await locators.areaSelectionDropdownButton.click();
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'visible', timeout: 5000 });
+        await page
+          .getByTestId(toolType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
+        await page
+          .getByTestId('multi-tool-dropdown')
+          .filter({ visible: true })
+          .first()
+          .waitFor({ state: 'detached', timeout: 5000 });
+        return;
       }
     },
 
-    // Set timeOut to zero if you are not expacting anything to be deleted once button is pressed
+    // Set timeOut to zero if you are not expacting anything to be deleted
+    // once button is pressed
     async erase({ timeOut }: { timeOut?: number } = {}) {
       await waitForRender(
         page,
@@ -178,6 +225,21 @@ export const CommonLeftToolbar = (page: Page) => {
         `Unable to select bond tool "${bondTool}" after ${maxAttempts} attempts.`,
         { cause: lastError },
       );
+    },
+
+    async isAreaSelectionToolActive() {
+      return !(await locators.areaSelectionDropdownButton.isVisible())
+        ? false
+        : (await locators.areaSelectionDropdownButton.getAttribute(
+            'data-is-selected',
+          )) === 'true';
+    },
+
+    async isAreaSelectionToolSelected(areaSelectionTool: SelectionToolType) {
+      const ccc = await locators.areaSelectionDropdownButton
+        .getByTestId(areaSelectionTool)
+        .isVisible();
+      return ccc;
     },
 
     async isBondToolActive() {

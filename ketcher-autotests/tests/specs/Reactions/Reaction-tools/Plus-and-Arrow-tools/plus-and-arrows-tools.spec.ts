@@ -350,7 +350,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(page, point.x - 140, point.y + 100);
     });

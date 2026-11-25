@@ -273,7 +273,7 @@ test.describe('Open Ketcher', () => {
 
     await CommonTopLeftToolbar(page).undo();
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
       force: true,
     });

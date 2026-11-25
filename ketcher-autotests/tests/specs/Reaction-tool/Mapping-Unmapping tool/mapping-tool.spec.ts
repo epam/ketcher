@@ -72,7 +72,7 @@ test.describe('Mapping Tools', () => {
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await clickInTheMiddleOfTheCanvas(page);
   });
 

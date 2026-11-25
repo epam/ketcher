@@ -39,6 +39,7 @@ type SubMenuProps = {
   autoSize?: boolean;
   disabled?: boolean;
   needOpenByMenuItemClick?: boolean;
+  openByMenuItemClickOnlyWhenActive?: boolean;
   testId?: string;
   layoutModeButton?: boolean;
   generalTitle?: string;
@@ -56,6 +57,7 @@ const SubMenu = ({
   autoSize = false,
   disabled = false,
   needOpenByMenuItemClick = false,
+  openByMenuItemClickOnlyWhenActive = false,
   testId,
   layoutModeButton = false,
   generalTitle,
@@ -107,6 +109,12 @@ const SubMenu = ({
   const ketcherEditorRootElement = document.querySelector(
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
+  const handleMenuItemClick = () => {
+    if (!openByMenuItemClickOnlyWhenActive || isActive(visibleItemId)) {
+      handleDropDownClick();
+    }
+  };
+
   return (
     <RootContainer
       data-testid={testId}
@@ -121,7 +129,7 @@ const SubMenu = ({
             title={visibleItemTitle}
             testId={visibleItemTestId}
             onClick={
-              needOpenByMenuItemClick ? handleDropDownClick : EmptyFunction
+              needOpenByMenuItemClick ? handleMenuItemClick : EmptyFunction
             }
           />
           {open || (

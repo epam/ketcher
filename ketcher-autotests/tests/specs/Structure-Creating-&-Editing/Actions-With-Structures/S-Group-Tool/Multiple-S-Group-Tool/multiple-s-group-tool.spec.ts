@@ -139,7 +139,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Multiple S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
       force: true,
     });

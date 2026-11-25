@@ -184,7 +184,7 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   );
   await takeEditorScreenshot(page);
 
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   // 108 115 122 123
   await getBondLocator(page, { bondId: 108 }).first().click({ force: true });
   await getBondLocator(page, { bondId: 115 }).first().click({ force: true });

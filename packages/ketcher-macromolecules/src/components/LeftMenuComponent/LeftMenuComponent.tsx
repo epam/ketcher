@@ -53,6 +53,7 @@ export function LeftMenuComponent() {
           disabled={isSettingsPanelOpen}
           subMenuId={SELECT_SUBMENU_ID}
           needOpenByMenuItemClick={true}
+          openByMenuItemClickOnlyWhenActive={true}
         >
           <Menu.Item
             itemId="select-rectangle"

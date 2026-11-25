@@ -4,11 +4,7 @@ import {
   TextEditorDialog,
 } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import {
-  clickInTheMiddleOfTheCanvas,
-  openFileAndAddToCanvas,
-  takeEditorScreenshot,
-} from '@utils';
+import { openFileAndAddToCanvas, takeEditorScreenshot } from '@utils';
 import { waitForPageInit } from '@utils/common';
 
 test.describe('Text tools test cases', () => {
@@ -27,7 +23,6 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2226
     // Verify if the text box displayed properly all elements
     await addTextBoxToCanvas(page);
-    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

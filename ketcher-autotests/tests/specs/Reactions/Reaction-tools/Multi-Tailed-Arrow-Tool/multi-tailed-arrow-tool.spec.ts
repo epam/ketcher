@@ -3958,6 +3958,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopRightToolbar(page).resetZoom();
     await openImageAndAddToCanvas(
       page,
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',

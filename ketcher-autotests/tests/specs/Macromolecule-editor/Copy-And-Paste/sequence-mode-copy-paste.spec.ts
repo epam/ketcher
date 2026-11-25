@@ -6,7 +6,6 @@ import {
   zoomWithMouseWheel,
   scrollDown,
   moveMouseAway,
-  waitForRender,
   copyFromCanvasToClipboardByKeyboard,
   pasteFromClipboardToCanvasByKeyboard,
   readFileContent,
@@ -359,9 +358,7 @@ test.describe('Sequence-edit mode', () => {
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
-    await waitForRender(page, async () => {
-      await takeEditorScreenshot(page);
-    });
+    await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

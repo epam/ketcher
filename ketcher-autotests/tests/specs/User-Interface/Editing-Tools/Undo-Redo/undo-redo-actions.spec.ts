@@ -73,7 +73,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,

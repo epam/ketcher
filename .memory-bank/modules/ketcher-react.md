@@ -61,6 +61,8 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 
 ## Assumptions & Constraints
 
+- When a molecules canvas context menu closes, it restores the editor's previous focus if focus was lost with the menu. It does not reclaim focus after an outside click or while a modal is open.
+
 - `AtomMenuItems` checks `queryProperties.customQuery` on every editable target atom using the same truthiness check as Atom Properties. Any custom-query target disables the Query properties submenu, including for mixed atom selections; unrelated menu actions keep their existing availability.
 
 - The paste tool and S-Group dialog do not run a canvas-wide S-Group expansion pass. Non-SUP groups are always expanded according to `SGroup.isExpanded()`; these UI paths do not normalize the raw `data.expanded` flag of unrelated groups.

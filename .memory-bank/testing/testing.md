@@ -522,6 +522,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
       */
    ```
    The `Version` line is the Ketcher release of the feature the test covers. Take it from the milestone of the feature issue (the source task linked from the autotest issue), dropping any `-rc.N` suffix: milestone `Ketcher 3.13.0-rc.1` gives `Version 3.13.0`. Do not take it from the autotest issue, whose milestone is `Autotests`, or from the current version in `package.json`.
+   A test for a fixed bug (see "Naming") adds a `Bug:` line with the link to the bug after `Test task:`, and takes `Version` from the title of its autotest issue: `Autotests for Ketcher 3.15.0 bugs - Part 3` gives `Version 3.15.0`.
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
 
 ### Naming
@@ -530,6 +531,8 @@ A spec file that covers a feature is named `<featureID>-<Feature-Name>.spec.ts`,
 
 - popup mode: `ketcher-autotests/tests/specs/Chromium-popup/Features/`;
 - full-screen mode: `ketcher-autotests/tests/specs/Features/`.
+
+Tests for the fixed bugs of one release, asked for by an autotest issue titled `Autotests for Ketcher <version> bugs - Part N`, go into one file per release: `ketcher-autotests/tests/specs/Chromium-popup/Bugs/ketcher-<version>-bugs.spec.ts`. A new test is numbered on from the highest case in the file, in the title style of the file, such as `Case 26 — <bug title>`. Its new test-data files go under `<Format>/Chromium-popup/Bugs/ketcher-<version>-bugs/`; the older tests keep their paths.
 
 Each `test()` title is a plain English sentence that starts with the serial number from the checklist item, such as `Case 1 - ...` or `1. ...`, matching the style of the target file.
 

@@ -7,17 +7,15 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class RNABase extends BaseMonomer {
   public getValidSourcePoint() {
-    if (this.chosenFirstAttachmentPointForBond) {
-      return this.chosenFirstAttachmentPointForBond;
-    }
-    return this.firstFreeAttachmentPoint;
+    return this.chosenFirstAttachmentPointForBond
+      ? this.chosenFirstAttachmentPointForBond
+      : this.firstFreeAttachmentPoint;
   }
 
   public getValidTargetPoint() {
-    if (this.potentialSecondAttachmentPointForBond) {
-      return this.potentialSecondAttachmentPointForBond;
-    }
-    return this.firstFreeAttachmentPoint;
+    return this.potentialSecondAttachmentPointForBond
+      ? this.potentialSecondAttachmentPointForBond
+      : this.firstFreeAttachmentPoint;
   }
 
   public get SubChainConstructor() {

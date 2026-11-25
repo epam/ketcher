@@ -56,10 +56,10 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
 
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
-      let atomId: number | undefined;
-      if (atom.type === 'rg-label') {
-        atomId = struct.atoms.add(rglabelToStruct(atom));
-      }
+      let atomId: number | undefined =
+        atom.type === 'rg-label'
+          ? struct.atoms.add(rglabelToStruct(atom))
+          : undefined;
       if (!atom.type || atom.type === 'atom-list') {
         atomId = struct.atoms.add(atomToStruct(atom));
       }

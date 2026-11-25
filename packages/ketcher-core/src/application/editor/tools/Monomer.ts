@@ -22,7 +22,6 @@ import {
   AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
 import type { MonomerOrAmbiguousType } from 'domain/types';
-import type { Command } from 'domain/entities/Command';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { assert } from 'utilities';
 import { Coordinates } from '../shared/coordinates';
@@ -52,26 +51,23 @@ class MonomerTool implements BaseTool {
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    let modelChanges: Command;
     const position = Coordinates.canvasToModel(
       new Vec2(
         this.editor.lastCursorPositionOfCanvas.x,
         this.editor.lastCursorPositionOfCanvas.y,
       ),
     );
-    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-      modelChanges = this.editor.drawingEntitiesManager.addAmbiguousMonomer(
-        this.monomer,
-        position,
-      );
-    } else {
-      modelChanges = this.editor.drawingEntitiesManager.addMonomer(
-        this.monomer,
-        // We convert monomer coordinates from pixels to angstroms
-        // because the model layer (like BaseMonomer) should not work with pixels
-        position,
-      );
-    }
+    const modelChanges = isAmbiguousMonomerLibraryItem(this.monomer)
+      ? this.editor.drawingEntitiesManager.addAmbiguousMonomer(
+          this.monomer,
+          position,
+        )
+      : this.editor.drawingEntitiesManager.addMonomer(
+          this.monomer,
+          // We convert monomer coordinates from pixels to angstroms
+          // because the model layer (like BaseMonomer) should not work with pixels
+          position,
+        );
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);

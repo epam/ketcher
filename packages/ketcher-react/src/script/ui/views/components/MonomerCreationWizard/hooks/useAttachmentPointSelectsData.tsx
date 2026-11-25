@@ -41,11 +41,11 @@ const getLeavingAtomOption = (
 });
 
 /**
- * Builds the leaving-atom option list shared by both regular and readonly
- * attachment points:
- * - H and OH are always present (in that order)
- * - If the current leaving atom differs from both, it is appended as a third option
- */
+Builds the leaving-atom option list shared by both regular and readonly
+attachment points:
+- H and OH are always present (in that order)
+- If the current leaving atom differs from both, it is appended as a third option
+*/
 const buildLeavingAtomOptions = (
   currentLabel: string,
   currentImplicitH = currentLabel === AtomLabel.O ? 1 : 0,

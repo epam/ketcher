@@ -80,10 +80,9 @@ export class MacromoleculesConverter {
   public static convertAttachmentPointNameToNumber(
     attachmentPointName: AttachmentPointName,
   ) {
-    if (attachmentPointName === 'hydrogen') {
-      return 0;
-    }
-    return Number(attachmentPointName?.replace('R', ''));
+    return attachmentPointName === 'hydrogen'
+      ? 0
+      : Number(attachmentPointName?.replace('R', ''));
   }
 
   public static findAttachmentPointAtom(
@@ -472,42 +471,56 @@ export class MacromoleculesConverter {
 
   // This method returns array of arrays of fragmentIds grouped by sgroup
   // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
+  // Fragments linked through any chain of sgroups go into the same group
   public static getFragmentsGroupedBySgroup(struct: Struct) {
+    const fragmentIdToSgroups = new Map<number, Set<SGroup>>();
+    const isGroupingSgroup = new Map<SGroup, boolean>();
+    struct.atoms.forEach((atom) => {
+      atom.sgs.forEach((sgroupId) => {
+        const sgroup = struct.sgroups.get(sgroupId);
+        if (!sgroup) return;
+        let isGrouping = isGroupingSgroup.get(sgroup);
+        if (isGrouping === undefined) {
+          isGrouping = !this.shouldSplitSgroupIntoSeparateFragments(
+            sgroup,
+            struct,
+          );
+          isGroupingSgroup.set(sgroup, isGrouping);
+        }
+        if (!isGrouping) return;
+        const fragmentSgroups = fragmentIdToSgroups.get(atom.fragment);
+        if (fragmentSgroups) {
+          fragmentSgroups.add(sgroup);
+        } else {
+          fragmentIdToSgroups.set(atom.fragment, new Set([sgroup]));
+        }
+      });
+    });
+
     const groupedFragments: number[][] = [];
+    const groupedFragmentIds = new Set<number>();
     struct.frags.forEach((_fragment, fragmentId) => {
-      const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
-        fragmentsGroup.includes(fragmentId),
-      );
-      if (isAlreadyGrouped) {
+      if (groupedFragmentIds.has(fragmentId)) {
         return;
       }
 
-      // Find all sgroups related to fragment
-      const fragmentSgroups = new Set<SGroup>();
-      struct.atoms.forEach((atom, atomId) => {
-        if (atom.fragment !== fragmentId) return;
-        const sgroup = struct.getGroupFromAtomId(atomId);
-        if (
-          sgroup &&
-          !this.shouldSplitSgroupIntoSeparateFragments(sgroup, struct)
-        ) {
-          fragmentSgroups.add(sgroup);
-        }
-      });
-
-      // Add new group of fragments with fragments related to one sgroup
-      const lastFragmentGroupIndex = groupedFragments.push([fragmentId]) - 1;
-      fragmentSgroups.forEach((sgroup) => {
-        sgroup.atoms.forEach((aid) => {
-          const atomFragmentId = struct.atoms.get(aid)?.fragment;
-          if (
-            isNumber(atomFragmentId) &&
-            !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
-          ) {
-            groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
-          }
+      const fragmentsGroup = [fragmentId];
+      groupedFragmentIds.add(fragmentId);
+      for (const groupFragmentId of fragmentsGroup) {
+        fragmentIdToSgroups.get(groupFragmentId)?.forEach((sgroup) => {
+          sgroup.atoms.forEach((aid) => {
+            const atomFragmentId = struct.atoms.get(aid)?.fragment;
+            if (
+              isNumber(atomFragmentId) &&
+              !groupedFragmentIds.has(atomFragmentId)
+            ) {
+              groupedFragmentIds.add(atomFragmentId);
+              fragmentsGroup.push(atomFragmentId);
+            }
+          });
         });
-      });
+      }
+      groupedFragments.push(fragmentsGroup);
     });
 
     return groupedFragments;

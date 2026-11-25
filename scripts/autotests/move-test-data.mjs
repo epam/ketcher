@@ -24,8 +24,8 @@ import {
 import { basename, dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SPECS_DIR = 'ketcher-autotests/tests/specs';
-const TEST_DATA_DIR = 'ketcher-autotests/tests/test-data';
+export const SPECS_DIR = 'ketcher-autotests/tests/specs';
+export const TEST_DATA_DIR = 'ketcher-autotests/tests/test-data';
 const POPUP_DIR = 'Chromium-popup';
 const SPEC_SUFFIX = '.spec.ts';
 

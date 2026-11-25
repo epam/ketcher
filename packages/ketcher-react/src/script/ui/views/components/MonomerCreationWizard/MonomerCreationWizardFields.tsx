@@ -156,7 +156,6 @@ const MonomerCreationWizardFields = (
   const {
     displayNaturalAnalogue,
     displayModificationTypes,
-    displayAliases,
     displayHelmAlias,
     displayBilnAlias,
     displayAxoLabsAlias: isAxoLabsAliasAvailable,
@@ -356,7 +355,7 @@ const MonomerCreationWizardFields = (
         </>
       )}
 
-      {displayAliases && hasAliasFields && (
+      {hasAliasFields && (
         <>
           <div className={styles.divider} />
 

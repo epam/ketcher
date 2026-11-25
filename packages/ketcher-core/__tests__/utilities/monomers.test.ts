@@ -7,6 +7,7 @@ import {
   isValidHelmAliasLength,
   isValidModificationTypes,
   MODIFICATION_TYPES_MAX_LENGTH,
+  normalizeAxoLabsAliasForSave,
   stripAxoLabsAliasBrackets,
   wrapAxoLabsAlias,
 } from '../../src/utilities/monomers';
@@ -73,6 +74,27 @@ describe('monomers utilities', () => {
     it('wraps an alias in brackets once', () => {
       expect(wrapAxoLabsAlias('abc')).toBe('(abc)');
       expect(wrapAxoLabsAlias('(abc)')).toBe('(abc)');
+    });
+  });
+
+  describe('normalizeAxoLabsAliasForSave', () => {
+    it('saves no alias for a blank value', () => {
+      expect(normalizeAxoLabsAliasForSave('')).toBeUndefined();
+      expect(normalizeAxoLabsAliasForSave('  ', 'p')).toBeUndefined();
+      expect(normalizeAxoLabsAliasForSave(undefined)).toBeUndefined();
+    });
+
+    it('keeps the loaded alias as stored when it is unchanged', () => {
+      expect(normalizeAxoLabsAliasForSave('p', 'p')).toBe('p');
+      expect(normalizeAxoLabsAliasForSave('(p)', 'p')).toBe('p');
+      expect(normalizeAxoLabsAliasForSave('p', '(p)')).toBe('(p)');
+    });
+
+    it('wraps a changed alias in brackets', () => {
+      expect(normalizeAxoLabsAliasForSave('Xq', 'p')).toBe('(Xq)');
+      expect(normalizeAxoLabsAliasForSave('Xq')).toBe('(Xq)');
+      expect(normalizeAxoLabsAliasForSave('(Xq)')).toBe('(Xq)');
+      expect(normalizeAxoLabsAliasForSave(' Xq ')).toBe('(Xq)');
     });
   });
 

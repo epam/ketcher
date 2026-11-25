@@ -1,5 +1,7 @@
 import {
+  type IKetMacromoleculesContent,
   isAmbiguousMonomerLibraryItem,
+  KetTemplateType,
   stripAxoLabsAliasBrackets,
   KetMonomerClass,
   type MonomerItemType,
@@ -34,10 +36,6 @@ export const getMonomerPropertyVisibility = (
   return {
     displayNaturalAnalogue: shouldDisplayNaturalAnalogue,
     displayModificationTypes: shouldDisplayModificationTypes,
-    displayAliases:
-      shouldDisplayHelmAlias ||
-      shouldDisplayBilnAlias ||
-      shouldDisplayAxoLabsAlias,
     displayHelmAlias: shouldDisplayHelmAlias,
     displayBilnAlias: shouldDisplayBilnAlias,
     displayAxoLabsAlias: shouldDisplayAxoLabsAlias,
@@ -131,10 +129,6 @@ export const hasMonomerFieldCollision = (
   });
 };
 
-type MonomersLibraryTemplates = {
-  [templateRef: string]: unknown;
-};
-
 /*
  * An AxoLabs alias is unique across the whole library, brackets ignored,
  * and every position it can be written in (monomer or RNA preset) counts.
@@ -142,7 +136,7 @@ type MonomersLibraryTemplates = {
  */
 export const hasAxoLabsAliasCollision = (
   library: MonomerItemType[],
-  monomersLibraryParsedJson: MonomersLibraryTemplates | null | undefined,
+  monomersLibraryParsedJson: IKetMacromoleculesContent,
   alias: string,
 ) => {
   const stripped = stripAxoLabsAliasBrackets(alias);
@@ -151,13 +145,11 @@ export const hasAxoLabsAliasCollision = (
 
   return (
     library.some(({ props }) => matches(props.aliasAxoLabs)) ||
-    Object.values(monomersLibraryParsedJson ?? {}).some((template) => {
-      const { type, aliasAxoLabs } = (template ?? {}) as {
-        type?: string;
-        aliasAxoLabs?: string;
-      };
-      return type === 'monomerGroupTemplate' && matches(aliasAxoLabs);
-    })
+    Object.values(monomersLibraryParsedJson).some(
+      (template) =>
+        template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        matches(template.aliasAxoLabs),
+    )
   );
 };
 

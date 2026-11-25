@@ -91,7 +91,12 @@ describe('saving library wizard changes', () => {
     await saveLibraryMonomer(
       ketcher,
       {
-        monomerTemplate: { ...template, alias: 'A', fullName: 'New name' },
+        monomerTemplate: {
+          ...template,
+          alias: 'A',
+          fullName: 'New name',
+          aliasAxoLabs: undefined,
+        },
         monomerRef: 'monomerTemplate-new-id',
       },
       original,
@@ -160,6 +165,44 @@ describe('saving library wizard changes', () => {
       JSON.parse(update.mock.calls[1][0])['monomerTemplate-new-id']
         .aliasAxoLabs,
     ).toBe('(new)');
+  });
+
+  it('drops an AxoLabs alias unchanged from the original on a new entry, ignoring brackets', async () => {
+    const chemTemplate = {
+      ...template,
+      class: KetMonomerClass.CHEM,
+      alias: 'A',
+    };
+    (provideEditorInstance as Mock).mockReturnValue({
+      monomersLibraryParsedJson: {
+        'monomerTemplate-original': {
+          ...chemTemplate,
+          id: 'original',
+          aliasAxoLabs: 'p',
+        },
+      },
+      checkIfMonomerSymbolClassPairExists: () => false,
+      updateMonomersLibrary: update,
+      monomersLibrary: [savedItem],
+      scheduleMonomerWizardInstanceReplacement: scheduleReplacement,
+    });
+    const chemOriginal = {
+      ...original,
+      props: { ...original.props, MonomerClass: KetMonomerClass.CHEM },
+    };
+
+    await saveLibraryMonomer(
+      ketcher,
+      {
+        monomerTemplate: { ...chemTemplate, alias: 'B', aliasAxoLabs: '(p)' },
+        monomerRef: 'monomerTemplate-new-id',
+      },
+      chemOriginal,
+    );
+
+    expect(
+      JSON.parse(update.mock.calls[0][0])['monomerTemplate-new-id'],
+    ).not.toHaveProperty('aliasAxoLabs');
   });
 
   it('adds a distinct monomer when the code changed, leaving the original alone', async () => {

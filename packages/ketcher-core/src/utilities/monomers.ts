@@ -17,9 +17,6 @@ export const AXOLABS_ALIAS_MAX_LENGTH = 6;
 
 export const AXOLABS_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an AxoLabs alias without brackets is ${AXOLABS_ALIAS_MAX_LENGTH}.`;
 
-export const AXOLABS_ALIAS_NOT_UNIQUE_ERROR_MESSAGE =
-  'The AxoLabs alias for every position must be unique.';
-
 export const HELM_ALIAS_MAX_LENGTH = 23;
 
 export const HELM_ALIAS_LENGTH_ERROR_MESSAGE = `The HELM alias must be no more than ${HELM_ALIAS_MAX_LENGTH} symbols long.`;
@@ -136,6 +133,29 @@ export function stripAxoLabsAliasBrackets(alias: string) {
 
 export function wrapAxoLabsAlias(alias: string) {
   return `(${stripAxoLabsAliasBrackets(alias)})`;
+}
+
+/*
+ * The single place that turns what the user typed into the alias to save.
+ * Blank means no alias; a value equal (brackets ignored) to the alias the form
+ * was loaded with keeps that alias as stored; anything else gets the brackets.
+ */
+export function normalizeAxoLabsAliasForSave(
+  typedAlias: string | undefined,
+  loadedAlias?: string,
+): string | undefined {
+  const trimmed = typedAlias?.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  if (
+    loadedAlias !== undefined &&
+    stripAxoLabsAliasBrackets(trimmed) ===
+      stripAxoLabsAliasBrackets(loadedAlias)
+  ) {
+    return loadedAlias;
+  }
+  return wrapAxoLabsAlias(trimmed);
 }
 
 export function getAxoLabsAliasFormatError(

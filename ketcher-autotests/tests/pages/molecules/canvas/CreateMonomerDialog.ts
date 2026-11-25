@@ -518,6 +518,13 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.keyboard.type(axolabsAlias);
     },
 
+    async getAxoLabsAlias() {
+      await this.expandAliasesSection();
+      return await aliasesSection.axolabsAliasEditbox
+        .locator('input')
+        .inputValue();
+    },
+
     async isAxoLabsAliasInvalid() {
       await this.expandAliasesSection();
       const input = aliasesSection.axolabsAliasEditbox.locator('input');

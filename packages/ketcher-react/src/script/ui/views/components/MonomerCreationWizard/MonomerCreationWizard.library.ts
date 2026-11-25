@@ -7,6 +7,7 @@ import {
   type MonomerItemType,
   provideEditorInstance,
   SettingsManager,
+  stripAxoLabsAliasBrackets,
 } from 'ketcher-core';
 import type { FinishNewMonomersCreationData } from '../../../../editor/Editor';
 import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utils';
@@ -73,7 +74,13 @@ export const saveLibraryMonomer = async (
     if (template.aliasBILN === editedMonomerTemplate?.aliasBILN) {
       delete template.aliasBILN;
     }
-    if (template.aliasAxoLabs === editedMonomerTemplate?.aliasAxoLabs) {
+    // Brackets are not part of the alias identity, so `(p)` equals stored `p`.
+    if (
+      template.aliasAxoLabs !== undefined &&
+      editedMonomerTemplate?.aliasAxoLabs !== undefined &&
+      stripAxoLabsAliasBrackets(template.aliasAxoLabs) ===
+        stripAxoLabsAliasBrackets(editedMonomerTemplate.aliasAxoLabs)
+    ) {
       delete template.aliasAxoLabs;
     }
   }

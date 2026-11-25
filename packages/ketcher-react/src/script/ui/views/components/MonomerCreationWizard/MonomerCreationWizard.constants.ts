@@ -2,7 +2,6 @@ import {
   AXOLABS_ALIAS_BRACKET_ERROR_MESSAGE,
   AXOLABS_ALIAS_FORMAT_ERROR_MESSAGE,
   AXOLABS_ALIAS_LENGTH_ERROR_MESSAGE,
-  AXOLABS_ALIAS_NOT_UNIQUE_ERROR_MESSAGE,
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   KetMonomerClass,
@@ -80,7 +79,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   invalidAxoLabsAlias: AXOLABS_ALIAS_FORMAT_ERROR_MESSAGE,
   axoLabsAliasBracket: AXOLABS_ALIAS_BRACKET_ERROR_MESSAGE,
   axoLabsAliasTooLong: AXOLABS_ALIAS_LENGTH_ERROR_MESSAGE,
-  notUniqueAxoLabsAlias: AXOLABS_ALIAS_NOT_UNIQUE_ERROR_MESSAGE,
+  notUniqueAxoLabsAlias: i18n.t(`${n}notUniqueAxoLabsAlias`),
   invalidRnaPresetStructure: i18n.t(`${n}invalidRnaPresetStructure`),
   rnaPresetAtomsOutsideComponents: i18n.t(
     `${n}rnaPresetAtomsOutsideComponents`,

@@ -180,6 +180,24 @@ describe('getEditAllInstancesInitialValues', () => {
     });
   });
 
+  it.each([
+    KetMonomerClass.RNA,
+    KetMonomerClass.CHEM,
+    KetMonomerClass.Phosphate,
+  ])('does not load the AxoLabs alias of a %s on Edit All', (MonomerClass) => {
+    const values = getEditAllInstancesInitialValues(
+      createMonomer({
+        MonomerClass,
+        MonomerCode: 'X',
+        MonomerName: 'X',
+        Name: 'X',
+        aliasAxoLabs: '(Xq)',
+      }),
+    );
+
+    expect(values.aliasAxoLabs).toBe('');
+  });
+
   it('collects required attachment points when an RNA component participates in presets', () => {
     const values = getEditAllInstancesInitialValues(
       createMonomer(

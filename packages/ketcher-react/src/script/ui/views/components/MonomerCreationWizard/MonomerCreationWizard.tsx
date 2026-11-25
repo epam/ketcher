@@ -25,8 +25,8 @@ import {
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
   NO_NATURAL_ANALOGUE,
+  normalizeAxoLabsAliasForSave,
   provideEditorInstance,
-  wrapAxoLabsAlias,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import {
@@ -171,7 +171,7 @@ const getInitialWizardStateForEdit = ({
       naturalAnalogue: initialValues.naturalAnalogue,
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
-      aliasAxoLabs: initialValues.aliasAxoLabs ?? '',
+      aliasAxoLabs: initialValues.aliasAxoLabs,
     },
   };
 
@@ -2210,9 +2210,10 @@ const MonomerCreationWizardInternal = ({
             modificationTypes.length > 0 ? modificationTypes : undefined,
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
-          aliasAxoLabs: valuesToSave.aliasAxoLabs
-            ? wrapAxoLabsAlias(valuesToSave.aliasAxoLabs)
-            : undefined,
+          aliasAxoLabs: normalizeAxoLabsAliasForSave(
+            valuesToSave.aliasAxoLabs,
+            monomerCreationState.editInstanceInitialValues?.aliasAxoLabs,
+          ),
           structure,
           attachmentPoints: remappedAttachmentPoints as Map<
             AttachmentPointName,
@@ -2450,9 +2451,11 @@ const MonomerCreationWizardInternal = ({
                         : undefined,
                     aliasHELM,
                     aliasBILN,
-                    aliasAxoLabs: aliasAxoLabs
-                      ? wrapAxoLabsAlias(aliasAxoLabs)
-                      : undefined,
+                    aliasAxoLabs: normalizeAxoLabsAliasForSave(
+                      aliasAxoLabs,
+                      monomerCreationState.editInstanceInitialValues
+                        ?.aliasAxoLabs,
+                    ),
                     attachmentPoints: assignedAttachmentPoints,
                     structure,
                   });

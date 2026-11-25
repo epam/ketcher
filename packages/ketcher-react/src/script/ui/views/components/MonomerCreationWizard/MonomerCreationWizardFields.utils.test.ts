@@ -1,4 +1,9 @@
-import { KetMonomerClass, type MonomerItemType, Struct } from 'ketcher-core';
+import {
+  type IKetMacromoleculesContent,
+  KetMonomerClass,
+  type MonomerItemType,
+  Struct,
+} from 'ketcher-core';
 import {
   getMonomerPropertyVisibility,
   getOtherLibraryMonomers,
@@ -30,7 +35,6 @@ describe('getMonomerPropertyVisibility', () => {
       expect(getMonomerPropertyVisibility(type)).toEqual({
         displayNaturalAnalogue: naturalAnalogue,
         displayModificationTypes: modificationTypes,
-        displayAliases: helmAlias || bilnAlias || axoLabsAlias,
         displayHelmAlias: helmAlias,
         displayBilnAlias: bilnAlias,
         displayAxoLabsAlias: axoLabsAlias,
@@ -190,6 +194,9 @@ describe('hasAxoLabsAliasCollision', () => {
       aliasAxoLabs,
     },
   });
+  const emptyJson = {
+    root: { templates: [] },
+  } as unknown as IKetMacromoleculesContent;
   const parsedJson = {
     root: { templates: [{ $ref: 'monomerGroupTemplate-X' }] },
     'monomerGroupTemplate-X': {
@@ -197,13 +204,13 @@ describe('hasAxoLabsAliasCollision', () => {
       aliasAxoLabs: 'preset1',
     },
     'monomerTemplate-Y': { type: 'monomerTemplate', aliasAxoLabs: 'notPreset' },
-  };
+  } as unknown as IKetMacromoleculesContent;
 
   it('finds a monomer with the same alias, ignoring brackets', () => {
-    expect(hasAxoLabsAliasCollision([monomer('abc')], null, '(abc)')).toBe(
+    expect(hasAxoLabsAliasCollision([monomer('abc')], emptyJson, '(abc)')).toBe(
       true,
     );
-    expect(hasAxoLabsAliasCollision([monomer('(abc)')], null, 'abc')).toBe(
+    expect(hasAxoLabsAliasCollision([monomer('(abc)')], emptyJson, 'abc')).toBe(
       true,
     );
   });
@@ -213,7 +220,9 @@ describe('hasAxoLabsAliasCollision', () => {
   });
 
   it('is case-sensitive', () => {
-    expect(hasAxoLabsAliasCollision([monomer('abc')], null, 'ABC')).toBe(false);
+    expect(hasAxoLabsAliasCollision([monomer('abc')], emptyJson, 'ABC')).toBe(
+      false,
+    );
     expect(hasAxoLabsAliasCollision([], parsedJson, 'PRESET1')).toBe(false);
   });
 

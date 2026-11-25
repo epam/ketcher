@@ -94,6 +94,7 @@ function initApp(
   );
 
   return () => {
+    store.dispose();
     store.dispatch(removeKeydownListener(element));
     store.dispatch(removeMouseListeners(element));
     removeResizeListener();

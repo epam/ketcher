@@ -12,11 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ***************************************************************************/
+ ****************************************************************************/
 
 import { initLib } from './init-lib';
 
-import { KetcherLogger, KetSerializer } from 'ketcher-core';
+import { KetcherLogger, KetSerializer, type SdfItem } from 'ketcher-core';
 import { isNumber } from 'lodash';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
@@ -52,6 +52,15 @@ export function changeTab(tab) {
   return {
     type: 'TMPL_CHANGE_TAB',
     data: { tab },
+  };
+}
+
+export function addTemplate(template: SdfItem) {
+  return {
+    type: 'TMPL_ADD',
+    data: {
+      template,
+    },
   };
 }
 
@@ -106,8 +115,10 @@ export function editTmpl(tmpl) {
         tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
         tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
 
-        if (tmpl.props.group === 'User Templates')
-          updateLocalStore(getState().templates.lib);
+        if (tmpl.props.group === 'User Templates') {
+          const { lib, runtimeTemplates } = getState().templates;
+          updateLocalStore(lib, runtimeTemplates);
+        }
       }
 
       try {
@@ -131,8 +142,10 @@ export function deleteUserTmpl(tmpl) {
 export function deleteTmpl(tmpl) {
   return (dispatch, getState) => {
     const lib = getState().templates.lib.filter((value) => value !== tmpl);
+
     dispatch(deleteUserTmpl(tmpl));
-    updateLocalStore(lib);
+
+    updateLocalStore(lib, getState().templates.runtimeTemplates);
   };
 }
 
@@ -141,7 +154,10 @@ SAVE
 */
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
-  const tmpl = { struct: struct.clone(), props: {} };
+  const tmpl = {
+    struct: struct.clone(),
+    props: {},
+  };
 
   return (dispatch, getState) => {
     void (async () => {
@@ -151,12 +167,17 @@ export function saveUserTmpl(struct) {
           name: string;
           attach?: Record<string, unknown>;
         };
+
         tmpl.struct.name = name.trim();
-        tmpl.props = { ...attach, group: 'User Templates' };
+
+        tmpl.props = {
+          ...attach,
+          group: 'User Templates',
+        };
 
         const lib = [...getState().templates.lib, tmpl];
         dispatch(initLib(lib));
-        updateLocalStore(lib);
+        updateLocalStore(lib, getState().templates.runtimeTemplates);
       } catch (e) {
         KetcherLogger.error('index.ts::saveUserTmpl', e);
       }
@@ -164,13 +185,20 @@ export function saveUserTmpl(struct) {
   };
 }
 
-function updateLocalStore(lib) {
+function updateLocalStore(lib, runtimeTemplates: SdfItem[] = []) {
   const ketSerializer = new KetSerializer();
+
   const userLib = lib
-    .filter((item) => item.props.group === 'User Templates')
+    .filter(
+      (item) =>
+        item.props.group === 'User Templates' &&
+        !runtimeTemplates.includes(item),
+    )
     .map((item) => ({
       struct: ketSerializer.serialize(item.struct),
-      props: { ...(omit(['group'], item.props) || {}) },
+      props: {
+        ...(omit(['group'], item.props) || {}),
+      },
     }));
 
   storage.setItem('ketcher-tmpls', userLib);
@@ -181,6 +209,7 @@ REDUCER
 */
 export const initTmplsState = {
   lib: [],
+  runtimeTemplates: [] as SdfItem[],
   selected: null,
   filter: '',
   group: null,
@@ -190,7 +219,6 @@ export const initTmplsState = {
 };
 
 const tmplActions = new Set([
-  'TMPL_INIT',
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
   'TMPL_CHANGE_FILTER',
@@ -204,7 +232,42 @@ const attachActions = new Set([
 ]);
 
 function templatesReducer(state = initTmplsState, action) {
-  if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
+  if (action.type === 'TMPL_CLEAR') {
+    return initTmplsState;
+  }
+
+  const runtimeTemplates = state.runtimeTemplates ?? [];
+
+  if (action.type === 'TMPL_INIT') {
+    const lib = action.data?.lib ?? state.lib;
+    return {
+      ...state,
+      ...(action.data || {}),
+      lib: [...new Set([...lib, ...runtimeTemplates])],
+      runtimeTemplates,
+    };
+  }
+
+  if (tmplActions.has(action.type)) {
+    return {
+      ...state,
+      ...(action.data || {}),
+    };
+  }
+
+  if (action.type === 'TMPL_ADD') {
+    const template = action.data?.template;
+
+    if (!template) {
+      return state;
+    }
+
+    return {
+      ...state,
+      lib: [...state.lib, template],
+      runtimeTemplates: [...runtimeTemplates, template],
+    };
+  }
 
   if (
     action.type === 'MODAL_OPEN' &&
@@ -215,14 +278,31 @@ function templatesReducer(state = initTmplsState, action) {
   }
 
   if (attachActions.has(action.type)) {
-    const attach = { ...state.attach, ...(action.data || {}) };
-    return { ...state, attach };
+    const attach = {
+      ...state.attach,
+      ...(action.data || {}),
+    };
+
+    return {
+      ...state,
+      attach,
+    };
   }
 
   if (action.type === 'TMPL_DELETE') {
-    const currentState = { ...state };
+    const currentState = {
+      ...state,
+    };
+
     const lib = currentState.lib.filter((value) => value !== action.data.tmpl);
-    return { ...currentState, lib };
+
+    return {
+      ...currentState,
+      lib,
+      runtimeTemplates: runtimeTemplates.filter(
+        (template) => template !== action.data.tmpl,
+      ),
+    };
   }
 
   return state;

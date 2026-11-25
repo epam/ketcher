@@ -571,6 +571,55 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
+  /**
+   * Adds a structure to the Ketcher template library without placing it
+   * on the drawing canvas.
+   *
+   * @param structure Structure in a format supported by Ketcher
+   *                  (for example CML, MOL, SMILES, etc.)
+   * @param name Template name
+   * @param group Template group. Defaults to "User Templates".
+   */
+  public async addTemplate(
+    structure: string,
+    name: string,
+    group = 'User Templates',
+  ): Promise<void> {
+    if (!structure || typeof structure !== 'string') {
+      throw new Error('Template structure is required');
+    }
+
+    if (typeof name !== 'string' || !name.trim()) {
+      throw new Error('Template name is required');
+    }
+
+    if (typeof group !== 'string') {
+      throw new Error('Template group must be a string');
+    }
+
+    const templateName = name.trim();
+
+    const struct: Struct = await prepareStructToRender(
+      structure,
+      this.structService,
+      this,
+    );
+
+    struct.name = templateName;
+
+    globalThis.dispatchEvent(
+      new CustomEvent('KETCHER_ADD_TEMPLATE', {
+        detail: {
+          struct,
+          props: {
+            group,
+            name: templateName,
+          },
+        },
+      }),
+    );
+  }
+
   async setMolecule(
     structString: string,
     options?: SetMoleculeOptions,

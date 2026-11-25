@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import type { FC, PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
   type ToolbarGroupItemCallProps,
   type ToolbarGroupItemProps,
@@ -32,10 +34,12 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
 
 interface BottomToolbarProps extends Omit<
   ToolbarGroupItemProps,
-  'id' | 'options'
+  'id' | 'options' | 'status'
 > {
   className?: string;
   active?: TemplatesListProps['active'];
+  status: TemplatesListProps['status'];
+  templates: TemplatesListProps['templates'];
 }
 
 type BottomToolbarCallProps = ToolbarGroupItemCallProps;
@@ -43,12 +47,20 @@ type BottomToolbarCallProps = ToolbarGroupItemCallProps;
 type Props = BottomToolbarProps & BottomToolbarCallProps;
 
 const BottomToolbar = (props: Props) => {
-  const { className, ...rest } = props;
+  const { className, templates, ...rest } = props;
+  const { t } = useTranslation();
 
   return (
     <div data-testid="bottom-toolbar" className={clsx(classes.root, className)}>
       <Group>
-        <TemplatesList {...rest} />
+        <div
+          className={classes.templates}
+          role="group"
+          aria-label={t('dialogs:toolbox.templateAttach.templatesName')}
+        >
+          <TemplatesList {...rest} templates={templates} />
+        </div>
+
         <ToolbarGroupItem id="template-lib" {...rest} />
       </Group>
     </div>

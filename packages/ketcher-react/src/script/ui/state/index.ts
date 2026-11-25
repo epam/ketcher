@@ -27,7 +27,8 @@ import {
 import type Editor from 'src/script/editor';
 import { load, onAction } from './shared';
 import optionsReducer, { initOptionsState } from './options';
-import templatesReducer, { initTmplsState } from './templates';
+import templatesReducer, { addTemplate, initTmplsState } from './templates';
+import type { SdfItem } from 'ketcher-core';
 import abbreviationLookupReducer from './abbreviationLookup';
 import commonReducer from './common';
 
@@ -88,6 +89,7 @@ type PreloadedRootState = Pick<
 
 export type AppStore = Store<RootState, UnknownAction> & {
   dispatch: AppDispatch;
+  dispose: () => void;
 };
 
 // INIT and UPDATE actions merge arbitrary payload keys into the state
@@ -182,11 +184,21 @@ function sanitizeForDevTools(value: unknown): unknown {
 
   const { templates } = sanitized;
   if (isRecord(templates) && templates.lib) {
-    sanitized.templates = { ...templates, lib: NOT_SERIALIZED };
+    sanitized.templates = {
+      ...templates,
+      lib: NOT_SERIALIZED,
+      ...('runtimeTemplates' in templates
+        ? { runtimeTemplates: NOT_SERIALIZED }
+        : {}),
+    };
   }
 
   if (sanitized.lib) {
     sanitized.lib = NOT_SERIALIZED;
+  }
+
+  if (sanitized.type === 'TMPL_ADD' && isRecord(sanitized.data)) {
+    sanitized.data = { ...sanitized.data, template: NOT_SERIALIZED };
   }
 
   return sanitized;
@@ -238,11 +250,35 @@ export default function (
       })) ||
     compose;
 
-  return createStore(
+  const store = createStore(
     rootReducer,
     initState,
     composeEnhancers(applyMiddleware(...middleware)),
   );
+
+  const handleAddTemplate = (event: Event) => {
+    const template = (event as CustomEvent<SdfItem>).detail;
+    if (!template?.struct) return;
+
+    store.dispatch(
+      addTemplate({
+        ...template,
+        props: {
+          ...template.props,
+          group: template.props?.group || 'User Templates',
+        },
+      }),
+    );
+  };
+
+  globalThis.addEventListener('KETCHER_ADD_TEMPLATE', handleAddTemplate);
+
+  return Object.assign(store, {
+    dispose: () => {
+      globalThis.removeEventListener('KETCHER_ADD_TEMPLATE', handleAddTemplate);
+      store.dispatch({ type: 'TMPL_CLEAR' });
+    },
+  });
 }
 
 export function setServer(server: ServerState): SetServerAction {

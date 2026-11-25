@@ -32,17 +32,12 @@ const isFunctionalGroupTemplate = (template: Template) =>
   template.props.group === 'Functional Groups';
 
 function getTemplateTitle(template: Template, index: number): string {
-  return isSaltOrSolventTemplate(template)
-    ? template.props.name
-    : template.struct.name || `${template.props.group} template ${index + 1}`;
-}
-
-function tmplName(tmpl: Template, i: number): string {
-  return isSaltOrSolventTemplate(tmpl)
-    ? (tmpl.props.abbreviation ?? '')
-    : (tmpl.props.abbreviation ??
-        tmpl.struct.name ??
-        `${tmpl.props.group} template ${i + 1}`);
+  if (isSaltOrSolventTemplate(template) && template.props.name) {
+    return template.props.name;
+  }
+  return (
+    template.struct.name || `${template.props.group} template ${index + 1}`
+  );
 }
 
 function createKeyDownHandler(callback: () => void) {
@@ -81,13 +76,15 @@ const TemplateItem: FC<TemplateItemProps> = memo(
     onDelete,
     onAttach,
   }) => {
+    const title = getTemplateTitle(tmpl, index);
+
     return (
       <div className={clsx(classes.td, { [classes.selected]: isSelected })}>
         <button
           type="button"
           data-testid={tmpl.struct.name}
           className={classes.selectButton}
-          title={greekify(getTemplateTitle(tmpl, index))}
+          title={greekify(title)}
           onClick={() => onSelect(tmpl)}
         >
           <div className={classes.structSlot}>
@@ -114,7 +111,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
               [classes.selectedTitle]: isSelected,
             })}
           >
-            {greekify(tmplName(tmpl, index))}
+            {greekify(tmpl.props.abbreviation || title)}
           </div>
         </button>
         {tmpl.props.group === 'User Templates' && (

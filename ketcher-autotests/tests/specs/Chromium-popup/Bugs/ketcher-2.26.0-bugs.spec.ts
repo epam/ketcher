@@ -29,7 +29,6 @@ import {
   ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -1652,9 +1651,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
+    await page.waitForTimeout(500);
     await pasteFromClipboardByKeyboard(page);
-    await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
+    await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

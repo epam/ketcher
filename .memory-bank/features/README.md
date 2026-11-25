@@ -1,16 +1,17 @@
 # Feature Specifications
 
-Each file in this directory is a short entry point for a product feature: a summary, a link to its spec, and its Limitations and Related links. The current observable behavior itself lives in the OpenSpec main spec, `openspec/specs/<feature>/spec.md`, which is the canonical description of product behavior and intentionally avoids implementation details.
+Each file in this directory describes the **current observable behavior** of a product feature. They are the canonical description of product behavior and intentionally avoid implementation details.
 
 ## Convention
 
-Every feature has one spec, `openspec/specs/<feature>/spec.md`, with:
+Every feature file, `.memory-bank/features/<feature>.md`, has:
 
 - **Purpose** — What problem the feature solves.
 - **Requirements** — `### Requirement:` blocks with SHALL text, each with `#### Scenario:` **WHEN** / **THEN** blocks.
 - **User interaction** and **Guarantees** — what the user does and what the feature guarantees.
+- **Limitations** and **Related** — edge cases and links to modules and neighbouring features. Limitations are not requirements.
 
-Limitations are not requirements. They stay in the feature file. Update the spec whenever the product behavior changes.
+Update the feature file whenever the product behavior changes. An OpenSpec change under `openspec/changes/` holds its deltas against these files until it is archived.
 
 ## Documented Features
 

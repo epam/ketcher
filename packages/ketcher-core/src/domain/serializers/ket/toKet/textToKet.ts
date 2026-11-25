@@ -51,9 +51,9 @@ const SUBSCRIPT_FLAG = 32;
 const SUPERSCRIPT_FLAG = 64;
 
 /**
- * Extracts font style overrides from a Lexical text node and applies them
- * to the target KET object (part, paragraph, or root text).
- */
+Extracts font style overrides from a Lexical text node and applies them
+to the target KET object (part, paragraph, or root text).
+*/
 function applyFontStyleOverrides(
   target: KetTextStyleOverrides,
   child: LexicalTextChild,
@@ -151,14 +151,14 @@ export function textToKet(textNode) {
         // Build parts array from text children
         paraObj.parts = (paragraph.children || [])
           .map((child: LexicalTextChild) => {
-            if (child.type !== 'text' || child.text === undefined) return null;
+            if (child.type !== 'text' || child.text === undefined) return;
 
             const part: KetTextPart = { text: child.text };
             applyFontStyleOverrides(part, child);
 
             return part;
           })
-          .filter((part) => part !== null);
+          .filter((part) => part !== undefined);
 
         return paraObj;
       },

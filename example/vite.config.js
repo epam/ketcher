@@ -89,13 +89,13 @@ const getImporterPackageName = (importer) => {
 
 const resolvePackageAlias = (source, importer) => {
   if (!importer || source.startsWith('.') || source.startsWith('\0')) {
-    return null;
+    return;
   }
 
   const packageName = getImporterPackageName(importer);
 
   if (!packageName) {
-    return null;
+    return;
   }
 
   const packageDirectory = PACKAGE_DIRECTORIES[packageName];
@@ -119,7 +119,7 @@ const resolvePackageAlias = (source, importer) => {
     const replacement = alias.replacements[0];
 
     if (!replacement) {
-      return null;
+      return;
     }
 
     const replacementPath =
@@ -129,8 +129,6 @@ const resolvePackageAlias = (source, importer) => {
 
     return resolve(packageDirectory, replacementPath);
   }
-
-  return null;
 };
 
 const PackageScopedAliasesPlugin = () => {
@@ -140,7 +138,7 @@ const PackageScopedAliasesPlugin = () => {
       const updatedId = resolvePackageAlias(source, importer);
 
       if (!updatedId) {
-        return null;
+        return;
       }
 
       const resolved = await this.resolve(updatedId, importer, {
@@ -481,9 +479,9 @@ const normalizeHtmlTransformHook = (plugin) => {
 const globalHtmlTags = [
   {
     /**
-     * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
-     * Fix: global is not defined
-     */
+    HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+    Fix: global is not defined
+    */
     injectTo: 'body',
     tag: 'script',
     children: 'var global = global || window',
@@ -538,16 +536,16 @@ const CopyServeConfigPlugin = () => {
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
-logger.warn = (msg, options) => {
+logger.warn = (message, options) => {
   if (
     // This warning occurs when entry html is not at the root path
-    msg
+    message
       .toLowerCase()
       .includes('files in the public directory are served at the root path.')
   ) {
     return;
   }
-  loggerWarn(msg, options);
+  loggerWarn(message, options);
 };
 
 const publicUrlBase = process.env.PUBLIC_URL

@@ -173,8 +173,8 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Navigates to the tab and section (if applicable) where the monomer is located.
-     */
+    Navigates to the tab and section (if applicable) where the monomer is located.
+    */
     async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
       const { libraryTab, rnaSection } =
         await this.getMonomerLibraryLocation(monomer);
@@ -187,9 +187,9 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
-     * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
-     */
+    Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
+    If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+    */
     async selectMonomer(
       monomer: Monomer | PresetType,
       shouldSelectOnFavoritesTab = false,
@@ -211,9 +211,9 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Hovers a monomer by navigating to the corresponding tab and clicking on the monomer.
-     * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
-     */
+    Hovers a monomer by navigating to the corresponding tab and clicking on the monomer.
+    If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+    */
     async hoverMonomer(
       monomer: Monomer | PresetType,
       shouldSelectOnFavoritesTab = false,
@@ -263,50 +263,50 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Clicks an item of the open card three-dot menu. The menu eases into its
-     * final position after opening, so a regular click fails Playwright's
-     * stability check — the click event is dispatched directly instead.
-     */
+    Clicks an item of the open card three-dot menu. The menu eases into its
+    final position after opening, so a regular click fails Playwright's
+    stability check — the click event is dispatched directly instead.
+    */
     async clickCardMenuItem(option: LibraryPresetOption) {
       await this.getCardMenuItemLocator(option).dispatchEvent('click');
     },
 
     getMonomerHELMAlias(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.helm ?? null,
+        (element) => element.dataset.helm,
       );
     },
 
     getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.axolabs ?? null,
+        (element) => element.dataset.axolabs,
       );
     },
 
     getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasBase ?? null,
+        (element) => element.dataset.idtaliasBase,
       );
     },
 
     getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint5 ?? null,
+        (element) => element.dataset.idtaliasModificationsEndpoint5,
       );
     },
     getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint3 ?? null,
+        (element) => element.dataset.idtaliasModificationsEndpoint3,
       );
     },
     getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsInternal ?? null,
+        (element) => element.dataset.idtaliasModificationsInternal,
       );
     },
     getMonomerModificationTypes(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.modificationtype ?? null,
+        (element) => element.dataset.modificationtype,
       );
     },
 
@@ -339,9 +339,9 @@ export const Library = (page: Page) => {
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
-      await btn.waitFor({ state: 'visible' });
-      await btn.hover();
+      const button = this.getMonomerAutochainButton(monomer);
+      await button.waitFor({ state: 'visible' });
+      await button.hover();
     },
 
     /**
@@ -353,9 +353,9 @@ export const Library = (page: Page) => {
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
-      await btn.waitFor({ state: 'visible' });
-      await btn.click();
+      const button = this.getMonomerAutochainButton(monomer);
+      await button.waitFor({ state: 'visible' });
+      await button.click();
     },
 
     async dragMonomerOnCanvas(
@@ -388,8 +388,8 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
-     */
+    Selects a custom preset by navigating to the Presets tab and clicking on the preset.
+    */
     async selectCustomPreset(presetTestId: string) {
       await this.goToMonomerLibraryLocation(Preset.A);
 
@@ -416,9 +416,9 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
-     * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
-     */
+    Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
+    If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+    */
     async addMonomerToFavorites(monomer: Monomer | PresetType) {
       await this.goToMonomerLibraryLocation(monomer);
 
@@ -435,8 +435,8 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
-     */
+    Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
+    */
     async removeMonomerFromFavorites(
       monomer: Monomer | PresetType,
       shouldRemoveFromFavoritesTab = true,
@@ -460,10 +460,10 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Selects multiple monomers by iterating through the provided list of monomers.
-     * For each monomer, it navigates to the corresponding tab and clicks on the monomer.
-     * If a monomer belongs to an RNA-specific accordion group, it expands the accordion item.
-     */
+    Selects multiple monomers by iterating through the provided list of monomers.
+    For each monomer, it navigates to the corresponding tab and clicks on the monomer.
+    If a monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+    */
     async selectMonomers(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
         await this.selectMonomer(monomer);
@@ -471,10 +471,10 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Adds multiple monomers to favorites by iterating through the provided list of monomers.
-     * For each monomer, it navigates to the corresponding tab, expands the accordion (if needed),
-     * and clicks on the monomer's favorite icon.
-     */
+    Adds multiple monomers to favorites by iterating through the provided list of monomers.
+    For each monomer, it navigates to the corresponding tab, expands the accordion (if needed),
+    and clicks on the monomer's favorite icon.
+    */
     async addMonomersToFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
         await moveMouseAway(page);
@@ -483,8 +483,8 @@ export const Library = (page: Page) => {
     },
 
     /**
-     * Removes multiple monomers from favorites by iterating through the provided list of monomers.
-     */
+    Removes multiple monomers from favorites by iterating through the provided list of monomers.
+    */
     async removeMonomersFromFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
         await this.removeMonomerFromFavorites(monomer);

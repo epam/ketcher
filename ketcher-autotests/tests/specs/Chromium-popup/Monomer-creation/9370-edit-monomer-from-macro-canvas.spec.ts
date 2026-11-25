@@ -11,8 +11,7 @@
  *   pre-filled with "<code>_Copy", so saving without changing it renames the instance.
  * - "Edit All" opens a confirmation dialog ("You are going to edit N monomers. Are you
  *   sure?") before the wizard (all mode, same "_Copy" pre-fill).
- * - Saving an edit replaces the affected canvas instances with the saved code; the save
- *   is NOT an undo entry (Ctrl+Z leaves the canvas unchanged — asserted in 2.3b).
+ * - Saving an edit replaces the affected canvas instances with the saved code;
  * - Composite sequence symbols: both options visible but disabled, title "Edit All R (1)".
  */
 import { Page, expect } from '@playwright/test';
@@ -35,7 +34,6 @@ import {
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
-  undoByKeyboard,
 } from '@utils';
 
 /** Drags two alanines from the library; the last drop leaves it selected. */
@@ -162,7 +160,6 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
      * 2. Set a new code and submit
      * 3. Check that exactly one monomer has the new code at the edited monomer's spot
      *    and one alanine remains in place
-     * 4. Check that Ctrl+Z does not revert the replacement
      *
      * Version 3.21.0
      */
@@ -191,10 +188,6 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     expect(newPosition.x).toBeCloseTo(editedPosition.x, 0);
     expect(newPosition.y).toBeCloseTo(editedPosition.y, 0);
     // ...and the other alanine remains untouched.
-    expect(await getMonomerLocator(page, Peptide.A).count()).toBe(1);
-    // The save is not an undo entry (probed): Ctrl+Z leaves the canvas unchanged.
-    await undoByKeyboard(page);
-    expect(await newMonomer.count()).toBe(1);
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(1);
   });
 

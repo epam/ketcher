@@ -17,7 +17,7 @@ type Props = {
 };
 
 const RulerScale = ({ transform, layoutMode }: Props) => {
-  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>();
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const getDynamicPositions = (
@@ -51,16 +51,14 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
       );
     }
 
-    if (layoutMode === 'snake-layout-mode') {
-      return getDynamicPositions(
-        visibleStart,
-        visibleEnd,
-        SnakeModeItemWidth,
-        SnakeModeStartOffset,
-      );
-    }
-
-    return [];
+    return layoutMode === 'snake-layout-mode'
+      ? getDynamicPositions(
+          visibleStart,
+          visibleEnd,
+          SnakeModeItemWidth,
+          SnakeModeStartOffset,
+        )
+      : [];
   }, [layoutMode, svgElement, transform]);
 
   const svgChildren = useMemo(() => {

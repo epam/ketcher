@@ -27,10 +27,7 @@ export function AtomListValid(
   atomType: AtomType,
   isCustomQuery: boolean,
 ) {
-  if (atomType !== 'list' || isCustomQuery) {
-    return true;
-  }
-  return value.length > 0;
+  return atomType !== 'list' || isCustomQuery ? true : value.length > 0;
 }
 
 export function pseudoAtomValid(

@@ -17,9 +17,9 @@ import type { Selection } from '../../../../editor/Editor';
 import { getRemovableAttachmentGroupId, onlyHasProperty } from './utils';
 
 /**
- * Count how many MonomerMicromolecule SGroups on the canvas share the same
- * monomer label as the given primary functional group.
- */
+Count how many MonomerMicromolecule SGroups on the canvas share the same
+monomer label as the given primary functional group.
+*/
 function computeTotalMonomerCount(
   editor: Editor,
   primaryFunctionalGroup: FunctionalGroup | undefined,
@@ -42,11 +42,11 @@ function computeTotalMonomerCount(
 }
 
 /**
- * Count how many of the provided functional groups are MonomerMicromolecules
- * with the same label as the primary functional group.
- * Used when the user has multiple monomers selected — the count reflects
- * only the selected instances that will actually be replaced.
- */
+Count how many of the provided functional groups are MonomerMicromolecules
+with the same label as the primary functional group.
+Used when the user has multiple monomers selected — the count reflects
+only the selected instances that will actually be replaced.
+*/
 function computeSelectedMatchingMonomerCount(
   functionalGroups: FunctionalGroup[],
   primaryFunctionalGroup: FunctionalGroup | undefined,
@@ -64,9 +64,9 @@ function computeSelectedMatchingMonomerCount(
 }
 
 /**
- * Returns true when the selection contains atoms or bonds that do NOT belong
- * to any monomer functional group (i.e. plain chemical structure elements).
- */
+Returns true when the selection contains atoms or bonds that do NOT belong
+to any monomer functional group (i.e. plain chemical structure elements).
+*/
 function hasSelectedNonMonomerStructure(
   editor: Editor,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
@@ -90,8 +90,9 @@ function hasSelectedNonMonomerStructure(
   if (selection?.bonds?.length) {
     return selection.bonds.some((bondId) => {
       const bond = struct.bonds.get(bondId);
-      if (!bond) return false;
-      return !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
+      return !bond
+        ? false
+        : !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
     });
   }
 
@@ -133,18 +134,21 @@ export const isItemInSelection = ({
   }
 
   switch (item.map) {
-    case 'sgroups':
+    case 'sgroups': {
       return selectedSGroupsIds.has(item.id);
+    }
 
-    case 'functionalGroups':
+    case 'functionalGroups': {
       return [...selectedFunctionalGroups.keys()].includes(item.id);
+    }
 
-    default:
+    default: {
       return (
         item.map in selection &&
         Array.isArray(selection[item.map]) &&
         selection[item.map].includes(item.id)
       );
+    }
   }
 };
 
@@ -223,11 +227,12 @@ export function getMenuPropsForClosestItem(
       }
     }
 
-    case 'attachmentGroups':
+    case 'attachmentGroups': {
       return {
         id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
         attachmentGroupIds: [closestItem.id],
       };
+    }
 
     case 'sgroups':
     case 'functionalGroups': {
@@ -280,8 +285,9 @@ export function getMenuPropsForClosestItem(
       };
     }
 
-    default:
+    default: {
       return null;
+    }
   }
 }
 

@@ -84,7 +84,7 @@ function convertStructToString(
 ): string {
   if (typeof struct !== 'string') {
     const aidMap = new Map();
-    const result = struct.clone(null, null, false, aidMap);
+    const result = struct.clone(undefined, undefined, false, aidMap);
 
     return serializer.serialize(result);
   }

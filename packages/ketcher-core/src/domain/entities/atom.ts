@@ -32,18 +32,18 @@ import type { BondEndpoint } from './bondEndpoint';
 import { SettingsManager } from 'utilities';
 
 /**
- * Return unions of Pick.
- * Difference with <Partial<Pick<O,P>>>  that this type always require at least one property
- *
- * Example:
- * interface O {
- *   field1 : 1;
- *   field2: 2;
- *   field3: 3
- * }
- * SubsetOfFields<O, 'field1'| 'field2'>
- * @returns Pick<O, "field1"> | Pick<O, "field2">
- */
+Return unions of Pick.
+Difference with <Partial<Pick<O,P>>>  that this type always require at least one property
+
+Example:
+interface O {
+  field1 : 1;
+  field2: 2;
+  field3: 3
+}
+SubsetOfFields<O, 'field1'| 'field2'>
+@returns Pick<O, "field1"> | Pick<O, "field2">
+*/
 type SubsetOfFields<O, P extends keyof O> = P extends P ? Pick<O, P> : never;
 
 export enum AttachmentPoints {
@@ -86,11 +86,11 @@ export interface AtomAttributes {
   queryProperties?: AtomQueryProperties;
   explicitValence?: number;
   /**
-   * Rgroup member attachment points
-   * Its value is indigo-converted `ATTCHPT`
-   * Ref: https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf P15
-   * Note: value `-1` has been converted to `3` by indigo.
-   */
+  Rgroup member attachment points
+  Its value is indigo-converted `ATTCHPT`
+  Ref: https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf P15
+  Note: value `-1` has been converted to `3` by indigo.
+  */
   attachmentPoints?: AttachmentPoints | null;
   rglabel?: number | null;
   charge?: number | null;
@@ -353,15 +353,15 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   /**
-   * Trick: used for cloned struct for tooltips, for preview, for templates
-   *
-   * Why?
-   * Currently, tooltips are implemented with removing sgroups (wrong implementation)
-   * That's why we need to mark atoms as sgroup attachment points.
-   *
-   * If we change preview approach to flagged (option for showing sgroups without abbreviation),
-   * then we will be able to remove this hack.
-   */
+  Trick: used for cloned struct for tooltips, for preview, for templates
+
+  Why?
+  Currently, tooltips are implemented with removing sgroups (wrong implementation)
+  That's why we need to mark atoms as sgroup attachment points.
+
+  If we change preview approach to flagged (option for showing sgroups without abbreviation),
+  then we will be able to remove this hack.
+  */
   setRGAttachmentPointForDisplayPurpose() {
     this.attachmentPoints = AttachmentPoints.FirstSideOnly;
   }
@@ -502,27 +502,36 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
 
     switch (groupno) {
-      case 1:
+      case 1: {
         return this.calculateGroup1Valence(context);
-      case 2:
+      }
+      case 2: {
         return this.calculateGroup2Valence(context);
-      case 3:
+      }
+      case 3: {
         return this.calculateGroup3Valence(context);
-      case 4:
+      }
+      case 4: {
         return this.calculateGroup4Valence(context);
-      case 5:
+      }
+      case 5: {
         return this.calculateGroup5Valence(context);
-      case 6:
+      }
+      case 6: {
         return this.calculateGroup6Valence(context);
-      case 7:
+      }
+      case 7: {
         return this.calculateGroup7Valence(context);
-      case 8:
+      }
+      case 8: {
         return this.calculateGroup8Valence(context);
-      default:
+      }
+      default: {
         return {
           valence: context.connectionCount,
           hydrogenCount: 0,
         };
+      }
     }
   }
 
@@ -846,10 +855,9 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
           connectionCount === 4 ||
           connectionCount === 6
         ) {
-          if (radicalCount === 1) {
-            return { valence: connectionCount, hydrogenCount: 0 };
-          }
-          return { valence: connectionCount, hydrogenCount: -1 };
+          return radicalCount === 1
+            ? { valence: connectionCount, hydrogenCount: 0 }
+            : { valence: connectionCount, hydrogenCount: -1 };
         }
         if (connectionCount > 7) {
           return { valence: connectionCount, hydrogenCount: -1 };
@@ -880,17 +888,13 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       }
       return { valence: connectionCount, hydrogenCount: -1 };
     }
-    if (connectionCount + radicalCount + absCharge === 0) {
-      return { valence: 1, hydrogenCount: 0 };
-    }
-    return { valence: connectionCount, hydrogenCount: -1 };
+    return connectionCount + radicalCount + absCharge === 0
+      ? { valence: 1, hydrogenCount: 0 }
+      : { valence: connectionCount, hydrogenCount: -1 };
   }
 
   private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
-    if (this.implicitHCount !== null) {
-      return this.implicitHCount;
-    }
-    return hydrogenCount;
+    return this.implicitHCount !== null ? this.implicitHCount : hydrogenCount;
   }
 
   private applyValenceResult(
@@ -992,27 +996,23 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     atomId?: number,
     shouldSearchBySgroups = false,
   ) {
-    if (atomId === undefined) {
-      return false;
-    }
-
-    return Boolean(
-      this.getSuperAtomAttachmentPointByLeavingGroup(
-        structOrSgroup,
-        atomId,
-        shouldSearchBySgroups,
-      ),
-    );
+    return atomId === undefined
+      ? false
+      : Boolean(
+          this.getSuperAtomAttachmentPointByLeavingGroup(
+            structOrSgroup,
+            atomId,
+            shouldSearchBySgroups,
+          ),
+        );
   }
 
   public static isSuperatomAttachmentAtom(struct: Struct, atomId?: number) {
-    if (atomId === undefined) {
-      return false;
-    }
-
-    return Boolean(
-      this.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
-    );
+    return atomId === undefined
+      ? false
+      : Boolean(
+          this.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
+        );
   }
 
   public static getAttachmentAtomExternalConnections(
@@ -1100,20 +1100,22 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       : struct.getGroupFromAtomId(atomId);
     const isMonomer = sGroup?.isMonomer;
 
-    if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
-      return false;
-    }
-
-    return Boolean(
-      this.isSuperatomLeavingGroupAtom(struct, atomId, shouldSearchBySgroups) &&
-      attachmentAtomExternalConnections?.find((_, bond) =>
-        bond.begin === attachmentPoint?.atomId
-          ? bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber
-          : bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber,
-      ) !== null,
-    );
+    return !sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)
+      ? false
+      : Boolean(
+          this.isSuperatomLeavingGroupAtom(
+            struct,
+            atomId,
+            shouldSearchBySgroups,
+          ) &&
+          attachmentAtomExternalConnections?.find((_, bond) =>
+            bond.begin === attachmentPoint?.atomId
+              ? bond.beginSuperatomAttachmentPointNumber ===
+                attachmentPoint?.attachmentPointNumber
+              : bond.endSuperatomAttachmentPointNumber ===
+                attachmentPoint?.attachmentPointNumber,
+          ) !== null,
+        );
   }
 
   private static isSGroup(

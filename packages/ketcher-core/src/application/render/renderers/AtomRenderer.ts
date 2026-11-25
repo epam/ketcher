@@ -14,7 +14,7 @@ import { StereoLabel } from 'domain/entities/atom';
 import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 import { StereoFlag } from 'domain/entities/fragment';
 import type { Settings } from 'application/settings';
-import util from '../util';
+import utility from '../util';
 import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
@@ -135,15 +135,15 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * WARNING: this method always reports its return type as
-   * `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
-   * circle branch actually produces a `SVGCircleElement` selection.  The
-   * deliberate misreport is required because TypeScript cannot resolve D3's
-   * overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
-   * union selection, which would force every call site to add its own cast.
-   * Callers must therefore restrict themselves to element-agnostic D3 methods
-   * (`attr`, `style`, `remove`) and must not rely on the element type itself.
-   */
+  WARNING: this method always reports its return type as
+  `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
+  circle branch actually produces a `SVGCircleElement` selection.  The
+  deliberate misreport is required because TypeScript cannot resolve D3's
+  overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
+  union selection, which would force every call site to add its own cast.
+  Callers must therefore restrict themselves to element-agnostic D3 methods
+  (`attr`, `style`, `remove`) and must not rely on the element type itself.
+  */
   private appendSelectionContour():
     D3SvgElementSelection<SVGRectElement, void> | undefined {
     if (
@@ -215,8 +215,8 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * Updates the width and height of the SelectionContour
-   */
+  Updates the width and height of the SelectionContour
+  */
   private updateSelectionContour() {
     if (!this.rootElement || !this.textElement) return;
 
@@ -239,25 +239,23 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
-    if (this.hoverElement) {
-      return this.hoverElement;
-    }
-
-    return this.appendSelectionContour()
-      ?.attr('stroke', '#0097a8')
-      .attr('stroke-width', '1.2')
-      .attr('fill', 'none')
-      .attr('opacity', '0')
-      .attr('class', 'dynamic-element');
+    return this.hoverElement
+      ? this.hoverElement
+      : this.appendSelectionContour()
+          ?.attr('stroke', '#0097a8')
+          .attr('stroke-width', '1.2')
+          .attr('fill', 'none')
+          .attr('opacity', '0')
+          .attr('class', 'dynamic-element');
   }
 
   /**
-   * Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
-   * AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
-   * via showHover/hideHover, unlike other renderers that add/remove elements.
-   * When the model layer turns on hover (e.g., Fragment selection tool), we need
-   * to explicitly show the hover element after it's created/returned by appendHover.
-   */
+  Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
+  AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
+  via showHover/hideHover, unlike other renderers that add/remove elements.
+  When the model layer turns on hover (e.g., Fragment selection tool), we need
+  to explicitly show the hover element after it's created/returned by appendHover.
+  */
   public redrawHover() {
     if (this.drawingEntity.hovered) {
       const hoverElement = this.appendHover();
@@ -308,10 +306,9 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
-    if (this.atom.properties.atomList) {
-      return this.atom.properties.atomList.label();
-    }
-    return this.atom.properties.alias ?? this.atom.label;
+    return this.atom.properties.atomList
+      ? this.atom.properties.atomList.label()
+      : (this.atom.properties.alias ?? this.atom.label);
   }
 
   /**
@@ -333,10 +330,9 @@ export class AtomRenderer extends BaseRenderer {
   */
   public get displayLabelText() {
     const text = this.labelText;
-    if (text.length > MAX_LABEL_LENGTH) {
-      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
-    }
-    return text;
+    return text.length > MAX_LABEL_LENGTH
+      ? `${text.substring(0, MAX_LABEL_LENGTH)}...`
+      : text;
   }
 
   /**
@@ -629,7 +625,7 @@ export class AtomRenderer extends BaseRenderer {
     this.radicalElement = this.rootElement?.append('g');
 
     switch (radical) {
-      case AtomRadical.Single:
+      case AtomRadical.Single: {
         this.radicalElement
           ?.append('circle')
           .attr('cx', 3)
@@ -643,7 +639,8 @@ export class AtomRenderer extends BaseRenderer {
           .attr('r', 2)
           .attr('fill', this.labelColor);
         break;
-      case AtomRadical.Doublet:
+      }
+      case AtomRadical.Doublet: {
         this.radicalElement
           ?.append('circle')
           .attr('cx', 0)
@@ -651,7 +648,8 @@ export class AtomRenderer extends BaseRenderer {
           .attr('r', 2)
           .attr('fill', this.labelColor);
         break;
-      case AtomRadical.Triplet:
+      }
+      case AtomRadical.Triplet: {
         this.radicalElement
           ?.append('path')
           .attr('d', `M 0 -5 L 2 -10 L 4 -5 M -6 -5 L -4 -10 L -2 -5`)
@@ -659,6 +657,7 @@ export class AtomRenderer extends BaseRenderer {
           .attr('stroke', this.labelColor)
           .attr('stroke-width', 1.4);
         break;
+      }
     }
   }
 
@@ -851,14 +850,18 @@ export class AtomRenderer extends BaseRenderer {
     const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
 
     switch (stereoLabelType) {
-      case StereoLabel.And:
+      case StereoLabel.And: {
         return '#0000cd'; // Default AND Centers color
-      case StereoLabel.Or:
+      }
+      case StereoLabel.Or: {
         return '#228b22'; // Default OR Centers color
-      case StereoLabel.Abs:
+      }
+      case StereoLabel.Abs: {
         return '#ff0000'; // Default Absolute Center color
-      default:
+      }
+      default: {
         return '#000';
+      }
     }
   }
 
@@ -971,7 +974,7 @@ export class AtomRenderer extends BaseRenderer {
       ).translate(this.scaledPosition);
       forwardShift = Math.max(
         forwardShift,
-        util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
+        utility.shiftRayBox(this.scaledPosition, direction, absoluteBox),
       );
     });
 
@@ -982,7 +985,7 @@ export class AtomRenderer extends BaseRenderer {
       height,
     };
 
-    const backwardShift = util.shiftRayBox(
+    const backwardShift = utility.shiftRayBox(
       this.scaledPosition,
       direction.negated(),
       Box2Abs.fromRelBox(stereoLabelBox),
@@ -1043,16 +1046,21 @@ function getStereoLabelStyleType(
   stereoLabelStyle: Settings['stereoLabelStyle'] | undefined,
 ): StereoLabelStyleType | undefined {
   switch (stereoLabelStyle) {
-    case 'IUPAC':
+    case 'IUPAC': {
       return StereoLabelStyleType.IUPAC;
-    case 'classic':
+    }
+    case 'classic': {
       return StereoLabelStyleType.Classic;
-    case 'On-Atoms':
+    }
+    case 'On-Atoms': {
       return StereoLabelStyleType.On;
-    case 'off':
+    }
+    case 'off': {
       return StereoLabelStyleType.Off;
-    default:
+    }
+    default: {
       return undefined;
+    }
   }
 }
 
@@ -1072,15 +1080,20 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereoLabelStyleType.Off:
+    case StereoLabelStyleType.Off: {
       return false;
-    case StereoLabelStyleType.On:
+    }
+    case StereoLabelStyleType.On: {
       return true;
-    case StereoLabelStyleType.Classic:
+    }
+    case StereoLabelStyleType.Classic: {
       return flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or;
-    case StereoLabelStyleType.IUPAC:
+    }
+    case StereoLabelStyleType.IUPAC: {
       return flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs;
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }

@@ -1,0 +1,215 @@
+{
+    "ket_version": "2.0.0",
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    13.125,
+                    -6.96875,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    13.125,
+                    -7.96875,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.125,
+                    -8.96875,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    12.125,
+                    -7.96875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.125,
+                    -7.96875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.625,
+                    -8.834775,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.625,
+                    -8.834775,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.125,
+                    -7.96875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.125,
+                    -7.96875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.625,
+                    -7.102724,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.625,
+                    -7.102724,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    4
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 4,
+                "atoms": [
+                    10,
+                    4
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10
+                ],
+                "name": "Tos",
+                "expanded": false,
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 1,
+                        "attachmentId": "1"
+                    }
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 17.125,
+            "y": 5.96875,
+            "z": 0
+        }
+    }
+}

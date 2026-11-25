@@ -62,9 +62,9 @@ jobs:
 
       # Pinned on purpose. 2.1.81 does not know --safe-mode and a run fails at
       # once, so before raising this version run the isolation check of task
-      # 4.5 in openspec/changes/review-agent/tasks.md: one `claude -p
-      # --safe-mode --restricted` call that must not load a CLAUDE.md, a hook
-      # or an MCP server from the working tree.
+      # 4.5 in openspec/changes/archive/2026-11-25-review-agent/tasks.md: one
+      # `claude -p --safe-mode --restricted` call that must not load a
+      # CLAUDE.md, a hook or an MCP server from the working tree.
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code@2.1.319
 

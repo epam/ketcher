@@ -94,7 +94,7 @@ Planned:
 - Module docs loaded by their `paths:` lists from Phase 1 (task 5.3).
 - Suggestion blocks in inline comments, and a second, independent verifier pass (task 5.4).
 - AI review may raise a risk tier, never lower it (task 5.5).
-- An evaluation set that measures recall and false positives on known PRs, and sets the default models from the result (`openspec/changes/review-agent`, task 6).
+- An evaluation set that measures recall and false positives on known PRs, and sets the default models from the result (follow-up of #12246).
 
 ### Human review
 

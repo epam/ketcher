@@ -42,10 +42,12 @@
 
 ## 6. Evaluation
 
-- [ ] 6.1 Add `scripts/review/eval/eval-set.json` with 2–3 entries from collected maintainer comments (reviewed head commits, expected findings with comment links) and 1–2 clean PRs.
-- [ ] 6.2 Eval runner (configurations, dry run only, finder output reuse) and report script reading `matches.json`.
-- [ ] 6.3 Run `sonnet-finders-sonnet-verifier` and `sonnet-finders-opus-verifier`; fill `matches.json`; decide whether to run `opus-finders-opus-verifier`.
-- [ ] 6.4 Set the default models in `config.mjs` from the results and record the decision in `design.md`.
+Moved out of this change, to a follow-up of #12246. The change is archived without it so that no change stays open. The planned work:
+
+- `scripts/review/eval/eval-set.json` with 2–3 entries from collected maintainer comments (reviewed head commits, expected findings with comment links) and 1–2 clean PRs.
+- Eval runner (configurations, dry run only, finder output reuse) and report script reading `matches.json`.
+- Run `sonnet-finders-sonnet-verifier` and `sonnet-finders-opus-verifier`; fill `matches.json`; decide whether to run `opus-finders-opus-verifier`.
+- Set the default models in `config.mjs` from the results and record the decision in `design.md`.
 
 ## 7. Workflow and docs
 

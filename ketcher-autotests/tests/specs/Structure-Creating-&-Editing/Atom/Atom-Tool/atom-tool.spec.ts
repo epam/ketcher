@@ -43,8 +43,6 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ExtendedTableDialog } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 
 test.describe('Atom Tool', () => {
   let page: Page;

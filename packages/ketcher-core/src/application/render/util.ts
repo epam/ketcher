@@ -37,9 +37,9 @@ function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
 }
 
 /**
- * Finds intersection of a ray and a box and
- * Returns the shift magnitude to avoid it
- */
+Finds intersection of a ray and a box and
+Returns the shift magnitude to avoid it
+*/
 function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   assert(!!p);
   assert(!!d);
@@ -243,7 +243,8 @@ function useLabelStyles(
       }
       break;
     }
-    case UsageInMacromolecule.MonomerConnectionsModal: {
+    case UsageInMacromolecule.MonomerConnectionsModal:
+    case UsageInMacromolecule.InsertionConnectionsModal: {
       if (isAttachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';

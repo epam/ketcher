@@ -87,10 +87,10 @@ abstract class SelectBase implements BaseTool {
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
   /**
-   * Controls whether auto-scroll is active during a selection drag.
-   * Override to `false` in subclasses that should not auto-scroll
-   * (e.g. SelectLasso, where the lasso shape would distort on scroll).
-   */
+  Controls whether auto-scroll is active during a selection drag.
+  Override to `false` in subclasses that should not auto-scroll
+  (e.g. SelectLasso, where the lasso shape would distort on scroll).
+  */
   protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
@@ -111,9 +111,9 @@ abstract class SelectBase implements BaseTool {
   private autoScrollDelta: Vec2 = new Vec2(0, 0);
 
   /**
-   * Reads renderer data from d3-bound event targets (`target.__data__`).
-   * Returns undefined when an event target has no renderer payload.
-   */
+  Reads renderer data from d3-bound event targets (`target.__data__`).
+  Returns undefined when an event target has no renderer payload.
+  */
   private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
     return (event.target as { __data__?: T } | null)?.__data__;
   }
@@ -141,11 +141,10 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
-      shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
-    } else {
-      shouldStartMove = true;
-    }
+    shouldStartMove =
+      this.editor.mode.modeName === 'sequence-layout-mode'
+        ? !(renderer instanceof BaseSequenceItemRenderer)
+        : true;
     if (shouldStartMove) this.mode = 'moving';
   }
 
@@ -261,19 +260,21 @@ abstract class SelectBase implements BaseTool {
 
     const bbox =
       this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    if (bbox) {
-      const viewParams = this.buildRotationViewParams(
-        this.rotationCenter,
-        bbox,
-        this.rotationStartAngle,
-      );
-      this.editor.transientDrawingView.showRotation({
-        ...viewParams,
-        rotationAngle: 0,
-        isRotating: true,
-      });
-      this.editor.transientDrawingView.update();
+    if (!bbox) {
+      return;
     }
+
+    const viewParams = this.buildRotationViewParams(
+      this.rotationCenter,
+      bbox,
+      this.rotationStartAngle,
+    );
+    this.editor.transientDrawingView.showRotation({
+      ...viewParams,
+      rotationAngle: 0,
+      isRotating: true,
+    });
+    this.editor.transientDrawingView.update();
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
@@ -348,11 +349,9 @@ abstract class SelectBase implements BaseTool {
     } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside || node instanceof Nucleotide) {
-            return node.monomers;
-          } else {
-            return node.monomer;
-          }
+          return node instanceof Nucleoside || node instanceof Nucleotide
+            ? node.monomers
+            : node.monomer;
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
@@ -869,21 +868,19 @@ abstract class SelectBase implements BaseTool {
       secondConnectedMonomer.center,
     );
 
-    if (!alignment) {
-      return this.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    return this.calculateInBetweenDistanceSnap(
-      cursorPosition,
-      initialMonomer,
-      connectedMonomer,
-      secondConnectedMonomer,
-      alignment,
-    );
+    return !alignment
+      ? this.calculateSideDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+        )
+      : this.calculateInBetweenDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+          secondConnectedMonomer,
+          alignment,
+        );
   }
 
   private tryToSnap(event: MouseEvent, movementDelta: Vec2) {
@@ -1437,19 +1434,21 @@ abstract class SelectBase implements BaseTool {
 
       const bbox =
         this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-      if (bbox && this.rotationCenter) {
-        const viewParams = this.buildRotationViewParams(
-          this.rotationCenter,
-          bbox,
-          this.rotationStartAngle,
-        );
-        this.editor.transientDrawingView.showRotation({
-          ...viewParams,
-          rotationAngle: angleDelta,
-          isRotating: true,
-        });
-        this.editor.transientDrawingView.update();
+      if (!bbox || !this.rotationCenter) {
+        return;
       }
+
+      const viewParams = this.buildRotationViewParams(
+        this.rotationCenter,
+        bbox,
+        this.rotationStartAngle,
+      );
+      this.editor.transientDrawingView.showRotation({
+        ...viewParams,
+        rotationAngle: angleDelta,
+        isRotating: true,
+      });
+      this.editor.transientDrawingView.update();
     });
   }
 
@@ -1500,13 +1499,15 @@ abstract class SelectBase implements BaseTool {
     this.rotationCenterUnsubscribe?.();
     this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (this.editor.selectedTool?.name !== 'eraser-tool') {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
-
-      this.editor.renderersContainer.update(modelChanges);
+    if (this.editor.selectedTool?.name === 'eraser-tool') {
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public stopMovement() {

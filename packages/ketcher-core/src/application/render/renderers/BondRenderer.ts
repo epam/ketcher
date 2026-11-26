@@ -641,19 +641,17 @@ export class BondRenderer extends BaseRenderer {
       }
 
       case BondType.Double: {
-        if (this.bond.stereo === BondStereo.CisTrans) {
-          bondSVGPaths =
-            DoubleCisTransBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-          );
-        }
+        bondSVGPaths =
+          this.bond.stereo === BondStereo.CisTrans
+            ? DoubleCisTransBondPathRenderer.preparePaths(bondVectors)
+            : DoubleBondPathRenderer.preparePaths(
+                bondVectors,
+                this.getDoubleBondShift(
+                  viewModel,
+                  bondVectors.firstHalfEdge,
+                  bondVectors.secondHalfEdge,
+                ),
+              );
         break;
       }
 
@@ -682,19 +680,17 @@ export class BondRenderer extends BaseRenderer {
 
         // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
         // Otherwise, render as a dashed double bond
-        if (isInConvexAromaticLoop) {
-          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-            this.bond.type,
-          );
-        }
+        bondSVGPaths = isInConvexAromaticLoop
+          ? SingleBondPathRenderer.preparePaths(bondVectors)
+          : DoubleBondPathRenderer.preparePaths(
+              bondVectors,
+              this.getDoubleBondShift(
+                viewModel,
+                bondVectors.firstHalfEdge,
+                bondVectors.secondHalfEdge,
+              ),
+              this.bond.type,
+            );
         break;
       }
 
@@ -825,12 +821,14 @@ export class BondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textNode = topologyText.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      topologyText
-        .attr('x', position.x - box.width / 2)
-        .attr('y', position.y + box.height / 4);
+    if (!textNode) {
+      return;
     }
+
+    const box = textNode.getBBox();
+    topologyText
+      .attr('x', position.x - box.width / 2)
+      .attr('y', position.y + box.height / 4);
   }
 
   private appendReactingCenterMark(bondFromStruct: StructBond) {
@@ -1012,33 +1010,35 @@ export class BondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textNode = cipText?.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      cipText?.attr('x', 0)?.attr('y', -box.y);
+    if (!textNode) {
+      return;
+    }
 
-      const rectWidth = box.width + 2;
-      const rectHeight = box.height + 2;
-      cipGroup
-        ?.insert('rect', 'text')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', rectWidth)
-        .attr('height', rectHeight)
-        .attr('rx', 3)
-        .attr('ry', 3)
-        .attr('fill', CANVAS_BACKGROUND_COLOR);
+    const box = textNode.getBBox();
+    cipText?.attr('x', 0)?.attr('y', -box.y);
 
-      cipGroup?.attr(
-        'transform',
-        `
+    const rectWidth = box.width + 2;
+    const rectHeight = box.height + 2;
+    cipGroup
+      ?.insert('rect', 'text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', rectWidth)
+      .attr('height', rectHeight)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('fill', CANVAS_BACKGROUND_COLOR);
+
+    cipGroup?.attr(
+      'transform',
+      `
         translate(${-this.scaledPosition.startPosition.x}, ${-this
           .scaledPosition.startPosition.y})
         translate(${this.scaledCenter.x - rectWidth / 2}, ${
           this.scaledCenter.y - rectHeight / 2
         })
         `,
-      );
-    }
+    );
   }
 
   public remove() {

@@ -76,15 +76,14 @@ export class Molfile {
   parseCTFile(props: ParseCTFileProps): Struct {
     const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
     let ret: Struct;
-    if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
-      ret = common.parseRxn(
-        molfileLines,
-        shouldReactionRelayout,
-        ignoreChiralFlag,
-      );
-    } else {
-      ret = common.parseMol(molfileLines, ignoreChiralFlag);
-    }
+    ret =
+      molfileLines[0].search(String.raw`\$RXN`) === 0
+        ? common.parseRxn(
+            molfileLines,
+            shouldReactionRelayout,
+            ignoreChiralFlag,
+          )
+        : common.parseMol(molfileLines, ignoreChiralFlag);
     ret.initHalfBonds();
     ret.initNeighbors();
     ret.bindSGroupsToFunctionalGroups();
@@ -127,13 +126,15 @@ export class Molfile {
         }
 
         if (
-          shouldIgnoreError ||
-          (!shouldPreserveIndigoDesc &&
-            /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
+          !shouldIgnoreError &&
+          (shouldPreserveIndigoDesc ||
+            !/^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
         ) {
-          errors += +shouldIgnoreError;
-          toRemove.push(sgroup.id);
+          return;
         }
+
+        errors += +shouldIgnoreError;
+        toRemove.push(sgroup.id);
       });
 
     if (errors) {
@@ -439,18 +440,20 @@ export class Molfile {
 
     if (rgroups) {
       rgroups.forEach((rg, rgid) => {
-        if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-          const line =
-            '  1 ' +
-            utils.paddedNum(rgid, 3) +
-            ' ' +
-            utils.paddedNum(rg.ifthen, 3) +
-            ' ' +
-            utils.paddedNum(rg.resth ? 1 : 0, 3) +
-            '   ' +
-            rg.range;
-          rglogicList.push(line);
+        if (!rg.resth && rg.ifthen <= 0 && rg.range.length === 0) {
+          return;
         }
+
+        const line =
+          '  1 ' +
+          utils.paddedNum(rgid, 3) +
+          ' ' +
+          utils.paddedNum(rg.ifthen, 3) +
+          ' ' +
+          utils.paddedNum(rg.resth ? 1 : 0, 3) +
+          '   ' +
+          rg.range;
+        rglogicList.push(line);
       });
     }
 

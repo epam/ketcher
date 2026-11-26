@@ -26,10 +26,10 @@ export const DELETE_CONFIRMATION = {
 };
 
 /**
- * Removes the monomer from the library together with every preset that
- * references it, keeping the KET library data and the Redux custom presets
- * (and their localStorage cache) in sync.
- */
+Removes the monomer from the library together with every preset that
+references it, keeping the KET library data and the Redux custom presets
+(and their localStorage cache) in sync.
+*/
 export const deleteMonomerWithPresets = (
   editor: CoreEditor,
   monomer: MonomerItemType,
@@ -59,10 +59,10 @@ export const deleteMonomerWithPresets = (
 };
 
 /**
- * Custom RNA presets (created in the RNA Builder) are stored in Redux state
- * and localStorage, NOT in `_monomersLibraryParsedJson`. This function checks
- * those presets so the delete confirmation covers them too.
- */
+Custom RNA presets (created in the RNA Builder) are stored in Redux state
+and localStorage, NOT in `_monomersLibraryParsedJson`. This function checks
+those presets so the delete confirmation covers them too.
+*/
 export const getReferencingCustomPresets = (
   monomer: MonomerItemType,
   customPresets: IRnaPreset[],
@@ -72,12 +72,11 @@ export const getReferencingCustomPresets = (
   );
   return customPresets.filter((preset) =>
     [preset.sugar, preset.base, preset.phosphate].some((component) => {
-      if (!component) return false;
-      return (
-        setMonomerTemplatePrefix(
-          component.props.id || getMonomerUniqueKey(component),
-        ) === ref
-      );
+      return !component
+        ? false
+        : setMonomerTemplatePrefix(
+            component.props.id || getMonomerUniqueKey(component),
+          ) === ref;
     }),
   );
 };

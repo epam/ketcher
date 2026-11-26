@@ -68,11 +68,9 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public get labelTooltipText(): string | null {
-    if (this.sgroup.type !== SGroup.TYPES.DAT) {
-      return null;
-    }
-
-    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
+    return this.sgroup.type !== SGroup.TYPES.DAT
+      ? null
+      : `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
   }
 
   private addLabelElement<ElementType extends SVGElement>(
@@ -245,15 +243,17 @@ export class SGroupRenderer extends BaseRenderer {
       return;
     }
 
-    if (this.sgroup.pp) {
-      const position = Scale.modelToCanvas(this.sgroup.pp, this.editorSettings);
-
-      this.appendValue(position, (bbox) =>
-        this.sgroup.data.context === SgContexts.Bond
-          ? this.getCenteredDataSGroupLabelShift(position, bbox)
-          : this.getAbsoluteDataSGroupLabelShift(position, bbox),
-      );
+    if (!this.sgroup.pp) {
+      return;
     }
+
+    const position = Scale.modelToCanvas(this.sgroup.pp, this.editorSettings);
+
+    this.appendValue(position, (bbox) =>
+      this.sgroup.data.context === SgContexts.Bond
+        ? this.getCenteredDataSGroupLabelShift(position, bbox)
+        : this.getAbsoluteDataSGroupLabelShift(position, bbox),
+    );
   }
 
   private calculateBracketBox(): Box2Abs | null {
@@ -590,22 +590,20 @@ export class SGroupRenderer extends BaseRenderer {
   private getAtomHoverPath(atomRenderer: AtomRenderer): PaperPath {
     const contour = atomRenderer.getHoverContour();
 
-    if (contour.type === 'circle') {
-      return new paperjs.Path.Circle(
-        new paperjs.Point(contour.center.x, contour.center.y),
-        contour.radius,
-      );
-    }
-
-    return new paperjs.Path.Rectangle(
-      new paperjs.Rectangle(
-        contour.x,
-        contour.y,
-        contour.width,
-        contour.height,
-      ),
-      new paperjs.Size(contour.radius, contour.radius),
-    );
+    return contour.type === 'circle'
+      ? new paperjs.Path.Circle(
+          new paperjs.Point(contour.center.x, contour.center.y),
+          contour.radius,
+        )
+      : new paperjs.Path.Rectangle(
+          new paperjs.Rectangle(
+            contour.x,
+            contour.y,
+            contour.width,
+            contour.height,
+          ),
+          new paperjs.Size(contour.radius, contour.radius),
+        );
   }
 
   private getBondHoverPath(

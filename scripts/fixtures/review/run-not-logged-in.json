@@ -1,0 +1,13 @@
+{
+  "type": "result",
+  "subtype": "success",
+  "is_error": true,
+  "api_error_status": 401,
+  "api_error_origin": "first_party",
+  "terminal_reason": "api_error",
+  "duration_ms": 2550,
+  "num_turns": 1,
+  "total_cost_usd": 0,
+  "modelUsage": {},
+  "result": "Not logged in · Please run /login"
+}

@@ -117,13 +117,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   /**
-   * The path that outlines this monomer's replacement-highlight area.
-   *
-   * The default is a rectangle matching the monomer body; renderers with a
-   * different body shape (e.g. phosphates, RNA bases) override this. The
-   * optional offset lets transient views request an inflated path while keeping
-   * the body-shape knowledge inside the renderer.
-   */
+  The path that outlines this monomer's replacement-highlight area.
+
+  The default is a rectangle matching the monomer body; renderers with a
+  different body shape (e.g. phosphates, RNA bases) override this. The
+  optional offset lets transient views request an inflated path while keeping
+  the body-shape knowledge inside the renderer.
+  */
   public getHighlightPath(offset = 0): HighlightPathData {
     return createRectHighlightPath(
       this.center,
@@ -199,10 +199,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return item.getAngle();
     });
     const isSectorOccupied = allAngles.some((item) => {
-      if (angle !== item && typeof angle === 'number') {
-        return Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340;
-      }
-      return false;
+      return angle !== item && typeof angle === 'number'
+        ? Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340
+        : false;
     });
 
     if (isSectorOccupied) {
@@ -656,25 +655,27 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected drawModification() {
     const config = this.modificationConfig;
-    if (config && this.monomer.isModification) {
-      const DARK_COLOR = '#333333';
-      const LIGHT_COLOR = 'white';
-      let fillColor: string | undefined;
+    if (!config || !this.monomer.isModification) {
+      return;
+    }
 
-      if (config.requiresFill) {
-        const isTextColorDark = this.textColor === DARK_COLOR;
-        fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
-      }
+    const DARK_COLOR = '#333333';
+    const LIGHT_COLOR = 'white';
+    let fillColor: string | undefined;
 
-      const useElement = this.rootElement
-        ?.append('use')
-        .attr('xlink:href', config.backgroundId)
-        .attr('pointer-events', 'none')
-        .attr('class', 'modification-background');
+    if (config.requiresFill) {
+      const isTextColorDark = this.textColor === DARK_COLOR;
+      fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
+    }
 
-      if (fillColor) {
-        useElement?.attr('fill', fillColor);
-      }
+    const useElement = this.rootElement
+      ?.append('use')
+      .attr('xlink:href', config.backgroundId)
+      .attr('pointer-events', 'none')
+      .attr('class', 'modification-background');
+
+    if (fillColor) {
+      useElement?.attr('fill', fillColor);
     }
   }
 

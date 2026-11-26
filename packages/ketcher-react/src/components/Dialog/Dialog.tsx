@@ -212,10 +212,9 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   };
 
   const isPrimary = (button) => {
-    if (primaryButtons && primaryButtons.length > 0) {
-      return primaryButtons.includes(button);
-    }
-    return isButtonOk(button);
+    return primaryButtons && primaryButtons.length > 0
+      ? primaryButtons.includes(button)
+      : isButtonOk(button);
   };
 
   const exit = (mode) => {
@@ -238,11 +237,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       const { key } = event;
       const active = document.activeElement;
       const isActiveTextarea = active?.tagName === 'TEXTAREA';
-      if (key === 'Escape' || (key === 'Enter' && !isActiveTextarea)) {
-        exit(key === 'Enter' ? 'OK' : 'Cancel');
-        event.preventDefault();
-        event.stopPropagation();
+      if (key !== 'Escape' && (key !== 'Enter' || isActiveTextarea)) {
+        return;
       }
+
+      exit(key === 'Enter' ? 'OK' : 'Cancel');
+      event.preventDefault();
+      event.stopPropagation();
     };
 
     document.addEventListener('keydown', keyDown);

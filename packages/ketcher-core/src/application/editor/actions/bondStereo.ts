@@ -50,11 +50,11 @@ export function fromStereoAtomAttributes(
           restruct,
         ),
       );
-      if (attributes.stereoLabel === null) {
-        action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct));
-      } else {
-        action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct));
-      }
+      action.addOp(
+        attributes.stereoLabel === null
+          ? new FragmentDeleteStereoAtom(frid, aid).perform(restruct)
+          : new FragmentAddStereoAtom(frid, aid).perform(restruct),
+      );
     }
     if (shouldReverse) action.operations.reverse();
   }

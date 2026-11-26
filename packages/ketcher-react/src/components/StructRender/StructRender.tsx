@@ -49,11 +49,13 @@ const StructRender = ({
   useEffect(() => {
     const container = renderRef.current;
 
-    if (container) {
-      container.innerHTML = '';
-      const normalizedStruct = normalizeStruct(struct);
-      RenderStruct.render(container, normalizedStruct, options);
+    if (!container) {
+      return;
     }
+
+    container.innerHTML = '';
+    const normalizedStruct = normalizeStruct(struct);
+    RenderStruct.render(container, normalizedStruct, options);
   }, [struct, options, update]);
 
   return (

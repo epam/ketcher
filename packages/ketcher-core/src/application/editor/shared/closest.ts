@@ -25,14 +25,14 @@ import type {
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 
 /**
- * Finds the closest atom to a given position within the rendered structure.
- *
- * @param restruct - The render structure containing visible atoms
- * @param pos - The position to search from
- * @param skip - Optional atom to skip (for excluding selection items)
- * @param minDistance - Optional minimum distance threshold; will use default if not provided
- * @returns Object with atom ID and distance, or null if no atom found within threshold
- */
+Finds the closest atom to a given position within the rendered structure.
+
+@param restruct - The render structure containing visible atoms
+@param pos - The position to search from
+@param skip - Optional atom to skip (for excluding selection items)
+@param minDistance - Optional minimum distance threshold; will use default if not provided
+@returns Object with atom ID and distance, or null if no atom found within threshold
+*/
 function findClosestAtom(
   restruct: ReStruct,
   pos: Vec2,
@@ -51,10 +51,12 @@ function findClosestAtom(
 
     const distance = Vec2.dist(pos, atom.a.pp);
 
-    if (distance < effectiveMinDistance) {
-      closestAtom = aid;
-      effectiveMinDistance = distance;
+    if (distance >= effectiveMinDistance) {
+      return;
     }
+
+    closestAtom = aid;
+    effectiveMinDistance = distance;
   });
 
   if (closestAtom !== undefined) {

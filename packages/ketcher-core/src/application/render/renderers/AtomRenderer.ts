@@ -135,15 +135,15 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * WARNING: this method always reports its return type as
-   * `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
-   * circle branch actually produces a `SVGCircleElement` selection.  The
-   * deliberate misreport is required because TypeScript cannot resolve D3's
-   * overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
-   * union selection, which would force every call site to add its own cast.
-   * Callers must therefore restrict themselves to element-agnostic D3 methods
-   * (`attr`, `style`, `remove`) and must not rely on the element type itself.
-   */
+  WARNING: this method always reports its return type as
+  `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
+  circle branch actually produces a `SVGCircleElement` selection.  The
+  deliberate misreport is required because TypeScript cannot resolve D3's
+  overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
+  union selection, which would force every call site to add its own cast.
+  Callers must therefore restrict themselves to element-agnostic D3 methods
+  (`attr`, `style`, `remove`) and must not rely on the element type itself.
+  */
   private appendSelectionContour():
     D3SvgElementSelection<SVGRectElement, void> | undefined {
     if (
@@ -215,8 +215,8 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * Updates the width and height of the SelectionContour
-   */
+  Updates the width and height of the SelectionContour
+  */
   private updateSelectionContour() {
     if (!this.rootElement || !this.textElement) return;
 
@@ -239,25 +239,23 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
-    if (this.hoverElement) {
-      return this.hoverElement;
-    }
-
-    return this.appendSelectionContour()
-      ?.attr('stroke', '#0097a8')
-      .attr('stroke-width', '1.2')
-      .attr('fill', 'none')
-      .attr('opacity', '0')
-      .attr('class', 'dynamic-element');
+    return this.hoverElement
+      ? this.hoverElement
+      : this.appendSelectionContour()
+          ?.attr('stroke', '#0097a8')
+          .attr('stroke-width', '1.2')
+          .attr('fill', 'none')
+          .attr('opacity', '0')
+          .attr('class', 'dynamic-element');
   }
 
   /**
-   * Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
-   * AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
-   * via showHover/hideHover, unlike other renderers that add/remove elements.
-   * When the model layer turns on hover (e.g., Fragment selection tool), we need
-   * to explicitly show the hover element after it's created/returned by appendHover.
-   */
+  Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
+  AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
+  via showHover/hideHover, unlike other renderers that add/remove elements.
+  When the model layer turns on hover (e.g., Fragment selection tool), we need
+  to explicitly show the hover element after it's created/returned by appendHover.
+  */
   public redrawHover() {
     if (this.drawingEntity.hovered) {
       const hoverElement = this.appendHover();
@@ -308,10 +306,9 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
-    if (this.atom.properties.atomList) {
-      return this.atom.properties.atomList.label();
-    }
-    return this.atom.properties.alias ?? this.atom.label;
+    return this.atom.properties.atomList
+      ? this.atom.properties.atomList.label()
+      : (this.atom.properties.alias ?? this.atom.label);
   }
 
   /**
@@ -333,10 +330,9 @@ export class AtomRenderer extends BaseRenderer {
   */
   public get displayLabelText() {
     const text = this.labelText;
-    if (text.length > MAX_LABEL_LENGTH) {
-      return `${text.substring(0, MAX_LABEL_LENGTH)}...`;
-    }
-    return text;
+    return text.length > MAX_LABEL_LENGTH
+      ? `${text.substring(0, MAX_LABEL_LENGTH)}...`
+      : text;
   }
 
   /**
@@ -605,18 +601,20 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendCharge() {
-    if (this.atom.hasCharge) {
-      const charge = this.atom.properties.charge as number;
-
-      this.textElement
-        ?.append('tspan')
-        .text(
-          (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
-            (charge > 0 ? '+' : '–'),
-        )
-        .attr('fill', this.labelColor)
-        .attr('dy', -4);
+    if (!this.atom.hasCharge) {
+      return;
     }
+
+    const charge = this.atom.properties.charge as number;
+
+    this.textElement
+      ?.append('tspan')
+      .text(
+        (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
+          (charge > 0 ? '+' : '–'),
+      )
+      .attr('fill', this.labelColor)
+      .attr('dy', -4);
   }
 
   private appendRadical() {
@@ -666,35 +664,39 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendExplicitValence() {
-    if (this.atom.hasExplicitValence) {
-      const explicitValence = this.atom.properties.explicitValence as number;
-
-      this.textElement
-        ?.append('tspan')
-        .text(`(${VALENCE_MAP[explicitValence]})`)
-        .attr('fill', this.labelColor)
-        .attr('letter-spacing', 0.2)
-        .attr('dy', -4);
+    if (!this.atom.hasExplicitValence) {
+      return;
     }
+
+    const explicitValence = this.atom.properties.explicitValence as number;
+
+    this.textElement
+      ?.append('tspan')
+      .text(`(${VALENCE_MAP[explicitValence]})`)
+      .attr('fill', this.labelColor)
+      .attr('letter-spacing', 0.2)
+      .attr('dy', -4);
   }
 
   private appendExplicitIsotope() {
-    if (this.atom.hasExplicitIsotope) {
-      const explicitIsotope = this.atom.properties.isotope as number;
-
-      this.textElement
-        /*
-         * TODO: Currently it's always appended in front of the atom (1H3C or 1CH3), however, in micro mode isotope is placed before the exact atom, not the hydrogen (H31C or 1CH3)
-         * While the latter is displayed correctly, the former has to be fixed. Can go through all the tspans and use label tspan instead of :first-child here
-         * However, now it leads to the atom properties being positioned incorrectly due to 'dy' attribute being relative to the previous tspan
-         * Probably we could consider another approach for positioning the atom properties?
-         */
-        ?.insert('tspan', ':first-child')
-        .text(explicitIsotope)
-        .attr('fill', this.labelColor)
-        .attr('letter-spacing', 0.2)
-        .attr('dy', -4);
+    if (!this.atom.hasExplicitIsotope) {
+      return;
     }
+
+    const explicitIsotope = this.atom.properties.isotope as number;
+
+    this.textElement
+      /*
+       * TODO: Currently it's always appended in front of the atom (1H3C or 1CH3), however, in micro mode isotope is placed before the exact atom, not the hydrogen (H31C or 1CH3)
+       * While the latter is displayed correctly, the former has to be fixed. Can go through all the tspans and use label tspan instead of :first-child here
+       * However, now it leads to the atom properties being positioned incorrectly due to 'dy' attribute being relative to the previous tspan
+       * Probably we could consider another approach for positioning the atom properties?
+       */
+      ?.insert('tspan', ':first-child')
+      .text(explicitIsotope)
+      .attr('fill', this.labelColor)
+      .attr('letter-spacing', 0.2)
+      .attr('dy', -4);
   }
 
   private appendAtomProperties() {

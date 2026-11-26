@@ -507,16 +507,18 @@ function applyTemplatePostProcessing(
     );
   }
 
-  if (pasteItems.bonds.length > 0) {
-    const firstPastedBond = restruct.molecule.bonds.get(pasteItems.bonds[0]);
-    if (!firstPastedBond) {
-      KetcherLogger.error(
-        `template.ts::applyTemplatePostProcessing: pasted bond ${pasteItems.bonds[0]} not found`,
-      );
-      return;
-    }
-    action.mergeWith(fromBondStereoUpdate(restruct, firstPastedBond));
+  if (pasteItems.bonds.length === 0) {
+    return;
   }
+
+  const firstPastedBond = restruct.molecule.bonds.get(pasteItems.bonds[0]);
+  if (!firstPastedBond) {
+    KetcherLogger.error(
+      `template.ts::applyTemplatePostProcessing: pasted bond ${pasteItems.bonds[0]} not found`,
+    );
+    return;
+  }
+  action.mergeWith(fromBondStereoUpdate(restruct, firstPastedBond));
 }
 
 function fromTemplateOnBond(

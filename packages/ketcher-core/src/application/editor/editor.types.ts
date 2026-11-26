@@ -51,6 +51,16 @@ export type CreateBondViaModalPayload = {
   initialSecondMonomerAttachmentPoint?: AttachmentPointName;
 };
 
+export type CreateInsertionBondsViaModalPayload = {
+  leftMonomer: BaseMonomer;
+  newMonomer: BaseMonomer;
+  rightMonomer: BaseMonomer;
+  leftAp: AttachmentPointName;
+  leftNewAp: AttachmentPointName;
+  rightNewAp: AttachmentPointName;
+  rightAp: AttachmentPointName;
+};
+
 export type SelectLayoutModePayload =
   LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
@@ -192,9 +202,9 @@ export type LibraryItemDragState = {
 } | null;
 
 /**
- * Identifies a specific free attachment point on a monomer.
- * Used to track drag-over hover targets during library-item drag operations.
- */
+Identifies a specific free attachment point on a monomer.
+Used to track drag-over hover targets during library-item drag operations.
+*/
 export type AttachmentPointTarget = {
   monomer: BaseMonomer;
   attachmentPointName: AttachmentPointName;

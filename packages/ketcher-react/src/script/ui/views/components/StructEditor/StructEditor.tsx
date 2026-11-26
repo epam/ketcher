@@ -93,21 +93,25 @@ function setupEditor(
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (props[eventName] !== oldProps[eventName]) {
-      if (oldProps[eventName]) {
-        editor.event[name].remove(oldProps[eventName]);
-      }
+    if (props[eventName] === oldProps[eventName]) {
+      return;
+    }
 
-      if (props[eventName]) {
-        editor.event[name].add(props[eventName]);
-      }
+    if (oldProps[eventName]) {
+      editor.event[name].remove(oldProps[eventName]);
+    }
+
+    if (props[eventName]) {
+      editor.event[name].add(props[eventName]);
     }
   });
 
-  if (struct !== oldProps.struct || haveOptionsChanged) {
-    editor.render.unobserveCanvasResize();
-    editor.render.observeCanvasResize();
+  if (struct === oldProps.struct && !haveOptionsChanged) {
+    return;
   }
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
@@ -165,8 +169,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
 
   // TODO https://github.com/epam/ketcher/issues/3472
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   scrollCanvas(event: WheelEvent) {
     if (event.shiftKey) {
       this.handleHorizontalScroll(event);
@@ -176,8 +180,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   handleHorizontalScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
@@ -191,9 +195,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * For mouse wheel and touchpad
-   * @param {WheelEvent} event
-   */
+  For mouse wheel and touchpad
+  @param {WheelEvent} event
+  */
   handleScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,

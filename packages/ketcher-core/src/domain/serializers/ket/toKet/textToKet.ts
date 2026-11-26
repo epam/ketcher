@@ -51,9 +51,9 @@ const SUBSCRIPT_FLAG = 32;
 const SUPERSCRIPT_FLAG = 64;
 
 /**
- * Extracts font style overrides from a Lexical text node and applies them
- * to the target KET object (part, paragraph, or root text).
- */
+Extracts font style overrides from a Lexical text node and applies them
+to the target KET object (part, paragraph, or root text).
+*/
 function applyFontStyleOverrides(
   target: KetTextStyleOverrides,
   child: LexicalTextChild,
@@ -87,11 +87,13 @@ function applyFontStyleOverrides(
   }
 
   // Extract color from Lexical style string (e.g. "color:#FF0000;")
-  if (child.style) {
-    const colorMatch = /(?:^|;)\s*color:\s*(#[0-9A-Fa-f]+)/.exec(child.style);
-    if (colorMatch) {
-      target.color = colorMatch[1];
-    }
+  if (!child.style) {
+    return;
+  }
+
+  const colorMatch = /(?:^|;)\s*color:\s*(#[0-9A-Fa-f]+)/.exec(child.style);
+  if (colorMatch) {
+    target.color = colorMatch[1];
   }
 }
 

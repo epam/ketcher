@@ -592,8 +592,10 @@ export class Struct {
           break;
         }
         case Bond.PATTERN.TYPE.AROMATIC: {
-          if (atom.neighbors.length === 1) return [-1, true];
-          return [atom.neighbors.length, true];
+          return [
+            atom.neighbors.length === 1 ? -1 : atom.neighbors.length,
+            true,
+          ];
         }
         default: {
           return [-1, false];
@@ -837,21 +839,25 @@ export class Struct {
       if (!a1 || !a2) return;
 
       a1.sgs.forEach((sgid) => {
-        if (!a2.sgs.has(sgid)) {
-          const sg = this.sgroups.get(sgid);
-          assert(sg, `SGroup ${sgid} not found`);
-          sg.xBonds.push(bid);
-          arrayAddIfMissing(sg.neiAtoms, bond.end);
+        if (a2.sgs.has(sgid)) {
+          return;
         }
+
+        const sg = this.sgroups.get(sgid);
+        assert(sg, `SGroup ${sgid} not found`);
+        sg.xBonds.push(bid);
+        arrayAddIfMissing(sg.neiAtoms, bond.end);
       });
 
       a2.sgs.forEach((sgid) => {
-        if (!a1.sgs.has(sgid)) {
-          const sg = this.sgroups.get(sgid);
-          assert(sg, `SGroup ${sgid} not found`);
-          sg.xBonds.push(bid);
-          arrayAddIfMissing(sg.neiAtoms, bond.begin);
+        if (a1.sgs.has(sgid)) {
+          return;
         }
+
+        const sg = this.sgroups.get(sgid);
+        assert(sg, `SGroup ${sgid} not found`);
+        sg.xBonds.push(bid);
+        arrayAddIfMissing(sg.neiAtoms, bond.begin);
       });
     });
   }
@@ -1033,11 +1039,11 @@ export class Struct {
   }
 
   /**
-   * A scale factor outside [0.01, 100] means the source geometry is degenerate;
-   * normalizing it would distort the drawing more than leaving it alone. Shared
-   * with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
-   * path applies the same rule rather than a copy of these bounds.
-   */
+  A scale factor outside [0.01, 100] means the source geometry is degenerate;
+  normalizing it would distort the drawing more than leaving it alone. Shared
+  with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
+  path applies the same rule rather than a copy of these bounds.
+  */
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
@@ -1143,14 +1149,16 @@ export class Struct {
     const components: ConnectedComponent[] = [];
     this.atoms.forEach((atom, aid) => {
       if (
-        (shouldDiscardExistingFragments || atom.fragment < 0) &&
-        !addedAtoms.has(aid) &&
-        !this.isAtomFromMacromolecule(aid)
+        (!shouldDiscardExistingFragments && atom.fragment >= 0) ||
+        addedAtoms.has(aid) ||
+        this.isAtomFromMacromolecule(aid)
       ) {
-        const component = this.findConnectedComponent(aid);
-        components.push(component);
-        addedAtoms = addedAtoms.union(component);
+        return;
       }
+
+      const component = this.findConnectedComponent(aid);
+      components.push(component);
+      addedAtoms = addedAtoms.union(component);
     });
 
     return components;
@@ -1256,14 +1264,14 @@ export class Struct {
   }
 
   /**
-   * Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
-   * unit). Applied identically to every input format; rescaleMolecules() in
-   * serializers/mol/utils.js follows the same rule for the reaction-merge path.
-   *
-   * The median rather than the mean: a handful of distorted bonds used to drag the
-   * average far from 1, shrinking the whole drawing — shapes, texts and images
-   * included — on load. See issue #5275.
-   */
+  Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
+  unit). Applied identically to every input format; rescaleMolecules() in
+  serializers/mol/utils.js follows the same rule for the reaction-merge path.
+
+  The median rather than the mean: a handful of distorted bonds used to drag the
+  average far from 1, shrinking the whole drawing — shapes, texts and images
+  included — on load. See issue #5275.
+  */
   rescale() {
     const median = this.getMedianBondLength();
     if (median <= 0) {
@@ -1507,11 +1515,13 @@ export class Struct {
     shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     this.sgroups.forEach((item) => {
-      if (item.data.fieldName === 'MRV_IMPLICIT_H') {
-        const atom = this.atoms.get(item.atoms[0]);
-        assert(atom, `Atom ${item.atoms[0]} not found`);
-        atom.hasImplicitH = true;
+      if (item.data.fieldName !== 'MRV_IMPLICIT_H') {
+        return;
       }
+
+      const atom = this.atoms.get(item.atoms[0]);
+      assert(atom, `Atom ${item.atoms[0]} not found`);
+      atom.hasImplicitH = true;
     });
 
     if (list) {
@@ -1721,17 +1731,14 @@ export class Struct {
 
   getBondIdByHalfBond(halfBondId: number) {
     const halfBond = this.halfBonds.get(halfBondId);
-    if (halfBond) {
-      return halfBond.bid;
-    }
-    return undefined;
+    return halfBond ? halfBond.bid : undefined;
   }
 
   /**
-   * @returns visibleAtoms = selected atoms
-   *                       - atoms in contracted functional groups
-   *                       + functional groups's attachment atoms
-   */
+  @returns visibleAtoms = selected atoms
+                        - atoms in contracted functional groups
+                        + functional groups's attachment atoms
+  */
   getSelectedVisibleAtoms(selection: EditorSelection | null) {
     return (
       selection?.atoms?.filter((atomId) => {
@@ -1853,37 +1860,39 @@ export class Struct {
       }
 
       const flipValue = sGroup.monomer.monomerItem.transformation?.flip;
-      if (flipValue) {
-        sGroup.atoms.forEach((atomId) => {
-          const atom = this.atoms.get(atomId);
-          if (!atom) {
-            return;
-          }
-
-          atom.pp = atom.pp.add(flipPointByCenter(atom.pp, center, flipValue));
-        });
-
-        const sGroupBonds = new Set<number>(
-          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId) ?? []),
-        );
-
-        sGroupBonds.forEach((bondId) => {
-          const bond = this.bonds.get(bondId);
-          if (!bond || bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-            return;
-          }
-
-          if (
-            bond.stereo === Bond.PATTERN.STEREO.UP ||
-            bond.stereo === Bond.PATTERN.STEREO.DOWN
-          ) {
-            bond.stereo =
-              bond.stereo === Bond.PATTERN.STEREO.UP
-                ? Bond.PATTERN.STEREO.DOWN
-                : Bond.PATTERN.STEREO.UP;
-          }
-        });
+      if (!flipValue) {
+        return;
       }
+
+      sGroup.atoms.forEach((atomId) => {
+        const atom = this.atoms.get(atomId);
+        if (!atom) {
+          return;
+        }
+
+        atom.pp = atom.pp.add(flipPointByCenter(atom.pp, center, flipValue));
+      });
+
+      const sGroupBonds = new Set<number>(
+        sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId) ?? []),
+      );
+
+      sGroupBonds.forEach((bondId) => {
+        const bond = this.bonds.get(bondId);
+        if (!bond || bond.type !== Bond.PATTERN.TYPE.SINGLE) {
+          return;
+        }
+
+        if (
+          bond.stereo === Bond.PATTERN.STEREO.UP ||
+          bond.stereo === Bond.PATTERN.STEREO.DOWN
+        ) {
+          bond.stereo =
+            bond.stereo === Bond.PATTERN.STEREO.UP
+              ? Bond.PATTERN.STEREO.DOWN
+              : Bond.PATTERN.STEREO.UP;
+        }
+      });
     });
   }
 
@@ -2028,14 +2037,16 @@ export class Struct {
 
     this.bondInitHalfBonds(bondId);
     const newBondObj = this.bonds.get(bondId);
-    if (newBondObj?.hb1 && newBondObj?.hb2) {
-      // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
-      // by hb.ang — inserting with ang=0 (the HalfBond default) would place
-      // the half-bond in the wrong position in the neighbor list.
-      this.halfBondUpdate(newBondObj.hb1);
-      this.halfBondUpdate(newBondObj.hb2);
-      this.atomAddNeighbor(newBondObj.hb1);
-      this.atomAddNeighbor(newBondObj.hb2);
+    if (!newBondObj?.hb1 || !newBondObj?.hb2) {
+      return;
     }
+
+    // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
+    // by hb.ang — inserting with ang=0 (the HalfBond default) would place
+    // the half-bond in the wrong position in the neighbor list.
+    this.halfBondUpdate(newBondObj.hb1);
+    this.halfBondUpdate(newBondObj.hb2);
+    this.atomAddNeighbor(newBondObj.hb1);
+    this.atomAddNeighbor(newBondObj.hb2);
   }
 }

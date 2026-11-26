@@ -4,28 +4,12 @@
 // about the PR is read through the GitHub API.
 import { danger, fail, schedule, warn } from 'danger';
 import { readFileSync } from 'node:fs';
+import {
+  LINKED_ISSUES_QUERY,
+  linkedIssueRefs,
+  type LinkedIssuesResponse,
+} from './scripts/linked-issues.mjs';
 import { checkPullRequest, MAX_FILE_LINES } from './scripts/pr-checks.mjs';
-
-const LINKED_ISSUES = `
-  query ($owner: String!, $repo: String!, $number: Int!) {
-    repository(owner: $owner, name: $repo) {
-      pullRequest(number: $number) {
-        closingIssuesReferences(first: 20) {
-          nodes { number issueType { name } }
-        }
-      }
-    }
-  }`;
-
-interface LinkedIssuesResponse {
-  repository: {
-    pullRequest: {
-      closingIssuesReferences: {
-        nodes: { number: number; issueType: { name: string } | null }[];
-      };
-    };
-  };
-}
 
 schedule(async () => {
   const { api, thisPR } = danger.github;
@@ -42,7 +26,7 @@ schedule(async () => {
     pull_number: pr.number,
     per_page: 100,
   });
-  const linked = await api.graphql<LinkedIssuesResponse>(LINKED_ISSUES, {
+  const linked = await api.graphql(LINKED_ISSUES_QUERY, {
     owner,
     repo,
     number: pr.number,
@@ -81,13 +65,7 @@ schedule(async () => {
     requestedReviewers:
       (pr.requested_reviewers?.length ?? 0) + (pr.requested_teams?.length ?? 0),
     labels: danger.github.issue.labels.map((label) => label.name),
-    linkedIssues:
-      linked.repository.pullRequest.closingIssuesReferences.nodes.map(
-        (issue) => ({
-          number: issue.number,
-          type: issue.issueType?.name ?? null,
-        }),
-      ),
+    linkedIssues: linkedIssueRefs(linked as LinkedIssuesResponse),
     files: files.map((file) => ({
       path: file.filename,
       status: file.status,

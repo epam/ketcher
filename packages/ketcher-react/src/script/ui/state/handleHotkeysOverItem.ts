@@ -127,15 +127,17 @@ function handleDialog({
   const dialogHandler = getDialogHandler(dialogType);
   const hoveredItemId = hoveredItem[dialogType];
 
-  if (dialogHandler) {
-    const props: HandlersProps = {
-      hoveredItemId,
-      newAction,
-      editor,
-      dispatch,
-    };
-    dialogHandler(props);
+  if (!dialogHandler) {
+    return;
   }
+
+  const props: HandlersProps = {
+    hoveredItemId,
+    newAction,
+    editor,
+    dispatch,
+  };
+  dialogHandler(props);
 }
 
 function getDialogHandler(itemType: string) {
@@ -269,8 +271,9 @@ async function isFunctionalGroupChange(
   props: HandlersProps,
   type: string,
 ): Promise<boolean> {
-  if (type === 'sgroups') return true;
-  return await isChangingFunctionalGroup(props, type);
+  return type === 'sgroups'
+    ? true
+    : await isChangingFunctionalGroup(props, type);
 }
 
 function getToolHandler(itemType: string, toolName = '') {
@@ -297,10 +300,7 @@ function getToolHandler(itemType: string, toolName = '') {
 
   const item = items[itemType];
 
-  if (item) {
-    return item[toolName];
-  }
-  return items._default[toolName];
+  return item ? item[toolName] : items._default[toolName];
 }
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
@@ -370,17 +370,19 @@ function handleBondTypeChangeTool({
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
-  if (existingAtom) {
-    const updatedAtom = fromAtomsAttributes(
-      editor.render.ctab,
-      hoveredItemId,
-      {
-        charge: (existingAtom.charge ?? 0) + (newAction.opts as number),
-      },
-      null,
-    );
-    editor.update(updatedAtom);
+  if (!existingAtom) {
+    return;
   }
+
+  const updatedAtom = fromAtomsAttributes(
+    editor.render.ctab,
+    hoveredItemId,
+    {
+      charge: (existingAtom.charge ?? 0) + (newAction.opts as number),
+    },
+    null,
+  );
+  editor.update(updatedAtom);
 }
 
 function mapItemsToArrays(

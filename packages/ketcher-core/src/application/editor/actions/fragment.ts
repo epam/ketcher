@@ -177,12 +177,12 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
 }
 
 /**
- * @param restruct { ReStruct }
- * @param aid { number }
- * @param frid { number }
- * @param newfrid { number }
- * @returns { Action }
- */
+@param restruct { ReStruct }
+@param aid { number }
+@param frid { number }
+@param newfrid { number }
+@returns { Action }
+*/
 function processAtom(restruct, aid, frid, newfrid) {
   const struct = restruct.molecule;
   const atomIds = struct
@@ -207,12 +207,16 @@ function processAtom(restruct, aid, frid, newfrid) {
 }
 
 /**
- * @param restruct { ReStruct }
- * @param frid { number }
- * @param rgForRemove
- * @return { Action }
- */
-// TODO [RB] the thing is too tricky :) need something else in future
+Gives each connected component of fragment `frid` its own new fragment,
+moving its atoms, attachment groups and R-group membership. Unless `frid`
+is -1, the old fragment is then removed from its R-group and deleted.
+Called after atoms or bonds are erased, when a fragment may fall apart.
+The operations are reversed at the end (see processAtom).
+@param restruct { ReStruct }
+@param frid { number }
+@param rgForRemove
+@return { Action }
+*/
 export function fromFragmentSplit(
   restruct,
   frid,
@@ -222,15 +226,17 @@ export function fromFragmentSplit(
   const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
   restruct.molecule.atoms.forEach((atom, aid) => {
-    if (atom.fragment === frid) {
-      const newfrid = (
-        action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
-      ).frid;
-
-      action.mergeWith(processAtom(restruct, aid, frid, newfrid));
-
-      if (rgid) action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
+    if (atom.fragment !== frid) {
+      return;
     }
+
+    const newfrid = (
+      action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
+    ).frid;
+
+    action.mergeWith(processAtom(restruct, aid, frid, newfrid));
+
+    if (rgid) action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
   });
 
   if (frid !== -1) {

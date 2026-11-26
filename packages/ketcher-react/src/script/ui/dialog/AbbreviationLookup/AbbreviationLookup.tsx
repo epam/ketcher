@@ -119,11 +119,11 @@ export const AbbreviationLookup = ({ options }: Props) => {
       return;
     }
 
-    if (option.type === AbbreviationType.Template) {
-      dispatch(onAction({ tool: 'template', opts: option.template }));
-    } else {
-      dispatch(onAction({ tool: 'atom', opts: option.element }));
-    }
+    dispatch(
+      option.type === AbbreviationType.Template
+        ? onAction({ tool: 'template', opts: option.template })
+        : onAction({ tool: 'atom', opts: option.element }),
+    );
 
     closePanel();
   };

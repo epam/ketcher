@@ -129,10 +129,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
-    if (this.visel.boundingBox) {
-      return ReObject.prototype.getVBoxObj.call(this, render);
-    }
-    return new Box2Abs(this.a.pp, this.a.pp);
+    return this.visel.boundingBox
+      ? ReObject.prototype.getVBoxObj.call(this, render)
+      : new Box2Abs(this.a.pp, this.a.pp);
   }
 
   drawHover(render: Render, shouldDrawOutline = true) {
@@ -170,31 +169,32 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       },
     );
 
-    if (attachmentPointEntry && hoverElement) {
-      const [attachmentPointName] = attachmentPointEntry;
-      hoverElement.hover(
-        () => {
-          globalThis.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'highlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
-          );
-        },
-        () => {
-          globalThis.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'resetHighlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
-          );
-        },
-      );
+    if (!attachmentPointEntry || !hoverElement) {
+      return;
     }
+    const [attachmentPointName] = attachmentPointEntry;
+    hoverElement.hover(
+      () => {
+        globalThis.dispatchEvent(
+          new CustomEvent<AttachmentPointName>(
+            'highlightAttachmentPointControls',
+            {
+              detail: attachmentPointName,
+            },
+          ),
+        );
+      },
+      () => {
+        globalThis.dispatchEvent(
+          new CustomEvent<AttachmentPointName>(
+            'resetHighlightAttachmentPointControls',
+            {
+              detail: attachmentPointName,
+            },
+          ),
+        );
+      },
+    );
   }
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
@@ -232,13 +232,15 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       potentialLeavingGroups.some((leavingAtomIds) =>
         leavingAtomIds.has(atomId),
       );
-    if (isPotentialAttachmentPointAtom) {
-      const path = this.makeHighlightePlate(render.ctab, {
-        stroke: '#43B5C0',
-        'stroke-dasharray': '- ',
-      });
-      render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
+    if (!isPotentialAttachmentPointAtom) {
+      return;
     }
+
+    const path = this.makeHighlightePlate(render.ctab, {
+      stroke: '#43B5C0',
+      'stroke-dasharray': '- ',
+    });
+    render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
   }
 
   setHover(isHovered: boolean, render: Render, shouldDrawOutline = true) {
@@ -288,13 +290,15 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       };
     }
 
-    if (style) {
-      const path = this.makeHighlightePlate(restruct, style, -4);
-
-      restruct.addReObjectPath(LayerMap.atom, this.visel, path);
-
-      return path;
+    if (!style) {
+      return;
     }
+
+    const path = this.makeHighlightePlate(restruct, style, -4);
+
+    restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+
+    return path;
   }
 
   // Same coordinate transform as ReObject.prototype.getVBoxObj, but applied
@@ -381,11 +385,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   ) => {
     const atom = this.a;
     const { render } = restruct;
-    if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
-    }
-
-    return this.getSelectionContour(render, highlightPadding).attr(style);
+    return this.isPlateShouldBeHidden(atom, render)
+      ? null
+      : this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
   makeHoverPlate(render: Render, shouldDrawOutline = true) {
@@ -407,10 +409,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const { render } = restruct;
     const { options } = render;
 
-    if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
-    }
-    return this.getSelectionContour(render).attr(options.selectionStyle);
+    return this.isPlateShouldBeHidden(atom, render)
+      ? null
+      : this.getSelectionContour(render).attr(options.selectionStyle);
   }
 
   // Keep atom available in DOM for tests even when the label is hidden
@@ -466,10 +467,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   /**
-   * if atom is rendered as Abbreviation: O, NH, ...
-   * In this case we need to shift the bond render start position to free space for Atom,
-   * same for the Attachment point
-   */
+  if atom is rendered as Abbreviation: O, NH, ...
+  In this case we need to shift the bond render start position to free space for Atom,
+  same for the Attachment point
+  */
   getShiftedSegmentPosition(
     renderOptions: RenderOptions,
     direction: Vec2,
@@ -500,14 +501,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       atomSymbolShift = Math.min(atomSymbolShift, maxShift);
     }
 
-    if (atomSymbolShift > 0) {
-      return atomPosition.addScaled(
-        direction,
-        atomSymbolShift + 3 * renderOptions.lineWidth,
-      );
-    } else {
-      return atomPosition;
-    }
+    return atomSymbolShift > 0
+      ? atomPosition.addScaled(
+          direction,
+          atomSymbolShift + 3 * renderOptions.lineWidth,
+        )
+      : atomPosition;
   }
 
   hasAttachmentPoint(): boolean {
@@ -671,6 +670,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         options.usageInMacromolecule === UsageInMacromolecule.BondPreview ||
         options.usageInMacromolecule ===
           UsageInMacromolecule.MonomerConnectionsModal ||
+        options.usageInMacromolecule ===
+          UsageInMacromolecule.InsertionConnectionsModal ||
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
@@ -1098,11 +1099,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       fragment?.enhancedStereoFlag,
     );
 
-    let text = '';
-
-    if (shouldShowStereoLabel) {
-      text = `${stereoLabel}\n`;
-    }
+    let text = shouldShowStereoLabel ? `${stereoLabel}\n` : '';
 
     if (shortenCustomQueryText.length > 0) {
       text += `${shortenCustomQueryText}\n`;
@@ -1185,10 +1182,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.atoms?.includes(aid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
-      if (hasCurrentHighlight) {
-        highlightColor = highlight.color;
-        hasHighlightOutline = highlight.outline;
+      if (!hasCurrentHighlight) {
+        return;
       }
+
+      highlightColor = highlight.color;
+      hasHighlightOutline = highlight.outline;
     });
 
     // Drawing highlight. Outline highlights (#9441) are drawn as a single
@@ -1439,15 +1438,11 @@ function getStereoAtomColor(
   options: RenderOptions,
   stereoLabel: string | null | undefined,
 ): string | undefined {
-  if (
-    !stereoLabel ||
+  return !stereoLabel ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
-  ) {
-    return DEFAULT_STEREO_COLOR;
-  }
-
-  return getColorFromStereoLabel(options, stereoLabel);
+    ? DEFAULT_STEREO_COLOR
+    : getColorFromStereoLabel(options, stereoLabel);
 }
 
 export function getColorFromStereoLabel(
@@ -1475,15 +1470,12 @@ export function getColorFromStereoLabel(
 function getStereoAtomOpacity(options: RenderOptions, stereoLabel: string) {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
   const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '');
-  if (
-    !options.autoFadeOfStereoLabels ||
+  return !options.autoFadeOfStereoLabels ||
     stereoLabelType === StereoLabel.Abs ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
-  ) {
-    return 1;
-  }
-  return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity);
+    ? 1
+    : Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity);
 }
 
 function shouldDisplayStereoLabel(
@@ -2194,11 +2186,11 @@ function getSubstitutionCountAttrText(value: number) {
 type AtomCustomQueryValue = string | number | boolean;
 
 /**
- * Minimum shape required by getAtomCustomQuery.
- * Satisfied by both a full Atom instance (query-specific fields nested
- * under queryProperties) and the flat Redux form state produced by the
- * Atom dialog (those fields hoisted to top level by fromAtom).
- */
+Minimum shape required by getAtomCustomQuery.
+Satisfied by both a full Atom instance (query-specific fields nested
+under queryProperties) and the flat Redux form state produced by the
+Atom dialog (those fields hoisted to top level by fromAtom).
+*/
 type AtomQueryInput = Partial<
   Pick<
     Atom,
@@ -2216,9 +2208,9 @@ type AtomQueryInput = Partial<
 } & Partial<AtomQueryProperties>; // flat query fields (form state path)
 
 /**
- * Maps atom properties and SMARTS/query-specific atom fields to the textual
- * Molfile query attributes rendered by getAtomCustomQuery().
- */
+Maps atom properties and SMARTS/query-specific atom fields to the textual
+Molfile query attributes rendered by getAtomCustomQuery().
+*/
 type AtomCustomQueryPropertyName =
   | 'aromaticity'
   | 'charge'
@@ -2492,10 +2484,10 @@ function countExtOverlaps(
 }
 
 /**
- * Returns the perpendicular shift that moves a property label clear of the AP
- * wave glyph when the label's proposed placement overlaps the nominal AP area
- * (#3268).  Returns Vec2(0,0) when no shift is needed.
- */
+Returns the perpendicular shift that moves a property label clear of the AP
+wave glyph when the label's proposed placement overlaps the nominal AP area
+(#3268).  Returns Vec2(0,0) when no shift is needed.
+*/
 function computeLateralApLabelShift(
   atomPos: Vec2,
   apDir: Vec2,

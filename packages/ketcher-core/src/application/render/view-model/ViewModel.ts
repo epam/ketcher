@@ -172,8 +172,8 @@ export class ViewModel {
 
   private loopIsInner(halfEdgesInLoop: HalfEdge[]): boolean {
     let totalAngle = 2 * Math.PI;
-    halfEdgesInLoop.forEach((halfEdge, i, loopArr) => {
-      const nextHalfEdge = loopArr[(i + 1) % loopArr.length];
+    halfEdgesInLoop.forEach((halfEdge, i, loopArray) => {
+      const nextHalfEdge = loopArray[(i + 1) % loopArray.length];
       const angle = this.getAngleBetweenHalfEdges(halfEdge, nextHalfEdge);
       totalAngle +=
         nextHalfEdge.oppositeHalfEdge === halfEdge ? Math.PI : angle; // back and forth along the same edge
@@ -210,10 +210,10 @@ export class ViewModel {
   }
 
   private loopIsConvex(loop: HalfEdge[]): boolean {
-    return loop.every((halfEdge, k, loopArr) => {
+    return loop.every((halfEdge, k, loopArray) => {
       const angle = this.getAngleBetweenHalfEdges(
         halfEdge,
-        loopArr[(k + 1) % loopArr.length],
+        loopArray[(k + 1) % loopArray.length],
       );
       return angle <= 0;
     });

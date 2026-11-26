@@ -1,4 +1,4 @@
-export type RaphaelRectAttr = {
+export type RaphaelRectAttribute = {
   x: number;
   y: number;
   width: number;
@@ -25,9 +25,9 @@ export type RaphaelDragOnEnd = (event: MouseEvent) => void;
 export interface RaphaelElement extends Record<string, unknown> {
   readonly raphaelid: string;
 
-  attr(attr: RaphaelRectAttr): this;
+  attr(attribute: RaphaelRectAttribute): this;
 
-  attr(): RaphaelRectAttr;
+  attr(): RaphaelRectAttribute;
 
   drag(
     onMove: RaphaelDragOnMove,

@@ -105,14 +105,16 @@ export class Bond extends BaseMicromoleculeEntity {
   static getAttrHash(
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
-    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
-    for (const attr in this.attrlist) {
-      const key = attr as keyof typeof Bond.attrlist;
+    const attributes: Partial<
+      Pick<BondAttributes, keyof typeof Bond.attrlist>
+    > = {};
+    for (const attribute in this.attrlist) {
+      const key = attribute as keyof typeof Bond.attrlist;
       if (key === 'stereo' || bond[key]) {
-        attrs[key] = bond[key] as never;
+        attributes[key] = bond[key] as never;
       }
     }
-    return attrs;
+    return attributes;
   }
 
   static getBondNeighbourIds(struct: Struct, bondId: number) {
@@ -223,9 +225,9 @@ export class Bond extends BaseMicromoleculeEntity {
     return [1, 3];
   }
 
-  static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
-      return this.attrlist[attr];
+  static attrGetDefault(attribute: string) {
+    if (attribute in this.attrlist) {
+      return this.attrlist[attribute];
     }
   }
 

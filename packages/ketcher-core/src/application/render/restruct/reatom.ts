@@ -62,7 +62,7 @@ import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltip
 import { ShowHydrogenLabels } from './showHydrogenLabels';
 import type { ReBondEndpoint } from './rebondEndpoint';
 
-interface ElemAttr {
+interface ElementAttribute {
   text: string;
   path: RenderPath;
   rbb: RelativeBox;
@@ -90,7 +90,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   hydrogenOnTheLeft: boolean;
   color: string;
   component: number;
-  label?: ElemAttr;
+  label?: ElementAttribute;
   infoLabel?: string;
   cip?: {
     // Raphael paths
@@ -135,16 +135,16 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   drawHover(render: Render, shouldDrawOutline = true) {
-    const ret = this.makeHoverPlate(render, shouldDrawOutline);
+    const returnValue = this.makeHoverPlate(render, shouldDrawOutline);
 
-    render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
-    this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
+    render.ctab.addReObjectPath(LayerMap.atom, this.visel, returnValue);
+    this.attachHighlightTriggerForAttachmentPointAtom(returnValue, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
       render,
       shouldDrawOutline,
     );
 
-    return ret;
+    return returnValue;
   }
 
   private attachHighlightTriggerForAttachmentPointAtom(
@@ -354,7 +354,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
   getSelectionContour(render: Render, highlightPadding = 0) {
     const hasLabel =
-      (this.a.pseudo?.length > 1 && !getQueryAttrsText(this)) ||
+      (this.a.pseudo?.length > 1 && !getQueryAttributesText(this)) ||
       (this.showLabel && this.a.implicitH !== 0) ||
       this.a.atomList !== null;
 
@@ -446,22 +446,22 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
   private getRatio(
     renderOptions: RenderOptions,
-    bondLen: number | null,
+    bondLength: number | null,
   ): number {
     const DEFAULT_BOND_LENGTH = 40;
     const DEFAULT_SUB_FONT_SIZE = 13;
     const subFontSize = renderOptions.fontszsubInPx ?? DEFAULT_SUB_FONT_SIZE;
-    if (!bondLen) return 1;
+    if (!bondLength) return 1;
     const shouldShowCharge = renderOptions.showCharge;
 
-    const isNeedShift = this.isNeedShiftForCharge(shouldShowCharge, bondLen);
+    const isNeedShift = this.isNeedShiftForCharge(shouldShowCharge, bondLength);
 
     if (!isNeedShift) {
       return 1;
     }
 
     const DEFAULT_PROPORTION = DEFAULT_BOND_LENGTH / DEFAULT_SUB_FONT_SIZE;
-    const currentProportion = bondLen / subFontSize;
+    const currentProportion = bondLength / subFontSize;
     const ratio = currentProportion / DEFAULT_PROPORTION;
     return ratio;
   }
@@ -475,17 +475,17 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     renderOptions: RenderOptions,
     direction: Vec2,
     _atomPosition?: Vec2,
-    bondLen: number | null = null,
+    bondLength: number | null = null,
   ): Vec2 {
     const atomPosition = Scale.modelToCanvas(
       _atomPosition ?? this.a.pp,
       renderOptions,
     );
     let atomSymbolShift = 0;
-    const exts = this.visel.exts;
-    const ratio = this.getRatio(renderOptions, bondLen);
-    for (const ext of exts) {
-      const box = ext.translate(atomPosition);
+    const extensions = this.visel.exts;
+    const ratio = this.getRatio(renderOptions, bondLength);
+    for (const extension of extensions) {
+      const box = extension.translate(atomPosition);
       const shiftRayBox = utility.shiftRayBox(atomPosition, direction, box);
       const shift = shiftRayBox * ratio;
       atomSymbolShift = Math.max(atomSymbolShift, shift);
@@ -496,8 +496,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     // larger than the bond itself, pushing the endpoint past the other atom
     // and making the bond look detached from the structure (#3508). Never
     // consume more than half the bond, so the two endpoints can't cross.
-    if (bondLen) {
-      const maxShift = Math.max(bondLen / 2 - 3 * renderOptions.lineWidth, 0);
+    if (bondLength) {
+      const maxShift = Math.max(
+        bondLength / 2 - 3 * renderOptions.lineWidth,
+        0,
+      );
       atomSymbolShift = Math.min(atomSymbolShift, maxShift);
     }
 
@@ -587,8 +590,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     let leftMargin = 0;
     let implh = 0;
     let isHydrogen = false;
-    let label: ElemAttr | undefined;
-    let index: ElemAttr | undefined;
+    let label: ElementAttribute | undefined;
+    let index: ElementAttribute | undefined;
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -631,7 +634,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
 
     if (this.showLabel) {
-      let hydroIndex: ElemAttr | null = null;
+      let hydroIndex: ElementAttribute | null = null;
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin);
         rightMargin += hydroIndex.rbb.width + delta;
@@ -1074,7 +1077,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const aamText = getAamText(this);
     const customQueryText = checkIsSmartPropertiesExist(this.a)
       ? getOnlyQueryAttributesCustomQuery(this.a)
-      : getQueryAttrsText(this);
+      : getQueryAttributesText(this);
     let shortenCustomQueryText = customQueryText;
     let customQueryTooltipText: string | undefined;
 
@@ -1110,12 +1113,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
 
     if (text.length > 0) {
-      const elem = Elements.get(this.a.label);
+      const element = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill:
-          elem && options.atomColoring
+          element && options.atomColoring
             ? ElementColor[this.a.label]
             : DEFAULT_ATOM_COLOR,
       });
@@ -1134,13 +1137,20 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;
       let t = 3;
-      let dir = this.bisectLargestSector(restruct.molecule);
+      let direction = this.bisectLargestSector(restruct.molecule);
       // estimate the shift to clear the atom label
-      for (const ext of visel.exts) {
-        t = Math.max(t, utility.shiftRayBox(ps, dir, ext.translate(ps)));
+      for (const extension of visel.exts) {
+        t = Math.max(
+          t,
+          utility.shiftRayBox(ps, direction, extension.translate(ps)),
+        );
       }
       // estimate the shift backwards to account for the size of the aam/query text box itself
-      t += utility.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+      t += utility.shiftRayBox(
+        ps,
+        direction.negated(),
+        Box2Abs.fromRelBox(aamBox),
+      );
 
       let perpShift = new Vec2(0, 0);
 
@@ -1151,7 +1161,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       ) {
         perpShift = computeLateralApLabelShift(
           ps,
-          dir,
+          direction,
           8 + t,
           aamBox.width,
           aamBox.height,
@@ -1160,12 +1170,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         );
       }
 
-      dir = dir.scaled(8 + t);
+      direction = direction.scaled(8 + t);
       pathAndRBoxTranslate(
         aamPath,
         aamBox,
-        dir.x + perpShift.x,
-        dir.y + perpShift.y,
+        direction.x + perpShift.x,
+        direction.y + perpShift.y,
       );
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true);
 
@@ -1228,14 +1238,14 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
       const cipGroup = paper.set();
       cipGroup.push(rect, cipText);
-      const cipGroupRelBox = utility.relBox(cipGroup.getBBox());
+      const cipGroupRelativeBox = utility.relBox(cipGroup.getBBox());
 
       let baseDistance = 3;
       const direction = this.bisectLargestSector(render.ctab.molecule);
-      for (const ext of this.visel.exts) {
+      for (const extension of this.visel.exts) {
         baseDistance = Math.max(
           baseDistance,
-          utility.shiftRayBox(ps, direction, ext.translate(ps)),
+          utility.shiftRayBox(ps, direction, extension.translate(ps)),
         );
       }
       const shiftDistance =
@@ -1248,7 +1258,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const shiftVector = direction.scaled(3 + shiftDistance);
       pathAndRBoxTranslate(
         cipGroup,
-        cipGroupRelBox,
+        cipGroupRelativeBox,
         shiftVector.x,
         shiftVector.y,
       );
@@ -1627,9 +1637,9 @@ function shouldHydrogenBeOnLeft(struct: Struct, atom: ReAtom) {
   if (visibleNeighbors.length === 1) {
     const neighbor = visibleNeighbors[0];
     const neighborHalfBond = struct.halfBonds.get(neighbor);
-    const neighborDirX = neighborHalfBond?.dir.x ?? 0;
+    const neighborDirectionX = neighborHalfBond?.dir.x ?? 0;
 
-    return neighborDirX > 0;
+    return neighborDirectionX > 0;
   }
 
   return false;
@@ -1687,7 +1697,7 @@ function buildLabel(
 ): {
   rightMargin: number;
   leftMargin: number;
-  label: ElemAttr;
+  label: ElementAttribute;
 } {
   const {
     atomColoring: shouldColorAtoms,
@@ -1778,7 +1788,7 @@ function buildLabel(
     leftMargin += xShift;
   }
 
-  const label: ElemAttr = { text, path, rbb, background };
+  const label: ElementAttribute = { text, path, rbb, background };
   atom.label = label;
   return { label, rightMargin, leftMargin };
 }
@@ -1825,9 +1835,9 @@ function getLabelText(
 
   if (atom.label && atom.rglabel !== null) {
     let text = '';
-    const rglabelNum = atom.rglabel as unknown as number;
+    const rglabelNumber = atom.rglabel as unknown as number;
     for (let rgi = 0; rgi < 32; rgi++) {
-      if (rglabelNum & (1 << rgi)) {
+      if (rglabelNumber & (1 << rgi)) {
         text += 'R' + (rgi + 1).toString();
       }
     }
@@ -1847,7 +1857,7 @@ function showHydroIndex(
   render: Render,
   implh: number,
   rightMargin: number,
-): ElemAttr {
+): ElementAttribute {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
@@ -1871,7 +1881,10 @@ function showHydroIndex(
   return { text, path, rbb };
 }
 
-function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
+function showRadical(
+  atom: ReAtom,
+  render: Render,
+): Omit<ElementAttribute, 'text'> {
   const ps: Vec2 = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const paper = render.paper;
@@ -1920,7 +1933,7 @@ function showIsotope(
   atom: ReAtom,
   render: Render,
   leftMargin: number,
-): ElemAttr {
+): ElementAttribute {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
@@ -1947,7 +1960,7 @@ function showCharge(
   atom: ReAtom,
   render: Render,
   rightMargin: number,
-): ElemAttr {
+): ElementAttribute {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
@@ -1980,7 +1993,7 @@ function showExplicitValence(
   atom: ReAtom,
   render: Render,
   rightMargin: number,
-): ElemAttr {
+): ElementAttribute {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
@@ -2012,17 +2025,17 @@ function showHydrogen(
   render: Render,
   implh: number,
   data: {
-    hydroIndex: ElemAttr | null;
+    hydroIndex: ElementAttribute | null;
     rightMargin: number;
     leftMargin: number;
   },
 ): {
-  hydrogen: ElemAttr;
-  hydroIndex: ElemAttr | null;
+  hydrogen: ElementAttribute;
+  hydroIndex: ElementAttribute | null;
   rightMargin: number;
   leftMargin: number;
 } {
-  let hydroIndex: ElemAttr | null = data.hydroIndex;
+  let hydroIndex: ElementAttribute | null = data.hydroIndex;
   const isHydrogenOnLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
@@ -2086,7 +2099,7 @@ function showHydrogen(
     );
     data.leftMargin -= hydrogenRbb.width + delta;
   }
-  const hydrogen: ElemAttr = {
+  const hydrogen: ElementAttribute = {
     text: hydrogenText,
     path: hydrogenPath,
     rbb: hydrogenRbb,
@@ -2099,7 +2112,7 @@ function showWarning(
   render: Render,
   leftMargin: number,
   rightMargin: number,
-): Omit<ElemAttr, 'text'> {
+): Omit<ElementAttribute, 'text'> {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const delta = 0.5 * render.options.lineWidth;
   const labelHeight = atom.label?.rbb.height ?? 0;
@@ -2135,18 +2148,18 @@ function getAamText(atom: ReAtom) {
   return aamText;
 }
 
-function getRingBondCountAttrText(value: number) {
-  let attrText: string;
+function getRingBondCountAttributeText(value: number) {
+  let attributeText: string;
   if (value > 0) {
-    attrText = 'rb' + value.toString();
+    attributeText = 'rb' + value.toString();
   } else if (value === -1) {
-    attrText = 'rb0';
+    attributeText = 'rb0';
   } else if (value === -2) {
-    attrText = 'rb*';
+    attributeText = 'rb*';
   } else {
     throw new Error('Ring bond count invalid');
   }
-  return attrText;
+  return attributeText;
 }
 
 function getRingConnectivity(value: number) {
@@ -2169,18 +2182,18 @@ function getDegree(value: number) {
   }
 }
 
-function getSubstitutionCountAttrText(value: number) {
-  let attrText: string;
+function getSubstitutionCountAttributeText(value: number) {
+  let attributeText: string;
   if (value > 0) {
-    attrText = 's' + value.toString();
+    attributeText = 's' + value.toString();
   } else if (value === -1) {
-    attrText = 's0';
+    attributeText = 's0';
   } else if (value === -2) {
-    attrText = 's*';
+    attributeText = 's*';
   } else {
     throw new Error('Substitution count invalid');
   }
-  return attrText;
+  return attributeText;
 }
 
 type AtomCustomQueryValue = string | number | boolean;
@@ -2363,10 +2376,10 @@ export function getAtomCustomQuery(
   atom: AtomQueryInput,
   shouldIncludeOnlyQueryAttributes?: boolean,
 ) {
-  let queryAttrsText = '';
+  let queryAttributesText = '';
 
   const addSemicolon = () => {
-    if (queryAttrsText.length > 0) queryAttrsText += ';';
+    if (queryAttributesText.length > 0) queryAttributesText += ';';
   };
 
   for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
@@ -2382,42 +2395,42 @@ export function getAtomCustomQuery(
       continue;
     }
 
-    const attrText = format(String(value));
-    if (attrText) {
+    const attributeText = format(String(value));
+    if (attributeText) {
       addSemicolon();
     }
-    queryAttrsText += attrText;
+    queryAttributesText += attributeText;
   }
 
-  return queryAttrsText;
+  return queryAttributesText;
 }
 
-function getQueryAttrsText(atom: ReAtom): string {
-  let queryAttrsText = '';
+function getQueryAttributesText(atom: ReAtom): string {
+  let queryAttributesText = '';
 
   const addSemicolon = () => {
-    if (queryAttrsText.length > 0) queryAttrsText += ';';
+    if (queryAttributesText.length > 0) queryAttributesText += ';';
   };
 
   const { ringBondCount, substitutionCount, unsaturatedAtom, hCount } = atom.a;
 
   if (ringBondCount !== 0) {
-    queryAttrsText += getRingBondCountAttrText(ringBondCount);
+    queryAttributesText += getRingBondCountAttributeText(ringBondCount);
   }
   if (substitutionCount !== 0) {
     addSemicolon();
-    queryAttrsText += getSubstitutionCountAttrText(substitutionCount);
+    queryAttributesText += getSubstitutionCountAttributeText(substitutionCount);
   }
   if (unsaturatedAtom > 0) {
     addSemicolon();
-    if (unsaturatedAtom === 1) queryAttrsText += 'u';
+    if (unsaturatedAtom === 1) queryAttributesText += 'u';
     else throw new Error('Unsaturated atom invalid value');
   }
   if (hCount > 0) {
     addSemicolon();
-    queryAttrsText += 'H' + (hCount - 1).toString();
+    queryAttributesText += 'H' + (hCount - 1).toString();
   }
-  return queryAttrsText;
+  return queryAttributesText;
 }
 
 function pathAndRBoxTranslate(
@@ -2441,10 +2454,10 @@ Project an axis-aligned box onto AP-local along/perp axes.
 function projectBoxOnApAxes(
   W: number,
   H: number,
-  apDir: Vec2,
+  apDirection: Vec2,
 ): { halfAlong: number; halfPerp: number } {
-  const ax = Math.abs(apDir.x);
-  const ay = Math.abs(apDir.y);
+  const ax = Math.abs(apDirection.x);
+  const ay = Math.abs(apDirection.y);
   return {
     halfAlong: (W / 2) * ax + (H / 2) * ay,
     halfPerp: (W / 2) * ay + (H / 2) * ax,
@@ -2454,8 +2467,8 @@ function projectBoxOnApAxes(
 /**
 Count atom-relative visel extents that overlap the candidate canvas-space box.
 */
-function countExtOverlaps(
-  exts: Box2Abs[],
+function countExtensionOverlaps(
+  extensions: Box2Abs[],
   atomPos: Vec2,
   centerX: number,
   centerY: number,
@@ -2469,8 +2482,8 @@ function countExtOverlaps(
     centerY + H / 2,
   );
   let count = 0;
-  for (const ext of exts) {
-    const ab = ext.translate(atomPos);
+  for (const extension of extensions) {
+    const ab = extension.translate(atomPos);
     if (!(
       box.p1.x <= ab.p0.x ||
       box.p0.x >= ab.p1.x ||
@@ -2490,12 +2503,12 @@ wave glyph when the label's proposed placement overlaps the nominal AP area
 */
 function computeLateralApLabelShift(
   atomPos: Vec2,
-  apDir: Vec2,
-  proposedAlongDist: number,
+  apDirection: Vec2,
+  proposedAlongDistribution: number,
   boxWidth: number,
   boxHeight: number,
   microModeScale: number,
-  viselExts: Box2Abs[],
+  viselExtensions: Box2Abs[],
 ): Vec2 {
   const waveHalfPerp = (AP_WAVE_HALF_PERP / AP_PATH_SCALE) * microModeScale;
   const waveFarAlong = (AP_WAVE_FAR_ALONG / AP_PATH_SCALE) * microModeScale;
@@ -2504,24 +2517,28 @@ function computeLateralApLabelShift(
   const { halfAlong, halfPerp } = projectBoxOnApAxes(
     boxWidth,
     boxHeight,
-    apDir,
+    apDirection,
   );
 
   const hasLongitudinalIntersection =
-    proposedAlongDist - halfAlong < nominalLength + waveFarAlong &&
-    proposedAlongDist + halfAlong > 0;
+    proposedAlongDistribution - halfAlong < nominalLength + waveFarAlong &&
+    proposedAlongDistribution + halfAlong > 0;
 
   if (!hasLongitudinalIntersection || halfPerp === 0) return new Vec2(0, 0);
 
   const shiftMag = waveHalfPerp + halfPerp + 2;
-  const perpDir = new Vec2(-apDir.y, apDir.x);
+  const perpDirection = new Vec2(-apDirection.y, apDirection.x);
 
   const score = (sign: 1 | -1): number =>
-    countExtOverlaps(
-      viselExts,
+    countExtensionOverlaps(
+      viselExtensions,
       atomPos,
-      atomPos.x + apDir.x * proposedAlongDist + perpDir.x * sign * shiftMag,
-      atomPos.y + apDir.y * proposedAlongDist + perpDir.y * sign * shiftMag,
+      atomPos.x +
+        apDirection.x * proposedAlongDistribution +
+        perpDirection.x * sign * shiftMag,
+      atomPos.y +
+        apDirection.y * proposedAlongDistribution +
+        perpDirection.y * sign * shiftMag,
       boxWidth,
       boxHeight,
     );
@@ -2529,7 +2546,7 @@ function computeLateralApLabelShift(
   const posScore = score(1);
   const negScore = score(-1);
   const sign = negScore < posScore ? -1 : 1;
-  return perpDir.scaled(sign * shiftMag);
+  return perpDirection.scaled(sign * shiftMag);
 }
 
 export default ReAtom;

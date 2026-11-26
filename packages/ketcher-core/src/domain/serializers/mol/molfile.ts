@@ -75,8 +75,8 @@ export class Molfile {
 
   parseCTFile(props: ParseCTFileProps): Struct {
     const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
-    let ret: Struct;
-    ret =
+    let returnValue: Struct;
+    returnValue =
       molfileLines[0].search(String.raw`\$RXN`) === 0
         ? common.parseRxn(
             molfileLines,
@@ -84,12 +84,12 @@ export class Molfile {
             ignoreChiralFlag,
           )
         : common.parseMol(molfileLines, ignoreChiralFlag);
-    ret.initHalfBonds();
-    ret.initNeighbors();
-    ret.bindSGroupsToFunctionalGroups();
-    ret.markFragments();
+    returnValue.initHalfBonds();
+    returnValue.initNeighbors();
+    returnValue.bindSGroupsToFunctionalGroups();
+    returnValue.markFragments();
 
-    return ret;
+    return returnValue;
   }
 
   prepareSGroups(
@@ -262,22 +262,22 @@ export class Molfile {
     this.writeCR();
   }
 
-  write(str: string) {
+  write(string_: string) {
     /*
     saver
     */
-    this.molfile += str;
+    this.molfile += string_;
   }
 
-  writeCR(str?: string) {
+  writeCR(string_?: string) {
     /*
     saver
     */
     if (arguments.length === 0) {
-      str = '';
+      string_ = '';
     }
 
-    this.molfile += str + '\n';
+    this.molfile += string_ + '\n';
   }
 
   writeWhiteSpace(length = 0) {
@@ -291,22 +291,22 @@ export class Molfile {
     this.write(' '.repeat(Math.max(length, 0)));
   }
 
-  writePadded(str: string, width: number) {
+  writePadded(string_: string, width: number) {
     /*
     saver
     */
-    this.write(str);
-    this.writeWhiteSpace(width - str.length);
+    this.write(string_);
+    this.writeWhiteSpace(width - string_.length);
   }
 
   writePaddedNumber(number: number, width: number) {
     /*
     saver
     */
-    const str = (number - 0).toString();
+    const string_ = (number - 0).toString();
 
-    this.writeWhiteSpace(width - str.length);
-    this.write(str);
+    this.writeWhiteSpace(width - string_.length);
+    this.write(string_);
   }
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
@@ -715,7 +715,7 @@ export class Molfile {
     this.writeCR(props.value);
   }
 
-  private writeAtomPropList(propId: string, values: NumberTuple[]) {
+  private writeAtomPropList(propertyId: string, values: NumberTuple[]) {
     while (values.length > 0) {
       const part: NumberTuple[] = [];
 
@@ -724,7 +724,7 @@ export class Molfile {
         values.splice(0, 1);
       }
 
-      this.write(propId);
+      this.write(propertyId);
       this.writePaddedNumber(part.length, 3);
 
       part.forEach((value) => {

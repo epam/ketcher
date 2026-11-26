@@ -26,7 +26,9 @@ import { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 import { monomerRendererFactory } from './monomerRendererFactory';
 import type { ConcreteMonomerEntityClass } from 'domain/helpers/monomerEntityFactory';
 
-type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
+type DerivedRendererClass = new (
+  ...arguments_: unknown[]
+) => BaseMonomerRenderer;
 
 type MonomerFactoryResult<T extends MonomerOrAmbiguousType> =
   T extends AmbiguousMonomerType

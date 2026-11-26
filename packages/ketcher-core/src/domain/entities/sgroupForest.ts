@@ -208,9 +208,9 @@ export function checkOverlapping(
       return atoms.some((aid) => sgAtoms.includes(aid));
     },
   };
-  const sgroups = atoms.reduce((res, aid) => {
+  const sgroups = atoms.reduce((result, aid) => {
     const atom = struct.atoms.get(aid);
-    return atom ? res.union(atom.sgs) : res;
+    return atom ? result.union(atom.sgs) : result;
   }, new Pile<number>());
 
   return [...sgroups].some(searchFunction[sGroupType]);

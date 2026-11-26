@@ -515,12 +515,12 @@ export class ChainsCollection {
           return;
         }
 
-        let isFindCur = false;
+        let isFindCurrent = false;
         antisenseChain.forEachNode(({ node: aNode }) => {
           if (aNode === antisenseNode) {
-            isFindCur = true;
+            isFindCurrent = true;
           }
-          if (isFindCur) {
+          if (isFindCurrent) {
             return;
           }
 
@@ -534,17 +534,17 @@ export class ChainsCollection {
             return;
           }
 
-          const curChainIdx =
+          const currentChainIndex =
             reorderedSenseForSequentialAntisenseChains.indexOf(chain);
           let last = anotherSenseChain;
           for (
-            let i = curChainIdx;
+            let i = currentChainIndex;
             i < reorderedSenseForSequentialAntisenseChains.length;
             i++
           ) {
-            const tmp = reorderedSenseForSequentialAntisenseChains[i];
+            const temporary = reorderedSenseForSequentialAntisenseChains[i];
             reorderedSenseForSequentialAntisenseChains[i] = last;
-            last = tmp;
+            last = temporary;
           }
           handledChain.add(anotherSenseChain);
         });
@@ -569,7 +569,7 @@ export class ChainsCollection {
       this.findCycledComplimentaryChains(c, c),
     );
 
-    const res: GrouppedChain[] = [{ group: 0, chain: c }];
+    const result: GrouppedChain[] = [{ group: 0, chain: c }];
     const handledChains = new Set<Chain>([c]);
     const monomerToChain = this.monomerToChain;
     const monomerToNode = this.monomerToNode;
@@ -634,13 +634,13 @@ export class ChainsCollection {
           return;
         }
 
-        const el = { chain: complimentaryChain, group: Number(!group) };
-        chains.push(el);
-        res.push(el);
+        const element = { chain: complimentaryChain, group: Number(!group) };
+        chains.push(element);
+        result.push(element);
       });
     }
 
-    return res;
+    return result;
   }
 
   public getComplimentaryChainsWithData(

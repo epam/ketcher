@@ -45,7 +45,7 @@ export function atomToStruct(source) {
   if (source.type === 'atom-list') {
     params.label = 'L#';
     const ids = source.elements
-      .map((el) => Elements.get(el)?.number)
+      .map((element) => Elements.get(element)?.number)
       .filter(Boolean) as number[];
     ifDef(params, 'atomList', {
       ids,

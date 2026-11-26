@@ -151,7 +151,7 @@ export class RotationView extends TransientView {
       rotationAngle = 0,
       isRotating = false,
       cursor,
-      startAngle: startAngleParam,
+      startAngle: startAngleParameter,
     } = params;
 
     if (!isRotating || !this.wasRotating) {
@@ -375,7 +375,7 @@ export class RotationView extends TransientView {
     // Use the click direction from the rotation tool so the 0° label,
     // dashed handle line, and handle stay aligned even after the rotation
     // center has been moved.
-    const startAngle = startAngleParam ?? -Math.PI / 2;
+    const startAngle = startAngleParameter ?? -Math.PI / 2;
     const toRadians = (deg: number) => (deg * Math.PI) / 180;
     const predefinedDegrees = [
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,

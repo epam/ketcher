@@ -29,7 +29,7 @@ export function prepareStructForKet(struct: Struct) {
     rgroup.frags.forEach((frid) => rgFrags.add(frid));
 
     const fragsAtoms = [...rgroup.frags.values()].reduce(
-      (res, frid) => res.union(struct.getFragmentIds(frid)),
+      (result, frid) => result.union(struct.getFragmentIds(frid)),
       new Pile<number>(),
     );
 

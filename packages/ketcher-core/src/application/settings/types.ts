@@ -161,7 +161,7 @@ Custom error for settings validation failures
 export class SettingsValidationError extends Error {
   constructor(public readonly errors: ValidationError[]) {
     super(
-      `Settings validation failed: ${errors.map((e) => e.message).join(', ')}`,
+      `Settings validation failed: ${errors.map((error) => error.message).join(', ')}`,
     );
     this.name = 'SettingsValidationError';
   }

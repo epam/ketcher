@@ -64,7 +64,7 @@ export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
 };
 
-export const getMonomerTemplateRefFromMonomerItem = (
+export const getMonomerTemplateReferenceFromMonomerItem = (
   monomerItem: MonomerItemType,
 ) => {
   const { props } = monomerItem;

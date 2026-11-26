@@ -1,8 +1,88 @@
 # Selection & Manipulation
 
-## Problem
+## Purpose
 
 Before editing, moving, deleting, or transforming parts of a drawing, the user must be able to select exactly the atoms, bonds, structures, or other objects they intend to act on — and then move, rotate, flip, or erase them.
+
+## Requirements
+
+Selection is reversible and non-destructive; manipulation acts only on the current selection and is undoable.
+
+### Requirement: Selecting a single atom
+
+The system SHALL ensure that only that atom becomes selected.
+
+#### Scenario: Selecting a single atom
+
+- **WHEN** the user clicks an atom with the _Rectangle_ or _Lasso_ tool
+- **THEN** only that atom becomes selected
+
+### Requirement: Adding to a selection
+
+The system SHALL ensure that those items are added to the current selection without clearing it.
+
+#### Scenario: Adding to a selection
+
+- **WHEN** the user `Shift-click`s additional atoms or bonds
+- **THEN** those items are added to the current selection without clearing it
+
+### Requirement: Moving a selection
+
+The system SHALL ensure that all selected atoms, bonds, and objects move together preserving their relative geometry.
+
+#### Scenario: Moving a selection
+
+- **WHEN** the user drags a multi-atom selection
+- **THEN** all selected atoms, bonds, and objects move together preserving their relative geometry
+
+### Requirement: Rotating with and without a selection
+
+The system SHALL ensure that only the selected objects rotate; if nothing or everything is selected the whole canvas rotates.
+
+#### Scenario: Rotating with and without a selection
+
+- **WHEN** the user rotates while a subset is selected
+- **THEN** only the selected objects rotate; if nothing or everything is selected the whole canvas rotates
+
+### Requirement: Erasing a selection
+
+The system SHALL ensure that all selected elements are removed as a single undoable step.
+
+#### Scenario: Erasing a selection
+
+- **WHEN** the user presses `Delete` with a selection active
+- **THEN** all selected elements are removed as a single undoable step
+
+### Requirement: Placing a static drawing object
+
+The system SHALL ensure that the newly created object remains on the canvas and the saved selection tool becomes active regardless of the user's _Reset to Select_ setting.
+
+#### Scenario: Placing a static drawing object
+
+- **WHEN** the user places text, an image, any reaction arrow other than the
+  Multi-Tailed Arrow, a reaction plus, or a simple shape
+- **THEN** the newly created object remains on the canvas and the saved
+  selection tool becomes active regardless of the user's _Reset to Select_
+  setting
+
+### Requirement: Restoring the Fragment Selection tool
+
+The system SHALL ensure that _Fragment Selection_ remains active and retains its part-of-molecule selection behavior.
+
+#### Scenario: Restoring the Fragment Selection tool
+
+- **WHEN** the user selects _Fragment Selection_ in the micromolecules editor and reloads the page
+- **THEN** _Fragment Selection_ remains active and retains its part-of-molecule selection behavior
+
+### Requirement: Auto-scrolling while dragging a selection near the canvas edge
+
+The system SHALL scroll the canvas continuously while the user drags a selection near a canvas edge.
+
+#### Scenario: Auto-scrolling while dragging a selection near the canvas edge
+
+- **WHEN** the user drags a selection and the cursor moves within 15 px of any edge of the canvas wrapper (in any layout mode: sequence, flex, or snake)
+- **THEN** the canvas scrolls continuously in that direction at a constant speed until the cursor moves away from the edge or the mouse button is released
+- **AND** scrolling is synchronized with the browser repaint cycle for smooth, jank-free movement
 
 ## User interaction
 
@@ -24,52 +104,11 @@ Before editing, moving, deleting, or transforming parts of a drawing, the user m
   _Reset to Select_ setting. The Multi-Tailed Arrow tool remains active so
   several related arrows can be placed consecutively.
 
-## Expected behavior
-
-Selection is reversible and non-destructive; manipulation acts only on the current selection and is undoable.
-
-#### Scenario: Selecting a single atom
-
-- **WHEN** the user clicks an atom with the _Rectangle_ or _Lasso_ tool
-- **THEN** only that atom becomes selected
-
-#### Scenario: Adding to a selection
-
-- **WHEN** the user `Shift-click`s additional atoms or bonds
-- **THEN** those items are added to the current selection without clearing it
-
-#### Scenario: Moving a selection
-
-- **WHEN** the user drags a multi-atom selection
-- **THEN** all selected atoms, bonds, and objects move together preserving their relative geometry
-
-#### Scenario: Rotating with and without a selection
-
-- **WHEN** the user rotates while a subset is selected
-- **THEN** only the selected objects rotate; if nothing or everything is selected the whole canvas rotates
-
-#### Scenario: Erasing a selection
-
-- **WHEN** the user presses `Delete` with a selection active
-- **THEN** all selected elements are removed as a single undoable step
-
-#### Scenario: Placing a static drawing object
-
-- **WHEN** the user places text, an image, any reaction arrow other than the
-  Multi-Tailed Arrow, a reaction plus, or a simple shape
-- **THEN** the newly created object remains on the canvas and the saved
-  selection tool becomes active regardless of the user's _Reset to Select_
-  setting
-
-#### Scenario: Restoring the Fragment Selection tool
-
-- **WHEN** the user selects _Fragment Selection_ in the micromolecules editor and reloads the page
-- **THEN** _Fragment Selection_ remains active and retains its part-of-molecule selection behavior
-
 ## Guarantees
 
 - Deleting a bond does not delete its atoms unless they become disconnected fragments per the tool's rules; each manipulation is one atomic undo entry.
 - Selection state is purely a view concern and never alters the chemical model.
+- Auto-scroll during selection drag is active in all macromolecules layout modes (sequence, flex, snake); it is disabled for the Lasso selection tool.
 
 ## Limitations
 

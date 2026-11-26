@@ -41,11 +41,11 @@ const getLeavingAtomOption = (
 });
 
 /**
- * Builds the leaving-atom option list shared by both regular and readonly
- * attachment points:
- * - H and OH are always present (in that order)
- * - If the current leaving atom differs from both, it is appended as a third option
- */
+Builds the leaving-atom option list shared by both regular and readonly
+attachment points:
+- H and OH are always present (in that order)
+- If the current leaving atom differs from both, it is appended as a third option
+*/
 const buildLeavingAtomOptions = (
   currentLabel: string,
   currentImplicitH = currentLabel === AtomLabel.O ? 1 : 0,
@@ -118,7 +118,7 @@ export const useAttachmentPointSelectsData = (
     return null;
   }
 
-  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
+  const usedNumbers = [...assignedAttachmentPoints.keys()].map((name) =>
     getAttachmentPointNumberFromLabel(name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);
@@ -127,7 +127,7 @@ export const useAttachmentPointSelectsData = (
     maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
 
   const usedNames = new Set(
-    Array.from(assignedAttachmentPoints.keys()).filter(
+    [...assignedAttachmentPoints.keys()].filter(
       (name) => name !== attachmentPointName,
     ),
   );

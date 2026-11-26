@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,8 @@ export const MenuLayout = styled.div<{ isHorizontal?: boolean }>(
   ({ theme, isHorizontal }) => ({
     backgroundColor: theme.ketcher.color.background.primary,
     borderRadius: '4px',
+    boxShadow: isHorizontal ? 'none' : theme.ketcher.shadow.mainLayoutBlocks,
+    padding: isHorizontal ? undefined : '2px 0',
     display: 'flex',
     flexDirection: isHorizontal ? 'row' : 'column',
     zIndex: theme.ketcher.zIndex.toolbar,

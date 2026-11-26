@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { CoreEditor, FlexMode } from 'application/editor';
 import { ClearTool } from 'application/editor/tools/Clear';
 import {
@@ -11,7 +12,7 @@ import {
 } from '../../../helpers/dom';
 import { Vec2 } from 'domain/entities';
 
-jest.mock('d3', () => {
+vi.mock('d3', () => {
   return {
     brush() {
       return {
@@ -62,7 +63,7 @@ jest.mock('d3', () => {
         },
       };
     },
-    ZoomTransform: jest.fn().mockImplementation(() => {
+    ZoomTransform: vi.fn().mockImplementation(function () {
       return { invertX() {}, invertY() {} };
     }),
     zoom() {
@@ -87,10 +88,10 @@ jest.mock('d3', () => {
   };
 });
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
 describe('Clear Tool', () => {
@@ -108,11 +109,11 @@ describe('Clear Tool', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should not call clear on transientDrawingView when canvas is already empty', () => {
-    const clearSpy = jest.spyOn(editor.transientDrawingView, 'clear');
+    const clearSpy = vi.spyOn(editor.transientDrawingView, 'clear');
 
     // Try to clear empty canvas - verify hasDrawingEntities is false
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);

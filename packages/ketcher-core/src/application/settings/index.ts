@@ -1,11 +1,12 @@
 /**
- * Settings module exports
- * Centralized settings management for Ketcher
- */
+Settings module exports
+Centralized settings management for Ketcher
+*/
 
 // Types and interfaces
 export type {
   Settings,
+  ValenceMode,
   ValidationResult,
   ValidationError,
   SettingsListener,

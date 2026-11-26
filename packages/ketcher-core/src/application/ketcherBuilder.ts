@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,27 +57,27 @@ export class KetcherBuilder {
   }
 
   /**
-   * Provide a custom settings service instance
-   * If not provided, a default SettingsService will be created
-   */
+  Provide a custom settings service instance
+  If not provided, a default SettingsService will be created
+  */
   withSettingsService(settingsService: ISettingsService): this {
     this.#settingsService = settingsService;
     return this;
   }
 
   /**
-   * Provide a custom storage adapter for settings
-   * Default is LocalStorageAdapter
-   */
+  Provide a custom storage adapter for settings
+  Default is LocalStorageAdapter
+  */
   withStorageAdapter(storageAdapter: ISettingsStorage): this {
     this.#storageAdapter = storageAdapter;
     return this;
   }
 
   /**
-   * Provide initial settings to merge with defaults
-   * These will be applied when the settings service is initialized
-   */
+  Provide initial settings to merge with defaults
+  These will be applied when the settings service is initialized
+  */
   withSettings(settings: DeepPartial<Settings>): this {
     this.#initialSettings = settings;
     return this;

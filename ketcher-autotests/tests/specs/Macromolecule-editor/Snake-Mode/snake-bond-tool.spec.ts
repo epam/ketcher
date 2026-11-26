@@ -6,7 +6,6 @@ import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
-  waitForRender,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
@@ -160,12 +159,10 @@ test.describe('Snake Bond Tool', () => {
     await expect(snakeModeButton).toHaveClass(/active/);
 
     await CommonTopLeftToolbar(page).undo();
-    await waitForRender(page);
     await expect(snakeModeButton).not.toBeVisible();
     await expect(flexModeButton).toHaveClass(/active/);
 
     await CommonTopLeftToolbar(page).redo();
-    await waitForRender(page);
     await expect(flexModeButton).not.toBeVisible();
     await expect(snakeModeButton).toHaveClass(/active/);
   });
@@ -279,6 +276,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate8, sugar9);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -497,6 +495,7 @@ test.describe('Snake Bond Tool', () => {
     });
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -714,6 +713,7 @@ test.describe('Snake Bond Tool', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -912,9 +912,10 @@ test.describe('Snake Bond Tool', () => {
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     // ---
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-4000.ket`);
     await moveMouseAway(page);
 
@@ -923,6 +924,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(0, -400);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -944,6 +946,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -957,9 +960,10 @@ test.describe('Snake Bond Tool', () => {
     */
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     // ---
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -971,6 +975,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

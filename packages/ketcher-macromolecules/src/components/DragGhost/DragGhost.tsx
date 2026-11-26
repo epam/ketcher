@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import {
   isLibraryItemRnaPreset,
   LibraryItemDragState,
@@ -17,10 +16,10 @@ export const DragGhost = () => {
   const editor = useSelector(selectEditor);
 
   const [libraryItemDragData, setLibraryItemDragData] =
-    useState<LibraryItemDragState>(null);
+    useState<LibraryItemDragState>();
 
   const ghostWrapperRef = useRef<HTMLDivElement>(null);
-  const animateRef = useRef<number | null>(null);
+  const animateRef = useRef<number | undefined>(undefined);
   const canvasBBoxRef = useRef<DOMRect | null>(null);
 
   const transform = useZoomTransform();
@@ -31,6 +30,13 @@ export const DragGhost = () => {
     }
 
     const handleLibraryItemDrag = (state: LibraryItemDragState) => {
+      if (ZoomTool.instance) {
+        const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
+        if (canvasWrapper) {
+          canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
+        }
+      }
+
       setLibraryItemDragData(state);
     };
 
@@ -40,19 +46,6 @@ export const DragGhost = () => {
       editor.events.setLibraryItemDragState.remove(handleLibraryItemDrag);
     };
   }, [editor]);
-
-  useEffect(() => {
-    if (!ZoomTool.instance || !libraryItemDragData) {
-      return;
-    }
-
-    const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
-    if (!canvasWrapper) {
-      return;
-    }
-
-    canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
-  }, [libraryItemDragData]);
 
   const leftOffset = editor?.ketcherRootElementBoundingClientRect?.left || 0;
   const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;
@@ -84,10 +77,12 @@ export const DragGhost = () => {
     });
 
     return () => {
-      if (animateRef.current) {
-        cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+      if (!animateRef.current) {
+        return;
       }
+
+      cancelAnimationFrame(animateRef.current);
+      animateRef.current = undefined;
     };
   }, [leftOffset, libraryItemDragData, topOffset, transform.k]);
 

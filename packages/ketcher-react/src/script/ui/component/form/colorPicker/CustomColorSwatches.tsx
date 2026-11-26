@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 import classes from './ColorPicker.module.less';
 import { Icon } from 'components';
@@ -34,10 +35,13 @@ function CustomColorSwatches({
   isCustomOpen,
   onToggleCustomOpen,
 }: Readonly<CustomColorSwatchesProps>) {
+  const { t } = useTranslation('components');
   return (
     <div className={classes.headerGroup}>
       <div className={classes.customHeader}>
-        <span className={classes.customLabel}>Custom Colors</span>
+        <span className={classes.customLabel}>
+          {t('colorPicker.customColors')}
+        </span>
         <button
           type="button"
           className={clsx(
@@ -47,7 +51,9 @@ function CustomColorSwatches({
           )}
           onClick={onToggleCustomOpen}
           aria-label={
-            isCustomOpen ? 'Close custom colors' : 'Open custom colors'
+            isCustomOpen
+              ? t('colorPicker.closeCustomColors')
+              : t('colorPicker.openCustomColors')
           }
           data-testid="color-picker-btn"
         >

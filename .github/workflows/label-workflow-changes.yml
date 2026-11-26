@@ -1,0 +1,27 @@
+name: Label workflow changes
+
+# Adds the workflows-changed label to a PR that changes CI workflows or AI
+# agent configuration (see .github/labeler.yml). Maintainers read those
+# changes before they approve an AI workflow run in the ai-workflows
+# environment.
+#
+# pull_request_target runs this file and .github/labeler.yml from the base
+# branch, so a PR cannot change or turn off its own check. The job does not
+# check out or run code from the PR and uses no secrets; the labeler reads the
+# changed file list through the GitHub API.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0
+        with:
+          sync-labels: true

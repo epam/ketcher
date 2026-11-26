@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,7 +47,7 @@ class SGroupAtomAdd extends BaseOperation {
     assert(atom, `OpSGroupAtomAdd: Atom ${aid} not found`);
     assert(sgroup, `OpSGroupAtomAdd: S-Group ${sgid} not found`);
 
-    if (sgroup.atoms.indexOf(aid) >= 0) {
+    if (sgroup.atoms.includes(aid)) {
       return;
     }
 

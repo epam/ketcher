@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,12 +26,13 @@ import {
   TextCreate,
   CalcImplicitH,
   FragmentSetProperties,
-  BondAttr,
-  AtomAttr,
+  BondAttribute,
+  AtomAttribute,
   ImageUpsert,
   MultitailArrowUpsert,
+  AttachmentGroupAdd,
 } from '../operations';
-import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
+import { fromRGroupAttributes, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
 import type { ReStruct } from 'application/render';
@@ -49,6 +50,7 @@ import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
   rxnArrows: number[];
   rxnPluses: number[];
@@ -60,6 +62,7 @@ export type CreatedItems = {
 
 type PasteItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
 };
 
@@ -69,9 +72,9 @@ export function fromPaste(
   point: Vec2,
   angle = 0,
   isPreview = false,
-  needMoveFromTopLeftPoint = false,
+  shouldMoveFromTopLeftPoint = false,
 ): [Action, PasteItems, CreatedItems] {
-  const xy0 = needMoveFromTopLeftPoint
+  const xy0 = shouldMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -84,11 +87,13 @@ export function fromPaste(
   const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
   };
 
   const items: CreatedItems = {
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
     rxnArrows: [],
     rxnPluses: [],
@@ -105,8 +110,8 @@ export function fromPaste(
     if (
       fragmentId !== undefined &&
       fragmentId !== null &&
-      !fridMap.has(fragmentId) &&
-      !isMacromoleculeAtom
+      !isMacromoleculeAtom &&
+      !fridMap.has(fragmentId)
     ) {
       const fragment = pstruct.frags.get(fragmentId);
 
@@ -118,7 +123,7 @@ export function fromPaste(
       }
 
       const fragmentAdd = action.addOp(
-        new FragmentAdd(null, fragment.properties).perform(restruct),
+        new FragmentAdd(undefined, fragment.properties).perform(restruct),
       ) as FragmentAdd;
 
       if (fragmentAdd.frid === null) {
@@ -137,11 +142,11 @@ export function fromPaste(
       mappedFragmentId = fridMap.get(fragmentId);
     }
 
-    const tmpAtom = Object.assign(atom.clone(), {
+    const temporaryAtom = Object.assign(atom.clone(), {
       fragment: mappedFragmentId,
     });
     const operation = new AtomAdd(
-      tmpAtom,
+      temporaryAtom,
       Vec2.diff(atom.pp, xy0).rotate(angle).add(point),
     ).perform(restruct) as AtomAdd;
     action.addOp(operation);
@@ -153,10 +158,26 @@ export function fromPaste(
     action.mergeWith(
       fromRGroupAttachmentPointAddition(
         restruct,
-        tmpAtom.attachmentPoints,
+        temporaryAtom.attachmentPoints,
         operation.data.aid as number,
       ),
     );
+  });
+
+  pstruct.attachmentGroups.forEach((attachmentGroup, id) => {
+    const atomIds = attachmentGroup.atomIds
+      .map((atomId) => aidMap.get(atomId))
+      .filter((atomId): atomId is number => atomId !== undefined);
+    const operation = new AttachmentGroupAdd({ atomIds }).perform(
+      restruct,
+    ) as AttachmentGroupAdd;
+    action.addOp(operation);
+
+    const pastedId = operation.data.id;
+    if (pastedId === null) return;
+    aidMap.set(id, pastedId);
+    pasteItems.attachmentGroups.push(pastedId);
+    items.attachmentGroups.push(pastedId);
   });
 
   pstruct.frags.forEach((frag, frid) => {
@@ -209,7 +230,7 @@ export function fromPaste(
 
     pasteItems.bonds.push(operation.data.bid as number);
     items.bonds.push(operation.data.bid as number);
-    new BondAttr(
+    new BondAttribute(
       operation.data.bid as number,
       'isPreview',
       isPreview,
@@ -256,7 +277,7 @@ export function fromPaste(
 
   pasteItems.atoms.forEach((aid) => {
     action.addOp(new CalcImplicitH([aid]).perform(restruct));
-    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
+    new AtomAttribute(aid, 'isPreview', isPreview).perform(restruct);
   });
 
   pstruct.rxnArrows.forEach((rxnArrow) => {
@@ -268,7 +289,7 @@ export function fromPaste(
     ).perform(restruct);
     action.addOp(operation);
     const rxnArrowId = operation.data.id;
-    if (rxnArrowId != null) {
+    if (rxnArrowId != undefined) {
       items.rxnArrows.push(rxnArrowId);
     }
   });
@@ -333,7 +354,7 @@ export function fromPaste(
     const ifThen = rg.ifthen;
     const safeIfThenId = pstruct.rgroups.get(ifThen) ? ifThen : 0;
     action
-      .mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()))
+      .mergeWith(fromRGroupAttributes(restruct, rgid, rg.getAttrs()))
       .mergeWith(fromUpdateIfThen(restruct, safeIfThenId, rg.ifthen));
   });
 

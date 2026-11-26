@@ -26,9 +26,10 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
-import util from 'application/render/util';
+import utility from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
+  CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
@@ -131,13 +132,13 @@ export class BondRenderer extends BaseRenderer {
     if (
       loop1HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
       loop2HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
-      (loop1DoubleBondsAmount > 1 || loop2DoubleBondsAmount === 1)
+      (loop2DoubleBondsAmount === 1 || loop1DoubleBondsAmount > 1)
     )
       return -1;
     if (
       loop2HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
       loop1HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
-      (loop2DoubleBondsAmount > 1 || loop1DoubleBondsAmount === 1)
+      (loop1DoubleBondsAmount === 1 || loop2DoubleBondsAmount > 1)
     )
       return 1;
     if (
@@ -209,7 +210,7 @@ export class BondRenderer extends BaseRenderer {
 
       shiftValue = Math.max(
         shiftValue,
-        util.shiftRayBox(
+        utility.shiftRayBox(
           atomPositionInPixels,
           halfEdge.direction,
           absoluteLabelSymbolBox2Abs,
@@ -258,7 +259,7 @@ export class BondRenderer extends BaseRenderer {
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#f5f5f5');
+      ?.attr('fill', CANVAS_BACKGROUND_COLOR);
   }
 
   public appendHover() {
@@ -321,6 +322,7 @@ export class BondRenderer extends BaseRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'atomic-bond')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', this.bond.type)
       .attr('data-bondstereo', this.bond.stereo)
@@ -622,7 +624,7 @@ export class BondRenderer extends BaseRenderer {
 
     let bondSVGPaths: SVGPathAttributes[] = [];
     switch (this.bond.type) {
-      case BondType.Single:
+      case BondType.Single: {
         if (this.bond.stereo === BondStereo.Up) {
           bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
             bondVectors,
@@ -636,26 +638,27 @@ export class BondRenderer extends BaseRenderer {
           bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
         }
         break;
+      }
 
-      case BondType.Double:
-        if (this.bond.stereo === BondStereo.CisTrans) {
-          bondSVGPaths =
-            DoubleCisTransBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-          );
-        }
+      case BondType.Double: {
+        bondSVGPaths =
+          this.bond.stereo === BondStereo.CisTrans
+            ? DoubleCisTransBondPathRenderer.preparePaths(bondVectors)
+            : DoubleBondPathRenderer.preparePaths(
+                bondVectors,
+                this.getDoubleBondShift(
+                  viewModel,
+                  bondVectors.firstHalfEdge,
+                  bondVectors.secondHalfEdge,
+                ),
+              );
         break;
+      }
 
-      case BondType.Triple:
+      case BondType.Triple: {
         bondSVGPaths = TripleBondPathRenderer.preparePaths(bondVectors);
         break;
+      }
 
       case BondType.Aromatic:
       case BondType.SingleAromatic:
@@ -666,48 +669,49 @@ export class BondRenderer extends BaseRenderer {
         const firstLoop =
           firstHalfEdge && firstHalfEdge.loopId >= 0
             ? viewModel.loops.get(firstHalfEdge.loopId)
-            : null;
+            : undefined;
         const secondLoop =
           secondHalfEdge && secondHalfEdge.loopId >= 0
             ? viewModel.loops.get(secondHalfEdge.loopId)
-            : null;
-        const inConvexAromaticLoop =
+            : undefined;
+        const isInConvexAromaticLoop =
           (firstLoop?.aromatic && firstLoop?.isConvex) ||
           (secondLoop?.aromatic && secondLoop?.isConvex);
 
         // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
         // Otherwise, render as a dashed double bond
-        if (inConvexAromaticLoop) {
-          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-            this.bond.type,
-          );
-        }
+        bondSVGPaths = isInConvexAromaticLoop
+          ? SingleBondPathRenderer.preparePaths(bondVectors)
+          : DoubleBondPathRenderer.preparePaths(
+              bondVectors,
+              this.getDoubleBondShift(
+                viewModel,
+                bondVectors.firstHalfEdge,
+                bondVectors.secondHalfEdge,
+              ),
+              this.bond.type,
+            );
         break;
       }
 
-      case BondType.SingleDouble:
+      case BondType.SingleDouble: {
         bondSVGPaths = SingleDoubleBondPathRenderer.preparePaths(bondVectors);
         break;
+      }
 
       case BondType.Any:
       case BondType.Dative:
-      case BondType.Hydrogen:
+      case BondType.Hydrogen: {
         bondSVGPaths = SingleBondPathRenderer.preparePaths(
           bondVectors,
           this.bond.type,
         );
         break;
+      }
 
-      default:
+      default: {
         break;
+      }
     }
 
     this.createBondHoverablePath(bondSVGPaths);
@@ -739,7 +743,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let mark: string | null = null;
+    let mark: string | undefined;
 
     if (bondFromStruct.customQuery) {
       mark = bondFromStruct.customQuery;
@@ -817,12 +821,14 @@ export class BondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textNode = topologyText.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      topologyText
-        .attr('x', position.x - box.width / 2)
-        .attr('y', position.y + box.height / 4);
+    if (!textNode) {
+      return;
     }
+
+    const box = textNode.getBBox();
+    topologyText
+      .attr('x', position.x - box.width / 2)
+      .attr('y', position.y + box.height / 4);
   }
 
   private appendReactingCenterMark(bondFromStruct: StructBond) {
@@ -866,118 +872,99 @@ export class BondRenderer extends BaseRenderer {
     const points: Vec2[] = [];
 
     switch (reactingCenterStatus) {
-      case StructBond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+      case StructBond.PATTERN.REACTING_CENTER.NOT_CENTER: {
+        // X
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.CENTER: // #
+      }
+      case StructBond.PATTERN.REACTING_CENTER.CENTER: {
+        // #
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, -acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: // ||
+      }
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: {
+        // ||
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
+      }
+      case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: {
+        // |
+        points.push(
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
+        );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
+      }
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: {
+        // ||| combined
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
         );
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
         break;
-      default:
+      }
+      default: {
         return;
+      }
     }
 
     if (points.length === 0) {
@@ -1023,33 +1010,35 @@ export class BondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textNode = cipText?.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      cipText?.attr('x', 0)?.attr('y', -box.y);
+    if (!textNode) {
+      return;
+    }
 
-      const rectWidth = box.width + 2;
-      const rectHeight = box.height + 2;
-      cipGroup
-        ?.insert('rect', 'text')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', rectWidth)
-        .attr('height', rectHeight)
-        .attr('rx', 3)
-        .attr('ry', 3)
-        .attr('fill', '#f5f5f5');
+    const box = textNode.getBBox();
+    cipText?.attr('x', 0)?.attr('y', -box.y);
 
-      cipGroup?.attr(
-        'transform',
-        `
+    const rectWidth = box.width + 2;
+    const rectHeight = box.height + 2;
+    cipGroup
+      ?.insert('rect', 'text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', rectWidth)
+      .attr('height', rectHeight)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('fill', CANVAS_BACKGROUND_COLOR);
+
+    cipGroup?.attr(
+      'transform',
+      `
         translate(${-this.scaledPosition.startPosition.x}, ${-this
           .scaledPosition.startPosition.y})
         translate(${this.scaledCenter.x - rectWidth / 2}, ${
           this.scaledCenter.y - rectHeight / 2
         })
         `,
-      );
-    }
+    );
   }
 
   public remove() {

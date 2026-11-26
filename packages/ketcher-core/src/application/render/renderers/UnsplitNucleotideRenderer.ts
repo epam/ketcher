@@ -42,17 +42,15 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return 'white';
-    }
-    return super.textColor;
+    return this.monomer.monomerItem.props.unresolved
+      ? 'white'
+      : super.textColor;
   }
 
   protected getMonomerColor(theme) {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return UNRESOLVED_MONOMER_COLOR;
-    }
-    return super.getMonomerColor(theme);
+    return this.monomer.monomerItem.props.unresolved
+      ? UNRESOLVED_MONOMER_COLOR
+      : super.getMonomerColor(theme);
   }
 
   protected appendBody(

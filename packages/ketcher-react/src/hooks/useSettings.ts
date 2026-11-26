@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,23 +34,23 @@ const findSettingsService = (
 };
 
 /**
- * React hook to access settings from ketcher-core settings service
- * Provides reactive access to settings with update methods
- *
- * @example
- * ```typescript
- * const { settings, updateSettings, loadPreset } = useSettings();
- *
- * // Read settings
- * console.log(settings?.resetToSelect);
- *
- * // Update settings
- * await updateSettings({ atomColoring: false });
- *
- * // Load preset
- * await loadPreset('acs');
- * ```
- */
+React hook to access settings from ketcher-core settings service
+Provides reactive access to settings with update methods
+
+@example
+```typescript
+const { settings, updateSettings, loadPreset } = useSettings();
+
+// Read settings
+console.log(settings?.resetToSelect);
+
+// Update settings
+await updateSettings({ atomColoring: false });
+
+// Load preset
+await loadPreset('acs');
+```
+*/
 export function useSettings() {
   const dispatch = useAppDispatch();
   const { ketcherId } = useAppContext();

@@ -19,11 +19,13 @@ export class ReactionArrowMoveTool
     closestItem: ReactionArrowClosestItem,
     isResizing: boolean,
   ) {
-    if (closestItem.map === 'rxnArrows') {
-      const reArrow = this.reStruct.rxnArrows.get(closestItem.id);
-      assert(reArrow != null);
-      reArrow.isResizing = isResizing;
+    if (closestItem.map !== 'rxnArrows') {
+      return;
     }
+
+    const reArrow = this.reStruct.rxnArrows.get(closestItem.id);
+    assert(reArrow != null);
+    reArrow.isResizing = isResizing;
   }
 
   mousedown(event: PointerEvent, closestItem: ReactionArrowClosestItem) {
@@ -44,13 +46,7 @@ export class ReactionArrowMoveTool
     const { closestItem, originalPosition } = dragContext;
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const offset = this.getOffset(event, originalPosition);
-    if (!closestItem.ref) {
-      return fromMultipleMove(
-        this.reStruct,
-        this.editor.selection() ?? {},
-        offset,
-      );
-    } else {
+    if (closestItem.ref) {
       this.updateResizingState(closestItem, true);
       const isSnappingEnabled = !event.ctrlKey;
       return fromArrowResizing(
@@ -60,6 +56,12 @@ export class ReactionArrowMoveTool
         current,
         closestItem.ref,
         isSnappingEnabled,
+      );
+    } else {
+      return fromMultipleMove(
+        this.reStruct,
+        this.editor.selection() ?? {},
+        offset,
       );
     }
   }

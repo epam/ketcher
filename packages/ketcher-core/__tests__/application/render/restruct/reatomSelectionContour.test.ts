@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import ReAtom from 'application/render/restruct/reatom';
 import type { Render } from 'application/render/raphaelRender';
 import type { RenderOptions } from 'application/render/render.types';
@@ -33,7 +34,7 @@ function createReatom() {
   return reatom;
 }
 
-function createFakeRender(rect: jest.Mock) {
+function createFakeRender(rect: Mock) {
   const options = {
     microModeScale,
     fontszInPx,
@@ -69,11 +70,15 @@ function createFakeRender(rect: jest.Mock) {
 // the original bug report).
 describe('ReAtom selection contour with an invRet annotation', () => {
   const padding = fontszInPx * radiusScaleFactor;
-  const height = fontszInPx * 1.23;
+  // Height of the atom's own label box (see labelBox in createReatom): the
+  // selection contour must be sized from the label's real measured extent,
+  // not a fixed font-size heuristic (which breaks when Sub font size
+  // differs from Font size).
+  const height = 10;
 
   it('sizes the labeled selection contour around the atom label, not the annotation', () => {
     const reatom = createReatom();
-    const rect = jest.fn();
+    const rect = vi.fn();
     const render = createFakeRender(rect);
 
     reatom.getSelectionContour(render);
@@ -93,5 +98,22 @@ describe('ReAtom selection contour with an invRet annotation', () => {
     expect(y).toBeCloseTo(-5 - padding);
     expect(width).toBeCloseTo(10 + padding * 2);
     expect(rectHeight).toBeCloseTo(height + padding * 2);
+  });
+
+  it('unions multiple label boxes without including the annotation', () => {
+    const reatom = createReatom();
+    reatom.visel.boxes.splice(1, 0, new Box2Abs(5, -5, 15, 5));
+    (reatom as unknown as { labelBoxCount: number }).labelBoxCount = 2;
+    const rect = vi.fn();
+
+    reatom.getSelectionContour(createFakeRender(rect));
+
+    expect(rect).toHaveBeenCalledWith(
+      -5 - padding,
+      -5 - padding,
+      20 + padding * 2,
+      height + padding * 2,
+      fontszInPx * radiusScaleFactor * 2,
+    );
   });
 });

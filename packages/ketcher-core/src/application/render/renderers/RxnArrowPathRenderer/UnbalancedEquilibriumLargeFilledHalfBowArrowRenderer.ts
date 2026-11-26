@@ -14,40 +14,36 @@ export class UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
     const macroModeScale = provideEditorSettings().macroModeScale;
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
-    const arrowHeadAttr = ARROW_HEAD_ATTR * macroModeScale;
+    const arrowHeadAttribute = ARROW_HEAD_ATTR * macroModeScale;
     const arrowHeadWidthNormal = ARROW_HEAD_WIDTH * macroModeScale;
     const arrowOffset = ARROW_OFFSET * macroModeScale;
-    const unbalanceVal = ARROW_UNBALANCED_OFFSET * macroModeScale;
+    const unbalanceValue = ARROW_UNBALANCED_OFFSET * macroModeScale;
     // Multiplying by 1.5 because it's large variant
     const arrowHeadWidth = arrowHeadWidthNormal * 1.5;
     const endX = start.x + arrowLength;
 
     const pathParts: string[] = [];
 
-    // First arrow
+    // First and second (unbalanced) arrows
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+        `L${toFixed(endX - arrowHeadLength + arrowHeadAttribute)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-    );
-
-    // Second (Unbalanced) arrow
-    pathParts.push(
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-        `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-        `M${toFixed(start.x + unbalanceVal)},${toFixed(
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+        `M${toFixed(start.x + unbalanceValue)},${toFixed(
           start.y + arrowOffset,
         )}` +
-        `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+        `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
         `L${toFixed(
-          start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal,
+          start.x + arrowHeadLength - arrowHeadAttribute + unbalanceValue,
         )},${start.y + arrowOffset}Z`,
     );
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-exports */
 import * as dotenv from 'dotenv';
-import * as os from 'os';
+import * as os from 'node:os';
 import { PlaywrightTestConfig, devices } from '@playwright/test';
 import {
   REMOTE_URL,
@@ -10,7 +10,7 @@ import {
   STANDALONE_POPUP_URL,
   REMOTE_POPUP_URL,
 } from './constants';
-import path from 'path';
+import path from 'node:path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
@@ -39,9 +39,9 @@ function baseURLPopup(): string {
 
 const MAX_NUMBER_OF_RETRIES = 2;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
-let numWorkers = os.cpus().length;
+let numberWorkers = os.cpus().length;
 if (process.env.NUM_WORKERS) {
-  numWorkers = Number(process.env.NUM_WORKERS);
+  numberWorkers = Number(process.env.NUM_WORKERS);
 }
 
 const config: PlaywrightTestConfig = {
@@ -53,7 +53,7 @@ const config: PlaywrightTestConfig = {
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
-  workers: numWorkers,
+  workers: numberWorkers,
   reporter: [
     ['blob', { outputDir: 'playwright-report/blob' }],
     ['line'],

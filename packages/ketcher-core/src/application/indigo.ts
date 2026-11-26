@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -84,7 +84,7 @@ function convertStructToString(
 ): string {
   if (typeof struct !== 'string') {
     const aidMap = new Map();
-    const result = struct.clone(null, null, false, aidMap);
+    const result = struct.clone(undefined, undefined, false, aidMap);
 
     return serializer.serialize(result);
   }
@@ -128,64 +128,61 @@ export class Indigo {
     );
   }
 
-  layout(struct: StructOrString, options): Promise<Struct> {
-    return this.#structService
-      .layout(
-        {
-          struct: convertStructToString(struct, this.#ketSerializer),
-          output_format: ChemicalMimeType.KET,
-        },
-        options,
-      )
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
-  }
-
-  clean(struct: StructOrString): Promise<Struct> {
-    return this.#structService
-      .clean({
+  async layout(struct: StructOrString, options): Promise<Struct> {
+    const data = await this.#structService.layout(
+      {
         struct: convertStructToString(struct, this.#ketSerializer),
         output_format: ChemicalMimeType.KET,
-      })
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+      },
+      options,
+    );
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
-  aromatize(struct: StructOrString): Promise<Struct> {
-    return this.#structService
-      .aromatize({
-        struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET,
-      })
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+  async clean(struct: StructOrString): Promise<Struct> {
+    const data = await this.#structService.clean({
+      struct: convertStructToString(struct, this.#ketSerializer),
+      output_format: ChemicalMimeType.KET,
+    });
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
-  dearomatize(struct: StructOrString): Promise<Struct> {
-    return this.#structService
-      .dearomatize({
-        struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET,
-      })
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+  async aromatize(struct: StructOrString): Promise<Struct> {
+    const data = await this.#structService.aromatize({
+      struct: convertStructToString(struct, this.#ketSerializer),
+      output_format: ChemicalMimeType.KET,
+    });
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
-  calculateCip(struct: StructOrString): Promise<Struct> {
-    return this.#structService
-      .calculateCip({
-        struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET,
-      })
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+  async dearomatize(struct: StructOrString): Promise<Struct> {
+    const data = await this.#structService.dearomatize({
+      struct: convertStructToString(struct, this.#ketSerializer),
+      output_format: ChemicalMimeType.KET,
+    });
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
-  automap(struct: StructOrString, options?: AutomapOptions): Promise<Struct> {
+  async calculateCip(struct: StructOrString): Promise<Struct> {
+    const data = await this.#structService.calculateCip({
+      struct: convertStructToString(struct, this.#ketSerializer),
+      output_format: ChemicalMimeType.KET,
+    });
+    return this.#ketSerializer.deserialize(data.struct);
+  }
+
+  async automap(
+    struct: StructOrString,
+    options?: AutomapOptions,
+  ): Promise<Struct> {
     const mode = options?.mode ?? 'discard';
 
-    return this.#structService
-      .automap({
-        struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET,
-        mode,
-      })
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+    const data = await this.#structService.automap({
+      struct: convertStructToString(struct, this.#ketSerializer),
+      output_format: ChemicalMimeType.KET,
+      mode,
+    });
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
   check(struct: StructOrString, options?: CheckOptions): Promise<CheckResult> {
@@ -209,12 +206,11 @@ export class Indigo {
     });
   }
 
-  recognize(image: Blob, options?: RecognizeOptions): Promise<Struct> {
+  async recognize(image: Blob, options?: RecognizeOptions): Promise<Struct> {
     const version = options?.version ?? '';
 
-    return this.#structService
-      .recognize(image, version)
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+    const data = await this.#structService.recognize(image, version);
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
   generateImageAsBase64(
@@ -222,25 +218,26 @@ export class Indigo {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat = options?.outputFormat ?? 'png';
-    const backgroundColor = options?.backgroundColor ?? '';
     const bondThickness = options?.bondThickness ?? defaultBondThickness;
+
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {
         outputFormat,
-        backgroundColor,
         bondThickness,
+        ...(options?.backgroundColor === undefined
+          ? {}
+          : { backgroundColor: options.backgroundColor }),
       },
     );
   }
 
-  toggleExplicitHydrogens(struct: StructOrString): Promise<Struct> {
-    return this.#structService
-      .toggleExplicitHydrogens({
-        struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET,
-      })
-      .then((data) => this.#ketSerializer.deserialize(data.struct));
+  async toggleExplicitHydrogens(struct: StructOrString): Promise<Struct> {
+    const data = await this.#structService.toggleExplicitHydrogens({
+      struct: convertStructToString(struct, this.#ketSerializer),
+      output_format: ChemicalMimeType.KET,
+    });
+    return this.#ketSerializer.deserialize(data.struct);
   }
 
   calculateMacromoleculeProperties(

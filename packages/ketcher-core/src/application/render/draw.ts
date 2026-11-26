@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@ import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
 import { getOptionsWithConvertedUnits } from './options';
-import Raphael from './raphael-ext';
+import Raphael from './raphael-extension';
 import svgPath from 'svgpath';
 import util from './util';
 import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
@@ -316,7 +316,7 @@ function arrowEllipticalArcFilledBow(
 
   const length = direction * arrowHeadLength;
   const width = direction * arrowHeadWidth;
-  const attr = direction * arrowHeadAttr;
+  const attribute = direction * arrowHeadAttr;
 
   const endX = start.x + arrowLength;
   const path =
@@ -325,8 +325,8 @@ function arrowEllipticalArcFilledBow(
       endX,
     )},${toFixed(start.y)}` +
     `L${toFixed(endX - width)},${toFixed(start.y - length)}` +
-    `l${toFixed(width)},${toFixed(attr)}` +
-    `l${toFixed(width)},${toFixed(-attr)}` +
+    `l${toFixed(width)},${toFixed(attribute)}` +
+    `l${toFixed(width)},${toFixed(-attribute)}` +
     `l${toFixed(-width)},${length}`;
 
   const transformedPath = svgPath(path)
@@ -560,11 +560,9 @@ function arrowDashedOpenAngle(
 
   // Dashed arrow
   for (let i = 0; i < arrowLength / dashInterval; i++) {
-    if (i % 2) {
-      path.push(`L${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`);
-    } else {
-      path.push(`M${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`);
-    }
+    path.push(
+      `${i % 2 ? 'L' : 'M'}${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+    );
   }
 
   // Arrowhead
@@ -610,7 +608,7 @@ function arrowFailed(
 
   const path: string[] = [];
 
-  // Arrow with arrowhead
+  // Arrow with arrowhead and failed sign lines
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y)}` +
       `L${toFixed(endX)},${toFixed(start.y)}` +
@@ -624,20 +622,12 @@ function arrowFailed(
         start.y - arrowHeadWidth,
       )}` +
       `L${toFixed(endX)},${toFixed(start.y)}Z`,
-  );
-
-  // Failed sign line 1
-  path.push(
     `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
       start.y + failSignWidth,
     )}` +
       `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
         start.y - failSignWidth,
       )}`,
-  );
-
-  // Failed sign line 2
-  path.push(
     `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
       start.y - failSignWidth,
     )}` +
@@ -672,7 +662,7 @@ function arrowRetrosynthetic(
 
   const path: string[] = [];
 
-  // First arrow and arrowhead
+  // First and second arrows with arrowheads
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -680,10 +670,6 @@ function arrowRetrosynthetic(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
-  );
-
-  // Second arrow and arrowhead
-  path.push(
     `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
@@ -757,7 +743,7 @@ function arrowEquilibriumFilledHalfBow(
 
   const path: string[] = [];
 
-  // top arrow
+  // top and bottom arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -767,10 +753,6 @@ function arrowEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // bottom arrow
-  path.push(
     `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + arrowHeadLength)},${toFixed(
@@ -807,7 +789,7 @@ function arrowEquilibriumFilledTriangle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -818,10 +800,6 @@ function arrowEquilibriumFilledTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}Z`,
-  );
-
-  // Second arrow
-  path.push(
     `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + arrowHeadLength)},${toFixed(
@@ -859,17 +837,13 @@ function arrowEquilibriumOpenAngle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-  );
-
-  // Second arrow
-  path.push(
     `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
@@ -900,13 +874,13 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset, arrowHeadAttr } =
     getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -916,16 +890,12 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
-    `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + unbalanceVal + arrowHeadLength)},${toFixed(
+    `M${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + unbalanceValue + arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${toFixed(start.x + unbalanceVal + arrowHeadLength - arrowHeadAttr)},${
+      `L${toFixed(start.x + unbalanceValue + arrowHeadLength - arrowHeadAttr)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -951,27 +921,23 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
-    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+    `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
         start.y + arrowOffset + arrowHeadWidth,
       )}`,
   );
@@ -1002,7 +968,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
     arrowOffset,
     arrowHeadAttr,
   } = getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   // Multiplying by 1.5 because it's large variant
   const arrowHeadWidth = arrowHeadWidthNormal * 1.5;
@@ -1011,7 +977,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -1021,17 +987,13 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
-    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+    `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal)},${
+      `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr + unbalanceValue)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -1057,13 +1019,13 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 ) {
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
-  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+  const unbalanceValue = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -1071,17 +1033,13 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowOffset)}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
-    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+    `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${
+      `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -1233,13 +1191,10 @@ function bondSingleDown(
   const bsp = 0.7 * options.stereoBond;
 
   let path = '';
-  let p;
-  let q;
-  let r;
   for (let i = 0; i < nlines; ++i) {
-    r = a.addScaled(d, step * i);
-    p = r.addScaled(n, (bsp * (i + 0.5)) / (nlines - 0.5));
-    q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5));
+    const r = a.addScaled(d, step * i);
+    const p = r.addScaled(n, (bsp * (i + 0.5)) / (nlines - 0.5));
+    const q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5));
     path += makeStroke(p, q);
   }
   return paper
@@ -1267,9 +1222,8 @@ function bondSingleEither(
   const bsp = 0.7 * options.stereoBond;
 
   let path = 'M' + toFixed(a.x) + ',' + toFixed(a.y);
-  let r: Vec2;
   for (let i = 0; i < nlines; ++i) {
-    r = a
+    const r = a
       .addScaled(d, step * (i + 0.5))
       .addScaled(n, ((i & 1 ? -1 : +1) * bsp * (i + 0.5)) / (nlines - 0.5));
     path += 'L' + toFixed(r.x) + ',' + toFixed(r.y);
@@ -1289,13 +1243,13 @@ function bondDouble(
   a2: Vec2,
   b1: Vec2,
   b2: Vec2,
-  cisTrans: boolean,
+  isCisTrans: boolean,
   options: RenderOptions,
   isSnapping: boolean,
 ) {
   return paper
     .path(
-      cisTrans
+      isCisTrans
         ? 'M{0},{1}L{6},{7}M{4},{5}L{2},{3}'
         : 'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
       toFixed(a1.x),
@@ -1325,10 +1279,9 @@ function bondSingleOrDouble(
   const bsp = options.bondSpace / 2;
 
   let path = '';
-  let pi;
   let pp = a;
   for (let i = 1; i <= nSect; ++i) {
-    pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
+    const pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
     if (i & 1) {
       path += makeStroke(pp, pi);
     } else {
@@ -1457,6 +1410,26 @@ function bondDative(
     .path(makeStroke(a, b))
     .attr(options.lineattr)
     .attr({ 'arrow-end': 'block-midium-long' })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
+function bondHaptic(
+  paper: RaphaelPaper,
+  halfBond1: HalfBond,
+  halfBond2: HalfBond,
+  options: RenderOptions,
+  isSnapping: boolean,
+  color = '#000',
+) {
+  const a = halfBond1.p;
+  const b = halfBond2.p;
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
     .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
@@ -1617,7 +1590,12 @@ function selectionPolygon(
   r: Vec2[],
   options: RenderOptions,
 ) {
-  const v = r[r.length - 1];
+  const v = r.at(-1);
+
+  if (!v) {
+    throw new Error('Cannot draw a selection polygon without points');
+  }
+
   let pstr = 'M' + toFixed(v.x) + ',' + toFixed(v.y);
   for (const point of r) {
     pstr += 'L' + toFixed(point.x) + ',' + toFixed(point.y);
@@ -1652,22 +1630,22 @@ function dashedPath(point1: Vec2, point2: Vec2, dash: number[]) {
   let t0 = 0;
   const t1 = Vec2.dist(point1, point2);
   const d = Vec2.diff(point2, point1).normalized();
-  let black = true;
+  let isBlack = true;
   let path = '';
   let i = 0;
 
   while (t0 < t1) {
-    const len = dash[i % dash.length];
-    const t2 = t0 + Math.min(len, t1 - t0);
-    if (black) {
+    const length_ = dash[i % dash.length];
+    const t2 = t0 + Math.min(length_, t1 - t0);
+    if (isBlack) {
       path +=
         'M ' +
         point1.addScaled(d, t0).coordStr() +
         ' L ' +
         point1.addScaled(d, t2).coordStr();
     }
-    t0 += len;
-    black = !black;
+    t0 += length_;
+    isBlack = !isBlack;
     i++;
   }
   return path;
@@ -1689,11 +1667,13 @@ function aromaticBondPaths(
 
 function recenterText(path: Element, relativeBox: RelativeBox) {
   // TODO: find a better way
-  if (Raphael.vml) {
-    const gap = relativeBox.height * 0.16;
-    path.translateAbs(0, gap);
-    relativeBox.y += gap;
+  if (!Raphael.vml) {
+    return;
   }
+
+  const gap = relativeBox.height * 0.16;
+  path.translateAbs(0, gap);
+  relativeBox.y += gap;
 }
 
 function rgroupAttachmentPoint(
@@ -1788,6 +1768,7 @@ export default {
   bondAny,
   bondHydrogen,
   bondDative,
+  bondHaptic,
   reactingCenter,
   bondMark,
   radicalCap,

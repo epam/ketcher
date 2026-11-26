@@ -121,12 +121,17 @@ export const LeftToolbar = (page: Page) => {
     },
 
     async expandReactionMappingToolsDropdown() {
-      const reactionMappingToolbar = page.getByTestId('multi-tool-dropdown');
+      if (await this.isReactionMappingToolActive()) {
+        await locators.reactionMappingToolButton.click();
+      } else {
+        await locators.reactionMappingToolButton.click();
+        await page.waitForTimeout(100);
+        await locators.reactionMappingToolButton.click();
+      }
 
-      await locators.reactionMappingToolButton
-        .getByTestId('dropdown-expand')
-        .click();
-      await reactionMappingToolbar.waitFor({ state: 'visible' });
+      await locators.reactionMappingToolSelectionPanel.waitFor({
+        state: 'visible',
+      });
     },
 
     async selectReactionMappingTool(
@@ -173,9 +178,8 @@ export const LeftToolbar = (page: Page) => {
         !(await this.isReactionMappingToolSelected(reactionMappingType))
       ) {
         await locators.reactionMappingToolButton.click();
-        if (!(await locators.reactionMappingToolSelectionPanel.isVisible())) {
-          await locators.reactionMappingToolButton.click();
-        }
+        await page.waitForTimeout(100);
+        await locators.reactionMappingToolButton.click();
         await locators.reactionMappingToolSelectionPanel.waitFor({
           state: 'visible',
           timeout: 5000,

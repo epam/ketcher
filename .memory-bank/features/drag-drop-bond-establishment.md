@@ -124,8 +124,8 @@ The system SHALL ensure that both the placed monomer and the bond are removed to
 
 ## User interaction
 
-- **Replacement check (first priority)** — while dragging, if the cursor is within the replacement proximity threshold of a canvas monomer's center, the replacement interaction activates and the AP proximity check is skipped entirely. See [monomer-replacement-drag-drop](../../changes/archive/2026-08-13-monomer-replacement-drag-drop/).
-- **Proximity highlight** — when no replacement target is active, all free attachment points of any canvas monomer within 25 px become visible; the nearest AP extends its size.
+- **Replacement check (first priority)** — while dragging, if the cursor is within the replacement proximity threshold of a canvas monomer's center, the replacement interaction activates and the AP proximity check is skipped entirely. See [monomer-replacement-drag-drop](./monomer-replacement-drag-drop.md).
+- **Proximity highlight** — when no replacement target is active, all free attachment points of any canvas monomer within 25 px become visible; the nearest AP extends its size. When a bond-insertion indicator ([monomer-insertion-drag-drop](./monomer-insertion-drag-drop.md)) is also in range, whichever of the two is geometrically closer to the cursor is shown and the other is suppressed — they are not strictly ordered the way replacement is.
 - **Bond on drop** — releasing the drag over a highlighted AP creates a polymer bond using the same default-bond rules as the Bond tool (R1-R2 for backbone, R3-R1 for sugar-base, etc.).
 - **Dialog fallback** — when no default bond can be resolved and the dropped entity has two or more free APs, the _Select Attachment Points_ dialog opens pre-populated with the target AP.
 - **Non-standard bond notification** — if the resolved bond pairs same-group attachment points (Rn–Rn), a toast notification is shown.
@@ -148,5 +148,7 @@ The system SHALL ensure that both the placed monomer and the bond are removed to
 ## Related
 
 - Feature: [macromolecules](./macromolecules.md)
-- Feature: [monomer-replacement-drag-drop](../../openspec/changes/archive/2026-08-13-monomer-replacement-drag-drop/)
+- Feature: [monomer-replacement-drag-drop](./monomer-replacement-drag-drop.md)
+- Feature: [monomer-insertion-drag-drop](./monomer-insertion-drag-drop.md) — competes with this
+  feature's AP highlight by cursor distance
 - Module: [editor-engine](../modules/editor-engine.md)

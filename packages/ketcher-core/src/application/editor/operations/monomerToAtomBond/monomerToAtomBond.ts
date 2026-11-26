@@ -39,10 +39,12 @@ export class MonomerToAtomBondAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.monomerToAtomBond) {
-      this.deleteMonomerToAtomBondChangeModel(this.monomerToAtomBond);
-      renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
+    if (!this.monomerToAtomBond) {
+      return;
     }
+
+    this.deleteMonomerToAtomBondChangeModel(this.monomerToAtomBond);
+    renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
   }
 }
 

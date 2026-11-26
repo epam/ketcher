@@ -394,6 +394,10 @@
           "enumEitherUnknown": "任意（未知）"
         },
         "variantCopolymer": "共聚物",
+        "variantAnyPolymer": "任意聚合物",
+        "variantMer": "Mer",
+        "variantGeneric": "通用",
+        "variantMonomer": "单体",
         "subtype": {
           "title": "子类型",
           "enumBlank": "<空白>",

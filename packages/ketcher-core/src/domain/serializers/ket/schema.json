@@ -508,7 +508,18 @@
           },
           "type": {
             "type": "string",
-            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent", "COP"]
+            "enum": [
+              "GEN",
+              "MUL",
+              "SRU",
+              "SUP",
+              "DAT",
+              "queryComponent",
+              "COP",
+              "ANY",
+              "MER",
+              "MON"
+            ]
           }
         },
         "if": {

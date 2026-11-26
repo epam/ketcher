@@ -420,6 +420,30 @@ export const bond: StructSchema = {
   },
 };
 
+// Bracket type selector (Copolymer "Subtype"), shared by polymer classifications
+const subtypeSchemaProperty: SchemaProperty = {
+  title: 'dialogs:toolbox.structSchema.sgroup.subtype.title',
+  enum: [null, 'ran', 'blo', 'alt'],
+  enumNames: [
+    'dialogs:toolbox.structSchema.sgroup.subtype.enumBlank',
+    'dialogs:toolbox.structSchema.sgroup.subtype.enumRandom',
+    'dialogs:toolbox.structSchema.sgroup.subtype.enumBlock',
+    'dialogs:toolbox.structSchema.sgroup.subtype.enumAlternating',
+  ],
+};
+
+// Repeat pattern selector, shared by polymer classifications
+const connectivitySchemaProperty: SchemaProperty = {
+  title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
+  enum: ['ht', 'hh', 'eu'],
+  enumNames: [
+    'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
+    'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
+    'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
+  ],
+  default: 'ht',
+};
+
 const sgroup: Omit<StructSchema, 'properties'> & {
   oneOf?: Partial<StructSchema>[];
 } = {
@@ -482,28 +506,49 @@ const sgroup: Omit<StructSchema, 'properties'> & {
       type: 'object',
       properties: {
         type: { enum: ['COP'] },
-        subtype: {
-          title: 'dialogs:toolbox.structSchema.sgroup.subtype.title',
-          enum: [null, 'ran', 'blo', 'alt'],
-          enumNames: [
-            'dialogs:toolbox.structSchema.sgroup.subtype.enumBlank',
-            'dialogs:toolbox.structSchema.sgroup.subtype.enumRandom',
-            'dialogs:toolbox.structSchema.sgroup.subtype.enumBlock',
-            'dialogs:toolbox.structSchema.sgroup.subtype.enumAlternating',
-          ],
-        },
-        connectivity: {
-          title: 'dialogs:toolbox.structSchema.sgroup.repeatPattern.title',
-          enum: ['ht', 'hh', 'eu'],
-          enumNames: [
-            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToTail',
-            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumHeadToHead',
-            'dialogs:toolbox.structSchema.sgroup.repeatPattern.enumEitherUnknown',
-          ],
-          default: 'ht',
-        },
+        subtype: subtypeSchemaProperty,
+        connectivity: connectivitySchemaProperty,
       },
       required: ['connectivity'],
+    },
+    {
+      key: 'ANY',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantAnyPolymer',
+      type: 'object',
+      properties: {
+        type: { enum: ['ANY'] },
+        subtype: subtypeSchemaProperty,
+        connectivity: connectivitySchemaProperty,
+      },
+      required: ['connectivity'],
+    },
+    {
+      key: 'MER',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantMer',
+      type: 'object',
+      properties: {
+        type: { enum: ['MER'] },
+        subtype: subtypeSchemaProperty,
+        connectivity: connectivitySchemaProperty,
+      },
+      required: ['connectivity'],
+    },
+    {
+      key: 'GEN',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantGeneric',
+      type: 'object',
+      properties: {
+        type: { enum: ['GEN'] },
+      },
+    },
+    {
+      key: 'MON',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantMonomer',
+      type: 'object',
+      properties: {
+        type: { enum: ['MON'] },
+        subtype: subtypeSchemaProperty,
+      },
     },
     {
       key: 'SUP',

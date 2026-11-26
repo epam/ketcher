@@ -214,7 +214,9 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       );
       break;
     }
-    case 'COP': {
+    case 'COP':
+    case 'ANY':
+    case 'MER': {
       ifDef(
         result,
         'subtype',
@@ -224,6 +226,14 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
         result,
         'connectivity',
         source.data.connectivity.toUpperCase() || 'HT',
+      );
+      break;
+    }
+    case 'MON': {
+      ifDef(
+        result,
+        'subtype',
+        source.data.subtype ? source.data.subtype.toUpperCase() : undefined,
       );
       break;
     }

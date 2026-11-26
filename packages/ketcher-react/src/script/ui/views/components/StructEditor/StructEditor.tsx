@@ -95,21 +95,25 @@ function setupEditor(
     const oldHandler = oldProps[eventName];
     const handler = props[eventName];
 
-    if (handler !== oldHandler) {
-      if (oldHandler) {
-        editor.event[name].remove(oldHandler);
-      }
+    if (handler === oldHandler) {
+      return;
+    }
 
-      if (handler) {
-        editor.event[name].add(handler);
-      }
+    if (oldHandler) {
+      editor.event[name].remove(oldHandler);
+    }
+
+    if (handler) {
+      editor.event[name].add(handler);
     }
   });
 
-  if (struct !== oldProps.struct || haveOptionsChanged) {
-    editor.render.unobserveCanvasResize();
-    editor.render.observeCanvasResize();
+  if (struct === oldProps.struct && !haveOptionsChanged) {
+    return;
   }
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {

@@ -42,6 +42,7 @@ export type ModalName =
   | 'delete'
   | 'updateSequenceInRNABuilder'
   | 'monomerConnection'
+  | 'insertionConnection'
   | 'confirmationDialog'
   | 'settings';
 

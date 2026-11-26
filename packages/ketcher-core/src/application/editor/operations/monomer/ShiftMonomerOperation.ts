@@ -66,7 +66,8 @@ export class ShiftMonomerOperation extends BaseOperation {
 
   isDummy() {
     const { value } = this.data;
-    if (value === null) return false;
-    return (value.x ?? 0) === 0 && (value.y ?? 0) === 0;
+    return value === null
+      ? false
+      : (value.x ?? 0) === 0 && (value.y ?? 0) === 0;
   }
 }

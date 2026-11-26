@@ -10,7 +10,7 @@ Your one write is the outcome file. Read code only, on `<base>` straight from gi
 - read a file: `git show <base>:<path>`
 - list a directory: `git ls-tree --name-only <base> <dir>/`
 
-Before exploring, read `.memory-bank/glossary.md`, `.memory-bank/domain.md`, the `.memory-bank/modules/` doc of the area, and the `openspec/specs/` capability the symptom touches, the same way. Use their terms.
+Before exploring, read `.memory-bank/glossary.md`, `.memory-bank/domain.md`, the `.memory-bank/modules/` doc of the area, and the `.memory-bank/features/` file the symptom touches, the same way. Use their terms.
 
 ## Steps
 
@@ -20,7 +20,7 @@ Before exploring, read `.memory-bank/glossary.md`, `.memory-bank/domain.md`, the
 
 3. **Name the cause.** One line: which code does what wrong, with `file:line`. Every path that disagrees gets its own `file:line`: molecules and macromolecules mode, a UI guard and a core check. Done when you can point at the line that would change.
 
-4. **Check for design.** If the code does what a requirement in `openspec/specs/` or an ADR in `.memory-bank/adr/` says it should → outcome `by-design`, with the reference. Done when you have read the area's capability in `openspec/specs/` and its ADRs.
+4. **Check for design.** If the code does what a requirement in `.memory-bank/features/` or an ADR in `.memory-bank/adr/` says it should → outcome `by-design`, with the reference. Done when you have read the area's file in `.memory-bank/features/` and its ADRs.
 
 5. **Otherwise** → outcome `bug` when you named the cause, or `cause-not-found` when the trace ran out. For `cause-not-found`, list every place you searched and what each one does.
 

@@ -133,8 +133,8 @@ function parseAtomListLine(atomListLine: string): {
 }
 
 /**
- * Handles 'A' property lines (atom alias/pseudo)
- */
+Handles 'A' property lines (atom alias/pseudo)
+*/
 function handleAliasProperty(
   line: string,
   ctabLines: string[],
@@ -159,8 +159,8 @@ function handleAliasProperty(
 }
 
 /**
- * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
- */
+Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
+*/
 function handleSimpleAtomProperty(
   propName: string,
   propertyData: string,
@@ -172,8 +172,8 @@ function handleSimpleAtomProperty(
 }
 
 /**
- * Handles SUB (substitution count) property
- */
+Handles SUB (substitution count) property
+*/
 function handleSubstitutionProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -193,8 +193,8 @@ function handleSubstitutionProperty(
 }
 
 /**
- * Handles RGP (rgroup label) property
- */
+Handles RGP (rgroup label) property
+*/
 function handleRGroupProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -218,8 +218,8 @@ function handleRGroupProperty(
 }
 
 /**
- * Handles LOG (rgroup logic) property
- */
+Handles LOG (rgroup logic) property
+*/
 function handleRGroupLogic(
   propertyData: string,
   rLogic: Record<number, RGroupAttributes>,
@@ -241,8 +241,8 @@ function handleRGroupLogic(
 }
 
 /**
- * Handles ALS (atom list) property
- */
+Handles ALS (atom list) property
+*/
 function handleAtomListProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -272,8 +272,8 @@ function handleAtomListProperty(
 }
 
 /**
- * Handles SMT/SCL (sGroup subscript/class) properties
- */
+Handles SMT/SCL (sGroup subscript/class) properties
+*/
 function handleSGroupDataProperty(
   type: string,
   propertyData: string,
@@ -290,8 +290,8 @@ function handleSGroupDataProperty(
 }
 
 /**
- * Handles SDS (sGroup expanded state) property
- */
+Handles SDS (sGroup expanded state) property
+*/
 function handleSGroupExpandedProperty(
   propertyData: string,
   sGroups: SGroupMap,
@@ -304,8 +304,8 @@ function handleSGroupExpandedProperty(
 }
 
 /**
- * Handles SAP (sGroup attachment point) property
- */
+Handles SAP (sGroup attachment point) property
+*/
 function handleSGroupAttachmentProperty(
   propertyData: string,
   sGroups: SGroupMap,
@@ -318,8 +318,8 @@ function handleSGroupAttachmentProperty(
 }
 
 /**
- * Processes M-type property line
- */
+Processes M-type property line
+*/
 function shouldStopAfterProcessingMPropertyLine(
   type: string,
   propertyData: string,
@@ -328,98 +328,124 @@ function shouldStopAfterProcessingMPropertyLine(
   rLogic: Record<number, RGroupAttributes>,
 ): boolean {
   switch (type) {
-    case 'END':
+    case 'END': {
       return true; // Signal to break loop
-    case 'CHG':
+    }
+    case 'CHG': {
       handleSimpleAtomProperty('charge', propertyData, props);
       break;
-    case 'RAD':
+    }
+    case 'RAD': {
       handleSimpleAtomProperty('radical', propertyData, props);
       break;
-    case 'ISO':
+    }
+    case 'ISO': {
       handleSimpleAtomProperty('isotope', propertyData, props);
       break;
-    case 'RBC':
+    }
+    case 'RBC': {
       handleSimpleAtomProperty('ringBondCount', propertyData, props);
       break;
-    case 'SUB':
+    }
+    case 'SUB': {
       handleSubstitutionProperty(propertyData, props);
       break;
-    case 'UNS':
+    }
+    case 'UNS': {
       handleSimpleAtomProperty('unsaturatedAtom', propertyData, props);
       break;
-    case 'RGP':
+    }
+    case 'RGP': {
       handleRGroupProperty(propertyData, props);
       break;
-    case 'LOG':
+    }
+    case 'LOG': {
       handleRGroupLogic(propertyData, rLogic);
       break;
-    case 'APO':
+    }
+    case 'APO': {
       handleSimpleAtomProperty('attachmentPoints', propertyData, props);
       break;
-    case 'ALS':
+    }
+    case 'ALS': {
       handleAtomListProperty(propertyData, props);
       break;
-    case 'STY':
+    }
+    case 'STY': {
       sGroup.initSGroup(sGroups, propertyData);
       break;
-    case 'SST':
+    }
+    case 'SST': {
       sGroup.applySGroupProp(sGroups, 'subtype', propertyData);
       break;
-    case 'SLB':
+    }
+    case 'SLB': {
       sGroup.applySGroupProp(sGroups, 'label', propertyData, true);
       break;
-    case 'SPL':
+    }
+    case 'SPL': {
       sGroup.applySGroupProp(sGroups, 'parent', propertyData, true, true);
       break;
-    case 'SCN':
+    }
+    case 'SCN': {
       sGroup.applySGroupProp(sGroups, 'connectivity', propertyData);
       break;
-    case 'SAL':
+    }
+    case 'SAL': {
       sGroup.applySGroupArrayProp(sGroups, 'atoms', propertyData, -1);
       break;
-    case 'SBL':
+    }
+    case 'SBL': {
       sGroup.applySGroupArrayProp(sGroups, 'bonds', propertyData, -1);
       break;
-    case 'SPA':
+    }
+    case 'SPA': {
       sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
       break;
+    }
     case 'SMT':
-    case 'SCL':
+    case 'SCL': {
       handleSGroupDataProperty(type, propertyData, sGroups);
       break;
-    case 'SDT':
+    }
+    case 'SDT': {
       sGroup.applyDataSGroupDesc(sGroups, propertyData);
       break;
-    case 'SDD':
+    }
+    case 'SDD': {
       sGroup.applyDataSGroupInfoLine(sGroups, propertyData);
       break;
-    case 'SCD':
+    }
+    case 'SCD': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, false);
       break;
-    case 'SED':
+    }
+    case 'SED': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, true);
       break;
-    case 'SDS':
+    }
+    case 'SDS': {
       handleSGroupExpandedProperty(propertyData, sGroups);
       break;
-    case 'SAP':
+    }
+    case 'SAP': {
       handleSGroupAttachmentProperty(propertyData, sGroups);
       break;
+    }
   }
 
   return false; // Continue loop
 }
 
 /**
- * @param ctab
- * @param ctabLines
- * @param shift
- * @param end
- * @param sGroups
- * @param rLogic
- * @returns { Pool }
- */
+@param ctab
+@param ctabLines
+@param shift
+@param end
+@param sGroups
+@param rLogic
+@returns { Pool }
+*/
 function parsePropertyLines(
   _ctab: Struct,
   ctabLines: string[],
@@ -461,10 +487,10 @@ function parsePropertyLines(
 }
 
 /**
- * @param atoms { Pool }
- * @param values { Pool }
- * @param propId { string }
- */
+@param atoms { Pool }
+@param values { Pool }
+@param propId { string }
+*/
 function applyAtomProp(
   atoms: Pool<Atom>,
   values: Pool<string | number | AtomList>,
@@ -482,10 +508,10 @@ function applyAtomProp(
 }
 
 /**
- * Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
- * This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
- * @param struct { Struct }
- */
+Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
+This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
+@param struct { Struct }
+*/
 function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
   struct.atoms.forEach((atom, atomId) => {
     if (!atom.attachmentPoints) {
@@ -748,10 +774,10 @@ function labelsListToIds(labels: string[]): number[] {
 }
 
 /**
- * @param hdr
- * @param lst
- * @returns { Pool }
- */
+@param hdr
+@param lst
+@returns { Pool }
+*/
 function parsePropertyLineAtomList(
   hdr: string[],
   lst: string[],

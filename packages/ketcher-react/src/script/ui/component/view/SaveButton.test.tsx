@@ -14,19 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { SaveButton } from './savebutton';
 
-jest.mock('../../../../hooks', () => {
+vi.mock('../../../../hooks', async (importOriginal) => {
   return {
-    ...jest.requireActual('../../../../hooks'),
+    ...(await importOriginal<typeof import('../../../../hooks')>()),
     useAppContext: () => ({
       ketcherId: '',
     }),
   };
 });
 
-jest.mock('ketcher-core');
+vi.mock('ketcher-core');
 
 describe('SaveButton', () => {
   const defaultProps = {
@@ -53,7 +54,7 @@ describe('SaveButton', () => {
   });
 
   it('Should get file data only after the button is clicked', () => {
-    const getData = jest.fn(() => '');
+    const getData = vi.fn(() => '');
     render(
       <SaveButton filename="test.sdf" getData={getData}>
         Save

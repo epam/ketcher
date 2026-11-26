@@ -212,7 +212,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
     const arrowId =
       typeof this.arrow.arrowId === 'number'
         ? String(this.arrow.arrowId)
@@ -220,7 +220,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
 
     this.hoverElement = this.rootElement
       ?.insert('path', ':first-child')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', '#0097A8')
       .attr('stroke-width', 1.2)
@@ -232,7 +232,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
     const arrowId =
       typeof this.arrow.arrowId === 'number'
         ? String(this.arrow.arrowId)
@@ -240,7 +240,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
 
     this.hoverAreaElement = this.rootElement
       ?.append('path')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', 'none')
       .attr('pointer-events', 'all')
@@ -273,7 +273,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
   }
 
   public appendSelection(): void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
     const arrowId =
       typeof this.arrow.arrowId === 'number'
         ? String(this.arrow.arrowId)
@@ -283,7 +283,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
       ?.insert('path', ':first-child')
       .attr('stroke', SELECTION_COLOR)
       .attr('fill', SELECTION_COLOR)
-      .attr('d', selectionPathDAttr);
+      .attr('d', selectionPathDAttribute);
 
     if (arrowId) {
       this.selectionElement?.attr('data-arrow-id', arrowId);

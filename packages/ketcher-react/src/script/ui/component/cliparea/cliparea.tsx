@@ -24,6 +24,7 @@ import {
   isClipboardAPIAvailable,
   isSelectionOutsideElement,
   notifyCopyCut,
+  notifyPasteCompleted,
 } from 'ketcher-core';
 
 const ieCb: DataTransfer | undefined =
@@ -134,15 +135,15 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          this.props.onCopy().then((data) => {
+          void (async () => {
+            const data = await this.props.onCopy();
             if (!data) {
               return;
             }
-            copy(data).then(() => {
-              event.preventDefault();
-              notifyCopyCut();
-            });
-          });
+            const copied = await copy(data);
+            event.preventDefault();
+            if (copied) notifyCopyCut();
+          })();
         } else {
           if (isSafariBrowser()) {
             const data = this.props.onLegacyCopy();
@@ -157,7 +158,8 @@ class ClipArea extends Component<ClipAreaProps> {
             }
             shouldSkipCopyEvent = true;
 
-            this.props.onCopy().then((data) => {
+            void (async () => {
+              const data = await this.props.onCopy();
               // It is possible to have access to clipboard data through evt.clipboardData
               // only in synchronous code. That's why we dispatch 'copy' event here after server call.
               // It will not work with long operations which time > 5 sec, because browser will close access
@@ -174,7 +176,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 { once: true },
               );
               document.execCommand('copy');
-            });
+            })();
 
             event.preventDefault();
           }
@@ -189,12 +191,12 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          (async () => {
+          void (async () => {
             const data = await this.props.onCut();
             if (!data) return;
-            await copy(data);
+            const copied = await copy(data);
             event.preventDefault();
-            notifyCopyCut();
+            if (copied) notifyCopyCut();
           })();
         } else {
           const data = this.props.onLegacyCut();
@@ -209,15 +211,16 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isClipboardAPIAvailable()) {
-          navigator.clipboard.read().then((data: ClipboardItem[]) => {
+          void (async () => {
+            const data: ClipboardItem[] = await navigator.clipboard.read();
             if (!data) {
               return;
             }
-            this.props.onPaste(data).then(() => {
-              event.preventDefault();
-              notifyRequestCompleted();
-            });
-          });
+            await this.props.onPaste(data);
+            event.preventDefault();
+            notifyRequestCompleted();
+            notifyPasteCompleted();
+          })();
         } else {
           if (event.clipboardData) {
             const data = legacyPaste(event.clipboardData, this.props.formats);
@@ -297,11 +300,9 @@ class ClipArea extends Component<ClipAreaProps> {
 }
 
 function isActiveElement(el: HTMLElement): boolean {
-  if (el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'button')
-    return false;
-  return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(
-    el.tagName,
-  );
+  return el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'button'
+    ? false
+    : ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName);
 }
 
 function autoselect(cliparea: HTMLTextAreaElement): void {
@@ -309,7 +310,7 @@ function autoselect(cliparea: HTMLTextAreaElement): void {
   cliparea.select();
 }
 
-async function copy(data: ClipboardData): Promise<void> {
+async function copy(data: ClipboardData): Promise<boolean> {
   try {
     const clipboardItemData: Record<string, Promise<Blob>> = {};
     Object.keys(data).forEach((mimeType) => {
@@ -341,9 +342,10 @@ async function copy(data: ClipboardData): Promise<void> {
 
         await navigator.clipboard.writeText(textData);
 
-        return;
+        return true;
       } else {
         KetcherLogger.error('cliparea.tsx::copy', error);
+        return false;
       }
     }
 
@@ -358,13 +360,17 @@ async function copy(data: ClipboardData): Promise<void> {
         // Fallback to simple text copy
         const textData = data['text/plain'] || JSON.stringify(data);
         await navigator.clipboard.writeText(textData);
+      } else {
+        return false;
       }
     } else {
       await navigator.clipboard.write([clipboardItem]);
     }
+    return true;
   } catch (error) {
     KetcherLogger.error('cliparea.tsx::copy', error);
     console.info(`Could not write exact type ${JSON.stringify(data)}`);
+    return false;
   }
 }
 

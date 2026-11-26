@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
+import type {
+  AmbiguousMonomerType,
+  MonomerOrAmbiguousType,
+} from 'domain/types';
 import {
   AmbiguousMonomer,
   Chem,
@@ -56,49 +58,58 @@ All monomer entity classes, including ambiguous.
 export type MonomerEntityClass =
   ConcreteMonomerEntityClass | typeof AmbiguousMonomer;
 
+type MonomerEntityFactoryResult<T extends MonomerOrAmbiguousType> =
+  T extends AmbiguousMonomerType
+    ? [EntityClass: typeof AmbiguousMonomer, ketMonomerClass: KetMonomerClass]
+    : [
+        EntityClass: ConcreteMonomerEntityClass,
+        ketMonomerClass: KetMonomerClass,
+      ];
+
 /**
  * Maps a monomer library item (concrete or ambiguous) to the corresponding
  * domain entity class and KetMonomerClass enum value.
  * This is a pure domain helper — it has no renderer imports.
  */
-export function monomerEntityFactory(
-  monomer: MonomerItemType,
-): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {
+export function monomerEntityFactory<T extends MonomerOrAmbiguousType>(
+  monomer: T,
+): MonomerEntityFactoryResult<T> {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     return [
       AmbiguousMonomer,
       AmbiguousMonomer.getMonomerClass(monomer.monomers),
-    ];
+    ] as MonomerEntityFactoryResult<T>;
   }
 
   if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA
   ) {
-    return [UnsplitNucleotide, KetMonomerClass.RNA];
+    return [
+      UnsplitNucleotide,
+      KetMonomerClass.RNA,
+    ] as MonomerEntityFactoryResult<T>;
   }
 
   if (
     monomer.props.MonomerClass === KetMonomerClass.AminoAcid ||
     monomer.props.MonomerType === MONOMER_CONST.PEPTIDE
   ) {
-    return [Peptide, KetMonomerClass.AminoAcid];
+    return [
+      Peptide,
+      KetMonomerClass.AminoAcid,
+    ] as MonomerEntityFactoryResult<T>;
   }
 
   if (isMonomerItemSugar(monomer)) {
-    return [Sugar, KetMonomerClass.Sugar];
+    return [Sugar, KetMonomerClass.Sugar] as MonomerEntityFactoryResult<T>;
   }
 
   if (isMonomerItemPhosphate(monomer)) {
-    return [Phosphate, KetMonomerClass.Phosphate];
+    return [
+      Phosphate,
+      KetMonomerClass.Phosphate,
+    ] as MonomerEntityFactoryResult<T>;
   }
 
   if (
@@ -108,12 +119,15 @@ export function monomerEntityFactory(
         monomer.props.MonomerNaturalAnalogCode,
       ))
   ) {
-    return [RNABase, KetMonomerClass.Base];
+    return [RNABase, KetMonomerClass.Base] as MonomerEntityFactoryResult<T>;
   }
 
   if (monomer.props.unresolved) {
-    return [UnresolvedMonomer, KetMonomerClass.CHEM];
+    return [
+      UnresolvedMonomer,
+      KetMonomerClass.CHEM,
+    ] as MonomerEntityFactoryResult<T>;
   }
 
-  return [Chem, KetMonomerClass.CHEM];
+  return [Chem, KetMonomerClass.CHEM] as MonomerEntityFactoryResult<T>;
 }

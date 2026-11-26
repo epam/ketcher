@@ -21,5 +21,5 @@ BondAdd.InverseConstructor = BondDelete;
 BondDelete.InverseConstructor = BondAdd;
 
 export { BondAdd, BondDelete };
-export * from './BondAttr';
+export * from './BondAttribute';
 export * from './BondMove';

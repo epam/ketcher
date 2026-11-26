@@ -17,8 +17,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 16.654263869722513,
-            "y": -10.611621772347839
+            "x": 16.579263869722514,
+            "y": -10.511621772347837
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",

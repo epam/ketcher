@@ -63,11 +63,10 @@ function getPanelPositionRelativeToRect(
 
   // Default position for panel is in the bottom;
   let x = middleBottomSide.x - width / 2;
-  let y = middleBottomSide.y;
-
-  if (clientY > viewportBottomLimit) {
-    y = middleTopSide.y - height;
-  }
+  let y =
+    clientY > viewportBottomLimit
+      ? middleTopSide.y - height
+      : middleBottomSide.y;
 
   if (clientX > viewportRightLimit) {
     x = middleLeftSide.x - width;
@@ -108,10 +107,12 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   // measurement and the reposition in the same commit, so the panel is never
   // painted at its pre-measurement position.
   useLayoutEffect(() => {
-    if (wrapperRef.current) {
-      setWrapperHeight(wrapperRef.current.clientHeight);
-      setWrapperWidth(wrapperRef.current.clientWidth);
+    if (!wrapperRef.current) {
+      return;
     }
+
+    setWrapperHeight(wrapperRef.current.clientHeight);
+    setWrapperWidth(wrapperRef.current.clientWidth);
   }, [sGroupData]);
 
   const panelCoordinate = getPanelPositionRelativeToRect(

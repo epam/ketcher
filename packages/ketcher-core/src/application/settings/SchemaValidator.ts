@@ -1,7 +1,7 @@
 /**
- * Schema-based validator using jsonschema
- * Validates settings against JSON Schema
- */
+Schema-based validator using jsonschema
+Validates settings against JSON Schema
+*/
 
 import {
   type Schema,
@@ -40,11 +40,9 @@ export class SchemaValidator implements ISettingsValidator {
   }
 
   private getErrorPath(error: JsonSchemaValidationError): string {
-    if (error.path.length === 0) {
-      return '';
-    }
-
-    return `/${error.path.map(this.escapeJsonPointerToken).join('/')}`;
+    return error.path.length === 0
+      ? ''
+      : `/${error.path.map(this.escapeJsonPointerToken).join('/')}`;
   }
 
   private escapeJsonPointerToken(token: string | number): string {
@@ -52,8 +50,8 @@ export class SchemaValidator implements ISettingsValidator {
   }
 
   /**
-   * Validate complete settings object
-   */
+  Validate complete settings object
+  */
   validate(settings: unknown): ValidationResult {
     const result = this.validator.validate(settings, this.fullSchema, {
       base: 'https://ketcher.local/',
@@ -71,8 +69,8 @@ export class SchemaValidator implements ISettingsValidator {
   }
 
   /**
-   * Validate partial settings (for updates)
-   */
+  Validate partial settings (for updates)
+  */
   validatePartial(partial: unknown): ValidationResult {
     const result = this.validator.validate(partial, this.partialSchema, {
       base: 'https://ketcher.local/',

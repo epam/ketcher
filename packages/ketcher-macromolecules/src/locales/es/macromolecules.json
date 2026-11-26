@@ -17,7 +17,7 @@
     "createDnaAntisenseStrand": "Crear cadena antisentido de ADN ({shortcut})"
   },
   "leftMenu": {
-    "handTool": "mano ({shortcut})",
+    "handTool": "Mover ({shortcut})",
     "selectRectangle": "Seleccionar rectángulo ({shortcut})",
     "lassoSelection": "Selección con lazo ({shortcut})",
     "structureSelection": "Selección de estructura ({shortcut})",
@@ -86,5 +86,18 @@
     "unknownStructure": "Estructura desconocida",
     "phosphateOnLeft": "Fosfato a la izquierda (5')",
     "phosphateOnRight": "Fosfato a la derecha (3')"
+  },
+  "library": {
+    "ambiguousGroup": {
+      "bases": "Bases ambiguas",
+      "dnaBases": "Bases de ADN ambiguas",
+      "rnaBases": "Bases de ARN ambiguas",
+      "sugars": "Azúcares ambiguos",
+      "phosphates": "Fosfatos ambiguos",
+      "aminoAcids": "Aminoácidos ambiguos",
+      "nucleotides": "Nucleótidos ambiguos",
+      "chem": "Químicos ambiguos"
+    },
+    "noNaturalAnalogue": "Sin análogo natural"
   }
 }

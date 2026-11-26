@@ -53,9 +53,9 @@ class RnaPresetTool implements Tool {
 
   constructor(
     private readonly editor: CoreEditor,
-    ...args: unknown[]
+    ...arguments_: unknown[]
   ) {
-    const [preset] = args as [IRnaPreset];
+    const [preset] = arguments_ as [IRnaPreset];
     this.editor = editor;
     if (preset?.base) {
       this.rnaBase = preset?.base;
@@ -208,18 +208,20 @@ class RnaPresetTool implements Tool {
       this.rnaBasePreviewRenderer?.show(this.editor.theme);
     }
 
-    if (this.phosphate) {
-      const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
-
-      this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
-
-      this.phosphatePreviewRenderer = new PhosphateRenderer(
-        this.phosphatePreview,
-        this.MONOMER_PREVIEW_SCALE_FACTOR,
-      );
-
-      this.phosphatePreviewRenderer?.show(this.editor.theme);
+    if (!this.phosphate) {
+      return;
     }
+
+    const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
+
+    this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
+
+    this.phosphatePreviewRenderer = new PhosphateRenderer(
+      this.phosphatePreview,
+      this.MONOMER_PREVIEW_SCALE_FACTOR,
+    );
+
+    this.phosphatePreviewRenderer?.show(this.editor.theme);
   }
 
   hidePreview() {

@@ -17,10 +17,6 @@ type CustomEventWaiter = {
 export const waitForRender = async (
   page: Page,
   callback = emptyFunction,
-  // DO NOT change this default timeout.
-  // NEVER.
-  // If you want to change the timeout, that means you're doing something wrong.
-  // Using waitForRender as waitForTimeout is discouraged.
   timeout = 90000,
 ) => {
   if (timeout === 0) {

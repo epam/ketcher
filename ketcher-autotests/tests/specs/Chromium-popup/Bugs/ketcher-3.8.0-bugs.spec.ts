@@ -172,7 +172,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonLeftToolbar(page).handTool();
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
 

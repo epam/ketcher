@@ -17,7 +17,7 @@ Convert domain entities into SVG without ever mutating the model. A renderer onl
 | Z-order        | a fixed layer map (Raphael rect anchors)        | D3 append order + raise-to-front              |
 | Modes          | single                                          | Flex / Snake / Sequence                       |
 
-Both dispatch a debounced (~250 ms) `renderComplete` window event. In micro mode,
+Both dispatch a debounced (50 ms) `renderComplete` window event. In micro mode,
 the editor also dispatches it after drawing an S-group or data-label hover. In
 macro mode, the S-group renderer dispatches it after drawing the hover.
 

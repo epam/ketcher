@@ -12,14 +12,18 @@
 
 ### Over the comment cap
 
-- [`src/Editor.ts:3`](https://github.com/epam/ketcher/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/src/Editor.ts#L3) · **nit** · Rule R5 · Odd name.
+1. [`src/Editor.ts:3`](https://github.com/epam/ketcher/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/src/Editor.ts#L3) · **nit** · Rule R5 · Odd name.
+
+   Failing scenario: Opening a KET file without atoms throws.
 
 ### Outside the diff
 
-- [`src/Editor.ts:40`](https://github.com/epam/ketcher/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/src/Editor.ts#L40) · **major** · Rule R5 · Old code repeats it.
+2. [`src/Editor.ts:40`](https://github.com/epam/ketcher/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/src/Editor.ts#L40) · **major** · Rule R5 · Old code repeats it.
+
+   Failing scenario: Opening a KET file without atoms throws.
 
 ### Passes without a result
 
 - `performance`
 
-**Feedback:** 👎 a finding that is wrong. Better still, reply to it with `Dismissed: <why>` — one sentence. A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.
+**Feedback:** 👎 an inline comment that is wrong. Better still, reply in its thread with `Dismissed: <why>` — one sentence. For a finding numbered here, comment on the pull request with `Dismissed <n>: <why>`, where `<n>` is its number. A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.

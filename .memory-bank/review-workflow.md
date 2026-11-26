@@ -112,9 +112,9 @@ Applies to every AI reviewer, including `/review-pr` and the code-review lenses.
    - `blocker`: an invariant break, a regression, or a bug. Fix before merge.
    - `major`: breaks a rule in `.memory-bank/review-rules.md` or a PR-type requirement, with no change in behavior. Fix before merge.
    - `nit`: style or wording. Optional, never blocks.
-3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a finding no rule covers. The posted text writes it as `Rule R5` or `Invariant D1` and leaves `none` out. Every posted location is a link to that line of the reviewed commit, with the destination `https://github.com/<owner>/<repo>/blob/<head sha>/<path>#L<line>`, so a reader opens the code from the comment instead of searching for the line. A finding without a failing scenario is dropped. For a structural finding, the failing scenario is the concrete change it makes harder, named: "adding a fourth bond type needs edits in these three switches".
+3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a finding no rule covers. The posted text writes it as `Rule R5` or `Invariant D1` and leaves `none` out. Every posted location is a link to that line of the reviewed commit, with the destination `https://github.com/<owner>/<repo>/blob/<head sha>/<path>#L<line>`, so a reader opens the code from the comment instead of searching for the line. A finding leads with a short claim, one sentence of what is wrong; the mechanism and the consequence go in the failing scenario, which the posted text puts on its own line under the claim. A finding without a failing scenario is dropped. For a structural finding, the failing scenario is the concrete change it makes harder, named: "adding a fourth bond type needs edits in these three switches".
 4. **Evidence.** A performance or security finding also carries a command and its output (a failing test, a repro script, a measurement) that show the failure. Without one, it is an open question: it goes in the brief or the report, not in an inline comment or a fix.
-5. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
+5. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, numbered in the order it states them, across its sections. An inline comment has no number: its thread already names it.
 6. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
 7. **No praise, and no summary** of what the diff does.
 
@@ -122,9 +122,9 @@ Applies to every AI reviewer, including `/review-pr` and the code-review lenses.
 
 Feedback on a finding:
 
-- The review brief asks for it. A 👎 on a bot comment marks the finding wrong, and a reply that starts with `Dismissed:` gives the reason in one sentence. The reason is what moves a rule; the reaction alone can only be counted.
+- The review brief asks for it. On an inline comment, a 👎 marks the finding wrong, and a reply in its thread that starts with `Dismissed:` gives the reason in one sentence. A finding of the brief has nothing to react to, so a pull request comment that starts with `Dismissed <n>:`, where `<n>` is the finding's number in the brief, gives the reason. The reason is what moves a rule; the reaction alone can only be counted.
 - A reason that says the pattern is fine here makes it a candidate for `.memory-bank/accepted-patterns.md`. A reason that says the rule does not apply to this code narrows the rule's `Scope`.
-- Reading the reactions and the `Dismissed:` replies back is not automated yet (planned: Phase 5, task 5.6). GitHub keeps both, so a later script still sees the feedback given before it existed.
+- Reading the reactions and the `Dismissed` replies back is not automated yet (planned: Phase 5, task 5.6). GitHub keeps both, so a later script still sees the feedback given before it existed.
 - A finding that repeats three times becomes a rule proposal (planned: Phase 6, task 6.3).
 - Each escaped defect becomes a case in the golden set for the eval (planned: Phase 5, task 5.1; Phase 6, task 6.3).
 

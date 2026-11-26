@@ -39,33 +39,27 @@ function isThenable(value: unknown): value is PromiseLike<unknown> {
   );
 }
 
-export function fileOpener(server?: unknown): Promise<OpenerFunction> {
-  return new Promise<OpenerFunction>((resolve, reject) => {
-    const ActiveXObject = getActiveXObject();
-    // TODO: refactor return
-    if (globalThis.FileReader) {
-      resolve(throughFileReader);
-    } else if (ActiveXObject) {
-      try {
-        const fso = new ActiveXObject('Scripting.FileSystemObject');
-        resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
-      } catch (error) {
-        reject(
-          error instanceof Error
-            ? error
-            : new Error('Failed to open file via ActiveX'),
-        );
-      }
-    } else if (isThenable(server)) {
-      resolve(
-        server.then((): OpenerFunction => {
-          throw Error("Server doesn't still support echo method");
-        }),
-      );
-    } else {
-      reject(new Error('Your browser does not support opening files locally'));
+export async function fileOpener(server?: unknown): Promise<OpenerFunction> {
+  const ActiveXObject = getActiveXObject();
+  if (globalThis.FileReader) {
+    return throughFileReader;
+  }
+  if (ActiveXObject) {
+    try {
+      const fso = new ActiveXObject('Scripting.FileSystemObject');
+      return (file) => Promise.resolve(throughFileSystemObject(fso, file));
+    } catch (e) {
+      throw e instanceof Error
+        ? e
+        : new Error('Failed to open file via ActiveX');
     }
-  });
+  }
+  if (isThenable(server)) {
+    await server;
+    throw Error("Server doesn't still support echo method");
+  }
+
+  throw new Error('Your browser does not support opening files locally');
 }
 
 function arrayBufferToBase64(buffer: ArrayLike<number>): string {
@@ -82,15 +76,17 @@ function readPPTXStructures(buffer: ArrayBuffer): string[] {
   const cfb = CFB.read(new Uint8Array(buffer), { type: 'array' });
   const structures: string[] = [];
   cfb.FullPaths.forEach((path) => {
-    if (path.endsWith('.bin')) {
-      const ole = CFB.find(cfb, path);
-      if (!ole) return;
-      const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
-      if (!sdf) return;
-      const base64String = arrayBufferToBase64(sdf.content);
-      if (base64String.startsWith('VmpDRDAxMDAEAw')) {
-        structures.push(base64String);
-      }
+    if (!path.endsWith('.bin')) {
+      return;
+    }
+
+    const ole = CFB.find(cfb, path);
+    if (!ole) return;
+    const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
+    if (!sdf) return;
+    const base64String = arrayBufferToBase64(sdf.content);
+    if (base64String.startsWith('VmpDRDAxMDAEAw')) {
+      structures.push(base64String);
     }
   });
   return structures;
@@ -113,19 +109,22 @@ function throughFileReader(file: FileWithMsClose): Promise<FileContent> {
       const { result } = rd;
       let content: FileContent;
       switch (fileType) {
-        case CDX:
+        case CDX: {
           content = String(result).split(',').at(-1) ?? '';
           break;
-        case PPTX:
+        }
+        case PPTX: {
           content = {
             structures:
               result instanceof ArrayBuffer ? readPPTXStructures(result) : [],
             isPPTX: true,
           };
           break;
-        default:
+        }
+        default: {
           content = typeof result === 'string' ? result : '';
           break;
+        }
       }
       if (file.msClose) file.msClose();
       resolve(content);
@@ -135,15 +134,18 @@ function throughFileReader(file: FileWithMsClose): Promise<FileContent> {
       reject(new Error(`Failed to read file: ${file.name}`));
     };
     switch (fileType) {
-      case CDX:
+      case CDX: {
         rd.readAsDataURL(file);
         break;
-      case PPTX:
+      }
+      case PPTX: {
         rd.readAsArrayBuffer(file);
         break;
-      default:
+      }
+      default: {
         rd.readAsText(file, 'UTF-8');
         break;
+      }
     }
   });
 }

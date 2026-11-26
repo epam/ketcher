@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,37 +17,45 @@
 import {
   Action,
   Scale,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   CoordinateTransformation,
+  type Vec2,
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import type { DragContext } from './template.types';
 
 class ReactionMapTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: any;
-  private line: any;
+  private dragCtx:
+    | (Pick<DragContext, 'xy0'> & {
+        item: NonNullable<DragContext['item']>;
+      })
+    | undefined;
+  private line: ReturnType<Editor['render']['selectionLine']> | null = null;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     this.editor = editor;
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const rnd = this.editor.render;
 
     const closestItem = this.editor.findItem(event, ['atoms']);
 
-    if (closestItem?.map === 'atoms') {
-      this.editor.hover(null);
-      this.dragCtx = {
-        item: closestItem,
-        xy0: CoordinateTransformation.pageToModel(event, rnd),
-      };
+    if (closestItem?.map !== 'atoms') {
+      return;
     }
+
+    this.editor.hover(null);
+    this.dragCtx = {
+      item: closestItem,
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
+    };
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const editor = this.editor;
     const rnd = editor.render;
 
@@ -78,30 +85,33 @@ class ReactionMapTool implements Tool {
     }
   }
 
-  updateLine(p1, p2) {
+  updateLine(p1: Vec2 | null | undefined, p2: Vec2 | null | undefined) {
     if (this.line) {
       this.line.remove();
       this.line = null;
     }
 
-    if (p1 && p2) {
-      const rnd = this.editor.render;
-      this.line = rnd.selectionLine(
-        Scale.modelToCanvas(p1, rnd.options).add(rnd.options.offset),
-        Scale.modelToCanvas(p2, rnd.options).add(rnd.options.offset),
-      );
+    if (!p1 || !p2) {
+      return;
     }
+
+    const rnd = this.editor.render;
+    this.line = rnd.selectionLine(
+      Scale.modelToCanvas(p1, rnd.options).add(rnd.options.offset),
+      Scale.modelToCanvas(p2, rnd.options).add(rnd.options.offset),
+    );
   }
 
-  mouseup(event) {
+  mouseup(event: PointerEvent) {
     if (this.dragCtx) {
+      const sourceId = this.dragCtx.item.id;
       const rnd = this.editor.render;
       const closestItem = this.editor.findItem(event, ['atoms']);
 
       if (closestItem?.map === 'atoms') {
         const action = new Action();
         const atoms = rnd.ctab.molecule.atoms;
-        const atom1 = atoms.get(this.dragCtx.item.id);
+        const atom1 = atoms.get(sourceId);
         const atom2 = atoms.get(closestItem.id);
         const aam1 = atom1?.aam;
         const aam2 = atom2?.aam;
@@ -110,19 +120,24 @@ class ReactionMapTool implements Tool {
           if ((aam1 && aam1 !== aam2) || (!aam1 && aam2)) {
             atoms.forEach((atom, aid) => {
               if (
-                aid !== this.dragCtx.item.id &&
+                aid !== sourceId &&
                 aid !== closestItem.id && // target is reassigned below; don't also reset it (would leave 2 conflicting aam ops on one atom -> broken undo, #2174)
                 ((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
               )
                 action.mergeWith(
-                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null),
+                  fromAtomsAttributes(rnd.ctab, aid, { aam: 0 }, null),
                 );
             });
           }
 
           if (aam1) {
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null),
+              fromAtomsAttributes(
+                rnd.ctab,
+                closestItem.id,
+                { aam: aam1 },
+                null,
+              ),
             );
           } else {
             let aam = 0;
@@ -130,17 +145,12 @@ class ReactionMapTool implements Tool {
               aam = Math.max(aam, atom.aam || 0);
             });
             action.mergeWith(
-              fromAtomsAttrs(
-                rnd.ctab,
-                this.dragCtx.item.id,
-                { aam: aam + 1 },
-                null,
-              ),
+              fromAtomsAttributes(rnd.ctab, sourceId, { aam: aam + 1 }, null),
             );
-            if (closestItem.id !== this.dragCtx.item.id) {
+            if (closestItem.id !== sourceId) {
               // single-atom self-map: source and target are the same atom -> only one op, so undo can revert it (#2174)
               action.mergeWith(
-                fromAtomsAttrs(
+                fromAtomsAttributes(
                   rnd.ctab,
                   closestItem.id,
                   { aam: aam + 1 },

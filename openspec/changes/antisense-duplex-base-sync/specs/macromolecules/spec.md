@@ -2,7 +2,7 @@
 
 ### Requirement: Synced double-stranded editing
 
-When the sync toggle is on in sequence layout mode, the system SHALL propagate edits made to one strand of a double-stranded sequence to the complementary strand. This covers deletion and typing as already specified, and additionally covers base replacement through both the RNA Builder and the monomer library. Propagation applies in either direction, from the sense strand to the antisense strand and from the antisense strand to the sense strand. When the sync toggle is off, the complementary strand SHALL be left unchanged by any of these edits.
+When the sync toggle is on in sequence layout mode, the system SHALL propagate deletion, typing, and base replacement (through the RNA Builder or the monomer library) on one strand of a double-stranded sequence to the complementary strand, in either direction. When the sync toggle is off, the complementary strand SHALL be left unchanged by these edits.
 
 #### Scenario: Synced double-stranded editing
 

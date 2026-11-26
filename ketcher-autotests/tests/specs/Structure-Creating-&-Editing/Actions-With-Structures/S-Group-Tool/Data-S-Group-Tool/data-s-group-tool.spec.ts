@@ -313,9 +313,13 @@ test.describe('Data S-Group tool', () => {
       PropertyLabelType: PropertyLabelType.Attached,
     });
     await moveMouseAway(page);
-    await waitForRender(page, async () => {
-      await moveMouseToTheMiddleOfTheScreen(page);
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await moveMouseToTheMiddleOfTheScreen(page);
+      },
+      200,
+    );
     await takeEditorScreenshot(page);
   });
 

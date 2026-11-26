@@ -1,6 +1,6 @@
 # Feature
 
-The **feature** kind of [SKILL.md](../SKILL.md). New behavior runs through OpenSpec: the change folder in `openspec/changes/<change>/` is the spec, its `tasks.md` is the task graph, and archiving it updates `openspec/specs/`.
+The **feature** kind of [SKILL.md](../SKILL.md). New behavior runs through OpenSpec: the change folder in `openspec/changes/<change>/` is the spec, its `tasks.md` is the task graph, and archiving it is followed by folding its deltas into `.memory-bank/features/`.
 
 The run ends in one PR that implements the whole change on one branch, with one **gate**: the user approves the proposal before any code is written.
 
@@ -16,7 +16,7 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
    - an OpenSpec change named in the conversation or in `openspec/changes/`: read its `proposal.md`, spec deltas, `design.md`, and `tasks.md`, then go to step 3;
    - a `Feature` issue or a goal in the conversation: go to step 2;
 
-2. **Propose.** Run the `openspec-propose` skill ([its SKILL.md](../../openspec-propose/SKILL.md)) on the issue or the goal, with the rules in `openspec/config.yaml`. Read the specs the change touches in `openspec/specs/` first, so each delta names the requirement it changes. Done when `npx openspec validate <change> --strict` passes.
+2. **Propose.** Run the `openspec-propose` skill ([its SKILL.md](../../openspec-propose/SKILL.md)) on the issue or the goal, with the rules in `openspec/config.yaml`. Read the feature files the change touches in `.memory-bank/features/` first, so each delta names the requirement it changes. Done when `npx openspec validate <change> --strict` passes.
 
 3. **Gate.** Show the user the proposal: why, what changes, the spec deltas as WHEN/THEN, and the task list. Ask in the same message:
    - whether to change anything;
@@ -58,7 +58,7 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
 11. **Verify** on the PR branch: dispatch a **verifier** with [VERIFY.md](../roles/VERIFY.md) and the change's spec deltas as the spec. A `fail` becomes a fix by a new implementer, then verify again. A `could not run` is not a pass: carry it to the PR and the final report. Done when the verdict is `pass`, `n/a`, or `could not run`.
 
-12. **Archive.** Run the `openspec-archive-change` skill ([its SKILL.md](../../openspec-archive-change/SKILL.md)). Then update the memory bank, as `AGENTS.md` says: the feature summary in `.memory-bank/features/`, and the `modules/`, `domain.md`, or `glossary.md` entries the change made true. Done when `npx openspec validate --all --strict` and `npm run check:agent-docs` pass, and the archive is one commit.
+12. **Archive.** Run the `openspec-archive-change` skill ([its SKILL.md](../../openspec-archive-change/SKILL.md)) with `--skip-specs`. Then update the memory bank, as `AGENTS.md` says: fold the deltas into the feature file in `.memory-bank/features/`, and the `modules/`, `domain.md`, or `glossary.md` entries the change made true. Done when `npx openspec validate --all --strict` and `npm run check:agent-docs` pass, and the archive is one commit.
 
 13. **Review.** Follow [REVIEW.md](../shared/REVIEW.md) with the archived change folder as the spec, so the archive and the memory-bank edits are reviewed with the code. A fresh implementer does the cleanup, and a fresh one fixes each round's findings. Done when REVIEW.md's rounds have stopped.
 

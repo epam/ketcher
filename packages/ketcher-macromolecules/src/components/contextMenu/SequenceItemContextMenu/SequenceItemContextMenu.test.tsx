@@ -23,6 +23,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import * as ketcherCore from 'ketcher-core';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 // This package's shared jest mock for react-contexify
 // (src/testMocks/react-contexify.tsx) spreads an Item's props straight onto
@@ -33,8 +34,8 @@ import * as ketcherCore from 'ketcher-core';
 // no case in its switch ever runs - a click would silently prove nothing.
 // This file overrides the mock locally so Item's onClick genuinely receives
 // { id }, letting a real DOM click drive the real handleMenuChange switch.
-jest.mock('react-contexify', () => {
-  const react = require('react');
+vi.mock('react-contexify', async () => {
+  const react = await vi.importActual<typeof import('react')>('react');
 
   const Item = ({
     children,
@@ -84,8 +85,8 @@ jest.mock('react-contexify', () => {
     Menu,
     Separator,
     Submenu,
-    contextMenu: { hideAll: jest.fn(), show: jest.fn() },
-    useContextMenu: () => ({ show: jest.fn(), hideAll: jest.fn() }),
+    contextMenu: { hideAll: vi.fn(), show: vi.fn() },
+    useContextMenu: () => ({ show: vi.fn(), hideAll: vi.fn() }),
   };
 });
 import {
@@ -105,7 +106,7 @@ import {
 } from './SequenceItemContextMenu';
 
 const setSyncEditMode = (isSyncEditMode: boolean) => {
-  jest.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
+  vi.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
     mode: { isSyncEditMode },
     // getModifyAminoAcidsMenuItems (called on every render) unconditionally
     // walks editor.monomersLibrary regardless of the selection under test.
@@ -198,7 +199,7 @@ const buildDuplexSelections = (): NodesSelection => {
 
 describe('SequenceItemContextMenu', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('dispatches setSequenceSelection with every selected entry when both strands of the duplex positions are selected', () => {
@@ -206,8 +207,8 @@ describe('SequenceItemContextMenu', () => {
 
     const mockEditor = {
       events: {
-        layoutModeChange: { add: jest.fn(), remove: jest.fn() },
-        turnOnSequenceEditInRNABuilderMode: { dispatch: jest.fn() },
+        layoutModeChange: { add: vi.fn(), remove: vi.fn() },
+        turnOnSequenceEditInRNABuilderMode: { dispatch: vi.fn() },
       },
       isSequenceEditInRNABuilderMode: false,
       // useMonomerCreationMenu (called on every render) walks the drawing

@@ -151,14 +151,14 @@ export interface Element {
 }
 
 /**
- * `Element.type` values that represent metals (alkali, alkaline-earth,
- * transition, post-transition, lanthanide, actinide), as opposed to
- * non-metals / metalloids / halogens / noble gases.
- *
- * Used to determine, per the 2017 BIOVIA Chemical Representation
- * specification, which elements fall outside the main-group valence table and
- * therefore default to zero valence / zero implicit hydrogens.
- */
+`Element.type` values that represent metals (alkali, alkaline-earth,
+transition, post-transition, lanthanide, actinide), as opposed to
+non-metals / metalloids / halogens / noble gases.
+
+Used to determine, per the 2017 BIOVIA Chemical Representation
+specification, which elements fall outside the main-group valence table and
+therefore default to zero valence / zero implicit hydrogens.
+*/
 export const METAL_ELEMENT_TYPES = [
   'alkali',
   'alkaline-earth',
@@ -169,10 +169,10 @@ export const METAL_ELEMENT_TYPES = [
 ];
 
 /**
- * Returns true if the given `Element.type` value denotes a metal
- * (alkali, alkaline-earth, transition, post-transition, lanthanide, or
- * actinide element).
- */
+Returns true if the given `Element.type` value denotes a metal
+(alkali, alkaline-earth, transition, post-transition, lanthanide, or
+actinide element).
+*/
 export function isMetalElementType(type?: string): boolean {
   return !!type && METAL_ELEMENT_TYPES.includes(type);
 }
@@ -302,14 +302,14 @@ export enum AtomLabel {
 }
 
 /**
- * String-literal union of all generic / pseudo query atom labels defined in
- * the Ketcher extended table (atom generics, special nodes, group generics,
- * and atom-list markers).
- *
- * These labels are NOT real periodic-table elements and therefore cannot be
- * members of the {@link AtomLabel} enum (which mirrors the periodic table).
- * They are used in query structures and are rendered in italic on the canvas.
- */
+String-literal union of all generic / pseudo query atom labels defined in
+the Ketcher extended table (atom generics, special nodes, group generics,
+and atom-list markers).
+
+These labels are NOT real periodic-table elements and therefore cannot be
+members of the {@link AtomLabel} enum (which mirrors the periodic table).
+They are used in query structures and are rendered in italic on the canvas.
+*/
 export type GenericAtomLabel =
   // Atom generics
   | 'A'
@@ -367,8 +367,8 @@ export type GenericAtomLabel =
   | 'L#';
 
 /**
- * The full set of valid atom label values that can appear on the macromolecules
- * canvas — either a real periodic-table element (plus D/T), or a generic /
- * pseudo query label from the extended table.
- */
+The full set of valid atom label values that can appear on the macromolecules
+canvas — either a real periodic-table element (plus D/T), or a generic /
+pseudo query label from the extended table.
+*/
 export type CoreAtomLabel = AtomLabel | GenericAtomLabel;

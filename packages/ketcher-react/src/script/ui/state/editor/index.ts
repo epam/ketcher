@@ -112,17 +112,28 @@ export default function initEditor(
       dispatch({ type: 'INIT', editor });
     },
     onChange: (action: string | undefined) => {
-      if (action === undefined) sleep(0).then(() => dispatch(resetToSelect()));
+      if (action === undefined)
+        void (async () => {
+          await sleep(0);
+          dispatch(resetToSelect());
+        })();
       // Editor switched to view only mode
       if (action === 'force')
-        sleep(0).then(() => dispatch(resetToSelect(true)));
+        void (async () => {
+          await sleep(0);
+          dispatch(resetToSelect(true));
+        })();
       // new tool in reducer
-      else sleep(0).then(() => dispatch(resetToSelect()));
+      else
+        void (async () => {
+          await sleep(0);
+          dispatch(resetToSelect());
+        })();
     },
     onSelectionChange: () => {
       updateAction();
     },
-    onElementEdit: (selem: Atom | Atom[] | TextEditPayload) => {
+    onElementEdit: async (selem: Atom | Atom[] | TextEditPayload) => {
       if (isTextEditPayload(selem)) {
         // TODO: move textdialog opening logic to another place
         return openDialog(dispatch, 'text', selem);
@@ -132,21 +143,22 @@ export default function initEditor(
           selem,
           fromAtom(selem[0]),
         );
-        return openDialog(dispatch, 'atomProps', {
+        const res = await openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
           isMultipleAtoms: true,
-        }).then((res) => toElement(res as ElementFormData));
+        });
+        return toElement(res as ElementFormData);
       }
       const fromResult = fromElement(selem);
       if (!fromResult) return;
       const elem = fromResult as ElementFormData;
-      let dlg: Promise<unknown>;
+      let dlg: unknown;
       if (Elements.get(elem.label ?? '')) {
-        dlg = openDialog(dispatch, 'atomProps', elem);
+        dlg = await openDialog(dispatch, 'atomProps', elem);
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
-        dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
-          ap: res,
-        }));
+        dlg = {
+          ap: await openDialog(dispatch, 'attachmentPoints', elem.ap),
+        };
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
@@ -161,43 +173,48 @@ export default function initEditor(
             [],
           ),
         };
-        dlg = openDialog(dispatch, 'rgroup', params).then((res) => ({
-          values: (res as { values: unknown[] }).values,
+        const res = (await openDialog(dispatch, 'rgroup', params)) as {
+          values: unknown[];
+        };
+        dlg = {
+          values: res.values,
           type: 'rlabel',
-        }));
+        };
       } else {
         // list/not-list and all other pseudo elements share this dialog flow
-        dlg = openDialog(
+        dlg = await openDialog(
           dispatch,
           elem.pseudo ? 'extended-table' : 'period-table',
           { ...elem, pseudo: elem.pseudo },
         );
       }
-      return dlg.then((res) => toElement(res as ElementFormData));
+      return toElement(dlg as ElementFormData);
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: (params: { stereoLabel: string | null }) =>
-      sleep(0).then(() => {
-        const init = fromStereoLabel(params.stereoLabel);
-        return openDialog(dispatch, 'enhancedStereo', {
-          init,
-        }).then(
-          (res) => toStereoLabel(res as ReturnType<typeof fromStereoLabel>),
-          () => null,
-        );
-      }),
+    onEnhancedStereoEdit: async (params: { stereoLabel: string | null }) => {
+      await sleep(0);
+      const init = fromStereoLabel(params.stereoLabel);
+      let res;
+      try {
+        res = await openDialog(dispatch, 'enhancedStereo', { init });
+      } catch {
+        return null;
+      }
+      return toStereoLabel(res as ReturnType<typeof fromStereoLabel>);
+    },
 
     onQuickEdit: (atom: Atom) => openDialog(dispatch, 'labelEdit', atom),
-    onBondEdit: (bonds: Bond[]) => {
+    onBondEdit: async (bonds: Bond[]) => {
       const bondsAttributes = generateCommonProperties(bonds, bonds[0]);
-      return openDialog(
+      const res = await openDialog(
         dispatch,
         'bondProps',
         fromBond(bondsAttributes as unknown as Bond),
-      ).then((res) => toBond(res as ReturnType<typeof fromBond>));
+      );
+      return toBond(res as ReturnType<typeof fromBond>);
     },
-    onRgroupEdit: (rgroup: RGroupEditParams) => {
+    onRgroupEdit: async (rgroup: RGroupEditParams) => {
       const struct = getState().editor.struct();
 
       if (Object.keys(rgroup).length > 2) {
@@ -227,55 +244,63 @@ export default function initEditor(
         values: [rgroup.label],
         disabledIds,
       };
-      return openDialog(dispatch, 'rgroup', params).then((res) => ({
+      const res = await openDialog(dispatch, 'rgroup', params);
+      return {
         label: (res as { values: unknown[] }).values[0],
-      }));
+      };
     },
-    onSgroupEdit: (sgroup: SGroupInput) =>
-      sleep(0) // hack to open dialog after dispatch sgroup tool action
-        .then(() =>
-          openDialog(dispatch, 'sgroup', {
-            ...fromSgroup(sgroup),
-            selectedSruCount: getSelectedSruCount(sgroup.type),
-          }),
-        )
-        .then((res) => toSgroup(res as SGroupFormData)),
-    onRemoveFG: (result: Record<string, unknown>) =>
-      sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
-    onEditMonomer: (payload: EditMonomerPayload) =>
-      sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
+    onSgroupEdit: async (sgroup: SGroupInput) => {
+      await sleep(0); // hack to open dialog after dispatch sgroup tool action
+      const res = await openDialog(dispatch, 'sgroup', {
+        ...fromSgroup(sgroup),
+        selectedSruCount: getSelectedSruCount(sgroup.type),
+      });
+      return toSgroup(res as SGroupFormData);
+    },
+    onRemoveFG: async (result: Record<string, unknown>) => {
+      await sleep(0);
+      return openDialog(dispatch, 'removeFG', result);
+    },
+    onEditMonomer: async (payload: EditMonomerPayload) => {
+      await sleep(0);
+      return openDialog(dispatch, 'editMonomer', payload);
+    },
     onMessage: (msg: { error?: unknown }) => {
       if (msg.error) {
         // TODO: add error handler call
       }
     },
-    onAromatizeStruct: (struct: Struct) => {
+    onAromatizeStruct: async (struct: Struct) => {
       const state = getState();
       const serverOpts = state.options.getServerSettings();
-      return serverCall(
-        state.editor,
-        state.server,
-        'aromatize',
-        serverOpts,
-        struct,
-      ).catch((error: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', error);
-        state.editor.errorHandler?.(String(error));
-      });
+      try {
+        await serverCall(
+          state.editor,
+          state.server,
+          'aromatize',
+          serverOpts,
+          struct,
+        );
+      } catch (e: unknown) {
+        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', e);
+        state.editor.errorHandler?.(String(e));
+      }
     },
-    onDearomatizeStruct: (struct: Struct) => {
+    onDearomatizeStruct: async (struct: Struct) => {
       const state = getState();
       const serverOpts = state.options.getServerSettings();
-      return serverCall(
-        state.editor,
-        state.server,
-        'dearomatize',
-        serverOpts,
-        struct,
-      ).catch((error: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', error);
-        state.editor.errorHandler?.(String(error));
-      });
+      try {
+        await serverCall(
+          state.editor,
+          state.server,
+          'dearomatize',
+          serverOpts,
+          struct,
+        );
+      } catch (e: unknown) {
+        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', e);
+        state.editor.errorHandler?.(String(e));
+      }
     },
     onMouseDown: () => {
       updateAction();

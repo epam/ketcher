@@ -88,9 +88,10 @@ export const SequenceItemContextMenu = ({
     contextMenuEvent?.target as
       (EventTarget & { __data__?: BaseSequenceItemRenderer }) | undefined
   )?.__data__;
-  const monomersToEdit = selectedMonomers.length
-    ? selectedMonomers
-    : (clickedRenderer?.node?.monomers ?? []);
+  const monomersToEdit =
+    selectedMonomers.length > 0
+      ? selectedMonomers
+      : (clickedRenderer?.node?.monomers ?? []);
   const monomerCreationMenu = useMonomerCreationMenu(
     editor,
     monomersToEdit,
@@ -239,7 +240,7 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
       separator: true,
     },
@@ -259,7 +260,7 @@ export const SequenceItemContextMenu = ({
     }
 
     switch (true) {
-      case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
+      case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder: {
         // Deactivate the context menu so its capture-phase Escape listener
         // stops swallowing the first Escape press. Without this the user has
         // to press Escape twice to leave RNA Builder mode.
@@ -284,23 +285,31 @@ export const SequenceItemContextMenu = ({
           );
         }
         break;
-      case menuItemId === SequenceItemContextMenuNames.startNewSequence:
+      }
+      case menuItemId === SequenceItemContextMenuNames.startNewSequence: {
         editor.events.startNewSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case menuItemId === SequenceItemContextMenuNames.editSequence:
+      }
+      case menuItemId === SequenceItemContextMenuNames.editSequence: {
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case menuItemId === SequenceItemContextMenuNames.createRnaAntisenseStrand:
+      }
+      case menuItemId ===
+        SequenceItemContextMenuNames.createRnaAntisenseStrand: {
         editor.events.createAntisenseChain.dispatch(false);
         break;
-      case menuItemId === SequenceItemContextMenuNames.createDnaAntisenseStrand:
+      }
+      case menuItemId ===
+        SequenceItemContextMenuNames.createDnaAntisenseStrand: {
         editor.events.createAntisenseChain.dispatch(true);
         break;
-      case menuItemId === SequenceItemContextMenuNames.establishHydrogenBond:
+      }
+      case menuItemId === SequenceItemContextMenuNames.establishHydrogenBond: {
         editor.events.establishHydrogenBond.dispatch(
           props.sequenceItemRenderer,
         );
         break;
+      }
       case menuItemId === SequenceItemContextMenuNames.deleteHydrogenBond: {
         const sequenceViewModel = SequenceRenderer.sequenceViewModel;
         const monomerToChain =
@@ -321,37 +330,37 @@ export const SequenceItemContextMenu = ({
 
         selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
           if (
-            selectedTwoStrandedNode.antisenseChain &&
-            selectedTwoStrandedNode.antisenseNode &&
-            !(
-              selectedTwoStrandedNode.antisenseNode instanceof
-                EmptySequenceNode ||
-              selectedTwoStrandedNode.antisenseNode instanceof
-                BackBoneSequenceNode
+            !selectedTwoStrandedNode.antisenseChain ||
+            !selectedTwoStrandedNode.antisenseNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              EmptySequenceNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              BackBoneSequenceNode
+          ) {
+            return;
+          }
+
+          if (
+            !antisenseChainToSelectedNodeMap.has(
+              selectedTwoStrandedNode.antisenseChain,
             )
           ) {
-            if (
-              !antisenseChainToSelectedNodeMap.has(
-                selectedTwoStrandedNode.antisenseChain,
-              )
-            ) {
-              antisenseChainToSelectedNodeMap.set(
-                selectedTwoStrandedNode.antisenseChain,
-                new Set(),
-              );
-            }
-
-            const antisenseChainSelectedNodes =
-              antisenseChainToSelectedNodeMap.get(
-                selectedTwoStrandedNode.antisenseChain,
-              );
-
-            if (!antisenseChainSelectedNodes) {
-              return;
-            }
-
-            antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
+            antisenseChainToSelectedNodeMap.set(
+              selectedTwoStrandedNode.antisenseChain,
+              new Set(),
+            );
           }
+
+          const antisenseChainSelectedNodes =
+            antisenseChainToSelectedNodeMap.get(
+              selectedTwoStrandedNode.antisenseChain,
+            );
+
+          if (!antisenseChainSelectedNodes) {
+            return;
+          }
+
+          antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
         });
 
         let isGoingToDeleteAllHydrogenBondsForAnyChain = false;
@@ -420,17 +429,21 @@ export const SequenceItemContextMenu = ({
         });
         break;
       }
-      case menuItemId === 'copy':
+      case menuItemId === 'copy': {
         editor.events.copySelectedStructure.dispatch();
         break;
-      case menuItemId === 'paste':
+      }
+      case menuItemId === 'paste': {
         editor.events.pasteFromClipboard.dispatch();
         break;
-      case menuItemId === 'delete':
+      }
+      case menuItemId === 'delete': {
         editor.events.deleteSelectedStructure.dispatch();
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
   };
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,14 +18,12 @@ import {
   StereoLabelStyleType,
   StereoColoringType,
   ShowHydrogenLabels,
-  ShowHydrogenLabelNames,
   defaultBondThickness,
 } from 'ketcher-core';
 import { type Schema, Validator } from 'jsonschema';
 
 type ExtendedSchema = Schema & {
   enumNames?: Array<string>;
-  default?: any;
 };
 
 // `title`/`enumNames` below hold translation keys ("settings:fields....."),
@@ -258,7 +255,13 @@ const render: {
   showHydrogenLabels: {
     title: `${f}showHydrogenLabels.title`,
     enum: Object.values(ShowHydrogenLabels),
-    enumNames: Object.values(ShowHydrogenLabelNames),
+    enumNames: [
+      `${f}showHydrogenLabels.enumOff`,
+      `${f}showHydrogenLabels.enumHetero`,
+      `${f}showHydrogenLabels.enumTerminal`,
+      `${f}showHydrogenLabels.enumTerminalAndHetero`,
+      `${f}showHydrogenLabels.enumOn`,
+    ],
     default: ShowHydrogenLabels.TerminalAndHetero,
   },
   // Bonds
@@ -504,18 +507,19 @@ const optionsSchema: ExtendedSchema = {
 
 export default optionsSchema;
 
-export function getDefaultOptions(): Record<string, any> {
+export function getDefaultOptions(): Record<string, unknown> {
   const props = optionsSchema.properties;
   if (!props) return {};
 
-  return Object.keys(props).reduce((res, prop) => {
+  return Object.keys(props).reduce<Record<string, unknown>>((res, prop) => {
     res[prop] = props[prop].default;
     return res;
   }, {});
 }
 
-export function validation(settings): Record<string, string> | null {
-  if (typeof settings !== 'object' || settings === null) return null;
+export function validation(input: unknown): Record<string, string> | null {
+  if (typeof input !== 'object' || input === null) return null;
+  const settings = input as Record<string, string>;
 
   const result = new Validator().validate(settings, optionsSchema as Schema, {
     base: 'https://ketcher.local/',

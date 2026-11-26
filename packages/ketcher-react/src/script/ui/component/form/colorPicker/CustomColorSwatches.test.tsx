@@ -1,14 +1,27 @@
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CustomColorSwatches from './CustomColorSwatches';
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'colorPicker.customColors': 'Custom Colors',
+        'colorPicker.openCustomColors': 'Open custom colors',
+        'colorPicker.closeCustomColors': 'Close custom colors',
+      })[key] ?? key,
+  }),
+}));
+
 const defaultProps = {
   customColors: ['#123456', '#ABCDEF'],
   pendingColor: '#123456',
-  onSelectColor: jest.fn(),
+  onSelectColor: vi.fn(),
   isCustomOpen: false,
-  onToggleCustomOpen: jest.fn(),
+  onToggleCustomOpen: vi.fn(),
 };
 
 describe('CustomColorSwatches', () => {
@@ -26,7 +39,7 @@ describe('CustomColorSwatches', () => {
   });
 
   it('calls onSelectColor when a custom swatch is clicked', async () => {
-    const onSelectColor = jest.fn();
+    const onSelectColor = vi.fn();
     render(
       <CustomColorSwatches {...defaultProps} onSelectColor={onSelectColor} />,
     );
@@ -35,7 +48,7 @@ describe('CustomColorSwatches', () => {
   });
 
   it('calls onToggleCustomOpen when the toggle button is clicked', async () => {
-    const onToggleCustomOpen = jest.fn();
+    const onToggleCustomOpen = vi.fn();
     render(
       <CustomColorSwatches
         {...defaultProps}

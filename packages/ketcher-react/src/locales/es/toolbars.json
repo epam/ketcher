@@ -1,0 +1,16 @@
+{
+  "modeControl": {
+    "molecules": "Moléculas",
+    "macromolecules": "Macromoléculas",
+    "switchToKetcherMode": "Cambiar al modo Ketcher",
+    "switchToMacromoleculeMode": "Cambiar al modo Macromolécula"
+  },
+  "zoom": {
+    "outLabel": "Alejar",
+    "inLabel": "Acercar",
+    "reset": "Zoom 100%"
+  },
+  "systemControls": {
+    "help": "Ayuda ({shortcut})"
+  }
+}

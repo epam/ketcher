@@ -19,14 +19,15 @@ import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../../helpers/dom';
+import { vi } from 'vitest';
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -44,13 +45,14 @@ describe('Phosphate following a nucleotide in sequence chain', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
       canvas,
       theme: {},
       renderersContainer: createRenderersManager(testRenderTheme),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

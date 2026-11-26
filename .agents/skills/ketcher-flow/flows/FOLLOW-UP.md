@@ -27,7 +27,7 @@ Take the whole state from the PR: its branch, its threads, its reviews, and its 
 
 5. **Review.** Follow [REVIEW.md](../shared/REVIEW.md) with the commit before step 4 as the branch point and `comments.md` with the linked issue as the spec. You do the cleanup and the fixes yourself. Done when the review rounds have stopped.
 
-6. **Push** to the same branch. A change that alters what the canvas draws runs [SNAPSHOTS.md](../shared/SNAPSHOTS.md) after the push. Done when the PR's head is your last commit.
+6. **Push** to the same branch, once the user approves it as _Landing_ in [SKILL.md](../SKILL.md) says. A change that alters what the canvas draws runs [SNAPSHOTS.md](../shared/SNAPSHOTS.md) after the push. Done when the PR's head is your last commit.
 
 7. **Draft the replies.** One per comment, in `<run dir>/<PR>/replies/<thread id>.md` (a review body gets `review-<n>.md`): the commit that addresses it, or the reason nothing changed. Start each with the line from [TRACKER.md](../shared/TRACKER.md). Leave threads unresolved for the reviewer to resolve. Done when every entry in `comments.md` has its reply file.
 

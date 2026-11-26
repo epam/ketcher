@@ -68,6 +68,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 ## Git and commits
 
 - **Never commit/push autonomously.** If a commit/push seems warranted, ask the user first and commit only after explicit approval. Staging (`git add`) is fine without asking.
+- **A `ketcher-flow` run** commits in the worktrees it works in, since those commits stay on this machine. It asks before every push and before it opens a PR: _Landing_ in its [SKILL.md](.agents/skills/ketcher-flow/SKILL.md) is that stop.
 - Commit subjects and PR titles use the form in [coding-standards.md](.memory-bank/coding-standards.md#tooling-and-process).
 
 ## Skills and tool files

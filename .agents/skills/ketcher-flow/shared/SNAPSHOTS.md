@@ -15,7 +15,7 @@ A change that alters what the canvas draws also alters reference screenshots, th
 5. **Regenerate.** Run the same command per project with `--update-snapshots=changed` and every target as one quoted argument (some paths contain spaces). Run it first with `--list`: the total must be near the failing count, and a whole-suite total means the list is broken. Call `docker-compose` directly, not `npm run docker:update` (testing.md says why).
    Done when the run reports no failures and `git status --short` shows only the PNGs of listed specs. Restore anything else with `git checkout`. Regenerating a PNG writes no spec, so it needs no ask (`AGENTS.md`, E2E tests). Changing a spec does.
 
-6. **Commit and prove.** Commit as `#<issue> - Update <area> snapshots for <change>`, push, and go to step 1. Under "Verified in the app", list the updated specs, what changed, and the **Acceptance** line it matches.
+6. **Commit and prove.** Commit as `#<issue> - Update <area> snapshots for <change>`, push once the user approves it as _Landing_ in [SKILL.md](../SKILL.md) says, and go to step 1. Under "Verified in the app", list the updated specs, what changed, and the **Acceptance** line it matches.
 
 7. **Clean up.** Done when this run leaves behind no container, no Docker virtual machine it started, and no stray file:
    - Stop a runtime you started once no container runs (`colima stop`, or quit Docker Desktop). Keep the images: pulling them again takes minutes.

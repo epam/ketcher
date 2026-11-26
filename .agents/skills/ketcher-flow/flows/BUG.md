@@ -1,6 +1,6 @@
 # Bug
 
-The **bug** kind of [SKILL.md](../SKILL.md): the path from one bug, in prose or as one issue, to a PR. You run it yourself until review, dispatching only the designers of _Design It Twice_. You go on without asking, and go back to the user only at an **escalation**.
+The **bug** kind of [SKILL.md](../SKILL.md): the path from one bug, in prose or as one issue, to a PR. You run it yourself until review, dispatching only the designers of _Design It Twice_. You go on without asking, and go back to the user only at an **escalation** and before the push (_Landing_ in SKILL.md).
 
 ## Escalations
 

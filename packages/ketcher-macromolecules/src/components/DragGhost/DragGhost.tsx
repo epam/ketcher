@@ -77,10 +77,12 @@ export const DragGhost = () => {
     });
 
     return () => {
-      if (animateRef.current) {
-        cancelAnimationFrame(animateRef.current);
-        animateRef.current = undefined;
+      if (!animateRef.current) {
+        return;
       }
+
+      cancelAnimationFrame(animateRef.current);
+      animateRef.current = undefined;
     };
   }, [leftOffset, libraryItemDragData, topOffset, transform.k]);
 

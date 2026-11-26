@@ -127,15 +127,17 @@ function handleDialog({
   const dialogHandler = getDialogHandler(dialogType);
   const hoveredItemId = hoveredItem[dialogType];
 
-  if (dialogHandler) {
-    const props: HandlersProps = {
-      hoveredItemId,
-      newAction,
-      editor,
-      dispatch,
-    };
-    dialogHandler(props);
+  if (!dialogHandler) {
+    return;
   }
+
+  const props: HandlersProps = {
+    hoveredItemId,
+    newAction,
+    editor,
+    dispatch,
+  };
+  dialogHandler(props);
 }
 
 function getDialogHandler(itemType: string) {
@@ -368,17 +370,19 @@ function handleBondTypeChangeTool({
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
-  if (existingAtom) {
-    const updatedAtom = fromAtomsAttributes(
-      editor.render.ctab,
-      hoveredItemId,
-      {
-        charge: (existingAtom.charge ?? 0) + (newAction.opts as number),
-      },
-      null,
-    );
-    editor.update(updatedAtom);
+  if (!existingAtom) {
+    return;
   }
+
+  const updatedAtom = fromAtomsAttributes(
+    editor.render.ctab,
+    hoveredItemId,
+    {
+      charge: (existingAtom.charge ?? 0) + (newAction.opts as number),
+    },
+    null,
+  );
+  editor.update(updatedAtom);
 }
 
 function mapItemsToArrays(

@@ -1655,6 +1655,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await pasteFromClipboardByKeyboard(page);
     await page.waitForTimeout(500);
     await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
     await takeEditorScreenshot(page);
   });
 

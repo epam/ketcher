@@ -468,16 +468,18 @@ export function initClipboard(
       );
       const result = await runAsyncAction(async () => {
         const structStr = await getStructStringFromClipboardData(data);
-        if (structStr || !rxnTextPlain.test(data['text/plain'])) {
-          const opts = isSmarts
-            ? {
-                fragment: true,
-                isPaste: true,
-                'input-format': ChemicalMimeType.DaylightSmarts,
-              }
-            : { fragment: true, isPaste: true };
-          await dispatch(load(structStr, opts));
+        if (!structStr && rxnTextPlain.test(data['text/plain'])) {
+          return;
         }
+
+        const opts = isSmarts
+          ? {
+              fragment: true,
+              isPaste: true,
+              'input-format': ChemicalMimeType.DaylightSmarts,
+            }
+          : { fragment: true, isPaste: true };
+        await dispatch(load(structStr, opts));
       }, ketcherInstance.eventBus);
       return result;
     },

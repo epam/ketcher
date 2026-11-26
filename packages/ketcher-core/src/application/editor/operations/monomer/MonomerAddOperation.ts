@@ -35,9 +35,11 @@ export class MonomerAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.monomer) {
-      this.deleteMonomerChangeModel(this.monomer);
-      renderersManager.deleteMonomer(this.monomer);
+    if (!this.monomer) {
+      return;
     }
+
+    this.deleteMonomerChangeModel(this.monomer);
+    renderersManager.deleteMonomer(this.monomer);
   }
 }

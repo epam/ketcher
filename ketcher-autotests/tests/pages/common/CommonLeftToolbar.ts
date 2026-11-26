@@ -76,6 +76,7 @@ export const CommonLeftToolbar = (page: Page) => {
         (await this.isAreaSelectionToolActive()) &&
         !(await this.isAreaSelectionToolSelected(toolType))
       ) {
+        await page.waitForTimeout(100);
         await locators.areaSelectionDropdownButton.click();
         await page
           .getByTestId('multi-tool-dropdown')

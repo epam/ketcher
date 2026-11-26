@@ -47,10 +47,8 @@ test.describe('3D Viewer', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, 20);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).cancel();
-    });
+    await dragMouseAndMoveTo(page, 20, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -63,10 +61,8 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, -20);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).cancel();
-    });
+    await dragMouseAndMoveTo(page, -20, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -80,10 +76,8 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, -20);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).cancel();
-    });
+    await dragMouseAndMoveTo(page, -20, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -100,10 +94,8 @@ test.describe('3D Viewer', () => {
       'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, -20);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).cancel();
-    });
+    await dragMouseAndMoveTo(page, -20, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 });
@@ -166,10 +158,8 @@ test.describe('3D Viewer', () => {
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(page, x, y + 75);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).apply();
-    });
+    await dragMouseTo(page, x, y + 75, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).apply();
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);
@@ -188,10 +178,8 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     const initialStructureData = await getKet(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, 80);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).apply();
-    });
+    await dragMouseAndMoveTo(page, 80, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).apply();
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);
@@ -209,10 +197,8 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     const initialStructureData = await getKet(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, 75);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).apply();
-    });
+    await dragMouseAndMoveTo(page, 75, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).apply();
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);
@@ -233,10 +219,8 @@ test.describe('3D Viewer', () => {
     );
     const initialStructureData = await getKet(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
-    await dragMouseAndMoveTo(page, -90);
-    await waitForRender(page, async () => {
-      await MiewDialog(page).apply();
-    });
+    await dragMouseAndMoveTo(page, -90, { waitForRenderTimeOut: 50 });
+    await MiewDialog(page).apply();
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);

@@ -584,6 +584,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
         page,
         MacroFileType.HELM,
         helm,
+        true,
       );
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain(
@@ -619,7 +620,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       '99999999999999999999999999999999999999999999999999',
     );
     await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
-    await keyboardPressOnCanvas(page, 'Backspace');
+    await keyboardPressOnCanvas(page, 'Backspace', {
+      waitForRenderTimeOut: 10,
+    });
     await page.waitForTimeout(1000);
     await CalculateVariablesPanel(page).setOligonucleotidesValue(
       '99999999999999999999999999999999999999999999999999',

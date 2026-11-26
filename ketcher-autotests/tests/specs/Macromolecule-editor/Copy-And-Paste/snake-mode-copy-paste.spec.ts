@@ -6,8 +6,8 @@ import {
   openFileAndAddToCanvasMacro,
   zoomWithMouseWheel,
   scrollDown,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -40,8 +40,8 @@ test.describe('Snake mode copy&paste', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
 
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -55,10 +55,10 @@ test.describe('Snake mode copy&paste', () => {
     await getMonomerLocator(page, Peptide.D).click();
     await getMonomerLocator(page, Peptide.F).first().click();
     await page.keyboard.up('Shift');
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

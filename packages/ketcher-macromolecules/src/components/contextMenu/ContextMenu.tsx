@@ -139,6 +139,11 @@ export const ContextMenu = ({
 }: MenuProps) => {
   const dispatch = useAppDispatch();
   const isContextMenuActive = useAppSelector(isContextMenuActivated);
+  const handleMenuItemClick = (params: ItemParams) => {
+    contextMenu.hideAll();
+    dispatch(setContextMenuActive(false));
+    handleMenuChange(params);
+  };
 
   useEffect(() => {
     // Prevent menu from closing when clicking inside it
@@ -205,7 +210,7 @@ export const ContextMenu = ({
 
   return (
     <StyledMenu id={id} onVisibilityChange={onVisibilityChange}>
-      {assembleMenuItems(menuItems, handleMenuChange) as never}
+      {assembleMenuItems(menuItems, handleMenuItemClick) as never}
     </StyledMenu>
   );
 };

@@ -7,13 +7,12 @@ import {
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   takeLeftToolbarScreenshot,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -382,7 +381,7 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'formic acid' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+    await getAtomLocator(page, { atomLabel: 'H', atomId: 5 }).hover({
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
@@ -605,7 +604,9 @@ test.describe('Hot keys', () => {
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -636,7 +637,7 @@ test.describe('Hot key Del', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await page.mouse.move(100, 100);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);

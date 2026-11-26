@@ -11,13 +11,12 @@ import {
   moveMouseAway,
   zoomOutByKeyboard,
   RxnFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -63,7 +62,9 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 10,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -107,7 +108,7 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await waitForRender(page, async () => {
       await getAtomLocator(page, { atomLabel: 'R#' }).click({
         force: true,
@@ -264,7 +265,7 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'R#' }).click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -350,7 +351,9 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to Copy/Paste structure with R-group label.
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -361,7 +364,9 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to Cut/Paste the structure with R-group label.
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

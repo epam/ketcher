@@ -2,15 +2,15 @@ import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
   dragMouseTo,
   moveMouseAway,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectPartOfMolecules,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -19,14 +19,10 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   ArrowType,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -350,7 +346,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await copyContentToClipboard(page, fileContent);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -522,7 +518,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -546,7 +542,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -567,8 +563,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -585,8 +581,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -602,8 +598,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -619,8 +615,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -635,7 +631,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/rings-with-multi-tailed-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -650,7 +648,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/rings-with-multi-tailed-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -722,8 +722,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -745,8 +745,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -766,8 +766,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -787,8 +787,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -898,7 +898,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
 
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
@@ -1618,7 +1620,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await mediumMultiTailedArrow.removeTail({ tailIndex: 1 });
     await largeMultiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1653,7 +1657,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await mediumMultiTailedArrow.removeTail({ tailIndex: 1 });
     await largeMultiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1936,7 +1942,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await multiTailedArrow1.removeTail({ tailIndex: 1 });
     await takeEditorScreenshot(page);
 
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1970,7 +1978,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await multiTailedArrow1.removeTail({ tailIndex: 1 });
     await takeEditorScreenshot(page);
 
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -2503,7 +2513,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await largeTailedArrow.getHeadResizeHandler().hover({ force: true });
     await dragMouseTo(page, 300, 600);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 750, 600, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -2554,7 +2566,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await largeTailedArrow.getHeadResizeHandler().hover({ force: true });
     await dragMouseTo(page, 300, 600);
     await takeEditorScreenshot(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 750, 600, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -2730,7 +2744,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(page, 900, 500);
     await takeEditorScreenshot(page);
 
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 650, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -2788,7 +2804,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(page, 900, 500);
     await takeEditorScreenshot(page);
 
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 900, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -3289,7 +3307,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await smallTailedArrow.bottomTailResizeHandler.hover({ force: true });
     await dragMouseTo(page, 400, 300);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 700, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -3340,7 +3360,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await smallTailedArrow.bottomTailResizeHandler.hover({ force: true });
     await dragMouseTo(page, 400, 300);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 700, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -3533,7 +3555,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 800, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -3591,7 +3615,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 800, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -3932,6 +3958,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopRightToolbar(page).resetZoom();
     await openImageAndAddToCanvas(
       page,
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',

@@ -6,7 +6,7 @@ import {
 } from '@utils/files/readFile';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -1017,7 +1017,7 @@ test(`25. Verify that Copy button copies the selected structure fragment and Pas
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
   await MoleculesTopToolbar(page).copy();
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 500, 350, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -1051,7 +1051,7 @@ test(`26. Verify that Cut button removes selected structure and stores it in the
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
   await MoleculesTopToolbar(page).cut();
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 500, 350, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();

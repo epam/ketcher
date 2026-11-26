@@ -440,7 +440,7 @@ test.fail(
         expect(leftToolbar.createMonomerButton).toBeDisabled(),
         expect(leftToolbar.reactionPlusToolButton).toBeDisabled(),
         expect(leftToolbar.arrowToolsButton).toBeDisabled(),
-        expect(leftToolbar.reactionMappingToolsButton).toBeDisabled(),
+        expect(leftToolbar.reactionMappingToolButton).toBeDisabled(),
         expect(leftToolbar.shapeToolsButton).toBeDisabled(),
         expect(leftToolbar.addTextButton).toBeDisabled(),
         expect(leftToolbar.addImageButton).toBeDisabled(),
@@ -3935,7 +3935,7 @@ for (const monomerToCreate of monomersToCreate54) {
     });
     await expect(monomerOnMicro).toBeVisible();
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await monomerOnMicro.click();
     await expect(monomerOnMicro).not.toBeVisible();
   });
@@ -4015,7 +4015,7 @@ for (const monomerToCreate of monomersToCreate55) {
     });
     await expect(monomerOnMacro).toBeVisible();
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await monomerOnMacro.click();
     await expect(monomerOnMacro).not.toBeVisible();
   });

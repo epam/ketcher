@@ -7,14 +7,13 @@ import {
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragTo,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -337,7 +336,9 @@ test.describe('Attachment Point Tool', () => {
     Undo/Redo actions for each step are correct.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -356,7 +357,9 @@ test.describe('Attachment Point Tool', () => {
     Undo/Redo actions for each step are correct.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -378,7 +381,9 @@ test.describe('Attachment Point Tool', () => {
       page,
       'KET/reaction-with-attachment-points.ket',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -393,7 +398,9 @@ test.describe('Attachment Point Tool', () => {
       page,
       'KET/reaction-with-attachment-points.ket',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
 
     await CommonTopLeftToolbar(page).undo();
@@ -597,7 +604,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/chain-attachment-list.mol',
     );
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomId: 2 }).click();
     await getAtomLocator(page, { atomId: 6 }).click();
     await takeEditorScreenshot(page);
@@ -618,12 +625,12 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/chain-attachment-list.mol',
     );
 
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomId: 2 }).hover();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await getAtomLocator(page, { atomId: 6 }).hover();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await takeEditorScreenshot(page);
 

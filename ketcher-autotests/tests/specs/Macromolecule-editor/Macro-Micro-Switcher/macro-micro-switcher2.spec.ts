@@ -13,8 +13,8 @@ import {
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
-  pasteFromClipboardByKeyboard,
-  copyToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   takePageScreenshot,
   MacroFileType,
   MolFileFormat,
@@ -23,10 +23,7 @@ import {
   takeElementScreenshot,
   getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
-import {
-  copyAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -41,10 +38,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
-import {
-  keyboardPressOnCanvas,
-  keyboardTypeOnCanvas,
-} from '@utils/keyboard/index';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -231,7 +225,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/one-attachment-point-with-oxygen.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
@@ -364,7 +358,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 10,
+    });
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -386,7 +382,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -639,16 +635,18 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/single-atom-properties.ket',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Flex,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -842,11 +840,11 @@ test.describe('Macro-Micro-Switcher2', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
+    await page.keyboard.press('ControlOrMeta+Alt+D');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
+    await page.keyboard.press('ControlOrMeta+Alt+P');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+R');
+    await page.keyboard.press('ControlOrMeta+Alt+R');
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -1205,8 +1203,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       LayoutMode.Flex,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await takeEditorScreenshot(page, {

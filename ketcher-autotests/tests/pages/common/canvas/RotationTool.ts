@@ -55,12 +55,9 @@ export const RotationTool = (page: Page) => {
 
     async moveRotationCenterHandleTo(coordinates: { x: number; y: number }) {
       await locators.rotationCenterHandle.hover();
-      await waitForRender(page, async () => {
-        await page.mouse.down();
-        await page.mouse.move(coordinates.x, coordinates.y);
-
-        await page.mouse.up();
-      });
+      await page.mouse.down();
+      await page.mouse.move(coordinates.x, coordinates.y);
+      await page.mouse.up();
     },
   };
 };

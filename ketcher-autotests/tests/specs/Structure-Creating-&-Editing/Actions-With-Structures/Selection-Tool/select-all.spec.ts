@@ -1,18 +1,17 @@
 import { test } from '@fixtures';
 import {
   clickOnCanvas,
-  deleteByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Select all', () => {
@@ -47,7 +46,9 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, offset, offset, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -61,7 +62,9 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, offset, offset, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -76,7 +79,7 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await commonLeftToolbar.handTool();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

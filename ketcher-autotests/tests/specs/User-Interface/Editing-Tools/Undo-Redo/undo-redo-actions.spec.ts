@@ -4,8 +4,8 @@ import {
   clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
   undoByKeyboard,
   redoByKeyboard,
@@ -13,12 +13,9 @@ import {
   zoomOutByKeyboard,
   dragTo,
   moveMouseAway,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -76,7 +73,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
@@ -690,7 +687,9 @@ test.describe('Undo/Redo Actions', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -713,7 +712,9 @@ test.describe('Undo/Redo Actions', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -860,8 +861,8 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await undoByKeyboard(page);
     await undoByKeyboard(page);
   });

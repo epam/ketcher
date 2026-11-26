@@ -3,8 +3,8 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   resetZoomLevelToDefault,
   zoomOutByKeyboard,
   MolFileFormat,
@@ -996,8 +996,8 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
 
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

@@ -7,7 +7,7 @@ import {
   waitForPageInit,
   waitForRender,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -221,12 +221,12 @@ test.describe('Lasso Selection tool', () => {
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectObjects(page, yAxis, yAxis);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 23 }).click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

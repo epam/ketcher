@@ -1,33 +1,5 @@
 import { Page } from '@playwright/test';
-import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
-import {
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-} from './helpers';
-import { moveMouseAway } from '../moveMouseAway';
 import { waitForRender } from '../common/loaders/waitForRender';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-
-export async function cutAndPaste(page: Page) {
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-  // to focus in Editor
-  await clickInTheMiddleOfTheCanvas(page);
-  await selectAllStructuresOnCanvas(page);
-  await cutToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
-}
-
-export async function copyAndPaste(page: Page) {
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-  // to focus in Editor
-  await clickInTheMiddleOfTheCanvas(page);
-  await moveMouseAway(page);
-  await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
-}
 
 export async function selectAllStructuresOnCanvas(
   page: Page,

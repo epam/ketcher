@@ -2,7 +2,7 @@ import { test, Page, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragMouseTo,
   moveMouseAway,
   takeEditorScreenshot,
@@ -158,7 +158,7 @@ async function deleteRightBondInRing(type: RingButton, page: Page) {
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
   await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-  await deleteByKeyboard(page);
+  await deleteByKeyboardOnCanvas(page);
 }
 
 async function checkHistoryForBondDeletion(page: Page) {

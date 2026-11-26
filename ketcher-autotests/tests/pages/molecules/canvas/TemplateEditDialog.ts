@@ -1,5 +1,4 @@
 import { Page, Locator } from '@playwright/test';
-import { waitForRender } from '@utils/common';
 
 type TemplateEditDialogLocators = {
   window: Locator;
@@ -30,14 +29,10 @@ export const TemplateEditDialog = (page: Page) => {
       await locators.closeWindowButton.click();
     },
     async edit() {
-      await waitForRender(page, async () => {
-        await locators.editButton.click({ force: true });
-      });
+      await locators.editButton.click({ force: true });
     },
     async save() {
-      await waitForRender(page, async () => {
-        await locators.saveButton.click({ force: true });
-      });
+      await locators.saveButton.click({ force: true });
     },
     async cancel() {
       await locators.cancelButton.click({ force: true });

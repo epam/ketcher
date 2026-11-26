@@ -38,6 +38,15 @@ const mockMenuItems = [
   <Menu.Item key="undo" itemId="undo" />,
 ];
 
+const selectionMenuItems = [
+  <Menu.Item
+    key="select-rectangle"
+    itemId="select-rectangle"
+    testId="select-rectangle"
+  />,
+  <Menu.Item key="select-lasso" itemId="select-lasso" testId="select-lasso" />,
+];
+
 const mockSubMenu = () => {
   return (
     <MenuContext.Provider value={mockValue}>
@@ -46,8 +55,27 @@ const mockSubMenu = () => {
   );
 };
 
+const selectionSubMenu = (activeItem?: string, openOnlyWhenActive = true) => {
+  return (
+    <MenuContext.Provider
+      value={{
+        activate: mockClickHandler,
+        isActive: (itemKey) => itemKey === activeItem,
+      }}
+    >
+      <Menu.Submenu
+        needOpenByMenuItemClick={true}
+        openByMenuItemClickOnlyWhenActive={openOnlyWhenActive}
+      >
+        {...selectionMenuItems}
+      </Menu.Submenu>
+    </MenuContext.Provider>
+  );
+};
+
 describe('Test SubMenu component', () => {
   beforeEach(() => {
+    mockClickHandler.mockClear();
     const ketcherRoot = document.createElement('div');
     ketcherRoot.className = 'Ketcher-polymer-editor-root';
     document.body.appendChild(ketcherRoot);
@@ -97,5 +125,30 @@ describe('Test SubMenu component', () => {
 
     expect(collapse).not.toBeNull();
     expect(collapse).toHaveStyle(`z-index: ${customOverlayZIndex}`);
+  });
+
+  it('should activate the selection tool without opening its dropdown when inactive', () => {
+    render(withThemeAndStoreProvider(selectionSubMenu()));
+
+    fireEvent.click(screen.getByTestId('select-rectangle'));
+
+    expect(mockClickHandler).toHaveBeenCalledWith('select-rectangle');
+    expect(screen.queryByTestId('multi-tool-dropdown')).toBeNull();
+  });
+
+  it('should open the selection dropdown when its active tool is clicked', () => {
+    render(withThemeAndStoreProvider(selectionSubMenu('select-rectangle')));
+
+    fireEvent.click(screen.getByTestId('select-rectangle'));
+
+    expect(screen.getByTestId('multi-tool-dropdown')).toBeInTheDocument();
+  });
+
+  it('should preserve menu-item dropdown behavior when active-only opening is disabled', () => {
+    render(withThemeAndStoreProvider(selectionSubMenu(undefined, false)));
+
+    fireEvent.click(screen.getByTestId('select-rectangle'));
+
+    expect(screen.getByTestId('multi-tool-dropdown')).toBeInTheDocument();
   });
 });

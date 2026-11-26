@@ -1,6 +1,6 @@
 import { test } from '@fixtures';
 import {
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragMouseTo,
   dragTo,
   openFileAndAddToCanvas,
@@ -91,7 +91,7 @@ test.describe('Fragment selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

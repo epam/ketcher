@@ -88,10 +88,14 @@ test.describe('Templates - Template Library', () => {
     const anyY = 524;
     await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.mouse.move(anyX, anyY);
-      await page.mouse.wheel(deltaX, deltaY);
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await page.mouse.move(anyX, anyY);
+        await page.mouse.wheel(deltaX, deltaY);
+      },
+      50,
+    );
     await takeEditorScreenshot(page);
   });
 

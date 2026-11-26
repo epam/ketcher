@@ -11,7 +11,7 @@ import {
   undoByKeyboard,
   redoByKeyboard,
   clearCanvasByKeyboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -85,7 +85,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Appropriate tools are selected by hotkeys.
     */
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await page.keyboard.press('Backspace');
@@ -160,7 +160,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
@@ -199,7 +199,9 @@ test.describe('Hotkeys', () => {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
           LayoutMode.Sequence,
         );
-        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', {
+          waitForRenderTimeOut: 50,
+        });
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });

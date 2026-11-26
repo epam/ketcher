@@ -4,11 +4,14 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   resetSettingsValuesToDefault,
   setSettingsOption,
@@ -39,7 +42,9 @@ test.describe('Ignore Chiral Flag', () => {
       LAminoAcidsTemplate.ARGLArginine,
     );
     await clickInTheMiddleOfTheCanvas(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -57,7 +62,9 @@ test.describe('Ignore Chiral Flag', () => {
       LAminoAcidsTemplate.ARGLArginine,
     );
     await clickInTheMiddleOfTheCanvas(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, pointY, pointZ, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

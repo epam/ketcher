@@ -18,12 +18,11 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
+import { waitForLoad } from '@utils/common/loaders/waitForLoad/waitForLoad';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 import { ImageBox, ImageBoxType } from '@tests/pages/common/canvas/ImageBox';
 import { getImageLocator } from '@utils/canvas/image/getImageLocator';
-import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -130,11 +129,12 @@ export async function openFileAndAddToCanvas(
   filename: string,
   xOffsetFromCenter?: number,
   yOffsetFromCenter?: number,
+  errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await openFile(page, filename);
 
-  await waitForLoadAndRender(page, async () => {
+  await waitForLoad(page, async () => {
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
   });
 
@@ -145,9 +145,12 @@ export async function openFileAndAddToCanvas(
   ) {
     await clickOnCanvas(page, xOffsetFromCenter, yOffsetFromCenter, {
       from: 'pageCenter',
+      waitForRenderTimeOut: errorMessageExpected ? 0 : undefined,
     });
   } else {
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: errorMessageExpected ? 0 : undefined,
+    });
   }
 }
 
@@ -196,6 +199,7 @@ export async function openImageAndAddToCanvas(
   filename: string,
   x?: number,
   y?: number,
+  errorMessageExpected = false,
 ): Promise<ImageBoxType> {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
@@ -210,12 +214,16 @@ export async function openImageAndAddToCanvas(
     await clickInTheMiddleOfTheCanvas(page);
   }
 
-  await waitForRender(page, async () => {
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles(resolvedFilePath);
-  });
+  await waitForRender(
+    page,
+    async () => {
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles(resolvedFilePath);
+    },
+    errorMessageExpected ? 0 : undefined,
+  );
 
-  if (!(await ErrorMessageDialog(page).isVisible())) {
+  if (!errorMessageExpected) {
     const imageBoxId = await getImageLocator(page, {}).evaluateAll(
       (elements) => {
         const ids = elements.map((element) => Number(element.dataset.imageId));
@@ -226,6 +234,8 @@ export async function openImageAndAddToCanvas(
 
     if (imageBoxId !== null) {
       return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));
+    } else {
+      return await ImageBox(page);
     }
   }
   return await ImageBox(page);

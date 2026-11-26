@@ -1560,7 +1560,7 @@ test(`39. Check that newly added nineteen standalone nucleotide can be deleted f
 
     const monomer = getMonomerLocator(page, nucleotide);
     await expect(monomer).toBeVisible();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await monomer.click();
     await expect(monomer).not.toBeVisible();
     await CommonTopLeftToolbar(page).undo();
@@ -1594,7 +1594,7 @@ test(`40. Check that newly added sixty-five new CHEMs can be deleted from canvas
 
     const monomer = getMonomerLocator(page, chem);
     await expect(monomer).toBeVisible();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await monomer.click();
     await expect(monomer).not.toBeVisible();
     await CommonTopLeftToolbar(page).undo();

@@ -7,15 +7,14 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   waitForRender,
   moveMouseAway,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -165,7 +164,9 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to copy and paste structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
@@ -178,7 +179,9 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to cut and paste structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -290,7 +293,7 @@ test.describe('Data S-Group tool', () => {
       PropertyLabelType: PropertyLabelType.Absolute,
     });
     await waitForRender(page, async () => {
-      await moveMouseToTheMiddleOfTheScreen(page);
+      await page.getByText('Qw@!23#$%').hover();
     });
     await takeEditorScreenshot(page);
   });
@@ -365,7 +368,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 17 }).click({
       force: true,
     });
@@ -434,7 +437,7 @@ test.describe('Data S-Group tool', () => {
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

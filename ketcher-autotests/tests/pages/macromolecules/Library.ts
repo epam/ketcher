@@ -370,6 +370,7 @@ export const Library = (page: Page) => {
       monomer: Monomer | PresetType,
       coordinates: { x: number; y: number; fromCenter?: boolean },
       shouldSelectOnFavoritesTab = false,
+      options: { timeOut?: number } = {},
     ) {
       const canvas = await getVisibleCanvas(page);
       const canvasBB = await canvas.boundingBox();
@@ -390,9 +391,13 @@ export const Library = (page: Page) => {
       await this.hoverMonomer(monomer, shouldSelectOnFavoritesTab);
       await page.mouse.down();
       await page.mouse.move(x, y);
-      await waitForRender(page, async () => {
-        await page.mouse.up();
-      });
+      await waitForRender(
+        page,
+        async () => {
+          await page.mouse.up();
+        },
+        options.timeOut,
+      );
     },
 
     /**

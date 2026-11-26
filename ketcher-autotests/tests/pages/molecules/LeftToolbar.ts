@@ -14,7 +14,8 @@ type LeftToolbarLocators = {
   createMonomerButton: Locator;
   reactionPlusToolButton: Locator;
   arrowToolsButton: Locator;
-  reactionMappingToolsButton: Locator;
+  reactionMappingToolButton: Locator;
+  reactionMappingToolSelectionPanel: Locator;
   shapeToolsButton: Locator;
   addTextButton: Locator;
   addImageButton: Locator;
@@ -31,9 +32,10 @@ export const LeftToolbar = (page: Page) => {
     createMonomerButton: page.getByTestId('create-monomer'),
     reactionPlusToolButton: page.getByTestId('reaction-plus'),
     arrowToolsButton: page.getByTestId('arrows-drop-down-button'),
-    reactionMappingToolsButton: page.getByTestId(
+    reactionMappingToolButton: page.getByTestId(
       'reaction-mapping-tools-drop-down-button',
     ),
+    reactionMappingToolSelectionPanel: page.getByTestId('multi-tool-dropdown'),
     shapeToolsButton: page.getByTestId('shapes-drop-down-button'),
     addTextButton: page.getByTestId('text'),
     addImageButton: page.getByTestId('images'),
@@ -119,19 +121,80 @@ export const LeftToolbar = (page: Page) => {
     },
 
     async expandReactionMappingToolsDropdown() {
-      const reactionMappingToolbar = page.getByTestId('multi-tool-dropdown');
+      if (await this.isReactionMappingToolActive()) {
+        await locators.reactionMappingToolButton.click();
+      } else {
+        await locators.reactionMappingToolButton.click();
+        await page.waitForTimeout(100);
+        await locators.reactionMappingToolButton.click();
+      }
 
-      await locators.reactionMappingToolsButton
-        .getByTestId('dropdown-expand')
-        .click();
-      await reactionMappingToolbar.waitFor({ state: 'visible' });
+      await locators.reactionMappingToolSelectionPanel.waitFor({
+        state: 'visible',
+      });
     },
 
     async selectReactionMappingTool(
       reactionMappingType: ReactionMappingType = ReactionMappingType.ReactionMapping,
     ) {
-      await this.expandReactionMappingToolsDropdown();
-      await page.getByTestId(reactionMappingType).first().click();
+      if (
+        (await this.isReactionMappingToolActive()) &&
+        (await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        return;
+      }
+
+      if (
+        !(await this.isReactionMappingToolActive()) &&
+        (await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        await locators.reactionMappingToolButton.click();
+        return;
+      }
+
+      if (
+        (await this.isReactionMappingToolActive()) &&
+        !(await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        await locators.reactionMappingToolButton.click();
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'visible',
+          timeout: 5000,
+        });
+        await page
+          .getByTestId(reactionMappingType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'detached',
+          timeout: 5000,
+        });
+        return;
+      }
+
+      if (
+        !(await this.isReactionMappingToolActive()) &&
+        !(await this.isReactionMappingToolSelected(reactionMappingType))
+      ) {
+        await locators.reactionMappingToolButton.click();
+        await page.waitForTimeout(100);
+        await locators.reactionMappingToolButton.click();
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'visible',
+          timeout: 5000,
+        });
+        await page
+          .getByTestId(reactionMappingType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'detached',
+          timeout: 5000,
+        });
+        return;
+      }
     },
 
     async expandShapeToolsDropdown() {
@@ -152,6 +215,23 @@ export const LeftToolbar = (page: Page) => {
 
     async image() {
       await locators.addImageButton.click();
+    },
+
+    async isReactionMappingToolActive() {
+      return !(await locators.reactionMappingToolButton.isVisible())
+        ? false
+        : (await locators.reactionMappingToolButton.getAttribute(
+            'data-is-selected',
+          )) === 'true';
+    },
+
+    async isReactionMappingToolSelected(
+      reactionMappingType: ReactionMappingType,
+    ) {
+      const ccc = await locators.reactionMappingToolButton
+        .getByTestId(reactionMappingType)
+        .isVisible();
+      return ccc;
     },
   };
 };

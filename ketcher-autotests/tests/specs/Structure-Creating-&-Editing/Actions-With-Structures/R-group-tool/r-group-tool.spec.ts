@@ -2,13 +2,16 @@ import { test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   clickOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
   MolFileFormat,
   openFileAndAddToCanvas,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
-import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -46,7 +49,9 @@ test.describe('R-Group', () => {
       page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -66,7 +71,9 @@ test.describe('R-Group', () => {
       page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

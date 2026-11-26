@@ -8,14 +8,13 @@ import {
   waitForRender,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   moveMouseAway,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
@@ -134,7 +133,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -150,7 +151,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -311,7 +314,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForRender(page, async () => {
       await getBondLocator(page, { bondId: 2 }).click({ force: true });
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
 
     await takeEditorScreenshot(page);
 
@@ -330,7 +333,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'N', atomId: 2 }).click();
     await takeEditorScreenshot(page);
 
@@ -672,7 +675,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 22 }).click({
       force: true,
     });

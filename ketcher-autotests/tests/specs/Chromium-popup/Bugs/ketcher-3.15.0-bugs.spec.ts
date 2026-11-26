@@ -651,7 +651,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       MonomerOnMicroOption.ExpandMonomers,
     );
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomId: 0 }).click({
       position: { x: 0, y: 10 },
       force: true,

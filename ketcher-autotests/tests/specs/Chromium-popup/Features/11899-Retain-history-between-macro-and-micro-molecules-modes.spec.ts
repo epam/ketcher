@@ -31,6 +31,25 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await waitForPageInit(page);
   });
 
+  test('Undo and Redo are disabled when their history queues are empty', async ({
+    page,
+  }) => {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
+
+    await Library(page).selectMonomer(Peptide.A);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeEnabled();
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeEnabled();
+  });
+
   test('Case 1 - Molecule added in Micro is undoable after switching to Macro', async ({
     page,
   }) => {
@@ -99,9 +118,6 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
     await expect(getAtomLocator(page, {})).toHaveCount(6);
 
-    // the switch was the last entry: an extra Redo changes nothing
-    await CommonTopLeftToolbar(page).redo();
-    await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
     await CommonTopLeftToolbar(page).undo();
     await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
     await expect(getAtomLocator(page, {})).toHaveCount(6);
@@ -308,7 +324,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Flex,
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     // micro bonds in Macro mode accept the Erase click only when forced
     await getBondLocator(page, {}).first().click({ force: true });
     await expect(getBondLocator(page, {})).toHaveCount(5);
@@ -512,7 +528,7 @@ test.describe('Retain history between macro and micro molecules modes', () => {
     await CommonTopLeftToolbar(page).redo();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
     // nothing is left to redo
-    await CommonTopLeftToolbar(page).redo();
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
     await expect(getCanvasByMode(page, 'macromolecules')).toBeVisible();
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
   });

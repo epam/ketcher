@@ -2,18 +2,17 @@ import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
   MolFileFormat,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardToCanvasByKeyboard,
   RxnFileFormat,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -130,7 +129,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
@@ -150,7 +151,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });

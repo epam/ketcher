@@ -67,6 +67,7 @@ import {
   MacromoleculesConverter,
   monomerFactory,
   MULTITAIL_ARROW_KEY,
+  notifyRenderComplete,
   normalizeMonomerAtomsPositions,
   Pile,
   provideEditorSettings,
@@ -4635,7 +4636,9 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       }
 
       if (!combinedPath) {
-        return;
+        // The individual renderers are already hovered; keep the target tracked
+        // so a later hover change can clear them even without a combined outline.
+        return true;
       }
 
       const combinedPathD = combinedPath.pathData;
@@ -4685,6 +4688,13 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
     }
   } else {
     item.setHover(isVisible, render);
+  }
+
+  if (
+    isVisible &&
+    (targetCi.map === 'sgroups' || targetCi.map === 'sgroupData')
+  ) {
+    notifyRenderComplete();
   }
 
   return true;

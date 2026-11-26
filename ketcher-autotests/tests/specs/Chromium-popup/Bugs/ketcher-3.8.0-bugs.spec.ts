@@ -28,9 +28,7 @@ import {
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  copyToClipboardByKeyboard,
   MacroFileType,
-  pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
@@ -95,11 +93,11 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).clickTextEditor();
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await takeEditorScreenshot(page);
-    await copyToClipboardByKeyboard(page);
+    await page.keyboard.press(`ControlOrMeta+KeyC`);
     await page.keyboard.press('Backspace');
-    await pasteFromClipboardByKeyboard(page);
+    await page.keyboard.press(`ControlOrMeta+KeyV`);
     await takeEditorScreenshot(page);
     await TextEditorDialog(page).cancel();
   });
@@ -174,7 +172,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonLeftToolbar(page).handTool();
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
 
@@ -584,7 +582,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       page,
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(1),
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'O', atomId: 4 }).click({
       force: true,
     });

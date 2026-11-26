@@ -1,9 +1,10 @@
 import { Page } from '@playwright/test';
 import { clickOnCanvas } from '@utils/clicks';
-import { keyboardPressOnCanvas } from '@utils/keyboard';
 import { moveMouseAway } from '@utils/moveMouseAway';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 type Point = { x: number; y: number };
 
@@ -18,6 +19,6 @@ export async function addAtoms(page: Page, atom: Atom, points: Point[]) {
   for (const point of points) {
     await clickOnCanvas(page, point.x, point.y);
   }
-  await keyboardPressOnCanvas(page, 'Escape');
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await moveMouseAway(page);
 }

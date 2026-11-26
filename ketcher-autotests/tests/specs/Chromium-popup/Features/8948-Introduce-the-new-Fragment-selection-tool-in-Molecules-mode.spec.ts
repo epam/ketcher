@@ -15,7 +15,6 @@ import {
   clickInTheMiddleOfTheCanvas,
   getTooltipLocator,
   getVisibleCanvas,
-  keyboardPressOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -131,7 +130,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
     await clickInTheMiddleOfTheCanvas(page);
 
     for (let i = 0; i < 3; i++) {
-      await keyboardPressOnCanvas(page, 'Shift+Tab');
+      await page.keyboard.press('Shift+Tab');
     }
 
     await expect(SelectionTypePanel(page).currentToolButton).toHaveAttribute(
@@ -364,7 +363,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       SelectionToolType.Fragment,
       SelectionToolType.Rectangle,
     ]) {
-      await keyboardPressOnCanvas(page, 'Shift+Tab');
+      await page.keyboard.press('Shift+Tab');
       await expect(SelectionTypePanel(page).currentToolButton).toHaveAttribute(
         'data-testid',
         toolType,

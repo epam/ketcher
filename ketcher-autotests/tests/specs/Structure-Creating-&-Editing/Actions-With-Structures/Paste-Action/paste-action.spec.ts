@@ -3,8 +3,8 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -55,10 +55,10 @@ test.describe('Paste Tool', () => {
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
 
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -7,24 +7,22 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   moveMouseAway,
   takeElementScreenshot,
   waitForRender,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
 import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   FileType,
@@ -262,7 +260,7 @@ test.describe('Image files', () => {
      */
     const fileContent = await readFileContent('KET/images-png-svg.ket');
     await copyContentToClipboard(page, fileContent);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -304,7 +302,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-svg-together.cdxml',
     );
     await copyContentToClipboard(page, fileContent);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -626,7 +624,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -648,7 +646,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
@@ -669,7 +669,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -756,7 +758,7 @@ test.describe('Image files', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -772,7 +774,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -788,7 +790,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -822,7 +824,7 @@ test.describe('Image files', () => {
        * Test case: #4897
        * Description: Error message is displayed - "Unsupported image type"
        */
-      await openImageAndAddToCanvas(page, `Images/${fileName}`);
+      await openImageAndAddToCanvas(page, `Images/${fileName}`, 100, 100, true);
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain('Unsupported image type');
       await ErrorMessageDialog(page).close();
@@ -834,7 +836,13 @@ test.describe('Image files', () => {
      * Test case: #4897
      * Description: Error message is displayed - "Image should be at least 16x16 pixels"
      */
-    await openImageAndAddToCanvas(page, 'Images/image-png-15px.png');
+    await openImageAndAddToCanvas(
+      page,
+      'Images/image-png-15px.png',
+      100,
+      100,
+      true,
+    );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Image should be at least 16x16 pixels');
     await ErrorMessageDialog(page).close();
@@ -1180,7 +1188,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1256,7 +1264,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1282,7 +1292,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1308,7 +1320,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2183,7 +2197,7 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
-      await openFileAndAddToCanvas(page, `CDX/${fileName}`);
+      await openFileAndAddToCanvas(page, `CDX/${fileName}`, 100, 100, true);
       await takeEditorScreenshot(page);
     });
   }
@@ -2204,7 +2218,7 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
-      await openFileAndAddToCanvas(page, `CDXML/${fileName}`);
+      await openFileAndAddToCanvas(page, `CDXML/${fileName}`, 100, 100, true);
       await takeEditorScreenshot(page);
     });
   }
@@ -2871,7 +2885,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
@@ -2902,7 +2918,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -3069,7 +3087,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
@@ -3100,7 +3120,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -3426,7 +3448,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
@@ -3452,7 +3476,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
@@ -3478,7 +3504,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -3509,7 +3537,9 @@ test.describe('Image files', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();

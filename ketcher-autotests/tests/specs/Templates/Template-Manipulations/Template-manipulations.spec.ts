@@ -6,9 +6,9 @@ import {
   openFileAndAddToCanvas,
   takePageScreenshot,
   moveMouseToTheMiddleOfTheScreen,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-  copyToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   clickOnCanvas,
   undoByKeyboard,
   pasteFromClipboardAndAddToCanvas,
@@ -203,7 +203,7 @@ test.describe('Template Manupulations', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await cutToClipboardByKeyboard(page);
+      await cutFromCanvasToClipboardByKeyboard(page);
       await undoByKeyboard(page);
       await takeEditorScreenshot(page);
     },
@@ -256,14 +256,14 @@ test.describe('Template Manupulations', () => {
     await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).structureLibrary();
@@ -650,8 +650,8 @@ test.describe('Open Ketcher', () => {
       await takeEditorScreenshot(page);
 
       await selectAllStructuresOnCanvas(page);
-      await cutToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await cutFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheCanvas(page);
@@ -683,8 +683,8 @@ test.describe('Open Ketcher', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheCanvas(page);
   });

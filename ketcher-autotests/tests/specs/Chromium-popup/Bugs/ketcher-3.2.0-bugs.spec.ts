@@ -28,7 +28,6 @@ import {
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
-  deleteHydrogenBond,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -41,7 +40,10 @@ import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  MonomerOnMicroOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
@@ -397,7 +399,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     );
     await selectAllStructuresOnCanvas(page);
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await deleteHydrogenBond(page, anySymbolA);
+    await ContextMenu(page, anySymbolA).click(
+      SequenceSymbolOption.DeleteHydrogenBonds,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

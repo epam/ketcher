@@ -74,7 +74,6 @@ test.describe('Clear canvas', () => {
     const x = 500;
     const y = 250;
     await addTextBoxToCanvas(page);
-    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText('one two three');
     await TextEditorDialog(page).apply();
     await BottomToolbar(page).clickRing(RingButton.Benzene);

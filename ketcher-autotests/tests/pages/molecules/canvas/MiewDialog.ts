@@ -32,6 +32,7 @@ export const MiewDialog = (page: Page) => {
 
     async cancel() {
       await locators.cancelButton.click();
+      await locators.window.waitFor({ state: 'hidden' });
     },
   };
 };

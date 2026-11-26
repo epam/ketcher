@@ -9,7 +9,7 @@ import {
   clickOnCanvas,
   zoomInByKeyboard,
   zoomOutByKeyboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -70,7 +70,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST');
     await TextEditorDialog(page).apply();
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getTextLabelLocator(page, { text: 'TEST' }).click();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -85,7 +85,7 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas(page, 'KET/text-object-for-test.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getTextLabelLocator(page, { text: 'TEXT' }).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -101,7 +101,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).cancel();
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).selectAllText();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -187,7 +187,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getTextLabelLocator(page, { text: '&&&' }).dblclick();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -203,7 +203,7 @@ test.describe('Text tools test cases', () => {
     await getTextLabelLocator(page, {
       text: 'Ketcher is a cool tool',
     }).click();
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -223,7 +223,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();

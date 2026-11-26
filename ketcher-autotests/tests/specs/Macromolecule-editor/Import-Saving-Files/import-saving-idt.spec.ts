@@ -5,7 +5,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { expect, Page, test } from '@fixtures';
 import {
-  copyToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   MacroFileType,
   moveMouseAway,
   openFile,
@@ -13,7 +13,7 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils';
@@ -35,10 +35,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
-import {
-  keyboardPressOnCanvas,
-  keyboardTypeOnCanvas,
-} from '@utils/keyboard/index';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import {
@@ -57,6 +54,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { exitFromEditMode } from '@utils/macromolecules/sequence';
 
 let page: Page;
 
@@ -374,7 +372,7 @@ test.describe('Import-Saving .idt Files', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardTypeOnCanvas(page, 'ttt');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await exitFromEditMode(page);
     await takeEditorScreenshot(page);
   });
 
@@ -930,9 +928,9 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await page.mouse.move(0, 600);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1130,7 +1128,7 @@ test.describe('Import-Saving .idt Files', () => {
       `/iMe-dC2/`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getMonomerLocator(page, Chem.iMe_dC2).click();
     await takeEditorScreenshot(page);
   });

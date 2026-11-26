@@ -7,14 +7,14 @@ import {
   zoomInByKeyboard,
   resetZoomLevelToDefault,
   zoomOutByKeyboard,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   dragMouseTo,
-  copyToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   MonomerType,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   clickOnCanvas,
   keyboardPressOnCanvas,
 } from '@utils';
@@ -3262,7 +3262,7 @@ test(`12. Check that option "Copy" copies the selected monomers and any bonds be
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(MonomerOption.Copy);
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
 
   await takeEditorScreenshot(page);
 });
@@ -3484,8 +3484,8 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
   );
 
   await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3662,9 +3662,9 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
   );
 
   await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
   await CommonTopLeftToolbar(page).clearCanvas();
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -3697,7 +3697,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
   );
 
   await selectAllStructuresOnCanvas(page);
-  await deleteByKeyboard(page);
+  await deleteByKeyboardOnCanvas(page);
   await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {

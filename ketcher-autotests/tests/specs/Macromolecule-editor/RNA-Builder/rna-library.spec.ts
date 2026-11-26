@@ -49,6 +49,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { RnaBuilderErrorDialog } from '@tests/pages/macromolecules/library/RnaBuilderErrorDialog';
 
 async function drawThreeMonomers(page: Page) {
   await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
@@ -384,6 +385,7 @@ test.describe('RNA Library', () => {
     ]);
     await Library(page).rnaBuilder.addToPresets();
     await takeEditorScreenshot(page);
+    await RnaBuilderErrorDialog(page).close();
   });
 
   test('Add Custom preset to Canvas', async () => {
@@ -870,7 +872,7 @@ test.describe('RNA Library', () => {
         page,
         'KET/monomers-connected-with-bonds.ket',
       );
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
@@ -1120,7 +1122,7 @@ test.describe('RNA Library', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -1249,7 +1251,7 @@ test.describe('RNA Library', () => {
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).redo();
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();

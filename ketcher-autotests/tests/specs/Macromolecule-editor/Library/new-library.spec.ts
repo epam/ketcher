@@ -1589,7 +1589,12 @@ for (const monomer of monomerToDrag) {
       pageErrors.push(error.message);
     });
 
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(
+      monomer,
+      { x: 100, y: 100 },
+      false,
+      { timeOut: 10 },
+    );
 
     const allErrors = [...consoleErrors, ...pageErrors];
 

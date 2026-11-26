@@ -10,9 +10,9 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   dragMouseTo,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   keyboardPressOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
@@ -203,7 +203,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await MoleculesTopToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takePageScreenshot(page);
   });
@@ -221,7 +221,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -376,7 +376,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
       force: true,
     });
@@ -397,11 +397,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
       force: true,
     });
-    await keyboardPressOnCanvas(page, 'n');
+    await page.keyboard.press('n');
     await takeEditorScreenshot(page);
   });
 

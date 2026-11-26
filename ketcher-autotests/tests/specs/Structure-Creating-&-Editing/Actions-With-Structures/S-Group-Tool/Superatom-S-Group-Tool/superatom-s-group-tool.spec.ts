@@ -6,14 +6,12 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
-  keyboardPressOnCanvas,
   moveMouseAway,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -132,7 +130,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
     });
@@ -207,7 +205,7 @@ test.describe('Superatom S-Group tool', () => {
       force: true,
     });
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await keyboardPressOnCanvas(page, 'o');
+    await page.keyboard.press('o');
     await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -220,7 +218,9 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
@@ -234,7 +234,10 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await cutAndPaste(page);
+    await page.waitForTimeout(100);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });

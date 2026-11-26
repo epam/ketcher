@@ -6,7 +6,7 @@ import {
   waitForPageInit,
   mapTwoAtoms,
   RxnFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragTo,
   getKet,
 } from '@utils';
@@ -72,7 +72,7 @@ test.describe('Mapping Tools', () => {
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await clickInTheMiddleOfTheCanvas(page);
   });
 
@@ -147,7 +147,7 @@ test.describe('Mapping Tools', () => {
         ReactionMappingType.ReactionMapping,
       );
       await getAtomLocator(page, { atomLabel: 'CEL' }).click();
-      await deleteByKeyboard(page);
+      await deleteByKeyboardOnCanvas(page);
       await takeEditorScreenshot(page);
 
       await CommonTopLeftToolbar(page).undo();

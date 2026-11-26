@@ -10,7 +10,7 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   MolFileFormat,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   keyboardPressOnCanvas,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -68,7 +68,7 @@ test.describe('Chain Tool verification', () => {
       'Molfiles-V2000/chains-expected-file.mol',
     );
     await getBondLocator(page, { bondId: 34 }).click({ force: true });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

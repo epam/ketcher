@@ -7,12 +7,11 @@ import {
   clickOnCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -34,13 +33,13 @@ test.describe('Text tools test cases', () => {
     // Verify if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).selectFontSize(20);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).clickTextEditor();
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).selectFontSize(10);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -95,7 +94,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST123');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).setOptions({
       fontSize: 25,
       isBold: true,
@@ -105,7 +104,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST123' }).dblclick();
     await TextEditorDialog(page).clickTextEditor();
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).setOptions({
       isSubscript: true,
     });
@@ -117,7 +116,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST321');
-    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press(`ControlOrMeta+KeyA`);
     await TextEditorDialog(page).setOptions({
       fontSize: 20,
       isBold: true,
@@ -154,7 +153,9 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEXT001');
     await TextEditorDialog(page).apply();
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 250, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -166,7 +167,9 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas(page, 'KET/two-text-objects.ket');
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();

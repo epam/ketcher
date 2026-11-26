@@ -79,7 +79,9 @@ export async function clickOnCanvas(
 ) {
   const {
     from = 'canvasTopLeft',
-    waitForRenderTimeOut,
+    waitForRenderTimeOut = options?.button !== 'left'
+      ? 0
+      : options?.waitForRenderTimeOut,
     ...clickOptions
   } = options ?? {};
 
@@ -210,19 +212,36 @@ export async function dragTo(
   });
 }
 
-export async function dragMouseTo(page: Page, x: number, y: number) {
+export async function dragMouseTo(
+  page: Page,
+  x: number,
+  y: number,
+  options?: {
+    waitForRenderTimeOut?: number;
+  },
+) {
   await page.mouse.down();
   await page.mouse.move(x, y);
-  await waitForRender(page, async () => {
-    await page.mouse.up();
-  });
+  await waitForRender(
+    page,
+    async () => {
+      await page.mouse.up();
+    },
+    options?.waitForRenderTimeOut,
+  );
 }
 
-export async function dragMouseAndMoveTo(page: Page, shift: number) {
+export async function dragMouseAndMoveTo(
+  page: Page,
+  shift: number,
+  options?: {
+    waitForRenderTimeOut?: number;
+  },
+) {
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
-  await dragMouseTo(page, coordinatesWithShift, y);
+  await dragMouseTo(page, coordinatesWithShift, y, options);
 }
 
 export async function shiftCanvas(page: Page, xShift: number, yShift: number) {

@@ -8,18 +8,14 @@ import {
   openFileAndAddToCanvas,
   Point,
   waitForRender,
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
   resetZoomLevelToDefault,
   ArrowType,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   saveStructureWithReaction,
   selectRectangleArea,
@@ -147,11 +143,15 @@ test.describe('Plus and Arrows tools ', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 100, y + 100);
     await takeEditorScreenshot(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -258,8 +258,8 @@ test.describe('Plus and Arrows tools ', () => {
           point.x - 200 + 20,
           point.y + 15 + 20,
         );
-        await cutToClipboardByKeyboard(page);
-        await pasteFromClipboardByKeyboard(page);
+        await cutFromCanvasToClipboardByKeyboard(page);
+        await pasteFromClipboardToCanvasByKeyboard(page);
 
         await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
       },
@@ -271,21 +271,23 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnCanvas(page, point.x - 150, point.y - 10, {
         from: 'pageTopLeft',
       });
-      await copyToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
 
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async () => {
-      await copyAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100, {
         from: 'pageTopLeft',
       });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(page, point.x - 140, point.y + 100);
     });
@@ -324,29 +326,31 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select reaction arrow, cut and paste it onto the canvas', async () => {
       await getArrowLocator(page, {}).click({ force: true });
-      await cutToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await cutFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
 
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
     test('Select reaction arrow, copy and paste it onto the canvas', async () => {
       await getArrowLocator(page, {}).click({ force: true });
-      await copyToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
 
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async () => {
-      await copyAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100, {
         from: 'pageTopLeft',
       });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await CommonLeftToolbar(page).erase();
+      await CommonLeftToolbar(page).erase({ timeOut: 0 });
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(page, point.x - 140, point.y + 100);
     });
@@ -391,14 +395,14 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the whole reaction and move it', async () => {
       await selectAllStructuresOnCanvas(page);
-      await moveMouseToTheMiddleOfTheScreen(page);
+      await getArrowLocator(page, {}).hover({ force: true });
       await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 
     test('Select reaction arrow, cut and paste it onto the canvas', async () => {
       await getArrowLocator(page, {}).click({ force: true });
-      await cutToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await cutFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
@@ -406,8 +410,8 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(page, point.x + 400, point.y + 100);
 
-      await cutToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+      await cutFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page, { delay: INPUT_DELAY });
 
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
@@ -418,8 +422,8 @@ test.describe('Plus and Arrows tools ', () => {
       });
       await arrow.hover({ force: true });
       await arrow.click({ force: true });
-      await copyToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page);
+      await copyFromCanvasToClipboardByKeyboard(page);
+      await pasteFromClipboardToCanvasByKeyboard(page);
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
@@ -682,8 +686,8 @@ test.describe('Plus and Arrows tools ', () => {
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page, { delay: INPUT_DELAY });
 
     await CommonTopLeftToolbar(page).clearCanvas();
   });
@@ -810,7 +814,9 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -828,7 +834,9 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });

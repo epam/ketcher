@@ -8,8 +8,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   MacroFileType,
   MolFileFormat,
   takeElementScreenshot,
@@ -781,9 +781,9 @@ test('Copy structure with long bonds and paste on canvas', async () => {
   );
   await takeEditorScreenshot(page);
   await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
   await page.mouse.move(300, 300);
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });

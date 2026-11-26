@@ -16,12 +16,11 @@ import {
   RxnFileFormat,
   MolFileFormat,
   dragTo,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -229,7 +228,7 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'AH' }).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -284,7 +283,9 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -298,7 +299,9 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -462,7 +465,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(page, coordinatesWithShift, y);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
       force: true,
     });
@@ -480,7 +483,7 @@ test.describe('Atom Tool', () => {
     Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
     */
     await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'N' }).first().click({
       force: true,
     });
@@ -602,9 +605,13 @@ test.describe('Atom Tool', () => {
       // Wait for AbbreviationLookup 1000ms timer from previous iteration to expire
       // before pressing the next shortcut key, otherwise the lookup popup intercepts it
       await page.waitForTimeout(1100);
-      await waitForRender(page, async () => {
-        await page.keyboard.press(labelKey);
-      });
+      await waitForRender(
+        page,
+        async () => {
+          await page.keyboard.press(labelKey);
+        },
+        50,
+      );
       await clickInTheMiddleOfTheCanvas(page);
       const atom = getAtomLocator(page, { atomLabel: labelKey });
       expect(await atom.count()).toEqual(1);

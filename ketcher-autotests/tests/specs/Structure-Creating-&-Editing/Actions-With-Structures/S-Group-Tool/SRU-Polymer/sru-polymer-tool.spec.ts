@@ -7,12 +7,11 @@ import {
   undoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -179,7 +178,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to delete and undo/redo atom on structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
       force: true,
     });
@@ -264,7 +263,9 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to copy and paste structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 500, {
       from: 'pageTopLeft',
     });
@@ -277,7 +278,9 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to cut and paste structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });

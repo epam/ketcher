@@ -142,8 +142,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheCanvas(page);
-    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

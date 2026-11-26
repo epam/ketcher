@@ -8,9 +8,9 @@ import {
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
   waitForRender,
-  cutToClipboardByKeyboard,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   takeElementScreenshot,
@@ -349,8 +349,8 @@ test.describe(`Bond tool (copy-paste):`, () => {
           from: 'pageTopLeft',
         });
 
-        await copyToClipboardByKeyboard(page);
-        await pasteFromClipboardByKeyboard(page);
+        await copyFromCanvasToClipboardByKeyboard(page);
+        await pasteFromClipboardToCanvasByKeyboard(page);
 
         await clickOnCanvas(page, point.x + 100, point.y, {
           waitForRenderTimeOut: 100,
@@ -358,8 +358,8 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await CommonTopLeftToolbar(page).undo();
 
         await clickInTheMiddleOfTheCanvas(page);
-        await cutToClipboardByKeyboard(page);
-        await pasteFromClipboardByKeyboard(page);
+        await cutFromCanvasToClipboardByKeyboard(page);
+        await pasteFromClipboardToCanvasByKeyboard(page);
         await clickOnCanvas(page, point.x + 100, point.y, {
           waitForRenderTimeOut: 100,
         });

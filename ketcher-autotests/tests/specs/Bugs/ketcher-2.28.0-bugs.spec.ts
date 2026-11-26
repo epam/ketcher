@@ -6,14 +6,14 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
-  copyToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   MacroFileType,
   moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   resetZoomLevelToDefault,
   selectCanvasArea,
   takeEditorScreenshot,
@@ -97,8 +97,8 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 
   await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -317,7 +317,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   });
 
   await selectAllStructuresOnCanvas(page);
-  await copyToClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
   await CommonTopLeftToolbar(page).clearCanvas();
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -325,7 +325,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   );
   await keyboardTypeOnCanvas(page, 'UUU');
   await keyboardPressOnCanvas(page, 'ArrowDown');
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await resetZoomLevelToDefault(page);
 
   await takeEditorScreenshot(page, {
@@ -553,7 +553,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
     bondType: MacroBondType.Hydrogen,
   }).first();
 
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   await hydrogenBond.click({ force: true });
 
   const leftEndSugarfR = getMonomerLocator(page, {
@@ -642,7 +642,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async ({
     bondType: MacroBondType.Hydrogen,
   }).first();
 
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   await hydrogenBond.click({ force: true });
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);

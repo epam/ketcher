@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { type FC, useCallback, useEffect } from 'react';
+import { type FC, useCallback, useEffect, useRef } from 'react';
 import { type MenuProps, contextMenu, Menu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
+import { useStore } from 'react-redux';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
+import type { StoreState } from 'src/script/ui/state/store.types';
 import styles from './ContextMenu.module.less';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import AtomMenuItems from './menuItems/AtomMenuItems';
@@ -36,6 +38,16 @@ import AttachmentGroupMenuItems from './menuItems/AttachmentGroupMenuItems';
 const props: Partial<MenuProps> = {
   animation: false,
   className: styles.contextMenu,
+};
+
+const getFocusedEditorElement = (ketcherId: string): HTMLElement | null => {
+  const activeElement = document.activeElement;
+  return activeElement instanceof HTMLElement &&
+    activeElement
+      .closest('[data-ketcher-id]')
+      ?.getAttribute('data-ketcher-id') === ketcherId
+    ? activeElement
+    : null;
 };
 
 // Takes ketcherId as an argument instead of closing over it, so it stays out of
@@ -103,8 +115,32 @@ const resetMenuPosition = (menuElement: HTMLElement, ketcherId: string) => {
 
 const ContextMenu: FC = () => {
   const { ketcherId } = useAppContext();
+  const store = useStore<StoreState>();
+  const focusedBeforeMenu = useRef<HTMLElement | null>(null);
+  const activeMenuElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    const handleOutsidePointer = (event: MouseEvent) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('.contexify')) {
+        return;
+      }
+
+      const isInEditor =
+        target instanceof Element &&
+        target.closest('[data-ketcher-id]')?.getAttribute('data-ketcher-id') ===
+          ketcherId;
+
+      if (event.type === 'mousedown') {
+        focusedBeforeMenu.current =
+          event.button === 2 && isInEditor
+            ? getFocusedEditorElement(ketcherId)
+            : null;
+      } else if (!isInEditor) {
+        focusedBeforeMenu.current = null;
+      }
+    };
+
     const handleEscapeKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') {
         return;
@@ -125,9 +161,13 @@ const ContextMenu: FC = () => {
     };
 
     document.addEventListener('keydown', handleEscapeKeyDown, true);
+    document.addEventListener('mousedown', handleOutsidePointer, true);
+    document.addEventListener('contextmenu', handleOutsidePointer, true);
 
     return () => {
       document.removeEventListener('keydown', handleEscapeKeyDown, true);
+      document.removeEventListener('mousedown', handleOutsidePointer, true);
+      document.removeEventListener('contextmenu', handleOutsidePointer, true);
     };
   }, [ketcherId]);
 
@@ -163,10 +203,14 @@ const ContextMenu: FC = () => {
     (id: string, isVisible: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       if (isVisible) {
+        if (document.activeElement !== document.body) {
+          focusedBeforeMenu.current = getFocusedEditorElement(ketcherId);
+        }
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector<HTMLElement>(
           '.contexify:last-of-type',
         );
+        activeMenuElement.current = contextMenuElement;
         const submenuElements =
           document.querySelectorAll<HTMLElement>('.contexify_submenu');
         if (contextMenuElement) {
@@ -180,10 +224,23 @@ const ContextMenu: FC = () => {
             adjustSubmenuPosition(submenuElement);
           });
         }
+      } else if (editor.contextMenu[id]) {
+        const previousFocus = focusedBeforeMenu.current;
+        const menuElement = activeMenuElement.current;
+        focusedBeforeMenu.current = null;
+        activeMenuElement.current = null;
+        if (
+          previousFocus?.isConnected &&
+          (document.activeElement === document.body ||
+            menuElement?.contains(document.activeElement)) &&
+          !store.getState().modal
+        ) {
+          previousFocus.focus();
+        }
       }
       editor.contextMenu[id] = isVisible;
     },
-    [ketcherId],
+    [ketcherId, store],
   );
 
   const ketcherEditorRootElement = document.querySelector(

@@ -7,16 +7,15 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   getCachedBodyCenter,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
   readFileContent,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -137,7 +136,9 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-groups-expanded.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -153,7 +154,9 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-groups-expanded.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -167,7 +170,9 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-contracted.mol',
     );
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
@@ -183,7 +188,9 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-contracted.mol',
     );
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -380,7 +387,7 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
     });
@@ -563,7 +570,7 @@ test.describe('Functional Groups', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).hover({
       force: true,
     });
-    await keyboardPressOnCanvas(page, 'n');
+    await keyboardPressOnCanvas(page, 'n', { waitForRenderTimeOut: 50 });
     await takeEditorScreenshot(page);
   });
 
@@ -589,7 +596,7 @@ test.describe('Functional Groups', () => {
       .boundingBox();
     if (point) {
       await page.mouse.move(point.x, point.y);
-      await keyboardPressOnCanvas(page, 'n');
+      await keyboardPressOnCanvas(page, 'n', { waitForRenderTimeOut: 50 });
     }
     await takeEditorScreenshot(page);
   });
@@ -635,7 +642,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -655,7 +662,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });

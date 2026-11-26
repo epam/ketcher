@@ -10,13 +10,12 @@ import {
   clickOnCanvas,
   zoomInByKeyboard,
   zoomOutByKeyboard,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
+  pasteFromClipboardToCanvasByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
 } from '@utils';
-import {
-  copyAndPaste,
-  cutAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -123,7 +122,7 @@ test.describe('Action on simples objects', () => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -146,13 +145,17 @@ test.describe('Action on simples objects', () => {
     const anyPointY = 200;
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await zoomOutByKeyboard(page, { repeat: 5 });
-    await copyAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await CommonTopLeftToolbar(page).undo();
     }
-    await cutAndPaste(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {

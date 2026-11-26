@@ -2,7 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectAllStructuresOnCanvas,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -1961,7 +1961,7 @@ test(`41. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
   await expect(ErrorMessageDialog(page).window).toBeVisible();
   await ErrorMessageDialog(page).close();
 
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
 
   await expect(targetAtom).toBeVisible();
@@ -1975,7 +1975,7 @@ test(`41. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
   await expect(targetAtom).not.toBeVisible();
   await expect(targetBond).not.toBeVisible();
 
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
 
   await expect(targetAtom).toBeVisible();

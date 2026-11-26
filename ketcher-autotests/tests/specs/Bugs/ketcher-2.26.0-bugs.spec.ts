@@ -15,9 +15,9 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-  cutToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
   moveMouseAway,
   RxnFileFormat,
   SdfFileFormat,
@@ -915,7 +915,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1196,14 +1196,14 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 650, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 550, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1598,7 +1598,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);

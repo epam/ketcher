@@ -311,7 +311,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
 
     // extra undo via keyboard — must be a no-op (clicking the disabled
     // button is not possible, so the shortcut is the safe probe)
-    await undoByKeyboard(page);
+    await page.keyboard.press(`ControlOrMeta+KeyZ`);
     await expectMicroMode(page);
     expect(await getAtomLocator(page, {}).count()).toBe(0);
   });

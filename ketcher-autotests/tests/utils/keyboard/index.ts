@@ -83,7 +83,7 @@ export async function keyboardTypeOnCanvas(
   }
 }
 
-export async function deleteByKeyboard(page: Page) {
+export async function deleteByKeyboardOnCanvas(page: Page) {
   await waitForRender(page, async () => {
     await page.keyboard.press('Delete');
   });

@@ -9,9 +9,9 @@ import {
   waitForIndigoToLoad,
   waitForRender,
   clickAfterItemsToMergeInitialization,
-  cutToClipboardByKeyboard,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   moveMouseAway,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -126,7 +126,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
@@ -145,8 +145,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/clean-diff-properties.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 67 }).click({
@@ -162,8 +162,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 600, 300, { from: 'pageTopLeft' });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -184,8 +184,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
         force: true,
       });
     });
-    await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await cutFromCanvasToClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await pasteFromClipboardToCanvasByKeyboard(page, { delay: INPUT_DELAY });
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -206,8 +206,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await getBondLocator(page, { bondId: 18 }).click({ force: true });
     });
-    await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await cutFromCanvasToClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await pasteFromClipboardToCanvasByKeyboard(page, { delay: INPUT_DELAY });
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -229,7 +229,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // 1. Loaded reaction
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
     // 2. Empty canvas - We removed all from canvas by Cut to clipboard
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -282,7 +282,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -299,8 +299,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/clean-diff-properties.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 63 }).click({
@@ -317,8 +317,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -334,8 +334,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
         force: true,
       });
     });
-    await copyToClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await copyFromCanvasToClipboardByKeyboard(page, { delay: INPUT_DELAY });
+    await pasteFromClipboardToCanvasByKeyboard(page, { delay: INPUT_DELAY });
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -351,8 +351,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       await getBondLocator(page, { bondId: 31 }).click({ force: true });
     });
 
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
 
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -366,8 +366,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -383,10 +383,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/clean-diff-properties.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 200, { from: 'pageTopLeft' });
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -399,8 +399,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/generic-groups.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 700, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -414,8 +414,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/generic-groups.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 98 }).click({
@@ -432,8 +432,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickAfterItemsToMergeInitialization(page, 300, 200);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 95 }).click({
@@ -451,8 +451,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 95 }).click({
@@ -469,8 +469,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/R-Group-structure.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -485,8 +485,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Nitrogen atom can't attach to structure
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/R-Group-structure.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await waitForRender(page, async () => {
@@ -505,8 +505,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/s-group-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -521,8 +521,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Can't add atom to structure
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/s-group-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 127 }).click({
@@ -539,8 +539,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -555,8 +555,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Nitrogen atom can't attach to structure
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -575,8 +575,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chiral-structure.mol');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -589,8 +589,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chiral-structure.mol');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -609,8 +609,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction.rxn');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -624,8 +624,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Nitrogen atom can't attach to structure.
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction.rxn');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -647,15 +647,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
     await openFileAndAddToCanvas(page, 'Rxn-V2000/rxn-reaction.rxn');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await openFileAndAddToCanvas(page, 'Rxn-V2000/allenes.rxn');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -676,8 +676,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Rxn-V2000/structure-with-failed-arrow.rxn',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -693,8 +693,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Rxn-V2000/structure-with-failed-arrow.rxn',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -715,8 +715,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Rxn-V2000/arrows-in-different-directions.rxn',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -731,8 +731,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Rxn-V2000/arrows-in-different-directions.rxn',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -754,8 +754,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/structure-with-all-kinds-of-s-groups.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -772,8 +772,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/structure-with-all-kinds-of-s-groups.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -791,8 +791,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-structure.rxn');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -805,8 +805,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-structure.rxn');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 39 }).click({
@@ -825,8 +825,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/all-kinds-of-bonds-test-file.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -838,8 +838,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/stereo-test-structures.ket');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -852,8 +852,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
     await openFileAndAddToCanvas(page, 'KET/stereo-test-structures.ket');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -877,8 +877,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/complex-r-group-structure.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -896,8 +896,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/complex-r-group-structure.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -920,8 +920,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'KET/structure-with-simple-objects-and-text.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 550, 150, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -940,8 +940,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'KET/structure-with-simple-objects-and-text.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -963,8 +963,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/aromatic-structures.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickAfterItemsToMergeInitialization(page, 500, 100);
     await takeEditorScreenshot(page);
   });
@@ -981,8 +981,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/aromatic-structures.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -1002,8 +1002,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/expanded-and-contracted-fg.ket');
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 150, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1017,8 +1017,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/expanded-and-contracted-fg.ket');
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -1041,8 +1041,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/expanded-and-contracted-salts.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 150, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1059,8 +1059,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
       'Molfiles-V2000/expanded-and-contracted-salts.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await cutFromCanvasToClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
@@ -1148,7 +1148,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       smartsString,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await PasteFromClipboardDialog(page).cancel();
     await page.keyboard.press('ControlOrMeta+Alt+v');
     // await clickInTheMiddleOfTheCanvas(page, 'left', {

@@ -2,8 +2,8 @@ import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  cutFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   moveMouseToTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseAway,
@@ -184,7 +184,7 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   );
   await takeEditorScreenshot(page);
 
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
   // 108 115 122 123
   await getBondLocator(page, { bondId: 108 }).first().click({ force: true });
   await getBondLocator(page, { bondId: 115 }).first().click({ force: true });
@@ -503,7 +503,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).erase();
+  await CommonLeftToolbar(page).erase({ timeOut: 0 });
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None },
@@ -555,12 +555,12 @@ test(`Verify that copying and pasting structures with all bond types in macromol
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await selectAllStructuresOnCanvas(page);
-  await cutToClipboardByKeyboard(page);
+  await cutFromCanvasToClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await moveMouseToTheMiddleOfTheScreen(page);
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
   await moveMouseAway(page);
 
   await takeEditorScreenshot(page);

@@ -3,7 +3,6 @@ import {
   clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -161,9 +160,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
     await AtomPropertiesDialog(page).apply();
     if (point) {
-      await waitForRender(page, async () => {
-        await page.mouse.move(point.x, point.y);
-      });
+      await page.mouse.move(point.x, point.y);
     }
     await takeEditorScreenshot(page);
   });
@@ -190,9 +187,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
       },
     });
     if (point) {
-      await waitForRender(page, async () => {
-        await page.mouse.move(point.x, point.y);
-      });
+      await page.mouse.move(point.x, point.y);
     }
     await takeEditorScreenshot(page);
   });

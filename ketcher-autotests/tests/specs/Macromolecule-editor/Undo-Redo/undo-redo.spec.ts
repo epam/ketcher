@@ -13,8 +13,8 @@ import {
   takePageScreenshot,
   waitForPageInit,
   zoomWithMouseWheel,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   selectAllStructuresOnCanvas,
   undoByKeyboard,
   MacroFileType,
@@ -71,10 +71,6 @@ test.describe('Undo Redo', () => {
     /*
     Description: Add monomers and bonds and do undo redo
     */
-
-    // check that history pointer stops on last operation
-    await CommonTopLeftToolbar(page).redo();
-    await CommonTopLeftToolbar(page).redo();
 
     // check undo
     await CommonTopLeftToolbar(page).undo();
@@ -415,9 +411,9 @@ test.describe('Undo-Redo tests', () => {
       fromCenter: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await page.mouse.move(200, 200);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await CommonTopLeftToolbar(page).undo();

@@ -7,12 +7,11 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
-  selectPartOfMolecules,
   clickOnCanvas,
   setMolecule,
   moveMouseAway,
@@ -20,7 +19,7 @@ import {
   SequenceFileFormat,
   readFileContent,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { selectAllStructuresOnCanvas, selectCanvasArea } from '@utils/canvas';
 import { waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -280,8 +279,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     const symbolU = getSymbolLocator(page, { symbolAlias: 'U' }).first();
     await modifyInRnaBuilder(page, symbolU);
-    await keyboardPressOnCanvas(page, 'Enter');
-    await keyboardTypeOnCanvas(page, 'AAA');
+    await keyboardPressOnCanvas(page, 'Enter', { waitForRenderTimeOut: 50 });
+    await keyboardTypeOnCanvas(page, 'AAA', { waitForRenderTimeOut: 50 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -339,14 +338,14 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       fromCenter: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
+    await copyFromCanvasToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
     await keyboardTypeOnCanvas(page, 'UUU');
     await keyboardPressOnCanvas(page, 'ArrowUp');
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardToCanvasByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -557,7 +556,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Undo_Redo operation for bonds and molecules (multi-select) works wrong.ket',
     );
-    await selectPartOfMolecules(page);
+    await selectCanvasArea(page, { x: 380, y: 290 }, { x: 650, y: 450 });
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

@@ -1,13 +1,13 @@
 import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
-  copyToClipboardByKeyboard,
+  copyFromCanvasToClipboardByKeyboard,
   MolFileFormat,
   Monomer,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
-  pasteFromClipboardByKeyboard,
+  pasteFromClipboardToCanvasByKeyboard,
   takeEditorScreenshot,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
@@ -2158,8 +2158,8 @@ test(`26. Copy and paste replaced monomers`, async () => {
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await selectAllSymbols(page, sequence);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await copyFromCanvasToClipboardByKeyboard(page);
+  await pasteFromClipboardToCanvasByKeyboard(page);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

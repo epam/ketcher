@@ -1,7 +1,7 @@
 import { Page, test } from '@fixtures';
 import {
   clickOnCanvas,
-  deleteByKeyboard,
+  deleteByKeyboardOnCanvas,
   dragMouseTo,
   dragTo,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -188,11 +188,11 @@ test.describe('Rectangle selection tool', () => {
       SelectionToolType.Rectangle,
     );
     await selectReactionLeftPart(page);
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
       force: true,
     });
-    await deleteByKeyboard(page);
+    await deleteByKeyboardOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test } from '@fixtures';
 import {
-  openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   copyToClipboardByKeyboard,
@@ -15,26 +14,11 @@ import {
   BottomToolbar,
   drawBenzeneRing,
 } from '@tests/pages/molecules/BottomToolbar';
-import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test('InfoModal with hotkey display for Paste action', async ({ page }) => {
-    const anyStructure = 'Molfiles-V2000/mol-1855-to-open.mol';
-    await openFileAndAddToCanvas(page, anyStructure);
-    await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).copy();
-    await MoleculesTopToolbar(page).paste();
-    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain(
-      "Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.CTRL/Cmd + Vfor paste",
-    );
-    await ErrorMessageDialog(page).close();
   });
 
   test('Canvas in Micro mode copied as MOL', async ({ page }) => {

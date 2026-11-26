@@ -609,12 +609,14 @@ export function fromSgroupDeletion(
 
     sG.neiAtoms.forEach((aid) => {
       if (
-        atomGetAttribute(restruct, aid, 'label') === '*' &&
-        !endsOfOtherPolymers.has(aid)
+        atomGetAttribute(restruct, aid, 'label') !== '*' ||
+        endsOfOtherPolymers.has(aid)
       ) {
-        action.addOp(new AtomAttribute(aid, 'label', 'C'));
-        action.addOp(new CalcImplicitH([aid]));
+        return;
       }
+
+      action.addOp(new AtomAttribute(aid, 'label', 'C'));
+      action.addOp(new CalcImplicitH([aid]));
     });
   }
 
@@ -664,54 +666,55 @@ export function fromSgroupDeletion(
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;
 
-      if (isNumber(leaveAtomId) && isNumber(attachmentAtomId)) {
-        const apNumber = attachmentPoint.attachmentPointNumber;
-        const isOccupied = [...struct.bonds.values()].some(
-          ({
-            begin: bondBegin,
-            end: bondEnd,
-            beginSuperatomAttachmentPointNumber,
-            endSuperatomAttachmentPointNumber,
-          }: BondAttributes) => {
-            const isAttached =
-              bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
-            if (!isAttached) return false;
-            const otherAtomId =
-              bondBegin === attachmentAtomId ? bondEnd : bondBegin;
-            if (otherAtomId === leaveAtomId) return false;
-            if (!atoms.includes(otherAtomId)) {
-              const bondApNumber =
-                bondBegin === attachmentAtomId
-                  ? beginSuperatomAttachmentPointNumber
-                  : endSuperatomAttachmentPointNumber;
-              return isNumber(bondApNumber) && isNumber(apNumber)
-                ? bondApNumber === apNumber
-                : true;
+      if (!isNumber(leaveAtomId) || !isNumber(attachmentAtomId)) {
+        return;
+      }
+      const apNumber = attachmentPoint.attachmentPointNumber;
+      const isOccupied = [...struct.bonds.values()].some(
+        ({
+          begin: bondBegin,
+          end: bondEnd,
+          beginSuperatomAttachmentPointNumber,
+          endSuperatomAttachmentPointNumber,
+        }: BondAttributes) => {
+          const isAttached =
+            bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
+          if (!isAttached) return false;
+          const otherAtomId =
+            bondBegin === attachmentAtomId ? bondEnd : bondBegin;
+          if (otherAtomId === leaveAtomId) return false;
+          if (!atoms.includes(otherAtomId)) {
+            const bondApNumber =
+              bondBegin === attachmentAtomId
+                ? beginSuperatomAttachmentPointNumber
+                : endSuperatomAttachmentPointNumber;
+            return isNumber(bondApNumber) && isNumber(apNumber)
+              ? bondApNumber === apNumber
+              : true;
+          }
+          return false;
+        },
+      );
+
+      if (isOccupied) {
+        struct.bonds.forEach(
+          (
+            { begin: bondBegin, end: bondEnd }: BondAttributes,
+            bondId: number,
+          ) => {
+            if (bondBegin === leaveAtomId || bondEnd === leaveAtomId) {
+              action.addOp(new BondDelete(bondId));
             }
-            return false;
           },
         );
-
-        if (isOccupied) {
-          struct.bonds.forEach(
-            (
-              { begin: bondBegin, end: bondEnd }: BondAttributes,
-              bondId: number,
-            ) => {
-              if (bondBegin === leaveAtomId || bondEnd === leaveAtomId) {
-                action.addOp(new BondDelete(bondId));
-              }
-            },
-          );
-          action.addOp(new AtomDelete(leaveAtomId));
-        } else if (isExpanded) {
-          action.addOp(new AtomAttribute(leaveAtomId, 'rglabel', null));
-        } else {
-          const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
-          const newLabel = monomerCaps?.[apLabel] || 'H';
-          action.addOp(new AtomAttribute(leaveAtomId, 'label', newLabel));
-          action.addOp(new AtomAttribute(leaveAtomId, 'rglabel', null));
-        }
+        action.addOp(new AtomDelete(leaveAtomId));
+      } else if (isExpanded) {
+        action.addOp(new AtomAttribute(leaveAtomId, 'rglabel', null));
+      } else {
+        const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
+        const newLabel = monomerCaps?.[apLabel] || 'H';
+        action.addOp(new AtomAttribute(leaveAtomId, 'label', newLabel));
+        action.addOp(new AtomAttribute(leaveAtomId, 'rglabel', null));
       }
     });
   }
@@ -777,10 +780,12 @@ export function fromSgroupAddition(
     restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
       const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
 
-      if (plainCarbon && atomGetDegree(restruct, aid) === 1) {
-        asteriskAction.addOp(new AtomAttribute(aid, 'label', '*'));
-        asteriskAction.addOp(new CalcImplicitH([aid]));
+      if (!plainCarbon || atomGetDegree(restruct, aid) !== 1) {
+        return;
       }
+
+      asteriskAction.addOp(new AtomAttribute(aid, 'label', '*'));
+      asteriskAction.addOp(new CalcImplicitH([aid]));
     });
 
     asteriskAction = asteriskAction.perform(restruct);

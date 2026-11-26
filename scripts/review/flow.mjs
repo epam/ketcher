@@ -45,6 +45,7 @@ import { runLinkedIssue, runVerification } from './verify.mjs';
  * @property {number} prNumber
  * @property {PullRequest} pr read before the round, for the models and labels
  * @property {GitHub} github
+ * @property {string} [repo] `owner/name`, so a location can link to the code
  * @property {string} baseDir the base checkout: prompts, rules, documents
  * @property {string} prDir the pull request checkout: what the runs read
  * @property {Models} models
@@ -362,9 +363,13 @@ async function roundOutput(options, pr, input, results) {
     ...input.plan.posted,
     ...fingerprints(results.confirmed),
   ]);
+  const source = options.repo
+    ? { repo: options.repo, head: pr.headSha }
+    : undefined;
   /** @type {import('./format.mjs').BriefInput} */
   const briefInput = {
     state: { round: input.plan.round, head: pr.headSha, posted },
+    source,
     range: input.range,
     linkedIssue: results.linked.answer,
     prType: prType({
@@ -381,7 +386,7 @@ async function roundOutput(options, pr, input, results) {
     skippedFiles: input.diff.skipped.length,
   };
   return {
-    comments: split.inline.map(inlineComment),
+    comments: split.inline.map((finding) => inlineComment(finding, source)),
     findings: split.inline,
     briefText: (failure) =>
       brief({

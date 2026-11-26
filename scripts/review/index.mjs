@@ -109,6 +109,7 @@ async function main(args, env) {
       prNumber: settings.prNumber,
       pr,
       github,
+      repo: settings.repo,
       baseDir: settings.baseDir,
       prDir: settings.prDir,
       models,

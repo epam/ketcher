@@ -1,4 +1,4 @@
-**major** · R5 · The cast hides a wrong type.
+**major** · Rule R5 · The cast hides a wrong type.
 
 Failing scenario: Opening a KET file without atoms throws.
 

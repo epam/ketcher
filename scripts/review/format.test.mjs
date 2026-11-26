@@ -5,8 +5,10 @@ import { parseDiff } from './diff.mjs';
 import {
   brief,
   briefLine,
+  findingLabel,
   inlineComment,
   limitComment,
+  locationText,
   plain,
   splitForPosting,
 } from './format.mjs';
@@ -16,6 +18,8 @@ const fixture = (name) =>
   readFileSync(new URL(`../fixtures/review/${name}`, import.meta.url), 'utf8');
 
 const HEAD = 'a'.repeat(40);
+const SOURCE = { repo: 'epam/ketcher', head: HEAD };
+const blob = `https://github.com/epam/ketcher/blob/${HEAD}`;
 
 const finding = (fields) => ({
   file: 'src/Editor.ts',
@@ -100,10 +104,81 @@ test('an inline comment gives severity, ID, claim, scenario and locations', () =
   assert.equal(comment.body, fixture('inline-comment.md').trimEnd());
 });
 
+test('the label names a rule or an invariant and leaves out none', () => {
+  assert.equal(findingLabel(finding({ id: 'R5' })), '**major** · Rule R5');
+  assert.equal(findingLabel(finding({ id: 'D1' })), '**major** · Invariant D1');
+  assert.equal(findingLabel(finding({ id: 'none' })), '**major**');
+  assert.equal(
+    briefLine(finding({ id: 'none', severity: 'nit' })),
+    '- `src/Editor.ts:2` · **nit** · The cast hides a wrong type.',
+  );
+});
+
+test('a location links to its line of the reviewed commit', () => {
+  assert.equal(
+    locationText('src/Editor.ts:2', SOURCE),
+    `[\`src/Editor.ts:2\`](${blob}/src/Editor.ts#L2)`,
+  );
+});
+
+test('a location stays plain code without a source or without a line', () => {
+  assert.equal(locationText('src/Editor.ts:2'), '`src/Editor.ts:2`');
+  assert.equal(locationText('src/Editor.ts', SOURCE), '`src/Editor.ts`');
+});
+
+test('a path cannot end the link destination early', () => {
+  // These are harmless in the link text; in the destination a parenthesis
+  // ends the link, `#` starts the fragment and `?` starts a query string.
+  assert.equal(
+    locationText('src/a (copy).ts:7', SOURCE),
+    `[\`src/a (copy).ts:7\`](${blob}/src/a%20%28copy%29.ts#L7)`,
+  );
+  assert.equal(
+    locationText('src/a#b.ts:5', SOURCE),
+    `[\`src/a#b.ts:5\`](${blob}/src/a%23b.ts#L5)`,
+  );
+  assert.equal(
+    locationText('src/a?b.ts:5', SOURCE),
+    `[\`src/a?b.ts:5\`](${blob}/src/a%3Fb.ts#L5)`,
+  );
+});
+
+test('the label tells a rule from an invariant by its ID', () => {
+  assert.equal(findingLabel(finding({ id: 'R12' })), '**major** · Rule R12');
+  assert.equal(findingLabel(finding({ id: 'A8' })), '**major** · Invariant A8');
+});
+
+test('a brief line links the finding to its line', () => {
+  assert.equal(
+    briefLine(finding(), SOURCE),
+    `- [\`src/Editor.ts:2\`](${blob}/src/Editor.ts#L2) · **major** · Rule R5 · The cast hides a wrong type.`,
+  );
+});
+
+test('an inline comment links the other locations and the existing code', () => {
+  const comment = inlineComment(
+    finding({
+      locations: ['src/Editor.ts:2', 'src/A.ts:5'],
+      references: ['src/util.ts:9'],
+    }),
+    SOURCE,
+  );
+  assert.ok(
+    comment.body.includes(`Also at: [\`src/A.ts:5\`](${blob}/src/A.ts#L5)`),
+    comment.body,
+  );
+  assert.ok(
+    comment.body.includes(
+      `Existing code: [\`src/util.ts:9\`](${blob}/src/util.ts#L9)`,
+    ),
+    comment.body,
+  );
+});
+
 test('a brief line cannot break out of its code span', () => {
   assert.equal(
     briefLine(finding({ file: 'a`b.ts' })),
-    "- `a'b.ts:2` · **major** · R5 · The cast hides a wrong type.",
+    "- `a'b.ts:2` · **major** · Rule R5 · The cast hides a wrong type.",
   );
 });
 
@@ -113,6 +188,7 @@ test('the brief states everything the output contract asks for', () => {
   const outside = finding({ line: 40, claim: 'Old code repeats it.' });
   const text = brief({
     state: { round: 2, head: HEAD, posted: ['0123456789abcdef'] },
+    source: SOURCE,
     range: { from: 'b'.repeat(40), kind: 'incremental' },
     linkedIssue: {
       number: 123,

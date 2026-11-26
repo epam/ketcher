@@ -42,13 +42,19 @@ const FRONTMATTER = /^---\n[\s\S]*?\n---\n/;
 /**
  * The part of the code-review SKILL.md that every lens and role shares:
  * without the frontmatter and without the section for the dispatcher.
+ * Throws when the dispatcher heading is missing: a renamed heading would
+ * otherwise send the dispatcher's instructions to every model run.
  * @param {string} skillText
  */
 export function sharedPrompt(skillText) {
   const body = skillText.replace(FRONTMATTER, '');
   const end = body.indexOf(DISPATCHER_HEADING);
-  const shared = end === -1 ? body : body.slice(0, end);
-  return shared.trim();
+  if (end === -1) {
+    throw new Error(
+      `The code-review SKILL.md has no "${DISPATCHER_HEADING.trim()}" heading, so the hub cannot cut the shared prompt from it.`,
+    );
+  }
+  return body.slice(0, end).trim();
 }
 
 /**

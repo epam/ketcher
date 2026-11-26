@@ -11,6 +11,12 @@ import { writeMarker } from './state.mjs';
 /** @typedef {import('./diff.mjs').DiffFile} DiffFile */
 
 /**
+ * Where the reviewed code is, so that a location can link to it: the
+ * `owner/name` of the repository and the commit the round reviewed.
+ * @typedef {{ repo: string, head: string }} CodeSource
+ */
+
+/**
  * The answer of the linked-issue run, with the issue number. Without
  * `fixesIssue` the run gave no answer.
  * @typedef {object} LinkedIssue
@@ -35,6 +41,7 @@ import { writeMarker } from './state.mjs';
  * @property {number} skippedFiles files left out of the finder passes
  * @property {Finding[]} [inline] confirmed, meant for an inline comment
  * @property {string} [inlineFailure] why the inline review could not be posted
+ * @property {CodeSource} [source] makes every location a link
  */
 
 /** Put after `@`, so GitHub does not notify the named account. */
@@ -59,6 +66,56 @@ const bySeverity = (a, b) =>
  * @param {string} location
  */
 const code = (location) => `\`${location.replaceAll('`', "'")}\``;
+
+/** `path:line`, as the location schema writes it. */
+const LOCATION = /^(?<path>.+):(?<line>[1-9][0-9]*)$/;
+
+/**
+ * A rule of `review-rules.md`. Every other ID the schema takes names an
+ * invariant, which `invariants.md` labels `D1`, `A1`, `B1` and so on.
+ */
+const RULE_ID = /^R[0-9]+$/;
+
+/**
+ * Characters `encodeURI` leaves as they are and that would end the path of
+ * the link: `)` closes the Markdown destination, `#` starts the fragment
+ * the line number needs, and `?` starts a query string. `(` goes with `)`,
+ * so a reader of the link sees a balanced pair.
+ */
+const BREAKS_LINK = /[()#?]/g;
+
+/** `%28` and so on, for a character that would end the link's path. */
+const percent = (character) =>
+  `%${character.codePointAt(0).toString(16).toUpperCase()}`;
+
+/**
+ * A location as inline code, and as a link to that line on GitHub when the
+ * round knows where the reviewed code is. A reader opens the code from the
+ * comment instead of searching for the line by hand. A location the schema
+ * would not accept stays plain code.
+ * @param {string} location
+ * @param {CodeSource} [source]
+ */
+export function locationText(location, source) {
+  const match = source && LOCATION.exec(location);
+  if (!match?.groups) {
+    return code(location);
+  }
+  const { path, line } = match.groups;
+  // A path is written by a model run, so anything that would end the link
+  // early is encoded: the link cannot break out of its destination, and it
+  // keeps pointing at the line.
+  const target = encodeURI(path).replaceAll(BREAKS_LINK, percent);
+  return `[${code(location)}](https://github.com/${source.repo}/blob/${source.head}/${target}#L${line})`;
+}
+
+/**
+ * The locations of one list, separated by commas.
+ * @param {string[]} locations
+ * @param {CodeSource} [source]
+ */
+const locationList = (locations, source) =>
+  locations.map((location) => locationText(location, source)).join(', ');
 
 /** A closed inline code span, such as `a < b`. */
 const CODE_SPAN = /(`[^`]*`)/;
@@ -123,22 +180,42 @@ export function splitForPosting(findings, files, cap = MAX_INLINE_COMMENTS) {
 }
 
 /**
- * One inline review comment, in the fields the GitHub API takes.
+ * The severity and, when one covers the finding, the rule or invariant:
+ * `**major** · Rule R5`. A `none` ID is left out, since it tells the reader
+ * nothing.
  * @param {Finding} finding
  */
-export function inlineComment(finding) {
+export function findingLabel(finding) {
+  const parts = [`**${finding.severity}**`];
+  if (finding.id !== 'none') {
+    const kind = RULE_ID.test(finding.id) ? 'Rule' : 'Invariant';
+    parts.push(`${kind} ${finding.id}`);
+  }
+  return parts.join(' · ');
+}
+
+/**
+ * One inline review comment, in the fields the GitHub API takes. GitHub
+ * anchors it on the line itself, so only the other locations are written.
+ * @param {Finding} finding
+ * @param {CodeSource} [source]
+ */
+export function inlineComment(finding, source) {
   const primary = `${finding.file}:${finding.line}`;
   const others = finding.locations.filter((location) => location !== primary);
   const lines = [
-    `**${finding.severity}** · ${finding.id} · ${plain(finding.claim)}`,
+    `${findingLabel(finding)} · ${plain(finding.claim)}`,
     '',
     `Failing scenario: ${plain(finding.scenario)}`,
   ];
   if (others.length > 0) {
-    lines.push('', `Also at: ${others.map(code).join(', ')}`);
+    lines.push('', `Also at: ${locationList(others, source)}`);
   }
   if (finding.references.length > 0) {
-    lines.push('', `Existing code: ${finding.references.map(code).join(', ')}`);
+    lines.push(
+      '',
+      `Existing code: ${locationList(finding.references, source)}`,
+    );
   }
   return { path: finding.file, line: finding.line, body: lines.join('\n') };
 }
@@ -146,10 +223,11 @@ export function inlineComment(finding) {
 /**
  * One finding as a line of the brief.
  * @param {Finding} finding
+ * @param {CodeSource} [source]
  */
-export function briefLine(finding) {
-  const location = code(`${finding.file}:${finding.line}`);
-  return `- ${location} · **${finding.severity}** · ${finding.id} · ${plain(finding.claim)}`;
+export function briefLine(finding, source) {
+  const location = locationText(`${finding.file}:${finding.line}`, source);
+  return `- ${location} · ${findingLabel(finding)} · ${plain(finding.claim)}`;
 }
 
 /** @param {LinkedIssue | undefined} issue */
@@ -210,7 +288,7 @@ function inlineFailureSection(input) {
   return section('Findings without an inline comment', [
     `GitHub did not take these findings as comments: ${plain(input.inlineFailure)}`,
     '',
-    ...(input.inline ?? []).map(briefLine),
+    ...(input.inline ?? []).map((finding) => briefLine(finding, input.source)),
   ]);
 }
 
@@ -260,8 +338,14 @@ export function brief(input, maxRounds = MAX_ROUNDS) {
   return [
     ...lines,
     ...inlineFailureSection(input),
-    ...section('Over the comment cap', input.overflow.map(briefLine)),
-    ...section('Outside the diff', input.outsideDiff.map(briefLine)),
+    ...section(
+      'Over the comment cap',
+      input.overflow.map((finding) => briefLine(finding, input.source)),
+    ),
+    ...section(
+      'Outside the diff',
+      input.outsideDiff.map((finding) => briefLine(finding, input.source)),
+    ),
     ...section(
       'Passes without a result',
       input.failedPasses.map((pass) => `- ${code(pass)}`),

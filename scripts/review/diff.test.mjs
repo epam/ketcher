@@ -95,6 +95,11 @@ test('paths with spaces and quoted non-ASCII paths are read', () => {
   assert.equal(byPath('ékezet.ts').oldPath, 'ékezet.ts');
 });
 
+test('a file keeps the text of its added lines, without the plus', () => {
+  assert.deepEqual(byPath('renamed-new.ts').added, ['E']);
+  assert.deepEqual(byPath('dashes.ts').added, []);
+});
+
 test('each file keeps its own part of the diff text', () => {
   const patch = byPath('mod.ts').patch;
   assert.ok(patch.startsWith('diff --git a/mod.ts b/mod.ts\n'));

@@ -138,12 +138,17 @@ const confirmedVerdict = {
  * A fake run: the security lens reports one finding on each file it sees,
  * and the verifier confirms every finding.
  */
-function fakeRun() {
+function fakeRun({ same = false } = {}) {
   const calls = [];
   const run = async ({ args, input }) => {
     const prompt = promptOf(args);
     calls.push({ prompt, input });
     const done = { ok: true, costUsd: 0, durationMs: 1, models: [] };
+    if (prompt === 'Duplicates prompt') {
+      // The round's finding is number 1, the extra finding number 2.
+      const pairs = [{ first: 1, second: 2, same, confidence: 'high' }];
+      return { ...done, output: { pairs } };
+    }
     if (prompt === 'Security prompt') {
       const findings = ['src/a.ts', 'src/b.ts']
         .filter((file) => input.includes(`b/${file}`))
@@ -217,4 +222,52 @@ test('no extra pass when the round already used its verification cap', async () 
   });
   assert.equal(calls.length, 0);
   assert.deepEqual(result.passes, []);
+});
+
+/** A round finding at the line the extra security pass reports on. */
+const roundFinding = confirmedFinding({
+  file: 'src/b.ts',
+  alsoCheck: 'security',
+  claim: 'The label reaches the DOM unescaped.',
+});
+
+/** Runs the deepening of a round that already has `roundFinding`. */
+const deepenWithRound = (run) =>
+  runDeepening({
+    confirmed: [roundFinding],
+    findings: [],
+    known: [roundFinding.fingerprint],
+    round: [roundFinding],
+    verified: 1,
+    prompts: { security: 'Security prompt' },
+    verifierPrompt: 'Verifier prompt',
+    duplicatesPrompt: 'Duplicates prompt',
+    context,
+    finderSettings: settingsWith(run),
+    verifierSettings: settingsWith(run),
+  });
+
+test('an extra finding that repeats a finding of the round is dropped', async () => {
+  const { run, calls } = fakeRun({ same: true });
+  const result = await deepenWithRound(run);
+  assert.deepEqual(
+    calls.map((call) => call.prompt),
+    ['Security prompt', 'Duplicates prompt'],
+  );
+  assert.deepEqual(result.confirmed, []);
+  assert.equal(result.runs.length, 2);
+});
+
+test('an extra finding that is a new problem is verified', async () => {
+  const { run, calls } = fakeRun({ same: false });
+  const result = await deepenWithRound(run);
+  assert.deepEqual(
+    calls.map((call) => call.prompt),
+    ['Security prompt', 'Duplicates prompt', 'Verifier prompt'],
+  );
+  assert.equal(result.confirmed.length, 1);
+  assert.equal(
+    result.confirmed[0].claim,
+    'Untrusted text reaches HTML in src/b.ts.',
+  );
 });

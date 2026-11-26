@@ -2,9 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   fingerprint,
+  freshFindings,
   mergeFindings,
   normalizeClaim,
-  prepareFindings,
+  rankAndCap,
   verificationRank,
 } from './merge.mjs';
 
@@ -104,35 +105,31 @@ test('rank: blockers, then several lenses, then majors, then nits', () => {
 });
 
 test('findings without a failing scenario are dropped and counted', () => {
-  const result = prepareFindings([
+  const result = freshFindings([
     finding({ line: 10 }),
     finding({ line: 50, scenario: '   ' }),
   ]);
-  assert.equal(result.toVerify.length, 1);
+  assert.equal(result.fresh.length, 1);
   assert.equal(result.noScenario, 1);
 });
 
 test('a finding posted in an earlier round is not verified again', () => {
   const posted = fingerprint(finding({}));
-  const result = prepareFindings([finding({}), finding({ id: 'R7' })], {
-    posted: [posted],
-  });
+  const result = freshFindings([finding({}), finding({ id: 'R7' })], [posted]);
   assert.deepEqual(
-    result.toVerify.map((merged) => merged.id),
+    result.fresh.map((merged) => merged.id),
     ['R7'],
   );
   assert.equal(result.alreadyPosted, 1);
 });
 
 test('at most N go to verification, blockers first, the rest is overflow', () => {
-  const result = prepareFindings(
-    [
-      finding({ line: 10, severity: 'nit' }),
-      finding({ line: 30 }),
-      finding({ line: 50, severity: 'blocker' }),
-    ],
-    { limit: 2 },
-  );
+  const { fresh } = freshFindings([
+    finding({ line: 10, severity: 'nit' }),
+    finding({ line: 30 }),
+    finding({ line: 50, severity: 'blocker' }),
+  ]);
+  const result = rankAndCap(fresh, 2);
   assert.deepEqual(
     result.toVerify.map((merged) => merged.severity),
     ['blocker', 'major'],

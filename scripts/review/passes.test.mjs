@@ -46,6 +46,12 @@ test('the shared prompt has no frontmatter and no dispatcher section', () => {
   assert.ok(!shared.includes('## For the dispatcher'));
 });
 
+test('a SKILL.md without the dispatcher heading stops the round', () => {
+  const skill =
+    '---\nname: code-review\n---\n\nShared text.\n\n## Dispatch\n\nSteps.\n';
+  assert.throws(() => sharedPrompt(skill), /For the dispatcher/);
+});
+
 test('every lens and role gets the shared part and its own file', () => {
   const roles = [VERIFIER_ROLE, LINKED_ISSUE_ROLE];
   for (const name of [...TRIGGERS.map((t) => t.lens), ...roles]) {

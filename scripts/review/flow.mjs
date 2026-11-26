@@ -6,7 +6,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { RULE_FILE } from '../agent-docs/rules.mjs';
-import { parseDiff as parsePanelDiff, pickPanel } from '../review-panel.mjs';
+import { panelFiles, pickPanel } from '../review-panel.mjs';
 import {
   DUPLICATES_ROLE,
   LINKED_ISSUE_ROLE,
@@ -14,14 +14,13 @@ import {
 } from './config.mjs';
 import { runDeepening } from './deepen.mjs';
 import { filePath, parseDiff } from './diff.mjs';
-import { runDuplicates } from './duplicates.mjs';
+import { findingsToVerify } from './duplicates.mjs';
 import {
   brief,
   inlineComment,
   limitComment,
   splitForPosting,
 } from './format.mjs';
-import { freshFindings, rankAndCap } from './merge.mjs';
 import { ranModels, reviewLabels } from './models.mjs';
 import { readRolePrompt, runFinderPasses } from './passes.mjs';
 import { prType } from './pr-type.mjs';
@@ -46,6 +45,7 @@ import { runLinkedIssue, runVerification } from './verify.mjs';
  * @property {number} prNumber
  * @property {PullRequest} pr read before the round, for the models and labels
  * @property {GitHub} github
+ * @property {string} [repo] `owner/name`, so a location can link to the code
  * @property {string} baseDir the base checkout: prompts, rules, documents
  * @property {string} prDir the pull request checkout: what the runs read
  * @property {Models} models
@@ -148,11 +148,13 @@ function reviewContext(baseDir, diff) {
 }
 
 /**
- * The lenses the panel script picks for the reviewed diff.
- * @param {string} diffText
+ * The lenses the panel script picks for the reviewed files. The panel gets
+ * the files this round already parsed, so it sees the same files as the
+ * rest of the round.
+ * @param {import('./diff.mjs').DiffFile[]} files
  */
-const panelLenses = (diffText) =>
-  pickPanel(parsePanelDiff(diffText)).map((item) => item.lens);
+const panelLenses = (files) =>
+  pickPanel(panelFiles(files)).map((item) => item.lens);
 
 /**
  * Reads everything the round reviews: the range, the diff, the panel, the
@@ -168,7 +170,7 @@ async function readRound({ github, baseDir, prNumber }, pr, plan) {
   const diff = filterDiff(files);
   const { context, ruleErrors } = reviewContext(baseDir, diff);
   const linkedIssues = await github.linkedIssues(prNumber);
-  const lenses = panelLenses(diff.text);
+  const lenses = panelLenses(diff.reviewed);
   return {
     plan,
     range,
@@ -243,23 +245,6 @@ async function linkedIssueStep({ github, baseDir }, step) {
 }
 
 /**
- * The findings of the round that go to verification: new ones only, with
- * the duplicates merged, ranked and capped.
- * @param {ReviewOptions} options
- * @param {{ findings: LensFinding[], posted: string[], settings: RunSettings }} step
- */
-async function prepareForVerification({ baseDir }, step) {
-  const { fresh } = freshFindings(step.findings, step.posted);
-  const duplicates = await runDuplicates({
-    findings: fresh,
-    prompt: readRolePrompt(baseDir, DUPLICATES_ROLE),
-    settings: step.settings,
-  });
-  const { toVerify, overflow } = rankAndCap(duplicates.findings);
-  return { toVerify, overflow, duplicates };
-}
-
-/**
  * The model runs of a round: finders, duplicates, verification, deepening
  * and the linked issue.
  * @param {ReviewOptions} options
@@ -276,9 +261,11 @@ async function runModels(options, { lenses, context, plan, linkedIssues }) {
     context,
     settings: settings.finder,
   });
-  const prepared = await prepareForVerification(options, {
+  const duplicatesPrompt = readRolePrompt(options.baseDir, DUPLICATES_ROLE);
+  const prepared = await findingsToVerify({
     findings: finders.findings,
     posted: plan.posted,
+    prompt: duplicatesPrompt,
     settings: settings.verifier,
   });
   const verification = await runVerification({
@@ -292,9 +279,11 @@ async function runModels(options, { lenses, context, plan, linkedIssues }) {
     confirmed: verification.confirmed,
     findings: finders.findings,
     known: [...plan.posted, ...fingerprints(merged)],
+    round: merged,
     verified: prepared.toVerify.length,
     prompts,
     verifierPrompt,
+    duplicatesPrompt,
     context,
     finderSettings: settings.finder,
     verifierSettings: settings.verifier,
@@ -374,9 +363,13 @@ async function roundOutput(options, pr, input, results) {
     ...input.plan.posted,
     ...fingerprints(results.confirmed),
   ]);
+  const source = options.repo
+    ? { repo: options.repo, head: pr.headSha }
+    : undefined;
   /** @type {import('./format.mjs').BriefInput} */
   const briefInput = {
     state: { round: input.plan.round, head: pr.headSha, posted },
+    source,
     range: input.range,
     linkedIssue: results.linked.answer,
     prType: prType({
@@ -393,7 +386,7 @@ async function roundOutput(options, pr, input, results) {
     skippedFiles: input.diff.skipped.length,
   };
   return {
-    comments: split.inline.map(inlineComment),
+    comments: split.inline.map((finding) => inlineComment(finding, source)),
     findings: split.inline,
     briefText: (failure) =>
       brief({

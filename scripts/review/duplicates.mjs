@@ -12,6 +12,7 @@ import {
   MERGE_LINE_DISTANCE,
   RUN_LIMITS,
 } from './config.mjs';
+import { freshFindings, rankAndCap } from './merge.mjs';
 import { buildArgs, runModel } from './runner.mjs';
 import { DUPLICATES_SCHEMA, SEVERITIES } from './schemas.mjs';
 
@@ -43,18 +44,23 @@ const isClose = (a, b, distance) =>
 
 /**
  * The pairs to ask about: findings in the same file, at most `distance`
- * lines apart, up to `cap` pairs.
+ * lines apart, up to `cap` pairs. The first `known` findings were already
+ * compared with each other, so a pair of two of them is not asked again.
  * @param {MergedFinding[]} findings
- * @param {{ distance?: number, cap?: number }} [options]
+ * @param {{ distance?: number, cap?: number, known?: number }} [options]
  * @returns {Pair[]}
  */
 export function candidatePairs(
   findings,
-  { distance = MERGE_LINE_DISTANCE, cap = MAX_DUPLICATE_PAIRS } = {},
+  { distance = MERGE_LINE_DISTANCE, cap = MAX_DUPLICATE_PAIRS, known = 0 } = {},
 ) {
   const pairs = [];
   for (let first = 0; first < findings.length; first += 1) {
-    for (let second = first + 1; second < findings.length; second += 1) {
+    for (
+      let second = Math.max(first + 1, known);
+      second < findings.length;
+      second += 1
+    ) {
       if (isClose(findings[first], findings[second], distance)) {
         pairs.push({ first, second });
       }
@@ -202,9 +208,11 @@ function duplicatesArgs(prompt, { model, authMode }) {
  * @param {MergedFinding[]} options.findings
  * @param {string} options.prompt the duplicates role prompt
  * @param {RunSettings} options.settings
+ * @param {number} [options.known] the first `known` findings were already
+ *   compared with each other
  */
-export async function runDuplicates({ findings, prompt, settings }) {
-  const pairs = candidatePairs(findings);
+export async function runDuplicates({ findings, prompt, settings, known = 0 }) {
+  const pairs = candidatePairs(findings, { known });
   if (pairs.length === 0) {
     return { findings, merged: [], failed: [], run: undefined };
   }
@@ -224,5 +232,49 @@ export async function runDuplicates({ findings, prompt, settings }) {
     merged,
     failed: [],
     run: result,
+  };
+}
+
+/**
+ * The findings that go to verification: new ones only, with the duplicates
+ * merged, ranked and capped. The main pass and the deepening pass of a round
+ * both take this path.
+ *
+ * `round` holds findings the round already has, for the deepening pass: the
+ * main pass's findings after their own duplicates step. A new finding that
+ * the run calls the same problem as one of them is dropped, since that
+ * problem is already verified or in the overflow. Pairs of two round
+ * findings are not asked about again.
+ * @param {object} options
+ * @param {import('./merge.mjs').LensFinding[]} options.findings
+ * @param {string[]} options.posted fingerprints already handled
+ * @param {MergedFinding[]} [options.round]
+ * @param {string} options.prompt the duplicates role prompt
+ * @param {RunSettings} options.settings
+ * @param {number} [options.limit] at most this many go to verification
+ */
+export async function findingsToVerify({
+  findings,
+  posted,
+  round = [],
+  prompt,
+  settings,
+  limit,
+}) {
+  const { fresh } = freshFindings(findings, posted);
+  const duplicates = await runDuplicates({
+    findings: [...round, ...fresh],
+    prompt,
+    settings,
+    known: round.length,
+  });
+  const roundPrints = new Set(round.map((finding) => finding.fingerprint));
+  const isNew = (finding) =>
+    ![finding.fingerprint, ...(finding.absorbed ?? [])].some((print) =>
+      roundPrints.has(print),
+    );
+  return {
+    ...rankAndCap(duplicates.findings.filter(isNew), limit),
+    duplicates,
   };
 }

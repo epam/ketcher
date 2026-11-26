@@ -82,7 +82,7 @@ function fakeRunner(findings = {}) {
   };
   const run = async ({ args, input }) => {
     const role = roleOf(args);
-    calls.push({ role });
+    calls.push({ role, lens: role === 'finder' ? lensOf(input) : undefined });
     const output = outputs[role](input);
     return { ok: true, output, costUsd: 0.01, durationMs: 1, models: [MODEL] };
   };
@@ -105,6 +105,7 @@ const earlierBrief = (state) => ({
  * @param {Error} [options.failPostReview] thrown by postReview
  * @param {(comment: object) => boolean} [options.refuseComment] refused alone
  * @param {string} [options.previousBase] merge base of the previous head
+ * @param {string} [options.diffText] the diff of every range instead of the fixture
  */
 function fakeGitHub({
   comments = [],
@@ -112,6 +113,7 @@ function fakeGitHub({
   failPostReview,
   refuseComment,
   previousBase,
+  diffText,
 } = {}) {
   const writes = [];
   const diffs = [];
@@ -122,7 +124,7 @@ function fakeGitHub({
     isAncestor: async () => true,
     diff: async (from, to) => {
       diffs.push([from, to]);
-      return fixture('flow-source.diff');
+      return diffText ?? fixture('flow-source.diff');
     },
     linkedIssues: async () => {
       if (failLinkedIssues) throw failLinkedIssues;
@@ -271,6 +273,27 @@ test('a later round reviews the whole pull request after a merge of master', asy
   assert.equal(log.round, 2);
   assert.equal(log.range.kind, 'full');
   assert.deepEqual(diffs[0], [BASE, HEAD]);
+});
+
+test('a source file whose name git quotes gets the lenses of a source change', async () => {
+  // git quotes a path with non-ASCII characters and escapes them in octal.
+  const quoted = '"b/packages/ketcher-core/src/\\303\\251.ts"';
+  const diffText = [
+    `diff --git ${quoted.replace('"b/', '"a/')} ${quoted}`,
+    'index 1111111..2222222 100644',
+    `--- ${quoted.replace('"b/', '"a/')}`,
+    `+++ ${quoted}`,
+    '@@ -1 +1,2 @@',
+    ' const a = 1;',
+    '+const b = a.trim();',
+  ].join('\n');
+  const { github } = fakeGitHub({ diffText });
+  const { run, calls } = fakeRunner();
+  await review({ github, run });
+  const lenses = calls
+    .filter((call) => call.role === 'finder')
+    .map((call) => call.lens);
+  assert.deepEqual(lenses.toSorted(), ['code-quality', 'correctness', 'reuse']);
 });
 
 test('a dry run prints the round and writes nothing to GitHub', async () => {

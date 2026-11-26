@@ -1,12 +1,13 @@
 // Deepening (design decision 12): the verifier can name one more lens for a
 // confirmed finding. The hub decides whether that lens runs: once per lens in
 // a round, only on the flagged files where that lens reported nothing. The
-// extra findings are merged and verified like the others, and their verdicts
-// start no further pass.
+// extra findings take the same path to verification as the main pass's, and
+// a finding that only repeats one the round already has is dropped. Their
+// verdicts start no further pass.
 
 import { MAX_VERIFIED_FINDINGS } from './config.mjs';
 import { filePath } from './diff.mjs';
-import { prepareFindings } from './merge.mjs';
+import { findingsToVerify } from './duplicates.mjs';
 import { runFinderPasses } from './passes.mjs';
 import { DEEPENING_LENSES } from './schemas.mjs';
 import { runVerification } from './verify.mjs';
@@ -83,9 +84,11 @@ export function narrowContext(context, paths) {
  * @param {(MergedFinding & { alsoCheck: string })[]} options.confirmed the confirmed findings of the round
  * @param {LensFinding[]} options.findings every finding of the round's finder passes
  * @param {string[]} options.known fingerprints posted before or found in this round
+ * @param {MergedFinding[]} options.round the round's findings after their duplicates step
  * @param {number} options.verified findings already sent to verification in this round
  * @param {Record<string, string>} options.prompts role prompt per lens
  * @param {string} options.verifierPrompt
+ * @param {string} options.duplicatesPrompt
  * @param {ReviewContext} options.context
  * @param {RunSettings} options.finderSettings
  * @param {RunSettings} options.verifierSettings
@@ -95,9 +98,11 @@ export async function runDeepening({
   confirmed,
   findings,
   known,
+  round,
   verified,
   prompts,
   verifierPrompt,
+  duplicatesPrompt,
   context,
   finderSettings,
   verifierSettings,
@@ -119,7 +124,14 @@ export async function runDeepening({
     ),
   );
   const extra = passResults.flatMap((result) => result.findings);
-  const { toVerify } = prepareFindings(extra, { posted: known, limit: room });
+  const { toVerify, duplicates } = await findingsToVerify({
+    findings: extra,
+    posted: known,
+    round,
+    prompt: duplicatesPrompt,
+    settings: verifierSettings,
+    limit: room,
+  });
   const verification = await runVerification({
     findings: toVerify,
     prompt: verifierPrompt,
@@ -133,9 +145,14 @@ export async function runDeepening({
     passes,
     confirmed: verification.confirmed,
     dropped: verification.dropped,
-    failed: [...failedPasses, ...verification.failed],
+    failed: [
+      ...failedPasses,
+      ...duplicates.failed.map((role) => `extra ${role}`),
+      ...verification.failed,
+    ],
     runs: [
       ...passResults.flatMap((result) => result.runs),
+      ...(duplicates.run ? [duplicates.run] : []),
       ...verification.runs,
     ],
   };

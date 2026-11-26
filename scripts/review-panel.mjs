@@ -14,6 +14,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { filePath, parseDiff as parseDiffFiles } from './review/diff.mjs';
 
 const SOURCE = /^packages\/[^/]+\/src\/.*\.(ts|tsx|js|jsx)$/;
 const TEST = /(\/__tests__\/|\.test\.[jt]sx?$|\.spec\.[jt]sx?$)/;
@@ -77,28 +78,24 @@ export const TRIGGERS = [
 const isSource = (path) => SOURCE.test(path) && !TEST.test(path);
 
 /**
- * Splits a unified diff into its files and the lines each one adds.
+ * The panel's view of parsed diff files: the path and the added lines.
  * A renamed file takes its new path; a deleted file keeps its path.
+ * @param {import('./review/diff.mjs').DiffFile[]} files
+ * @returns {DiffFile[]}
+ */
+export function panelFiles(files) {
+  return files.map((file) => ({ path: filePath(file), added: file.added }));
+}
+
+/**
+ * Splits a unified diff into its files and the lines each one adds. It uses
+ * the review hub's parser, so the hub and this script read a diff the same
+ * way, quoted file names included.
  * @param {string} diff
  * @returns {DiffFile[]}
  */
 export function parseDiff(diff) {
-  const files = [];
-  let current = null;
-  let inHunk = false;
-  for (const line of diff.split('\n')) {
-    const header = line.match(/^diff --git a\/(.+) b\/(.+)$/);
-    if (header) {
-      current = { path: header[2], added: [] };
-      files.push(current);
-      inHunk = false;
-    } else if (line.startsWith('@@')) {
-      inHunk = true;
-    } else if (current && inHunk && line.startsWith('+')) {
-      current.added.push(line.slice(1));
-    }
-  }
-  return files;
+  return panelFiles(parseDiffFiles(diff));
 }
 
 /**

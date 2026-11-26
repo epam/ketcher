@@ -100,7 +100,7 @@ test.describe('Enumerations', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getMonomerLocator(page, Base.baA).click();
     await takeEditorScreenshot(page);
   });

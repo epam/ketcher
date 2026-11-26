@@ -40,6 +40,16 @@ const props: Partial<MenuProps> = {
   className: styles.contextMenu,
 };
 
+const getFocusedEditorElement = (ketcherId: string): HTMLElement | null => {
+  const activeElement = document.activeElement;
+  return activeElement instanceof HTMLElement &&
+    activeElement
+      .closest('[data-ketcher-id]')
+      ?.getAttribute('data-ketcher-id') === ketcherId
+    ? activeElement
+    : null;
+};
+
 // Takes ketcherId as an argument instead of closing over it, so it stays out of
 // the render scope and callbacks using it do not have to depend on it.
 const resetMenuPosition = (menuElement: HTMLElement, ketcherId: string) => {
@@ -111,10 +121,22 @@ const ContextMenu: FC = () => {
 
   useEffect(() => {
     const handleOutsidePointer = (event: MouseEvent) => {
-      if (
-        !(event.target instanceof Element) ||
-        !event.target.closest('.contexify')
-      ) {
+      const target = event.target;
+      if (target instanceof Element && target.closest('.contexify')) {
+        return;
+      }
+
+      const isInEditor =
+        target instanceof Element &&
+        target.closest('[data-ketcher-id]')?.getAttribute('data-ketcher-id') ===
+          ketcherId;
+
+      if (event.type === 'mousedown') {
+        focusedBeforeMenu.current =
+          event.button === 2 && isInEditor
+            ? getFocusedEditorElement(ketcherId)
+            : null;
+      } else if (!isInEditor) {
         focusedBeforeMenu.current = null;
       }
     };
@@ -181,14 +203,9 @@ const ContextMenu: FC = () => {
     (id: string, isVisible: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       if (isVisible) {
-        const activeElement = document.activeElement;
-        focusedBeforeMenu.current =
-          activeElement instanceof HTMLElement &&
-          activeElement
-            .closest('[data-ketcher-id]')
-            ?.getAttribute('data-ketcher-id') === ketcherId
-            ? activeElement
-            : null;
+        if (document.activeElement !== document.body) {
+          focusedBeforeMenu.current = getFocusedEditorElement(ketcherId);
+        }
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector<HTMLElement>(
           '.contexify:last-of-type',

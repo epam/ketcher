@@ -218,7 +218,6 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
-    await page.waitForTimeout(100);
     await selectAllStructuresOnCanvas(page);
     await copyFromCanvasToClipboardByKeyboard(page);
     await pasteFromClipboardToCanvasByKeyboard(page);

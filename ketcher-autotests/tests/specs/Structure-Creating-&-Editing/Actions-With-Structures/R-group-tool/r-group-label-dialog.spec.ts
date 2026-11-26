@@ -62,7 +62,9 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickInTheMiddleOfTheCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
+      waitForRenderTimeOut: 10,
+    });
     await takeEditorScreenshot(page);
   });
 

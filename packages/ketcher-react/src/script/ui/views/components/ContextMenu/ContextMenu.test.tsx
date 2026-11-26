@@ -104,6 +104,41 @@ describe('context menu focus', () => {
     await waitFor(() => expect(cliparea).toHaveFocus());
   });
 
+  it('restores editor focus when right-click blurs it before the menu opens', async () => {
+    const canvas = document.createElement('div');
+    root.appendChild(canvas);
+    fireEvent.mouseDown(canvas, { button: 2 });
+    cliparea.blur();
+    fireEvent.contextMenu(canvas, { button: 2 });
+
+    const item = await openMenu();
+    fireEvent.click(item);
+    fireEvent.animationEnd(item);
+
+    await waitFor(() => expect(cliparea).toHaveFocus());
+  });
+
+  it('discards a pending focus when the next right-click is in another editor', async () => {
+    const canvas = document.createElement('div');
+    root.appendChild(canvas);
+    fireEvent.mouseDown(canvas, { button: 2 });
+    cliparea.blur();
+
+    const otherEditor = document.createElement('div');
+    otherEditor.dataset.ketcherId = 'other';
+    document.body.appendChild(otherEditor);
+    fireEvent.mouseDown(otherEditor, { button: 2 });
+    fireEvent.contextMenu(otherEditor, { button: 2 });
+    otherEditor.remove();
+
+    const item = await openMenu();
+    fireEvent.click(item);
+    fireEvent.animationEnd(item);
+
+    await waitForMenuToClose();
+    expect(document.body).toHaveFocus();
+  });
+
   it('restores focus when the close notification precedes menu removal', async () => {
     const item = await openMenu();
     item.focus();

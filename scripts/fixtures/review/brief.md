@@ -12,11 +12,11 @@
 
 ### Over the comment cap
 
-- `src/Editor.ts:3` · **nit** · R5 · Odd name.
+- `src/Editor.ts:3` · **nit** · Rule R5 · Odd name.
 
 ### Outside the diff
 
-- `src/Editor.ts:40` · **major** · R5 · Old code repeats it.
+- `src/Editor.ts:40` · **major** · Rule R5 · Old code repeats it.
 
 ### Passes without a result
 

@@ -5,6 +5,7 @@ import { parseDiff } from './diff.mjs';
 import {
   brief,
   briefLine,
+  findingLabel,
   inlineComment,
   limitComment,
   plain,
@@ -100,10 +101,20 @@ test('an inline comment gives severity, ID, claim, scenario and locations', () =
   assert.equal(comment.body, fixture('inline-comment.md').trimEnd());
 });
 
+test('the label names a rule or an invariant and leaves out none', () => {
+  assert.equal(findingLabel(finding({ id: 'R5' })), '**major** · Rule R5');
+  assert.equal(findingLabel(finding({ id: 'D1' })), '**major** · Invariant D1');
+  assert.equal(findingLabel(finding({ id: 'none' })), '**major**');
+  assert.equal(
+    briefLine(finding({ id: 'none', severity: 'nit' })),
+    '- `src/Editor.ts:2` · **nit** · The cast hides a wrong type.',
+  );
+});
+
 test('a brief line cannot break out of its code span', () => {
   assert.equal(
     briefLine(finding({ file: 'a`b.ts' })),
-    "- `a'b.ts:2` · **major** · R5 · The cast hides a wrong type.",
+    "- `a'b.ts:2` · **major** · Rule R5 · The cast hides a wrong type.",
   );
 });
 

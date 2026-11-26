@@ -123,6 +123,21 @@ export function splitForPosting(findings, files, cap = MAX_INLINE_COMMENTS) {
 }
 
 /**
+ * The severity and, when one covers the finding, the rule or invariant:
+ * `**major** · Rule R5`. A `none` ID is left out, since it tells the reader
+ * nothing.
+ * @param {Finding} finding
+ */
+export function findingLabel(finding) {
+  const parts = [`**${finding.severity}**`];
+  if (finding.id !== 'none') {
+    const kind = finding.id.startsWith('R') ? 'Rule' : 'Invariant';
+    parts.push(`${kind} ${finding.id}`);
+  }
+  return parts.join(' · ');
+}
+
+/**
  * One inline review comment, in the fields the GitHub API takes.
  * @param {Finding} finding
  */
@@ -130,7 +145,7 @@ export function inlineComment(finding) {
   const primary = `${finding.file}:${finding.line}`;
   const others = finding.locations.filter((location) => location !== primary);
   const lines = [
-    `**${finding.severity}** · ${finding.id} · ${plain(finding.claim)}`,
+    `${findingLabel(finding)} · ${plain(finding.claim)}`,
     '',
     `Failing scenario: ${plain(finding.scenario)}`,
   ];
@@ -149,7 +164,7 @@ export function inlineComment(finding) {
  */
 export function briefLine(finding) {
   const location = code(`${finding.file}:${finding.line}`);
-  return `- ${location} · **${finding.severity}** · ${finding.id} · ${plain(finding.claim)}`;
+  return `- ${location} · ${findingLabel(finding)} · ${plain(finding.claim)}`;
 }
 
 /** @param {LinkedIssue | undefined} issue */

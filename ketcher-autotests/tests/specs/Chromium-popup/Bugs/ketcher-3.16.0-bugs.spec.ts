@@ -27,6 +27,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { collectPageErrors } from '@utils/common/collectPageErrors';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -45,7 +46,6 @@ test('Case 1: Copy/Paste action causes exception in log if done reasonably fast 
    * 1. Load molecule from file: AllPossibleQueryFeatures.zip (unzip first)
    * 2. Select few rings
    * 3. Press Ctrl+C/Ctrl+V reasonably fast
-   * Actual result: exception is thrown
    * Expected result: there are not errors in the console
    * Version 3.16.0
    */
@@ -77,7 +77,6 @@ test('Case 2: Aromatizing causes NULL in export to MDL Molfile V2000 format file
    * 1. Open the app
    * 2. Click Aromatize button
    * 3. Click Ctrl+S
-   * Actual result: NULL appears in the beginning of the content (Molfile V2000)
    * Expected result: NULL is not present
    * Version 3.16.0
    */
@@ -98,7 +97,6 @@ test('Case 3: Micro: S-Group brackets are drawn incorrectly for simple aromatic 
    * 1. Open the app
    * 2. Open KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/BrokenBrackets.ket file
    * 3. Check the S-Group brackets
-   * Actual result: brackets are rotated and only include part of the molecule
    * Expected result: two vertical brackers are displayed at the left and right sides of the molecule
    * Version 3.16.0
    */
@@ -118,7 +116,6 @@ test('Case 4: Adding hydrogens causes S-Group label positions far away from thei
    * 1. Open the app
    * 2. Open KET/Chromium-popup/Bugs/ketcher-3.16.0-bugs/All types of bond - Either topology - Unmarked - S-Group - Data - Bond.ket file
    * 3. Click the Add/Remove explicit hydrogens button
-   * Actual result: S-groups labels are displayed above the structures
    * Expected result: S-group labels stay near the structures
    * Version 3.16.0
    */
@@ -135,33 +132,30 @@ test('Case 5: Establishing connection between ambiguous phosphate and sugar work
 }) => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
-   * Bug: https://github.com/epam/ketcher/issues/5470
+   * Bug: https://github.com/epam/ketcher/issues/5740
    * Description: Establishing connection between ambiguous phosphate and sugar works wrong
    * Scenario:
    * 1. Open the app in macromolecules -> Flex mode
    * 2. Copy the following HELM: RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0
    * 3. Try to connect ambiguous phosphate with sugar using center to center way or ph(R2) to center way or sg(R1) to center way
-
-   * Actual result: Attachment points are not shown, In case of center-to-center way - Select Connection point dialog appears
    * Expected result: Attachment points are shown, Select Connection point dialog doesn't appear
    * Version 3.16.0
    */
-  const helmString = 'RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0';
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    helmString,
-  );
-  const phosphate = getMonomerLocator(page, {
-    monomerType: MonomerType.Phosphate,
-  }).first();
-  const sugar = getMonomerLocator(page, { monomerType: MonomerType.Sugar }).nth(
-    1,
+    'RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0',
   );
   await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
-  await phosphate.getByTestId('shape').hover({ force: true });
+  await getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+  })
+    .first()
+    .hover({ force: true });
   await page.mouse.down();
-  await sugar.getByTestId('shape').hover({ force: true });
+  await getMonomerLocator(page, { monomerType: MonomerType.Sugar })
+    .nth(1)
+    .hover({ force: true });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await page.mouse.up();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -178,8 +172,6 @@ test('Case 6: Copy/Cut/Paste operations works inconsistently with S-Groups (abbr
    * 3. Right click on appeared monomer and click on Expand monomer at context menu
    * 4. Select expanded monomer and copy (or cut) it to clipboard
    * 5. Paste it from clipboard to the canvas
-
-   * Actual result: System paste monomer in collapsed state
    * Expected result: System paste monomer in expanded state
    * Version 3.16.0
    */
@@ -207,8 +199,6 @@ test("Case 7: Antisense creating doesn't work if ambiguous phosphate present in 
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM using paste from clipboard: RNA1{R(A)([gly],[hn])}$$$$V2.0
    * 3. Select all monomers on the canvas and click Create Antisense Strand from context menu
-
-   * Actual result: Nothing happens, there is an error in console
    * Expected result: Antisense chain created. Phosphate in anti-sence chain should be natural P
    * Version 3.16.0
    */
@@ -243,8 +233,6 @@ test("Case 8: Antisense creating doesn't work if ambiguous sugar present in the 
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM using paste from clipboard: RNA1{([25mo3r],[25R])(A)P}$$$$V2.0
    * 3. Select all monomers on the canvas and call context menu
-
-   * Actual result: Create Antisense Strand option is absent
    * Expected result: Create Antisense Strand option is present and works correct (antisense creation is possible)
    * Version 3.16.0
    */
@@ -274,8 +262,6 @@ test("Case 9: Antisense creating doesn't work if ambiguous peptide present in th
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM using paste from clipboard: RNA1{R(A)P}|PEPTIDE1{(A,C,D,E)}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0
    * 3. Select all monomers on the canvas and click Create Antisense Strand from context menu
-
-   * Actual result: Nothing happens, there is an error in console
    * Expected result: Antisense chain created but with no monomers created for ambiguous monomer in antisence chain
    * Version 3.16.0
    */
@@ -310,8 +296,6 @@ test('Case 10: Phosphate in antisense chain converted wrong', async ({
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM using paste from clipboard: RNA1{[RSpabC](A)[Ssp]}$$$$V2.0
    * 3. Select all monomers on the canvas and click Create Antisense Strand from context menu
-
-   * Actual result: Phosphate in antisense chain copied as it is (Ssp)
    * Expected result: Phosphate in antisense chain copied as it is P if it belongs to nucleotide
    * Version 3.16.0
    */
@@ -341,8 +325,6 @@ test('Case 11: It is possible to create antisense even if it is not allowed (whe
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM using paste from clipboard: RNA1{R([nC6n5C])P.R([nC6n5C])P}$RNA1,RNA1,2:R2-5:R2$$$V2.0
    * 3. Select all monomers on the top of the chain and click Create Antisense Strand from context menu
-
-   * Actual result: System creates antisense chain for all bases
    * Expected result: Create Antisense Strand option is disabled
    * Version 3.16.0
    */
@@ -377,8 +359,6 @@ test("Case 12.1: Export to Sequence (3-letter code) and export to IDT doesn't th
    * 1. Go to Macro - Flex mode
    * 2. Load from file: All 16 types of bonds.zip
    * 3. Save canvas to Sequence (3-letter code) or IDT
-
-   * Actual result: System shows empty export result
    * Expected result: System shown error message: Convert error! Error during sequence type recognition(RNA, DNA or Peptide)
    * Version 3.16.0
    */
@@ -406,8 +386,6 @@ test("Case 12.2: Export to Sequence (3-letter code) and export to IDT doesn't th
    * 1. Go to Macro - Flex mode
    * 2. Load from file: All 16 types of bonds.zip
    * 3. Save canvas to Sequence (3-letter code) or IDT
-
-   * Actual result: System shows empty export result
    * Expected result: System shown error message: Convert error! Error during sequence type recognition(RNA, DNA or Peptide)
    * Version 3.16.0
    */
@@ -436,8 +414,6 @@ test('Case 13: Undo of delete of micromolecule connected to monomer creates unde
    * 2. Load from file: Undo of delete of micromolecule connected to monomer creates undescructable separate atom.zip
    * 3. Select molecule and bond and delete it
    * 4. Press Undo button
-
-   * Actual result: System creates separate understructable atom
    * Expected result: System recovers molecule and bond
    * Version 3.16.0
    */

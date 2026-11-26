@@ -88,17 +88,21 @@ export const Library = (page: Page) => {
     rnaBuilder,
 
     async hideLibrary() {
-      if (await locators.hideLibraryButton.isVisible()) {
-        await locators.hideLibraryButton.click();
-        await locators.searchEditbox.waitFor({ state: 'hidden' });
+      if (await locators.hideLibraryButton.isHidden()) {
+        return;
       }
+
+      await locators.hideLibraryButton.click();
+      await locators.searchEditbox.waitFor({ state: 'hidden' });
     },
 
     async showLibrary() {
-      if (await locators.showLibraryButton.isVisible()) {
-        await locators.showLibraryButton.click();
-        await locators.searchEditbox.waitFor({ state: 'visible' });
+      if (await locators.showLibraryButton.isHidden()) {
+        return;
       }
+
+      await locators.showLibraryButton.click();
+      await locators.searchEditbox.waitFor({ state: 'visible' });
     },
 
     async switchToFavoritesTab() {
@@ -148,10 +152,12 @@ export const Library = (page: Page) => {
     },
 
     async openTab(libraryTab: LibraryTab) {
-      if (!(await pageObject.isTabOpened(libraryTab))) {
-        await expect(getElement(libraryTab)).toBeInViewport();
-        await getElement(libraryTab).click();
+      if (await pageObject.isTabOpened(libraryTab)) {
+        return;
       }
+
+      await expect(getElement(libraryTab)).toBeInViewport();
+      await getElement(libraryTab).click();
     },
 
     async isRNASectionOpened(rnaSection: RNASection): Promise<boolean> {
@@ -160,10 +166,12 @@ export const Library = (page: Page) => {
 
     async openRNASection(rnaSection: RNASection) {
       await pageObject.openTab(LibraryTab.RNA);
-      if (!(await pageObject.isRNASectionOpened(rnaSection))) {
-        await expect(getElement(rnaSection)).toBeInViewport();
-        await getElement(rnaSection).click();
+      if (await pageObject.isRNASectionOpened(rnaSection)) {
+        return;
       }
+
+      await expect(getElement(rnaSection)).toBeInViewport();
+      await getElement(rnaSection).click();
     },
 
     async getMonomerLibraryLocation(monomer: Monomer | PresetType) {

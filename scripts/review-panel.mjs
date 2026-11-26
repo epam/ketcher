@@ -13,6 +13,8 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import { filePath, parseDiff as parseDiffFiles } from './review/diff.mjs';
 
 const SOURCE = /^packages\/[^/]+\/src\/.*\.(ts|tsx|js|jsx)$/;
 const TEST = /(\/__tests__\/|\.test\.[jt]sx?$|\.spec\.[jt]sx?$)/;
@@ -32,6 +34,7 @@ const CODE = /\.(ts|tsx|js|jsx|mjs|cjs)$/;
 /** @type {Trigger[]} Order is the order the panel lists the lenses in. */
 export const TRIGGERS = [
   { lens: 'correctness', anySource: true },
+  { lens: 'reuse', anySource: true },
   { lens: 'code-quality', paths: [CODE] },
   {
     lens: 'performance',
@@ -75,28 +78,24 @@ export const TRIGGERS = [
 const isSource = (path) => SOURCE.test(path) && !TEST.test(path);
 
 /**
- * Splits a unified diff into its files and the lines each one adds.
+ * The panel's view of parsed diff files: the path and the added lines.
  * A renamed file takes its new path; a deleted file keeps its path.
+ * @param {import('./review/diff.mjs').DiffFile[]} files
+ * @returns {DiffFile[]}
+ */
+export function panelFiles(files) {
+  return files.map((file) => ({ path: filePath(file), added: file.added }));
+}
+
+/**
+ * Splits a unified diff into its files and the lines each one adds. It uses
+ * the review hub's parser, so the hub and this script read a diff the same
+ * way, quoted file names included.
  * @param {string} diff
  * @returns {DiffFile[]}
  */
 export function parseDiff(diff) {
-  const files = [];
-  let current = null;
-  let inHunk = false;
-  for (const line of diff.split('\n')) {
-    const header = line.match(/^diff --git a\/(.+) b\/(.+)$/);
-    if (header) {
-      current = { path: header[2], added: [] };
-      files.push(current);
-      inHunk = false;
-    } else if (line.startsWith('@@')) {
-      inHunk = true;
-    } else if (current && inHunk && line.startsWith('+')) {
-      current.added.push(line.slice(1));
-    }
-  }
-  return files;
+  return panelFiles(parseDiffFiles(diff));
 }
 
 /**
@@ -105,12 +104,10 @@ export function parseDiff(diff) {
  * @returns {{ lens: string, because: string }[]}
  */
 export function pickPanel(files) {
-  const panel = [];
-  for (const trigger of TRIGGERS) {
+  return TRIGGERS.flatMap((trigger) => {
     const hit = files.find((file) => matches(trigger, file));
-    if (hit) panel.push({ lens: trigger.lens, because: hit.path });
-  }
-  return panel;
+    return hit ? [{ lens: trigger.lens, because: hit.path }] : [];
+  });
 }
 
 function matches(trigger, file) {
@@ -125,32 +122,56 @@ function matches(trigger, file) {
   );
 }
 
+const EXEC_OPTIONS = { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 };
+
+/**
+ * Reads the diff that the panel is picked for: the pull request diff with
+ * `--pr` (and `--repo`), the branch diff since its branch point with
+ * `--base`, or the diff piped to standard input when neither is given.
+ * An unknown option throws, so a typo does not read standard input instead.
+ * @param {string[]} args command-line arguments after the script path
+ * @returns {string} unified diff text
+ */
 function readDiff(args) {
-  const pr = args.indexOf('--pr');
-  if (pr !== -1) {
-    const repo = args.indexOf('--repo');
-    const repoArgs = repo === -1 ? [] : ['--repo', args[repo + 1]];
-    return execFileSync('gh', ['pr', 'diff', args[pr + 1], ...repoArgs], {
-      encoding: 'utf8',
-      maxBuffer: 256 * 1024 * 1024,
-    });
+  const { values } = parseArgs({
+    args,
+    options: {
+      pr: { type: 'string' },
+      repo: { type: 'string' },
+      base: { type: 'string' },
+    },
+  });
+  if (values.pr) {
+    const repoArgs = values.repo ? ['--repo', values.repo] : [];
+    return execFileSync(
+      'gh',
+      ['pr', 'diff', values.pr, ...repoArgs],
+      EXEC_OPTIONS,
+    );
   }
-  const base = args.indexOf('--base');
-  if (base !== -1) {
-    return execFileSync('git', ['diff', `${args[base + 1]}...HEAD`], {
-      encoding: 'utf8',
-      maxBuffer: 256 * 1024 * 1024,
-    });
+  if (values.base) {
+    return execFileSync('git', ['diff', `${values.base}...HEAD`], EXEC_OPTIONS);
   }
   return readFileSync(0, 'utf8');
 }
 
-if (realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const panel = pickPanel(parseDiff(readDiff(process.argv.slice(2))));
+/**
+ * Prints the panel for the diff that the arguments name, one lens per line
+ * with the file that triggered it.
+ * @param {string[]} args command-line arguments after the script path
+ */
+function main(args) {
+  const panel = pickPanel(parseDiff(readDiff(args)));
   if (panel.length === 0) {
     console.log('No lens applies.');
   }
   for (const { lens, because } of panel) {
     console.log(`${lens}: ${because}`);
   }
+}
+
+// Run only when the script is started directly, not when a test or the
+// review hub imports it. realpathSync resolves a start through a symlink.
+if (realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main(process.argv.slice(2));
 }

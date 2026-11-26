@@ -1269,10 +1269,12 @@ export class CoreEditor {
   }
 
   public cancelLibraryItemDrag() {
-    if (this.dragDropHandler.isDragging) {
-      this.libraryItemDragCancelled = true;
-      this.events.setLibraryItemDragState.dispatch(null);
+    if (!this.dragDropHandler.isDragging) {
+      return;
     }
+
+    this.libraryItemDragCancelled = true;
+    this.events.setLibraryItemDragState.dispatch(null);
   }
 
   private handleHotKeyEvents(event: KeyboardEvent) {
@@ -1283,16 +1285,18 @@ export class CoreEditor {
     const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
     if (
-      shortcutKey &&
-      keySettings[shortcutKey]?.handler &&
-      !isEditableInputTarget(event.target)
+      !shortcutKey ||
+      !keySettings[shortcutKey]?.handler ||
+      isEditableInputTarget(event.target)
     ) {
-      if (shortcutKey === 'undo' || shortcutKey === 'redo') {
-        event.stopImmediatePropagation();
-      }
-      keySettings[shortcutKey].handler(this);
-      event.preventDefault();
+      return;
     }
+
+    if (shortcutKey === 'undo' || shortcutKey === 'redo') {
+      event.stopImmediatePropagation();
+    }
+    keySettings[shortcutKey].handler(this);
+    event.preventDefault();
   }
 
   private setupKeyboardEvents() {
@@ -1514,6 +1518,9 @@ export class CoreEditor {
       this.onSelectTool(tool, options),
     );
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
+    this.events.createInsertionBondsViaModal.add((payload) =>
+      this.dragDropHandler.handleInsertionConnection(payload),
+    );
     this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
       this.onCancelBondCreation(secondMonomer),
     );
@@ -2336,15 +2343,17 @@ export class CoreEditor {
     this.monomersLibrary.forEach((monomerItem) => {
       const naturalAnalogue = monomerItem.props?.MonomerNaturalAnalogCode;
 
-      if (monomerItem.props?.modificationTypes) {
-        if (!grouped[naturalAnalogue]) {
-          grouped[naturalAnalogue] = new Set<string>();
-        }
-
-        monomerItem.props.modificationTypes.forEach((modificationType) => {
-          grouped[naturalAnalogue].add(modificationType);
-        });
+      if (!monomerItem.props?.modificationTypes) {
+        return;
       }
+
+      if (!grouped[naturalAnalogue]) {
+        grouped[naturalAnalogue] = new Set<string>();
+      }
+
+      monomerItem.props.modificationTypes.forEach((modificationType) => {
+        grouped[naturalAnalogue].add(modificationType);
+      });
     });
 
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
@@ -2608,17 +2617,19 @@ export class CoreEditor {
 
   private updateLastCursorPosition(event) {
     const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
-    if (events.includes(event.type)) {
-      const clientAreaBoundingBox = this.canvasOffset;
-
-      this.lastCursorPosition = new Vec2({
-        x: event.pageX - clientAreaBoundingBox.x,
-        y: event.pageY - clientAreaBoundingBox.y,
-      });
-      this.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
-        this.lastCursorPosition,
-      );
+    if (!events.includes(event.type)) {
+      return;
     }
+
+    const clientAreaBoundingBox = this.canvasOffset;
+
+    this.lastCursorPosition = new Vec2({
+      x: event.pageX - clientAreaBoundingBox.x,
+      y: event.pageY - clientAreaBoundingBox.y,
+    });
+    this.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
+      this.lastCursorPosition,
+    );
   }
 
   private useToolIfNeeded(eventHandlerName: ToolEventHandlerName, event) {
@@ -2888,21 +2899,23 @@ export class CoreEditor {
   }
 
   private resetModeIfNeeded() {
-    if (this.previousModes.length === 0) {
-      const ketcher = ketcherProvider.getKetcher();
-      const isBlank = ketcher?.editor?.struct().isBlank();
-      const oldModeName = this.mode?.modeName;
-      const newModeName = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
-
-      if (oldModeName === newModeName) {
-        return;
-      }
-
-      this.mode.destroy();
-      this.previousModes.push(this.mode);
-      this.mode = new (getModeConstructor(newModeName))();
-      this.events.layoutModeChange.dispatch(newModeName);
+    if (this.previousModes.length !== 0) {
+      return;
     }
+
+    const ketcher = ketcherProvider.getKetcher();
+    const isBlank = ketcher?.editor?.struct().isBlank();
+    const oldModeName = this.mode?.modeName;
+    const newModeName = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
+
+    if (oldModeName === newModeName) {
+      return;
+    }
+
+    this.mode.destroy();
+    this.previousModes.push(this.mode);
+    this.mode = new (getModeConstructor(newModeName))();
+    this.events.layoutModeChange.dispatch(newModeName);
   }
 
   public switchToMacromolecules() {

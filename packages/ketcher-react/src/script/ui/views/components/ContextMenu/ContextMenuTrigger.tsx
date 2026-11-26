@@ -31,7 +31,7 @@ import {
 } from './contextMenu.types';
 import {
   getAttachmentGroupTargetForBondHalf,
-  getIsItemInSelection,
+  isItemInSelection,
   getMenuPropsForClosestItem,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
@@ -154,7 +154,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       } else if (!selection) {
         triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
-        getIsItemInSelection({
+        isItemInSelection({
           item: closestItem,
           selection,
           selectedFunctionalGroups,
@@ -169,11 +169,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         ) {
           triggerType = ContextMenuTriggerType.Selection;
         } else {
-          if (selection[MULTITAIL_ARROW_KEY]) {
-            triggerType = ContextMenuTriggerType.ClosestItem;
-          } else {
-            triggerType = ContextMenuTriggerType.None;
-          }
+          triggerType = selection[MULTITAIL_ARROW_KEY]
+            ? ContextMenuTriggerType.ClosestItem
+            : ContextMenuTriggerType.None;
         }
       } else {
         // closestItem is outside of selection

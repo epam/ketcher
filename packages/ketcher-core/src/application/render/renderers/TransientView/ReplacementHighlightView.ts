@@ -23,10 +23,10 @@ export type ReplacementHighlightViewParams = {
 };
 
 /**
- * Colour of the replacement outline. Matches the macromolecules selection
- * accent so the "will be replaced" highlight reads as part of the same design
- * system.
- */
+Colour of the replacement outline. Matches the macromolecules selection
+accent so the "will be replaced" highlight reads as part of the same design
+system.
+*/
 const OUTLINE_COLOR = '#167782';
 /**
 Thickness (px, canvas space) of the outline stroke.
@@ -41,25 +41,25 @@ Half-width (px, canvas space) of the neck drawn along intra-preset bonds.
 */
 const NECK_HALF_WIDTH = 0.6;
 /**
- * Draws a single smooth path that outlines the whole group of monomers that
- * will be replaced by a drag-drop (a full preset, a subset of it, or one
- * monomer).
- *
- * Each monomer renderer owns the path that outlines its body (via
- * `getHighlightPath`). This view collects those paths, adds a capsule path
- * along every bond internal to the highlighted set, and uses Paper.js boolean
- * union to produce one continuous path that hugs each shape and flows smoothly
- * across the necks — without SVG filters or sampled SDF contouring.
- */
+Draws a single smooth path that outlines the whole group of monomers that
+will be replaced by a drag-drop (a full preset, a subset of it, or one
+monomer).
+
+Each monomer renderer owns the path that outlines its body (via
+`getHighlightPath`). This view collects those paths, adds a capsule path
+along every bond internal to the highlighted set, and uses Paper.js boolean
+union to produce one continuous path that hugs each shape and flows smoothly
+across the necks — without SVG filters or sampled SDF contouring.
+*/
 // @ts-ignore
 export class ReplacementHighlightView extends TransientView {
   public static readonly viewName = 'ReplacementHighlightView';
 
   /**
-   * Collects each monomer's own highlight path plus a neck path along every
-   * bond internal to the highlighted set (bonds to unaffected neighbours are
-   * left open, so the outline reflects exactly what will be replaced).
-   */
+  Collects each monomer's own highlight path plus a neck path along every
+  bond internal to the highlighted set (bonds to unaffected neighbours are
+  left open, so the outline reflects exactly what will be replaced).
+  */
   private static collectPathData(monomers: BaseMonomer[]): HighlightPathData[] {
     const pathData: HighlightPathData[] = monomers.map((monomer) =>
       (monomer.renderer as BaseMonomerRenderer).getHighlightPath(OUTLINE_GAP),

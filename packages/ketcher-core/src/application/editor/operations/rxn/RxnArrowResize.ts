@@ -40,11 +40,17 @@ export class RxnArrowResize extends Base {
     d: Vec2,
     current: Vec2,
     anchor: Vec2 | null,
-    noinvalidate: boolean,
+    shouldSkipInvalidation: boolean,
     isSnappingEnabled: boolean,
   ) {
     super(OperationType.RXN_ARROW_RESIZE);
-    this.data = { id, d, current, anchor, noinvalidate };
+    this.data = {
+      id,
+      d,
+      current,
+      anchor,
+      noinvalidate: shouldSkipInvalidation,
+    };
     this.isSnappingEnabled = isSnappingEnabled;
   }
 
@@ -55,7 +61,7 @@ export class RxnArrowResize extends Base {
     const current = this.data.current;
     const item = struct.rxnArrows.get(id);
     const reItem = restruct.rxnArrows.get(id);
-    assert(item != null && reItem != null);
+    assert(item != undefined && reItem != undefined);
     const anchor = this.data.anchor;
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0();
@@ -68,13 +74,13 @@ export class RxnArrowResize extends Base {
 
       if (
         /**
-         *          (anchor)
-         *   (pos[1])   ^
-         *              |  ↘ (d)
-         *   (pos[0])   o —— > (current)
-         *
-         * more details: ./RxnArrowResize.doc.png
-         */
+                 (anchor)
+          (pos[1])   ^
+                     |  ↘ (d)
+          (pos[0])   o —— > (current)
+
+        more details: ./RxnArrowResize.doc.png
+        */
         toFixed(anchor.x) === toFixed(item.pos[1].x) &&
         toFixed(anchor.y) === toFixed(item.pos[1].y)
       ) {
@@ -93,13 +99,13 @@ export class RxnArrowResize extends Base {
 
       if (
         /**
-         *          (anchor)
-         *   (pos[0])   o
-         *              |  ↘ (d)
-         *   (pos[1])   x —— o  (current)
-         *
-         * more details: ./RxnArrowResize.doc.png
-         */
+                 (anchor)
+          (pos[0])   o
+                     |  ↘ (d)
+          (pos[1])   x —— o  (current)
+
+        more details: ./RxnArrowResize.doc.png
+        */
         toFixed(anchor.x) === toFixed(item.pos[0].x) &&
         toFixed(anchor.y) === toFixed(item.pos[0].y)
       ) {
@@ -203,8 +209,5 @@ export function getSnappedArrowVector(arrow: Vec2) {
   }
   const isSnappingToNegativeYAxis =
     Math.abs(oxAngle - AXIS.NEGATIVE_Y) <= ARROW_MAX_SNAPPING_ANGLE;
-  if (isSnappingToNegativeYAxis) {
-    return new Vec2(0, -arrowLength);
-  }
-  return arrow;
+  return isSnappingToNegativeYAxis ? new Vec2(0, -arrowLength) : arrow;
 }

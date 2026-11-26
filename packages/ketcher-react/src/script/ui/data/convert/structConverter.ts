@@ -22,7 +22,7 @@ import {
   Bond,
   RxnArrowMode,
   StereoFlag,
-  exceedsMolfileV2000Limit,
+  isMolfileV2000LimitExceeded,
   getPropertiesByFormat,
 } from 'ketcher-core';
 
@@ -40,20 +40,20 @@ export function couldBeSaved(
     const arrayOfAtoms: Array<Atom> = [...struct.atoms.values()];
     const arrayOfBonds: Array<Bond> = [...struct.bonds.values()];
 
-    const atomsHaveUnsupportedProperties = arrayOfAtoms.some(
+    const hasUnsupportedAtomProperties = arrayOfAtoms.some(
       (atom) =>
         atom.radical ||
         atom.unsaturatedAtom ||
         atom.exactChangeFlag ||
         atom.invRet,
     );
-    const bondsHaveUnsupportedProperties = arrayOfBonds.some(
+    const hasUnsupportedBondProperties = arrayOfBonds.some(
       (bond) =>
         Boolean(bond.reactingCenterStatus) ||
         bond.type === Bond.PATTERN.TYPE.DATIVE ||
         bond.type === Bond.PATTERN.TYPE.HYDROGEN,
     );
-    if (bondsHaveUnsupportedProperties || atomsHaveUnsupportedProperties) {
+    if (hasUnsupportedBondProperties || hasUnsupportedAtomProperties) {
       warnings.push(
         `Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.`,
       );
@@ -104,7 +104,7 @@ export function couldBeSaved(
       ] as SupportedFormat[]
     ).includes(format)
   ) {
-    if (struct.rgroups.size !== 0)
+    if (struct.rgroups.size > 0)
       warnings.push(
         `In ${formatName} the structure will be saved without R-group fragments`,
       );
@@ -146,7 +146,7 @@ export function couldBeSaved(
 
   if (
     (['mol'] as SupportedFormat[]).includes(format) &&
-    exceedsMolfileV2000Limit(struct)
+    isMolfileV2000LimitExceeded(struct)
   ) {
     warnings.push(
       'The structure exceeds the MDL Molfile V2000 limit (999 atoms/bonds) and will be saved in V3000 format.',
@@ -156,10 +156,9 @@ export function couldBeSaved(
   if (
     (['mol', 'rxn'] as SupportedFormat[]).includes(format) &&
     [...struct.frags.values()].some((fr) => {
-      if (fr?.enhancedStereoFlag) {
-        return fr.enhancedStereoFlag !== StereoFlag.Abs;
-      }
-      return false;
+      return fr?.enhancedStereoFlag
+        ? fr.enhancedStereoFlag !== StereoFlag.Abs
+        : false;
     })
   ) {
     warnings.push(
@@ -178,20 +177,18 @@ export function couldBeSaved(
       ] as SupportedFormat[]
     ).includes(format)
   ) {
-    if (struct.functionalGroups.size !== 0)
+    if (struct.functionalGroups.size > 0)
       warnings.push(
         `In ${formatName} the structure will be saved without functional groups.`,
       );
   }
 
   if ((['cml'] as SupportedFormat[]).includes(format)) {
-    if (struct.functionalGroups.size !== 0)
+    if (struct.functionalGroups.size > 0)
       warnings.push(
         `Structure contains functional groups. In ${formatName} information will be partly lost.`,
       );
   }
 
-  if (warnings.length !== 0) return warnings.join('\n');
-
-  return null;
+  return warnings.length > 0 ? warnings.join('\n') : null;
 }

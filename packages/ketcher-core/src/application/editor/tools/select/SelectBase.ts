@@ -87,24 +87,34 @@ abstract class SelectBase implements BaseTool {
   public mode:
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
+  /**
+  Controls whether auto-scroll is active during a selection drag.
+  Override to `false` in subclasses that should not auto-scroll
+  (e.g. SelectLasso, where the lasso shape would distort on scroll).
+  */
+  protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
+  protected rotationCenter: Vec2 | undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
+  protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
+  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
+  private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
+  private autoScrollRequestAnimationFrameID: number | null = null;
+  private autoScrollDelta: Vec2 = new Vec2(0, 0);
 
   /**
-   * Reads renderer data from d3-bound event targets (`target.__data__`).
-   * Returns undefined when an event target has no renderer payload.
-   */
+  Reads renderer data from d3-bound event targets (`target.__data__`).
+  Returns undefined when an event target has no renderer payload.
+  */
   private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
     return (event.target as { __data__?: T } | null)?.__data__;
   }
@@ -132,11 +142,10 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
-      shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
-    } else {
-      shouldStartMove = true;
-    }
+    shouldStartMove =
+      this.editor.mode.modeName === 'sequence-layout-mode'
+        ? !(renderer instanceof BaseSequenceItemRenderer)
+        : true;
     if (shouldStartMove) this.mode = 'moving';
   }
 
@@ -172,8 +181,13 @@ abstract class SelectBase implements BaseTool {
         return;
       }
 
-      const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey, event.altKey);
+      const isModKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+      this.mousedownEntity(
+        renderer,
+        event.shiftKey,
+        isModKeyPressed,
+        event.altKey,
+      );
     }
   }
 
@@ -221,7 +235,8 @@ abstract class SelectBase implements BaseTool {
     this.mode = 'rotating';
     this.rotationCenter =
       this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter() ??
+      undefined;
 
     if (!this.rotationCenter) {
       this.mode = 'standby';
@@ -246,19 +261,21 @@ abstract class SelectBase implements BaseTool {
 
     const bbox =
       this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    if (bbox) {
-      const viewParams = this.buildRotationViewParams(
-        this.rotationCenter,
-        bbox,
-        this.rotationStartAngle,
-      );
-      this.editor.transientDrawingView.showRotation({
-        ...viewParams,
-        rotationAngle: 0,
-        isRotating: true,
-      });
-      this.editor.transientDrawingView.update();
+    if (!bbox) {
+      return;
     }
+
+    const viewParams = this.buildRotationViewParams(
+      this.rotationCenter,
+      bbox,
+      this.rotationStartAngle,
+    );
+    this.editor.transientDrawingView.showRotation({
+      ...viewParams,
+      rotationAngle: 0,
+      isRotating: true,
+    });
+    this.editor.transientDrawingView.update();
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
@@ -266,7 +283,8 @@ abstract class SelectBase implements BaseTool {
     event.preventDefault();
 
     if (
-      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length
+      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length >
+      0
     ) {
       return;
     }
@@ -281,9 +299,9 @@ abstract class SelectBase implements BaseTool {
 
   protected mousedownEntity(
     renderer: BaseRenderer,
-    shiftKey = false,
-    modKey = false,
-    altKey = false,
+    isShiftKeyPressed = false,
+    isModKeyPressed = false,
+    isAltKeyPressed = false,
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
@@ -300,11 +318,11 @@ abstract class SelectBase implements BaseTool {
     }
 
     const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
-    const isChainSelectionModKey = modKey && isSequenceItem;
+    const isChainSelectionModKey = isModKeyPressed && isSequenceItem;
 
-    if (!shiftKey && !isChainSelectionModKey && !altKey) {
+    if (!isShiftKeyPressed && !isChainSelectionModKey && !isAltKeyPressed) {
       this.startMoveIfNeeded(renderer);
-      if (renderer.drawingEntity.selected && !isSequenceItem) {
+      if (!isSequenceItem && renderer.drawingEntity.selected) {
         return;
       }
       modelChanges.merge(
@@ -316,7 +334,7 @@ abstract class SelectBase implements BaseTool {
           drawingEntitiesToSelect,
         );
       modelChanges.merge(selectModelChanges);
-    } else if (shiftKey) {
+    } else if (isShiftKeyPressed) {
       if (renderer.drawingEntity.selected) {
         return;
       }
@@ -332,11 +350,9 @@ abstract class SelectBase implements BaseTool {
     } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside || node instanceof Nucleotide) {
-            return node.monomers;
-          } else {
-            return node.monomer;
-          }
+          return node instanceof Nucleoside || node instanceof Nucleotide
+            ? node.monomers
+            : node.monomer;
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
@@ -350,7 +366,7 @@ abstract class SelectBase implements BaseTool {
         ),
       );
     } else if (
-      altKey &&
+      isAltKeyPressed &&
       this.editor.mode.modeName !== 'sequence-layout-mode' &&
       renderer.drawingEntity instanceof BaseMonomer
     ) {
@@ -853,21 +869,19 @@ abstract class SelectBase implements BaseTool {
       secondConnectedMonomer.center,
     );
 
-    if (!alignment) {
-      return this.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    return this.calculateInBetweenDistanceSnap(
-      cursorPosition,
-      initialMonomer,
-      connectedMonomer,
-      secondConnectedMonomer,
-      alignment,
-    );
+    return !alignment
+      ? this.calculateSideDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+        )
+      : this.calculateInBetweenDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+          secondConnectedMonomer,
+          alignment,
+        );
   }
 
   private tryToSnap(event: MouseEvent, movementDelta: Vec2) {
@@ -880,11 +894,11 @@ abstract class SelectBase implements BaseTool {
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
-    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+    const modifierKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const externalConnectionsToSelection =
       this.editor.drawingEntitiesManager.externalConnectionsToSelection;
 
-    if (modKeyPressed || externalConnectionsToSelection.length === 0) {
+    if (modifierKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
 
@@ -951,26 +965,26 @@ abstract class SelectBase implements BaseTool {
           return emptyResult;
         }
 
-        const showAngleSnapping = Boolean(angleSnapPosition);
-        const showBondLengthSnapping = Boolean(bondLengthSnapPosition);
-        const showDistanceSnapping =
-          !showBondLengthSnapping && Boolean(distanceSnapPosition);
+        const shouldShowAngleSnapping = Boolean(angleSnapPosition);
+        const shouldShowBondLengthSnapping = Boolean(bondLengthSnapPosition);
+        const shouldShowDistanceSnapping =
+          !shouldShowBondLengthSnapping && Boolean(distanceSnapPosition);
 
         if (
-          !showAngleSnapping &&
-          !showBondLengthSnapping &&
-          !showDistanceSnapping
+          !shouldShowAngleSnapping &&
+          !shouldShowBondLengthSnapping &&
+          !shouldShowDistanceSnapping
         ) {
           return emptyResult;
         }
 
         return {
           snapPosition: snapPosition.sub(selectedMonomer.position),
-          showAngleSnapping,
+          showAngleSnapping: shouldShowAngleSnapping,
           bond,
           connectedMonomer,
-          showBondLengthSnapping,
-          showDistanceSnapping,
+          showBondLengthSnapping: shouldShowBondLengthSnapping,
+          showDistanceSnapping: shouldShowDistanceSnapping,
           showGroupCenterSnapping: false,
           alignment,
           alignedMonomers,
@@ -1008,12 +1022,84 @@ abstract class SelectBase implements BaseTool {
     return snappingOptions[0] ?? emptyResult;
   }
 
+  private handleAutoScrollDuringSelection(event: MouseEvent) {
+    if (!this.autoScrollEnabled) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const canvasWrapperNode = this.editor.zoomTool.canvasWrapper?.node();
+    if (!canvasWrapperNode) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const rect = canvasWrapperNode.getBoundingClientRect();
+    const threshold = SelectBase.AUTO_SCROLL_EDGE_THRESHOLD;
+
+    const distanceFromTop = event.clientY - rect.top;
+    const distanceFromBottom = rect.bottom - event.clientY;
+    const distanceFromLeft = event.clientX - rect.left;
+    const distanceFromRight = rect.right - event.clientX;
+
+    // Note: D3 zoom translateBy moves viewport, not content.
+    // Negative values move viewport up (content appears to scroll down)
+    // Positive values move viewport down (content appears to scroll up)
+    let deltaX = 0;
+    let deltaY = 0;
+
+    if (distanceFromTop < threshold) {
+      deltaY = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromBottom < threshold) {
+      deltaY = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (distanceFromLeft < threshold) {
+      deltaX = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromRight < threshold) {
+      deltaX = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (deltaX === 0 && deltaY === 0) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    this.autoScrollDelta.x = deltaX;
+    this.autoScrollDelta.y = deltaY;
+
+    if (this.autoScrollRequestAnimationFrameID === null) {
+      this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
+        this.performAutoScroll(),
+      );
+    }
+  }
+
+  private performAutoScroll() {
+    if (
+      this.mode !== 'selecting' ||
+      this.autoScrollRequestAnimationFrameID === null
+    ) {
+      this.autoScrollRequestAnimationFrameID = null;
+      return;
+    }
+
+    this.editor.zoomTool.scrollBy(
+      this.autoScrollDelta.x,
+      this.autoScrollDelta.y,
+    );
+    this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
+      this.performAutoScroll(),
+    );
+  }
+
   mousemove(event: MouseEvent) {
     if (this.mode === 'standby') {
       return;
     }
 
     if (this.mode === 'selecting') {
+      this.handleAutoScrollDuringSelection(event);
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
       return;
@@ -1095,28 +1181,28 @@ abstract class SelectBase implements BaseTool {
         });
       } else {
         const {
-          showAngleSnapping,
+          showAngleSnapping: shouldShowAngleSnapping,
           connectedMonomer,
           bond,
-          showBondLengthSnapping,
-          showDistanceSnapping,
+          showBondLengthSnapping: shouldShowBondLengthSnapping,
+          showDistanceSnapping: shouldShowDistanceSnapping,
           alignment,
           alignedMonomers,
         } = snapResult;
 
-        if (showAngleSnapping) {
+        if (shouldShowAngleSnapping) {
           this.editor.transientDrawingView.showAngleSnap({
             connectedMonomer,
             polymerBond: bond,
-            isBondLengthSnapped: showBondLengthSnapping,
+            isBondLengthSnapped: shouldShowBondLengthSnapping,
           });
         }
 
-        if (showBondLengthSnapping) {
+        if (shouldShowBondLengthSnapping) {
           this.editor.transientDrawingView.showBondSnap(bond);
         }
 
-        if (showDistanceSnapping) {
+        if (shouldShowDistanceSnapping) {
           this.editor.transientDrawingView.showDistanceSnap({
             alignment,
             alignedMonomers,
@@ -1167,7 +1253,7 @@ abstract class SelectBase implements BaseTool {
         if (hasMonomerSelection) {
           const firstMonomerCurrentPosition = selectedMonomers[0]?.position;
           const actualMovementDelta =
-            this.firstMonomerPositionBeforeMove && firstMonomerCurrentPosition
+            firstMonomerCurrentPosition && this.firstMonomerPositionBeforeMove
               ? Vec2.diff(
                   firstMonomerCurrentPosition,
                   this.firstMonomerPositionBeforeMove,
@@ -1308,8 +1394,8 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const viewParams = this.buildRotationViewParams(center, bbox);
-    this.editor.transientDrawingView.showRotation(viewParams);
+    const viewParameters = this.buildRotationViewParams(center, bbox);
+    this.editor.transientDrawingView.showRotation(viewParameters);
     this.editor.transientDrawingView.update();
   }
 
@@ -1351,19 +1437,21 @@ abstract class SelectBase implements BaseTool {
 
       const bbox =
         this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-      if (bbox && this.rotationCenter) {
-        const viewParams = this.buildRotationViewParams(
-          this.rotationCenter,
-          bbox,
-          this.rotationStartAngle,
-        );
-        this.editor.transientDrawingView.showRotation({
-          ...viewParams,
-          rotationAngle: angleDelta,
-          isRotating: true,
-        });
-        this.editor.transientDrawingView.update();
+      if (!bbox || !this.rotationCenter) {
+        return;
       }
+
+      const viewParams = this.buildRotationViewParams(
+        this.rotationCenter,
+        bbox,
+        this.rotationStartAngle,
+      );
+      this.editor.transientDrawingView.showRotation({
+        ...viewParams,
+        rotationAngle: angleDelta,
+        isRotating: true,
+      });
+      this.editor.transientDrawingView.update();
     });
   }
 
@@ -1375,8 +1463,8 @@ abstract class SelectBase implements BaseTool {
       Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
     ) {
       this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
+      this.rotationCenter = undefined;
+      this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
       this.updateRotationView();
@@ -1391,29 +1479,42 @@ abstract class SelectBase implements BaseTool {
     history.update(modelChanges);
 
     this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
+    this.rotationCenter = undefined;
+    this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
     this.updateRotationView();
   }
 
+  private cancelAutoScroll() {
+    if (this.autoScrollRequestAnimationFrameID !== null) {
+      cancelAnimationFrame(this.autoScrollRequestAnimationFrameID);
+      this.autoScrollRequestAnimationFrameID = null;
+    }
+    this.autoScrollDelta.x = 0;
+    this.autoScrollDelta.y = 0;
+  }
+
   destroy() {
+    this.cancelAutoScroll();
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
     this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (this.editor.selectedTool?.name !== 'eraser-tool') {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
-
-      this.editor.renderersContainer.update(modelChanges);
+    if (this.editor.selectedTool?.name === 'eraser-tool') {
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public stopMovement() {
+    this.cancelAutoScroll();
     this.mode = 'standby';
     this.editor.transientDrawingView.clear();
   }

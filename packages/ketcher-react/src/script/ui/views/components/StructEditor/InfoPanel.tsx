@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -34,6 +33,7 @@ import clsx from 'clsx';
 import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import { useTranslation } from 'react-i18next';
 import classes from './InfoPanel.module.less';
+import type { StoreState } from 'src/script/ui/state/store.types';
 
 const HOVER_PANEL_PADDING = 20;
 const MAX_INFO_PANEL_SIZE = 200;
@@ -110,7 +110,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
   // so it must be checked before the clientX/clientY guard.
   // sGroup.pp must exist to avoid assertion error in getContractedPosition.
-  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
+  if (render && sGroup instanceof MonomerMicromolecule && sGroup.pp) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
       const { position } = sGroup.getContractedPosition(render.ctab.molecule);
@@ -139,9 +139,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
 
   if (
     nonTooltipSGroup ||
-    (!molecule && !sGroupData) ||
     clientX === undefined ||
-    clientY === undefined
+    clientY === undefined ||
+    (!molecule && !sGroupData)
   ) {
     return null;
   }
@@ -189,7 +189,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   );
 };
 
-export default connect((store: any) => ({
+export default connect((store: StoreState) => ({
   clientX: functionGroupInfoSelector(store)?.event?.clientX,
   clientY: functionGroupInfoSelector(store)?.event?.clientY,
   groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,

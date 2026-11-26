@@ -3,6 +3,10 @@ Large-scale change PR. Read the protocol in .memory-bank/review-workflow.md befo
 Open the PR with ?template=large-scale-change.md in the URL.
 -->
 
+## Summary
+
+<diagram, diff-sketch, or tree>
+
 ## Split decision
 
 Which option you used (split by package with parallel change, stack, or one PR with separated commits), and why the earlier options do not work.
@@ -26,6 +30,20 @@ The 5 to 10 files with a decision, one line each. Add self-review comments on th
 
 - `path/to/file`:
 
-## Revert plan
+## Merge Danger
+
+**Door:** <one-way or two-way>
+
+**Blast Radius:** <one-word description>
+
+<optional: potential ramifications of merge>
+
+### Revert plan
 
 How to roll back, and what else must roll back with it.
+
+---
+
+Closes #<issue>
+
+Memory bank: <the file this PR updated, or "not needed">

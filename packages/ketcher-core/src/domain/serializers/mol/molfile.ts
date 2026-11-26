@@ -76,15 +76,14 @@ export class Molfile {
   parseCTFile(props: ParseCTFileProps): Struct {
     const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
     let ret: Struct;
-    if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
-      ret = common.parseRxn(
-        molfileLines,
-        shouldReactionRelayout,
-        ignoreChiralFlag,
-      );
-    } else {
-      ret = common.parseMol(molfileLines, ignoreChiralFlag);
-    }
+    ret =
+      molfileLines[0].search(String.raw`\$RXN`) === 0
+        ? common.parseRxn(
+            molfileLines,
+            shouldReactionRelayout,
+            ignoreChiralFlag,
+          )
+        : common.parseMol(molfileLines, ignoreChiralFlag);
     ret.initHalfBonds();
     ret.initNeighbors();
     ret.bindSGroupsToFunctionalGroups();
@@ -93,7 +92,10 @@ export class Molfile {
     return ret;
   }
 
-  prepareSGroups(skipErrors: boolean, preserveIndigoDesc?: boolean) {
+  prepareSGroups(
+    shouldSkipErrors: boolean,
+    shouldPreserveIndigoDesc?: boolean,
+  ) {
     const mol = this.molecule;
     if (!mol) return;
 
@@ -106,13 +108,13 @@ export class Molfile {
       .forEach((id) => {
         const sgroup = mol.sgroups.get(id);
         if (!sgroup) return;
-        let errorIgnore = false;
+        let shouldIgnoreError = false;
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
         } catch (error: unknown) {
           KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', error);
-          if (!skipErrors || !isErrorWithNumericId(error)) {
+          if (!shouldSkipErrors || !isErrorWithNumericId(error)) {
             throw new Error(
               `Error: ${
                 isErrorWithMessage(error) ? error.message : String(error)
@@ -120,17 +122,19 @@ export class Molfile {
               { cause: error },
             );
           }
-          errorIgnore = true;
+          shouldIgnoreError = true;
         }
 
         if (
-          errorIgnore ||
-          (!preserveIndigoDesc &&
-            /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
+          !shouldIgnoreError &&
+          (shouldPreserveIndigoDesc ||
+            !/^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
         ) {
-          errors += +errorIgnore;
-          toRemove.push(sgroup.id);
+          return;
         }
+
+        errors += +shouldIgnoreError;
+        toRemove.push(sgroup.id);
       });
 
     if (errors) {
@@ -160,9 +164,9 @@ export class Molfile {
 
   saveMolecule(
     molecule: Struct,
-    skipSGroupErrors: boolean,
-    norgroups?: boolean,
-    preserveIndigoDesc?: boolean,
+    shouldSkipSGroupErrors: boolean,
+    shouldOmitRGroups?: boolean,
+    shouldPreserveIndigoDesc?: boolean,
   ) {
     /*
     saver
@@ -190,7 +194,7 @@ export class Molfile {
         '\n';
       for (const component of all) {
         const saver = new Molfile();
-        const submol = molecule.clone(component, null, true);
+        const submol = molecule.clone(component, undefined, true);
         const molfile = saver.saveMolecule(submol, false, true);
         this.molfile += '$MOL\n' + molfile;
       }
@@ -198,7 +202,7 @@ export class Molfile {
     }
 
     if (molecule.rgroups.size > 0) {
-      if (norgroups) {
+      if (shouldOmitRGroups) {
         molecule = molecule.getScaffold();
       } else {
         const scaffold = new Molfile().getCTab(
@@ -228,7 +232,7 @@ export class Molfile {
     this.molecule = molecule.clone();
     this.centerMonomerMicromoleculeAtoms();
 
-    this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
+    this.prepareSGroups(shouldSkipSGroupErrors, shouldPreserveIndigoDesc);
 
     this.writeHeader();
     this.writeCTab2000();
@@ -356,7 +360,7 @@ export class Molfile {
     }[] = [];
     molecule.atoms.forEach((atom, id) => {
       let label = atom.label;
-      if (atom.atomList != null) {
+      if (atom.atomList != undefined) {
         label = 'L';
         atomsIds.push(id);
       } else if (atom.pseudo) {
@@ -412,7 +416,7 @@ export class Molfile {
       if (atom.radical !== 0) {
         radicalList.push([id, atom.radical]);
       }
-      if (atom.rglabel != null && atom.label === 'R#') {
+      if (atom.rglabel != undefined && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
           if (atom.rglabel & (1 << rgi)) {
@@ -420,7 +424,7 @@ export class Molfile {
           }
         }
       }
-      if (atom.attachmentPoints != null) {
+      if (atom.attachmentPoints != undefined) {
         aplabelList.push([id, atom.attachmentPoints]);
       }
       if (atom.ringBondCount !== 0) {
@@ -436,18 +440,20 @@ export class Molfile {
 
     if (rgroups) {
       rgroups.forEach((rg, rgid) => {
-        if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-          const line =
-            '  1 ' +
-            utils.paddedNum(rgid, 3) +
-            ' ' +
-            utils.paddedNum(rg.ifthen, 3) +
-            ' ' +
-            utils.paddedNum(rg.resth ? 1 : 0, 3) +
-            '   ' +
-            rg.range;
-          rglogicList.push(line);
+        if (!rg.resth && rg.ifthen <= 0 && rg.range.length === 0) {
+          return;
         }
+
+        const line =
+          '  1 ' +
+          utils.paddedNum(rgid, 3) +
+          ' ' +
+          utils.paddedNum(rg.ifthen, 3) +
+          ' ' +
+          utils.paddedNum(rg.resth ? 1 : 0, 3) +
+          '   ' +
+          rg.range;
+        rglogicList.push(line);
       });
     }
 
@@ -588,7 +594,7 @@ export class Molfile {
         expandedGroups.push(sg.id + 1);
     });
 
-    if (expandedGroups.length) {
+    if (expandedGroups.length > 0) {
       const expandedGroupsLine = `M  SDS EXP  ${
         expandedGroups.length
       }   ${expandedGroups.join('   ')}`;
@@ -609,7 +615,7 @@ export class Molfile {
       }
 
       const positions = getAtomPositions(sgroup.atoms, mol.atoms);
-      if (!positions.length) {
+      if (positions.length === 0) {
         return;
       }
 

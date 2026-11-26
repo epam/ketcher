@@ -82,6 +82,7 @@ export class SequenceRenderer {
   private static newSequenceButtons: NewSequenceButton[] = [];
   private static readonly sequenceBondRenderers =
     new Set<SequenceBondRenderer>();
+  private static isCaretAfterRowEndValue = false;
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -283,30 +284,32 @@ export class SequenceRenderer {
         chain.length,
       );
 
-      if (!isEditInRnaBuilderMode) {
-        const nextChain = sequenceViewModel.chains[chainIndex + 1];
+      if (isEditInRnaBuilderMode) {
+        return;
+      }
 
-        // Extract actual Chain objects with type safety
-        const currentChain = chain.firstNode?.chain;
-        const nextChainObj = nextChain?.firstNode?.chain;
+      const nextChain = sequenceViewModel.chains[chainIndex + 1];
 
-        // Check if chains are connected via side-chain bonds
-        // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
-        const hasSideChainConnection =
-          currentChain &&
-          nextChainObj &&
-          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+      // Extract actual Chain objects with type safety
+      const currentChain = chain.firstNode?.chain;
+      const nextChainObj = nextChain?.firstNode?.chain;
 
-        // Show PLUS button only if there are no side-chain connections between chains
-        if (!hasSideChainConnection) {
-          this.showNewSequenceButton(
-            chainIndex,
-            Math.max(
-              chain.lastRow.sequenceViewModelItems.length,
-              nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
-            ),
-          );
-        }
+      // Check if chains are connected via side-chain bonds
+      // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
+      const hasSideChainConnection =
+        currentChain &&
+        nextChainObj &&
+        this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+
+      // Show PLUS button only if there are no side-chain connections between chains
+      if (!hasSideChainConnection) {
+        this.showNewSequenceButton(
+          chainIndex,
+          Math.max(
+            chain.lastRow.sequenceViewModelItems.length,
+            nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
+          ),
+        );
       }
     });
 
@@ -357,7 +360,7 @@ export class SequenceRenderer {
                   monomerToChain.get(polymerBond.firstMonomer) ===
                     monomerToChain.get(polymerBond.secondMonomer);
 
-                if (handledHydrogenBonds.has(polymerBond) || isBondInOneChain) {
+                if (isBondInOneChain || handledHydrogenBonds.has(polymerBond)) {
                   return;
                 }
 
@@ -432,16 +435,13 @@ export class SequenceRenderer {
               // If side connection comes from rna base then take connected sugar and draw side connection from it
               // because for rna we display only one letter instead of three
               const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
-              if (
-                isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
-                connectedSugarToBase
-              ) {
-                bondRenderer = new PolymerBondSequenceRenderer(
-                  new PolymerBond(monomer, connectedSugarToBase),
-                );
-              } else {
-                bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
-              }
+              bondRenderer =
+                connectedSugarToBase &&
+                isRnaBaseOrAmbiguousRnaBase(anotherMonomer)
+                  ? new PolymerBondSequenceRenderer(
+                      new PolymerBond(monomer, connectedSugarToBase),
+                    )
+                  : new PolymerBondSequenceRenderer(polymerBond);
               this.showBondRenderer(bondRenderer);
               polymerBond.setRenderer(bondRenderer);
               handledAttachmentPoints.add(attachmentPointName);
@@ -466,17 +466,19 @@ export class SequenceRenderer {
           });
         });
       });
-      if (chain.isCyclic) {
-        const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
-          .R1 as PolymerBond;
-        const bondRenderer = new PolymerBondSequenceRenderer(
-          polymerBond,
-          chain.firstNode,
-          chain.lastNonEmptyNode,
-        );
-        this.showBondRenderer(bondRenderer);
-        polymerBond.setRenderer(bondRenderer);
+      if (!chain.isCyclic) {
+        return;
       }
+
+      const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
+        .R1 as PolymerBond;
+      const bondRenderer = new PolymerBondSequenceRenderer(
+        polymerBond,
+        chain.firstNode,
+        chain.lastNonEmptyNode,
+      );
+      this.showBondRenderer(bondRenderer);
+      polymerBond.setRenderer(bondRenderer);
     });
   }
 
@@ -485,14 +487,12 @@ export class SequenceRenderer {
     this.sequenceBondRenderers.add(bondRenderer);
   }
 
-  private static isCaretAfterRowEndValue = false;
-
   public static get isCaretAfterRowEnd() {
     return this.isCaretAfterRowEndValue;
   }
 
-  private static set isCaretAfterRowEnd(value: boolean) {
-    this.isCaretAfterRowEndValue = value;
+  private static set isCaretAfterRowEnd(isAfterRowEnd: boolean) {
+    this.isCaretAfterRowEndValue = isAfterRowEnd;
   }
 
   public static setCaretPosition(
@@ -508,11 +508,14 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      const afterRowEnd =
+      const isAfterRowEnd =
         this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
-      renderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.redrawCaret(caretPosition, isAfterRowEnd);
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
+        renderer.antisenseNodeRenderer?.redrawCaret(
+          caretPosition,
+          isAfterRowEnd,
+        );
       }
     }
     SequenceRenderer.caretPosition = caretPosition;
@@ -526,10 +529,13 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     if (editor.isSequenceEditMode) {
-      const afterRowEnd =
+      const isAfterRowEnd =
         this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
-      renderer?.redrawCaret(caretPosition, afterRowEnd);
-      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.redrawCaret(caretPosition, isAfterRowEnd);
+      renderer?.antisenseNodeRenderer?.redrawCaret(
+        caretPosition,
+        isAfterRowEnd,
+      );
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {
@@ -632,15 +638,17 @@ export class SequenceRenderer {
     const monomers: BaseMonomer[] = [];
     this.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
-        startCaretPosition <= nodeIndexOverall &&
-        nodeIndexOverall < (endCaretPosition ?? this.caretPosition)
+        startCaretPosition > nodeIndexOverall ||
+        nodeIndexOverall >= (endCaretPosition ?? this.caretPosition)
       ) {
-        if (twoStrandedNode.senseNode?.monomer) {
-          monomers.push(twoStrandedNode.senseNode?.monomer);
-        }
-        if (twoStrandedNode.antisenseNode?.monomer) {
-          monomers.push(twoStrandedNode.antisenseNode?.monomer);
-        }
+        return;
+      }
+
+      if (twoStrandedNode.senseNode?.monomer) {
+        monomers.push(twoStrandedNode.senseNode?.monomer);
+      }
+      if (twoStrandedNode.antisenseNode?.monomer) {
+        monomers.push(twoStrandedNode.antisenseNode?.monomer);
       }
     });
     return monomers;
@@ -690,15 +698,11 @@ export class SequenceRenderer {
   private static get currentChainRow() {
     const currentEdittingNode = this.currentEdittingNode;
 
-    if (!currentEdittingNode) {
-      return [];
-    }
-
-    return (
-      this.nodesGroupedByRows.find((idexRow) =>
-        idexRow.includes(currentEdittingNode),
-      ) ?? []
-    );
+    return !currentEdittingNode
+      ? []
+      : (this.nodesGroupedByRows.find((idexRow) =>
+          idexRow.includes(currentEdittingNode),
+        ) ?? []);
   }
 
   private static get previousRowOfNodes() {
@@ -805,10 +809,10 @@ export class SequenceRenderer {
 
   private static redrawCaretOnRenderer(
     renderer: BaseSequenceItemRenderer,
-    afterRowEnd: boolean,
+    isAfterRowEnd: boolean,
   ) {
     renderer.removeCaret();
-    if (afterRowEnd) {
+    if (isAfterRowEnd) {
       renderer.showCaretAfterNode();
     } else {
       renderer.showCaret();
@@ -817,18 +821,18 @@ export class SequenceRenderer {
 
   private static redrawCaretOnBothStrands(
     node: ITwoStrandedChainItem,
-    afterRowEnd: boolean,
+    isAfterRowEnd: boolean,
   ) {
-    this.isCaretAfterRowEnd = afterRowEnd;
+    this.isCaretAfterRowEnd = isAfterRowEnd;
     const renderer = node.senseNode?.renderer;
 
     if (!(renderer instanceof BaseSequenceItemRenderer)) {
       return;
     }
 
-    this.redrawCaretOnRenderer(renderer, afterRowEnd);
+    this.redrawCaretOnRenderer(renderer, isAfterRowEnd);
     if (renderer.antisenseNodeRenderer) {
-      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, afterRowEnd);
+      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, isAfterRowEnd);
     }
   }
 
@@ -1033,11 +1037,9 @@ export class SequenceRenderer {
   public static get previousNodeInSameChain() {
     const currentEdittingNode = this.currentEdittingNode;
 
-    if (!currentEdittingNode) {
-      return undefined;
-    }
-
-    return this.getPreviousNodeInSameChain(currentEdittingNode);
+    return !currentEdittingNode
+      ? undefined
+      : this.getPreviousNodeInSameChain(currentEdittingNode);
   }
 
   private static get nextCaretPosition(): number | undefined {
@@ -1241,22 +1243,20 @@ export class SequenceRenderer {
     const modelChanges = new Command();
     const senseNodeMonomer = twoStrandedNode.senseNode?.monomer;
     const antiSenseNodeMonomer = twoStrandedNode.antisenseNode?.monomer;
-    const needTurnOffSelection = senseNodeMonomer?.selected;
+    const shouldTurnOffSelection = senseNodeMonomer?.selected;
 
     if (senseNodeMonomer) {
       const result =
         editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           senseNodeMonomer,
         );
-      if (needTurnOffSelection) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-            result.drawingEntities,
-          ),
-        );
-      } else {
-        modelChanges.merge(result.command);
-      }
+      modelChanges.merge(
+        shouldTurnOffSelection
+          ? editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+              result.drawingEntities,
+            )
+          : result.command,
+      );
     }
 
     if (antiSenseNodeMonomer) {
@@ -1264,15 +1264,13 @@ export class SequenceRenderer {
         editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           antiSenseNodeMonomer,
         );
-      if (needTurnOffSelection) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-            result.drawingEntities,
-          ),
-        );
-      } else {
-        modelChanges.merge(result.command);
-      }
+      modelChanges.merge(
+        shouldTurnOffSelection
+          ? editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+              result.drawingEntities,
+            )
+          : result.command,
+      );
     }
 
     return modelChanges;
@@ -1294,16 +1292,18 @@ export class SequenceRenderer {
         twoStrandedNode.senseNode.renderer?.removeSelection();
       }
       if (
-        twoStrandedNode.antisenseNode instanceof EmptySequenceNode ||
-        twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
+        !(twoStrandedNode.antisenseNode instanceof EmptySequenceNode) &&
+        !(twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode)
       ) {
-        command.merge(
-          editor.drawingEntitiesManager.unselectDrawingEntity(
-            twoStrandedNode.antisenseNode.monomer,
-          ),
-        );
-        twoStrandedNode.antisenseNode.renderer?.removeSelection();
+        return;
       }
+
+      command.merge(
+        editor.drawingEntitiesManager.unselectDrawingEntity(
+          twoStrandedNode.antisenseNode.monomer,
+        ),
+      );
+      twoStrandedNode.antisenseNode.renderer?.removeSelection();
     });
     return command;
   }
@@ -1399,16 +1399,18 @@ export class SequenceRenderer {
 
     this.forEachNode(({ twoStrandedNode }) => {
       if (
-        twoStrandedNode.senseNode?.monomers.includes(monomer) ||
-        twoStrandedNode.antisenseNode?.monomers.includes(monomer)
+        !twoStrandedNode.senseNode?.monomers.includes(monomer) &&
+        !twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
-        const renderer =
-          twoStrandedNode.senseNode?.renderer ??
-          twoStrandedNode.antisenseNode?.renderer;
+        return;
+      }
 
-        if (renderer instanceof BaseSequenceItemRenderer) {
-          rendererToReturn = renderer;
-        }
+      const renderer =
+        twoStrandedNode.senseNode?.renderer ??
+        twoStrandedNode.antisenseNode?.renderer;
+
+      if (renderer instanceof BaseSequenceItemRenderer) {
+        rendererToReturn = renderer;
       }
     });
 
@@ -1416,22 +1418,22 @@ export class SequenceRenderer {
   }
 
   /**
-   * Checks if two chains have at least one side-chain connection between them.
-   *
-   * @param chain1 - First chain to check
-   * @param chain2 - Second chain to check
-   * @returns true if any monomer in chain1 has a side-chain bond to any monomer in chain2
-   *
-   * @example
-   * // Two chains connected by R3-R3 bond
-   * const hasConnection = hasSideChainConnectionBetweenChains(chainA, chainB);
-   * // Returns: true
-   *
-   * @remarks
-   * - Returns false if either chain is empty or undefined
-   * - Uses Set for O(1) lookup performance
-   * - Only checks connections from chain1 to chain2 (assumes bidirectional bonds)
-   */
+  Checks if two chains have at least one side-chain connection between them.
+
+  @param chain1 - First chain to check
+  @param chain2 - Second chain to check
+  @returns true if any monomer in chain1 has a side-chain bond to any monomer in chain2
+
+  @example
+  // Two chains connected by R3-R3 bond
+  const hasConnection = hasSideChainConnectionBetweenChains(chainA, chainB);
+  // Returns: true
+
+  @remarks
+  - Returns false if either chain is empty or undefined
+  - Uses Set for O(1) lookup performance
+  - Only checks connections from chain1 to chain2 (assumes bidirectional bonds)
+  */
   private static hasSideChainConnectionBetweenChains(
     chain1: Chain,
     chain2: Chain,
@@ -1490,10 +1492,12 @@ export class SequenceRenderer {
       this.chainsCollection.chains.forEach((chain) => {
         chain.monomers.forEach((monomer) => {
           monomer.forEachBond((bond) => {
-            if (!handledBonds.has(bond)) {
-              handledBonds.add(bond);
-              bond.renderer?.remove();
+            if (handledBonds.has(bond)) {
+              return;
             }
+
+            handledBonds.add(bond);
+            bond.renderer?.remove();
           });
         });
       });

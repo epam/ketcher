@@ -51,6 +51,16 @@ export type CreateBondViaModalPayload = {
   initialSecondMonomerAttachmentPoint?: AttachmentPointName;
 };
 
+export type CreateInsertionBondsViaModalPayload = {
+  leftMonomer: BaseMonomer;
+  newMonomer: BaseMonomer;
+  rightMonomer: BaseMonomer;
+  leftAp: AttachmentPointName;
+  leftNewAp: AttachmentPointName;
+  rightNewAp: AttachmentPointName;
+  rightAp: AttachmentPointName;
+};
+
 export type SelectLayoutModePayload =
   LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
@@ -99,9 +109,10 @@ export interface Editor {
   setOrigin: () => void;
   struct: (
     struct?: Struct,
-    needToCenterStruct?: boolean,
+    shouldCenterStruct?: boolean,
     x?: number,
     y?: number,
+    ignoreHistory?: boolean,
   ) => Struct;
   structToAddFragment: (struct: Struct, x?: number, y?: number) => Struct;
   subscribe: <T = unknown>(
@@ -112,17 +123,19 @@ export interface Editor {
     eventName: string,
     subscriber: EditorSubscriber<T>,
   ) => void;
-  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
+  selection: (
+    argument?: EditorSelection | 'all' | null,
+  ) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
   historyStack: Action[];
   historyPtr: number;
   addHistoryAction: (action: Action) => void;
-  clear: () => void;
+  clear: (ignoreHistory?: boolean) => void;
   clearHistory: () => void;
   options(): RenderOptions;
   options(value: EditorOptions): void;
-  setOptions: (opts: string) => void;
+  setOptions: (options: string) => void;
   zoom: (value?: number) => number | undefined;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
@@ -160,7 +173,7 @@ export interface Editor {
   };
   update: (
     action: Action | true,
-    ignoreHistory?: boolean,
+    shouldIgnoreHistory?: boolean,
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
@@ -173,7 +186,7 @@ export interface Editor {
   closeMonomerCreationWizard: () => void;
   openMonomerCreationWizardFromMacro: (
     request: MonomerCreationWizardRequest,
-    onFinish: (savedCanvas: boolean) => void,
+    onFinish: (isCanvasSaved: boolean) => void,
   ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;
@@ -189,9 +202,9 @@ export type LibraryItemDragState = {
 } | null;
 
 /**
- * Identifies a specific free attachment point on a monomer.
- * Used to track drag-over hover targets during library-item drag operations.
- */
+Identifies a specific free attachment point on a monomer.
+Used to track drag-over hover targets during library-item drag operations.
+*/
 export type AttachmentPointTarget = {
   monomer: BaseMonomer;
   attachmentPointName: AttachmentPointName;

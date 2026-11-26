@@ -37,14 +37,14 @@ export const saveLibraryMonomer = async (
    * the original stays visible and usable — including its identity, its id and
    * the properties (aliases) that have no control in the attributes panel.
    */
-  const supersedesOriginal =
+  const shouldSupersedeOriginal =
     Boolean(editedMonomerTemplate) &&
     createdTemplate.class === editedMonomerTemplate?.class &&
     createdTemplate.alias === editedMonomerTemplate?.alias;
-  const originalMonomerTemplate = supersedesOriginal
+  const originalMonomerTemplate = shouldSupersedeOriginal
     ? editedMonomerTemplate
     : undefined;
-  const originalRef = supersedesOriginal ? editedRef : undefined;
+  const originalRef = shouldSupersedeOriginal ? editedRef : undefined;
 
   const template = {
     ...originalMonomerTemplate,
@@ -59,6 +59,19 @@ export const saveLibraryMonomer = async (
       template.aliasHELM = originalMonomerTemplate.aliasHELM;
     if (!displayBilnAlias)
       template.aliasBILN = originalMonomerTemplate.aliasBILN;
+  } else {
+    /*
+     * Saving as a new entry keeps the original in the library, so the new
+     * version cannot carry the aliases it was loaded with — they are unique
+     * per polymer type and would collide with the original on save. Aliases
+     * the user explicitly changed are kept.
+     */
+    if (template.aliasHELM === editedMonomerTemplate?.aliasHELM) {
+      delete template.aliasHELM;
+    }
+    if (template.aliasBILN === editedMonomerTemplate?.aliasBILN) {
+      delete template.aliasBILN;
+    }
   }
   const ref = originalRef ?? data.monomerRef;
   const ket = JSON.stringify({

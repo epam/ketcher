@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { render } from '@testing-library/react';
 
 import SelectCheckbox from './select-checkbox';
@@ -12,7 +14,7 @@ describe('SelectCheckbox component should be rendered correctly', () => {
       },
       type: 'checkbox',
       value: true,
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<SelectCheckbox {...booleanProps} />);
@@ -30,7 +32,7 @@ describe('SelectCheckbox component should be rendered correctly', () => {
       },
       type: 'radio',
       value: 'option1',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<SelectCheckbox {...enumProps} />);

@@ -8,7 +8,7 @@ Load, beyond the skill's list:
 
 - [coding-standards.md](../../../.memory-bank/coding-standards.md): conventions that hold today.
 
-Scope: Lint and `tsc` report what they enforce. Do not raise those.
+Scope: Lint, `tsc`, and Danger report what they enforce, file length (R16) included. Do not raise those.
 
 Focus:
 
@@ -16,6 +16,4 @@ Focus:
 - Two fields that must stay in sync: a new boolean that repeats a mode or phase another field already holds. Replace both with one state value.
 - Two owners for one piece of state, or one item set kept in two hand-synced lists.
 - Boundary repetition: raw input (file text, a monomer library entry, a serialized structure) checked again after it was parsed in `packages/ketcher-core/src/application/formatters/` or a loader. The business logic after the parse should not re-check it.
-- Non-atomic edits: a model change applied in steps where a throw between steps leaves the structure half-updated. See [operations-history.md](../../../.memory-bank/modules/operations-history.md).
-- A changed file that the diff pushes past 1,000 lines (R16). Count the lines with Grep before you report it.
 - Fowler smells, each a judgment call: Feature Envy (a helper reaches into another module's data more than its own), Data Clumps (the same group of fields travels together through call after call), Primitive Obsession (a domain concept held as a bare string or number with its checks scattered), Speculative Generality (an abstraction, flag, or parameter with one caller), Shotgun Surgery (one concept change edits the same fragment in many files), Middle Man (a class that holds nothing but forwards to it).

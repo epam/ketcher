@@ -28,6 +28,10 @@ import type ReStruct from './restruct';
 import type { RenderOptions, RenderPath } from '../render.types';
 
 class ReLoop extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
   loop: Loop;
   centre: Vec2;
   radius: number;
@@ -37,10 +41,6 @@ class ReLoop extends ReObject {
     this.loop = loop;
     this.centre = new Vec2();
     this.radius = 0;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   show(restruct: ReStruct, _rlid: number, options: RenderOptions): void {
@@ -133,10 +133,10 @@ class ReLoop extends ReObject {
     }
     const sgroup = molecule.getGroupFromAtomId(firstAtomId);
     if (sgroup?.isContracted()) {
-      const allInSameSgroup = [...atomIds].every(
+      const isEntireLoopInSameSgroup = [...atomIds].every(
         (atomId) => molecule.getGroupFromAtomId(atomId) === sgroup,
       );
-      if (allInSameSgroup) {
+      if (isEntireLoopInSameSgroup) {
         return;
       }
     }
@@ -185,7 +185,7 @@ class ReLoop extends ReObject {
         'stroke-dasharray': '- ',
       });
     }
-    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
+    restruct.addReObjectPath(LayerMap.data, this.visel, path, undefined, true);
   }
 
   isValid(struct: Struct, rlid: number): boolean {

@@ -1,7 +1,13 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
-import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
+import {
+  LinkerSequenceNode,
+  Nucleotide,
+  Nucleoside,
+  UnresolvedMonomer,
+  Vec2,
+} from 'domain/entities';
 import type {
   SubChainNode,
   SequenceNode,
@@ -25,9 +31,10 @@ const CARET_X_OFFSET_BEFORE_NODE = -17;
 const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
+  private positionalEnumeration: number | null = null;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
-  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
   public caretElement?:
@@ -300,7 +307,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return nodeIndex;
   }
 
+  private get sequenceId() {
+    const monomer =
+      this.node instanceof Nucleotide || this.node instanceof Nucleoside
+        ? this.node.rnaBase
+        : this.node.monomer;
+    return monomer.monomerItem.seqId;
+  }
+
   private get counterNumber() {
+    if (this.sequenceId !== undefined) return this.sequenceId;
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
     let numberToDisplay;
@@ -325,15 +341,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         phosphateNodeIndex !== -1 ||
         ambiguousMonomerNonPeptideNodeIndex !== -1
       ) {
-        if (
+        numberToDisplay =
           linkerNodeIndex < nodeIndex ||
           phosphateNodeIndex < nodeIndex ||
           ambiguousMonomerNonPeptideNodeIndex < nodeIndex
-        ) {
-          numberToDisplay = this.getNodeIndexInSubgroup();
-        } else {
-          numberToDisplay = nodeIndex + 1;
-        }
+            ? this.getNodeIndexInSubgroup()
+            : nodeIndex + 1;
       } else if (
         nodeIndex === 0 ||
         nodeIndex === subChain.nodes.length - 1 ||
@@ -440,22 +453,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         return false;
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
-      if (nodeIndex === -1) return false;
-
-      return (
-        (nodeIndex > 0 &&
-          subChain.nodes[nodeIndex - 1] instanceof LinkerSequenceNode) ||
-        (nodeIndex < subChain.nodes.length - 1 &&
-          subChain.nodes[nodeIndex + 1] instanceof LinkerSequenceNode) ||
-        (nodeIndex > 0 &&
-          this.checkIfNodeIsAmbiguousMonomerNotPeptide(
-            subChain.nodes[nodeIndex - 1],
-          )) ||
-        (nodeIndex < subChain.nodes.length - 1 &&
-          this.checkIfNodeIsAmbiguousMonomerNotPeptide(
-            subChain.nodes[nodeIndex + 1],
-          ))
-      );
+      return nodeIndex === -1
+        ? false
+        : (nodeIndex > 0 &&
+            subChain.nodes[nodeIndex - 1] instanceof LinkerSequenceNode) ||
+            (nodeIndex < subChain.nodes.length - 1 &&
+              subChain.nodes[nodeIndex + 1] instanceof LinkerSequenceNode) ||
+            (nodeIndex > 0 &&
+              this.checkIfNodeIsAmbiguousMonomerNotPeptide(
+                subChain.nodes[nodeIndex - 1],
+              )) ||
+            (nodeIndex < subChain.nodes.length - 1 &&
+              this.checkIfNodeIsAmbiguousMonomerNotPeptide(
+                subChain.nodes[nodeIndex + 1],
+              ));
     });
   }
 
@@ -494,12 +505,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (!this.isSubChainNode(this.node)) return null;
 
     const subChain = this.chain.subChains.find((subChain) => {
-      if (!this.isSubChainNode(this.node)) return false;
-      return subChain.nodes.includes(this.node);
+      return !this.isSubChainNode(this.node)
+        ? false
+        : subChain.nodes.includes(this.node);
     });
 
-    if (!subChain) return null;
-    return subChain;
+    return !subChain ? null : subChain;
   }
 
   // returns non-breaking sequence of ignored nodes before first node in subchain
@@ -512,15 +523,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (nodeIndex === -1) return [];
 
     const nodesBefore = this.subChainWithNode.nodes.slice(0, nodeIndex);
-    if (nodesBefore.some((node) => !this.inIgnoreList(node))) {
-      return [];
-    }
-
-    return nodesBefore;
+    return nodesBefore.some((node) => !this.inIgnoreList(node))
+      ? []
+      : nodesBefore;
   }
 
   private get hasOnlyIgnoredNodesBeforeNodeInSubChain() {
-    return !!this.ignoredNodesBeforeFirstNodeInSubChain.length;
+    return this.ignoredNodesBeforeFirstNodeInSubChain.length > 0;
   }
 
   // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
@@ -533,15 +542,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (nodeIndex === -1) return [];
 
     const nodesAfter = this.subChainWithNode.nodes.slice(nodeIndex + 1);
-    if (nodesAfter.some((node) => !this.inIgnoreList(node))) {
-      return [];
-    }
-
-    return nodesAfter;
+    return nodesAfter.some((node) => !this.inIgnoreList(node))
+      ? []
+      : nodesAfter;
   }
 
   private get hasOnlyIgnoredNodesAfterNodeInChain() {
-    return !!this.ignoredNodesAfterLastNodeInSubChain.length;
+    return this.ignoredNodesAfterLastNodeInSubChain.length > 0;
   }
 
   // returns true if node is not in ignore list and is first node in chain
@@ -560,8 +567,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get isNodeInFirstSubChain(): boolean {
-    if (!this.isSubChainNode(this.node)) return false;
-    return this.chain.subChains[0].nodes.includes(this.node);
+    return !this.isSubChainNode(this.node)
+      ? false
+      : this.chain.subChains[0].nodes.includes(this.node);
   }
 
   // returns true if node is not in ignore list and is first node in subchain
@@ -646,7 +654,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
-  public redrawCaret(editingNodeIndexOverall?: number, afterRowEnd = false) {
+  public redrawCaret(editingNodeIndexOverall?: number, isAfterRowEnd = false) {
     this.removeCaret();
 
     if (
@@ -654,7 +662,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      if (afterRowEnd) {
+      if (isAfterRowEnd) {
         this.showCaretAfterNode();
       } else {
         this.showCaret();
@@ -798,12 +806,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {
-    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  public setEnumeration(enumeration: number | null) {
+    this.positionalEnumeration = enumeration;
   }
 
   public redrawEnumeration() {
-    // intentional no-op: default base implementation; subclasses override when behavior is needed
+    if (this.positionalEnumeration !== null) {
+      this.counterElement?.text(this.sequenceId ?? this.positionalEnumeration);
+    }
   }
 
   public redrawAttachmentPoints() {

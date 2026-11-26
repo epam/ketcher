@@ -7,10 +7,10 @@ import type {
   SerializedTextNode,
 } from './retext';
 
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
+const BOLD_FLAG = 1;
+const ITALIC_FLAG = 2;
+const SUBSCRIPT_FLAG = 32;
+const SUPERSCRIPT_FLAG = 64;
 
 export interface DraftInlineStyleRange {
   offset: number;
@@ -122,7 +122,7 @@ function buildTextSegments(
 
   // Group consecutive characters with identical styles into segments
   const segments: TextSegment[] = [];
-  let currentSegment: TextSegment | null = null;
+  let currentSegment: TextSegment | undefined;
 
   for (let i = 0; i < text.length; i++) {
     const charStyle = charStyles[i];
@@ -160,18 +160,22 @@ function applyStyleToChar(
   styleString: string,
 ): void {
   switch (styleString) {
-    case 'BOLD':
-      charStyle.format |= IS_BOLD;
+    case 'BOLD': {
+      charStyle.format |= BOLD_FLAG;
       break;
-    case 'ITALIC':
-      charStyle.format |= IS_ITALIC;
+    }
+    case 'ITALIC': {
+      charStyle.format |= ITALIC_FLAG;
       break;
-    case 'SUBSCRIPT':
-      charStyle.format |= IS_SUBSCRIPT;
+    }
+    case 'SUBSCRIPT': {
+      charStyle.format |= SUBSCRIPT_FLAG;
       break;
-    case 'SUPERSCRIPT':
-      charStyle.format |= IS_SUPERSCRIPT;
+    }
+    case 'SUPERSCRIPT': {
+      charStyle.format |= SUPERSCRIPT_FLAG;
       break;
+    }
     default: {
       // Handle custom font-size styling
       const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(styleString);

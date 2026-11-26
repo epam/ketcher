@@ -17,7 +17,7 @@
 import {
   Atom,
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   FunctionalGroup,
   KetcherLogger,
   CoordinateTransformation,
@@ -128,7 +128,7 @@ function propsDialog(editor, id, pos) {
     fragId: atom ? atom.fragment : null,
   });
 
-  Promise.resolve(res)
+  void Promise.resolve(res)
     .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
       elem = { ...Atom.attrlist, ...elem };
@@ -139,11 +139,11 @@ function propsDialog(editor, id, pos) {
         elem.aam = atom.aam; // WTF??
         elem.attachmentPoints = atom.attachmentPoints;
 
-        if (!elem.rglabel && label !== 'R#') {
+        if (label !== 'R#' && !elem.rglabel) {
           elem.label = label;
         }
 
-        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
+        editor.update(fromAtomsAttributes(editor.render.ctab, id, elem, false));
       }
     })
     .catch((error) => {

@@ -8,14 +8,21 @@
 // Usage: node drive.mjs <command> [--flag value ...]
 //   start   [--url URL] [--headed]   start the daemon and browser (url default http://127.0.0.1:4002/index.html)
 //   open    --mode molecules|macromolecules   wait for window.ketcher, switch editor mode through the UI
+//           [--no-ketcher]           only load the page (a host page that shows no editor yet)
 //   load    (--text S | --file F) [--via paste|api] [--type 'HELM'] [--api-kind molecule|helm]   load a structure
-//   click   (--testid ID | --role R --name N) [--nth N]
-//   canvas-click [--dx N --dy N]     click the canvas, offset in px from its centre (the active tool acts there)
+//   click   (--testid ID | --role R --name N) [--nth N] [--y-from-bottom N]
+//   canvas-click [--dx N --dy N] [--button left|right] [--clicks 2]   click the canvas, offset in px from its centre
+//   drag    (--from-testid ID [--from-nth N] | --from-dx N --from-dy N) --to-dx N --to-dy N [--hold-ms N] [--shot FILE]
+//           press, move in steps, release; --shot takes a screenshot while the button is still down
+//   state   (--testid ID | --role R --name N) [--nth N]   count, visible, enabled, text, value, and
+//           offset (centre and size, as px from the canvas centre) of one element
 //   fill    (--testid ID | --role R --name N) --text S
 //   press   --key K                  keyboard key on the page, e.g. Control+z
 //   export  --format F [--out FILE]  F: ket|mol|mol3000|smiles|extsmiles|smarts|cml|rxn|sdf|inchi|inchikey|cdxml|fasta|idt|axolabs|seq1|seq3
 //   screenshot --out FILE
 //   errors  [--out FILE] [--clear]              console errors, page errors, failed requests so far
+//   wait    --ms N                   let the page run N ms (a timeout that fires late, e.g. 30 s)
+//   workers                          Web Workers the page created and terminated since the last open
 //   status                           daemon and page state
 //   stop                             close the browser and the daemon (only ours)
 // Common: --dir DIR  daemon state dir (default <repo>/.verify-ketcher/session)
@@ -120,6 +127,25 @@ async function daemon() {
   const browser = await chromium.launch({ headless: !flags.headed });
   const context = await browser.newContext({
     viewport: { width: 1600, height: 1000 },
+    // Ketcher copies and pastes through navigator.clipboard.
+    permissions: ['clipboard-read', 'clipboard-write'],
+  });
+  // Counts Web Workers the page creates and terminates, for the `workers` command.
+  await context.addInitScript(() => {
+    const counts = { created: 0, terminated: 0 };
+    globalThis.__verifyWorkers = counts;
+    const NativeWorker = globalThis.Worker;
+    if (!NativeWorker) return;
+    globalThis.Worker = class extends NativeWorker {
+      constructor(...args) {
+        super(...args);
+        counts.created++;
+      }
+      terminate() {
+        counts.terminated++;
+        super.terminate();
+      }
+    };
   });
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
@@ -143,6 +169,16 @@ async function daemon() {
       problems.push({ kind: 'http', text: `${r.status()} ${r.url()}` });
   });
 
+  const canvasPoint = async (dx, dy) => {
+    const box = await page
+      .locator('[data-testid="ketcher-canvas"]:visible')
+      .first()
+      .boundingBox();
+    return {
+      x: box.x + box.width / 2 + Number(dx ?? 0),
+      y: box.y + box.height / 2 + Number(dy ?? 0),
+    };
+  };
   const target = (f) =>
     f.testid
       ? page.getByTestId(f.testid)
@@ -155,6 +191,7 @@ async function daemon() {
       if (!TESTID.modeOption[mode])
         throw new Error('--mode molecules|macromolecules');
       await page.goto(url, { waitUntil: 'domcontentloaded' });
+      if (f['no-ketcher']) return { url: page.url(), mode: null };
       await page.waitForFunction(() => !!globalThis.ketcher, null, {
         timeout: 90000,
       });
@@ -210,21 +247,84 @@ async function daemon() {
     },
     async click(f) {
       const loc = visible(target(f)).nth(Number(f.nth ?? 0));
-      await loc.click();
+      if (f['y-from-bottom'] !== undefined) {
+        // Click N px above the bottom edge, centred horizontally (monomer cards
+        // carry other click targets in their middle).
+        const b = await loc.boundingBox();
+        await loc.click({
+          position: {
+            x: b.width / 2,
+            y: b.height - Number(f['y-from-bottom']),
+          },
+        });
+      } else await loc.click();
       await page.waitForTimeout(300);
       return { clicked: f.testid ?? `${f.role}:${f.name}` };
     },
     async 'canvas-click'(f) {
       // Click on the drawing canvas, offset in pixels from its centre.
-      const canvas = page
-        .locator('[data-testid="ketcher-canvas"]:visible')
-        .first();
-      const box = await canvas.boundingBox();
-      const x = box.x + box.width / 2 + Number(f.dx ?? 0);
-      const y = box.y + box.height / 2 + Number(f.dy ?? 0);
-      await page.mouse.click(x, y);
+      const { x, y } = await canvasPoint(f.dx, f.dy);
+      const button = f.button ?? 'left';
+      const clickCount = Number(f.clicks ?? 1);
+      await page.mouse.click(x, y, { button, clickCount });
       await page.waitForTimeout(500);
-      return { clicked: { x: Math.round(x), y: Math.round(y) } };
+      return {
+        clicked: { x: Math.round(x), y: Math.round(y), button, clickCount },
+      };
+    },
+    async drag(f) {
+      let from;
+      if (f['from-testid']) {
+        const loc = visible(page.getByTestId(f['from-testid'])).nth(
+          Number(f['from-nth'] ?? 0),
+        );
+        const b = await loc.boundingBox();
+        from = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+      } else from = await canvasPoint(f['from-dx'], f['from-dy']);
+      const to = await canvasPoint(f['to-dx'], f['to-dy']);
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      await page.mouse.move(to.x, to.y, { steps: 10 });
+      await page.waitForTimeout(Number(f['hold-ms'] ?? 300));
+      if (f.shot) {
+        mkdirSync(dirname(resolve(f.shot)), { recursive: true });
+        await page.screenshot({ path: resolve(f.shot) });
+      }
+      await page.mouse.up();
+      await page.waitForTimeout(500);
+      const r = (p) => ({ x: Math.round(p.x), y: Math.round(p.y) });
+      return { dragged: { from: r(from), to: r(to) } };
+    },
+    async state(f) {
+      // Prefer visible matches: some test IDs also sit on hidden duplicates.
+      const all = target(f);
+      const count = await all.count();
+      if (!count) return { exists: false };
+      const shown = await visible(all).count();
+      const loc = (shown ? visible(all) : all).nth(Number(f.nth ?? 0));
+      const tag = await loc.evaluate((e) => e.tagName.toLowerCase());
+      const b = await loc.boundingBox();
+      const c = await canvasPoint(0, 0).catch(() => null);
+      return {
+        exists: true,
+        count,
+        // Centre of the element as an offset from the canvas centre, for canvas-click and drag.
+        offset:
+          b && c
+            ? {
+                dx: Math.round(b.x + b.width / 2 - c.x),
+                dy: Math.round(b.y + b.height / 2 - c.y),
+                width: Math.round(b.width),
+                height: Math.round(b.height),
+              }
+            : null,
+        visible: await loc.isVisible(),
+        enabled: await loc.isEnabled(),
+        text: ((await loc.textContent()) ?? '').trim(),
+        value: ['input', 'textarea', 'select'].includes(tag)
+          ? await loc.inputValue()
+          : null,
+      };
     },
     async fill(f) {
       await visible(target(f))
@@ -269,6 +369,15 @@ async function daemon() {
       }
       if (f.clear) problems.length = 0;
       return out;
+    },
+    async wait(f) {
+      const ms = Number(f.ms);
+      if (!(ms > 0)) throw new Error('--ms N');
+      await page.waitForTimeout(ms);
+      return { waitedMs: ms };
+    },
+    async workers() {
+      return page.evaluate(() => ({ ...globalThis.__verifyWorkers }));
     },
     async status() {
       return {
@@ -388,10 +497,7 @@ async function client() {
 if (cmd === '__daemon') await daemon();
 else if (!cmd || cmd === 'help' || flags.help) {
   console.error(
-    readFileSync(fileURLToPath(import.meta.url), 'utf8')
-      .split('\n')
-      .slice(0, 24)
-      .join('\n'),
+    readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n\n')[0],
   );
   process.exit(2);
 } else process.exit(await client());

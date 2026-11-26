@@ -9,13 +9,13 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -34,7 +34,7 @@ describe('replaceMonomer with hydrogen bonds', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -42,6 +42,7 @@ describe('replaceMonomer with hydrogen bonds', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

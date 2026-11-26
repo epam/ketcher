@@ -37,9 +37,9 @@ function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
 }
 
 /**
- * Finds intersection of a ray and a box and
- * Returns the shift magnitude to avoid it
- */
+Finds intersection of a ray and a box and
+Returns the shift magnitude to avoid it
+*/
 function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   assert(!!p);
   assert(!!d);
@@ -191,7 +191,13 @@ function drawCIPLabel({
 
   path.push(cipValuePath.path.toFront());
 
-  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);
+  restruct.addReObjectPath(
+    LayerMap.additionalInfo,
+    visel,
+    path,
+    undefined,
+    true,
+  );
 
   return cipValuePath;
 }
@@ -212,12 +218,12 @@ function updateHalfBondCoordinates(
 }
 
 function escapeHtml(str) {
-  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
 
 function useLabelStyles(
-  attachmentPointSelected: boolean,
-  attachmentPointUsed: boolean,
+  isAttachmentPointSelected: boolean,
+  isAttachmentPointUsed: boolean,
   usageInMacromolecule: UsageInMacromolecule,
 ): {
   color: string;
@@ -229,34 +235,39 @@ function useLabelStyles(
   let stroke = '#7C7C7F';
 
   switch (usageInMacromolecule) {
-    case UsageInMacromolecule.MonomerPreview:
+    case UsageInMacromolecule.MonomerPreview: {
       stroke = 'none';
-      if (attachmentPointUsed) {
+      if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }
       break;
+    }
     case UsageInMacromolecule.MonomerConnectionsModal:
-      if (attachmentPointSelected) {
+    case UsageInMacromolecule.InsertionConnectionsModal: {
+      if (isAttachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
         stroke = '#B4B9D6';
       }
       break;
-    case UsageInMacromolecule.BondPreview:
-      if (attachmentPointSelected) {
+    }
+    case UsageInMacromolecule.BondPreview: {
+      if (isAttachmentPointSelected) {
         fill = '#CDF1FC';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }
       stroke = 'none';
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
 
   return { color, fill, stroke };

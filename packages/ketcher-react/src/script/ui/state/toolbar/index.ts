@@ -77,10 +77,12 @@ export function initResize() {
 }
 
 export function removeResizeListener(): void {
-  if (resizeListener) {
-    removeEventListener('resize', resizeListener);
-    resizeListener = null;
+  if (!resizeListener) {
+    return;
   }
+
+  removeEventListener('resize', resizeListener);
+  resizeListener = null;
 }
 
 /*
@@ -120,12 +122,15 @@ export default function (
         ? { ...state, opened: null }
         : { ...state, opened: data.menuName };
     }
-    case 'UPDATE':
+    case 'UPDATE': {
       return { ...state, opened: null };
-    case 'MODAL_OPEN':
+    }
+    case 'MODAL_OPEN': {
       return { ...state, opened: null };
-    default:
+    }
+    default: {
       return state;
+    }
   }
 }
 /*

@@ -60,37 +60,37 @@ class KetcherBuilder {
   }
 
   /**
-   * Provide a custom settings service instance
-   * If not provided, a default SettingsService will be created
-   */
+  Provide a custom settings service instance
+  If not provided, a default SettingsService will be created
+  */
   withSettingsService(settingsService: ISettingsService): this {
     this.settingsService = settingsService;
     return this;
   }
 
   /**
-   * Provide a custom storage adapter for settings
-   * Default is LocalStorageAdapter
-   */
+  Provide a custom storage adapter for settings
+  Default is LocalStorageAdapter
+  */
   withStorageAdapter(storageAdapter: ISettingsStorage): this {
     this.storageAdapter = storageAdapter;
     return this;
   }
 
   /**
-   * Provide initial settings to merge with defaults
-   * These will be applied when the settings service is initialized
-   */
+  Provide initial settings to merge with defaults
+  These will be applied when the settings service is initialized
+  */
   withSettings(settings: DeepPartial<Settings>): this {
     this.initialSettings = settings;
     return this;
   }
 
   /**
-   * Provide a list of Ketcher functionality to disable (e.g. "expand
-   * monomers" from the macromolecules context menu). See
-   * `KetcherFunctionality` for the available values.
-   */
+  Provide a list of Ketcher functionality to disable (e.g. "expand
+  monomers" from the macromolecules context menu). See
+  `KetcherFunctionality` for the available values.
+  */
   withDisabledFunctionality(
     disabledFunctionality: DisabledFunctionalityConfig,
   ): this {
@@ -106,6 +106,15 @@ class KetcherBuilder {
     this.structService = structService;
     this.formatterFactory = new FormatterFactory(structService);
     return structService;
+  }
+
+  /**
+  Ends the struct service this builder currently holds. The editor calls it
+  on unmount: a standalone service owns an Indigo worker that stays alive
+  until it is destroyed.
+  */
+  destroy() {
+    this.structService?.destroy?.();
   }
 
   reinitializeApi(
@@ -180,9 +189,9 @@ class KetcherBuilder {
         {
           buttons: buttons ?? {},
           errorHandler: errorHandler ?? null,
-          version: process.env.VERSION ?? '',
-          buildDate: process.env.BUILD_DATE ?? '',
-          buildNumber: process.env.BUILD_NUMBER ?? '',
+          version: import.meta.env.VERSION ?? '',
+          buildDate: import.meta.env.BUILD_DATE ?? '',
+          buildNumber: import.meta.env.BUILD_NUMBER ?? '',
           customButtons: customButtons ?? [],
         },
         structService,

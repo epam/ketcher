@@ -19,15 +19,11 @@ import { useSelector } from 'react-redux';
 import { AbbreviationLookup } from './AbbreviationLookup';
 import { useOptions } from './hooks/useOptions';
 
-import { selectIsAbbreviationLookupOpen } from '../../state/abbreviationLookup/selectors';
+import { isAbbreviationLookupOpen } from '../../state/abbreviationLookup/selectors';
 
 export const AbbreviationLookupContainer = () => {
-  const isOpen = useSelector(selectIsAbbreviationLookupOpen);
+  const isOpen = useSelector(isAbbreviationLookupOpen);
   const abbreviationOptions = useOptions();
 
-  if (!isOpen) {
-    return null;
-  }
-
-  return <AbbreviationLookup options={abbreviationOptions} />;
+  return !isOpen ? null : <AbbreviationLookup options={abbreviationOptions} />;
 };

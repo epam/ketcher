@@ -26,15 +26,15 @@ import type ReStruct from './restruct';
 import type { RenderOptions } from '../render.types';
 
 class ReRxnPlus extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   item: RxnPlus;
 
   constructor(plus: RxnPlus) {
     super('rxnPlus');
     this.item = plus;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   hoverPath(render: Render) {
@@ -64,7 +64,7 @@ class ReRxnPlus extends ReObject {
     const centre = Scale.modelToCanvas(this.item.pp, options);
     const path = draw.plus(render.paper, centre, options);
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
     path.node?.setAttribute('data-testid', 'rxn-plus');
   }

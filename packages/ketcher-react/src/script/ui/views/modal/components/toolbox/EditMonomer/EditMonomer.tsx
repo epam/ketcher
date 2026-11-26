@@ -24,6 +24,7 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
+  provideEditorInstance,
   type EditMonomerVariant,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
@@ -60,8 +61,11 @@ const EditMonomer = (props: Props) => {
     onOk(true);
   };
 
-  const handleEditMonomer = (editAllInstances = false) => {
-    if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {
+  const handleEditMonomer = async (shouldEditAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
+    if (editor.openEditMonomerWizard(fgIds, shouldEditAllInstances)) {
       onOk(true);
     }
   };

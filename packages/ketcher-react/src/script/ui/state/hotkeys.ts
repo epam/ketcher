@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -35,14 +34,17 @@ import {
   getStructStringFromClipboardData,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
+import type { Action } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { load, onAction, removeStructAction } from './shared';
+import type { StoreState } from './store.types';
 import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
 import {
   selectAbbreviationLookupValue,
-  selectIsAbbreviationLookupOpen,
+  isAbbreviationLookupOpen,
 } from './abbreviationLookup/selectors';
 import {
   closeAbbreviationLookup,
@@ -104,7 +106,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
   if (globalThis.isPolymerEditorTurnedOn) {
     return true;
   }
-  if (state.modal || selectIsAbbreviationLookupOpen(state)) {
+  if (state.modal || isAbbreviationLookupOpen(state)) {
     return true;
   }
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
@@ -116,7 +118,7 @@ function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
   const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+  return Boolean(currentlyPressedKeys && (!isTheSameKey || !isShortcutKey));
 }
 
 function handleAbbreviationLookup(key: string, state, dispatch, event) {
@@ -286,7 +288,7 @@ function handleHotkeyGroup(
 
     event.preventDefault();
   } else if (isIE) {
-    clipArea.exec(event);
+    clipArea.canExecuteClipboardCommand(event);
   }
 }
 
@@ -302,12 +304,12 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 
   const { editor } = state;
   const { render } = editor;
-  const actionState = state.actionState;
+  let actionState = state.actionState;
   const actionTool = actionState.activeTool;
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key?.length === 1 && !hoveredItem) {
+  if (!hoveredItem && key?.length === 1) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,
@@ -324,13 +326,18 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     return;
   }
 
-  if (editor.rotateController.isRotating && key === 'Escape') {
+  if (key === 'Escape' && editor.rotateController.isRotating) {
     handleRotateEscape(editor);
     return;
   }
 
   const group = keyNorm.lookup(hotKeys, event);
   if (group !== undefined) {
+    if (group.includes('copy') || group.includes('cut')) {
+      // Selection updates are debounced, but clipboard shortcuts need current state.
+      dispatch({ type: 'UPDATE' });
+      actionState = getState().actionState;
+    }
     handleHotkeyGroup(
       group,
       actionTool,
@@ -359,7 +366,7 @@ function getHoveredItem(
   const hoveredItem = {};
 
   for (const ctabItem in ctab) {
-    if (Object.keys(hoveredItem).length) {
+    if (Object.keys(hoveredItem).length > 0) {
       break;
     }
 
@@ -374,7 +381,7 @@ function getHoveredItem(
     });
   }
 
-  return Object.keys(hoveredItem).length ? hoveredItem : null;
+  return Object.keys(hoveredItem).length > 0 ? hoveredItem : null;
 }
 
 function checkGroupOnTool(group, actionTool) {
@@ -392,7 +399,10 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 /*
 ClipArea
 */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(
+  dispatch: ThunkDispatch<StoreState, unknown, Action<string>>,
+  getState: () => StoreState,
+): clipArea.ClipAreaProps {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
   );
@@ -451,27 +461,29 @@ export function initClipboard(dispatch, getState) {
       }, ketcherInstance.eventBus);
       return result;
     },
-    async onPaste(data, isSmarts: boolean) {
+    async onPaste(data, isSmarts?: boolean) {
       const state = getState();
       const ketcherInstance = ketcherProvider.getKetcher(
         state.editor.ketcherId,
       );
       const result = await runAsyncAction(async () => {
         const structStr = await getStructStringFromClipboardData(data);
-        if (structStr || !rxnTextPlain.test(data['text/plain'])) {
-          const opts = isSmarts
-            ? {
-                fragment: true,
-                isPaste: true,
-                'input-format': ChemicalMimeType.DaylightSmarts,
-              }
-            : { fragment: true, isPaste: true };
-          await dispatch(load(structStr, opts));
+        if (!structStr && rxnTextPlain.test(data['text/plain'])) {
+          return;
         }
+
+        const opts = isSmarts
+          ? {
+              fragment: true,
+              isPaste: true,
+              'input-format': ChemicalMimeType.DaylightSmarts,
+            }
+          : { fragment: true, isPaste: true };
+        await dispatch(load(structStr, opts));
       }, ketcherInstance.eventBus);
       return result;
     },
-    onLegacyPaste(data, isSmarts: boolean) {
+    onLegacyPaste(data, isSmarts?: boolean) {
       const structStr =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
@@ -500,10 +512,9 @@ function isAbleToCopy(editor: Editor): boolean {
   if (struct.isBlank()) {
     return false;
   }
-  const simpleObjectOrText = Boolean(
-    struct.simpleObjects.size || struct.texts.size,
-  );
-  if (simpleObjectOrText && isIE && errorHandler) {
+  const hasSimpleObjectOrText =
+    struct.simpleObjects.size > 0 || struct.texts.size > 0;
+  if (hasSimpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
@@ -514,12 +525,13 @@ function isAbleToCopy(editor: Editor): boolean {
   return true;
 }
 
-async function clipData(editor: Editor) {
+async function clipData(
+  editor: Editor,
+): Promise<clipArea.ClipboardData | null> {
   if (!isAbleToCopy(editor)) {
     return null;
   }
 
-  const res = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
 
@@ -535,52 +547,50 @@ async function clipData(editor: Editor) {
       SupportedFormat.molAuto,
     );
 
-    res[ChemicalMimeType.KET] = ket;
-
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
 
-    res['text/plain'] = data;
-    res[type] = data;
-
-    return res;
-  } catch (error: any) {
+    return {
+      [ChemicalMimeType.KET]: ket,
+      'text/plain': data,
+      [type]: data,
+    };
+  } catch (error) {
     KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 
   return null;
 }
 
-function legacyClipData(editor: Editor) {
+function legacyClipData(editor: Editor): clipArea.ClipboardData | null {
   if (!isAbleToCopy(editor)) {
     return null;
   }
 
-  const res = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
   const molSerializer = new MolSerializer();
   try {
     const serializer = new KetSerializer();
     const ket = serializer.serialize(struct);
-    res[ChemicalMimeType.KET] = ket;
-
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
     const data = molSerializer.serialize(struct);
-    res['text/plain'] = data;
-    res[type] = data;
 
-    return res;
-  } catch (error: any) {
+    return {
+      [ChemicalMimeType.KET]: ket,
+      'text/plain': data,
+      [type]: data,
+    };
+  } catch (error) {
     KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 

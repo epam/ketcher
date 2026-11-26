@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const selectIsAbbreviationLookupOpen = (state): boolean =>
+export const isAbbreviationLookupOpen = (state): boolean =>
   state.abbreviationLookup.isOpen;
 
 export const selectAbbreviationLookupValue = (state): string =>

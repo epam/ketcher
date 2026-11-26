@@ -17,3 +17,18 @@
 .expandButton {
     margin-right: -8px !important;
 }
+
+.resizeHandle {
+    height: 6px;
+    flex-shrink: 0;
+    cursor: ns-resize;
+
+    &:hover {
+        background-color: rgb(202 211 221 / 50%);
+    }
+}
+
+.draggableHeader {
+    cursor: move !important;
+    user-select: none;
+}

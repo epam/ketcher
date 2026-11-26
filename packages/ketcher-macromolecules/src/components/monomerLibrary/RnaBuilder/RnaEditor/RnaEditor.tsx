@@ -25,20 +25,20 @@ import {
   recalculateRnaBuilderValidations,
   RnaBuilderPresetsItem,
   selectActivePreset,
-  selectIsEditMode,
+  isRnaBuilderEditMode,
   selectPresetFullName,
   setActiveRnaBuilderItem,
   setIsEditMode,
 } from 'state/rna-builder';
-import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { isRnaBuilderSequenceEditMode } from 'state/common';
 import clsx from 'clsx';
 
 export const RnaEditor = ({ duplicatePreset }) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const activePreset = useAppSelector(selectActivePreset);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const activePresetFullName = selectPresetFullName(activePreset);
 
@@ -60,10 +60,12 @@ export const RnaEditor = ({ duplicatePreset }) => {
   }
 
   useEffect(() => {
-    if (!activePreset) {
-      dispatch(createNewPreset());
-      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    if (activePreset) {
+      return;
     }
+
+    dispatch(createNewPreset());
+    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset, dispatch]);
 
   useEffect(() => {

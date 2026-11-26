@@ -50,31 +50,35 @@ export const CDXStructuresViewer = ({
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
-  const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
+  const isLoading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
   useEffect(() => {
-    if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
-      inputHandler('');
-    } else {
-      inputHandler(itemsMap[selectedIndex].base64struct);
-    }
+    inputHandler(
+      !itemsMap[selectedIndex] || itemsMap[selectedIndex].error
+        ? ''
+        : itemsMap[selectedIndex].base64struct,
+    );
   }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImage = useCallback(
     (str, index) => {
-      parseStruct(str, server)
-        .then((struct) => {
+      void (async () => {
+        try {
+          const struct = await parseStruct(str, server);
           setItemsMap((state) => ({
             ...state,
             [index]: { base64struct: str, struct },
           }));
-        })
-        .catch((error) => {
+        } catch (error) {
           setItemsMap((state) => ({
             ...state,
-            [index]: { base64struct: str, error: error.message || error },
+            [index]: {
+              base64struct: str,
+              error: error instanceof Error ? error.message : String(error),
+            },
           }));
-        });
+        }
+      })();
     },
     [server],
   );
@@ -97,7 +101,7 @@ export const CDXStructuresViewer = ({
   }, [loadFirstStructure]);
 
   const renderStructure = (structure: item) => {
-    if (loading) {
+    if (isLoading) {
       return (
         <div className={styles.centerWrapper}>
           <LoadingCircles />

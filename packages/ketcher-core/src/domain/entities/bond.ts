@@ -102,72 +102,13 @@ export class Bond extends BaseMicromoleculeEntity {
     customQuery: null,
   };
 
-  begin: number;
-  end: number;
-  readonly type: number;
-  readonly xxx: string;
-  stereo: number;
-  readonly topology: number | null;
-  readonly reactingCenterStatus: number | null;
-  customQuery: string | null;
-  len: number;
-  sb: number;
-  sa: number;
-  cip?: BondCIP | null;
-  hb1?: number;
-  hb2?: number;
-  angle: number;
-  center: Vec2;
-  isPreview: boolean;
-  beginSuperatomAttachmentPointNumber?: number;
-  endSuperatomAttachmentPointNumber?: number;
-  beginSgroup?: SGroup;
-  endSgroup?: SGroup;
-
-  constructor(attributes: BondAttributes) {
-    super(attributes.initiallySelected);
-    this.begin = attributes.begin;
-    this.end = attributes.end;
-    this.type = attributes.type;
-    this.xxx = attributes.xxx ?? '';
-    this.stereo = Bond.PATTERN.STEREO.NONE;
-    this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
-    this.customQuery = null;
-    this.reactingCenterStatus = 0;
-    this.cip = attributes.cip ?? null;
-    this.len = 0;
-    this.sb = 0;
-    this.sa = 0;
-    this.angle = 0;
-    this.isPreview = false;
-    this.beginSuperatomAttachmentPointNumber =
-      attributes.beginSuperatomAttachmentPointNumber;
-    this.endSuperatomAttachmentPointNumber =
-      attributes.endSuperatomAttachmentPointNumber;
-
-    if (attributes.stereo) this.stereo = attributes.stereo;
-    if (attributes.topology) this.topology = attributes.topology;
-    if (attributes.customQuery) {
-      this.customQuery = attributes.customQuery;
-      this.type = Bond.PATTERN.TYPE.ANY;
-      this.reactingCenterStatus = null;
-      this.topology = null;
-    }
-
-    if (attributes.reactingCenterStatus) {
-      this.reactingCenterStatus = attributes.reactingCenterStatus;
-    }
-
-    this.center = new Vec2();
-  }
-
   static getAttrHash(
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
     const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
     for (const attr in this.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
-      if (bond[key] || key === 'stereo') {
+      if (key === 'stereo' || bond[key]) {
         attrs[key] = bond[key] as never;
       }
     }
@@ -311,15 +252,13 @@ export class Bond extends BaseMicromoleculeEntity {
   getCenter(struct: StructBondEndpointAccess): Vec2 {
     const p1 = struct.getBondEndpoint(this.begin)?.pp;
     const p2 = struct.getBondEndpoint(this.end)?.pp;
-    if (!p1 || !p2) return new Vec2();
-    return Vec2.lc2(p1, 0.5, p2, 0.5);
+    return !p1 || !p2 ? new Vec2() : Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
   getDir(struct: StructBondEndpointAccess): Vec2 {
     const p1 = struct.getBondEndpoint(this.begin)?.pp;
     const p2 = struct.getBondEndpoint(this.end)?.pp;
-    if (!p1 || !p2) return new Vec2();
-    return p2.sub(p1).normalized();
+    return !p1 || !p2 ? new Vec2() : p2.sub(p1).normalized();
   }
 
   clone(aidMap?: Map<number, number> | null): Bond {
@@ -348,17 +287,13 @@ export class Bond extends BaseMicromoleculeEntity {
     const sGroup1 = struct.getGroupFromAtomId(this.begin);
     const sGroup2 = struct.getGroupFromAtomId(this.end);
 
-    if (!sGroup1 || !sGroup2) {
-      return false;
-    }
-
-    return sGroup1 !== sGroup2;
+    return !sGroup1 || !sGroup2 ? false : sGroup1 !== sGroup2;
   }
 
   public static isBondToHiddenLeavingGroup(
     struct: Struct,
     bond: Bond,
-    includeAtomsInCollapsedSgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
@@ -371,7 +306,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.begin,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
@@ -379,7 +314,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.end,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );
@@ -396,5 +331,64 @@ export class Bond extends BaseMicromoleculeEntity {
         sgroup.isMonomer
       );
     });
+  }
+
+  begin: number;
+  end: number;
+  readonly type: number;
+  readonly xxx: string;
+  stereo: number;
+  readonly topology: number | null;
+  readonly reactingCenterStatus: number | null;
+  customQuery: string | null;
+  len: number;
+  sb: number;
+  sa: number;
+  cip?: BondCIP | null;
+  hb1?: number;
+  hb2?: number;
+  angle: number;
+  center: Vec2;
+  isPreview: boolean;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
+  beginSgroup?: SGroup;
+  endSgroup?: SGroup;
+
+  constructor(attributes: BondAttributes) {
+    super(attributes.initiallySelected);
+    this.begin = attributes.begin;
+    this.end = attributes.end;
+    this.type = attributes.type;
+    this.xxx = attributes.xxx ?? '';
+    this.stereo = Bond.PATTERN.STEREO.NONE;
+    this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
+    this.customQuery = null;
+    this.reactingCenterStatus = 0;
+    this.cip = attributes.cip ?? null;
+    this.len = 0;
+    this.sb = 0;
+    this.sa = 0;
+    this.angle = 0;
+    this.isPreview = false;
+    this.beginSuperatomAttachmentPointNumber =
+      attributes.beginSuperatomAttachmentPointNumber;
+    this.endSuperatomAttachmentPointNumber =
+      attributes.endSuperatomAttachmentPointNumber;
+
+    if (attributes.stereo) this.stereo = attributes.stereo;
+    if (attributes.topology) this.topology = attributes.topology;
+    if (attributes.customQuery) {
+      this.customQuery = attributes.customQuery;
+      this.type = Bond.PATTERN.TYPE.ANY;
+      this.reactingCenterStatus = null;
+      this.topology = null;
+    }
+
+    if (attributes.reactingCenterStatus) {
+      this.reactingCenterStatus = attributes.reactingCenterStatus;
+    }
+
+    this.center = new Vec2();
   }
 }

@@ -21,7 +21,7 @@ import {
   type AtomQueryPropertiesName,
   type AtomQueryProperties,
   type AtomAllAttributeName,
-  atomGetAttr,
+  atomGetAttribute,
   Atom,
   ketcherProvider,
 } from 'ketcher-core';
@@ -134,16 +134,17 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     struct,
     props.propsFromTrigger?.atomIds ?? [],
   );
+  const hasCustomQuery = editableAtomIds.some((atomId) =>
+    Boolean(struct.atoms.get(atomId)?.queryProperties.customQuery),
+  );
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
     const { ctab } = editor.render;
     if (editableAtomIds.length > 0) {
       const atomId = editableAtomIds[0];
-      if (properties.includes(key as AtomQueryPropertiesName)) {
-        return atomGetAttr(ctab, atomId, 'queryProperties')?.[key];
-      } else {
-        return atomGetAttr(ctab, atomId, key as AtomAttributeName);
-      }
+      return properties.includes(key as AtomQueryPropertiesName)
+        ? atomGetAttribute(ctab, atomId, 'queryProperties')?.[key]
+        : atomGetAttribute(ctab, atomId, key as AtomAttributeName);
     } else return null;
   };
 
@@ -169,7 +170,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     }
   };
 
-  const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
+  const isOnlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
@@ -192,7 +193,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     editor,
   });
 
-  if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
+  if (isAtomSuperatomLeavingGroup && isOnlyOneAtomSelected) {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
@@ -215,7 +216,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
-  const showAttachmentGroupCreate = editableAtomIds.length > 1;
+  const shouldShowAttachmentGroupCreate = editableAtomIds.length > 1;
   return (
     <>
       {showMarkAsMenu && (
@@ -279,7 +280,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
       <AttachmentGroupActionMenuItem
         {...props}
-        showCreate={showAttachmentGroupCreate}
+        showCreate={shouldShowAttachmentGroupCreate}
       />
       <Item
         {...props}
@@ -294,7 +295,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         label={t('components:contextMenu.queryPropertiesMenu')}
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
-        disabled={disabledForMonomerCreation || editableAtomIds.length === 0}
+        disabled={
+          disabledForMonomerCreation ||
+          editableAtomIds.length === 0 ||
+          hasCustomQuery
+        }
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (

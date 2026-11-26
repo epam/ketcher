@@ -1,16 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
-  fromBondsAttrs,
+  fromBondsAttributes,
   fromFragmentDeletion,
   FunctionalGroup,
   Atom,
   Action,
   KetcherLogger,
   bondChangingAction,
+  type AtomAttributes,
+  type BondAttributes,
 } from 'ketcher-core';
 import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
@@ -34,7 +35,7 @@ import { runDeleteWithAttachmentGroupSplitConfirm } from '../../editor/utils/att
 type TNewAction = {
   tool?: string;
   dialog?: string;
-  opts?: any;
+  opts?: unknown;
 };
 
 type HandlersProps = {
@@ -43,6 +44,8 @@ type HandlersProps = {
   editor: Editor;
   dispatch: Dispatch;
 };
+
+type ItemHandler = (props: HandlersProps) => void;
 
 type HandleHotkeyOverItemProps = {
   hoveredItem: Record<string, number>;
@@ -100,14 +103,15 @@ function handleEraser({
   }
 
   if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
-    isFunctionalGroupChange(
-      { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
-      itemType,
-    ).then((res) => {
-      if (res) {
+    void (async () => {
+      const isFunctionalGroup = await isFunctionalGroupChange(
+        { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
+        itemType,
+      );
+      if (isFunctionalGroup) {
         eraseItem({ editor, item });
       }
-    });
+    })();
   } else {
     eraseItem({ editor, item });
   }
@@ -123,19 +127,21 @@ function handleDialog({
   const dialogHandler = getDialogHandler(dialogType);
   const hoveredItemId = hoveredItem[dialogType];
 
-  if (dialogHandler) {
-    const props: HandlersProps = {
-      hoveredItemId,
-      newAction,
-      editor,
-      dispatch,
-    };
-    return dialogHandler(props);
+  if (!dialogHandler) {
+    return;
   }
+
+  const props: HandlersProps = {
+    hoveredItemId,
+    newAction,
+    editor,
+    dispatch,
+  };
+  dialogHandler(props);
 }
 
 function getDialogHandler(itemType: string) {
-  const dialogs = {
+  const dialogs: Record<string, ItemHandler> = {
     atoms: (props: HandlersProps) => handleAtomPropsDialog(props),
     bonds: (props: HandlersProps) => handleBondPropsDialog(props),
   };
@@ -167,10 +173,16 @@ function handleAtomPropsDialog({
     const convertedAtomForModal = fromAtom(atomFromStruct?.a);
 
     if (!newAction.dialog) return;
+    const dialog = newAction.dialog;
 
-    openDialog(dispatch, newAction.dialog, convertedAtomForModal ?? undefined)
-      .then((res) => {
-        const updatedAtom = fromAtomsAttrs(
+    void (async () => {
+      try {
+        const res = await openDialog(
+          dispatch,
+          dialog,
+          convertedAtomForModal ?? undefined,
+        );
+        const updatedAtom = fromAtomsAttributes(
           restruct,
           hoveredItemId,
           toAtom(res as ElementFormData),
@@ -178,13 +190,13 @@ function handleAtomPropsDialog({
         );
 
         editor.update(updatedAtom);
-      })
-      .catch((error) => {
+      } catch (error) {
         KetcherLogger.error(
           'handleHotkeysOverItem.ts::handleAtomPropsDialog',
           error,
         );
-      });
+      }
+    })();
   }
 }
 
@@ -199,13 +211,19 @@ function handleBondPropsDialog({
   const convertedBondForModal = fromBond(bondFromStruct?.b);
 
   if (!newAction.dialog) return;
+  const dialog = newAction.dialog;
 
-  openDialog(dispatch, newAction.dialog, convertedBondForModal ?? undefined)
-    .then((res) => {
+  void (async () => {
+    try {
+      const res = await openDialog(
+        dispatch,
+        dialog,
+        convertedBondForModal ?? undefined,
+      );
       const convertedBond = toBond(res as ReturnType<typeof fromBond>);
       if (!convertedBond) return;
 
-      const updatedBond = fromBondsAttrs(
+      const updatedBond = fromBondsAttributes(
         restruct,
         hoveredItemId,
         convertedBond,
@@ -213,13 +231,13 @@ function handleBondPropsDialog({
       );
 
       editor.update(updatedBond);
-    })
-    .catch((error) => {
+    } catch (error) {
       KetcherLogger.error(
         'handleHoutkeysOverItem.ts::handleBondPropsDialog',
         error,
       );
-    });
+    }
+  })();
 }
 
 function handleTool({
@@ -240,10 +258,11 @@ function handleTool({
         newAction,
         dispatch,
       };
-      isFunctionalGroupChange(props, item).then((result) => {
+      void (async () => {
+        const result = await isFunctionalGroupChange(props, item);
         if (!result && isChangeStructureTool) return;
         toolHandler(props);
-      });
+      })();
     }
   }
 }
@@ -252,12 +271,13 @@ async function isFunctionalGroupChange(
   props: HandlersProps,
   type: string,
 ): Promise<boolean> {
-  if (type === 'sgroups') return true;
-  return await isChangingFunctionalGroup(props, type);
+  return type === 'sgroups'
+    ? true
+    : await isChangingFunctionalGroup(props, type);
 }
 
 function getToolHandler(itemType: string, toolName = '') {
-  const items = {
+  const items: Record<string, Record<string, ItemHandler>> = {
     atoms: {
       atom: (props: HandlersProps) => handleAtomTool(props),
       bond: (props: HandlersProps) => handleBondTool(props),
@@ -280,15 +300,12 @@ function getToolHandler(itemType: string, toolName = '') {
 
   const item = items[itemType];
 
-  if (item) {
-    return item[toolName];
-  }
-  return items._default[toolName];
+  return item ? item[toolName] : items._default[toolName];
 }
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
-  const atomProps = { ...newAction.opts };
-  const updatedAtoms = fromAtomsAttrs(
+  const atomProps = { ...(newAction.opts as Partial<AtomAttributes>) };
+  const updatedAtoms = fromAtomsAttributes(
     editor.render.ctab,
     hoveredItemId,
     atomProps,
@@ -302,7 +319,7 @@ function handleSgroupsTool({
   newAction,
   editor,
 }: HandlersProps) {
-  const atomProps = { ...newAction.opts };
+  const atomProps = { ...(newAction.opts as Partial<AtomAttributes>) };
   const action = new Action();
   const ctab = editor.render.ctab;
   const sGroup = ctab.molecule.sgroups.get(hoveredItemId);
@@ -316,7 +333,12 @@ function handleSgroupsTool({
   );
   deleteFunctionalGroups([hoveredItemId], ctab, action);
   action.mergeWith(
-    fromAtomsAttrs(editor.render.ctab, SGroupPositionAtomId, atomProps, true),
+    fromAtomsAttributes(
+      editor.render.ctab,
+      SGroupPositionAtomId,
+      atomProps,
+      true,
+    ),
   );
   editor.update(action);
 }
@@ -324,7 +346,7 @@ function handleSgroupsTool({
 function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const newBond = fromBondAddition(
     editor.render.ctab,
-    newAction.opts,
+    newAction.opts as Partial<BondAttributes>,
     hoveredItemId,
     { label: 'C' },
   )[0];
@@ -341,30 +363,32 @@ function handleBondTypeChangeTool({
   if (!bond) return;
 
   const action = bondChangingAction(restruct, hoveredItemId, bond, {
-    ...newAction.opts,
+    ...(newAction.opts as Partial<BondAttributes>),
   });
   editor.update(action);
 }
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
-  if (existingAtom) {
-    const updatedAtom = fromAtomsAttrs(
-      editor.render.ctab,
-      hoveredItemId,
-      {
-        charge: existingAtom.charge + newAction.opts,
-      },
-      null,
-    );
-    editor.update(updatedAtom);
+  if (!existingAtom) {
+    return;
   }
+
+  const updatedAtom = fromAtomsAttributes(
+    editor.render.ctab,
+    hoveredItemId,
+    {
+      charge: (existingAtom.charge ?? 0) + (newAction.opts as number),
+    },
+    null,
+  );
+  editor.update(updatedAtom);
 }
 
 function mapItemsToArrays(
   items: Record<string, number>,
 ): Record<string, number[]> {
-  const mappedItems = {};
+  const mappedItems: Record<string, number[]> = {};
   for (const item in items) {
     mappedItems[item] = [items[item]];
   }
@@ -391,12 +415,12 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));
     } else if (rglabel !== element.rglabel) {
-      if (!element.rglabel && label !== 'R#') {
+      if (label !== 'R#' && !element.rglabel) {
         element.label = label;
       }
 
       editor.update(
-        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
+        fromAtomsAttributes(editor.render.ctab, hoveredItemId, element, false),
       );
     }
   } catch (error) {

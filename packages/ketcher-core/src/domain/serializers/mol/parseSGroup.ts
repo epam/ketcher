@@ -26,7 +26,7 @@ import { assert } from 'utilities';
 
 function readKeyValuePairs(
   str: string,
-  valueString: boolean,
+  isStringValue: boolean,
 ): Pool<string | number> {
   const ret = new Pool<string | number>();
   const partition = utils.partitionLineFixed(str, 3, true);
@@ -34,7 +34,7 @@ function readKeyValuePairs(
 
   for (let i = 0; i < count; ++i) {
     const key = utils.parseDecimalInt(partition[2 * i + 1]) - 1;
-    const value = valueString
+    const value = isStringValue
       ? partition[2 * i + 2].trim()
       : utils.parseDecimalInt(partition[2 * i + 2]);
 
@@ -46,7 +46,7 @@ function readKeyValuePairs(
 
 function readKeyMultiValuePairs(
   str: string,
-  valueString: boolean,
+  isStringValue: boolean,
 ): Array<[number, string | number]> {
   const ret: Array<[number, string | number]> = [];
   const partition = utils.partitionLineFixed(str, 3, true);
@@ -54,7 +54,7 @@ function readKeyMultiValuePairs(
   for (let i = 0; i < count; ++i) {
     ret.push([
       utils.parseDecimalInt(partition[2 * i + 1]) - 1,
-      valueString
+      isStringValue
         ? partition[2 * i + 2].trim()
         : utils.parseDecimalInt(partition[2 * i + 2]),
     ]);
@@ -86,18 +86,18 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
 
   const bondsToRemove: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const beginIn = bond.begin in atomReductionMap;
-    const endIn = bond.end in atomReductionMap;
-    const endInPatoms = bond.end in patomsMap;
-    const beginInPatoms = bond.begin in patomsMap;
+    const isBeginInReductionMap = bond.begin in atomReductionMap;
+    const isEndInReductionMap = bond.end in atomReductionMap;
+    const isEndInParentAtoms = bond.end in patomsMap;
+    const isBeginInParentAtoms = bond.begin in patomsMap;
     if (
-      (beginIn && endIn) ||
-      (beginIn && endInPatoms) ||
-      (endIn && beginInPatoms)
+      (isBeginInReductionMap && isEndInReductionMap) ||
+      (isBeginInReductionMap && isEndInParentAtoms) ||
+      (isEndInReductionMap && isBeginInParentAtoms)
     ) {
       bondsToRemove.push(bid);
-    } else if (beginIn) bond.begin = atomReductionMap[bond.begin];
-    else if (endIn) bond.end = atomReductionMap[bond.end];
+    } else if (isBeginInReductionMap) bond.begin = atomReductionMap[bond.begin];
+    else if (isEndInReductionMap) bond.end = atomReductionMap[bond.end];
   });
 
   for (const bondId of bondsToRemove) {
@@ -131,12 +131,14 @@ function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
 }
 
 function postLoadDat(sgroup: SGroup, mol?: Struct): void {
-  if (!sgroup.data.absolute && mol) {
-    if (!sgroup.pp) {
-      throw new Error('SGroup pp is not set');
-    }
-    sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
+  if (!mol || sgroup.data.absolute) {
+    return;
   }
+
+  if (!sgroup.pp) {
+    throw new Error('SGroup pp is not set');
+  }
+  sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
 }
 
 function postLoadMon(_sgroup: SGroup): void {
@@ -234,12 +236,12 @@ function applySGroupProp(
   sGroups: SGroupMap,
   propName: string,
   propData: string,
-  numeric?: boolean,
-  core?: boolean,
+  isNumeric?: boolean,
+  isCore?: boolean,
 ): void {
-  const kv = readKeyValuePairs(propData, !numeric);
+  const kv = readKeyValuePairs(propData, !isNumeric);
   for (const key of kv.keys()) {
-    (core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
+    (isCore ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
   }
 }
 
@@ -263,8 +265,8 @@ function applyDataSGroupName(sg: SGroup, name: string): void {
   sg.data.fieldName = name;
 }
 
-function applyDataSGroupExpand(sg: SGroup, expanded: boolean): void {
-  sg.data.expanded = expanded;
+function applyDataSGroupExpand(sg: SGroup, isExpanded: boolean): void {
+  sg.data.expanded = isExpanded;
 }
 
 function applyDataSGroupQuery(sg: SGroup, query: string): void {
@@ -304,9 +306,9 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
 
   const x = Number.parseFloat(split[0]);
   const y = Number.parseFloat(split[1]);
-  const attached = split[3].trim() === 'A';
-  const absolute = split[4].trim() === 'A';
-  const showUnits = split[5].trim() === 'U';
+  const isAttached = split[3].trim() === 'A';
+  const isAbsolute = split[4].trim() === 'A';
+  const shouldShowUnits = split[5].trim() === 'U';
   const nCharsRaw = split[7].trim();
   const nCharsToDisplay =
     nCharsRaw === 'ALL' ? -1 : utils.parseDecimalInt(nCharsRaw);
@@ -314,9 +316,9 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
   const daspPos = utils.parseDecimalInt(split[11].trim());
 
   sg.pp = new Vec2(x, -y);
-  sg.data.attached = attached;
-  sg.data.absolute = absolute;
-  sg.data.showUnits = showUnits;
+  sg.data.attached = isAttached;
+  sg.data.absolute = isAbsolute;
+  sg.data.showUnits = shouldShowUnits;
   sg.data.nCharsToDisplay = nCharsToDisplay;
   sg.data.tagChar = tagChar;
   sg.data.daspPos = daspPos;
@@ -331,32 +333,31 @@ function applyDataSGroupInfoLine(sGroups: SGroupMap, propData: string): void {
 function applyDataSGroupData(
   sg: SGroup,
   data: string,
-  finalize: boolean,
+  shouldFinalize: boolean,
 ): void {
   sg.data.fieldValue = (sg.data.fieldValue || '') + data;
-  if (finalize) {
-    sg.data.fieldValue = trimRight(sg.data.fieldValue);
-    if (
-      sg.data.fieldValue.startsWith('"') &&
-      sg.data.fieldValue.endsWith('"')
-    ) {
-      sg.data.fieldValue = sg.data.fieldValue.substring(
-        1,
-        sg.data.fieldValue.length - 1,
-      );
-    }
+  if (!shouldFinalize) {
+    return;
+  }
+
+  sg.data.fieldValue = trimRight(sg.data.fieldValue);
+  if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"')) {
+    sg.data.fieldValue = sg.data.fieldValue.substring(
+      1,
+      sg.data.fieldValue.length - 1,
+    );
   }
 }
 
 function applyDataSGroupDataLine(
   sGroups: SGroupMap,
   propData: string,
-  finalize: boolean,
+  shouldFinalize: boolean,
 ): void {
   const id = utils.parseDecimalInt(propData.substring(0, 5)) - 1;
   const data = propData.substring(5);
   const sg = sGroups[id];
-  applyDataSGroupData(sg, data, finalize);
+  applyDataSGroupData(sg, data, shouldFinalize);
 }
 
 // Utility functions
@@ -380,13 +381,13 @@ function identityMap(array: number[]): Record<number, number> {
 }
 
 /**
- * Superatom attachment point parsing for 'ctab' v2000
- * Implemented based on: https://github.com/epam/ketcher/issues/2467
- * @param ctabString example '   1  1   2   0   '
- *        M SAP sssnn6 iii ooo cc
- *             ^
- *             start position for ctabString content
- */
+Superatom attachment point parsing for 'ctab' v2000
+Implemented based on: https://github.com/epam/ketcher/issues/2467
+@param ctabString example '   1  1   2   0   '
+       M SAP sssnn6 iii ooo cc
+            ^
+            start position for ctabString content
+*/
 function parseSGroupSAPLineV2000(ctabString: string): {
   sGroupId: number;
   attachmentPoints: SGroupAttachmentPoint[];

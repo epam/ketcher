@@ -192,9 +192,9 @@ export function saveSettings(
 }
 
 /**
- * Sync settings from ketcher-core SettingsService to Redux
- * Used for backward compatibility - Redux becomes a passive consumer
- */
+Sync settings from ketcher-core SettingsService to Redux
+Used for backward compatibility - Redux becomes a passive consumer
+*/
 export function syncSettingsFromCore(coreSettings: Partial<Settings>) {
   const normalizedSettings = normalizeSettingsForForm(coreSettings, {
     removeCoreOnlyFields: true,
@@ -260,7 +260,7 @@ export function changeImage(file: RecognizeImageFile) {
   };
 }
 
-export function shouldFragment(isFrag: boolean) {
+export function setFragmentRecognition(isFrag: boolean) {
   return {
     type: 'IS_FRAGMENT_RECOGNIZE',
     data: { fragment: isFrag },

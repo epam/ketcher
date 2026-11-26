@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -148,16 +147,11 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
 // TODO rename and unify after moving all hotkeys to core editor
 //  to handle all events in same way and to have same structure for all hotkey configs
 /**
- * Normalizes a shortcut string, keyboard event, or normalized hotkey map.
- * String and event inputs return a normalized shortcut key, while map inputs
- * return a copy with normalized shortcut keys.
- */
-function keyNormBase(obj: KeyboardEvent): string;
-function keyNormBase(obj: string): string;
-function keyNormBase(obj: HotKeyMap): HotKeyMap;
-function keyNormBase(
-  obj: string | KeyboardEvent | HotKeyMap,
-): string | HotKeyMap {
+Normalizes a shortcut string, keyboard event, or normalized hotkey map.
+String and event inputs return a normalized shortcut key, while map inputs
+return a copy with normalized shortcut keys.
+*/
+const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -165,7 +159,11 @@ function keyNormBase(
   return typeof obj === 'object'
     ? normalizeKeyMap(obj)
     : normalizeShortcut(obj);
-}
+}) as {
+  (obj: KeyboardEvent): string;
+  (obj: string): string;
+  (obj: HotKeyMap): HotKeyMap;
+};
 
 const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
   const existing = hotKeys[key];
@@ -197,10 +195,10 @@ export const initHotKeys = (actions: HotKeyActions) => {
 
 type KeyNorm = typeof keyNormBase & {
   /**
-   * Returns the action group bound to a keyboard event. Multiple action names
-   * may be returned when the same hotkey is shared, in the order they were
-   * registered. Undefined means no binding was found for that shortcut.
-   */
+  Returns the action group bound to a keyboard event. Multiple action names
+  may be returned when the same hotkey is shared, in the order they were
+  registered. Undefined means no binding was found for that shortcut.
+  */
   lookup: (map: HotKeyMap, event: KeyboardEvent) => string[] | undefined;
 };
 

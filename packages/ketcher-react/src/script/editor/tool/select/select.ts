@@ -70,7 +70,7 @@ import {
   isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
-  onSelectionMove,
+  isSelectionMoveHandled,
   onSelectionStart,
   selMerge,
 } from './select.helpers';
@@ -195,8 +195,8 @@ class SelectTool implements Tool {
     if (ci.map === 'frags') {
       sel = getFragSelection(ctab, ci.id) ?? sel;
     } else if (
-      (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
-      sgroups
+      sgroups &&
+      (ci.map === 'sgroups' || ci.map === 'functionalGroups')
     ) {
       const sgroup = sgroups.item;
       sel = {
@@ -375,7 +375,7 @@ class SelectTool implements Tool {
 
       editor.update(selectionDragCtx.action, true);
     } else {
-      const isSelectionRunning = onSelectionMove(
+      const isSelectionRunning = isSelectionMoveHandled(
         event,
         this.editor,
         this.#lassoHelper,
@@ -517,18 +517,20 @@ class SelectTool implements Tool {
 
     this.editor.rotateController.rerender();
 
-    if (clickedAttachmentGroupId !== null) {
-      const itemUnderCursor = editor.findItem(
-        event,
-        getMapsForClosestItem(false),
-        null,
-      );
-      if (
-        itemUnderCursor?.map === 'attachmentGroups' &&
-        itemUnderCursor.id === clickedAttachmentGroupId
-      ) {
-        editor.hover(itemUnderCursor, null, event);
-      }
+    if (clickedAttachmentGroupId === null) {
+      return;
+    }
+
+    const itemUnderCursor = editor.findItem(
+      event,
+      getMapsForClosestItem(false),
+      null,
+    );
+    if (
+      itemUnderCursor?.map === 'attachmentGroups' &&
+      itemUnderCursor.id === clickedAttachmentGroupId
+    ) {
+      editor.hover(itemUnderCursor, null, event);
     }
   }
 
@@ -655,7 +657,7 @@ class SelectTool implements Tool {
         type: 'text',
       });
 
-      dialog
+      void dialog
         .then(({ content }) => {
           if (!content) {
             editor.update(fromTextDeletion(struct, ci.id));
@@ -825,7 +827,7 @@ function getHoverTarget(
   };
 }
 
-function getMapsForClosestItem(selectFragment: boolean) {
+function getMapsForClosestItem(shouldSelectFragment: boolean) {
   return [
     'sgroups',
     'functionalGroups',
@@ -839,7 +841,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'simpleObjects',
     'texts',
     IMAGE_KEY,
-    ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
+    ...(shouldSelectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }
 

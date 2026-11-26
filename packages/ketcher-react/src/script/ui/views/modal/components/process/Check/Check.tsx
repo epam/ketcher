@@ -208,11 +208,12 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
 
   const handleCheck = () => {
     setIsStructureChecking(false);
-    onCheck(result.checkOptions).then(() => {
+    void (async () => {
+      await onCheck(result.checkOptions);
       setIsStructureChecking(true);
       setLastCheckDate(new Date());
       setIsCheckedWithNewSettings(true);
-    });
+    })();
   };
 
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
@@ -272,7 +273,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </span>
             <div
               className={
-                Object.keys(moleculeErrors).length && isStructureChecking
+                isStructureChecking && Object.keys(moleculeErrors).length > 0
                   ? style.warnings
                   : style.centeredContainer
               }
@@ -281,7 +282,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               {isStructureChecking ? (
                 <div
                   className={
-                    Object.keys(moleculeErrors).length
+                    Object.keys(moleculeErrors).length > 0
                       ? style.warningsContainer
                       : style.centeredContainer
                   }
@@ -320,8 +321,13 @@ const mapDispatchToProps = (
   dispatch: AppDispatch,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
-  onCheck: (opts: CheckOption[]) =>
-    dispatch(check(opts)).catch(ownProps.onCancel),
+  onCheck: async (opts: CheckOption[]) => {
+    try {
+      await dispatch(check(opts));
+    } catch {
+      ownProps.onCancel();
+    }
+  },
   onApply: (res: CheckState) => {
     dispatch(checkOpts(res));
     ownProps.onOk(res);

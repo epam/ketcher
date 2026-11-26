@@ -54,7 +54,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as Node | null;
-      if (popupRef.current && target && popupRef.current.contains(target)) {
+      if (target && popupRef.current && popupRef.current.contains(target)) {
         return;
       }
       // Ignore clicks on the trigger button so its own onClick can toggle the

@@ -95,11 +95,9 @@ class TemplatePreview {
       'bonds',
     ]);
 
-    if (ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false) {
-      return ci;
-    } else {
-      return null;
-    }
+    return ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false
+      ? ci
+      : null;
   }
 
   movePreview(event: PointerEvent) {
@@ -180,24 +178,14 @@ class TemplatePreview {
   }
 
   private hideFloatingPreview() {
-    if (this.floatingPreviewAction) {
-      const action = this.floatingPreviewAction.perform(this.restruct);
-      this.editor.update(action, true);
-      this.floatingPreviewAction = null;
-      this.floatingPreview = null;
+    if (!this.floatingPreviewAction) {
+      return;
     }
-  }
 
-  public hideConnectedPreview() {
-    if (this.connectedPreviewAction) {
-      this.connectedPreviewAction.perform(this.restruct);
-      this.connectedPreviewAction = null;
-      this.editor.render.update();
-    }
-    if (this.connectedPreviewTimeout) {
-      clearTimeout(this.connectedPreviewTimeout);
-      this.connectedPreviewTimeout = null;
-    }
+    const action = this.floatingPreviewAction.perform(this.restruct);
+    this.editor.update(action, true);
+    this.floatingPreviewAction = null;
+    this.floatingPreview = null;
   }
 
   private showConnectedPreview(event: MouseEvent, ci: ClosestItemType) {
@@ -246,6 +234,20 @@ class TemplatePreview {
       this.editor.update(action, true);
       this.connectedPreviewAction = action;
     }
+  }
+
+  public hideConnectedPreview() {
+    if (this.connectedPreviewAction) {
+      this.connectedPreviewAction.perform(this.restruct);
+      this.connectedPreviewAction = null;
+      this.editor.render.update();
+    }
+    if (!this.connectedPreviewTimeout) {
+      return;
+    }
+
+    clearTimeout(this.connectedPreviewTimeout);
+    this.connectedPreviewTimeout = null;
   }
 }
 

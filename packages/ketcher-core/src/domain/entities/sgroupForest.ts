@@ -38,9 +38,23 @@ export class SGroupForest {
     this.atomSets = new Map();
   }
 
-  /**
-  returns an array or s-group ids in the order of breadth-first search
-  */
+  private resetParentLink(childId: number, id: number) {
+    const parentId = this.parent.get(childId);
+    if (parentId === undefined) {
+      return;
+    }
+
+    const childs = this.children.get(parentId);
+    if (!childs) {
+      return;
+    }
+
+    const childIndex = childs.indexOf(childId);
+    childs.splice(childIndex, 1);
+    this.parent.set(childId, id);
+  }
+
+  /** returns an array or s-group ids in the order of breadth-first search */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
     const queue = [...(this.children.get(-1) as Array<number>)];
@@ -66,36 +80,34 @@ export class SGroupForest {
 
   getAtomSetRelations(newId: number, atoms: Pile<number>) {
     // find the lowest superset in the hierarchy
-    const isStrictSuperset = new Map<number, boolean>();
-    const isSubset = new Map<number, boolean>();
+    const strictSupersetById = new Map<number, boolean>();
+    const subsetById = new Map<number, boolean>();
 
     this.atomSets.delete(newId);
 
     this.atomSets.forEach((atomSet, id) => {
-      isSubset.set(id, atomSet.isSuperset(atoms));
-      isStrictSuperset.set(
+      subsetById.set(id, atomSet.isSuperset(atoms));
+      strictSupersetById.set(
         id,
         atoms.isSuperset(atomSet) && !atomSet.equals(atoms),
       );
     });
 
     const parents = [...this.atomSets.keys()].filter((sgid) => {
-      if (isSubset.get(sgid) !== true) {
+      if (subsetById.get(sgid) !== true) {
         return false;
       }
       const childs = this.children.get(sgid);
       return (
-        childs?.findIndex((childId) => isSubset.get(childId) === true) === -1
+        childs?.findIndex((childId) => subsetById.get(childId) === true) === -1
       );
     });
 
     const children = [...this.atomSets.keys()].filter((id) => {
       const parentId = this.parent.get(id);
-      if (parentId !== undefined && isStrictSuperset.get(parentId) === true) {
-        return false;
-      }
-
-      return isStrictSuperset.get(id) === true;
+      return parentId !== undefined && strictSupersetById.get(parentId) === true
+        ? false
+        : strictSupersetById.get(id) === true;
     });
 
     return {
@@ -142,22 +154,6 @@ export class SGroupForest {
     this.atomSets.set(id, new Pile(atoms));
 
     return { parent, children };
-  }
-
-  private resetParentLink(childId: number, id: number) {
-    const parentId = this.parent.get(childId);
-    if (parentId === undefined) {
-      return;
-    }
-
-    const childs = this.children.get(parentId);
-    if (!childs) {
-      return;
-    }
-
-    const childIndex = childs.indexOf(childId);
-    childs.splice(childIndex, 1);
-    this.parent.set(childId, id);
   }
 
   remove(id: number): void {

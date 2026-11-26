@@ -72,15 +72,19 @@ class AtomAdd extends BaseOperation<Data> {
     struct.atomSetPos(aid, new Vec2(pos as Point));
 
     const arrow = struct.rxnArrows.get(0);
-    if (arrow) {
-      const atomInstance = struct.atoms.get(aid);
-      if (atomInstance) {
-        atomInstance.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
-          new Pile([aid]),
-          arrow.pos[0].x,
-        );
-      }
+    if (!arrow) {
+      return;
     }
+
+    const atomInstance = struct.atoms.get(aid);
+    if (!atomInstance) {
+      return;
+    }
+
+    atomInstance.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
+      new Pile([aid]),
+      arrow.pos[0].x,
+    );
   }
 }
 

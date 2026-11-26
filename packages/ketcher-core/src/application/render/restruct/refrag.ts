@@ -24,15 +24,15 @@ import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReFrag extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
   public item: Fragment;
 
   constructor(frag: Fragment) {
     super('frag');
     this.item = frag;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   fragGetAtoms(restruct: ReStruct, fid: number): number[] {
@@ -89,21 +89,16 @@ class ReFrag extends ReObject {
   _draw(render: Render, fid: number, attrs: Record<string, unknown>) {
     const bb = this.calcBBox(render.ctab, fid, render);
 
-    if (bb) {
-      const p0 = Scale.modelToCanvas(
-        new Vec2(bb.p0.x, bb.p0.y),
-        render.options,
-      );
-      const p1 = Scale.modelToCanvas(
-        new Vec2(bb.p1.x, bb.p1.y),
-        render.options,
-      );
-      return render.paper
-        .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
-        .attr(attrs);
+    if (!bb) {
+      // TODO abnormal situation, empty fragments must be destroyed by tools
+      return;
     }
 
-    // TODO abnormal situation, empty fragments must be destroyed by tools
+    const p0 = Scale.modelToCanvas(new Vec2(bb.p0.x, bb.p0.y), render.options);
+    const p1 = Scale.modelToCanvas(new Vec2(bb.p1.x, bb.p1.y), render.options);
+    return render.paper
+      .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
+      .attr(attrs);
   }
 
   draw(_render: Render): null {
@@ -114,7 +109,7 @@ class ReFrag extends ReObject {
     // Do nothing. This method shouldn't actually be called.
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(isHovered: boolean, render: Render): void {
     let fid = render.ctab.frags.keyOf(this);
 
     if (!fid && fid !== 0) {
@@ -126,13 +121,13 @@ class ReFrag extends ReObject {
 
     render.ctab.atoms.forEach((atom) => {
       if (atom.a.fragment === fid) {
-        atom.setHover(hover, render);
+        atom.setHover(isHovered, render);
       }
     });
 
     render.ctab.bonds.forEach((bond) => {
       if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
-        bond.setHover(hover, render);
+        bond.setHover(isHovered, render);
       }
     });
   }

@@ -16,9 +16,9 @@ export class HoverIcon {
   _label: ElementLabel | '';
   isShown: boolean;
   /**
-   Is required for the case, when mouse moved outside the canvas, then loading of structure
-   happens and icon needs to be shown above loader.
-   */
+  Is required for the case, when mouse moved outside the canvas, then loading of structure
+  happens and icon needs to be shown above loader.
+  */
   shouldBeShownWhenMouseBack: boolean;
   editor: Editor;
 
@@ -67,19 +67,23 @@ export class HoverIcon {
 
   onMouseMove(event: MouseEvent) {
     if (
-      this.isShown ||
-      (this.isOverLoader(event) && this.shouldBeShownWhenMouseBack)
+      !this.isShown &&
+      (!this.isOverLoader(event) || !this.shouldBeShownWhenMouseBack)
     ) {
-      this.show();
-      this.updatePosition();
+      return;
     }
+
+    this.show();
+    this.updatePosition();
   }
 
   onMouseLeave(event: MouseEvent) {
-    if (!this.isOverLoader(event) && this.isShown) {
-      this.shouldBeShownWhenMouseBack = true;
-      this.hide();
+    if (this.isOverLoader(event) || !this.isShown) {
+      return;
     }
+
+    this.shouldBeShownWhenMouseBack = true;
+    this.hide();
   }
 
   updatePosition() {
@@ -101,11 +105,11 @@ export class HoverIcon {
     this.shouldBeShownWhenMouseBack = false;
   }
 
-  hide(restShouldBeShownWhenMouseBack?: boolean) {
+  hide(shouldResetVisibilityOnMouseReturn?: boolean) {
     this.element.hide();
     this.isShown = false;
 
-    if (restShouldBeShownWhenMouseBack) {
+    if (shouldResetVisibilityOnMouseReturn) {
       this.shouldBeShownWhenMouseBack = false;
     }
   }

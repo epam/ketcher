@@ -56,14 +56,14 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
 
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
-      let atomId: number | null = null;
-      if (atom.type === 'rg-label') {
-        atomId = struct.atoms.add(rglabelToStruct(atom));
-      }
+      let atomId: number | undefined =
+        atom.type === 'rg-label'
+          ? struct.atoms.add(rglabelToStruct(atom))
+          : undefined;
       if (!atom.type || atom.type === 'atom-list') {
         atomId = struct.atoms.add(atomToStruct(atom));
       }
-      if (atomId !== null) {
+      if (atomId !== undefined) {
         addRGroupAttachmentPointsToStruct(
           struct,
           atomId,
@@ -85,9 +85,9 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
       // file can reference a non-existent atom; without this the whole S-group is later
       // silently discarded when the struct is reconstructed/cloned (Struct.clone).
       // Mirrors the MOL parser (SGroup.filter + empty-group removal in mol/v2000.ts).
-      const hadAtoms = sgroup.atoms.length > 0;
+      const hasOriginalAtoms = sgroup.atoms.length > 0;
       sgroup.atoms = sgroup.atoms.filter((atomId) => struct.atoms.has(atomId));
-      if (hadAtoms && sgroup.atoms.length === 0) {
+      if (hasOriginalAtoms && sgroup.atoms.length === 0) {
         return; // all references were invalid — skip this malformed S-group
       }
       const id = struct.sgroups.add(sgroup);
@@ -203,8 +203,9 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       break;
     }
     case 'GEN':
-    default:
+    default: {
       break;
+    }
   }
   return sgroup;
 }

@@ -233,11 +233,7 @@ export class SGroup {
 
   isExpanded(): boolean {
     // flag ".data.expanded" exists only for the SuperAtom
-    if (SGroup.isSuperAtom(this)) {
-      return Boolean(this.data.expanded);
-    } else {
-      return true;
-    }
+    return SGroup.isSuperAtom(this) ? Boolean(this.data.expanded) : true;
   }
 
   isContracted(): boolean {
@@ -262,9 +258,9 @@ export class SGroup {
         contentBoxes.push(bba);
       });
 
-      const contentBB = contentBoxes.reduce<Box2Abs | null>(
+      const contentBB = contentBoxes.reduce<Box2Abs | undefined>(
         (contentBounds, bba) => {
-          let bbb: Box2Abs | null = null;
+          let bbb: Box2Abs | undefined;
           [bba.p0.x, bba.p1.x].forEach((x) => {
             [bba.p0.y, bba.p1.y].forEach((y) => {
               const v = new Vec2(x, y);
@@ -274,7 +270,7 @@ export class SGroup {
           assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
           return contentBounds ? Box2Abs.union(contentBounds, bbb) : bbb;
         },
-        null,
+        undefined,
       );
 
       assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
@@ -286,7 +282,7 @@ export class SGroup {
 
     const sgroups = [...struct.sgroups.values()];
     for (const _ of sgroups) {
-      if (!descriptorIntersects(sgroups, topLeftPoint)) break;
+      if (!doesDescriptorIntersect(sgroups, topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
     }
@@ -315,7 +311,7 @@ export class SGroup {
 
   addAttachmentPoint(
     attachmentPoint: SGroupAttachmentPoint,
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
       ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
@@ -325,7 +321,7 @@ export class SGroup {
         attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
-    if (isAttachmentPointAlreadyExist && validateUniqueness) {
+    if (isAttachmentPointAlreadyExist && shouldValidateUniqueness) {
       throw new Error(
         'The same attachment point cannot be added to an S-group more than once',
       );
@@ -337,10 +333,10 @@ export class SGroup {
   addAttachmentPoints(
     attachmentPoints:
       ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
-      this.addAttachmentPoint(attachmentPoint, validateUniqueness);
+      this.addAttachmentPoint(attachmentPoint, shouldValidateUniqueness);
     }
   }
 
@@ -358,12 +354,12 @@ export class SGroup {
   }
 
   /**
-   * Connection point - is not! the same as Attachment point.
-   * Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
-   * So it doesn't matter how it happens (connection atom).
-   * When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
-   * But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
-   */
+  Connection point - is not! the same as Attachment point.
+  Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
+  So it doesn't matter how it happens (connection atom).
+  When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
+  But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
+  */
   private getConnectionPointsCount(struct: Struct): number {
     const connectionAtoms = new Set<number>();
     for (const atomId of this.atoms) {
@@ -383,24 +379,24 @@ export class SGroup {
   }
 
   /**
-   * Why only one?
-   * Currently other parts of application don't support several attachment points for sgroup.
-   * So to support it - it's required to refactor almost every peace of code with sgroups.
-   *
-   *
-   * Why return 'undefined' without fallback?
-   * If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
-   */
+  Why only one?
+  Currently other parts of application don't support several attachment points for sgroup.
+  So to support it - it's required to refactor almost every peace of code with sgroups.
+
+
+  Why return 'undefined' without fallback?
+  If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
+  */
   getAttachmentAtomId(): number | undefined {
     return this.attachmentPoints[0]?.atomId;
   }
 
   /**
-   * WHY? atomId drives which atom renders the sgroup label; position is the visual
-   * center used for movement, hit-testing and rendering. Keeping them separate lets
-   * the label always float at the geometric center of all atoms regardless of which
-   * atom happens to be the attachment point.
-   */
+  WHY? atomId drives which atom renders the sgroup label; position is the visual
+  center used for movement, hit-testing and rendering. Keeping them separate lets
+  the label always float at the geometric center of all atoms regardless of which
+  atom happens to be the attachment point.
+  */
   getContractedPosition(struct: Struct): {
     atomId: number;
     position: Vec2;
@@ -446,16 +442,15 @@ export class SGroup {
     }
 
     const superatomClass = this.data.class;
-    if (isSuperatomClass(superatomClass)) {
-      return SUPERATOM_CLASS_TEXT[superatomClass];
-    }
-
-    return '';
+    return isSuperatomClass(superatomClass)
+      ? SUPERATOM_CLASS_TEXT[superatomClass]
+      : '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup?.pp || !sgroup.bracketBox) return null;
-    return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
+    return !sgroup?.pp || !sgroup.bracketBox
+      ? null
+      : Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
   }
 
   static isSaltOrSolvent(moleculeName: string): boolean {
@@ -599,10 +594,7 @@ export class SGroup {
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
     const getAtom = (aid: number): RenderableSGroupAtom | undefined => {
-      if (remol && render) {
-        return remol.atoms.get(aid);
-      }
-      return mol.atoms.get(aid);
+      return remol && render ? remol.atoms.get(aid) : mol.atoms.get(aid);
     };
 
     sGroup.bracketDirection = new Vec2(1, 0);
@@ -611,9 +603,9 @@ export class SGroup {
       const atom = getAtom(aid);
       if (!atom) return;
 
-      let structBoundingBox: Box2Abs | null = null;
-      if ('getVBoxObj' in atom && atom.getVBoxObj && render) {
-        structBoundingBox = atom.getVBoxObj(render);
+      let structBoundingBox: Box2Abs | undefined;
+      if (render && 'getVBoxObj' in atom && atom.getVBoxObj) {
+        structBoundingBox = atom.getVBoxObj(render) ?? undefined;
       } else if (atom.pp) {
         const position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
@@ -629,7 +621,7 @@ export class SGroup {
     const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
@@ -725,7 +717,7 @@ export class SGroup {
   static getObjBBox(
     atoms: number[],
     mol: Struct,
-    useCollapsedSgroupsPosition = false,
+    shouldUseCollapsedSgroupsPosition = false,
   ): Box2Abs {
     const a0 = mol.atoms.get(atoms[0])?.pp;
     assert(a0, `SGroup.getObjBBox: atom ${atoms[0]} position is not found`);
@@ -736,7 +728,7 @@ export class SGroup {
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
-        useCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
+        shouldUseCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
           ? sgroup.getContractedPosition(mol).position
           : atom.pp;
       bb = bb.include(p);
@@ -789,13 +781,13 @@ export class SGroup {
       }
     });
 
-    if (xBonds.length !== 0 && xBonds.length !== 2) {
+    if (xBonds.length > 0 && xBonds.length !== 2) {
       throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
     let xAtom2 = -1;
-    let crossBond: Bond | null = null;
+    let crossBond: Bond | undefined;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
       assert(
@@ -834,7 +826,7 @@ export class SGroup {
         newBond.end = amap[newBond.end];
         mol.bonds.add(newBond);
       });
-      if (crossBond !== null) {
+      if (crossBond !== undefined) {
         const newCrossBond = crossBond.clone();
         newCrossBond.begin = tailAtom;
         newCrossBond.end = amap[xAtom1];
@@ -906,10 +898,7 @@ export class SGroup {
   }
 
   static isSuperAtom(sGroup?: SGroup): boolean {
-    if (!sGroup) {
-      return false;
-    }
-    return sGroup?.type === this.TYPES.SUP;
+    return !sGroup ? false : sGroup?.type === this.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {
@@ -933,7 +922,10 @@ export class SGroup {
   }
 }
 
-function descriptorIntersects(sgroups: SGroup[], topLeftPoint: Vec2): boolean {
+function doesDescriptorIntersect(
+  sgroups: SGroup[],
+  topLeftPoint: Vec2,
+): boolean {
   return sgroups.some((sg: SGroup) => {
     if (!sg.pp) return false;
 

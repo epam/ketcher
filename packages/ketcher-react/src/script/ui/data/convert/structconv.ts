@@ -164,7 +164,7 @@ export function toElement(elem: ElementFormData) {
       : [];
 
     return {
-      label: values.length ? 'R#' : 'C',
+      label: values.length > 0 ? 'R#' : 'C',
       rglabel: values.length === 0 ? null : toRlabel(values),
     };
   }
@@ -313,7 +313,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
-    charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
+    charge: charge !== 0 && restAtom.charge ? Number(charge) : null,
     // Empty string from cleared form field must become null like undefined (not ?? alone).
     alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
@@ -358,7 +358,7 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
 export function fromStereoLabel(stereoLabel: string | null) {
   if (stereoLabel === null) return { type: null };
   const typeMatch = stereoLabel.match(/\D+/g);
-  if (!typeMatch?.length) {
+  if (typeMatch === null || typeMatch.length === 0) {
     return { type: stereoLabel, orNumber: 0, andNumber: 0 };
   }
 
@@ -398,14 +398,17 @@ export function toStereoLabel(stereoLabel: {
   orNumber?: number;
 }) {
   switch (stereoLabel.type) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return `${StereoLabel.And}${stereoLabel.andNumber ?? 1}`;
+    }
 
-    case StereoLabel.Or:
+    case StereoLabel.Or: {
       return `${StereoLabel.Or}${stereoLabel.orNumber ?? 1}`;
+    }
 
-    default:
+    default: {
       return stereoLabel.type;
+    }
   }
 }
 
@@ -575,20 +578,24 @@ export function toSgroup(sgroup: SGroupFormData) {
   const attached = 'attached';
 
   switch (radiobuttons) {
-    case 'Absolute':
+    case 'Absolute': {
       attrs[absolute] = true;
       attrs[attached] = false;
       break;
-    case 'Attached':
+    }
+    case 'Attached': {
       attrs[absolute] = false;
       attrs[attached] = true;
       break;
-    case 'Relative':
+    }
+    case 'Relative': {
       attrs[absolute] = false;
       attrs[attached] = false;
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
 
   if (attrs.fieldName) attrs.fieldName = attrs.fieldName.trim();

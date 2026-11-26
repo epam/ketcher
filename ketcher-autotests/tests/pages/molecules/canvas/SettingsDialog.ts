@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,
@@ -6,7 +5,6 @@ import {
   BondsSetting,
   ComboBoxOptionEntry,
   comboBoxOptions,
-  ComboBoxValue,
   EditboxOptionEntry,
   editboxOptions,
   GeneralSetting,
@@ -21,7 +19,6 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { TopRightToolbar } from '../TopRightToolbar';
-import { waitForRender } from '@utils/common';
 
 type GeneralSectionLocators = {
   resetToSelectToolCombobox: Locator;
@@ -104,6 +101,8 @@ type SettingsDialogLocators = {
   openFromFileButton: Locator;
   saveToFileButton: Locator;
   resetButton: Locator;
+  resetSubmenuTrigger: Locator;
+  manageSettingsButton: Locator;
   closeWindowButton: Locator;
   generalSection: Locator;
   stereochemistrySection: Locator;
@@ -290,11 +289,13 @@ export const SettingsDialog = (page: Page) => {
   );
 
   const locators: SettingsDialogLocators = {
-    window: page.getByTestId('settings-dialog'),
-    openFromFileButton: page.getByTestId('open-settings-from-file-button'),
-    saveToFileButton: page.getByTestId('save-settings-to-file-button'),
-    resetButton: page.getByTestId('reset-settings-button'),
-    closeWindowButton: page.getByTestId('close-window-button'),
+    window: page.getByTestId('settings-panel'),
+    openFromFileButton: page.getByTestId('load-settings-menu-button'),
+    saveToFileButton: page.getByTestId('save-settings-menu-button'),
+    resetButton: page.getByTestId('reset-to-default-button'),
+    resetSubmenuTrigger: page.getByTestId('reset-to-submenu-trigger'),
+    manageSettingsButton: page.getByTestId('manage-settings-button'),
+    closeWindowButton: page.getByTestId('settings-panel-close'),
     generalSection,
     stereochemistrySection,
     atomsSection,
@@ -303,9 +304,9 @@ export const SettingsDialog = (page: Page) => {
     validationSection,
     threeDViewerSection,
     optionsForDebuggingSection,
-    setACSSettingsButton: page.getByTestId('acs-style-button'),
-    applyButton: page.getByTestId('OK'),
-    cancelButton: page.getByTestId('Cancel'),
+    setACSSettingsButton: page.getByTestId('reset-to-acs-button'),
+    applyButton: page.getByTestId('settings-panel-apply'),
+    cancelButton: page.getByTestId('settings-panel-cancel'),
   };
 
   const sectionLocators: Record<SettingsSection, Locator> = {
@@ -333,9 +334,8 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async apply() {
-      await waitForRender(page, async () => {
-        await locators.applyButton.click();
-      });
+      await locators.applyButton.click();
+      await locators.window.waitFor({ state: 'hidden' });
     },
 
     async cancel() {
@@ -343,6 +343,8 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async setACSSettings() {
+      await locators.manageSettingsButton.click();
+      await locators.resetSubmenuTrigger.hover();
       await locators.setACSSettingsButton.click();
     },
 
@@ -370,14 +372,14 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async reset() {
-      if (await locators.resetButton.isEnabled()) {
-        await locators.resetButton.click();
-      }
+      await locators.manageSettingsButton.click();
+      await locators.resetSubmenuTrigger.hover();
+      await locators.resetButton.click();
     },
   };
 };
 
-let cachedMap: Map<string, SettingsSection> | null = null;
+let cachedMap: Map<string, SettingsSection> | undefined;
 
 // The "*Setting" constant groups below no longer line up 1:1 with the
 // Settings dialog's accordion sections (fields were regrouped without
@@ -394,58 +396,45 @@ const SECTION_OVERRIDES = new Map<string, SettingsSection>([
   [ServerSetting.IgnorePseudoatomsAtMass, SettingsSection.Validation],
   [ServerSetting.AddRsitesAtMassCalculation, SettingsSection.Reactions],
   [ServerSetting.AddIsotopesAtMassCalculation, SettingsSection.Reactions],
+  // 3D Viewer section was merged into General Editing & Display in the redesign
+  [ThreeDViewerSetting.DisplayMode, SettingsSection.General],
+  [ThreeDViewerSetting.BackgroundColor, SettingsSection.General],
+  [ThreeDViewerSetting.LabelColoring, SettingsSection.General],
 ]);
 
 function createOptionToSectionMap(): Map<string, SettingsSection> {
   if (cachedMap) return cachedMap;
   const map = new Map<string, SettingsSection>();
 
-  Object.values(GeneralSetting).forEach((val) =>
-    map.set(val, SettingsSection.General),
+  Object.values(GeneralSetting).forEach((value) =>
+    map.set(value, SettingsSection.General),
   );
-  Object.values(StereochemistrySetting).forEach((val) =>
-    map.set(val, SettingsSection.Stereochemistry),
+  Object.values(StereochemistrySetting).forEach((value) =>
+    map.set(value, SettingsSection.Stereochemistry),
   );
-  Object.values(AtomsSetting).forEach((val) =>
-    map.set(val, SettingsSection.Atoms),
+  Object.values(AtomsSetting).forEach((value) =>
+    map.set(value, SettingsSection.Atoms),
   );
-  Object.values(BondsSetting).forEach((val) =>
-    map.set(val, SettingsSection.Bonds),
+  Object.values(BondsSetting).forEach((value) =>
+    map.set(value, SettingsSection.Bonds),
   );
   // ServerSetting fields are now split across the Reactions & Components,
   // Validation & Calculation, and Debugging sections; see SECTION_OVERRIDES.
-  Object.values(ServerSetting).forEach((val) =>
-    map.set(val, SettingsSection.Validation),
+  Object.values(ServerSetting).forEach((value) =>
+    map.set(value, SettingsSection.Validation),
   );
-  Object.values(ThreeDViewerSetting).forEach((val) =>
-    map.set(val, SettingsSection.ThreeDViewer),
+  Object.values(ThreeDViewerSetting).forEach((value) =>
+    map.set(value, SettingsSection.ThreeDViewer),
   );
-  Object.values(OptionsForDebuggingSetting).forEach((val) =>
-    map.set(val, SettingsSection.Debugging),
+  Object.values(OptionsForDebuggingSetting).forEach((value) =>
+    map.set(value, SettingsSection.Debugging),
   );
 
-  SECTION_OVERRIDES.forEach((section, val) => map.set(val, section));
+  SECTION_OVERRIDES.forEach((section, value) => map.set(value, section));
 
   cachedMap = map;
   return cachedMap;
 }
-
-export async function setSettingsOption(
-  page: Page,
-  option: (typeof comboBoxOptions)[number],
-  value: ComboBoxValue,
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: (typeof switcherOptions)[number],
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: AllSettingsOptions,
-  value?: string,
-): Promise<void>;
 
 export async function setSettingsOption(
   page: Page,
@@ -474,20 +463,16 @@ export async function setSettingsOption(
   }
 }
 
-export function setSettingsOptions(
+export async function setSettingsOptions(
   page: Page,
   options: (
+    | { option: AllSettingsOptions; value?: string }
     | ComboBoxOptionEntry
     | SwitcherOptionEntry
     | EditboxOptionEntry
     | OtherOptionEntry
   )[],
-): Promise<void>;
-
-export async function setSettingsOptions(
-  page: Page,
-  options: { option: AllSettingsOptions; value?: string }[],
-) {
+): Promise<void> {
   const optionsToSectionMap = createOptionToSectionMap();
   const hasFontOption = options.some(
     (entry) => entry.option === GeneralSetting.Font,
@@ -504,7 +489,9 @@ export async function setSettingsOptions(
   const sortedOptions = [...options];
   sortedOptions.sort((a, b) => a.option.localeCompare(b.option));
 
-  for (const { option, value } of sortedOptions) {
+  for (const entry of sortedOptions) {
+    const { option } = entry;
+    const value = 'value' in entry ? entry.value : undefined;
     const section = optionsToSectionMap.get(option) ?? SettingsSection.General;
     if (openedSection !== section) {
       await SettingsDialog(page).openSection(openedSection);

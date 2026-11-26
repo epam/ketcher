@@ -8148,8 +8148,7 @@
             "y": -11.911458587646493
         },
         "alias": "Unknown",
-        "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "templateId": "unknown_monomer_with_idt_alias_Unknown"
     },
     "monomerTemplate-unknown_monomer_with_idt_alias_Unknown": {
         "type": "monomerTemplate",

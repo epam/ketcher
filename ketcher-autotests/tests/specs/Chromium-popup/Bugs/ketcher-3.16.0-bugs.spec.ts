@@ -27,7 +27,6 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { collectPageErrors } from '@utils/common/collectPageErrors';
-import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();

@@ -729,6 +729,11 @@ function findCloseMerge(
     atomToFunctionalGroup: new Map(),
   };
 
+  const isFunctionalGroupSelected = selected.atoms.some((atomId) => {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    return sgroup !== undefined && FunctionalGroup.isFunctionalGroup(sgroup);
+  });
+
   maps.forEach((map) => {
     if (map === 'atoms') {
       [...pos.atoms.keys()].forEach((atomId) => {
@@ -741,7 +746,8 @@ function findCloseMerge(
           selected,
           result,
         );
-        if (!merged) {
+        // A moved functional group must not replace other groups with its terminal atoms
+        if (!merged && !isFunctionalGroupSelected) {
           didMergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
         }
       });

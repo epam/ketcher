@@ -381,7 +381,7 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'formic acid' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+    await getAtomLocator(page, { atomLabel: 'H', atomId: 5 }).hover({
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');

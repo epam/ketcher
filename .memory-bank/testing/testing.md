@@ -493,6 +493,8 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Async / Timing
 
+For context-menu hotkey regressions, wait for the menu to become hidden before sending the key. The menu item retains focus during its feedback animation, so sending the key before closure can miss focus-loss bugs. Use a visibility assertion rather than a fixed delay or a canvas click. Do not select another tool or use a helper that restores focus between the menu action and the keypress. Test each key from an independent editor state.
+
 1. **Wrap canvas-mutating actions in `waitForRender` only when they are expected to emit `renderComplete`** or use a higher-level utility that already does this. For actions with a different completion signal, such as a ghost element becoming visible, wait for that signal instead of using a no-op `waitForRender` as a barrier.
 2. **Use `waitForSpinnerFinishedWork`** whenever the action triggers a loading spinner (file open, save, structure check).
 3. **Use `waitFor({ state: 'visible' })`** or `waitFor({ state: 'detached' })` to assert element presence/absence. Avoid polling with `waitForTimeout`.

@@ -15,7 +15,7 @@ export class UnbalancedEquilibriumFilledHalfTriangleArrowRenderer {
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
     const arrowOffset = ARROW_OFFSET * macroModeScale;
-    const unbalanceVal = ARROW_UNBALANCED_OFFSET * macroModeScale;
+    const unbalanceValue = ARROW_UNBALANCED_OFFSET * macroModeScale;
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
@@ -29,15 +29,15 @@ export class UnbalancedEquilibriumFilledHalfTriangleArrowRenderer {
         `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-        `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-        `M${toFixed(start.x + unbalanceVal)},${toFixed(
+      `M${toFixed(start.x + unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+        `M${toFixed(start.x + unbalanceValue)},${toFixed(
           start.y + arrowOffset,
         )}` +
-        `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
+        `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
-        `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${
+        `L${toFixed(start.x + arrowHeadLength + unbalanceValue)},${
           start.y + arrowOffset
         }Z`,
     );

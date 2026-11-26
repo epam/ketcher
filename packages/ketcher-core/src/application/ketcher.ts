@@ -109,7 +109,7 @@ const MONOMER_LIBRARY_CONVERT_TIMEOUT_MS = 5 * 60 * 1000;
 
 export class Ketcher {
   readonly #formatterFactory: FormatterFactory;
-  #editor: Editor | null = null;
+  #editor: Editor | undefined;
   readonly #eventBus: EventEmitter;
   readonly #settingsService?: ISettingsService;
   _id: string;
@@ -126,8 +126,8 @@ export class Ketcher {
     settingsService?: ISettingsService,
     disabledFunctionality?: DisabledFunctionalityConfig,
   ) {
-    assert(structService != null);
-    assert(formatterFactory != null);
+    assert(structService != undefined);
+    assert(formatterFactory != undefined);
     this._id = uniqueId();
     this.changeEvent = new Subscription();
     this.libraryUpdateEvent = new Subscription();
@@ -152,9 +152,9 @@ export class Ketcher {
   }
 
   /**
-   * Handle settings changes from settings service
-   * Updates editor and triggers re-render if needed
-   */
+  Handle settings changes from settings service
+  Updates editor and triggers re-render if needed
+  */
   #onSettingsChanged(settings: Settings): void {
     // This will be called when settings change
     // The editor will need to be updated with new settings
@@ -164,7 +164,7 @@ export class Ketcher {
 
   get editor(): Editor {
     // we should assign editor exactly after ketcher creation, so #editor
-    // being null here would indicate a programming error (accessing the
+    // being unset here would indicate a programming error (accessing the
     // editor before Ketcher has finished initializing), not a normal
     // runtime case
     if (!this.#editor) {
@@ -180,19 +180,19 @@ export class Ketcher {
   }
 
   /**
-   * Get settings service for managing application settings
-   * Returns undefined if settings service was not provided during construction
-   */
+  Get settings service for managing application settings
+  Returns undefined if settings service was not provided during construction
+  */
   get settingsService(): ISettingsService | undefined {
     return this.#settingsService;
   }
 
   /**
-   * Checks whether a given piece of functionality was disabled via the
-   * `disabledFunctionality` configuration option. Any UI entry point that
-   * can trigger that functionality (context menu item, toolbar button,
-   * etc.) should consult this method and hide/disable itself accordingly.
-   */
+  Checks whether a given piece of functionality was disabled via the
+  `disabledFunctionality` configuration option. Any UI entry point that
+  can trigger that functionality (context menu item, toolbar button,
+  etc.) should consult this method and hide/disable itself accordingly.
+  */
   isFunctionalityDisabled(functionality: KetcherFunctionality): boolean {
     return this.#disabledFunctionality.has(functionality);
   }
@@ -376,8 +376,8 @@ export class Ketcher {
   }
 
   /**
-   * Rejects if the macromolecules editor is unavailable or disabled.
-   */
+  Rejects if the macromolecules editor is unavailable or disabled.
+  */
   async getSequence(
     format: '1-letter' | '3-letter' = '1-letter',
   ): Promise<string> {
@@ -572,7 +572,7 @@ export class Ketcher {
   }
 
   async setMolecule(
-    structStr: string,
+    structString: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = provideEditorInstance();
@@ -581,11 +581,14 @@ export class Ketcher {
     await macromoleculesEditor?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
-      assert(typeof structStr === 'string');
+      assert(typeof structString === 'string');
 
       if (globalThis.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        await parseAndAddMacromoleculesOnCanvas(
+          structString,
+          this.structService,
+        );
 
         if (options?.needZoom !== false) {
           macromoleculesEditor?.zoomToStructuresIfNeeded();
@@ -593,7 +596,7 @@ export class Ketcher {
         }
       } else {
         const struct: Struct = await prepareStructToRender(
-          structStr,
+          structString,
           this.structService,
           this,
         );
@@ -619,18 +622,18 @@ export class Ketcher {
         if (!shouldPreserveCanvasPosition) {
           this.editor.zoomAccordingContent(struct);
         }
-        if (x == null && y == null && !shouldPreserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition && x == undefined && y == undefined) {
           this.editor.centerStruct();
         }
       }
     }, this.eventBus);
   }
 
-  async setHelm(helmStr: string): Promise<void | undefined> {
+  async setHelm(helmString: string): Promise<void | undefined> {
     await runAsyncAction<void>(async () => {
-      assert(typeof helmStr === 'string');
+      assert(typeof helmString === 'string');
       const struct: Struct = await prepareStructToRender(
-        helmStr,
+        helmString,
         this.structService,
         this,
       );
@@ -642,7 +645,7 @@ export class Ketcher {
   }
 
   async addFragment(
-    structStr: string,
+    structString: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = provideEditorInstance();
@@ -652,20 +655,23 @@ export class Ketcher {
     await macromoleculesEditor?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
-      assert(typeof structStr === 'string');
+      assert(typeof structString === 'string');
 
       if (globalThis.isPolymerEditorTurnedOn) {
         const isCanvasEmptyBeforeOpenStructure =
           !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
 
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        await parseAndAddMacromoleculesOnCanvas(
+          structString,
+          this.structService,
+        );
 
         if (isCanvasEmptyBeforeOpenStructure) {
           macromoleculesEditor?.zoomToStructuresIfNeeded();
         }
       } else {
         const struct: Struct = await prepareStructToRender(
-          structStr,
+          structString,
           this.structService,
           this,
         );
@@ -689,33 +695,35 @@ export class Ketcher {
     const editor = provideEditorInstance();
 
     await runAsyncAction<void>(async () => {
-      if (globalThis.isPolymerEditorTurnedOn) {
-        const ketSerializer = new KetSerializer();
-        const serializedKet = ketSerializer.serialize(
-          new Struct(),
-          editor.drawingEntitiesManager,
-          undefined,
-          false,
-          true,
-        );
-
-        const result = await this.structService.layout(
-          {
-            struct: serializedKet,
-            output_format: ChemicalMimeType.KET,
-          },
-          {
-            'smart-layout': false,
-          },
-        );
-
-        deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(
-          result.struct,
-          this.structService,
-          true,
-        );
+      if (!globalThis.isPolymerEditorTurnedOn) {
+        return;
       }
+
+      const ketSerializer = new KetSerializer();
+      const serializedKet = ketSerializer.serialize(
+        new Struct(),
+        editor.drawingEntitiesManager,
+        undefined,
+        false,
+        true,
+      );
+
+      const result = await this.structService.layout(
+        {
+          struct: serializedKet,
+          output_format: ChemicalMimeType.KET,
+        },
+        {
+          'smart-layout': false,
+        },
+      );
+
+      deleteAllEntitiesOnCanvas();
+      await parseAndAddMacromoleculesOnCanvas(
+        result.struct,
+        this.structService,
+        true,
+      );
     }, this.eventBus);
   }
 
@@ -770,8 +778,8 @@ export class Ketcher {
   }
 
   /**
-   * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
-   */
+  @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
+  */
   setZoom(value: number) {
     const editor = provideEditorInstance();
     if (editor && value) editor.zoomTool.zoomTo(value);
@@ -779,10 +787,12 @@ export class Ketcher {
 
   setMode(mode: SupportedModes) {
     const editor = provideEditorInstance();
-    if (editor && mode) {
-      editor.events.selectMode.dispatch(ModeTypes[mode]);
-      editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
+    if (!editor || !mode) {
+      return;
     }
+
+    editor.events.selectMode.dispatch(ModeTypes[mode]);
+    editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
   }
 
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
@@ -823,13 +833,15 @@ export class Ketcher {
     let meta: string;
 
     switch (outputFormat) {
-      case 'svg':
+      case 'svg': {
         meta = 'image/svg+xml';
         break;
+      }
 
       case 'png':
-      default:
+      default: {
         meta = 'image/png';
+      }
     }
     const serverSettings = this.editor.serverSettings;
 
@@ -858,20 +870,20 @@ export class Ketcher {
   }
 
   /**
-   * Converts raw monomer data to KET format before it is sent to the editor.
-   *
-   * @throws {Error} When conversion fails or the server rejects the payload.
-   *   The thrown message is prefixed with
-   *   "Monomer item could not be loaded because of an error: ".
-   */
+  Converts raw monomer data to KET format before it is sent to the editor.
+
+  @throws {Error} When conversion fails or the server rejects the payload.
+    The thrown message is prefixed with
+    "Monomer item could not be loaded because of an error: ".
+  */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
-    params?: UpdateMonomersLibraryParams,
+    parameters?: UpdateMonomersLibraryParams,
   ) {
     const serverSettings = this.editor.serverSettings;
     const rawMonomersDataString = ensureString(rawMonomersData);
     const format =
-      params?.format ?? identifyStructFormat(rawMonomersDataString);
+      parameters?.format ?? identifyStructFormat(rawMonomersDataString);
     let dataInKetFormat: string | JSON;
 
     if (format === SupportedFormat.ket) {
@@ -928,7 +940,7 @@ export class Ketcher {
 
   public async updateMonomersLibrary(
     rawMonomersData: string | JSON,
-    params?: UpdateMonomersLibraryParams,
+    parameters?: UpdateMonomersLibraryParams,
   ) {
     const editor = provideEditorInstance();
 
@@ -946,24 +958,27 @@ export class Ketcher {
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
-      params,
+      parameters,
     );
 
     const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
       rawMonomersData,
-      params,
+      parameters,
     );
 
     editor.updateMonomersLibrary(
       dataInKetFormat,
       undefined,
-      params?.shouldPersist,
+      parameters?.shouldPersist,
     );
-    if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
+    if (
+      SettingsManager.persistMonomerLibraryUpdates &&
+      parameters?.shouldPersist
+    ) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
     }
-    if (params?.needDispatchLibraryUpdateEvent) {
+    if (parameters?.needDispatchLibraryUpdateEvent) {
       this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     }
   }

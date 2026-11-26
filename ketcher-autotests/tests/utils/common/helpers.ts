@@ -47,7 +47,7 @@ export async function clearLocalStorage(page: Page) {
 export async function resetClipboard(page: Page) {
   await page.evaluate(async () => {
     try {
-      await navigator.clipboard.writeText('');
+      globalThis.window.ketcher.editor.clearHistory();
     } catch {
       // No clipboard permission in this context - nothing to reset.
     }

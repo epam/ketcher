@@ -3,7 +3,7 @@
 // through, and the tooltip must show that one.
 
 type HotkeyModules = {
-  hotkeysConfiguration: typeof import('../editorEvents').hotkeysConfiguration;
+  hotkeysConfiguration: typeof import('../editorEvents').hotkeysConfig;
   keyNorm: typeof import('../../../utilities/keynorm').keyNorm;
   initHotKeys: typeof import('../../../utilities/keynorm').initHotKeys;
   generateMenuShortcuts: typeof import('../../../utilities/shortcutsUtil').generateMenuShortcuts;
@@ -20,7 +20,8 @@ const loadOnPlatform = async (
 
   vi.resetModules();
   vi.doMock('react-device-detect', () => ({ isMacOs }));
-  const { hotkeysConfiguration } = await import('../editorEvents');
+  const { hotkeysConfig: hotkeysConfiguration } =
+    await import('../editorEvents');
   const { keyNorm, initHotKeys } = await import('../../../utilities/keynorm');
   const { generateMenuShortcuts } =
     await import('../../../utilities/shortcutsUtil');

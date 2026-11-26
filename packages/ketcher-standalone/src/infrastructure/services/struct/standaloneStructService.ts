@@ -165,12 +165,14 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.BILN;
       break;
     }
-    case ChemicalMimeType.RDF:
+    case ChemicalMimeType.RDF: {
       format = SupportedFormat.RDF;
       break;
-    case ChemicalMimeType.MonomerLibrary:
+    }
+    case ChemicalMimeType.MonomerLibrary: {
       format = SupportedFormat.MonomerLibrary;
       break;
+    }
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');
@@ -181,17 +183,13 @@ function convertMimeTypeToOutputFormat(
 }
 
 function mapCalculatedPropertyName(property: CalculateProps) {
-  if (property === 'gross-formula') {
-    return 'gross';
-  }
-  return property;
+  return property === 'gross-formula' ? 'gross' : property;
 }
 
 function mapWarningGroup(property: string) {
-  if (property === 'OVERLAP_BOND') {
-    return 'overlapping_bonds';
-  }
-  return property.toLowerCase();
+  return property === 'OVERLAP_BOND'
+    ? 'overlapping_bonds'
+    : property.toLowerCase();
 }
 
 // Timers of the calls of one service that still wait for a worker reply, keyed
@@ -209,14 +207,14 @@ function cancelPendingTimeouts(eventEmitter: EventEmitter) {
 }
 
 /**
- * Creates a wrapper that adds timeout functionality to worker communication
- * @param eventEmitter - The event emitter instance
- * @param workerEvent - The worker event type to listen to
- * @param action - The callback function to execute on success
- * @param reject - The callback function to execute on timeout
- * @param timeout - Timeout in milliseconds (0 means no timeout)
- * @returns An object with setup method to initialize the timeout wrapper
- */
+Creates a wrapper that adds timeout functionality to worker communication
+@param eventEmitter - The event emitter instance
+@param workerEvent - The worker event type to listen to
+@param action - The callback function to execute on success
+@param reject - The callback function to execute on timeout
+@param timeout - Timeout in milliseconds (0 means no timeout)
+@returns An object with setup method to initialize the timeout wrapper
+*/
 function createTimeoutWrapper<T>(
   eventEmitter: EventEmitter,
   workerEvent: WorkerEvent,

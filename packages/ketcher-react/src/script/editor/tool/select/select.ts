@@ -517,18 +517,20 @@ class SelectTool implements Tool {
 
     this.editor.rotateController.rerender();
 
-    if (clickedAttachmentGroupId !== null) {
-      const itemUnderCursor = editor.findItem(
-        event,
-        getMapsForClosestItem(false),
-        null,
-      );
-      if (
-        itemUnderCursor?.map === 'attachmentGroups' &&
-        itemUnderCursor.id === clickedAttachmentGroupId
-      ) {
-        editor.hover(itemUnderCursor, null, event);
-      }
+    if (clickedAttachmentGroupId === null) {
+      return;
+    }
+
+    const itemUnderCursor = editor.findItem(
+      event,
+      getMapsForClosestItem(false),
+      null,
+    );
+    if (
+      itemUnderCursor?.map === 'attachmentGroups' &&
+      itemUnderCursor.id === clickedAttachmentGroupId
+    ) {
+      editor.hover(itemUnderCursor, null, event);
     }
   }
 
@@ -655,7 +657,7 @@ class SelectTool implements Tool {
         type: 'text',
       });
 
-      dialog
+      void dialog
         .then(({ content }) => {
           if (!content) {
             editor.update(fromTextDeletion(struct, ci.id));

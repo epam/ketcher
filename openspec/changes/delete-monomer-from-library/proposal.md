@@ -22,7 +22,7 @@ Custom (user-made) monomers can be created via the Monomer Creation Wizard, but 
 
 ### Modified Capabilities
 
-- none (no existing capability in `openspec/specs/` covers library-card deletion yet; the related in-progress changes `edit-monomer-wizard-dialog`, `edit-monomers-from-macromolecules-mode`, and `monomer-context-menu-edit-options` cover the context menu, edit dialog, and edit-instance flows but not deletion).
+- none (no existing capability in `.memory-bank/features/` covers library-card deletion yet; the related in-progress changes `edit-monomer-wizard-dialog`, `edit-monomers-from-macromolecules-mode`, and `monomer-context-menu-edit-options` cover the context menu, edit dialog, and edit-instance flows but not deletion).
 
 ## Impact
 

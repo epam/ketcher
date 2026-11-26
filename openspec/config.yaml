@@ -11,8 +11,12 @@ context: |
   ## Knowledge base
 
   Read `AGENTS.md` before creating any artifact. It maps where project knowledge lives.
-  Current product behavior is in `openspec/specs/`; the feature files in
-  `.memory-bank/features/` point to those specs.
+  Current product behavior is in the feature files in `.memory-bank/features/`.
+  There is no `openspec/specs/` folder: write each delta against the matching
+  feature file.
+
+  ### Additional rules for openspec-propose
+  - End `tasks.md` with a "Memory Bank (at archive)" section. List the feature file the change's deltas fold into, plus every other `.memory-bank/` owner file (from AGENTS.md's table) that the proposal expects to change — modules, `domain.md`, `glossary.md`, `invariants.md`, `formats/`, an ADR — by name, not just "update the memory bank". If none beyond the feature file look likely yet, say so explicitly rather than omitting the section, since the actual set is re-checked against the diff at archive time regardless of what this section predicted.
 
   ### Additional rules for openspec-apply-change
   - Do not update the memory bank while the change is in progress. Update it when archiving, as AGENTS.md describes.
@@ -22,3 +26,4 @@ context: |
 
   ### Additional rules for openspec-archive-change
   - Edit each memory-bank file in the format AGENTS.md gives for it.
+  - Archive with `openspec archive <change> --skip-specs`: there is no `openspec/specs/` folder. Fold each delta into `.memory-bank/features/<capability>.md` by hand, in the same commit.

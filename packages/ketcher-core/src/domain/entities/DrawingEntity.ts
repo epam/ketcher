@@ -20,10 +20,12 @@ export abstract class DrawingEntity {
     },
   ) {
     this._position = _position || new Vec2(0, 0);
-    if (this.config?.generateId === true) {
-      this.id = id;
-      id++;
+    if (this.config?.generateId !== true) {
+      return;
     }
+
+    this.id = id;
+    id++;
   }
 
   private isPointInPolygon(r: Vec2[], p: Vec2) {
@@ -125,11 +127,9 @@ export abstract class DrawingEntity {
         rectangleBottomRightPoint.y > point.y &&
         rectangleTopLeftPoint.x < point.x &&
         rectangleTopLeftPoint.y < point.y;
-      if (isShiftKeyPressed) {
-        isSelected = isPreviousSelected || isLocatedInRectangle;
-      } else {
-        isSelected = isLocatedInRectangle;
-      }
+      isSelected = isShiftKeyPressed
+        ? isPreviousSelected || isLocatedInRectangle
+        : isLocatedInRectangle;
     });
 
     if (isSelected) {
@@ -155,11 +155,9 @@ export abstract class DrawingEntity {
 
     selectionPoints.forEach((point) => {
       const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
-      if (isShiftKeyPressed) {
-        isSelected = isPreviousSelected || locatedInPolygon;
-      } else {
-        isSelected = locatedInPolygon;
-      }
+      isSelected = isShiftKeyPressed
+        ? isPreviousSelected || locatedInPolygon
+        : locatedInPolygon;
     });
 
     if (isSelected) {

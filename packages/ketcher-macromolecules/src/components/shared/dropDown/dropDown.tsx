@@ -91,6 +91,8 @@ const DropDownItem = styled(MenuItem)`
 export type Option = {
   id: string;
   label: string;
+  /** i18n key. When present, it overrides `label` as the displayed text. */
+  labelKey?: string;
 };
 
 export type DropDownProps = {

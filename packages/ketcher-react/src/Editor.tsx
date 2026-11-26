@@ -40,6 +40,20 @@ interface MacromoleculesEditorProps {
   monomersLibraryReplace?: string | JSON;
   onInit(macromoleculesEditor: CoreEditor): void;
 }
+
+type CanvasMode = 'molecules' | 'macromolecules';
+
+const notifyCanvasModeSwitchComplete = (
+  ketcherId: string,
+  mode: CanvasMode,
+) => {
+  globalThis.dispatchEvent(
+    new CustomEvent('canvasModeSwitchComplete', {
+      detail: { ketcherId, mode },
+    }),
+  );
+};
+
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -160,17 +174,19 @@ export const Editor = (props: Props) => {
     }
 
     return () => {
-      if (macromoleculesEditor) {
-        macromoleculesEditor.events.switchToMacromoleculesMode.remove(
-          switchToMacromoleculesModeHandler,
-        );
-        macromoleculesEditor.events.switchToMoleculesMode.remove(
-          switchToMoleculesModeHandler,
-        );
-        macromoleculesEditor.events.openMonomerCreationWizard.remove(
-          openWizardHandler,
-        );
+      if (!macromoleculesEditor) {
+        return;
       }
+
+      macromoleculesEditor.events.switchToMacromoleculesMode.remove(
+        switchToMacromoleculesModeHandler,
+      );
+      macromoleculesEditor.events.switchToMoleculesMode.remove(
+        switchToMoleculesModeHandler,
+      );
+      macromoleculesEditor.events.openMonomerCreationWizard.remove(
+        openWizardHandler,
+      );
     };
   }, [
     macromoleculesEditor,
@@ -200,26 +216,29 @@ export const Editor = (props: Props) => {
 
     try {
       macromoleculesEditor.finishMonomerWizardSession(hasSavedCanvas);
+      notifyCanvasModeSwitchComplete(ketcherId, 'macromolecules');
     } catch (error) {
       moleculesEditor?.errorHandler?.(
         error instanceof Error ? error.message : String(error),
       );
     }
-  }, [showPolymerEditor, macromoleculesEditor, moleculesEditor]);
+  }, [showPolymerEditor, macromoleculesEditor, moleculesEditor, ketcherId]);
 
   useEffect(() => {
     globalThis.isPolymerEditorTurnedOn = isMacromoleculesEditorTurnedOn;
   }, [isMacromoleculesEditorTurnedOn]);
 
   useLayoutEffect(() => {
-    if (!isMacromoleculesEditorEnabled && macromoleculesEditor) {
-      // Preserve the structure before the child's passive cleanup destroys its
-      // imperative editor. Drop that instance before it can be enabled again.
-      macromoleculesEditor.switchToMicromolecules();
-      macromoleculesEditorRef.current = undefined;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMacromoleculesEditor(undefined);
+    if (isMacromoleculesEditorEnabled || !macromoleculesEditor) {
+      return;
     }
+
+    // Preserve the structure before the child's passive cleanup destroys its
+    // imperative editor. Drop that instance before it can be enabled again.
+    macromoleculesEditor.switchToMicromolecules();
+    macromoleculesEditorRef.current = undefined;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMacromoleculesEditor(undefined);
   }, [isMacromoleculesEditorEnabled, macromoleculesEditor]);
 
   /*
@@ -324,6 +343,7 @@ export const Editor = (props: Props) => {
     if (!isMacromoleculesEditorTurnedOn) {
       macromoleculesEditor.switchToMicromolecules();
       moleculesEditor.focusCliparea();
+      notifyCanvasModeSwitchComplete(ketcherId, 'molecules');
       return;
     }
 
@@ -333,9 +353,12 @@ export const Editor = (props: Props) => {
     let cancelled = false;
 
     macromoleculesEditor.ensureDefaultMonomersLibraryLoaded().then(() => {
-      if (!cancelled) {
-        macromoleculesEditor.switchToMacromolecules();
+      if (cancelled) {
+        return;
       }
+
+      macromoleculesEditor.switchToMacromolecules();
+      notifyCanvasModeSwitchComplete(ketcherId, 'macromolecules');
     });
 
     return () => {
@@ -344,6 +367,7 @@ export const Editor = (props: Props) => {
   }, [
     isMacromoleculesEditorEnabled,
     isMacromoleculesEditorTurnedOn,
+    ketcherId,
     moleculesEditor,
     macromoleculesEditor,
     togglePolymerEditor,
@@ -367,13 +391,15 @@ export const Editor = (props: Props) => {
     // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
     // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
     if (
-      onInit &&
-      ketcherProvider.getIndexById(ketcher.id) !== -1 &&
-      initializedKetcherRef.current !== ketcher
+      !onInit ||
+      ketcherProvider.getIndexById(ketcher.id) === -1 ||
+      initializedKetcherRef.current === ketcher
     ) {
-      initializedKetcherRef.current = ketcher;
-      onInit?.(ketcher);
+      return;
     }
+
+    initializedKetcherRef.current = ketcher;
+    onInit?.(ketcher);
   };
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
@@ -394,6 +420,7 @@ export const Editor = (props: Props) => {
       <div dir={i18n.dir()} className={styles.root}>
         <div
           data-ketcher-editor
+          data-ketcher-id={ketcherId}
           className={styles.editorsWrapper}
           style={{
             display: isMacromoleculesEditorTurnedOn ? undefined : 'none',
@@ -420,6 +447,7 @@ export const Editor = (props: Props) => {
         </div>
         <div
           data-ketcher-editor
+          data-ketcher-id={ketcherId}
           className={styles.editorsWrapper}
           style={{
             display: isMacromoleculesEditorTurnedOn ? 'none' : undefined,

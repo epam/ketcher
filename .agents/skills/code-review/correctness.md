@@ -16,6 +16,7 @@ Focus:
 - Invariants: a change that breaks D1–D4, A2, A3, or B1–B3 in [invariants.md](../../../.memory-bank/invariants.md). An `invert()` that does not restore what `execute()` changed, and a macro operation that skips `EditorHistory.update`, are the common shapes. Name the undo or redo sequence that leaves the canvas inconsistent.
 - Non-atomic edits: a model change applied in steps where a throw between steps leaves the structure half-updated.
 - Callers: a changed return value, parameter, default, or thrown error in an existing function. Grep its callers and name one that relies on the old behavior.
+- Fix in the wrong place: a fix in shared code (`BaseMode`, a base tool, a shared helper) that changes modes or callers the issue did not name, a fix in the renderer that leaves the model wrong, or a fix in one mode that leaves the same bug in the mode next to it. Name the caller or mode that now behaves differently, or the place where the bug stays.
 - Both editor modes: shared code that the diff changes for one mode. Check the path through the other mode: `Struct` for molecules, `DrawingEntitiesManager` for macromolecules, and the mode switch between them.
 - Id zero: entity ids from `Pool` start at 0. A truthy check (`if (atomId)`, `id || fallback`, `&&` on an id) fails on the first atom, bond, or monomer.
 - Edge structures: an empty canvas, an empty selection, one atom with no bonds, several fragments, a reaction with arrows and pluses, an S-group, a monomer with an empty attachment point. Name the one the changed code mishandles.

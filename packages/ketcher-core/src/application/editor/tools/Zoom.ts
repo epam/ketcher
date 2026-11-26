@@ -53,11 +53,11 @@ export class ZoomTool implements BaseTool {
     return ZoomTool._instance;
   }
 
-  private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
+  private zoom!: ZoomBehavior<SVGSVGElement, void> | undefined;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
-  private rememberedZoomTransform: ZoomTransform | null = null;
-  private resizeObserver: ResizeObserver | null = null;
+  private rememberedZoomTransform: ZoomTransform | undefined;
+  private resizeObserver: ResizeObserver | undefined;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
   private scrollBars!: {
     horizontal: ScrollBar;
@@ -104,9 +104,9 @@ export class ZoomTool implements BaseTool {
       })
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
-      .filter((e) => {
-        e.preventDefault();
-        if (e.ctrlKey && e.type === 'wheel') {
+      .filter((error) => {
+        error.preventDefault();
+        if (error.ctrlKey && error.type === 'wheel') {
           return true;
         }
         return false;
@@ -147,13 +147,13 @@ export class ZoomTool implements BaseTool {
   }
 
   public forgetRememberedZoomTransform() {
-    this.rememberedZoomTransform = null;
+    this.rememberedZoomTransform = undefined;
   }
 
   public restoreRememberedZoomTransform() {
     const transform = this.rememberedZoomTransform;
 
-    this.rememberedZoomTransform = null;
+    this.rememberedZoomTransform = undefined;
 
     if (transform) {
       this.zoom?.transform(this.canvasWrapper, transform);
@@ -189,11 +189,13 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBars(shouldForceHide = false) {
-    if (this.canvas.node() && this.canvasWrapper.node()) {
-      this.initScrollBars();
-      this.renderScrollBar(this.scrollBars.horizontal, shouldForceHide);
-      this.renderScrollBar(this.scrollBars.vertical, shouldForceHide);
+    if (!this.canvas.node() || !this.canvasWrapper.node()) {
+      return;
     }
+
+    this.initScrollBars();
+    this.renderScrollBar(this.scrollBars.horizontal, shouldForceHide);
+    this.renderScrollBar(this.scrollBars.vertical, shouldForceHide);
   }
 
   renderScrollBar(scrollBar: ScrollBar, shouldForceHide = false) {
@@ -354,14 +356,16 @@ export class ZoomTool implements BaseTool {
   mouseWheeled(event) {
     const isShiftKeydown = event.shiftKey;
     const boxNode = this.canvasWrapper.node();
-    if (boxNode && (event.deltaX || event.deltaY)) {
-      const x = -event.deltaX / this.zoomLevel;
-      const y = -event.deltaY / this.zoomLevel;
-      if (isShiftKeydown) {
-        this.zoom?.translateBy(this.canvasWrapper, x - y, 0);
-      } else {
-        this.zoom?.translateBy(this.canvasWrapper, x, y);
-      }
+    if (!boxNode || (!event.deltaX && !event.deltaY)) {
+      return;
+    }
+
+    const x = -event.deltaX / this.zoomLevel;
+    const y = -event.deltaY / this.zoomLevel;
+    if (isShiftKeydown) {
+      this.zoom?.translateBy(this.canvasWrapper, x - y, 0);
+    } else {
+      this.zoom?.translateBy(this.canvasWrapper, x, y);
     }
   }
 
@@ -424,7 +428,7 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
-    this.rememberedZoomTransform = null;
+    this.rememberedZoomTransform = undefined;
 
     const canvasWrapperNode = this.canvasWrapper.node();
 
@@ -478,8 +482,8 @@ export class ZoomTool implements BaseTool {
     this.scrollBars?.horizontal?.bar?.remove();
     this.scrollBars?.vertical?.bar?.remove();
     this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.zoom = null;
+    this.resizeObserver = undefined;
+    this.zoom = undefined;
     this.zoomEventHandlers = [];
   }
 
@@ -500,16 +504,18 @@ export class ZoomTool implements BaseTool {
     const OFFSET_FROM_CANVAS_BORDER = 2;
     const canvasWrapperSize = this.canvasWrapperSize;
 
-    if (structureBbox.width < canvasWrapperSize.width / 2) {
-      const scale = canvasWrapperSize.width / 2 / structureBbox.width;
-      this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
-      this.scrollTo(
-        new Vec2(structureBbox.left, structureBbox.top),
-        false,
-        OFFSET_FROM_CANVAS_BORDER,
-        OFFSET_FROM_CANVAS_BORDER,
-      );
+    if (structureBbox.width >= canvasWrapperSize.width / 2) {
+      return;
     }
+
+    const scale = canvasWrapperSize.width / 2 / structureBbox.width;
+    this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
+    this.scrollTo(
+      new Vec2(structureBbox.left, structureBbox.top),
+      false,
+      OFFSET_FROM_CANVAS_BORDER,
+      OFFSET_FROM_CANVAS_BORDER,
+    );
   }
 
   public get canvasWrapperHeight() {

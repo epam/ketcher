@@ -109,6 +109,11 @@ consumer check covers the standalone entries.
 
 Always use these aliases. Never use relative `../../` paths from test files.
 
+The keyboard clipboard helpers wait for `copyOrCutComplete` or `pasteComplete`
+when operating on the editor canvas in micro and macro modes. Native editing
+fields use the browser's clipboard handling instead. These events report that
+the handler finished, not that the pasted structure was valid.
+
 ---
 
 ## How to Run E2E Tests
@@ -143,6 +148,20 @@ npm run docker:test-popup    # Run chromium-popup project
 npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
+
+Install Docker Desktop for the host OS as the [autotests README](../../ketcher-autotests/README.md) says (macOS, Windows, Linux), and create `ketcher-autotests/.env` from `.env.example`, which has `DOCKER=true`. Where Docker Desktop cannot run (it needs an admin password and a window, and a headless agent session has neither), Colima gives the same Docker on macOS: `brew install colima docker docker-compose`, then `colima start --vm-type vz --cpu 6 --memory 12 --disk 60`. The scripts call the `docker-compose` binary.
+
+Containers run on the host's architecture, and Chromium does not survive amd64 emulation on an arm64 host: QEMU crashes it (`rcu_read_unlock` assertion), and Rosetta may be missing (`arch -x86_64` fails with "Bad CPU type"). CI runners are amd64. Leave `DOCKER_DEFAULT_PLATFORM` unset.
+
+- On an amd64 host the images should match CI's.
+- On an arm64 host (Apple Silicon) the images are arm64. On the spec checked they drew the same differing-pixel counts as CI (36 and 19 pixels). Run one failing spec on `<base>` and on the branch before you regenerate a batch.
+
+`npm run docker:update file_name:N` regenerates one spec. To regenerate a list, call `docker-compose run --rm autotests bash /app/test_run.sh --project=<project> --update-snapshots=changed` with the specs as arguments, and check the count first with `--list`. This avoids `GENERATE_DATA=true`, which `npm run docker:update` sets and which rewrites files under `tests/test-data/`.
+
+Docker tests use the standalone build served inside the container at
+`http://127.0.0.1:4002`, a secure context for clipboard access. Set
+`DOCKER_KETCHER_URL` to test an external deployment instead; clipboard tests
+require an HTTPS URL.
 
 ### Local run caveats
 
@@ -375,8 +394,18 @@ await page.getByTestId('context-menu').getByText('Copy').click();
 | `waitForPageInit(page)`                | Navigate to `''`, wait for `window.ketcher`, wait for Indigo button enabled |
 | `waitForKetcherInit(page)`             | Wait for `window.ketcher` to exist                                          |
 | `waitForIndigoToLoad(page)`            | Wait for aromatize button to be enabled (Indigo WASM ready)                 |
-| `waitForRender(page, cb)`              | Run `cb`, then wait for `renderComplete` custom event (250 ms timeout)      |
-| `waitForSpinnerFinishedWork(page, cb)` | Run `cb`, wait for all loading spinners to detach, then `waitForRender`     |
+| `waitForRender(page, cb)`              | Listen before `cb`, then wait up to 260 ms after `cb` for `renderComplete`  |
+| `waitForCanvasModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for canvas switch completion for that editor and mode |
+| `waitForLayoutModeSwitch(page, cb, mode, ketcherId)` | Listen before `cb`; wait for Flex/Snake/Sequence switch completion for that editor and mode |
+| `waitForSpinnerFinishedWork(page, cb)` | Listen before `cb`; wait for `renderComplete` and all loading spinners to detach |
+
+Canvas and layout switch helpers resolve on their dedicated completion events,
+without a fixed render delay. They fail after 30 seconds if no matching event
+arrives, and remove their listener when the action fails or the wait finishes.
+The toolbar methods also wait for their dropdown to close after the switch.
+Canvas mode completion alone does not mean the mode menu's backdrop has stopped
+intercepting pointer events. Callers should not add a fixed delay or an outer
+`waitForRender` for those switches.
 
 ### Canvas Screenshots
 
@@ -401,7 +430,7 @@ All screenshot functions accept `maxDiffPixelRatio` and `maxDiffPixels` options 
 | `openFileAndAddToCanvasMacro(page, filename, structureFormat)` | Open file with explicit format selection                                     |
 | `verifyFileExport(page, expectedFilename, fileType)`           | Export from Ketcher API, compare to stored expected file                     |
 | `receiveFileComparisonData(...)`                               | Low-level: get file content from Ketcher API + read expected file            |
-| `saveToFile(filename, data)`                                   | Write expected file (only when `GENERATE_DATA=true` or `--update-snapshots`) |
+| `saveToFile(filename, data)`                                   | Write expected file (only when `GENERATE_DATA=true`; `--update-snapshots` alone does not reach the Playwright workers) |
 
 All test data files live in `tests/test-data/`. Paths passed to these helpers are **relative to that directory**.
 
@@ -464,7 +493,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Async / Timing
 
-1. **When it is needed wrap canvas-mutating actions in `waitForRender`** or use the higher-level utility functions that already do this. Never use raw `page.waitForTimeout` as a substitute.
+1. **Wrap canvas-mutating actions in `waitForRender` only when they are expected to emit `renderComplete`** or use a higher-level utility that already does this. For actions with a different completion signal, such as a ghost element becoming visible, wait for that signal instead of using a no-op `waitForRender` as a barrier.
 2. **Use `waitForSpinnerFinishedWork`** whenever the action triggers a loading spinner (file open, save, structure check).
 3. **Use `waitFor({ state: 'visible' })`** or `waitFor({ state: 'detached' })` to assert element presence/absence. Avoid polling with `waitForTimeout`.
 
@@ -493,6 +522,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
       */
    ```
    The `Version` line is the Ketcher release of the feature the test covers. Take it from the milestone of the feature issue (the source task linked from the autotest issue), dropping any `-rc.N` suffix: milestone `Ketcher 3.13.0-rc.1` gives `Version 3.13.0`. Do not take it from the autotest issue, whose milestone is `Autotests`, or from the current version in `package.json`.
+   A test for a fixed bug (see "Naming") adds a `Bug:` line with the link to the bug after `Test task:`, and takes `Version` from the title of its autotest issue: `Autotests for Ketcher 3.15.0 bugs - Part 3` gives `Version 3.15.0`.
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
 
 ### Naming
@@ -501,6 +531,8 @@ A spec file that covers a feature is named `<featureID>-<Feature-Name>.spec.ts`,
 
 - popup mode: `ketcher-autotests/tests/specs/Chromium-popup/Features/`;
 - full-screen mode: `ketcher-autotests/tests/specs/Features/`.
+
+Tests for the fixed bugs of one release, asked for by an autotest issue titled `Autotests for Ketcher <version> bugs - Part N`, go into one file per release: `ketcher-autotests/tests/specs/Chromium-popup/Bugs/ketcher-<version>-bugs.spec.ts`. A new test is numbered on from the highest case in the file, in the title style of the file, such as `Case 26 — <bug title>`. Its new test-data files go under `<Format>/Chromium-popup/Bugs/ketcher-<version>-bugs/`; the older tests keep their paths.
 
 Each `test()` title is a plain English sentence that starts with the serial number from the checklist item, such as `Case 1 - ...` or `1. ...`, matching the style of the target file.
 
@@ -518,7 +550,7 @@ test('Copy stays enabled in Macro mode', async () => {
 
 ### Screenshot Testing
 
-Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes a `data-canvasmode` attribute, atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
+Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes `data-canvasmode` and, in the macromolecules editor, `data-canvaslayout` (`flex`, `snake`, or `sequence`). Atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
 
 10. **Use `takeEditorScreenshot`** for canvas comparisons, not `takePageScreenshot`. Canvas screenshots are more stable across viewport changes.
 11. **Add `hideMacromoleculeEditorScrollBars: true`** when macromolecule editor scroll bars might appear and affect snapshots.
@@ -544,7 +576,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
 20. **Import `Page` and `Locator` from `@fixtures`**, not from `@playwright/test`.
-21. **Do not share test-action values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name) are defined locally inside that test; hoisting them to the module level couples the tests and makes each one harder to read. Static inputs may stay at module level: fixture file paths and facts describing a fixture (e.g. its atom count).
+21. **Do not share values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name), fixture file paths, and facts describing a fixture (e.g. its atom count) are defined inside the test that uses them. Hoisting them to the module level couples the tests and makes each one harder to read. The shared `page` of the shared-page pattern (rule 6) is the exception.
 
 ---
 
@@ -573,7 +605,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **Tests that depend on execution order** — each test in a suite must be independently executable. Use `beforeEach` / the canvas fixture for cleanup.
 - **Commented-out tests or `test.skip`** left indefinitely — use `test.skip` with a comment and a tracking issue reference; do not comment out code.
 - **Using an expected file as test input** — files named `*-expected.*` are outputs of other tests, and `GENERATE_DATA=true` can rewrite them. Add a separate input file.
-- **Inventing a test-data folder name** — put new input files for a feature in a folder named like the spec file, `<featureID>-<Feature-Name>` (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`).
+- **Test data outside the feature folder** — every file a feature spec uses, inputs and expected files, lives in a folder named like the spec file: `<Format>/Chromium-popup/<featureID>-<Feature-Name>/` for popup specs, `<Format>/<featureID>-<Feature-Name>/` for full-scale specs (for example `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/`). Copy a file from another folder there; do not reference it in its old folder. The Claude Implement Autotests workflow does this with `scripts/autotests/move-test-data.mjs`.
 - **Overly broad screenshots** — `takePageScreenshot` captures the entire page including the library panel, which is noisy. Prefer `takeEditorScreenshot` or `takeElementScreenshot`.
 - **Single giant test file** (>500 lines) — split by feature or connection rule type. The `connection-rules-for-*.spec.ts` pattern is the right approach.
 

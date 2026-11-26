@@ -1,5 +1,5 @@
 import {
-  getMonomerTemplateRefFromMonomerItem,
+  getMonomerTemplateReferenceFromMonomerItem,
   type IKetMonomerTemplate,
   isAmbiguousMonomerLibraryItem,
   type Ketcher,
@@ -18,7 +18,7 @@ export const saveLibraryMonomer = async (
 ) => {
   const editor = provideEditorInstance();
   const editedRef = original
-    ? getMonomerTemplateRefFromMonomerItem(original)
+    ? getMonomerTemplateReferenceFromMonomerItem(original)
     : undefined;
   const editedTemplate = editedRef
     ? editor.monomersLibraryParsedJson?.[editedRef]
@@ -101,7 +101,7 @@ export const saveLibraryMonomer = async (
     const savedMonomerItem = editor.monomersLibrary.find(
       (item) =>
         !isAmbiguousMonomerLibraryItem(item) &&
-        getMonomerTemplateRefFromMonomerItem(item) === ref,
+        getMonomerTemplateReferenceFromMonomerItem(item) === ref,
     );
 
     if (savedMonomerItem) {

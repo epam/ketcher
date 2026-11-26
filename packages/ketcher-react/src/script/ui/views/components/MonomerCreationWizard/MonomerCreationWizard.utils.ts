@@ -1,7 +1,7 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
-  getMonomerTemplateRefFromMonomerItem,
+  getMonomerTemplateReferenceFromMonomerItem,
   type MonomerCreationInitialValues,
   type MonomerItemType,
   KetMonomerClass,
@@ -227,7 +227,7 @@ export const getLibraryEditInitialValues = (
   const initialValues = getInitialValues(libraryItem, false);
   const presetRequirements = getPresetRequirements(
     initialValues.type,
-    getMonomerTemplateRefFromMonomerItem(libraryItem),
+    getMonomerTemplateReferenceFromMonomerItem(libraryItem),
     monomersLibraryParsedJson,
   );
 
@@ -247,7 +247,7 @@ export const getEditAllInstancesInitialValues = (
   const initialValues = getInitialValues(monomer, true);
   const presetRequirements = getPresetRequirements(
     initialValues.type,
-    getMonomerTemplateRefFromMonomerItem(monomer.monomerItem),
+    getMonomerTemplateReferenceFromMonomerItem(monomer.monomerItem),
     monomersLibraryParsedJson,
   );
 

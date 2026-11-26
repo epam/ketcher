@@ -51,7 +51,11 @@ const finding = {
       pattern: ID_PATTERN,
       description: 'Rule or invariant ID, or none.',
     },
-    claim: { ...text, description: 'One sentence: what is wrong.' },
+    claim: {
+      ...text,
+      description:
+        'One short sentence, at most about 20 words: what is wrong. The mechanism and the consequence go in the scenario.',
+    },
     scenario: {
       ...text,
       description:

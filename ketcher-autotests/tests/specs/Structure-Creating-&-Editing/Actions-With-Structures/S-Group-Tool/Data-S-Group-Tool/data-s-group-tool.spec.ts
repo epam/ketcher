@@ -368,7 +368,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await CommonLeftToolbar(page).erase();
+    await CommonLeftToolbar(page).erase({ timeOut: 0 });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 17 }).click({
       force: true,
     });

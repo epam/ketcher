@@ -15,6 +15,7 @@ type LeftToolbarLocators = {
   reactionPlusToolButton: Locator;
   arrowToolsButton: Locator;
   reactionMappingToolButton: Locator;
+  reactionMappingToolSelectionPanel: Locator;
   shapeToolsButton: Locator;
   addTextButton: Locator;
   addImageButton: Locator;
@@ -34,6 +35,7 @@ export const LeftToolbar = (page: Page) => {
     reactionMappingToolButton: page.getByTestId(
       'reaction-mapping-tools-drop-down-button',
     ),
+    reactionMappingToolSelectionPanel: page.getByTestId('multi-tool-dropdown'),
     shapeToolsButton: page.getByTestId('shapes-drop-down-button'),
     addTextButton: page.getByTestId('text'),
     addImageButton: page.getByTestId('images'),
@@ -150,21 +152,19 @@ export const LeftToolbar = (page: Page) => {
         !(await this.isReactionMappingToolSelected(reactionMappingType))
       ) {
         await locators.reactionMappingToolButton.click();
-        await page
-          .getByTestId('multi-tool-dropdown')
-          .filter({ visible: true })
-          .first()
-          .waitFor({ state: 'visible', timeout: 5000 });
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'visible',
+          timeout: 5000,
+        });
         await page
           .getByTestId(reactionMappingType)
           .filter({ has: page.locator(':visible') })
           .first()
           .click();
-        await page
-          .getByTestId('multi-tool-dropdown')
-          .filter({ visible: true })
-          .first()
-          .waitFor({ state: 'detached', timeout: 5000 });
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'detached',
+          timeout: 5000,
+        });
         return;
       }
 
@@ -173,23 +173,22 @@ export const LeftToolbar = (page: Page) => {
         !(await this.isReactionMappingToolSelected(reactionMappingType))
       ) {
         await locators.reactionMappingToolButton.click();
-        await page.waitForTimeout(50);
-        await locators.reactionMappingToolButton.click();
-        await page
-          .getByTestId('multi-tool-dropdown')
-          .filter({ visible: true })
-          .first()
-          .waitFor({ state: 'visible', timeout: 5000 });
+        if (!(await locators.reactionMappingToolSelectionPanel.isVisible())) {
+          await locators.reactionMappingToolButton.click();
+        }
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'visible',
+          timeout: 5000,
+        });
         await page
           .getByTestId(reactionMappingType)
           .filter({ has: page.locator(':visible') })
           .first()
           .click();
-        await page
-          .getByTestId('multi-tool-dropdown')
-          .filter({ visible: true })
-          .first()
-          .waitFor({ state: 'detached', timeout: 5000 });
+        await locators.reactionMappingToolSelectionPanel.waitFor({
+          state: 'detached',
+          timeout: 5000,
+        });
         return;
       }
     },

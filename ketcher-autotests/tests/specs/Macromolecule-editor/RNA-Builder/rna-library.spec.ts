@@ -49,6 +49,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { RnaBuilderErrorDialog } from '@tests/pages/macromolecules/library/RnaBuilderErrorDialog';
 
 async function drawThreeMonomers(page: Page) {
   await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
@@ -384,6 +385,7 @@ test.describe('RNA Library', () => {
     ]);
     await Library(page).rnaBuilder.addToPresets();
     await takeEditorScreenshot(page);
+    await RnaBuilderErrorDialog(page).close();
   });
 
   test('Add Custom preset to Canvas', async () => {

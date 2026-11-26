@@ -68,9 +68,13 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
         }
         title={t('monomerLibrary.errorModalTitle')}
         onClose={closeErrorModal}
+        testId="rna-builder-error-modal"
       >
         <Modal.Content>
-          <div style={{ padding: '12px' }}>
+          <div
+            style={{ padding: '12px' }}
+            data-testid="rna-builder-error-modal-body"
+          >
             {uniqueNameError &&
               t('monomerLibrary.presetNameExists', { name: uniqueNameError })}
             {invalidPresetError &&
@@ -80,7 +84,10 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
           </div>
         </Modal.Content>
         <Modal.Footer>
-          <StyledButton onClick={closeErrorModal}>
+          <StyledButton
+            onClick={closeErrorModal}
+            data-testid="rna-builder-error-modal-close"
+          >
             {t('common:button.close')}
           </StyledButton>
         </Modal.Footer>

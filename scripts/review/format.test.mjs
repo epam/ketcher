@@ -5,6 +5,7 @@ import { parseDiff } from './diff.mjs';
 import {
   brief,
   briefLine,
+  feedbackAsk,
   findingLabel,
   inlineComment,
   limitComment,
@@ -108,9 +109,10 @@ test('the label names a rule or an invariant and leaves out none', () => {
   assert.equal(findingLabel(finding({ id: 'R5' })), '**major** · Rule R5');
   assert.equal(findingLabel(finding({ id: 'D1' })), '**major** · Invariant D1');
   assert.equal(findingLabel(finding({ id: 'none' })), '**major**');
-  assert.equal(
-    briefLine(finding({ id: 'none', severity: 'nit' })),
-    '- `src/Editor.ts:2` · **nit** · The cast hides a wrong type.',
+  assert.ok(
+    briefLine(finding({ id: 'none', severity: 'nit' }), 1).startsWith(
+      '1. `src/Editor.ts:2` · **nit** · The cast hides a wrong type.\n',
+    ),
   );
 });
 
@@ -149,9 +151,10 @@ test('the label tells a rule from an invariant by its ID', () => {
 });
 
 test('a brief line links the finding to its line', () => {
-  assert.equal(
-    briefLine(finding(), SOURCE),
-    `- [\`src/Editor.ts:2\`](${blob}/src/Editor.ts#L2) · **major** · Rule R5 · The cast hides a wrong type.`,
+  assert.ok(
+    briefLine(finding(), 1, SOURCE).startsWith(
+      `1. [\`src/Editor.ts:2\`](${blob}/src/Editor.ts#L2) · **major** · Rule R5 · The cast hides a wrong type.\n`,
+    ),
   );
 });
 
@@ -176,10 +179,66 @@ test('an inline comment links the other locations and the existing code', () => 
 });
 
 test('a brief line cannot break out of its code span', () => {
-  assert.equal(
-    briefLine(finding({ file: 'a`b.ts' })),
-    "- `a'b.ts:2` · **major** · Rule R5 · The cast hides a wrong type.",
+  assert.ok(
+    briefLine(finding({ file: 'a`b.ts' }), 1).startsWith(
+      "1. `a'b.ts:2` · **major** · Rule R5 · The cast hides a wrong type.\n",
+    ),
   );
+});
+
+test('a brief line puts the failing scenario on its own line', () => {
+  assert.equal(
+    briefLine(finding({ scenario: 'Undo\nkeeps the bond.' }), 3),
+    [
+      '3. `src/Editor.ts:2` · **major** · Rule R5 · The cast hides a wrong type.',
+      '',
+      '   Failing scenario: Undo keeps the bond.',
+    ].join('\n'),
+  );
+});
+
+test('a two-digit number indents the scenario to the item text', () => {
+  const [, , scenario] = briefLine(finding(), 10).split('\n');
+  assert.equal(
+    scenario,
+    '    Failing scenario: Opening a KET file without atoms throws.',
+  );
+});
+
+test('the brief numbers its findings on across its sections', () => {
+  const refused = finding({ severity: 'blocker', claim: 'Refused.' });
+  const overflow = finding({ line: 3, severity: 'nit', claim: 'Over.' });
+  const outside = finding({ line: 40, claim: 'Outside.' });
+  const text = brief({
+    state: { round: 1, head: HEAD, posted: [] },
+    range: { from: 'b'.repeat(40), kind: 'full' },
+    prType: undefined,
+    panel: [],
+    models: [],
+    findings: [refused, overflow, outside],
+    overflow: [overflow],
+    outsideDiff: [outside],
+    failedPasses: [],
+    skippedFiles: 0,
+    inline: [refused],
+    inlineFailure: 'line must be part of the diff',
+  });
+  assert.match(text, /^1\. .* · Refused\.$/m);
+  assert.match(text, /^2\. .* · Over\.$/m);
+  assert.match(text, /^3\. .* · Outside\.$/m);
+  // Every finding is in the brief, so there is no inline comment to answer.
+  assert.ok(!text.includes('in its thread'), text);
+  assert.ok(text.includes('`Dismissed <n>: <why>`'), text);
+});
+
+test('the feedback ask names only the ways a round can be answered', () => {
+  assert.deepEqual(feedbackAsk(0, 0), []);
+  const inlineOnly = feedbackAsk(2, 0).join('\n');
+  assert.ok(inlineOnly.includes('`Dismissed: <why>`'), inlineOnly);
+  assert.ok(!inlineOnly.includes('<n>'), inlineOnly);
+  const briefOnly = feedbackAsk(0, 2).join('\n');
+  assert.ok(briefOnly.includes('`Dismissed <n>: <why>`'), briefOnly);
+  assert.ok(!briefOnly.includes('in its thread'), briefOnly);
 });
 
 test('the brief states everything the output contract asks for', () => {

@@ -221,14 +221,36 @@ export function inlineComment(finding, source) {
 }
 
 /**
- * One finding as a line of the brief.
+ * One finding of the brief, numbered so that a reply can name it: the claim
+ * on the first line, the failing scenario under it. The brief is one
+ * comment, so the number is all a reply has to point at. The scenario is
+ * indented to the item's text, so Markdown keeps it in the list item.
  * @param {Finding} finding
+ * @param {number} number its place among the findings the brief states
  * @param {CodeSource} [source]
  */
-export function briefLine(finding, source) {
+export function briefLine(finding, number, source) {
+  const marker = `${number}. `;
   const location = locationText(`${finding.file}:${finding.line}`, source);
-  return `- ${location} · ${findingLabel(finding)} · ${plain(finding.claim)}`;
+  return [
+    `${marker}${location} · ${findingLabel(finding)} · ${plain(finding.claim)}`,
+    '',
+    `${' '.repeat(marker.length)}Failing scenario: ${plain(finding.scenario)}`,
+  ].join('\n');
 }
+
+/**
+ * The findings of one section of the brief, numbered on from `first`, with a
+ * blank line between two of them.
+ * @param {Finding[]} findings
+ * @param {number} first the number of the first one
+ * @param {CodeSource} [source]
+ */
+const briefLines = (findings, first, source) =>
+  findings.flatMap((finding, index) => [
+    ...(index > 0 ? [''] : []),
+    briefLine(finding, first + index, source),
+  ]);
 
 /** @param {LinkedIssue | undefined} issue */
 function linkedIssueLine(issue) {
@@ -263,7 +285,7 @@ function countLine(findings) {
 }
 
 /**
- * A section of the brief with one line per item, or nothing when empty.
+ * A section of the brief with its items, or nothing when empty.
  * @param {string} title
  * @param {string[]} lines
  */
@@ -273,6 +295,14 @@ function section(title, lines) {
   }
   return ['', `### ${title}`, '', ...lines];
 }
+
+/**
+ * The findings of a refused inline review, which the brief states in their
+ * place.
+ * @param {BriefInput} input
+ */
+const refusedInline = (input) =>
+  input.inlineFailure === undefined ? [] : (input.inline ?? []);
 
 /**
  * The findings of a review that GitHub would not take, with the reason.
@@ -288,32 +318,44 @@ function inlineFailureSection(input) {
   return section('Findings without an inline comment', [
     `GitHub did not take these findings as comments: ${plain(input.inlineFailure)}`,
     '',
-    ...(input.inline ?? []).map((finding) => briefLine(finding, input.source)),
+    ...briefLines(refusedInline(input), 1, input.source),
   ]);
 }
 
 /**
  * The feedback ask. A wrong finding is what improves the reviewer, so the ask
  * names it first. A reaction can only be counted; the reason in a reply is
- * what changes a rule, so the ask gives the `Dismissed:` prefix that a later
- * script can find. The feedback loop in `review-workflow.md` owns the rule.
+ * what changes a rule, so the ask gives the `Dismissed` prefix that a later
+ * script can find. An inline comment has its own thread to react and reply
+ * in; a finding of the brief has only its number, so its reply names it. The
+ * feedback loop in `review-workflow.md` owns the rule.
+ * @param {number} inlineCount findings posted as inline comments
+ * @param {number} briefCount findings the brief numbers
  */
-const FEEDBACK_LINE =
-  '**Feedback:** 👎 a finding that is wrong. Better still, reply to it with `Dismissed: <why>` — one sentence. A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.';
-
-/**
- * The feedback ask, for a brief that states at least one finding.
- * @param {Finding[]} findings every confirmed finding
- */
-function feedbackAsk(findings) {
-  if (findings.length === 0) {
+export function feedbackAsk(inlineCount, briefCount) {
+  if (inlineCount + briefCount === 0) {
     return [];
   }
-  return ['', FEEDBACK_LINE];
+  const asks = [];
+  if (inlineCount > 0) {
+    asks.push(
+      '👎 an inline comment that is wrong. Better still, reply in its thread with `Dismissed: <why>` — one sentence.',
+    );
+  }
+  if (briefCount > 0) {
+    asks.push(
+      'For a finding numbered here, comment on the pull request with `Dismissed <n>: <why>`, where `<n>` is its number.',
+    );
+  }
+  return [
+    '',
+    `**Feedback:** ${asks.join(' ')} A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.`,
+  ];
 }
 
 /**
  * The review brief: one top-level comment, with the marker on its first line.
+ * The findings it states are numbered across its sections.
  * @param {BriefInput} input
  * @param {number} [maxRounds]
  */
@@ -335,22 +377,26 @@ export function brief(input, maxRounds = MAX_ROUNDS) {
       `**Not reviewed:** ${input.skippedFiles} generated, lock or autotest files.`,
     );
   }
+  // Numbered in the order the sections state them.
+  const firstOverflow = refusedInline(input).length + 1;
+  const firstOutside = firstOverflow + input.overflow.length;
+  const briefCount = firstOutside + input.outsideDiff.length - 1;
   return [
     ...lines,
     ...inlineFailureSection(input),
     ...section(
       'Over the comment cap',
-      input.overflow.map((finding) => briefLine(finding, input.source)),
+      briefLines(input.overflow, firstOverflow, input.source),
     ),
     ...section(
       'Outside the diff',
-      input.outsideDiff.map((finding) => briefLine(finding, input.source)),
+      briefLines(input.outsideDiff, firstOutside, input.source),
     ),
     ...section(
       'Passes without a result',
       input.failedPasses.map((pass) => `- ${code(pass)}`),
     ),
-    ...feedbackAsk(input.findings),
+    ...feedbackAsk(input.findings.length - briefCount, briefCount),
   ].join('\n');
 }
 

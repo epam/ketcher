@@ -1,0 +1,4 @@
+{
+  "description": "Judgement of every confirmed finding of the eval runs, per configuration and pull request. `finderHits` lists the expected findings some finder raised before verification. Each confirmed finding is `match` (it is the expected finding in `expected`), `valid` (a real defect the maintainer did not raise), `false-positive`, or `todo`. Run `node scripts/review/eval/report.mjs --draft` to add the findings not judged yet.",
+  "runs": {}
+}

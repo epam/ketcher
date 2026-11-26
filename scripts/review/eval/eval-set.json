@@ -1,0 +1,89 @@
+{
+  "description": "Merged epam/ketcher pull requests that the review hub is measured on. `head` is the commit the maintainer reviewed, `base` the master commit it branched from. An entry with expected findings measures recall; an entry without them was approved with no comment, so every confirmed finding there is checked for a false positive.",
+  "repo": "epam/ketcher",
+  "entries": [
+    {
+      "pr": 12363,
+      "title": "#12264 - Refactor: Explicit/implicit Any type clean up from packages\\ketcher-react\\src\\typings.d.ts file",
+      "kind": "with-findings",
+      "base": "66a202e38e7993101556bb7075d8e432827536e2",
+      "head": "651cde97dfac704e15e534a0a1c2bbc7ece57b40",
+      "expected": [
+        {
+          "id": "12363-jsx-namespace",
+          "file": "packages/ketcher-react/src/typings.d.ts",
+          "line": 8,
+          "rule": "none",
+          "summary": "The custom global JSX namespace is likely unneeded: rely on the JSX types React ships instead of redeclaring them.",
+          "comment": "https://github.com/epam/ketcher/pull/12363#discussion_r4376835190"
+        },
+        {
+          "id": "12363-shorthand-name",
+          "file": "packages/ketcher-react/src/typings.d.ts",
+          "line": 83,
+          "rule": "R10",
+          "summary": "The subscription handler parameter is named `f`; use a full name such as `handler`.",
+          "comment": "https://github.com/epam/ketcher/pull/12363#discussion_r4376842026"
+        }
+      ]
+    },
+    {
+      "pr": 12473,
+      "title": "#12273 - Refactor: Explicit/implicit Any type clean up from packages\\ketcher-react\\src\\script\\editor\\tool\\rotate.ts file",
+      "kind": "with-findings",
+      "base": "cddfcb9cf9e8bb86a1031e9ffd0219fb45096782",
+      "head": "076c2272728f4b0c005bbc011abd7d9c4d477c32",
+      "expected": [
+        {
+          "id": "12473-ts-ignore",
+          "file": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts",
+          "line": 312,
+          "rule": "R7",
+          "summary": "The test keeps a `@ts-ignore` above an assignment that already casts through `unknown`; the suppression is likely unneeded.",
+          "comment": "https://github.com/epam/ketcher/pull/12473#discussion_r4424198353"
+        },
+        {
+          "id": "12473-shared-drag-type",
+          "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+          "line": 50,
+          "rule": "R9",
+          "summary": "The new `RotateDragContext` type repeats a drag context that other tools define too; share a base type and extend it.",
+          "comment": "https://github.com/epam/ketcher/pull/12473#discussion_r4424217794"
+        }
+      ]
+    },
+    {
+      "pr": 10447,
+      "title": "#10221 - Support library searching using three letter amino-acid codes",
+      "kind": "with-findings",
+      "base": "5fcc1a547f5220c10b5e5e04f308cdbdfab3d1eb",
+      "head": "1180f13b9b00e1e72ca769fd5e208325bfcbde7e",
+      "expected": [
+        {
+          "id": "10447-match-in-check",
+          "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts",
+          "line": 628,
+          "rule": "R9",
+          "summary": "The three-letter code match sits beside `checkMonomerMatch` in the filter instead of inside it, so the monomer matching logic is split over two places.",
+          "comment": "https://github.com/epam/ketcher/pull/10447#discussion_r3638115132"
+        }
+      ]
+    },
+    {
+      "pr": 12695,
+      "title": "#12693 - Editor crashes when hovering a selected Data S-group",
+      "kind": "clean",
+      "base": "6ab0bca25de58304011893482a3cd95dbad1e7cd",
+      "head": "c4497219e06ded8555e168e8822678ec1b954158",
+      "expected": []
+    },
+    {
+      "pr": 12783,
+      "title": "#12772 - `*` keeps the hydrogens of the carbon it replaced",
+      "kind": "clean",
+      "base": "97f6a4349fe5a0ec459ce60741161cdb9489192e",
+      "head": "1c707106e1815ed949a4ecce76094e12d8afc429",
+      "expected": []
+    }
+  ]
+}

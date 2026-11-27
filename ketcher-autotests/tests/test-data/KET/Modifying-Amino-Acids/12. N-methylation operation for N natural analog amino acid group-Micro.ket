@@ -91,7 +91,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -289,8 +290,7 @@
             "y": -2.75
         },
         "alias": "meN",
-        "templateId": "meN___N-Methyl-Asparagine",
-        "seqid": 3
+        "templateId": "meN___N-Methyl-Asparagine"
     },
     "monomer3": {
         "type": "monomer",

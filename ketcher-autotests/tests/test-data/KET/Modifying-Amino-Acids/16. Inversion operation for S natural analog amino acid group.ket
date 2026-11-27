@@ -216,7 +216,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -403,8 +404,7 @@
             "y": -1.25
         },
         "alias": "dS",
-        "templateId": "dS___D-Serine",
-        "seqid": 4
+        "templateId": "dS___D-Serine"
     },
     "monomer4": {
         "type": "monomer",

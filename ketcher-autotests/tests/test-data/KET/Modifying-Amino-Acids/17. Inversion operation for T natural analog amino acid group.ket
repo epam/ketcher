@@ -186,7 +186,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -227,7 +228,8 @@
                     0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -400,8 +402,7 @@
             "y": -2.75
         },
         "alias": "dT",
-        "templateId": "dT___D-Threonine",
-        "seqid": 5
+        "templateId": "dT___D-Threonine"
     },
     "monomer5": {
         "type": "monomer",

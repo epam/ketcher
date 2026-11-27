@@ -1,11 +1,12 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/index';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 import {
   AntisenseStrandType,
   LayoutMode,
 } from '../constants/macromoleculesTopToolbar/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
+import { waitForLayoutModeSwitch } from '@utils/common/loaders/waitForLayoutModeSwitch';
 
 type MacromoleculesTopToolbarLocators = {
   arrangeAsRingButton: Locator;
@@ -69,7 +70,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
           state: 'visible',
           timeout: 5000,
         });
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           "Create Antisense Strand Tools Section didn't appeared after click in 5 seconds, trying one more time...",
         );
@@ -135,7 +136,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
           state: 'visible',
           timeout: 5000,
         });
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           "Layout Mode Dropdown Section didn't appeared after click in 5 seconds, trying one more time...",
         );
@@ -151,14 +152,50 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     },
 
     async selectLayoutModeTool(layoutMode: LayoutMode) {
-      const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
-      const layoutModeButton = page.getByTestId(layoutMode).first();
+      if ((await this.getActiveLayoutMode()) === layoutMode) {
+        return;
+      }
+
+      const layoutOption = page.getByTestId(layoutMode);
+      const switchLayoutModeDropdown = page
+        .getByTestId('multi-tool-dropdown')
+        .filter({ has: layoutOption });
+      const layoutModeButton = switchLayoutModeDropdown.getByTestId(layoutMode);
       if (!(await layoutModeButton.isVisible())) {
         await this.expandSwitchLayoutModeDropdown();
-        await layoutModeButton.click();
-        await switchLayoutModeDropdown.waitFor({
-          state: 'hidden',
-        });
+      }
+      const ketcherId = await locators.switchLayoutModeDropdownButton.evaluate(
+        (element) =>
+          element
+            .closest('[data-ketcher-editor]')
+            ?.getAttribute('data-ketcher-id'),
+      );
+      if (!ketcherId) {
+        throw new Error('Cannot identify the active Ketcher editor.');
+      }
+      await waitForLayoutModeSwitch(
+        page,
+        () => layoutModeButton.click(),
+        layoutMode,
+        ketcherId,
+      );
+      await switchLayoutModeDropdown.waitFor({ state: 'detached' });
+    },
+
+    async getActiveLayoutMode(): Promise<LayoutMode | null> {
+      const layout = await getCanvasByMode(page, 'macromolecules').getAttribute(
+        'data-canvaslayout',
+      );
+
+      switch (layout) {
+        case 'flex':
+          return LayoutMode.Flex;
+        case 'snake':
+          return LayoutMode.Snake;
+        case 'sequence':
+          return LayoutMode.Sequence;
+        default:
+          return null;
       }
     },
 

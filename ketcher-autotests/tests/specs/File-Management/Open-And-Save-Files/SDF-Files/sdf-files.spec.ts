@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   BondsSetting,
@@ -26,8 +25,6 @@ test.describe('CDF files', () => {
     await waitForPageInit(page);
   });
   test('Open SDF v2000 file and save it', async ({ page }) => {
-    await waitForPageInit(page);
-
     await openFileAndAddToCanvas(page, 'SDF/sdf-v2000-to-open.sdf');
     await verifyFileExport(
       page,

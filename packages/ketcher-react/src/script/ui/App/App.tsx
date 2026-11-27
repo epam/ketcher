@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -80,13 +80,7 @@ const App = (props: Props) => {
 
   useEffect(() => {
     checkServer();
-    // TODO suppressed after upgrade to react 19. Need to fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     dispatch(initFGTemplates());
-    // TODO suppressed after upgrade to react 19. Need to fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     dispatch(initSaltsAndSolventsTemplates());
 
     return () => {
@@ -100,7 +94,7 @@ const App = (props: Props) => {
       // Ideally is to remove ketcher instance in cleanup function of the most parent component (MicromoleculesEditor, or Editor, depends on usage)
       ketcherProvider.removeKetcherInstance(ketcherId);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- Library initialization intentionally runs once per App mount.
 
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{
@@ -127,12 +121,7 @@ const App = (props: Props) => {
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
 
-        {
-          // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          <AppClipArea />
-        }
+        <AppClipArea />
         <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
         <Snackbar

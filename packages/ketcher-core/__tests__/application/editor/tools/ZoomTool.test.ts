@@ -1,5 +1,6 @@
+import { vi } from 'vitest';
 import { CoreEditor } from 'application/editor';
-import { polymerEditorTheme } from '../../../mock-data';
+import { coreEditorTheme, polymerEditorTheme } from '../../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -14,7 +15,7 @@ const makeRect = (left: number, top: number, width: number, height: number) =>
     height,
     right: left + width,
     bottom: top + height,
-  } as DOMRect);
+  }) as DOMRect;
 
 const mockGetBoundingClientRect = (element: Element, rect: DOMRect) => {
   Object.defineProperty(element, 'getBoundingClientRect', {
@@ -26,16 +27,16 @@ const mockGetBoundingClientRect = (element: Element, rect: DOMRect) => {
 describe('Zoom Tool', () => {
   let canvas: SVGSVGElement;
   let button;
-  const zoomed = jest.fn();
+  const zoomed = vi.fn();
 
   beforeEach(() => {
     document.body.innerHTML = '';
     zoomed.mockClear();
-    window.SVGElement.prototype.getBBox = () =>
+    globalThis.SVGElement.prototype.getBBox = () =>
       ({
         width: 20,
         height: 30,
-      } as DOMRect);
+      }) as DOMRect;
     canvas = createPolymerEditorCanvas();
     Object.defineProperty(canvas, 'width', {
       value: {
@@ -57,11 +58,11 @@ describe('Zoom Tool', () => {
   });
 
   it('should zoom in when scroll mouse wheel up and press CTRL', () => {
-    jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
+    vi.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
 
     // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
     const _editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
@@ -73,10 +74,10 @@ describe('Zoom Tool', () => {
 
   describe('drawScrollBars', () => {
     beforeEach(() => {
-      jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
+      vi.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
       // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
       const _editor = new CoreEditor({
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         canvas,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });

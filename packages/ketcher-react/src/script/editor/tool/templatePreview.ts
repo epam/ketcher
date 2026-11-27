@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,6 +48,12 @@ class TemplatePreview {
   private floatingPreview: {
     atoms: number[];
     bonds: number[];
+    rxnArrows: number[];
+    rxnPluses: number[];
+    texts: number[];
+    images: number[];
+    simpleObjects: number[];
+    multitailArrows: number[];
   } | null;
 
   private position: Vec2;
@@ -89,11 +95,9 @@ class TemplatePreview {
       'bonds',
     ]);
 
-    if (ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false) {
-      return ci;
-    } else {
-      return null;
-    }
+    return ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false
+      ? ci
+      : null;
   }
 
   movePreview(event: PointerEvent) {
@@ -128,12 +132,12 @@ class TemplatePreview {
         this.showConnectedPreview(event, previewTarget);
       }, PREVIEW_DELAY);
     } else if (shouldHidePreview) {
-      if (!this.floatingPreview) {
+      if (this.floatingPreview) {
+        this.moveFloatingPreview();
+      } else {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
         this.editor.render.update(false, null);
-      } else {
-        this.moveFloatingPreview();
       }
     }
   }
@@ -160,11 +164,11 @@ class TemplatePreview {
         fragmentIds.add(atom.fragment);
       }
     });
-    return Array.from(fragmentIds);
+    return [...fragmentIds];
   }
 
   private showFloatingPreview(position: Vec2) {
-    [this.floatingPreviewAction, this.floatingPreview] = fromTemplateOnCanvas(
+    [this.floatingPreviewAction, , this.floatingPreview] = fromTemplateOnCanvas(
       this.restruct,
       this.template,
       position,
@@ -174,24 +178,14 @@ class TemplatePreview {
   }
 
   private hideFloatingPreview() {
-    if (this.floatingPreviewAction) {
-      const action = this.floatingPreviewAction.perform(this.restruct);
-      this.editor.update(action, true);
-      this.floatingPreviewAction = null;
-      this.floatingPreview = null;
+    if (!this.floatingPreviewAction) {
+      return;
     }
-  }
 
-  public hideConnectedPreview() {
-    if (this.connectedPreviewAction) {
-      this.connectedPreviewAction.perform(this.restruct);
-      this.connectedPreviewAction = null;
-      this.editor.render.update();
-    }
-    if (this.connectedPreviewTimeout) {
-      clearTimeout(this.connectedPreviewTimeout);
-      this.connectedPreviewTimeout = null;
-    }
+    const action = this.floatingPreviewAction.perform(this.restruct);
+    this.editor.update(action, true);
+    this.floatingPreviewAction = null;
+    this.floatingPreview = null;
   }
 
   private showConnectedPreview(event: MouseEvent, ci: ClosestItemType) {
@@ -206,7 +200,7 @@ class TemplatePreview {
       const sign2 = this.template.sign;
       const shouldFlip = sign1 * sign2 > 0;
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         this.restruct,
         this.template,
         ci.id,
@@ -216,14 +210,10 @@ class TemplatePreview {
         true,
       );
 
-      promise.then(([action, pasteItems]) => {
-        if (!this.isModeFunctionalGroup) {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems);
-          action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
-          this.editor.update(action, true);
-          this.connectedPreviewAction = action;
-        }
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
+      this.editor.update(action, true);
+      this.connectedPreviewAction = action;
     } else if (ci.map === 'atoms') {
       const angle = getAngleFromEvent(event, ci, this.restruct);
 
@@ -244,6 +234,20 @@ class TemplatePreview {
       this.editor.update(action, true);
       this.connectedPreviewAction = action;
     }
+  }
+
+  public hideConnectedPreview() {
+    if (this.connectedPreviewAction) {
+      this.connectedPreviewAction.perform(this.restruct);
+      this.connectedPreviewAction = null;
+      this.editor.render.update();
+    }
+    if (!this.connectedPreviewTimeout) {
+      return;
+    }
+
+    clearTimeout(this.connectedPreviewTimeout);
+    this.connectedPreviewTimeout = null;
   }
 }
 

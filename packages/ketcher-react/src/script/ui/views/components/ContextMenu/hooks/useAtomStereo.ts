@@ -29,9 +29,11 @@ const useAtomStereo = () => {
           stereoAtomIdsRef.current,
         );
 
-        action && editor.update(action);
-      } catch (e) {
-        KetcherLogger.error('useAtomStereo.ts::useAtomStereo::handler', e);
+        if (action) {
+          editor.update(action);
+        }
+      } catch (error) {
+        KetcherLogger.error('useAtomStereo.ts::useAtomStereo::handler', error);
         noOperation();
       }
     },
@@ -47,7 +49,7 @@ const useAtomStereo = () => {
       );
       stereoAtomIdsRef.current = stereoAtomIds;
 
-      if (Array.isArray(stereoAtomIds) && stereoAtomIds.length !== 0) {
+      if (Array.isArray(stereoAtomIds) && stereoAtomIds.length > 0) {
         return false;
       }
 

@@ -3,7 +3,10 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import {
+  type ResolvedMonomerClass,
+  resolveMonomerClass,
+} from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
@@ -11,6 +14,7 @@ import {
 import type { IVariantMonomer } from 'domain/entities/types';
 import type { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { Chem } from 'domain/entities/Chem';
 import { Peptide } from 'domain/entities/Peptide';
@@ -20,6 +24,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import { compareStrings } from 'utilities';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -33,59 +38,16 @@ export const MONOMER_CLASS_TO_CONSTRUCTOR = {
 };
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
-  public monomers: BaseMonomer[];
-  public monomerClass: KetMonomerClass;
-  public subtype: KetAmbiguousMonomerTemplateSubType;
-  constructor(
-    public variantMonomerItem: AmbiguousMonomerType,
-    position?: Vec2,
-    generateId = true,
-  ) {
-    const variantMonomerLabel =
-      variantMonomerItem.subtype ===
-        KetAmbiguousMonomerTemplateSubType.MIXTURE ||
-      variantMonomerItem.label?.length > 1
-        ? DEFAULT_VARIANT_MONOMER_LABEL
-        : variantMonomerItem.label;
-
-    super(
-      {
-        label: variantMonomerLabel,
-        props: {
-          MonomerNaturalAnalogCode: '',
-          MonomerName: variantMonomerLabel,
-          Name: variantMonomerLabel,
-        },
-        attachmentPoints: AmbiguousMonomer.getAttachmentPoints(
-          variantMonomerItem.monomers,
-        ),
-        struct: new Struct(),
-        isAmbiguous: true,
-      },
-      position,
-      { generateId },
-    );
-    this.monomers = variantMonomerItem.monomers;
-    this.monomerClass = AmbiguousMonomer.getMonomerClass(
-      variantMonomerItem.monomers,
-    );
-    this.subtype = variantMonomerItem.subtype;
-  }
-
-  public static getMonomerClass(monomers: BaseMonomer[]) {
+  public static getMonomerClass(monomers: BaseMonomer[]): ResolvedMonomerClass {
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
-    const containDifferentMonomerTypes = monomers.some((monomer) => {
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
       const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
       return monomerClass !== monomerClassToCompare;
     });
 
-    if (containDifferentMonomerTypes) {
-      return KetMonomerClass.CHEM;
-    }
-
-    return monomerClass;
+    return hasDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
   }
 
   private static getAttachmentPoints(monomers: BaseMonomer[]) {
@@ -112,14 +74,52 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     });
   }
 
+  public monomers: BaseMonomer[];
+  public monomerClass: KetMonomerClass;
+  public subtype: KetAmbiguousMonomerTemplateSubType;
+  constructor(
+    public variantMonomerItem: AmbiguousMonomerType,
+    position?: Vec2,
+    shouldGenerateId = true,
+  ) {
+    const variantMonomerLabel =
+      variantMonomerItem.subtype ===
+        KetAmbiguousMonomerTemplateSubType.MIXTURE ||
+      variantMonomerItem.label?.length > 1
+        ? DEFAULT_VARIANT_MONOMER_LABEL
+        : variantMonomerItem.label;
+
+    super(
+      {
+        label: variantMonomerLabel,
+        seqId: variantMonomerItem.seqId,
+        props: {
+          MonomerNaturalAnalogCode: '',
+          MonomerName: variantMonomerLabel,
+          Name: variantMonomerLabel,
+        },
+        attachmentPoints: AmbiguousMonomer.getAttachmentPoints(
+          variantMonomerItem.monomers,
+        ),
+        struct: new Struct(),
+        isAmbiguous: true,
+      },
+      position,
+      { generateId: shouldGenerateId },
+    );
+    this.monomers = variantMonomerItem.monomers;
+    this.monomerClass = AmbiguousMonomer.getMonomerClass(
+      variantMonomerItem.monomers,
+    );
+    this.subtype = variantMonomerItem.subtype;
+  }
+
   public get monomerCaps() {
     let monomerCaps: Partial<Record<AttachmentPointName, string>> | undefined;
 
     this.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.MonomerCaps) {
-        if (!monomerCaps) {
-          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
-        } else {
+        if (monomerCaps) {
           for (const [attachmentPointName, label] of Object.entries(
             monomer.monomerItem.props.MonomerCaps,
           )) {
@@ -129,6 +129,8 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
               monomerCaps[attachmentPointName] = '';
             }
           }
+        } else {
+          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
         }
       }
     });
@@ -140,7 +142,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public get isModification() {
     const ownTemplateIds = this.variantMonomerItem.options
       .map((option) => option.templateId)
-      .sort();
+      .sort(compareStrings);
 
     const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
 
@@ -154,7 +156,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
       const libraryTemplateIds = libraryItem.options
         .map((option) => option.templateId)
-        .sort();
+        .sort(compareStrings);
 
       return (
         libraryTemplateIds.length === ownTemplateIds.length &&
@@ -183,6 +185,9 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
       [KetMonomerClass.AminoAcid]: PeptideSubChain,
       [KetMonomerClass.RNA]: RnaSubChain,
       [KetMonomerClass.DNA]: RnaSubChain,
+      [KetMonomerClass.Sugar]: RnaSubChain,
+      [KetMonomerClass.Phosphate]: PhosphateSubChain,
+      [KetMonomerClass.Base]: ChemSubChain,
     };
 
     return monomerClassToSubchainConstructor[this.monomerClass] || ChemSubChain;

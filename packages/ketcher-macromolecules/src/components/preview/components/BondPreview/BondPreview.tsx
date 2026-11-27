@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
@@ -20,31 +19,42 @@ const BondPreview = ({ className }: Props) => {
 
   const { polymerBond, style } = preview;
 
-  const ContainerDynamic = useMemo(() => {
-    if (!style) {
-      return styled(Container)``;
-    }
-
-    return styled(Container)`
-      top: ${style?.top ?? ''};
-      left: ${style?.left ?? ''};
-      right: ${style?.right ?? ''};
-    `;
-  }, [style]);
-
-  const {
+  // Show the monomers in canvas order, left to right and then top to bottom,
+  // whichever end the bond was created from (e.g. a 5' phosphate of a preset).
+  // Attachment points can't decide this: antisense chains reverse their order
+  const firstPosition = polymerBond.firstMonomer.position;
+  const secondPosition = polymerBond.secondMonomer?.position;
+  const isSecondMonomerShownFirst = Boolean(
+    secondPosition &&
+    (secondPosition.x < firstPosition.x ||
+      (secondPosition.x === firstPosition.x &&
+        secondPosition.y < firstPosition.y)),
+  );
+  const [
     firstMonomer,
     secondMonomer,
     firstMonomerAttachmentPoint,
     secondMonomerAttachmentPoint,
-  } = polymerBond;
+  ] = isSecondMonomerShownFirst
+    ? [
+        polymerBond.secondMonomer,
+        polymerBond.firstMonomer,
+        polymerBond.secondMonomerAttachmentPoint,
+        polymerBond.firstMonomerAttachmentPoint,
+      ]
+    : [
+        polymerBond.firstMonomer,
+        polymerBond.secondMonomer,
+        polymerBond.firstMonomerAttachmentPoint,
+        polymerBond.secondMonomerAttachmentPoint,
+      ];
 
   const {
     preparedAttachmentPointsData: firstMonomerPreparedAPsData,
     connectedAttachmentPoints: firstMonomerConnectedAPs,
   } = useAttachmentPoints({
-    monomerCaps: firstMonomer.monomerCaps,
-    attachmentPointsToBonds: firstMonomer.attachmentPointsToBonds,
+    monomerCaps: firstMonomer?.monomerCaps,
+    attachmentPointsToBonds: firstMonomer?.attachmentPointsToBonds,
   });
 
   const {
@@ -60,9 +70,10 @@ const BondPreview = ({ className }: Props) => {
   }
 
   return (
-    <ContainerDynamic
+    <Container
       className={className}
       data-testid="polymer-library-preview"
+      style={{ top: style?.top, left: style?.left, right: style?.right }}
     >
       <ConnectionOverview
         firstMonomer={firstMonomer}
@@ -96,7 +107,7 @@ const BondPreview = ({ className }: Props) => {
           />
         }
       />
-    </ContainerDynamic>
+    </Container>
   );
 };
 

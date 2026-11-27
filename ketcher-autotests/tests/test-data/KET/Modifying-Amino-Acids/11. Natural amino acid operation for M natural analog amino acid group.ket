@@ -108,8 +108,7 @@
             "y": -1.25
         },
         "alias": "M",
-        "templateId": "M___Methionine",
-        "seqid": 1
+        "templateId": "M___Methionine"
     },
     "monomerTemplate-M___Methionine": {
         "type": "monomerTemplate",
@@ -129,7 +128,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -288,6 +288,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "M"
     },

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,12 +28,20 @@ import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
 import type { MonomerItemType } from 'domain/types';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 
-const customizer = (value: any) => {
-  if (typeof value === 'object' && value.y) {
+const hasNumericYCoordinate = (value: unknown): value is { y: number } =>
+  typeof value === 'object' &&
+  value !== null &&
+  'y' in value &&
+  typeof value.y === 'number';
+
+const customizer = (value: unknown): unknown => {
+  if (hasNumericYCoordinate(value) && value.y) {
     const clonedValue = cloneDeep(value);
     clonedValue.y = -clonedValue.y;
     return clonedValue;
   }
+
+  return undefined;
 };
 
 export const getNodeWithInvertedYCoord = <T>(node: T): T =>
@@ -61,11 +69,9 @@ export const getMonomerTemplateRefFromMonomerItem = (
 ) => {
   const { props } = monomerItem;
 
-  if (props.id) {
-    return setMonomerTemplatePrefix(props.id);
-  }
-
-  return setMonomerTemplatePrefix(getMonomerUniqueKey(monomerItem));
+  return setMonomerTemplatePrefix(
+    props.id ? props.id : getMonomerUniqueKey(monomerItem),
+  );
 };
 
 export const getHELMClassByKetMonomerClass = (
@@ -114,13 +120,13 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
 };
 
 /**
- *
- * System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
- * It needs to rotate them by 180 degrees in y-axis.
- *
- * @param position - coordinates of the structure
- *
- */
+
+System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+It needs to rotate them by 180 degrees in y-axis.
+
+@param position - coordinates of the structure
+
+*/
 export const switchIntoChemistryCoordSystem = (position: Vec2) => {
   return rotateCoordAxisBy180Degrees(position, Axis.y);
 };
@@ -144,7 +150,7 @@ export const modifyTransformation = (transformation: MonomerTransformation) => {
 export const populateStructWithSelection = (
   populatedStruct: Struct,
   selection?: EditorSelection,
-  resetSelection = false,
+  shouldResetSelection = false,
 ) => {
   if (!selection) {
     return populatedStruct;
@@ -153,7 +159,7 @@ export const populateStructWithSelection = (
     const selectedEntities = selection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
       if (typeof value.setInitiallySelected === 'function') {
-        if (resetSelection) {
+        if (shouldResetSelection) {
           value.setInitiallySelected(
             selectedEntities.includes(key) || undefined,
           );

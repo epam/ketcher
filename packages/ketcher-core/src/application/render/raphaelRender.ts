@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import type { RaphaelPaper } from 'raphael';
 
-import Raphael from './raphael-ext';
+import Raphael from './raphael-extension';
 import ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
@@ -30,7 +30,7 @@ import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import type { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName, MonomerItemType } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
 
@@ -48,9 +48,19 @@ export type MonomerCreationInitialValues = {
   aliasBILN: string;
   position?: Vec2;
   editMode?: 'instance' | 'all';
+  libraryOnly?: boolean;
+  originalMonomerItem?: MonomerItemType;
+  modificationTypes?: string[];
   originalType?: KetMonomerClass;
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
+  /**
+  When editMode is 'all' and the user had multiple monomers of the same
+  type/symbol selected, this contains the SGroup IDs of those specific
+  monomers. If provided, only these monomers will be replaced instead of
+  all canvas instances.
+  */
+  selectedSGroupIds?: number[];
 };
 
 export type RnaComponentAtoms = Map<
@@ -78,9 +88,19 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
 } | null;
 
 export class Render {
+  private userOpts: Partial<RenderOptions>;
+  private oldCb: Box2Abs | undefined;
+  private scrollbar: ScrollbarContainer;
+  private resizeObserver: ResizeObserver | undefined;
+  private _monomerCreationState: MonomerCreationState = null;
+
   public skipRaphaelInitialization = false;
   public readonly clientArea: HTMLElement;
   public readonly paper: RaphaelPaper;
@@ -91,17 +111,20 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
-  private oldCb: Box2Abs | null = null;
-  private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
-  private _monomerCreationState: MonomerCreationState = null;
+
+  observeCanvasResize = () => {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.sz = this.getCanvasSizeVector();
+      this.resizeViewBox();
+    });
+    this.resizeObserver.observe(this.paper.canvas);
+  };
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
-    reuseRestructIfExist?: boolean,
+    shouldReuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
     this.clientArea = clientArea;
@@ -112,7 +135,7 @@ export class Render {
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
-    if (reuseRestructIfExist && currentRender?.ctab) {
+    if (shouldReuseRestructIfExist && currentRender?.ctab) {
       this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
@@ -129,29 +152,51 @@ export class Render {
     });
   }
 
-  observeCanvasResize = () => {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.sz = this.getCanvasSizeVector();
-      this.resizeViewBox();
-    });
+  private getCanvasSizeVector() {
+    return this.userOpts.width
+      ? new Vec2(this.userOpts.width, this.userOpts.height)
+      : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  }
 
-    this.resizeObserver.observe(this.paper.canvas);
-  };
+  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
+    const fixedPoint = new Vec2(
+      this.viewBox.minX + this.viewBox.width / 2,
+      this.viewBox.minY + this.viewBox.height / 2,
+    );
+    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
+    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
+    return [viewBoxX, viewBoxY];
+  }
 
   unobserveCanvasResize = () => {
     this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
+    this.resizeObserver = undefined;
   };
 
-  updateOptions(opts: string) {
+  private zoomOnMouse(
+    event: WheelEvent,
+    zoomedWidth: number,
+    zoomedHeight: number,
+  ) {
+    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
+    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
+    const heightRatio =
+      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
+    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
+    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
+    return [viewBoxX, viewBoxY];
+  }
+
+  updateOptions(options: string) {
     try {
-      const passedOptions = JSON.parse(opts);
+      const passedOptions = JSON.parse(options);
       if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
-    } catch (e) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
+    } catch (error) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
       console.log('Not a valid settings object');
     }
     return false;
@@ -169,7 +214,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }
@@ -190,54 +237,34 @@ export class Render {
     this.options.zoom = zoom;
   }
 
-  private getCanvasSizeVector() {
-    return this.userOpts.width
-      ? new Vec2(this.userOpts.width, this.userOpts.height)
-      : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  /**
+  The options this render was asked for, without the values defaultOptions
+  derives from them. This is the right base for building a render with
+  changed options: the derived values get recomputed instead of carried over.
+  */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
   }
 
   resizeViewBox() {
     this.sz = this.getCanvasSizeVector();
     const newWidth = this.sz.x / this.options.zoom;
     const newHeight = this.sz.y / this.options.zoom;
-    this.setViewBox((prev) => ({
-      ...prev,
+    this.setViewBox((previous) => ({
+      ...previous,
       width: newWidth,
       height: newHeight,
     }));
   }
 
-  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
-    const fixedPoint = new Vec2(
-      this.viewBox.minX + this.viewBox.width / 2,
-      this.viewBox.minY + this.viewBox.height / 2,
-    );
-    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
-    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
-    return [viewBoxX, viewBoxY];
-  }
-
-  private zoomOnMouse(
-    event: WheelEvent,
-    zoomedWidth: number,
-    zoomedHeight: number,
-  ) {
-    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
-    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
-    const heightRatio =
-      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
-    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
-    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
-    return [viewBoxX, viewBoxY];
-  }
-
   /**
-   * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
-   */
-  setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
+  @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
+  */
+  setViewBox(function_: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;
-  setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
-    const newViewBox = typeof arg === 'function' ? arg(this.viewBox) : arg;
+  setViewBox(argument: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
+    const newViewBox =
+      typeof argument === 'function' ? argument(this.viewBox) : argument;
     this.viewBox = newViewBox;
     this.paper.canvas.setAttribute(
       'viewBox',
@@ -246,7 +273,7 @@ export class Render {
     this.scrollbar.update();
   }
 
-  setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
+  setMolecule(struct: Struct, shouldForceUpdateWithTimeout = false) {
     this.paper.clear(); // removes scrollbar rects also
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
@@ -255,7 +282,7 @@ export class Render {
 
     // need to use force update with timeout to have ability select bonds in case of usage:
     // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
-    if (forceUpdateWithTimeout) {
+    if (shouldForceUpdateWithTimeout) {
       setTimeout(() => {
         this.update(true);
       }, 0);
@@ -264,8 +291,7 @@ export class Render {
     }
   }
 
-  update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
+  update(shouldForce = false, viewSz: Vec2 | null = null) {
     viewSz =
       viewSz ??
       new Vec2(
@@ -273,51 +299,53 @@ export class Render {
         this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
-    const changes = this.ctab.update(force);
+    const hasChanges = this.ctab.update(shouldForce);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (changes) {
-      const bb = this.ctab
-        .getVBoxObj()
-        .transform(Scale.modelToCanvas, this.options)
-        .translate(this.options.offset ?? new Vec2());
-
-      if (this.options.downScale) {
-        this.ctab.molecule.rescale();
-      }
-
-      const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
-        const sz1 = bb.sz();
-        const marg = this.options.autoScaleMargin;
-        const mv = new Vec2(marg, marg);
-        const csz = viewSz;
-        if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
-          throw new Error('View box too small for the given margin');
-        }
-        let rescale =
-          this.options.rescaleAmount ??
-          Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
-
-        const isForceDownscale = this.options.downScale && rescale < 1;
-        const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
-        if (isBondsLengthFit || isForceDownscale) {
-          rescale = 1;
-        }
-        const sz2 = sz1.add(mv.scaled(2 * rescale));
-        this.paper.setViewBox(
-          bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
-          bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
-          csz.x * rescale,
-          csz.y * rescale,
-        );
-      }
-
-      notifyRenderComplete();
+    if (!hasChanges) {
+      return;
     }
+
+    const bb = this.ctab
+      .getVBoxObj()
+      .transform(Scale.modelToCanvas, this.options)
+      .translate(this.options.offset ?? new Vec2());
+
+    if (this.options.downScale) {
+      this.ctab.molecule.rescale();
+    }
+
+    const isAutoScale = this.options.autoScale || this.options.downScale;
+    if (isAutoScale) {
+      const sz1 = bb.sz();
+      const marg = this.options.autoScaleMargin;
+      const mv = new Vec2(marg, marg);
+      const csz = viewSz;
+      if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
+        throw new Error('View box too small for the given margin');
+      }
+      let rescale =
+        this.options.rescaleAmount ??
+        Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
+
+      const isForceDownscale = this.options.downScale && rescale < 1;
+      const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
+      if (isBondsLengthFit || isForceDownscale) {
+        rescale = 1;
+      }
+      const sz2 = sz1.add(mv.scaled(2 * rescale));
+      this.paper.setViewBox(
+        bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
+        bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
+        csz.x * rescale,
+        csz.y * rescale,
+      );
+    } else {
+      if (!this.oldCb) this.oldCb = new Box2Abs();
+      this.scrollbar.update();
+      this.options.offset = this.options.offset ?? new Vec2();
+    }
+
+    notifyRenderComplete();
   }
 
   get monomerCreationState() {

@@ -260,7 +260,8 @@
                     0,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -468,8 +469,7 @@
             "y": -2.75
         },
         "alias": "dV",
-        "templateId": "dV___D-Valine",
-        "seqid": 7
+        "templateId": "dV___D-Valine"
     },
     "monomer7": {
         "type": "monomer",

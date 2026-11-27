@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { SaveButton } from './savebutton';
 
-jest.mock('../../../../hooks', () => {
+vi.mock('../../../../hooks', async (importOriginal) => {
   return {
-    ...jest.requireActual('../../../../hooks'),
+    ...(await importOriginal<typeof import('../../../../hooks')>()),
     useAppContext: () => ({
       ketcherId: '',
     }),
   };
 });
 
-jest.mock('ketcher-core');
+vi.mock('ketcher-core');
 
 describe('SaveButton', () => {
   const defaultProps = {
@@ -50,5 +51,18 @@ describe('SaveButton', () => {
       const btn = screen.getByRole('button');
       expect(btn).toBeDisabled();
     });
+  });
+
+  it('Should get file data only after the button is clicked', () => {
+    const getData = vi.fn(() => '');
+    render(
+      <SaveButton filename="test.sdf" getData={getData}>
+        Save
+      </SaveButton>,
+    );
+
+    expect(getData).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button'));
+    expect(getData).toHaveBeenCalledTimes(1);
   });
 });

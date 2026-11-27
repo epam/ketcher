@@ -542,7 +542,8 @@
                     0.749,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "N",
@@ -830,8 +831,7 @@
             "y": -2.75
         },
         "alias": "TyrPO3",
-        "templateId": "TyrPO3___O-phospho-L-tyrosine",
-        "seqid": 8
+        "templateId": "TyrPO3___O-phospho-L-tyrosine"
     },
     "monomer8": {
         "type": "monomer",

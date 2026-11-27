@@ -1,5 +1,5 @@
 import type { ReStruct } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 
@@ -30,7 +30,7 @@ class RGroupAttachmentPointRemove extends BaseOperation {
     const struct = restruct.molecule;
     const item = struct.rgroupAttachmentPoints.get(attachmentPointId);
     const reItem = restruct.rgroupAttachmentPoints.get(attachmentPointId);
-    assert(item != null && reItem != null);
+    assert(item != undefined && reItem != undefined);
 
     this.data.atomId = item.atomId;
     this.data.attachmentPointType = item.type;

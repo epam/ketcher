@@ -186,7 +186,8 @@
                     0,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -235,7 +236,8 @@
                     1,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -381,8 +383,7 @@
             "y": -2.75
         },
         "alias": "meT",
-        "templateId": "meT___N-Methyl-Threonine",
-        "seqid": 4
+        "templateId": "meT___N-Methyl-Threonine"
     },
     "monomer4": {
         "type": "monomer",

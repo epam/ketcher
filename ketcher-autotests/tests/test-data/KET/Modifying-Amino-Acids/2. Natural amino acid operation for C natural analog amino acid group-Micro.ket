@@ -143,8 +143,7 @@
             "y": -1.25
         },
         "alias": "C",
-        "templateId": "C___Cysteine",
-        "seqid": 1
+        "templateId": "C___Cysteine"
     },
     "monomerTemplate-C___Cysteine": {
         "type": "monomerTemplate",
@@ -164,7 +163,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -317,6 +317,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "C"
     },

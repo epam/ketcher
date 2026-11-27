@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
@@ -321,6 +320,7 @@ export const CreateMonomerDialog = (page: Page) => {
     async selectType(option: MonomerType) {
       await locators.typeCombobox.click();
       await page.getByTestId(option).click();
+      await page.getByTestId(option).waitFor({ state: 'detached' });
     },
 
     async setCode(value: string) {
@@ -365,27 +365,24 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async expandModificationSection() {
-      const modificationSectionState = await modificationSection.getAttribute(
-        'aria-expanded',
-      );
+      const modificationSectionState =
+        await modificationSection.getAttribute('aria-expanded');
       if (modificationSectionState === 'false') {
         await modificationSection.click();
       }
     },
 
     async collapseModificationSection() {
-      const modificationSectionState = await modificationSection.getAttribute(
-        'aria-expanded',
-      );
+      const modificationSectionState =
+        await modificationSection.getAttribute('aria-expanded');
       if (modificationSectionState === 'true') {
         await modificationSection.click();
       }
     },
 
     async expandAliasesSection() {
-      const aliasesSectionState = await aliasesSection.getAttribute(
-        'aria-expanded',
-      );
+      const aliasesSectionState =
+        await aliasesSection.getAttribute('aria-expanded');
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
@@ -393,9 +390,8 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async collapseAliasesSection() {
-      const aliasesSectionState = await aliasesSection.getAttribute(
-        'aria-expanded',
-      );
+      const aliasesSectionState =
+        await aliasesSection.getAttribute('aria-expanded');
       if (aliasesSectionState === 'true') {
         await aliasesSection.click();
       }
@@ -508,10 +504,13 @@ export const CreateMonomerDialog = (page: Page) => {
       await locators.terminalIndicatorTooltip.waitFor(options);
     },
 
-    async submit({ ignoreWarning = false } = {}) {
+    async submit({ ignoreWarning: shouldIgnoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
-        if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
+        if (
+          (await WarningMessageDialog(page).isVisible()) &&
+          shouldIgnoreWarning
+        ) {
           await WarningMessageDialog(page).ok();
         }
       });
@@ -542,7 +541,7 @@ export async function createMonomer(
     )[];
     HELMAlias?: string;
   },
-  ignoreWarning = true,
+  shouldIgnoreWarning = true,
 ) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
@@ -560,7 +559,7 @@ export async function createMonomer(
   if (options.HELMAlias) {
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
-  await createMonomerDialog.submit({ ignoreWarning });
+  await createMonomerDialog.submit({ ignoreWarning: shouldIgnoreWarning });
 }
 
 export async function deselectAtomAndBonds(

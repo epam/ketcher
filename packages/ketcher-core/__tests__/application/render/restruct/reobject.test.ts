@@ -1,4 +1,7 @@
+import { vi } from 'vitest';
 import ReObject from 'application/render/restruct/reobject';
+import type { RenderOptions } from 'application/render/render.types';
+import type { RaphaelSet } from 'raphael';
 
 it('should change selection style correctly for simple objects when selected', () => {
   const reObject = new ReObject('simpleObject');
@@ -9,12 +12,12 @@ it('should change selection style correctly for simple objects when selected', (
       fill: '#CCFFDD',
       'stroke-width': 20,
     },
-  };
+  } as unknown as RenderOptions;
   reObject.hovering = {
-    attr: jest.fn((style) =>
+    attr: vi.fn((style) =>
       expect(style.fill).not.toEqual(options.hoverStyle.fill),
     ),
-  };
+  } as unknown as RaphaelSet;
 
   reObject.changeSelectionStyle(options);
 });
@@ -26,12 +29,10 @@ it('should change selection style correctly for other objects when selected', ()
     hoverStyle: {
       fill: '#CCFFDD',
     },
-  };
+  } as unknown as RenderOptions;
   reObject.hovering = {
-    attr: jest.fn((style) =>
-      expect(style.fill).toEqual(options.hoverStyle.fill),
-    ),
-  };
+    attr: vi.fn((style) => expect(style.fill).toEqual(options.hoverStyle.fill)),
+  } as unknown as RaphaelSet;
 
   reObject.changeSelectionStyle(options);
 });

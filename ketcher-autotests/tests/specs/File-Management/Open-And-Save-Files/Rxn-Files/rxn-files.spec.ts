@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -43,9 +40,11 @@ async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
   const textareaText = await SaveStructureDialog(page).getTextAreaValue();
   const expectedSentence = '$RXN';
-  wantedResult
-    ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
-    : expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  if (wantedResult) {
+    expect(textareaText?.startsWith(expectedSentence)).toBeTruthy();
+  } else {
+    expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  }
   await SaveStructureDialog(page).cancel();
 }
 

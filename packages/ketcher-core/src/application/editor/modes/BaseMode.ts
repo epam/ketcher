@@ -6,14 +6,21 @@ import { provideEditorInstance } from '../editorSingleton';
 import { type LayoutMode, DEFAULT_LAYOUT_MODE } from './types';
 import { getModeConstructor } from './modesRegistry';
 import {
+  type ClipboardData,
   getStructStringFromClipboardData,
   initHotKeys,
   isClipboardAPIAvailable,
+  isSelectionOutsideElement,
   KetcherLogger,
   keyNorm,
   legacyCopy,
   legacyPaste,
+  getSvgFromDrawnStructures,
   normalizeError,
+  notifyCopyCut,
+  notifyPasteCompleted,
+  PLAIN_TEXT_MIME_TYPE,
+  convertSvgToPng,
 } from 'utilities';
 import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
@@ -23,6 +30,13 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
+type KeyboardEventHandler = {
+  shortcut: string | string[];
+  handler: (event: KeyboardEvent) => void;
+};
+
+type KeyboardEventHandlers = Record<string, KeyboardEventHandler>;
+
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
 
@@ -30,6 +44,73 @@ export abstract class BaseMode {
     public modeName: LayoutMode,
     public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
+
+  private changeMode(
+    editor: CoreEditor,
+    modeName: LayoutMode,
+    isUndo = false,
+  ): void {
+    editor.events.layoutModeChange.dispatch(modeName);
+    const ModeConstructor = getModeConstructor(modeName);
+    editor.mode.destroy();
+    editor.setMode(new ModeConstructor());
+    editor.mode.initialize(true, isUndo, false, false, true);
+  }
+
+  private async copyCanvasAsImage(): Promise<void> {
+    const editor = provideEditorInstance();
+    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
+
+    if (!svg) {
+      throw new Error('Cannot get drawn structures!');
+    }
+
+    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ [image.type]: image }),
+    ]);
+  }
+
+  private async convertKetToMol(ket: string): Promise<string> {
+    const editor = provideEditorInstance();
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const result = await ketcher.structService.convert(
+      { struct: ket, output_format: ChemicalMimeType.Mol },
+      { 'molfile-saving-mode': '3000' },
+    );
+
+    return result.struct;
+  }
+
+  private updateEntitiesPosition(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): void {
+    const newNodePosition = this.getNewNodePosition();
+    const firstEntityPosition =
+      drawingEntitiesManager.allEntities[0]?.[1].position;
+    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+
+    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
+      drawingEntitiesManager.moveDrawingEntityModelChange(
+        drawindEntity,
+        offset,
+      );
+    });
+  }
+
+  private checkIfTargetIsInput(event: Event): boolean {
+    return (
+      event.target instanceof HTMLElement &&
+      (event.target?.nodeName === 'INPUT' ||
+        event.target?.nodeName === 'TEXTAREA' ||
+        event.target.contentEditable === 'true')
+    );
+  }
+
+  private isSelectionOutsideCanvas(): boolean {
+    return isSelectionOutsideElement(provideEditorInstance().canvas);
+  }
 
   public get isAntisenseEditMode(): boolean {
     return false;
@@ -39,19 +120,13 @@ export abstract class BaseMode {
     return false;
   }
 
-  private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
-    editor.events.layoutModeChange.dispatch(modeName);
-    const ModeConstructor = getModeConstructor(modeName);
-    editor.mode.destroy();
-    editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo, false);
-  }
-
   public initialize(
-    needRemoveSelection = true,
+    shouldRemoveSelection = true,
     _isUndo = false,
-    _needReArrangeChains = false,
-  ) {
+    _shouldReArrangeChains = false,
+    _shouldForceRecalculateAntisense = false,
+    _isHistoryReplay = false,
+  ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
 
@@ -61,22 +136,34 @@ export abstract class BaseMode {
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
+        () => {
+          const currentEditor = provideEditorInstance();
+          if (
+            currentEditor.mode.modeName === 'snake-layout-mode' &&
+            currentEditor.drawingEntitiesManager.hasMonomers
+          ) {
+            currentEditor.scrollToTopLeftCorner();
+          }
+        },
       ),
     );
 
-    if (needRemoveSelection) {
+    if (shouldRemoveSelection) {
       editor.events.selectSelectionTool.dispatch();
     }
 
     return command;
   }
 
-  async onKeyDown(event: KeyboardEvent) {
+  async onKeyDown(event: KeyboardEvent): Promise<void> {
     if (!this.checkIfTargetIsInput(event)) {
       const hotKeys = initHotKeys(this.keyboardEventHandlers);
-      const shortcutKey = keyNorm.lookup(hotKeys, event);
+      const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
-      if (this.keyboardEventHandlers[shortcutKey]) {
+      if (shortcutKey && this.keyboardEventHandlers[shortcutKey]) {
+        if (shortcutKey === 'start-new-sequence') {
+          event.preventDefault();
+        }
         event.stopImmediatePropagation();
       }
     }
@@ -85,8 +172,10 @@ export abstract class BaseMode {
         const editor = provideEditorInstance();
         if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
-          const shortcutKey = keyNorm.lookup(hotKeys, event);
-          this.keyboardEventHandlers[shortcutKey]?.handler(event);
+          const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
+          if (shortcutKey) {
+            this.keyboardEventHandlers[shortcutKey]?.handler(event);
+          }
         }
         editor.events.mouseLeaveSequenceItem.dispatch();
         resolve();
@@ -94,11 +183,11 @@ export abstract class BaseMode {
     });
   }
 
-  get keyboardEventHandlers() {
+  get keyboardEventHandlers(): KeyboardEventHandlers {
     return {};
   }
 
-  abstract getNewNodePosition();
+  abstract getNewNodePosition(): Vec2;
 
   abstract applyAdditionalPasteOperations(
     _drawingEntitiesManager: DrawingEntitiesManager,
@@ -114,8 +203,11 @@ export abstract class BaseMode {
 
   abstract scrollForView(): void | Promise<void>;
 
-  onCopy(event?: ClipboardEvent) {
-    if (event && this.checkIfTargetIsInput(event)) {
+  onCopy(event?: ClipboardEvent): void {
+    if (
+      event &&
+      (this.checkIfTargetIsInput(event) || this.isSelectionOutsideCanvas())
+    ) {
       return;
     }
     const editor = provideEditorInstance();
@@ -127,17 +219,23 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(serializedKet);
+      void this.writeToClipboard(serializedKet, drawingEntitiesManager)
+        .then(notifyCopyCut)
+        .catch((error) => KetcherLogger.error('BaseMode.ts::onCopy', error));
     } else if (event) {
       legacyCopy(event.clipboardData, {
-        'text/plain': serializedKet,
+        [PLAIN_TEXT_MIME_TYPE]: serializedKet,
       });
       event.preventDefault();
+      notifyCopyCut();
     }
   }
 
-  onCut(event?: ClipboardEvent) {
-    if (event && this.checkIfTargetIsInput(event)) {
+  onCut(event?: ClipboardEvent): void {
+    if (
+      event &&
+      (this.checkIfTargetIsInput(event) || this.isSelectionOutsideCanvas())
+    ) {
       return;
     }
 
@@ -157,7 +255,56 @@ export abstract class BaseMode {
     }
   }
 
-  async onPaste(event?: ClipboardEvent) {
+  async onCopyAs(format: 'ket' | 'mol' | 'image'): Promise<void> {
+    const editor = provideEditorInstance();
+
+    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+      return;
+    }
+
+    try {
+      if (format === 'image') {
+        await this.copyCanvasAsImage();
+        return;
+      }
+
+      const drawingEntitiesManager =
+        editor.drawingEntitiesManager.filterSelection();
+      const serializedKet = new KetSerializer().serialize(
+        new Struct(),
+        drawingEntitiesManager,
+      );
+      const text =
+        format === 'mol'
+          ? await this.convertKetToMol(serializedKet)
+          : serializedKet;
+
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::onCopyAs', error);
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage: normalizeError(error).message,
+      });
+    }
+  }
+
+  /**
+  Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+  exports it (monomers are drawn as they look on the canvas).
+  */
+  /**
+  Puts the copied structure on the clipboard. By default only KET is written
+  as plain text; modes can override it to add other formats.
+  */
+  protected writeToClipboard(
+    serializedKet: string,
+    _drawingEntitiesManager: DrawingEntitiesManager,
+  ): Promise<void> {
+    return navigator.clipboard.writeText(serializedKet);
+  }
+
+  async onPaste(event?: ClipboardEvent): Promise<void> {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
@@ -173,18 +320,23 @@ export abstract class BaseMode {
       this._pasteIsInProgress = true;
 
       const clipboardData = await navigator.clipboard.read();
-      this.pasteFromClipboard(clipboardData).finally(() => {
-        this._pasteIsInProgress = false;
+      void (async () => {
+        try {
+          await this.pasteFromClipboard(clipboardData);
+        } finally {
+          this._pasteIsInProgress = false;
 
-        if (!isCanvasEmptyBeforePaste) {
-          return;
+          if (isCanvasEmptyBeforePaste) {
+            editor.zoomToStructuresIfNeeded();
+          }
         }
-
-        editor.zoomToStructuresIfNeeded();
-      });
+        notifyPasteCompleted();
+      })();
     } else if (event) {
-      const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
-      this.pasteFromClipboard(clipboardData);
+      const clipboardData = legacyPaste(event.clipboardData, [
+        PLAIN_TEXT_MIME_TYPE,
+      ]);
+      void this.pasteFromClipboard(clipboardData).then(notifyPasteCompleted);
       event.preventDefault();
 
       if (!isCanvasEmptyBeforePaste) {
@@ -199,39 +351,73 @@ export abstract class BaseMode {
     }
   }
 
-  async pasteFromClipboard(clipboardData) {
-    let modelChanges;
-    const editor = provideEditorInstance();
-    const pastedStr = await getStructStringFromClipboardData(clipboardData);
-    if (!pastedStr?.trim()) {
-      return;
-    }
-    const format = identifyStructFormat(pastedStr, true);
-    if (format === SupportedFormat.ket) {
-      modelChanges = this.pasteKetFormatFragment(pastedStr);
-    } else {
-      modelChanges = await this.pasteWithIndigoConversion(
-        pastedStr,
-        editor.sequenceTypeEnterMode,
-      );
+  async isPasteContentValid(pastedString: string): Promise<boolean> {
+    if (!pastedString.trim()) {
+      return false;
     }
 
-    if (!modelChanges || modelChanges.operations.length === 0) {
+    try {
+      const editor = provideEditorInstance();
+      const format = identifyStructFormat(pastedString, true);
+      let ketStruct = pastedString;
+
+      if (format !== SupportedFormat.ket) {
+        const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+        const convertedStruct = await indigo.convert(pastedString, {
+          outputFormat: ChemicalMimeType.KET,
+          sequenceType: editor.sequenceTypeEnterMode,
+        });
+
+        ketStruct = convertedStruct.struct;
+      }
+
+      const ketSerializer = new KetSerializer();
+      const deserialisedKet =
+        ketSerializer.deserializeToDrawingEntities(ketStruct);
+      const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
+
+      return Boolean(
+        drawingEntitiesManager &&
+        this.isPasteAllowedByMode(drawingEntitiesManager),
+      );
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::isPasteContentValid', error);
+      return false;
+    }
+  }
+
+  async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
+    let pasteOperations: Command | undefined;
+    const editor = provideEditorInstance();
+    const pastedString = await getStructStringFromClipboardData(clipboardData);
+    if (!pastedString?.trim()) {
+      return;
+    }
+    const format = identifyStructFormat(pastedString, true);
+    pasteOperations =
+      format === SupportedFormat.ket
+        ? this.pasteKetFormatFragment(pastedString)
+        : await this.pasteWithIndigoConversion(
+            pastedString,
+            editor.sequenceTypeEnterMode,
+          );
+
+    if (!pasteOperations || pasteOperations.operations.length === 0) {
       return;
     }
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
-    editor.renderersContainer.update(modelChanges);
-    EditorHistory.getInstance(editor).update(modelChanges);
+    editor.renderersContainer.update(pasteOperations);
+    EditorHistory.getInstance(editor).update(pasteOperations);
     editor.events.mouseLeaveSequenceItem.dispatch();
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string) {
+  pasteKetFormatFragment(pastedString: string): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
-      ketSerializer.deserializeToDrawingEntities(pastedStr);
+      ketSerializer.deserializeToDrawingEntities(pastedString);
     if (!deserialisedKet) {
       throw new Error('Error during parsing file');
     }
@@ -266,13 +452,13 @@ export abstract class BaseMode {
   }
 
   async pasteWithIndigoConversion(
-    pastedStr: string,
+    pastedString: string,
     sequenceType: SequenceType,
-  ) {
+  ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
-      const ketStruct = await indigo.convert(pastedStr, {
+      const ketStruct = await indigo.convert(pastedString, {
         outputFormat: ChemicalMimeType.KET,
         sequenceType,
       });
@@ -288,23 +474,7 @@ export abstract class BaseMode {
     }
   }
 
-  private updateEntitiesPosition(
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ) {
-    const newNodePosition = this.getNewNodePosition();
-    const firstEntityPosition =
-      drawingEntitiesManager.allEntities[0]?.[1].position;
-    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
-
-    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
-      drawingEntitiesManager.moveDrawingEntityModelChange(
-        drawindEntity,
-        offset,
-      );
-    });
-  }
-
-  unsupportedSymbolsError(errorMessage: string) {
+  unsupportedSymbolsError(errorMessage: string): void {
     const editor = provideEditorInstance();
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
@@ -312,16 +482,7 @@ export abstract class BaseMode {
     });
   }
 
-  private checkIfTargetIsInput(event: Event) {
-    return (
-      event.target instanceof HTMLElement &&
-      (event.target?.nodeName === 'INPUT' ||
-        event.target?.nodeName === 'TEXTAREA' ||
-        event.target.contentEditable === 'true')
-    );
-  }
-
-  public destroy() {
+  public destroy(): void {
     // intentional no-op: default base implementation; subclasses override when behavior is needed
   }
 }

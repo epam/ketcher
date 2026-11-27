@@ -11,7 +11,10 @@ const CHEM_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].autochainPreview;
 
 export class ChemRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: Chem, scale?: number) {
+  constructor(
+    public monomer: Chem,
+    scale?: number,
+  ) {
     super(
       monomer,
       CHEM_HOVERED_ELEMENT_ID,

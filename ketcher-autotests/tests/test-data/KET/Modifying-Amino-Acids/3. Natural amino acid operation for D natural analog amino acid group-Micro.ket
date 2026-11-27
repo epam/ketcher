@@ -85,8 +85,7 @@
             "y": -1.25
         },
         "alias": "D",
-        "templateId": "D___Aspartic acid",
-        "seqid": 1
+        "templateId": "D___Aspartic acid"
     },
     "monomerTemplate-D___Aspartic acid": {
         "type": "monomerTemplate",
@@ -106,7 +105,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -274,6 +274,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "D"
     },

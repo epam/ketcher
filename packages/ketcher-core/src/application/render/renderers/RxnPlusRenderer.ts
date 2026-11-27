@@ -8,8 +8,7 @@ import { SELECTION_COLOR } from 'application/render/renderers/constants';
 
 export class RxnPlusRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGRectElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGRectElement, void> | undefined;
 
   constructor(public rxnPlus: RxnPlus) {
     super(rxnPlus);
@@ -51,11 +50,11 @@ export class RxnPlusRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     const halfOfLineLength = this.halfOfLineLength;
-    const pathDAttr = `M0,${-halfOfLineLength}L0,${halfOfLineLength}M${-halfOfLineLength},0L${halfOfLineLength},0`;
+    const pathDAttribute = `M0,${-halfOfLineLength}L0,${halfOfLineLength}M${-halfOfLineLength},0L${halfOfLineLength},0`;
 
     this.rootElement
       .append('path')
-      .attr('d', pathDAttr)
+      .attr('d', pathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', '#000')
       .attr('stroke-width', 2);

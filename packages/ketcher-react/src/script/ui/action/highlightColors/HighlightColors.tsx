@@ -1,13 +1,13 @@
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
 import {
   ColorContainer,
   ColorItem,
   ColorSquare,
-  Divider,
   standardColors,
 } from './style';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 
 interface HighlightMenuProps {
   onHighlight: (color: string) => void;
@@ -15,10 +15,12 @@ interface HighlightMenuProps {
 }
 
 const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
+  const { t } = useTranslation('toolbar');
+
   return (
     <Submenu
       data-testid="Highlight-option"
-      label="Highlight"
+      label={t('highlight.label')}
       disabled={disabled}
     >
       <ColorContainer>
@@ -32,7 +34,7 @@ const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
           </ColorItem>
         ))}
       </ColorContainer>
-      <Divider />
+      <Separator />
       <Item data-testid="No highlight-option" onClick={() => onHighlight('')}>
         <div
           style={{
@@ -40,7 +42,9 @@ const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
           }}
         >
           <Icon name="no-highlight-cross" />
-          <span style={{ marginLeft: '10px' }}>No highlight</span>
+          <span style={{ marginLeft: '10px' }}>
+            {t('highlight.noHighlight')}
+          </span>
         </div>
       </Item>
     </Submenu>

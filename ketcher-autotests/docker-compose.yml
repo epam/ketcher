@@ -25,3 +25,5 @@ services:
       - ./:/app
       - ./build:/app/node_modules
       - ../:/ketcher
+    environment:
+      KETCHER_URL: ${DOCKER_KETCHER_URL:-http://127.0.0.1:4002}

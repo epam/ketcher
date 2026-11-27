@@ -7,15 +7,15 @@ import {
   setIsEditMode,
   selectActivePreset,
   selectActiveRnaBuilderItem,
-  selectIsEditMode,
+  isRnaBuilderEditMode,
   RnaBuilderPresetsItem,
   setActiveMonomerKey,
+  setSequenceSelection,
+  selectSequenceSelection,
+  monomerGroupToPresetGroup,
 } from 'state/rna-builder';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
-import { LibraryNameType } from 'src/constants';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
+import { LibraryNameType, MonomerGroups } from 'src/constants';
 import {
   IRnaPreset,
   isAmbiguousMonomerLibraryItem,
@@ -28,6 +28,7 @@ import { useGroupsData } from './hooks/useGroupsData';
 import RnaElementsTabsView from './RnaElementsTabsView';
 import RnaElementsAccordionView from './RnaElementsAccordionView';
 import { getMonomerUniqueKey } from 'state/library';
+import { applyMonomerToSequenceSelection } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
 interface RnaUnifiedViewProps {
   view: 'tabs' | 'accordion';
@@ -46,24 +47,37 @@ export const RnaElements = ({
 
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const editor = useAppSelector(selectEditor);
 
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
+  const sequenceSelection = useAppSelector(selectSequenceSelection);
 
   const [newPreset, setNewPreset] = useState(activePreset);
+  // The RNA builder is reset through redux, which cannot reach this local copy
+  // of the preset being built. Re-syncing it whenever the active preset or the
+  // edit mode changes keeps a cancelled preset's monomers from constraining the
+  // library the next time a group is expanded (#9690).
+  const [prevBuilderState, setPrevBuilderState] = useState({
+    activePreset,
+    isEditMode,
+  });
+
+  if (
+    prevBuilderState.activePreset !== activePreset ||
+    prevBuilderState.isEditMode !== isEditMode
+  ) {
+    setPrevBuilderState({ activePreset, isEditMode });
+    setNewPreset(activePreset);
+  }
 
   useEffect(() => {
-    dispatch(
-      setActiveRnaBuilderItem(
-        isEditMode && activePreset
-          ? activeRnaBuilderItem
-          : RnaBuilderPresetsItem.Presets,
-      ),
-    );
-  }, [isEditMode]);
+    if (!isEditMode) {
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    }
+  }, [isEditMode, dispatch]);
 
   const groupsData = useGroupsData(libraryName);
 
@@ -97,8 +111,32 @@ export const RnaElements = ({
       setNewPreset(currentPreset);
       dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
       dispatch(setActiveRnaBuilderItem(groupName));
+
+      // Applying the picked monomer to the current sequence selection belongs in
+      // this event handler rather than in an effect reacting to the redux update
+      // (react-you-might-not-need-an-effect/no-event-handler).
+      if (isSequenceEditInRNABuilderMode && sequenceSelection) {
+        const field = `${monomerGroupToPresetGroup[groupName]}Label`;
+        dispatch(
+          setSequenceSelection(
+            applyMonomerToSequenceSelection(
+              sequenceSelection,
+              field,
+              monomer,
+              groupName === MonomerGroups.BASES,
+            ),
+          ),
+        );
+      }
     },
-    [dispatch, editor, isEditMode, isSequenceEditInRNABuilderMode, newPreset],
+    [
+      dispatch,
+      editor,
+      isEditMode,
+      isSequenceEditInRNABuilderMode,
+      newPreset,
+      sequenceSelection,
+    ],
   );
 
   return (

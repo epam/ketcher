@@ -221,7 +221,8 @@
                     -1.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -544,7 +545,6 @@
             "y": -5.75
         },
         "alias": "meR",
-        "templateId": "meR___N-Methyl-Arginine",
-        "seqid": 11
+        "templateId": "meR___N-Methyl-Arginine"
     }
 }

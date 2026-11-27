@@ -1,5 +1,6 @@
 import { ChangeEvent, KeyboardEvent, memo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { LayoutMode } from 'ketcher-core';
 
 import useTranslateAlongXAxis from './useTranslateAlongXAxis';
@@ -21,18 +22,15 @@ const RulerInput = ({
   layoutMode,
   onCommitValue,
 }: Props) => {
+  const { t } = useTranslation('macromolecules');
   const ref = useRef<HTMLInputElement>(null);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useTranslateAlongXAxis(ref, offsetX);
 
   const stringifiedLineLengthValue = lineLengthValue.toString();
 
-  const [editingValue, setEditingValue] = useState<string | null>(null);
-  const displayValue =
-    editingValue !== null ? editingValue : stringifiedLineLengthValue;
+  const [editingValue, setEditingValue] = useState<string>();
+  const displayValue = editingValue ?? stringifiedLineLengthValue;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEditingValue(event.target.value);
@@ -40,13 +38,13 @@ const RulerInput = ({
 
   const handleBlur = () => {
     if (!editingValue || editingValue.trim() === '') {
-      setEditingValue(null);
+      setEditingValue(undefined);
       return;
     }
 
     const newValue = Number(editingValue);
     if (Number.isNaN(newValue) || newValue < 1) {
-      setEditingValue(null);
+      setEditingValue(undefined);
       return;
     }
 
@@ -55,15 +53,17 @@ const RulerInput = ({
         ? Math.round(newValue / 10) * 10
         : newValue;
 
-    setEditingValue(null);
+    setEditingValue(undefined);
     onCommitValue(newLineLength);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      event.currentTarget.blur();
+    if (event.key !== 'Enter') {
+      return;
     }
+
+    event.preventDefault();
+    event.currentTarget.blur();
   };
 
   return (
@@ -72,7 +72,7 @@ const RulerInput = ({
         styles.rulerInput,
         isDragging && styles.rulerInputDragging,
       )}
-      title="Number of monomers in a line"
+      title={t('ruler.monomersInLine')}
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"

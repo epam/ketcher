@@ -6,12 +6,11 @@ import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import util from '../util';
+import utility from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGLineElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGLineElement, void> | undefined;
 
   constructor(public monomerToAtomBond: MonomerToAtomBond) {
     super(monomerToAtomBond);
@@ -87,9 +86,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
       const directionY = endPositionInPixels.y - startPositionInPixels.y;
-      const distance = Math.sqrt(
-        directionX * directionX + directionY * directionY,
-      );
+      const distance = Math.hypot(directionX, directionY);
 
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;
@@ -103,7 +100,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       const rayDirection = bondDirection.negated();
 
       // Calculate the shift needed to avoid overlap with the combined visual bounding box
-      const shift = util.shiftRayBox(
+      const shift = utility.shiftRayBox(
         new Vec2(0, 0),
         rayDirection,
         combinedVisualBBox,

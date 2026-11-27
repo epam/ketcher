@@ -1,9 +1,8 @@
-/* eslint-disable no-empty-pattern */
-import { test as utils } from '../utilsFixtures';
+import { test as utils } from '../utilitiesFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { mergeTests, Page } from '@playwright/test';
-import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
 
 export const test = mergeTests(utils, pageObjects).extend<
   { FlexCanvas: void },
@@ -14,34 +13,32 @@ export const test = mergeTests(utils, pageObjects).extend<
       ketcher,
       CommonTopRightToolbar,
       CommonTopLeftToolbar,
-      MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
     },
     use,
   ) => {
     const page = ketcher.page as Page;
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await use();
     await CommonTopLeftToolbar(page).clearCanvas();
     await page.keyboard.press('Escape');
-    const banner = NotificationBanner(page);
+    const banner = NotificationBannerOnMacro(page);
     while (await banner.isVisible()) {
       await banner.waitForBecomeHidden();
     }
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
   },
   initFlexCanvas: [
-    async (
-      { createPage, CommonTopRightToolbar, MacromoleculesTopToolbar },
-      use,
-    ) => {
+    async ({ createPage, CommonTopRightToolbar }, use) => {
       await use(async () => {
         const page = await createPage();
-        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
           LayoutMode.Flex,
         );
         return page;

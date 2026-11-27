@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,11 +15,9 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
@@ -29,6 +27,7 @@ import {
   getPersistedSequenceType,
   persistSequenceType,
 } from 'helpers/sequenceTypeStorage';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -71,24 +70,20 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
+  const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
     editor?.events.changeSequenceTypeEnterMode,
   );
-  const [isSequenceMode, setIsSequenceMode] = useState(false);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const layoutMode = useLayoutMode();
+  const isSequenceMode = layoutMode === 'sequence-layout-mode';
   const isDisabled = !!isSequenceEditInRNABuilderMode;
 
   const dispatch = useAppDispatch();
-
-  const onToggleSequenceMode = (data) => {
-    const mode = typeof data === 'object' ? data.mode : data;
-    setIsSequenceMode(mode === 'sequence-layout-mode');
-  };
 
   useEffect(() => {
     const onChangeSequenceType = (mode: SequenceType) => {
@@ -102,21 +97,15 @@ export const SequenceTypeGroupButton = () => {
       setActiveSequenceType(mode);
       persistSequenceType(mode);
     };
-    editor?.events.selectMode.add(onToggleSequenceMode);
     editor?.events.changeSequenceTypeEnterMode.add(onChangeSequenceType);
     editor?.events.changeSequenceTypeEnterMode.dispatch(
       getPersistedSequenceType(),
     );
 
     return () => {
-      editor?.events.selectMode.remove(onToggleSequenceMode);
       editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
-
-  useEffect(() => {
-    onToggleSequenceMode(layoutMode);
-  }, [layoutMode]);
+  }, [editor, dispatch]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
     editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
@@ -127,7 +116,9 @@ export const SequenceTypeGroupButton = () => {
       <ButtonGroup disabled={isDisabled}>
         <SequenceTypeButton
           data-testid={`${SequenceType.RNA}Btn`}
-          title="RNA (Ctrl+Alt+R)"
+          title={t('sequenceType.rnaTooltip', {
+            shortcut: hotkeysShortcuts.RNASequenceType,
+          })}
           variant={
             activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
           }
@@ -137,7 +128,9 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.DNA}Btn`}
-          title="DNA (Ctrl+Alt+D)"
+          title={t('sequenceType.dnaTooltip', {
+            shortcut: hotkeysShortcuts.DNASequenceType,
+          })}
           variant={
             activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
           }
@@ -147,7 +140,9 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
         <SequenceTypeButton
           data-testid={`${SequenceType.PEPTIDE}Btn`}
-          title="Peptides (Ctrl+Alt+P)"
+          title={t('sequenceType.peptidesTooltip', {
+            shortcut: hotkeysShortcuts.PEPTIDESequenceTYpe,
+          })}
           variant={
             activeSequenceType === SequenceType.PEPTIDE
               ? 'contained'

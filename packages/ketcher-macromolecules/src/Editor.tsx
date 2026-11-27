@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,8 @@ import { merge } from 'lodash';
 import {
   BaseMonomer,
   CoreEditor,
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  FlexModePolymerBondRenderer,
+  SnakeModePolymerBondRenderer,
   EditorLineLength,
   SetEditorLineLengthAction,
   NodeSelection,
@@ -37,7 +38,7 @@ import {
   isPasteContentAvailable,
   DeepPartial,
 } from 'ketcher-core';
-import { configureAppStore } from 'state';
+import { store } from 'state';
 import {
   defaultTheme,
   EditorTheme,
@@ -64,6 +65,7 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
+  useLayoutMode,
   useSequenceEditInRNABuilderMode,
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
@@ -109,6 +111,10 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
+import {
+  LayoutBoundsProvider,
+  MACROMOLECULES_MAIN_AREA_TEST_ID,
+} from 'components/Layout/Layout';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
@@ -119,7 +125,10 @@ import { DragGhost } from 'components/DragGhost/DragGhost';
 import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 import { FloatingTools } from 'components/FloatingTools';
 
-import './theme.less';
+import * as themeStyles from './theme.less';
+
+// Keep the runtime stylesheet while excluding its Less import from declarations.
+void themeStyles;
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -145,7 +154,6 @@ function EditorContainer({
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
 }: Readonly<EditorContainerProps>) {
-  const [store] = useState(() => configureAppStore());
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -157,7 +165,7 @@ function EditorContainer({
 
   useEffect(() => {
     store.dispatch(initKetcherId(ketcherId));
-  }, [ketcherId, store]);
+  }, [ketcherId]);
 
   return (
     <Provider store={store}>
@@ -196,6 +204,7 @@ function Editor({
   const errorTooltips = useAppSelector(selectErrorTooltips);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
+  const layoutMode = useLayoutMode();
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -204,8 +213,11 @@ function Editor({
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const [isPasteAvailable, setIsPasteAvailable] = useState(true);
   const updatePasteAvailability = useCallback(() => {
-    isPasteContentAvailable().then(setIsPasteAvailable);
-  }, []);
+    if (!editor) return;
+    isPasteContentAvailable((content) =>
+      editor.mode.isPasteContentValid(content),
+    ).then(setIsPasteAvailable);
+  }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
@@ -213,15 +225,44 @@ function Editor({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
 
+  const showSequenceContextMenuRef = useRef(showSequenceContextMenu);
   useEffect(() => {
+    showSequenceContextMenuRef.current = showSequenceContextMenu;
+  }, [showSequenceContextMenu]);
+
+  const showSelectedMonomersContextMenuRef = useRef(
+    showSelectedMonomersContextMenu,
+  );
+  useEffect(() => {
+    showSelectedMonomersContextMenuRef.current =
+      showSelectedMonomersContextMenu;
+  }, [showSelectedMonomersContextMenu]);
+
+  const editorInitParamsRef = useRef({
+    ketcherId,
+    theme,
+    monomersLibraryUpdate,
+    monomersLibraryReplace,
+    onInit,
+  });
+
+  useEffect(() => {
+    const {
+      ketcherId: initKetcherId,
+      theme: initTheme,
+      monomersLibraryUpdate: initMonomersLibraryUpdate,
+      monomersLibraryReplace: initMonomersLibraryReplace,
+      onInit: initOnInit,
+    } = editorInitParamsRef.current;
+
     dispatch(
       createEditor({
-        ketcherId,
-        theme,
+        ketcherId: initKetcherId,
+        theme: initTheme,
         canvas: canvasRef.current,
-        monomersLibraryUpdate,
-        monomersLibraryReplace,
-        onInit,
+        monomersLibraryUpdate: initMonomersLibraryUpdate,
+        monomersLibraryReplace: initMonomersLibraryReplace,
+        onInit: initOnInit,
         onLibraryError: (err) => {
           dispatch(
             setMonomerLibraryLoadError(
@@ -243,76 +284,103 @@ function Editor({
   useMacromoleculesHotkeys();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add(([event, selections]) => {
+    const onRightClickSequence = ([event, selections]: [
+      PointerEvent,
+      NodeSelection[][],
+    ]): void => {
       setSelections(selections);
       setContextMenuEvent(event);
       updatePasteAvailability();
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
-      showSequenceContextMenu({
+      showSequenceContextMenuRef.current({
         event,
         props: {
           sequenceItemRenderer: event.target.__data__,
         },
       });
-    });
-    editor?.events.rightClickPolymerBond.add(
-      ([event, polymerBondRenderer]: [
-        PointerEvent,
-        DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-      ]): void => {
-        setContextMenuEvent(event);
-        setSelectedMonomers([]);
-        showSelectedMonomersContextMenu({
-          event,
-          props: {
-            polymerBondRenderer,
-          },
-        });
-      },
+    };
+    const onRightClickPolymerBond = ([event, polymerBondRenderer]: [
+      PointerEvent,
+      FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer,
+    ]): void => {
+      setContextMenuEvent(event);
+      setSelectedMonomers([]);
+      showSelectedMonomersContextMenuRef.current({
+        event,
+        props: {
+          polymerBondRenderer,
+        },
+      });
+    };
+    const onRightClickSelectedMonomers = ([event, selectedMonomers]: [
+      PointerEvent,
+      BaseMonomer[],
+    ]): void => {
+      setSelectedMonomers(selectedMonomers);
+      setContextMenuEvent(event);
+      updatePasteAvailability();
+      showSelectedMonomersContextMenuRef.current({
+        event,
+        props: { selectedMonomers },
+      });
+    };
+    const onRightClickCanvas = ([event, selections]: [
+      PointerEvent,
+      BaseMonomer[],
+    ]): void => {
+      setContextMenuEvent(event);
+      updatePasteAvailability();
+      globalThis.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
+      setSelectedMonomers(selections);
+      showSelectedMonomersContextMenuRef.current({
+        event,
+        props: { selectedMonomers: selections },
+      });
+    };
+    const onRightClickCanvasSequence = ([event, selections]: [
+      PointerEvent,
+      NodesSelection,
+    ]): void => {
+      setContextMenuEvent(event);
+      updatePasteAvailability();
+      globalThis.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
+      setSelections(selections);
+      showSequenceContextMenuRef.current({
+        event,
+        props: {},
+      });
+    };
+    const onToggleMacromoleculesPropertiesVisibility = () => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
+    };
+
+    editor?.events.rightClickSequence.add(onRightClickSequence);
+    editor?.events.rightClickPolymerBond.add(onRightClickPolymerBond);
+    editor?.events.rightClickSelectedMonomers.add(onRightClickSelectedMonomers);
+    editor?.events.rightClickCanvas.add(onRightClickCanvas);
+    editor?.events.rightClickCanvasSequence.add(onRightClickCanvasSequence);
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(
+      onToggleMacromoleculesPropertiesVisibility,
     );
 
-    editor?.events.rightClickSelectedMonomers.add(
-      ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
-        setSelectedMonomers(selectedMonomers);
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        showSelectedMonomersContextMenu({
-          event,
-          props: { selectedMonomers },
-        });
-      },
-    );
-    editor?.events.rightClickCanvas.add(
-      ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
-        dispatch(setContextMenuActive(true));
-        setSelectedMonomers(selections);
-        showSelectedMonomersContextMenu({
-          event,
-          props: { selectedMonomers: selections },
-        });
-      },
-    );
-    editor?.events.rightClickCanvasSequence.add(
-      ([event, selections]: [PointerEvent, NodesSelection]) => {
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
-        dispatch(setContextMenuActive(true));
-        setSelections(selections);
-        showSequenceContextMenu({
-          event,
-          props: {},
-        });
-      },
-    );
-    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
-      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
-    });
-  }, [editor]);
+    return () => {
+      editor?.events.rightClickSequence.remove(onRightClickSequence);
+      editor?.events.rightClickPolymerBond.remove(onRightClickPolymerBond);
+      editor?.events.rightClickSelectedMonomers.remove(
+        onRightClickSelectedMonomers,
+      );
+      editor?.events.rightClickCanvas.remove(onRightClickCanvas);
+      editor?.events.rightClickCanvasSequence.remove(
+        onRightClickCanvasSequence,
+      );
+      editor?.events.toggleMacromoleculesPropertiesVisibility.remove(
+        onToggleMacromoleculesPropertiesVisibility,
+      );
+    };
+  }, [editor, dispatch, updatePasteAvailability]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();
@@ -329,13 +397,13 @@ function Editor({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       SetEditorLineLengthAction,
       setEditorLineLengthListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         SetEditorLineLengthAction,
         setEditorLineLengthListener,
       );
@@ -351,7 +419,7 @@ function Editor({
   }, []);
 
   return (
-    <>
+    <LayoutBoundsProvider>
       <Layout>
         <Layout.Top
           shortened={!isMonomerLibraryHidden}
@@ -383,13 +451,14 @@ function Editor({
           <LeftMenuComponent />
         </Layout.Left>
 
-        <Layout.Main>
+        <Layout.Main data-testid={MACROMOLECULES_MAIN_AREA_TEST_ID}>
           <EditorEvents />
           <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
             data-canvasmode="macromolecules-mode"
+            data-canvaslayout={layoutMode.replace(/-layout-mode$/, '')}
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
@@ -475,7 +544,7 @@ function Editor({
           ))}
         </StyledToastContainer>
       </Snackbar>
-    </>
+    </LayoutBoundsProvider>
   );
 }
 

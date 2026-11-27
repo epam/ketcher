@@ -143,8 +143,7 @@
             "y": -1.25
         },
         "alias": "H",
-        "templateId": "H___Histidine",
-        "seqid": 1
+        "templateId": "H___Histidine"
     },
     "monomerTemplate-H___Histidine": {
         "type": "monomerTemplate",
@@ -164,7 +163,8 @@
                     -1.058,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -384,6 +384,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "H"
     },

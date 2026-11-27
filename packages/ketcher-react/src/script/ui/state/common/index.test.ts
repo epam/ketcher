@@ -4,8 +4,10 @@ describe('Common reducer', () => {
   it('Should return initial value', () => {
     const randomAction = { type: 'RANDOM' };
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    const state = reducer(undefined, randomAction as any);
+    const state = reducer(
+      undefined,
+      randomAction as unknown as Parameters<typeof reducer>[1],
+    );
     expect(state).toEqual({ cursorPosition: { x: 0, y: 0 } });
   });
 

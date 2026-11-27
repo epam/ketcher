@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,43 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { Delete } from './Delete';
+import type { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 const mockProps = {
   isModalOpen: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 };
 
 describe('Delete component', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const preset: any = {
-    base: {
-      label: 'A',
-    },
-    phosphate: {
-      label: 'P',
-    },
-    sugar: {
-      label: 'R',
-    },
+  const preset = {
+    base: { label: 'A' },
+    phosphate: { label: 'P' },
+    sugar: { label: 'R' },
     name: 'A',
-  };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const presetCustom: any = {
-    base: {
-      label: '25A',
-    },
-    phosphate: {
-      label: 'P',
-    },
-    sugar: {
-      label: 'R',
-    },
+  } as unknown as IRnaPreset;
+  const presetCustom = {
+    base: { label: '25A' },
+    phosphate: { label: 'P' },
+    sugar: { label: 'R' },
     name: 'MyRna',
     nameInList: 'MyRna',
-  };
+  } as unknown as IRnaPreset;
   it('should render correctly', () => {
     expect(
       render(

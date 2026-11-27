@@ -57,8 +57,7 @@
             "y": -1.25
         },
         "alias": "U",
-        "templateId": "U___Selenocysteine",
-        "seqid": 1
+        "templateId": "U___Selenocysteine"
     },
     "monomerTemplate-U___Selenocysteine": {
         "type": "monomerTemplate",
@@ -78,7 +77,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -231,6 +231,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "U"
     },

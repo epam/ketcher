@@ -140,7 +140,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -189,7 +190,8 @@
                     0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -370,8 +372,7 @@
             "y": -2.75
         },
         "alias": "meI",
-        "templateId": "meI___N-Methyl-Isoleucine",
-        "seqid": 6
+        "templateId": "meI___N-Methyl-Isoleucine"
     },
     "monomer6": {
         "type": "monomer",

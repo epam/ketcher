@@ -3,8 +3,8 @@ export function b64toBlob(
   contentType = '',
   sliceSize = 512,
 ): Blob {
-  const byteCharacters: string = window.atob(b64Data);
-  const byteArrays: Uint8Array[] = [];
+  const byteCharacters: string = globalThis.atob(b64Data);
+  const byteArrays: Array<Uint8Array<ArrayBuffer>> = [];
 
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice: string = byteCharacters.slice(offset, offset + sliceSize);
@@ -14,10 +14,10 @@ export function b64toBlob(
       byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    const byteArray: Uint8Array = new Uint8Array(byteNumbers);
+    const byteArray: Uint8Array<ArrayBuffer> = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);
   }
 
-  const blob: Blob = new Blob(byteArrays as BlobPart[], { type: contentType });
+  const blob: Blob = new Blob(byteArrays, { type: contentType });
   return blob;
 }

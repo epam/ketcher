@@ -8,6 +8,8 @@ import { PolymerBondRendererFactory } from 'application/render/renderers/Polymer
 import {
   type Loop,
   type RGroupAttachmentPoint,
+  type Atom,
+  type Bond,
   Box2Abs,
   Pool,
   Struct,
@@ -16,7 +18,7 @@ import {
 import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import type { MonomerItemType } from 'domain/types';
-import { mockFn } from 'jest-mock-extended';
+import { vi } from 'vitest';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 const mockAtoms = [
@@ -393,11 +395,11 @@ const mockBonds = [
   },
 ];
 
-const atoms = new Pool();
-mockAtoms.forEach((atom, key) => atoms.set(key, atom));
+const atoms = new Pool<Atom>();
+mockAtoms.forEach((atom, key) => atoms.set(key, atom as Atom));
 
-const bonds = new Pool();
-mockBonds.forEach((bond, key) => bonds.set(key, bond));
+const bonds = new Pool<Bond>();
+mockBonds.forEach((bond, key) => bonds.set(key, bond as Bond));
 
 const mockHalfBonds = [
   {
@@ -650,7 +652,7 @@ const mockFrags = [
     stereoFlagPosition: undefined,
     enhancedStereoFlag: 'ABS',
     updateStereoFlag() {},
-    calcBBox: mockFn().mockReturnValue({
+    calcBBox: vi.fn(() => ({
       p0: {
         x: 4,
         y: 6,
@@ -661,7 +663,7 @@ const mockFrags = [
         y: 8,
         z: 0,
       },
-    }),
+    })),
   },
 ];
 const frags = new Map();
@@ -683,7 +685,7 @@ const molecule = {
     children: {
       key: -1,
       value: [],
-      get: mockFn().mockReturnValue([]),
+      get: vi.fn(() => []),
     },
     atomSets: {},
   },
@@ -710,7 +712,7 @@ const molecule = {
   bondInitHalfBonds() {},
   atomAddNeighbor() {},
   setImplicitHydrogen() {},
-  getRGroupAttachmentPointsByAtomId: mockFn().mockReturnValue([0]),
+  getRGroupAttachmentPointsByAtomId: vi.fn(() => [0]),
 };
 
 export const restruct = {
@@ -728,19 +730,20 @@ export const restruct = {
   markBond() {},
   markItem() {},
   rgroupAttachmentPoints: new Pool<ReRGroupAttachmentPoint>(),
-  getRGroupAttachmentPointsVBoxByAtomIds: mockFn().mockReturnValue(
-    new Box2Abs(
-      new Vec2({
-        x: 6,
-        y: 7,
-        z: 0,
-      }),
-      new Vec2({
-        x: 7,
-        y: 9,
-        z: 0,
-      }),
-    ),
+  getRGroupAttachmentPointsVBoxByAtomIds: vi.fn(
+    () =>
+      new Box2Abs(
+        new Vec2({
+          x: 6,
+          y: 7,
+          z: 0,
+        }),
+        new Vec2({
+          x: 7,
+          y: 9,
+          z: 0,
+        }),
+      ),
   ),
 };
 
@@ -770,8 +773,30 @@ export const peptideMonomerItem: MonomerItemType = {
 };
 
 export const polymerEditorTheme = {
-  monomer: { color: { A: { regular: 'yellow' } } },
+  monomer: {
+    color: { A: { regular: 'yellow' }, CHEM: { regular: 'yellow' } },
+  },
   peptide: { color: { A: { regular: 'yellow' } } },
+};
+
+export const coreEditorTheme = {
+  ketcher: polymerEditorTheme,
+};
+
+export const chemMonomerItem: MonomerItemType = {
+  favorite: false,
+  label: 'A6OH',
+  props: {
+    BranchMonomer: '',
+    MonomerCaps: {},
+    MonomerCode: '',
+    MonomerName: '',
+    MonomerType: 'CHEM',
+    MonomerClass: KetMonomerClass.CHEM,
+    Name: '',
+    MonomerNaturalAnalogCode: '',
+  },
+  struct: new Struct(),
 };
 
 export const getFinishedPolymerBond = (x1, y1, x2, y2) => {

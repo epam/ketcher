@@ -309,7 +309,8 @@
                     0.209,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -544,8 +545,7 @@
             "y": -2.75
         },
         "alias": "dP",
-        "templateId": "dP___D-Proline",
-        "seqid": 9
+        "templateId": "dP___D-Proline"
     },
     "monomer9": {
         "type": "monomer",

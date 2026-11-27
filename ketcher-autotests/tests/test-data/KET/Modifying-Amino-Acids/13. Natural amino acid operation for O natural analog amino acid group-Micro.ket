@@ -57,8 +57,7 @@
             "y": -1.25
         },
         "alias": "O",
-        "templateId": "O___Pyrrolysine",
-        "seqid": 1
+        "templateId": "O___Pyrrolysine"
     },
     "monomerTemplate-O___Pyrrolysine": {
         "type": "monomerTemplate",
@@ -78,7 +77,8 @@
                     -2.769,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -167,7 +167,8 @@
                     2.731,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -381,6 +382,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "O"
     },

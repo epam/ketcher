@@ -10,7 +10,7 @@ import {
   type RnaPresetComponentKey,
   MonomerCreationComponentStructureUpdateEvent,
 } from 'application/editor/shared/customEvents';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export class MarkAsRnaComponentOperation extends BaseOperation {
   constructor(
@@ -18,8 +18,8 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
     private readonly componentKey: RnaPresetComponentKey,
     private readonly newAtomIds: number[],
     private readonly newBondIds: number[],
-    private readonly prevAtomIds: number[],
-    private readonly prevBondIds: number[],
+    private readonly previousAtomIds: number[],
+    private readonly previousBondIds: number[],
   ) {
     super(OperationType.MONOMER_CREATION_MARK_RNA_COMPONENT);
   }
@@ -27,10 +27,8 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
   execute(_restruct: ReStruct): void {
     assert(this.monomerCreationState);
 
-    if (!this.monomerCreationState.rnaComponentAtoms) {
-      this.monomerCreationState.rnaComponentAtoms =
-        new Map() as RnaComponentAtoms;
-    }
+    this.monomerCreationState.rnaComponentAtoms ??=
+      new Map() as RnaComponentAtoms;
 
     this.monomerCreationState.rnaComponentAtoms.set(this.componentKey, {
       atoms: [...this.newAtomIds],
@@ -42,7 +40,7 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
       atomIds: this.newAtomIds,
       bondIds: this.newBondIds,
     };
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
         detail: eventData,
       }),
@@ -53,8 +51,8 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
     return new MarkAsRnaComponentOperation(
       this.monomerCreationState,
       this.componentKey,
-      this.prevAtomIds,
-      this.prevBondIds,
+      this.previousAtomIds,
+      this.previousBondIds,
       this.newAtomIds,
       this.newBondIds,
     );

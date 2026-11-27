@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
@@ -6,7 +6,7 @@ import {
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import type { D3SvgElementSelection } from 'application/render/types';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities/vec2';
 import { getStructureBbox } from 'domain/entities/structureBbox';
@@ -25,34 +25,17 @@ import {
 } from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
+  private readonly editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private path = '';
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
     this.polymerBond.setRenderer(this);
-  }
-
-  public get rootBBox(): DOMRect | undefined {
-    const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
-  }
-
-  public get width(): number {
-    return this.rootBBox?.width ?? 0;
-  }
-
-  public get height(): number {
-    return this.rootBBox?.height ?? 0;
+    this.editorEvents = editorEvents;
   }
 
   private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
@@ -72,17 +55,30 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     };
   }
 
+  public get rootBBox(): DOMRect | undefined {
+    const rootNode = this.rootElement?.node();
+    return !rootNode ? undefined : rootNode.getBBox();
+  }
+
+  public get width(): number {
+    return this.rootBBox?.width ?? 0;
+  }
+
+  public get height(): number {
+    return this.rootBBox?.height ?? 0;
+  }
+
   public moveSelection(): void {
     if (
-      this.previousStateOfIsMonomersOnSameHorizontalLine !==
+      this.previousStateOfIsMonomersOnSameHorizontalLine ===
       this.polymerBond.isHorizontal
     ) {
-      this.remove();
-      this.show();
-    } else {
       assert(this.rootElement);
       this.moveStart();
       this.moveEnd();
+    } else {
+      this.remove();
+      this.show();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
       this.polymerBond.isHorizontal;
@@ -139,11 +135,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
     let thirdPoint: Vec2;
 
-    if (isBoundingBoxVertical) {
-      thirdPoint = new Vec2(firstPoint.x, secondPoint.y);
-    } else {
-      thirdPoint = new Vec2(secondPoint.x, firstPoint.y);
-    }
+    thirdPoint = isBoundingBoxVertical
+      ? new Vec2(firstPoint.x, secondPoint.y)
+      : new Vec2(secondPoint.x, firstPoint.y);
 
     this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}`;
 
@@ -173,33 +167,36 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   private addCornerBasedOnDirection(
-    prevPoint: Vec2,
+    previousPoint: Vec2,
     cornerPoint: Vec2,
     nextPoint: Vec2,
   ) {
-    if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
-      if (prevPoint.x < cornerPoint.x) {
+    if (previousPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
+      if (previousPoint.x < cornerPoint.x) {
         if (cornerPoint.y < nextPoint.y) {
-          this.path = this.path.concat(generateCornerFromLeftToBottom());
+          this.path += generateCornerFromLeftToBottom();
         } else {
-          this.path = this.path.concat(generateCornerFromLeftToTop());
+          this.path += generateCornerFromLeftToTop();
         }
       } else if (cornerPoint.y < nextPoint.y) {
-        this.path = this.path.concat(generateCornerFromRightToBottom());
+        this.path += generateCornerFromRightToBottom();
       } else {
-        this.path = this.path.concat(generateCornerFromRightToTop());
+        this.path += generateCornerFromRightToTop();
       }
-    } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
-      if (prevPoint.y < cornerPoint.y) {
+    } else if (
+      previousPoint.y !== cornerPoint.y &&
+      cornerPoint.x !== nextPoint.x
+    ) {
+      if (previousPoint.y < cornerPoint.y) {
         if (cornerPoint.x < nextPoint.x) {
-          this.path = this.path.concat(generateCornerFromTopToRight());
+          this.path += generateCornerFromTopToRight();
         } else {
-          this.path = this.path.concat(generateCornerFromTopToLeft());
+          this.path += generateCornerFromTopToLeft();
         }
       } else if (cornerPoint.x < nextPoint.x) {
-        this.path = this.path.concat(generateCornerFromBottomToRight());
+        this.path += generateCornerFromBottomToRight();
       } else {
-        this.path = this.path.concat(generateCornerFromBottomToLeft());
+        this.path += generateCornerFromBottomToLeft();
       }
     }
   }

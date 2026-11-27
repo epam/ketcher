@@ -163,7 +163,8 @@
                     -0.601,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -448,7 +449,6 @@
             "y": -4.25
         },
         "alias": "meH",
-        "templateId": "meH___N-Methyl-Histidine",
-        "seqid": 8
+        "templateId": "meH___N-Methyl-Histidine"
     }
 }

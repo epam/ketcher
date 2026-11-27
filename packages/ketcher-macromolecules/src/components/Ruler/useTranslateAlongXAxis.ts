@@ -1,10 +1,10 @@
 import { RefObject, useLayoutEffect, useRef } from 'react';
 
-const useTranslateAlongXAxis = (
-  ref: RefObject<HTMLElement | SVGSVGElement>,
+const useTranslateAlongXAxis = <T extends HTMLElement | SVGSVGElement>(
+  ref: RefObject<T | null>,
   offsetX: number,
 ) => {
-  const animateRef = useRef<number | null>(null);
+  const animateRef = useRef<number | undefined>(undefined);
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -17,10 +17,12 @@ const useTranslateAlongXAxis = (
     });
 
     return () => {
-      if (animateRef.current) {
-        cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+      if (!animateRef.current) {
+        return;
       }
+
+      cancelAnimationFrame(animateRef.current);
+      animateRef.current = undefined;
     };
   }, [ref, offsetX]);
 };

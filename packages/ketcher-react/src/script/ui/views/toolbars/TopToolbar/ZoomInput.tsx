@@ -1,3 +1,4 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +23,7 @@ import {
   useCallback,
 } from 'react';
 import styled from '@emotion/styled';
+import { isTouchDevice } from '../../../../../utils';
 
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
@@ -96,17 +98,23 @@ export const ZoomInput = ({
         event.nativeEvent.stopImmediatePropagation();
       }
 
-      if (event.key === 'Enter') {
-        onZoomSubmit();
-        inputEl.select();
+      if (event.key !== 'Enter') {
+        return;
       }
+
+      onZoomSubmit();
+      inputEl.select();
     },
     [onZoomSubmit, inputRef, shortcuts],
   );
 
-  // Focus on input field upon mounting
+  // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
+    if (isTouchDevice) {
+      return;
+    }
+
     inputEl?.focus();
     inputEl?.select();
   }, [inputRef]);
@@ -117,6 +125,7 @@ export const ZoomInput = ({
       data-testid="zoom-value"
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
+      inputMode="numeric"
     />
   );
 };

@@ -1,4 +1,4 @@
-import { type FC, useEffect, useRef, useState } from 'react';
+import { type FC, useLayoutEffect, useRef, useState } from 'react';
 import {
   type Render,
   type SGroup,
@@ -30,10 +30,21 @@ function getPanelPositionRelativeToRect(
     return null;
   }
 
+  const hoveringWithAttrs = sGroup.hovering as {
+    removed?: boolean;
+    attrs?: { path?: Array<Array<number>> } | null;
+  };
+
+  // A selected s-group keeps the outline of an earlier hover, which Raphael
+  // has already removed. Its points are gone, so there is nothing to place
+  // the panel against.
+  if (hoveringWithAttrs.removed) {
+    return null;
+  }
+
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
-  const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
-    (line) => line.slice(1),
-  );
+  const rectCoords: Array<Array<number>> =
+    hoveringWithAttrs.attrs?.path?.map((line) => line.slice(1)) ?? [];
 
   const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
     calculateMiddleCoordsForRect(rectCoords);
@@ -52,11 +63,10 @@ function getPanelPositionRelativeToRect(
 
   // Default position for panel is in the bottom;
   let x = middleBottomSide.x - width / 2;
-  let y = middleBottomSide.y;
-
-  if (clientY > viewportBottomLimit) {
-    y = middleTopSide.y - height;
-  }
+  let y =
+    clientY > viewportBottomLimit
+      ? middleTopSide.y - height
+      : middleBottomSide.y;
 
   if (clientX > viewportRightLimit) {
     x = middleLeftSide.x - width;
@@ -90,12 +100,20 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (wrapperRef.current) {
-      setWrapperHeight(wrapperRef.current.clientHeight);
-      setWrapperWidth(wrapperRef.current.clientWidth);
+  // The panel is positioned from its own measured size, so it has to be
+  // measured once it is in the DOM and again whenever its content changes.
+  // Without a dependency array this would re-run after every render, including
+  // the re-render its own setState triggers. useLayoutEffect keeps the
+  // measurement and the reposition in the same commit, so the panel is never
+  // painted at its pre-measurement position.
+  useLayoutEffect(() => {
+    if (!wrapperRef.current) {
+      return;
     }
-  });
+
+    setWrapperHeight(wrapperRef.current.clientHeight);
+    setWrapperWidth(wrapperRef.current.clientWidth);
+  }, [sGroupData]);
 
   const panelCoordinate = getPanelPositionRelativeToRect(
     clientX,

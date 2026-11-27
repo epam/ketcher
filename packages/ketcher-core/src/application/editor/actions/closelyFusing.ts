@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import { checkAtomValence } from './atom';
 import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
 import utils from '../shared/utils';
+import { isHapticBondWithAttachmentGroup } from 'domain/helpers/hapticBond';
 
 export function fromItemsFuse(restruct, items) {
   let action = new Action();
@@ -34,11 +35,11 @@ export function fromItemsFuse(restruct, items) {
   );
 
   // merge single atoms
-  items.atoms.forEach((dst, src) => {
-    if (usedAtoms.has(dst) || usedAtoms.has(src)) return;
+  items.atoms.forEach((destination, source) => {
+    if (usedAtoms.has(destination) || usedAtoms.has(source)) return;
 
-    action = fromAtomMerge(restruct, src, dst).mergeWith(action);
-    usedAtoms.add(dst).add(src);
+    action = fromAtomMerge(restruct, source, destination).mergeWith(action);
+    usedAtoms.add(destination).add(source);
   });
 
   // merge bonds
@@ -53,8 +54,8 @@ export function getItemsToFuse(editor, items) {
   const struct = editor.render.ctab.molecule;
 
   const mergeItems = items || {
-    atoms: Array.from(struct.atoms.keys()),
-    bonds: Array.from(struct.bonds.keys()),
+    atoms: [...struct.atoms.keys()],
+    bonds: [...struct.bonds.keys()],
   };
 
   return closestToMerge(
@@ -67,13 +68,13 @@ export function getHoverToFuse(items) {
   if (!items) return null;
 
   const hoverItems = {
-    atoms: Array.from(items.atoms.values()),
-    bonds: Array.from(items.bonds.values()),
+    atoms: [...items.atoms.values()],
+    bonds: [...items.bonds.values()],
     ...(items.functionalGroups && {
-      functionalGroups: Array.from(items.functionalGroups.values()),
+      functionalGroups: [...items.functionalGroups.values()],
     }),
     ...(items.atomToFunctionalGroup && {
-      sgroups: Array.from(items.atomToFunctionalGroup.values()),
+      sgroups: [...items.atomToFunctionalGroup.values()],
     }),
   };
 
@@ -89,18 +90,18 @@ export function mergeMapOfItemsToSet(items: Map<number, number>): Set<number> {
 }
 
 /**
- * @param struct
- * @param closestMap {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>,
- *    atomToFunctionalGroup: Map<number, number>
- * }}
- * @return {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>,
- *    atomToFunctionalGroup: Map<number, number>
- * }}
- */
+@param struct
+@param closestMap {{
+		atoms: Map<number, number>,
+		bonds: Map<number, number>,
+   atomToFunctionalGroup: Map<number, number>
+}}
+@return {{
+		atoms: Map<number, number>,
+		bonds: Map<number, number>,
+   atomToFunctionalGroup: Map<number, number>
+}}
+*/
 function closestToMerge(struct, closestMap) {
   const mergeMap = {
     atoms: new Map<number, number>(closestMap.atoms),
@@ -110,27 +111,40 @@ function closestToMerge(struct, closestMap) {
     ),
   };
 
-  closestMap.bonds.forEach((dstId, srcId) => {
-    const bond = struct.bonds.get(srcId);
-    const bondCI = struct.bonds.get(dstId);
+  closestMap.bonds.forEach((destinationId, sourceId) => {
+    const bond = struct.bonds.get(sourceId);
+    const bondCI = struct.bonds.get(destinationId);
+    if (!bond || !bondCI) {
+      mergeMap.bonds.delete(sourceId);
+      return;
+    }
 
-    if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+    if (
+      isHapticBondWithAttachmentGroup(struct, bond) ||
+      isHapticBondWithAttachmentGroup(struct, bondCI)
+    ) {
+      mergeMap.bonds.delete(sourceId);
+      if (bond) {
+        mergeMap.atoms.delete(bond.begin);
+        mergeMap.atoms.delete(bond.end);
+      }
+      return;
+    }
+
+    const mergeParams = utils.mergeBondsParams(struct, bond, struct, bondCI);
+    if (mergeParams?.merged) {
       mergeMap.atoms.delete(bond.begin);
       mergeMap.atoms.delete(bond.end);
     } else {
-      mergeMap.bonds.delete(srcId);
+      mergeMap.bonds.delete(sourceId);
     }
   });
 
-  if (
-    mergeMap.atoms.size === 0 &&
+  return mergeMap.atoms.size === 0 &&
     mergeMap.bonds.size === 0 &&
     mergeMap.atomToFunctionalGroup.size === 0
-  ) {
-    return null;
-  }
-
-  return mergeMap;
+    ? null
+    : mergeMap;
 }
 
 function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {

@@ -6,9 +6,10 @@ import {
   fromArrowAddition,
   fromArrowDeletion,
   fromArrowResizing,
+  RxnArrowDelete,
+  assert,
 } from 'ketcher-core';
 import type { Editor } from '../../Editor';
-import assert from 'assert';
 import type { ArrowAddTool } from './arrow.types';
 
 interface BaseDragContext {
@@ -34,7 +35,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private dragCtx: ReactionArrowDragContext | null = null;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly editor: Editor,
     private readonly mode: RxnArrowMode,
@@ -46,59 +46,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private get reStruct() {
     return this.render.ctab;
-  }
-
-  mousedown(event: MouseEvent) {
-    this.dragCtx = {
-      p0: CoordinateTransformation.pageToModel(event, this.render),
-      action: null,
-      itemId: null,
-    };
-  }
-
-  mousemove(event: MouseEvent) {
-    if (!this.dragCtx) return;
-    const current = CoordinateTransformation.pageToModel(event, this.render);
-    const diff = current.sub(this.dragCtx.p0);
-    if (!this.dragCtx.action) {
-      const action = fromArrowAddition(
-        this.reStruct,
-        [this.dragCtx.p0, this.dragCtx.p0],
-        this.mode,
-      );
-      // TODO: need to rework  actions/operations logic
-      this.dragCtx = {
-        ...this.dragCtx,
-        itemId: action.operations[0].data.id,
-        action,
-      };
-      this.editor.update(this.dragCtx.action, true);
-    } else {
-      this.dragCtx.action.perform(this.reStruct);
-    }
-
-    this.updateResizingState(this.dragCtx.itemId, true);
-    const isSnappingEnabled = !event.ctrlKey;
-    this.dragCtx.action = fromArrowResizing(
-      this.reStruct,
-      this.dragCtx.itemId,
-      diff,
-      current,
-      null,
-      isSnappingEnabled,
-    );
-    this.editor.update(this.dragCtx.action, true);
-  }
-
-  mouseup(event: MouseEvent) {
-    if (!this.dragCtx) return;
-    if (this.dragCtx.action) {
-      this.dragCtx = this.addNewArrowWithDragging(this.dragCtx);
-      this.editor.update(this.dragCtx.action);
-    } else {
-      this.addNewArrowWithClicking(event);
-    }
-    this.dragCtx = null;
   }
 
   private getArrowWithMinimalLengthEnd(start: Vec2, end: Vec2 | null): Vec2 {
@@ -138,15 +85,81 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     const ci = this.editor.findItem(event, ['rxnArrows']);
     const p0 = CoordinateTransformation.pageToModel(event, this.render);
 
-    if (!ci) {
-      const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];
-      this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode));
+    if (ci) {
+      return;
     }
+
+    const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];
+    this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode));
   }
 
   private updateResizingState(arrowId: number, isResizing: boolean) {
     const reArrow = this.reStruct.rxnArrows.get(arrowId);
     assert(reArrow != null);
     reArrow.isResizing = isResizing;
+  }
+
+  mousedown(event: MouseEvent) {
+    this.dragCtx = {
+      p0: CoordinateTransformation.pageToModel(event, this.render),
+      action: null,
+      itemId: null,
+    };
+  }
+
+  mousemove(event: MouseEvent) {
+    if (!this.dragCtx) return;
+    const current = CoordinateTransformation.pageToModel(event, this.render);
+    const diff = current.sub(this.dragCtx.p0);
+    if (this.dragCtx.action) {
+      this.dragCtx.action.perform(this.reStruct);
+    } else {
+      const action = fromArrowAddition(
+        this.reStruct,
+        [this.dragCtx.p0, this.dragCtx.p0],
+        this.mode,
+      );
+      // TODO: need to rework  actions/operations logic
+      const firstOp = action.operations[0];
+      if (!(firstOp instanceof RxnArrowDelete)) {
+        throw new TypeError(
+          'Expected RxnArrowDelete as the first operation of fromArrowAddition',
+        );
+      }
+      const arrowId = firstOp.data.id;
+      assert(arrowId != null);
+      const dragCtx: DragContextInProgress = {
+        ...this.dragCtx,
+        itemId: arrowId,
+        action,
+      };
+      this.dragCtx = dragCtx;
+      this.editor.update(dragCtx.action, true);
+    }
+
+    const dragCtx = this.dragCtx;
+    assert(dragCtx?.action != null);
+    this.updateResizingState(dragCtx.itemId, true);
+    const isSnappingEnabled = !event.ctrlKey;
+    dragCtx.action = fromArrowResizing(
+      this.reStruct,
+      dragCtx.itemId,
+      diff,
+      current,
+      null,
+      isSnappingEnabled,
+    );
+    this.editor.update(dragCtx.action, true);
+  }
+
+  mouseup(event: MouseEvent) {
+    if (!this.dragCtx) return;
+    if (this.dragCtx.action) {
+      this.dragCtx = this.addNewArrowWithDragging(this.dragCtx);
+      this.editor.update(this.dragCtx.action);
+    } else {
+      this.addNewArrowWithClicking(event);
+    }
+    this.dragCtx = null;
   }
 }

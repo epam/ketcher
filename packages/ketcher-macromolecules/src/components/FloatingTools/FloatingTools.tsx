@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { Icon, IconName } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
@@ -75,6 +76,7 @@ export interface FloatingToolsProps {
 const POSITION_EPSILON = 0.1; // view-pixel threshold to avoid noisy updates
 
 export const FloatingTools = () => {
+  const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState<Vec2>(new Vec2(0, 0));
@@ -95,10 +97,12 @@ export const FloatingTools = () => {
     const dx = Math.abs(viewPos.x - positionRef.current.x);
     const dy = Math.abs(viewPos.y - positionRef.current.y);
 
-    if (dx > POSITION_EPSILON || dy > POSITION_EPSILON) {
-      positionRef.current = viewPos;
-      setPosition(viewPos);
+    if (dx <= POSITION_EPSILON && dy <= POSITION_EPSILON) {
+      return;
     }
+
+    positionRef.current = viewPos;
+    setPosition(viewPos);
   }, [editor]);
 
   useEffect(() => {
@@ -179,21 +183,21 @@ export const FloatingTools = () => {
     <FloatingToolsWrapper left={position.x} top={position.y}>
       <ToolButton
         onClick={handleFlipHorizontal}
-        title="Flip horizontally"
+        title={t('floatingTools.flipHorizontally')}
         data-testid="transform-flip-h"
       >
         <Icon name={'transform-flip-h' as IconName} />
       </ToolButton>
       <ToolButton
         onClick={handleFlipVertical}
-        title="Flip vertically"
+        title={t('floatingTools.flipVertically')}
         data-testid="transform-flip-v"
       >
         <Icon name={'transform-flip-v' as IconName} />
       </ToolButton>
       <ToolButton
         onClick={handleDelete}
-        title="Delete"
+        title={t('floatingTools.delete')}
         data-testid="float-delete"
       >
         <Icon name={'delete' as IconName} />

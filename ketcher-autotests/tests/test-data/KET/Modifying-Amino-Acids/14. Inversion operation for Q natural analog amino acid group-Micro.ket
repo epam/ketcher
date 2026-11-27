@@ -77,7 +77,8 @@
                     -1.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -289,8 +290,7 @@
             "y": -1.25
         },
         "alias": "dQ",
-        "templateId": "dQ___D-Glutamine",
-        "seqid": 2
+        "templateId": "dQ___D-Glutamine"
     },
     "monomer2": {
         "type": "monomer",

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import { Elements } from 'ketcher-core';
 import { capitalize } from 'lodash/fp';
+import { useTranslation } from 'react-i18next';
 
 interface ElementNumberProps {
   label: string;
@@ -24,20 +25,19 @@ interface ElementNumberProps {
 type Props = ElementNumberProps;
 
 const ElementNumber = (props: Props) => {
+  const { t } = useTranslation('dialogs');
   const { label } = props;
   const value = Elements.get(capitalize(label))?.number ?? '';
 
   return (
     <label>
-      {/* eslint-disable jsx-a11y/label-has-associated-control */}
-      <span>Number</span>
+      <span>{t('toolbox.atom.numberLabel')}</span>
       <input
         type="text"
         readOnly
         value={value}
         data-testid={'element-number'}
       />
-      {/* eslint-enable jsx-a11y/label-has-associated-control */}
     </label>
   );
 };

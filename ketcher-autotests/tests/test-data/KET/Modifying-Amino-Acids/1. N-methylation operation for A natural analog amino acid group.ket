@@ -546,7 +546,8 @@
                     0.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -889,8 +890,7 @@
             "y": -4.25
         },
         "alias": "meA",
-        "templateId": "meA___N-Methyl-Alanine",
-        "seqid": 22
+        "templateId": "meA___N-Methyl-Alanine"
     },
     "monomer22": {
         "type": "monomer",

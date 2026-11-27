@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { openFileAndAddToCanvas, takeElementScreenshot } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -19,7 +17,7 @@ test.describe('Copolymer S-Group type', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
@@ -191,7 +189,7 @@ test.describe('Copolymer S-Group type', () => {
     await expect(page.getByTestId(SubtypeOption.Random)).toBeVisible();
     await expect(page.getByTestId(SubtypeOption.Block)).toBeVisible();
     await expect(page.getByTestId(SubtypeOption.Alternating)).toBeVisible();
-    expect(options).toHaveLength(3);
+    expect(options).toHaveLength(4);
     await page.keyboard.press('Escape');
     await SGroupPropertiesDialog(page).cancel();
   });

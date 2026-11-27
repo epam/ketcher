@@ -32,8 +32,7 @@ const ARROW_STROKE_WIDTH = 2;
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public arrow: RxnArrow) {
     super(arrow);
@@ -83,87 +82,99 @@ export class RxnArrowRenderer extends BaseRenderer {
     let paths: SVGPathAttributes[] = [];
 
     switch (this.arrow.type) {
-      case RxnArrowMode.OpenAngle:
+      case RxnArrowMode.OpenAngle: {
         paths = OpenAngleArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.FilledTriangle:
+      }
+      case RxnArrowMode.FilledTriangle: {
         paths = FilledTriangleArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.FilledBow:
+      }
+      case RxnArrowMode.FilledBow: {
         paths = FilledBowArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.DashedOpenAngle:
+      }
+      case RxnArrowMode.DashedOpenAngle: {
         paths = DashedOpenAngleArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.Failed:
+      }
+      case RxnArrowMode.Failed: {
         paths = FailedArrowRenderer.preparePaths(startPosition, length, angle);
         break;
-      case RxnArrowMode.Retrosynthetic:
+      }
+      case RxnArrowMode.Retrosynthetic: {
         paths = RetrosyntheticArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.BothEndsFilledTriangle:
+      }
+      case RxnArrowMode.BothEndsFilledTriangle: {
         paths = BothEndsFilledArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.EquilibriumFilledHalfBow:
+      }
+      case RxnArrowMode.EquilibriumFilledHalfBow: {
         paths = EquilibriumFilledHalfBowArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.EquilibriumFilledTriangle:
+      }
+      case RxnArrowMode.EquilibriumFilledTriangle: {
         paths = EquilibriumFilledTriangleArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.EquilibriumOpenAngle:
+      }
+      case RxnArrowMode.EquilibriumOpenAngle: {
         paths = EquilibriumOpenAngleArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow:
+      }
+      case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow: {
         paths = UnbalancedEquilibriumFilledHalfBowArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle:
+      }
+      case RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle: {
         paths = UnbalancedEquilibriumOpenHalfAngleArrowRenderer.preparePaths(
           startPosition,
           length,
           angle,
         );
         break;
-      case RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow:
+      }
+      case RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow: {
         paths =
           UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer.preparePaths(
             startPosition,
@@ -171,7 +182,8 @@ export class RxnArrowRenderer extends BaseRenderer {
             angle,
           );
         break;
-      case RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle:
+      }
+      case RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle: {
         paths =
           UnbalancedEquilibriumFilledHalfTriangleArrowRenderer.preparePaths(
             startPosition,
@@ -179,7 +191,8 @@ export class RxnArrowRenderer extends BaseRenderer {
             angle,
           );
         break;
-      case RxnArrowMode.EllipticalArcFilledBow:
+      }
+      case RxnArrowMode.EllipticalArcFilledBow: {
         paths = EllipticalArcFilledBowArrowRenderer.preparePaths(
           startPosition,
           length,
@@ -187,7 +200,8 @@ export class RxnArrowRenderer extends BaseRenderer {
           height,
         );
         break;
-      case RxnArrowMode.EllipticalArcFilledTriangle:
+      }
+      case RxnArrowMode.EllipticalArcFilledTriangle: {
         paths = EllipticalArcFilledTriangleArrowRenderer.preparePaths(
           startPosition,
           length,
@@ -195,7 +209,8 @@ export class RxnArrowRenderer extends BaseRenderer {
           height,
         );
         break;
-      case RxnArrowMode.EllipticalArcOpenAngle:
+      }
+      case RxnArrowMode.EllipticalArcOpenAngle: {
         paths = EllipticalArcOpenAngleArrowRenderer.preparePaths(
           startPosition,
           length,
@@ -203,7 +218,8 @@ export class RxnArrowRenderer extends BaseRenderer {
           height,
         );
         break;
-      case RxnArrowMode.EllipticalArcOpenHalfAngle:
+      }
+      case RxnArrowMode.EllipticalArcOpenHalfAngle: {
         paths = EllipticalArcOpenHalfAngleArrowRenderer.preparePaths(
           startPosition,
           length,
@@ -211,10 +227,12 @@ export class RxnArrowRenderer extends BaseRenderer {
           height,
         );
         break;
+      }
 
-      default:
+      default: {
         KetcherLogger.error('Unknown RxnArrow arrow type: ', this.arrow.type);
         break;
+      }
     }
 
     return paths;
@@ -234,10 +252,10 @@ export class RxnArrowRenderer extends BaseRenderer {
       `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
       `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
       `L${toFixed(endX + wOffset)},${toFixed(
-        start.y + (!height ? hOffset : 0),
+        start.y + (height ? 0 : hOffset),
       )}` +
       `L${toFixed(start.x - wOffset)},${toFixed(
-        start.y + (!height ? hOffset : 0),
+        start.y + (height ? 0 : hOffset),
       )}Z`;
 
     return svgPath(path).rotate(angle, start.x, start.y).toString();
@@ -280,11 +298,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
 
     this.hoverElement = this.rootElement
       ?.insert('path', ':first-child')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', '#0097A8')
       .attr('stroke-width', 1.2)
@@ -292,11 +310,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
 
     this.hoverAreaElement = this.rootElement
       ?.append('path')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', 'none')
       .attr('pointer-events', 'all')
@@ -323,13 +341,13 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   public appendSelection(): void {
-    const selectionPathDAttr = this.getSelectionContour(
+    const selectionPathDAttribute = this.getSelectionContour(
       this.scaledPosition.startPosition,
     );
 
     this.selectionElement = this.canvas
       ?.insert('path', ':first-child')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', SELECTION_COLOR)
       .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');

@@ -14,7 +14,7 @@ const useIDTAliasesTextForMonomer = ({
 }: Props) => {
   return useMemo(() => {
     if (!idtAliases) {
-      return null;
+      return;
     }
 
     const { base, modifications } = idtAliases;
@@ -27,8 +27,8 @@ const useIDTAliasesTextForMonomer = ({
     // For preview on canvas
     if (attachmentPointsToBonds) {
       const { R1, R2 } = attachmentPointsToBonds;
-      const hasR1Connection = R1 != null;
-      const hasR2Connection = R2 != null;
+      const hasR1Connection = R1 != undefined;
+      const hasR2Connection = R2 != undefined;
 
       if (hasR1Connection && !hasR2Connection) {
         return removeSlashesFromIdtAlias(endpoint3 ?? internal);
@@ -43,11 +43,11 @@ const useIDTAliasesTextForMonomer = ({
 
     // For preview in library
 
-    const allModificationsHaveSameBase = Object.values(modifications).every(
+    const hasSameBaseForAllModifications = Object.values(modifications).every(
       (modification) => modification.includes(base),
     );
 
-    if (endpoint3 && endpoint5 && internal && allModificationsHaveSameBase) {
+    if (endpoint3 && endpoint5 && internal && hasSameBaseForAllModifications) {
       return removeSlashesFromIdtAlias(base);
     }
 

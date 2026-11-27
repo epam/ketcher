@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'utilities';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -7,11 +7,14 @@ import { Chem } from 'domain/entities/Chem';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
-export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
-  let left;
-  let right;
-  let top;
-  let bottom;
+export function getRenderedStructuresBbox(
+  drawingEntities?: DrawingEntity[],
+  { includePolymerBonds = false } = {},
+) {
+  let left: number | undefined;
+  let right: number | undefined;
+  let top: number | undefined;
+  let bottom: number | undefined;
   const editor = provideEditorInstance();
 
   (
@@ -40,11 +43,43 @@ export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
 
     assert(monomerPosition);
 
-    left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-    right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-    top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-    bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
+    left =
+      left === undefined
+        ? monomerPosition.x
+        : Math.min(left, monomerPosition.x);
+    right =
+      right === undefined
+        ? monomerPosition.x
+        : Math.max(right, monomerPosition.x);
+    top =
+      top === undefined ? monomerPosition.y : Math.min(top, monomerPosition.y);
+    bottom =
+      bottom === undefined
+        ? monomerPosition.y
+        : Math.max(bottom, monomerPosition.y);
   });
+
+  if (includePolymerBonds) {
+    editor.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      const bondBbox = polymerBond.baseRenderer?.rootBBox;
+
+      if (!bondBbox) {
+        return;
+      }
+
+      left = Math.min(left ?? bondBbox.x, bondBbox.x);
+      right = Math.max(right ?? bondBbox.x, bondBbox.x + bondBbox.width);
+      top = Math.min(top ?? bondBbox.y, bondBbox.y);
+      bottom = Math.max(bottom ?? bondBbox.y, bondBbox.y + bondBbox.height);
+    });
+  }
+
+  assert(
+    left !== undefined &&
+      right !== undefined &&
+      top !== undefined &&
+      bottom !== undefined,
+  );
   return {
     left,
     right,

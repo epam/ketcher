@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,7 +46,7 @@ class LassoHelper {
       return locate.inRectangle(rnd.ctab, this.points[0], this.points[1]);
     }
 
-    throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
+    throw new Error('Selector mode unknown');
   }
 
   begin(event: MouseEvent) {
@@ -87,16 +87,18 @@ class LassoHelper {
       this.selection = null;
     }
 
-    if (this.points && this.points.length > 1) {
-      const rnd = this.editor.render;
-      const dp = this.points.map((p) =>
-        Scale.modelToCanvas(p, rnd.options).add(rnd.options.offset),
-      );
-      this.selection =
-        this.mode === 0
-          ? rnd.selectionPolygon(dp)
-          : rnd.selectionRectangle(dp[0], dp[1]);
+    if (!this.points || this.points.length <= 1) {
+      return;
     }
+
+    const rnd = this.editor.render;
+    const dp = this.points.map((p) =>
+      Scale.modelToCanvas(p, rnd.options).add(rnd.options.offset),
+    );
+    this.selection =
+      this.mode === 0
+        ? rnd.selectionPolygon(dp)
+        : rnd.selectionRectangle(dp[0], dp[1]);
   }
 
   end() {

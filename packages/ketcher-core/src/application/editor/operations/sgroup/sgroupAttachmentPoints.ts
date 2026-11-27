@@ -2,7 +2,7 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 type Data = {
   sGroupId: number;
@@ -24,7 +24,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
     const struct = restruct.molecule;
     const sgroup = struct.sgroups.get(this.data.sGroupId);
 
-    assert(sgroup != null);
+    assert(sgroup != undefined);
 
     const attachmentPoint = this.data.attachmentPoint;
 

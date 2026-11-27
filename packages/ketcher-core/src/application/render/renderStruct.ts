@@ -1,24 +1,32 @@
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
+import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
+import type { RenderOptions } from './render.types';
 import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
- * Is used to improve search and opening tab performance in Template Dialog
- * Rendering a lot of structures causes great delay
- */
-const renderCache = new Map();
-let previousOptions: any;
+Is used to improve search and opening tab performance in Template Dialog
+Rendering a lot of structures causes great delay
+*/
+export type RenderStructOptions = Partial<RenderOptions> & {
+  cachePrefix?: string;
+  needCache?: boolean;
+  wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
+};
+
+const renderCache = new Map<string, string>();
+let previousOptions: RenderStructOptions | undefined;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
-   * for S-Groups we want to show expanded structure
-   * without brackets
-   */
+  for S-Groups we want to show expanded structure
+  without brackets
+  */
   static prepareStruct(struct: Struct) {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
@@ -33,7 +41,7 @@ export class RenderStruct {
 
   static removeSmallAttachmentPointLabelsInModal(
     render: Render,
-    options: any = {},
+    options: RenderStructOptions = {},
   ) {
     if (!options.labelInMonomerConnectionsModal) {
       return;
@@ -62,100 +70,109 @@ export class RenderStruct {
   static render(
     wrapperElement: HTMLElement | null,
     struct: Struct | null,
-    options: any = {},
+    options: RenderStructOptions = {},
   ) {
-    if (wrapperElement && struct) {
-      const { cachePrefix = '', needCache = true, wrapperDimensions } = options;
-      const cacheKey = `${cachePrefix}${struct.name}`;
+    if (!wrapperElement || !struct) {
+      return;
+    }
 
-      if (!isEqual(previousOptions, options)) {
-        renderCache.clear();
-        previousOptions = options;
-      }
+    const {
+      cachePrefix = '',
+      needCache: shouldCache = true,
+      wrapperDimensions,
+      ...renderOptions
+    } = options;
+    const cacheKey = `${cachePrefix}${struct.name}`;
 
-      if (renderCache.has(cacheKey) && needCache) {
-        wrapperElement.innerHTML = renderCache.get(cacheKey);
-        return;
-      }
+    if (!isEqual(previousOptions, options)) {
+      renderCache.clear();
+      previousOptions = options;
+    }
 
-      const preparedStruct = this.prepareStruct(struct.clone());
-      preparedStruct.initHalfBonds();
-      preparedStruct.initNeighbors();
-      preparedStruct.setImplicitHydrogen();
-      preparedStruct.markFragments();
-      const structureSize = preparedStruct.getCoordBoundingBox();
-      const structureSizeInPixels = Coordinates.modelToCanvas(
-        new Vec2(
-          structureSize.max.x - structureSize.min.x,
-          structureSize.max.y - structureSize.min.y,
-        ),
-      );
+    const cachedSvg = renderCache.get(cacheKey);
 
-      // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
-      // This is critical for batch rendering scenarios (e.g., template tables)
-      // where getBoundingClientRect() would be called multiple times per frame
-      const wrapperElementBoundingRect = wrapperDimensions || {
-        width: wrapperElement.getBoundingClientRect().width,
-        height: wrapperElement.getBoundingClientRect().height,
-      };
+    if (shouldCache && cachedSvg !== undefined) {
+      wrapperElement.innerHTML = cachedSvg;
+      return;
+    }
 
-      const isStructureLessThanWrapper =
-        structureSizeInPixels.x < wrapperElementBoundingRect.width &&
-        structureSizeInPixels.y < wrapperElementBoundingRect.height;
-      const structureRectangleSize = Math.max(
-        structureSizeInPixels.x,
-        structureSizeInPixels.y,
-      );
-      const svgSize = isStructureLessThanWrapper
-        ? Math.min(
-            structureRectangleSize,
-            wrapperElementBoundingRect.width,
-            wrapperElementBoundingRect.height,
-          )
-        : undefined;
-      const extendedOptions = {
-        autoScale: true,
-        ...options,
-      };
+    const preparedStruct = this.prepareStruct(struct.clone());
+    preparedStruct.initHalfBonds();
+    preparedStruct.initNeighbors();
+    preparedStruct.setImplicitHydrogen();
+    preparedStruct.markFragments();
+    const structureSize = preparedStruct.getCoordBoundingBox();
+    const structureSizeInPixels = Coordinates.modelToCanvas(
+      new Vec2(
+        structureSize.max.x - structureSize.min.x,
+        structureSize.max.y - structureSize.min.y,
+      ),
+    );
 
-      if (window.isPolymerEditorTurnedOn) {
-        extendedOptions.fontsz = 30;
-        extendedOptions.fontszsub = 20;
-        extendedOptions.width = svgSize;
-        extendedOptions.height = svgSize;
-      }
+    // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
+    // This is critical for batch rendering scenarios (e.g., template tables)
+    // where getBoundingClientRect() would be called multiple times per frame
+    const wrapperElementBoundingRect = wrapperDimensions || {
+      width: wrapperElement.getBoundingClientRect().width,
+      height: wrapperElement.getBoundingClientRect().height,
+    };
 
-      const rnd = new Render(wrapperElement, extendedOptions);
+    const isStructureLessThanWrapper =
+      structureSizeInPixels.x < wrapperElementBoundingRect.width &&
+      structureSizeInPixels.y < wrapperElementBoundingRect.height;
+    const structureRectangleSize = Math.max(
+      structureSizeInPixels.x,
+      structureSizeInPixels.y,
+    );
+    const svgSize = isStructureLessThanWrapper
+      ? Math.min(
+          structureRectangleSize,
+          wrapperElementBoundingRect.width,
+          wrapperElementBoundingRect.height,
+        )
+      : undefined;
+    const extendedOptions: Partial<RenderOptions> = {
+      autoScale: true,
+      ...renderOptions,
+    };
 
-      if (!window.isPolymerEditorTurnedOn) {
-        preparedStruct.rescale();
-      }
+    if (globalThis.isPolymerEditorTurnedOn) {
+      extendedOptions.fontsz = 30;
+      extendedOptions.fontszsub = 20;
+      extendedOptions.width = svgSize;
+      extendedOptions.height = svgSize;
+    }
 
-      rnd.setMolecule(preparedStruct);
+    const rnd = new Render(wrapperElement, extendedOptions);
 
-      if (window.isPolymerEditorTurnedOn) {
-        // Raphael sets overflow:hidden as an inline style on the SVG element,
-        // which clips bond strokes at the bounding-box edge and makes them
-        // appear thinner than bonds in the interior. Override it so strokes
-        // can paint the few pixels beyond the viewBox that they need.
-        (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
-      }
+    if (!globalThis.isPolymerEditorTurnedOn) {
+      preparedStruct.rescale();
+    }
 
-      this.removeSmallAttachmentPointLabelsInModal(rnd, options);
+    rnd.setMolecule(preparedStruct);
 
-      if (needCache) {
-        renderCache.set(cacheKey, rnd.clientArea.innerHTML);
-      }
+    if (globalThis.isPolymerEditorTurnedOn) {
+      // Raphael sets overflow:hidden as an inline style on the SVG element,
+      // which clips bond strokes at the bounding-box edge and makes them
+      // appear thinner than bonds in the interior. Override it so strokes
+      // can paint the few pixels beyond the viewBox that they need.
+      (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+    }
+
+    this.removeSmallAttachmentPointLabelsInModal(rnd, options);
+
+    if (shouldCache) {
+      renderCache.set(cacheKey, rnd.clientArea.innerHTML);
     }
   }
 }
 
 /**
- * Why?
- * We need somehow display sgroup attachment points (tooltips, preview, templates),
- * But due to current rendering approach for sgroups (ungrouping sgroups)
- * - we have to use RGroup attachment points on atoms for this purposes
- */
+Why?
+We need somehow display sgroup attachment points (tooltips, preview, templates),
+But due to current rendering approach for sgroups (ungrouping sgroups)
+- we have to use RGroup attachment points on atoms for this purposes
+*/
 function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
 ) {
@@ -165,8 +182,11 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
     }
 
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;
+      const attachmentPointAtom = getOrThrow(
+        struct.atoms,
+        attachmentPoint.atomId,
+        `Atom with id ${attachmentPoint.atomId} not found in struct while converting sgroup attachment points`,
+      );
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
       const rgroupAttachmentPoint =
         attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(

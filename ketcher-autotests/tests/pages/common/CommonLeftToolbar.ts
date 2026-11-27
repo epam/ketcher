@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
@@ -172,15 +171,11 @@ export const CommonLeftToolbar = (page: Page) => {
     },
 
     async isBondToolActive() {
-      if (!(await locators.bondSelectionDropdownButton.isVisible())) {
-        return false;
-      }
-
-      return (
-        (await locators.bondSelectionDropdownButton.getAttribute(
-          'data-is-selected',
-        )) === 'true'
-      );
+      return !(await locators.bondSelectionDropdownButton.isVisible())
+        ? false
+        : (await locators.bondSelectionDropdownButton.getAttribute(
+            'data-is-selected',
+          )) === 'true';
     },
 
     async isBondToolSelected(bondTool: MacroBondTool | MicroBondTool) {

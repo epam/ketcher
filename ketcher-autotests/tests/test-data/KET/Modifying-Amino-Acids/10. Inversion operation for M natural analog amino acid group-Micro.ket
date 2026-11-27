@@ -128,7 +128,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -301,8 +302,7 @@
             "y": -1.25
         },
         "alias": "dM",
-        "templateId": "dM___D-Methionine",
-        "seqid": 2
+        "templateId": "dM___D-Methionine"
     },
     "monomer2": {
         "type": "monomer",

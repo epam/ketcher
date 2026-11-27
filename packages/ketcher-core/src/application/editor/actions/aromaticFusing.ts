@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,24 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-/**
- * @param restruct { ReStruct }
- * @param _events { Array<PipelineSubscription> }
- * @param bid { number }
- * @param template {{
- * 		molecule: Struct,
- * 		bid: number
- *  }}
- * @param simpleFusing { Function }
- * @returns { Promise }
- */
+import type { ReStruct } from 'application/render';
+import type { Action } from './action';
+import type { EditorTemplate, PasteItems } from './template.types';
+
+type SimpleFusing = (
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+) => [Action, PasteItems];
+
 export function fromAromaticTemplateOnBond(
-  restruct,
-  template,
-  bid,
-  _events,
-  simpleFusing,
-) {
-  const action = simpleFusing(restruct, template, bid);
-  return Promise.resolve(action);
+  restruct: ReStruct,
+  template: EditorTemplate,
+  bid: number,
+  _events: unknown,
+  simpleFusing: SimpleFusing,
+): [Action, PasteItems] {
+  return simpleFusing(restruct, template, bid);
 }

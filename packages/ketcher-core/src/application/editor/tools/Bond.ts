@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,59 +19,200 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import {
-  AmbiguousMonomer,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { AttachmentPointName } from 'domain/types';
-// FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
-//  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
-//  which probably due to a circular dependency
-//  because of using uncontrolled `index.ts` files.
-import { Coordinates } from '../shared/coordinates';
+import {
+  AttachmentPointName,
+  type MouseEventWithAttachmentPoint,
+} from 'domain/types';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import {
   MACROMOLECULES_BOND_TYPES,
   ToolName,
 } from 'application/editor/tools/types';
-import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
-
-type MouseEventWithAttachmentPoint = MouseEvent & {
-  attachmentPointName: AttachmentPointName;
-};
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
-  private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
+  private _bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
   private readonly history: EditorHistory;
   private readonly bondType: MACROMOLECULES_BOND_TYPES;
 
+  public handleBondCreation = (payload: {
+    firstMonomer: BaseMonomer;
+    secondMonomer: BaseMonomer;
+    firstSelectedAttachmentPoint: AttachmentPointName;
+    secondSelectedAttachmentPoint: AttachmentPointName;
+  }): void => {
+    assert(this.bondRenderer);
+
+    const {
+      secondMonomer,
+      firstSelectedAttachmentPoint,
+      secondSelectedAttachmentPoint,
+    } = payload;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.finishPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+        secondMonomer,
+        firstSelectedAttachmentPoint,
+        secondSelectedAttachmentPoint,
+      );
+    this.history.update(modelChanges);
+    this.editor.renderersContainer.update(modelChanges);
+    if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
+      this.editor.events.error.dispatch(
+        'You have connected monomers with attachment points of the same group',
+      );
+    }
+    this.isBondConnectionModalOpen = false;
+    this.editor.renderersContainer.deletePolymerBond(
+      this.bondRenderer.polymerBond,
+    );
+    this.bondRenderer = undefined;
+  };
+
+  public handleBondCreationCancellation = (
+    secondMonomer: BaseMonomer,
+  ): void => {
+    if (!this.bondRenderer) {
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+        secondMonomer,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+    this.isBondConnectionModalOpen = false;
+    this.bondRenderer = undefined;
+  };
+
   constructor(
     private readonly editor: CoreEditor,
-    options: { toolName: ToolName },
+    ...arguments_: unknown[]
   ) {
+    const [options] = arguments_ as [{ toolName: ToolName }];
     this.editor = editor;
     this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
       options.toolName === ToolName.bondSingle
         ? MACROMOLECULES_BOND_TYPES.SINGLE
         : MACROMOLECULES_BOND_TYPES.HYDROGEN;
+  }
+
+  private get bondRenderer() {
+    return this._bondRenderer;
+  }
+
+  private set bondRenderer(
+    renderer: FlexModeOrSnakeModePolymerBondRenderer | undefined,
+  ) {
+    const isStartingConnection = !this._bondRenderer && Boolean(renderer);
+    this._bondRenderer = renderer;
+    this.editor.canvas.toggleAttribute(
+      'data-drawing-connection',
+      Boolean(renderer),
+    );
+    if (isStartingConnection) {
+      // Hover contours live outside bond groups and must be cleared explicitly.
+      this.editor.drawingEntitiesManager.bonds.forEach((bond) => {
+        bond.turnOffHover();
+        bond.renderer?.redrawHover();
+      });
+    }
+  }
+
+  private removeBond() {
+    const modelChanges = this.bondRenderer
+      ? this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+          this.bondRenderer.polymerBond,
+        )
+      : new Command();
+    this.bondRenderer = undefined;
+    return modelChanges;
+  }
+
+  private finishBondCreation(secondMonomer: BaseMonomer) {
+    assert(this.bondRenderer);
+
+    if (!this.isHydrogenBond && !secondMonomer.hasFreeAttachmentPoint) {
+      this.editor.events.error.dispatch(
+        "Monomers don't have any connection point available",
+      );
+
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    }
+
+    if (
+      this.isHydrogenBond &&
+      secondMonomer.hasHydrogenBondWithMonomer(
+        this.bondRenderer?.polymerBond.firstMonomer,
+      )
+    ) {
+      this.editor.events.error.dispatch(
+        'Unable to establish multiple hydrogen bonds between two monomers',
+      );
+
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    }
+
+    const firstMonomerAttachmentPoint = this.isHydrogenBond
+      ? AttachmentPointName.HYDROGEN
+      : this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+          this.bondRenderer.polymerBond,
+        );
+    const secondMonomerAttachmentPoint = this.isHydrogenBond
+      ? AttachmentPointName.HYDROGEN
+      : secondMonomer.getPotentialAttachmentPointByBond(
+          this.bondRenderer.polymerBond,
+        );
+    assert(firstMonomerAttachmentPoint);
+    assert(secondMonomerAttachmentPoint);
+    if (
+      firstMonomerAttachmentPoint === secondMonomerAttachmentPoint &&
+      !this.isHydrogenBond
+    ) {
+      this.editor.events.error.dispatch(
+        'You have connected monomers with attachment points of the same group',
+      );
+    }
+
+    return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
+      this.bondRenderer.polymerBond,
+      secondMonomer,
+      firstMonomerAttachmentPoint,
+      this.isHydrogenBond
+        ? AttachmentPointName.HYDROGEN
+        : secondMonomerAttachmentPoint,
+      this.bondType,
+    );
+  }
+
+  private shouldInvokeModal(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+    checkForPotentialBonds = true,
+  ) {
+    return shouldInvokeConnectionModal(
+      firstMonomer,
+      secondMonomer,
+      checkForPotentialBonds,
+      this.isHydrogenBond,
+    );
   }
 
   get isHydrogenBond() {
@@ -94,63 +235,52 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  private removeBond() {
-    if (this.bondRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-          this.bondRenderer.polymerBond,
-        );
-      this.bondRenderer = undefined;
-
-      return modelChanges;
-    } else {
-      return new Command();
-    }
-  }
-
   public mousedown(event: MouseEvent) {
     const selectedRenderer = event.target?.__data__;
     if (
-      selectedRenderer instanceof BaseMonomerRenderer ||
-      selectedRenderer instanceof AttachmentPoint
+      !(selectedRenderer instanceof BaseMonomerRenderer) &&
+      !(selectedRenderer instanceof AttachmentPoint)
     ) {
-      const startAttachmentPoint =
-        selectedRenderer.monomer.startBondAttachmentPoint;
-
-      if (!startAttachmentPoint && !this.isHydrogenBond) {
-        this.editor.events.error.dispatch(
-          "Selected monomer doesn't have any free attachment points",
-        );
-        return;
-      }
-
-      const { polymerBond, command: modelChanges } =
-        this.editor.drawingEntitiesManager.startPolymerBondCreation(
-          selectedRenderer.monomer,
-          selectedRenderer.monomer.position,
-          Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
-          this.bondType,
-        );
-
-      this.editor.renderersContainer.update(modelChanges);
-      this.bondRenderer = polymerBond.renderer;
+      return;
     }
+
+    const startAttachmentPoint =
+      selectedRenderer.monomer.startBondAttachmentPoint;
+
+    if (!startAttachmentPoint && !this.isHydrogenBond) {
+      this.editor.events.error.dispatch(
+        "Selected monomer doesn't have any free attachment points",
+      );
+      return;
+    }
+
+    const { polymerBond, command: modelChanges } =
+      this.editor.drawingEntitiesManager.startPolymerBondCreation(
+        selectedRenderer.monomer,
+        selectedRenderer.monomer.position,
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+        this.bondType,
+      );
+
+    this.editor.renderersContainer.update(modelChanges);
+    this.bondRenderer = polymerBond.renderer;
   }
 
   public mousemove() {
-    if (this.bondRenderer) {
-      const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
-        this.bondRenderer.polymerBond,
-        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
-      );
-      this.editor.renderersContainer.update(modelChanges);
+    if (!this.bondRenderer) {
+      return;
     }
+
+    const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
+      this.bondRenderer.polymerBond,
+      Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+    );
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (this.bondRenderer || !renderer?.polymerBond) return;
 
     const modelChanges =
@@ -164,8 +294,7 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) return;
 
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (!renderer) return;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -248,8 +377,7 @@ class PolymerBond implements BaseTool {
   public mouseLeaveMonomer(event: MouseEvent) {
     const eventToElementData = event.relatedTarget?.__data__;
     const eventFromElementData = event.target?.__data__ as
-      | BaseMonomerRenderer
-      | undefined;
+      BaseMonomerRenderer | undefined;
     if (
       eventToElementData instanceof AttachmentPoint &&
       eventToElementData.monomer === eventFromElementData?.monomer
@@ -263,17 +391,19 @@ class PolymerBond implements BaseTool {
     if (!renderer) return;
 
     if (
-      renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
-      !this.isBondConnectionModalOpen
+      renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer ||
+      this.isBondConnectionModalOpen
     ) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
-          renderer.monomer,
-          this.bondRenderer?.polymerBond,
-        );
-
-      this.editor.renderersContainer.update(modelChanges);
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
+        renderer.monomer,
+        this.bondRenderer?.polymerBond,
+      );
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public mouseLeaveAttachmentPoint(event: MouseEvent) {
@@ -284,16 +414,17 @@ class PolymerBond implements BaseTool {
       ?.__data__ as unknown as AttachmentPoint;
     if (!attachmentPointRenderer) return;
     if (
-      attachmentPointRenderer.monomer.renderer !==
+      attachmentPointRenderer.monomer.renderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer
     ) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
-          attachmentPointRenderer.monomer,
-          this.bondRenderer?.polymerBond,
-        );
-      this.editor.renderersContainer.update(modelChanges);
+      return;
     }
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
+        attachmentPointRenderer.monomer,
+        this.bondRenderer?.polymerBond,
+      );
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public mouseUpAttachmentPoint(event: MouseEventWithAttachmentPoint) {
@@ -303,125 +434,67 @@ class PolymerBond implements BaseTool {
       renderer.monomer.renderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && !isFirstMonomerHovered) {
-      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
-      const secondMonomer = renderer.monomer;
+    if (isFirstMonomerHovered || !this.bondRenderer) {
+      return;
+    }
 
-      if (secondMonomer.isAttachmentPointUsed(event.attachmentPointName)) {
-        this.mouseup();
+    const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+    const secondMonomer = renderer.monomer;
+
+    if (secondMonomer.isAttachmentPointUsed(event.attachmentPointName)) {
+      this.mouseup();
+      return;
+    }
+
+    for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
+      const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
+      if (!bond) {
+        continue;
+      }
+      const hasBondAlready =
+        (bond.firstMonomer === firstMonomer &&
+          bond.secondMonomer === secondMonomer) ||
+        (bond.firstMonomer === secondMonomer &&
+          bond.secondMonomer === firstMonomer);
+      if (hasBondAlready) {
+        // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+        const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+        if (isExistingBondSingleBond && this.isHydrogenBond) {
+          this.editor.events.error.dispatch(
+            'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+          );
+        } else {
+          this.editor.events.error.dispatch(
+            "There can't be more than 1 bond between the first and the second monomer",
+          );
+        }
         return;
       }
-
-      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
-        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
-        if (!bond) {
-          continue;
-        }
-        const alreadyHasBond =
-          (bond.firstMonomer === firstMonomer &&
-            bond.secondMonomer === secondMonomer) ||
-          (bond.firstMonomer === secondMonomer &&
-            bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
-          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
-            this.editor.events.error.dispatch(
-              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
-            );
-          } else {
-            this.editor.events.error.dispatch(
-              "There can't be more than 1 bond between the first and the second monomer",
-            );
-          }
-          return;
-        }
-      }
-      secondMonomer.setChosenSecondAttachmentPoint(event.attachmentPointName);
-      const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
-      if (showModal) {
-        this.isBondConnectionModalOpen = true;
-
-        this.editor.events.openMonomerConnectionModal.dispatch({
-          firstMonomer,
-          secondMonomer,
-        });
-        return;
-      }
-      const modelChanges = this.finishBondCreation(renderer.monomer);
-      this.history.update(modelChanges);
-      if (modelChanges.operations[0]?.polymerBond) {
-        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
-          modelChanges.operations[0].polymerBond,
-        ]);
-      }
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.renderersContainer.deletePolymerBond(
-        this.bondRenderer.polymerBond,
-      );
-      this.bondRenderer = undefined;
-      event.stopPropagation();
     }
-  }
+    secondMonomer.setChosenSecondAttachmentPoint(event.attachmentPointName);
+    const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
+    if (showModal) {
+      this.isBondConnectionModalOpen = true;
 
-  private finishBondCreation(secondMonomer: BaseMonomer) {
-    assert(this.bondRenderer);
-
-    if (!this.isHydrogenBond && !secondMonomer.hasFreeAttachmentPoint) {
-      this.editor.events.error.dispatch(
-        "Monomers don't have any connection point available",
-      );
-
-      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-      );
+      this.editor.events.openMonomerConnectionModal.dispatch({
+        firstMonomer,
+        secondMonomer,
+      });
+      return;
     }
-
-    if (
-      this.isHydrogenBond &&
-      secondMonomer.hasHydrogenBondWithMonomer(
-        this.bondRenderer?.polymerBond.firstMonomer,
-      )
-    ) {
-      this.editor.events.error.dispatch(
-        'Unable to establish multiple hydrogen bonds between two monomers',
-      );
-
-      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-      );
+    const modelChanges = this.finishBondCreation(renderer.monomer);
+    this.history.update(modelChanges);
+    if (modelChanges.operations[0]?.polymerBond) {
+      this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+        modelChanges.operations[0].polymerBond,
+      ]);
     }
-
-    const firstMonomerAttachmentPoint = this.isHydrogenBond
-      ? AttachmentPointName.HYDROGEN
-      : this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-          this.bondRenderer.polymerBond,
-        );
-    const secondMonomerAttachmentPoint = this.isHydrogenBond
-      ? AttachmentPointName.HYDROGEN
-      : secondMonomer.getPotentialAttachmentPointByBond(
-          this.bondRenderer.polymerBond,
-        );
-    assert(firstMonomerAttachmentPoint);
-    assert(secondMonomerAttachmentPoint);
-    if (
-      firstMonomerAttachmentPoint === secondMonomerAttachmentPoint &&
-      !this.isHydrogenBond
-    ) {
-      this.editor.events.error.dispatch(
-        'You have connected monomers with attachment points of the same group',
-      );
-    }
-
-    return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.renderersContainer.deletePolymerBond(
       this.bondRenderer.polymerBond,
-      secondMonomer,
-      firstMonomerAttachmentPoint,
-      this.isHydrogenBond
-        ? AttachmentPointName.HYDROGEN
-        : secondMonomerAttachmentPoint,
-      this.bondType,
     );
+    this.bondRenderer = undefined;
+    event.stopPropagation();
   }
 
   public mouseup() {
@@ -439,61 +512,63 @@ class PolymerBond implements BaseTool {
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && renderer?.monomer && !isFirstMonomerHovered) {
-      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
-      const secondMonomer = renderer?.monomer;
+    if (isFirstMonomerHovered || !this.bondRenderer || !renderer?.monomer) {
+      return;
+    }
 
-      for (const attachmentPoint in secondMonomer?.attachmentPointsToBonds) {
-        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
-        if (!bond) {
-          continue;
-        }
-        const alreadyHasBond =
-          (bond.firstMonomer === firstMonomer &&
-            bond.secondMonomer === secondMonomer) ||
-          (bond.firstMonomer === secondMonomer &&
-            bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
-          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
-            this.editor.events.error.dispatch(
-              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
-            );
-          } else {
-            this.editor.events.error.dispatch(
-              "There can't be more than 1 bond between the first and the second monomer",
-            );
-          }
-          return;
-        }
+    const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+    const secondMonomer = renderer?.monomer;
+
+    for (const attachmentPoint in secondMonomer?.attachmentPointsToBonds) {
+      const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
+      if (!bond) {
+        continue;
       }
-      const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
-      if (showModal) {
-        this.isBondConnectionModalOpen = true;
-
-        this.editor.events.openMonomerConnectionModal.dispatch({
-          firstMonomer,
-          secondMonomer,
-        });
+      const hasBondAlready =
+        (bond.firstMonomer === firstMonomer &&
+          bond.secondMonomer === secondMonomer) ||
+        (bond.firstMonomer === secondMonomer &&
+          bond.secondMonomer === firstMonomer);
+      if (hasBondAlready) {
+        // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+        const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+        if (isExistingBondSingleBond && this.isHydrogenBond) {
+          this.editor.events.error.dispatch(
+            'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+          );
+        } else {
+          this.editor.events.error.dispatch(
+            "There can't be more than 1 bond between the first and the second monomer",
+          );
+        }
         return;
       }
-
-      // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
-      const modelChanges = this.finishBondCreation(renderer.monomer);
-      if (modelChanges.operations[0]?.polymerBond) {
-        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
-          modelChanges.operations[0].polymerBond,
-        ]);
-      }
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.renderersContainer.deletePolymerBond(
-        this.bondRenderer.polymerBond,
-      );
-      this.bondRenderer = undefined;
-      this.history.update(modelChanges);
-      event.stopPropagation();
     }
+    const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
+    if (showModal) {
+      this.isBondConnectionModalOpen = true;
+
+      this.editor.events.openMonomerConnectionModal.dispatch({
+        firstMonomer,
+        secondMonomer,
+      });
+      return;
+    }
+
+    // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
+    const modelChanges = this.finishBondCreation(renderer.monomer);
+    if (modelChanges.operations[0]?.polymerBond) {
+      this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+        modelChanges.operations[0].polymerBond,
+      ]);
+    }
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.renderersContainer.deletePolymerBond(
+      this.bondRenderer.polymerBond,
+    );
+    this.bondRenderer = undefined;
+    this.history.update(modelChanges);
+    event.stopPropagation();
   }
 
   public mouseUpAtom(event: MouseEvent) {
@@ -561,185 +636,14 @@ class PolymerBond implements BaseTool {
     this.history.update(modelChanges);
   }
 
-  public handleBondCreation = (payload: {
-    firstMonomer: BaseMonomer;
-    secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: AttachmentPointName;
-    secondSelectedAttachmentPoint: AttachmentPointName;
-  }): void => {
-    assert(this.bondRenderer);
-
-    const {
-      secondMonomer,
-      firstSelectedAttachmentPoint,
-      secondSelectedAttachmentPoint,
-    } = payload;
-    const modelChanges =
-      this.editor.drawingEntitiesManager.finishPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-        secondMonomer,
-        firstSelectedAttachmentPoint,
-        secondSelectedAttachmentPoint,
-      );
-    this.history.update(modelChanges);
-    this.editor.renderersContainer.update(modelChanges);
-    if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
-      this.editor.events.error.dispatch(
-        'You have connected monomers with attachment points of the same group',
-      );
-    }
-    this.isBondConnectionModalOpen = false;
-    this.editor.renderersContainer.deletePolymerBond(
-      this.bondRenderer.polymerBond,
-    );
-    this.bondRenderer = undefined;
-  };
-
-  public handleBondCreationCancellation = (
-    secondMonomer: BaseMonomer,
-  ): void => {
-    if (!this.bondRenderer) {
-      return;
-    }
-
-    const modelChanges =
-      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-        secondMonomer,
-      );
-    this.editor.renderersContainer.update(modelChanges);
-    this.isBondConnectionModalOpen = false;
-    this.bondRenderer = undefined;
-  };
-
   public destroy() {
     const modelChanges = this.removeBond();
+    this.isBondConnectionModalOpen = false;
     modelChanges.merge(
       this.editor.drawingEntitiesManager.removeHoverForAllMonomers(),
     );
 
     this.editor.renderersContainer.update(modelChanges);
-  }
-
-  private shouldInvokeModal(
-    firstMonomer: BaseMonomer,
-    secondMonomer: BaseMonomer,
-    checkForPotentialBonds = true,
-  ) {
-    if (this.isHydrogenBond) {
-      return;
-    }
-
-    // No Modal: no free attachment point on second monomer
-    if (!secondMonomer.hasFreeAttachmentPoint) {
-      return false;
-    }
-
-    // No Modal: Both monomers have APs selected
-    if (
-      firstMonomer.chosenFirstAttachmentPointForBond !== null &&
-      secondMonomer.chosenSecondAttachmentPointForBond !== null
-    ) {
-      return false;
-    }
-
-    // Modal: either of the monomers doesn't have any potential APs
-    if (
-      checkForPotentialBonds &&
-      (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
-    ) {
-      return true;
-    }
-
-    // No Modal: Both monomers have only 1 attachment point
-    if (
-      firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
-      secondMonomer.unUsedAttachmentPointsNamesList.length === 1
-    ) {
-      return false;
-    }
-
-    // Modal: Any or both monomers are Chems
-    if (
-      firstMonomer instanceof Chem ||
-      secondMonomer instanceof Chem ||
-      (firstMonomer instanceof AmbiguousMonomer &&
-        firstMonomer.monomerClass === KetMonomerClass.CHEM) ||
-      (secondMonomer instanceof AmbiguousMonomer &&
-        secondMonomer.monomerClass === KetMonomerClass.CHEM)
-    ) {
-      return true;
-    }
-
-    // Modal: Any or both monomers are unresolved
-    if (
-      firstMonomer instanceof UnresolvedMonomer ||
-      secondMonomer instanceof UnresolvedMonomer
-    ) {
-      return true;
-    }
-
-    // Modal: One monomer is Peptide and another is RNA monomer
-    const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
-    const firstMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => firstMonomer instanceof RNAClass,
-    );
-    const secondMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => secondMonomer instanceof RNAClass,
-    );
-    if (
-      (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||
-      (firstMonomerIsRNA && secondMonomer instanceof UnsplitNucleotide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide) ||
-      (firstMonomerIsRNA &&
-        secondMonomer instanceof AmbiguousMonomer &&
-        secondMonomer.monomerClass === KetMonomerClass.AminoAcid) ||
-      (secondMonomerIsRNA &&
-        firstMonomer instanceof AmbiguousMonomer &&
-        firstMonomer.monomerClass === KetMonomerClass.AminoAcid)
-    ) {
-      return true;
-    }
-
-    // Modal: special case for Peptide chain
-    if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {
-      // one of monomers has more than 2 AP
-      const hasPlentyAttachmentPoints =
-        firstMonomer.listOfAttachmentPoints.length > 2 ||
-        secondMonomer.listOfAttachmentPoints.length > 2;
-
-      // at least one of monomers has more than 1 free AP
-      const hasPlentyFreeAttachmentPoints =
-        firstMonomer.unUsedAttachmentPointsNamesList.length > 1 ||
-        secondMonomer.unUsedAttachmentPointsNamesList.length > 1;
-
-      // there is no possibility to connect R1-R2
-      const BothR1AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1) &&
-        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1);
-
-      const BothR2AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2);
-
-      const R1AndR2AttachmentPointUsed =
-        (firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-          firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1)) ||
-        (secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-          secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1));
-
-      if (
-        hasPlentyAttachmentPoints &&
-        hasPlentyFreeAttachmentPoints &&
-        (BothR1AttachmentPointUsed ||
-          BothR2AttachmentPointUsed ||
-          R1AndR2AttachmentPointUsed)
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
 }
 

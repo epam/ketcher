@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 import { Page, Locator, expect } from '@playwright/test';
 import { MacroFileType } from '@utils/canvas/types';
 import {
@@ -41,15 +40,19 @@ export const PasteFromClipboardDialog = (page: Page) => {
     async selectContentType(contentType: MacroFileType) {
       const contentTypeOption = page.getByText(contentType, { exact: true });
       await locators.contentTypeSelector.waitFor({ state: 'visible' });
-      if (await contentTypeOption.isHidden()) {
-        await locators.contentTypeSelector.click();
-        const listbox = page.getByRole('listbox');
-        await listbox.waitFor({ state: 'visible' });
-        await contentTypeOption.click();
-        if (await listbox.isVisible()) {
-          await contentTypeOption.click(); /* retry */
-        }
+      if (await contentTypeOption.isVisible()) {
+        return;
       }
+
+      await locators.contentTypeSelector.click();
+      const listbox = page.getByRole('listbox');
+      await listbox.waitFor({ state: 'visible' });
+      await contentTypeOption.click();
+      if (await listbox.isHidden()) {
+        return;
+      }
+      // eslint-disable-next-line no-inline-comments
+      await contentTypeOption.click(); /* retry */
     },
 
     async selectMonomerType(typeDropdownOption: SequenceMonomerType) {
@@ -68,12 +71,10 @@ export const PasteFromClipboardDialog = (page: Page) => {
       await locators.openStructureTextarea.fill(text);
     },
 
-    async addToCanvas(
-      option: { errorMessageExpected: boolean } = {
-        errorMessageExpected: false,
-      },
-    ) {
-      if (option.errorMessageExpected) {
+    async addToCanvas({
+      errorMessageExpected = false,
+    }: { errorMessageExpected?: boolean } = {}) {
+      if (errorMessageExpected) {
         await waitForLoad(page, async () => {
           await PasteFromClipboardDialog(page).addToCanvasButton.click();
         });
@@ -84,12 +85,10 @@ export const PasteFromClipboardDialog = (page: Page) => {
       }
     },
 
-    async openAsNew(
-      option: { errorMessageExpected: boolean } = {
-        errorMessageExpected: false,
-      },
-    ) {
-      if (option.errorMessageExpected) {
+    async openAsNew({
+      errorMessageExpected = false,
+    }: { errorMessageExpected?: boolean } = {}) {
+      if (errorMessageExpected) {
         await waitForLoad(page, async () => {
           await expect(
             PasteFromClipboardDialog(page).openAsNewButton,

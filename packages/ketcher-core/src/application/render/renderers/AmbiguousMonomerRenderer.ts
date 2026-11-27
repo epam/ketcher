@@ -9,6 +9,11 @@ import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
+import {
+  type HighlightPathData,
+  createCircleHighlightPath,
+  createDiamondHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -20,13 +25,16 @@ type PreviewAttachmentPointParams = {
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
-    selected: string;
     hover: string;
     body: string;
     variant?: string;
+    autochainPreview: string;
   };
 
-  constructor(public monomer: AmbiguousMonomer, scale?: number) {
+  constructor(
+    public monomer: AmbiguousMonomer,
+    scale?: number,
+  ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
 
@@ -46,31 +54,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.monomerSymbolElementsIds = monomerSymbolElementsIds;
     this.CHAIN_START_TERMINAL_INDICATOR_TEXT =
       this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
-  }
-
-  protected appendBody(
-    rootElement: Selection<SVGGElement, void, HTMLElement, never>,
-  ) {
-    return rootElement
-      .append('use')
-      .data([this])
-      .attr(
-        'href',
-        this.monomerSymbolElementsIds.variant ??
-          this.monomerSymbolElementsIds.body,
-      )
-      .attr('fill', '#fff')
-      .attr('stroke', '#585858')
-      .attr('stroke-width', '1px')
-      .attr('paint-order', 'fill');
-  }
-
-  public get enumerationElementPosition() {
-    return this.monomerRenderer.enumerationElementPosition;
-  }
-
-  public get beginningElementPosition() {
-    return this.monomerRenderer.beginningElementPosition;
+    this.CHAIN_END_TERMINAL_INDICATOR_TEXT =
+      this.monomerRenderer.CHAIN_END_TERMINAL_INDICATOR_TEXT;
   }
 
   private appendNumberOfMonomers() {
@@ -119,21 +104,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.raiseAttachmentPoints();
   }
 
-  public show(theme) {
-    super.show(theme);
-    this.appendNumberOfMonomers();
-    if (this.enumerationElementPosition) {
-      this.appendEnumeration();
-    }
-  }
-
   private appendPreviewAttachmentPoint(
-    params: PreviewAttachmentPointParams,
+    parameters: PreviewAttachmentPointParams,
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
   ) {
     const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
-      params;
+      parameters;
     const attachmentPointParams = this.prepareAttachmentPointsParams(
       attachmentPointName,
       customAngle,
@@ -145,33 +122,98 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
         connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
       selected: selectedAttachmentPoint === attachmentPointName,
       usage,
-      canvas: params.canvas,
+      canvas: parameters.canvas,
       applyZoomForPositionCalculation: false,
     });
   }
 
-  public showExternal(params: PreviewAttachmentPointParams) {
-    this.rootElement = this.appendRootElement(params.canvas);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+  public get textColor() {
+    return this.monomer.isModification && this.modificationConfig
+      ? 'white'
+      : super.textColor;
+  }
+
+  protected appendBody(
+    rootElement: Selection<SVGGElement, void, HTMLElement, never>,
+  ) {
+    return rootElement
+      .append('use')
+      .data([this])
+      .attr(
+        'href',
+        this.monomerSymbolElementsIds.variant ??
+          this.monomerSymbolElementsIds.body,
+      )
+      .attr('fill', '#fff')
+      .attr('stroke', '#585858')
+      .attr('stroke-width', '1px')
+      .attr('paint-order', 'fill');
+  }
+
+  public get enumerationElementPosition() {
+    return this.monomerRenderer.enumerationElementPosition;
+  }
+
+  public get beginningElementPosition() {
+    return this.monomerRenderer.beginningElementPosition;
+  }
+
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const monomerClass = AmbiguousMonomer.getMonomerClass(
+      this.monomer.monomers,
+    );
+    const { width, height } = this.monomerSize;
+    if (monomerClass === KetMonomerClass.Phosphate) {
+      return createCircleHighlightPath(
+        this.center,
+        Math.min(width, height) / 2,
+        offset,
+      );
+    }
+    if (monomerClass === KetMonomerClass.Base) {
+      return createDiamondHighlightPath(
+        this.center,
+        Math.min(width, height),
+        offset,
+      );
+    }
+    return super.getHighlightPath(offset);
+  }
+
+  public show(theme) {
+    super.show(theme);
+    this.appendNumberOfMonomers();
+    if (this.enumerationElementPosition) {
+      this.appendEnumeration();
+    }
+  }
+
+  public showExternal(parameters: PreviewAttachmentPointParams) {
+    this.rootElement = this.appendRootElement(parameters.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
+    this.drawModification();
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.appendPreviewAttachmentPoint.bind(this, params),
+      (attachmentPointName: AttachmentPointName, customAngle?: number) =>
+        this.appendPreviewAttachmentPoint(
+          parameters,
+          attachmentPointName,
+          customAngle,
+        ),
     );
   }
 
   protected get modificationConfig() {
     switch (this.monomer.monomerClass) {
-      case KetMonomerClass.AminoAcid:
+      case KetMonomerClass.AminoAcid: {
         return { backgroundId: '#modified-background', requiresFill: true };
-      case KetMonomerClass.Base:
+      }
+      case KetMonomerClass.Base: {
         return { backgroundId: '#rna-base-modified-background' };
-      case KetMonomerClass.Sugar:
+      }
+      case KetMonomerClass.Sugar: {
         // Ambiguous monomers render on a white body, so the default white sugar
         // band would be invisible — requiresFill drives the <use> fill to a dark
         // color here (the text color isn't #333333) to keep the band visible.
@@ -179,10 +221,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
           backgroundId: '#sugar-modified-background',
           requiresFill: true,
         };
-      case KetMonomerClass.Phosphate:
+      }
+      case KetMonomerClass.Phosphate: {
         return { backgroundId: '#phosphate-modified-background' };
-      default:
+      }
+      default: {
         return undefined;
+      }
     }
   }
 }

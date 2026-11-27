@@ -1,6 +1,9 @@
 import { type AtomType, Elements, genericsList } from 'ketcher-core';
 import { capitalize } from 'lodash';
-import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
+import {
+  atom as atomSchema,
+  CUSTOM_QUERY_MAX_LENGTH,
+} from '../../../../../data/schema/struct-schema';
 import { matchCharge } from 'src/script/ui/data/utils';
 
 export function atomValid(
@@ -24,10 +27,7 @@ export function AtomListValid(
   atomType: AtomType,
   isCustomQuery: boolean,
 ) {
-  if (atomType !== 'list' || isCustomQuery) {
-    return true;
-  }
-  return value.length >= 1;
+  return atomType !== 'list' || isCustomQuery ? true : value.length > 0;
 }
 
 export function pseudoAtomValid(
@@ -66,6 +66,9 @@ export function chargeValid(
 export function customQueryValid(value: string, isCustomQuery: boolean) {
   if (!isCustomQuery) {
     return true;
+  }
+  if (value.length > CUSTOM_QUERY_MAX_LENGTH) {
+    return false;
   }
   const regex = new RegExp(atomSchema.properties.customQuery.pattern as string);
   return regex.test(value);

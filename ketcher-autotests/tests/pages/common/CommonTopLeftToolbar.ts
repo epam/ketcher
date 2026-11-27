@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
@@ -42,17 +41,18 @@ export const CommonTopLeftToolbar = (page: Page) => {
         try {
           await locators.clearCanvasButton.click({
             force: false,
-            timeout: 2000,
+            timeout: 1000,
           });
           return;
         } catch {
           attempts++;
           await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
           await page.keyboard.press('Escape');
-          if (await closeWindowXButton.isVisible()) {
-            await closeWindowXButton.click();
+          await page.waitForTimeout(100);
+          if (await closeWindowXButton.first().isVisible()) {
+            await closeWindowXButton.first().click();
+            await closeWindowXButton.first().waitFor({ state: 'detached' });
           }
-          await page.waitForTimeout(200);
         }
       }
 

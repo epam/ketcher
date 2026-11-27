@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { TransientView } from './TransientView';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -115,11 +115,6 @@ const getRotationArcPath = (
   );
 };
 
-// TypeScript doesn't support abstract static methods, but the TransientView pattern
-// requires static show() methods. This ts-ignore is necessary to follow the
-// established pattern used by other TransientView subclasses (SelectionView, etc.)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;
@@ -130,19 +125,20 @@ export class RotationView extends TransientView {
   private static readonly rotationCenterSubscribers = new Set<
     (payload: RotationCenterEvent) => void
   >();
+  public static readonly viewName = 'RotationView';
 
   public static subscribeRotationHandle(
     listener: (payload: RotationHandleEvent) => void,
   ) {
-    RotationView.rotationHandleSubscribers.add(listener);
-    return () => RotationView.rotationHandleSubscribers.delete(listener);
+    this.rotationHandleSubscribers.add(listener);
+    return () => this.rotationHandleSubscribers.delete(listener);
   }
 
   public static subscribeRotationCenter(
     listener: (payload: RotationCenterEvent) => void,
   ) {
-    RotationView.rotationCenterSubscribers.add(listener);
-    return () => RotationView.rotationCenterSubscribers.delete(listener);
+    this.rotationCenterSubscribers.add(listener);
+    return () => this.rotationCenterSubscribers.delete(listener);
   }
 
   public static show(
@@ -158,7 +154,7 @@ export class RotationView extends TransientView {
       startAngle: startAngleParam,
     } = params;
 
-    if (!isRotating || !RotationView.wasRotating) {
+    if (!isRotating || !this.wasRotating) {
       RotationView.lastSnappingRadius = undefined;
     }
     RotationView.wasRotating = isRotating;
@@ -188,7 +184,7 @@ export class RotationView extends TransientView {
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
 
     const handleCenterX = isRotating
-      ? cursorInCanvas?.x ?? center.x
+      ? (cursorInCanvas?.x ?? center.x)
       : boundingBox.left + boundingBox.width / 2;
     const handleCenterY =
       cursorInCanvas?.y ??
@@ -230,13 +226,13 @@ export class RotationView extends TransientView {
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        RotationView.rotationCenterSubscribers.forEach((listener) =>
+        this.rotationCenterSubscribers.forEach((listener) =>
           listener({ type: 'down', event }),
         );
       })
       .on('mousemove', (event: PointerEvent) => {
         if (event.buttons !== 1) return;
-        RotationView.rotationCenterSubscribers.forEach((listener) =>
+        this.rotationCenterSubscribers.forEach((listener) =>
           listener({ type: 'drag', event }),
         );
       });
@@ -274,13 +270,13 @@ export class RotationView extends TransientView {
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        RotationView.rotationHandleSubscribers.forEach((listener) =>
+        this.rotationHandleSubscribers.forEach((listener) =>
           listener({ type: 'down', event }),
         );
       })
       .on('mousedown', (event: PointerEvent) => {
         if (event.buttons !== 1) return;
-        RotationView.rotationHandleSubscribers.forEach((listener) =>
+        this.rotationHandleSubscribers.forEach((listener) =>
           listener({ type: 'drag', event }),
         );
       });
@@ -316,160 +312,157 @@ export class RotationView extends TransientView {
     }
 
     // Draw rotation protractor and arc when rotating
-    if (isRotating) {
-      const centerInView = Coordinates.canvasToView(center);
-      const fallbackRadius =
-        Math.sqrt(
-          Math.pow(handleCenterY - centerInView.y, 2) +
-            Math.pow(handleCenterX - centerInView.x, 2),
-        ) -
-        STYLE.HANDLE_MARGIN -
-        STYLE.HANDLE_RADIUS;
+    if (!isRotating) {
+      return;
+    }
 
-      const cursorDistance = cursor
-        ? Math.sqrt(
-            Math.pow(cursor.x - centerInView.x, 2) +
-              Math.pow(cursor.y - centerInView.y, 2),
-          )
-        : undefined;
+    const centerInView = Coordinates.canvasToView(center);
+    const fallbackRadius =
+      Math.sqrt(
+        Math.pow(handleCenterY - centerInView.y, 2) +
+          Math.pow(handleCenterX - centerInView.x, 2),
+      ) -
+      STYLE.HANDLE_MARGIN -
+      STYLE.HANDLE_RADIUS;
 
-      const rawRadius =
-        cursorDistance === undefined
-          ? fallbackRadius
-          : Math.max(cursorDistance - STYLE.PROTRACTOR_CURSOR_OFFSET, 0);
+    const cursorDistance = cursor
+      ? Math.sqrt(
+          Math.pow(cursor.x - centerInView.x, 2) +
+            Math.pow(cursor.y - centerInView.y, 2),
+        )
+      : undefined;
 
-      const snappedToStep =
-        Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
-        STYLE.PROTRACTOR_RADIUS_STEP;
-      let radius = snappedToStep > 0 ? snappedToStep : 0;
+    const rawRadius =
+      cursorDistance === undefined
+        ? fallbackRadius
+        : Math.max(cursorDistance - STYLE.PROTRACTOR_CURSOR_OFFSET, 0);
 
-      const lastSnappingRadius = RotationView.lastSnappingRadius;
-      if (radius > 0) {
-        if (lastSnappingRadius === undefined) {
-          RotationView.lastSnappingRadius = radius;
-        } else {
-          // Keep the radius stable until it grows/shrinks enough (as in rotate-controller).
-          const upperThreshold = lastSnappingRadius * 1.4;
-          const lowerThreshold = lastSnappingRadius / 1.4;
-          if (radius >= upperThreshold || radius <= lowerThreshold) {
-            RotationView.lastSnappingRadius = radius;
-          } else {
-            radius = lastSnappingRadius;
-          }
-        }
-      }
+    const snappedToStep =
+      Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
+      STYLE.PROTRACTOR_RADIUS_STEP;
+    let radius = Math.max(snappedToStep, 0);
 
-      if (radius > 0) {
-        // Draw protractor circle
-        transientLayer
-          .append('circle')
-          .attr('cx', center.x)
-          .attr('cy', center.y)
-          .attr('r', radius)
-          .attr('fill', 'none')
-          .attr('stroke', STYLE.PROTRACTOR_COLOR)
-          .attr('stroke-dasharray', '4,4')
-          .attr('style', 'pointer-events: none');
+    const lastSnappingRadius = this.lastSnappingRadius;
+    if (radius <= 0) {
+      return;
+    }
 
-        // Draw protractor degree ticks and labels (as in rotate-controller).
-        // Use the click direction from the rotation tool so the 0° label,
-        // dashed handle line, and handle stay aligned even after the rotation
-        // center has been moved.
-        const startAngle = startAngleParam ?? -Math.PI / 2;
-        const toRadians = (deg: number) => (deg * Math.PI) / 180;
-        const predefinedDegrees = [
-          0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60,
-          -45, -30,
-        ];
-        const currentDegrees = normalizeDegrees(
-          Math.round((rotationAngle * 180) / Math.PI),
-        );
-        const tickLength =
-          radius >= STYLE.MIN_RADIUS_FOR_TEXT
-            ? STYLE.DEGREE_LINE_LENGTH
-            : STYLE.DEGREE_LINE_LENGTH / 2;
-
-        predefinedDegrees.forEach((degree) => {
-          const diff = getDegreeDifference(degree, currentDegrees);
-          const angle = startAngle + toRadians(degree);
-          const lineStartX = center.x + radius * Math.cos(angle);
-          const lineStartY = center.y + radius * Math.sin(angle);
-          const lineEndX = center.x + (radius + tickLength) * Math.cos(angle);
-          const lineEndY = center.y + (radius + tickLength) * Math.sin(angle);
-
-          transientLayer
-            .append('path')
-            .attr('d', `M${lineStartX},${lineStartY}L${lineEndX},${lineEndY}`)
-            .attr('stroke', diff > 90 ? 'none' : STYLE.PROTRACTOR_COLOR)
-            .attr('stroke-dasharray', '4,4')
-            .attr('style', 'pointer-events: none');
-
-          if (radius < STYLE.MIN_RADIUS_FOR_TEXT) {
-            return;
-          }
-
-          const textRadius = radius + STYLE.DEGREE_TEXT_MARGIN + tickLength;
-          const textX = center.x + textRadius * Math.cos(angle);
-          const textY = center.y + textRadius * Math.sin(angle);
-          let textFill: string;
-          if (diff > 90) {
-            textFill = 'none';
-          } else if (degree !== 0 && degree === currentDegrees) {
-            textFill = STYLE.ACTIVE_COLOR;
-          } else {
-            textFill = STYLE.INITIAL_COLOR;
-          }
-
-          transientLayer
-            .append('text')
-            .attr('x', textX)
-            .attr('y', textY)
-            .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'middle')
-            .attr('font-size', `${STYLE.DEGREE_FONT_SIZE}px`)
-            .attr('fill', textFill)
-            .text(`${degree}°`);
-        });
-
-        // Draw rotation arc
-        transientLayer
-          .append('path')
-          .attr(
-            'd',
-            getRotationArcPath(center, radius, startAngle, rotationAngle),
-          )
-          .attr('fill', 'none')
-          .attr('stroke', STYLE.ACTIVE_COLOR)
-          .attr('stroke-width', 1)
-          .attr('style', 'pointer-events: none');
-
-        // Draw angle text
-        const angleInDegrees = normalizeDegrees(
-          Math.round((rotationAngle * 180) / Math.PI),
-        );
-        const textAngle = startAngle;
-        const textRadius = radius + 20;
-        const textX =
-          center.x +
-          textRadius * Math.cos(textAngle) +
-          STYLE.CURRENT_ANGLE_X_OFFSET;
-        const textY =
-          center.y +
-          textRadius * Math.sin(textAngle) +
-          STYLE.CURRENT_ANGLE_Y_OFFSET;
-
-        transientLayer
-          .append('text')
-          .attr('x', textX)
-          .attr('y', textY)
-          .attr('text-anchor', 'middle')
-          .attr('dominant-baseline', 'middle')
-          .attr('font-size', '16px')
-          .attr('fill', '#333333')
-          .text(`${angleInDegrees}°`);
+    if (lastSnappingRadius === undefined) {
+      RotationView.lastSnappingRadius = radius;
+    } else {
+      // Keep the radius stable until it grows/shrinks enough (as in rotate-controller).
+      const upperThreshold = lastSnappingRadius * 1.4;
+      const lowerThreshold = lastSnappingRadius / 1.4;
+      if (radius >= upperThreshold || radius <= lowerThreshold) {
+        RotationView.lastSnappingRadius = radius;
+      } else {
+        radius = lastSnappingRadius;
       }
     }
-  }
 
-  public static readonly viewName = 'RotationView';
+    // Draw protractor circle
+    transientLayer
+      .append('circle')
+      .attr('cx', center.x)
+      .attr('cy', center.y)
+      .attr('r', radius)
+      .attr('fill', 'none')
+      .attr('stroke', STYLE.PROTRACTOR_COLOR)
+      .attr('stroke-dasharray', '4,4')
+      .attr('style', 'pointer-events: none');
+
+    // Draw protractor degree ticks and labels (as in rotate-controller).
+    // Use the click direction from the rotation tool so the 0° label,
+    // dashed handle line, and handle stay aligned even after the rotation
+    // center has been moved.
+    const startAngle = startAngleParam ?? -Math.PI / 2;
+    const toRadians = (deg: number) => (deg * Math.PI) / 180;
+    const predefinedDegrees = [
+      0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
+      -30,
+    ];
+    const currentDegrees = normalizeDegrees(
+      Math.round((rotationAngle * 180) / Math.PI),
+    );
+    const tickLength =
+      radius >= STYLE.MIN_RADIUS_FOR_TEXT
+        ? STYLE.DEGREE_LINE_LENGTH
+        : STYLE.DEGREE_LINE_LENGTH / 2;
+
+    predefinedDegrees.forEach((degree) => {
+      const diff = getDegreeDifference(degree, currentDegrees);
+      const angle = startAngle + toRadians(degree);
+      const lineStartX = center.x + radius * Math.cos(angle);
+      const lineStartY = center.y + radius * Math.sin(angle);
+      const lineEndX = center.x + (radius + tickLength) * Math.cos(angle);
+      const lineEndY = center.y + (radius + tickLength) * Math.sin(angle);
+
+      transientLayer
+        .append('path')
+        .attr('d', `M${lineStartX},${lineStartY}L${lineEndX},${lineEndY}`)
+        .attr('stroke', diff > 90 ? 'none' : STYLE.PROTRACTOR_COLOR)
+        .attr('stroke-dasharray', '4,4')
+        .attr('style', 'pointer-events: none');
+
+      if (radius < STYLE.MIN_RADIUS_FOR_TEXT) {
+        return;
+      }
+
+      const textRadius = radius + STYLE.DEGREE_TEXT_MARGIN + tickLength;
+      const textX = center.x + textRadius * Math.cos(angle);
+      const textY = center.y + textRadius * Math.sin(angle);
+      let textFill: string;
+      if (diff > 90) {
+        textFill = 'none';
+      } else if (degree !== 0 && degree === currentDegrees) {
+        textFill = STYLE.ACTIVE_COLOR;
+      } else {
+        textFill = STYLE.INITIAL_COLOR;
+      }
+
+      transientLayer
+        .append('text')
+        .attr('x', textX)
+        .attr('y', textY)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', `${STYLE.DEGREE_FONT_SIZE}px`)
+        .attr('fill', textFill)
+        .text(`${degree}°`);
+    });
+
+    // Draw rotation arc
+    transientLayer
+      .append('path')
+      .attr('d', getRotationArcPath(center, radius, startAngle, rotationAngle))
+      .attr('fill', 'none')
+      .attr('stroke', STYLE.ACTIVE_COLOR)
+      .attr('stroke-width', 1)
+      .attr('style', 'pointer-events: none');
+
+    // Draw angle text
+    const angleInDegrees = normalizeDegrees(
+      Math.round((rotationAngle * 180) / Math.PI),
+    );
+    const textAngle = startAngle;
+    const textRadius = radius + 20;
+    const textX =
+      center.x +
+      textRadius * Math.cos(textAngle) +
+      STYLE.CURRENT_ANGLE_X_OFFSET;
+    const textY =
+      center.y +
+      textRadius * Math.sin(textAngle) +
+      STYLE.CURRENT_ANGLE_Y_OFFSET;
+
+    transientLayer
+      .append('text')
+      .attr('x', textX)
+      .attr('y', textY)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('font-size', '16px')
+      .attr('fill', '#333333')
+      .text(`${angleInDegrees}°`);
+  }
 }

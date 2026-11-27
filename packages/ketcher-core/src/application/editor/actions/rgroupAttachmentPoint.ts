@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'utilities';
 import type { ReStruct } from 'application/render';
 import { AttachmentPoints } from 'domain/entities/atom';
 import type { Struct } from 'domain/entities/struct';
@@ -7,7 +7,7 @@ import {
   RGroupAttachmentPointRemove,
 } from '../operations';
 import { Action } from './action';
-import { fromAtomsAttrs } from './atom';
+import { fromAtomsAttributes } from './atom';
 
 export function fromRGroupAttachmentPointUpdate(
   restruct: ReStruct,
@@ -29,7 +29,7 @@ export function fromRGroupAttachmentPointAddition(
 ) {
   const action = new Action();
   switch (attachmentPoints) {
-    case AttachmentPoints.FirstSideOnly:
+    case AttachmentPoints.FirstSideOnly: {
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -37,8 +37,9 @@ export function fromRGroupAttachmentPointAddition(
         }),
       );
       break;
+    }
 
-    case AttachmentPoints.SecondSideOnly:
+    case AttachmentPoints.SecondSideOnly: {
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -46,8 +47,9 @@ export function fromRGroupAttachmentPointAddition(
         }),
       );
       break;
+    }
 
-    case AttachmentPoints.BothSides:
+    case AttachmentPoints.BothSides: {
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -61,9 +63,11 @@ export function fromRGroupAttachmentPointAddition(
         }),
       );
       break;
+    }
 
-    default:
+    default: {
       break;
+    }
   }
   return action.perform(restruct);
 }
@@ -89,11 +93,11 @@ export function fromRGroupAttachmentPointDeletion(
     restruct.molecule,
     id,
   );
-  const actionToUpdateAtomsAttrs = fromAtomsAttrs(
+  const actionToUpdateAtomsAttributes = fromAtomsAttributes(
     restruct,
     atomId,
     { attachmentPoints: newAttachmentPoints },
-    null,
+    false,
   );
 
   const actionToDeletePoint = new Action();
@@ -101,7 +105,7 @@ export function fromRGroupAttachmentPointDeletion(
 
   return actionToDeletePoint
     .perform(restruct)
-    .mergeWith(actionToUpdateAtomsAttrs);
+    .mergeWith(actionToUpdateAtomsAttributes);
 }
 
 function getNewAtomAttachmentPoints(
@@ -111,7 +115,7 @@ function getNewAtomAttachmentPoints(
   const pointToDelete = struct.rgroupAttachmentPoints.get(
     rgroupAttachmentPointToDelete,
   );
-  assert(pointToDelete != null);
+  assert(pointToDelete != undefined);
   const attachedAtomId = pointToDelete.atomId;
   const attachedAtom = struct.atoms.get(attachedAtomId);
   const currentAttachmentPoints = attachedAtom?.attachmentPoints;

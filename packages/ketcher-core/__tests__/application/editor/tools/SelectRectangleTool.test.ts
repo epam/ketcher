@@ -1,6 +1,8 @@
+import { vi } from 'vitest';
 import { CoreEditor, FlexMode } from 'application/editor';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import {
+  coreEditorTheme,
   getFinishedPolymerBond,
   peptideMonomerItem,
   polymerEditorTheme,
@@ -13,7 +15,7 @@ import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 
-jest.mock('d3', () => {
+vi.mock('d3', () => {
   return {
     brush() {
       return {
@@ -70,11 +72,14 @@ jest.mock('d3', () => {
         },
       };
     },
-    ZoomTransform: jest.fn().mockImplementation(() => {
+    ZoomTransform: vi.fn().mockImplementation(function () {
       return { invertX() {}, invertY() {} };
     }),
     zoom() {
       return {
+        extent() {
+          return this;
+        },
         scaleExtent() {
           return this;
         },
@@ -92,15 +97,15 @@ jest.mock('d3', () => {
   };
 });
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
 describe('Select Rectangle Tool', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should select drawing entity on mousedown', () => {
@@ -114,7 +119,7 @@ describe('Select Rectangle Tool', () => {
     } as MouseEvent;
     const selectRectangleTool = new SelectRectangle(
       new CoreEditor({
-        theme: polymerEditorTheme,
+        theme: coreEditorTheme,
         canvas: createPolymerEditorCanvas(),
         renderersContainer: createRenderersManager(polymerEditorTheme),
         mode: new FlexMode(),
@@ -130,30 +135,31 @@ describe('Select Rectangle Tool', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const mode = new FlexMode();
     const editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode,
     });
-    const onMove = jest.fn();
+    const onMove = vi.fn();
 
-    jest
-      .spyOn(BaseMonomerRenderer.prototype, 'moveSelection')
-      .mockImplementation(onMove);
-    jest
-      .spyOn(PeptideRenderer.prototype, 'drawSelection')
-      .mockImplementation(() => {});
-    jest
-      .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
-      .mockImplementation(() => {});
-    const fn = jest
+    vi.spyOn(BaseMonomerRenderer.prototype, 'moveSelection').mockImplementation(
+      onMove,
+    );
+    vi.spyOn(PeptideRenderer.prototype, 'drawSelection').mockImplementation(
+      () => {},
+    );
+    vi.spyOn(
+      BaseMonomerRenderer.prototype,
+      'redrawEnumeration',
+    ).mockImplementation(() => {});
+    const fn = vi
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation((func) => {
         func(0);
         return 0;
       });
     // TODO: Probably mock Editor/TransientDrawingView better
-    editor.transientDrawingView.update = jest.fn();
+    editor.transientDrawingView.update = vi.fn();
 
     const modelChanges = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
@@ -186,5 +192,32 @@ describe('Select Rectangle Tool', () => {
 
     expect(onMove).toHaveBeenCalled();
     fn.mockRestore();
+  });
+
+  it('should select monomer and start moving when Ctrl is held before mousedown in flex mode', () => {
+    const editor = new CoreEditor({
+      theme: coreEditorTheme,
+      canvas: createPolymerEditorCanvas(),
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+      mode: new FlexMode(),
+    });
+    const modelChanges = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(modelChanges);
+    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+    const selectRectangleTool = new SelectRectangle(editor);
+    const event = {
+      target: {
+        __data__: peptide.renderer,
+      },
+      ctrlKey: true,
+    } as MouseEvent;
+
+    selectRectangleTool.mousedown(event);
+
+    expect(peptide.selected).toBeTruthy();
+    expect(selectRectangleTool.mode).toBe('moving');
   });
 });

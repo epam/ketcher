@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   MacroFileType,
@@ -369,7 +366,7 @@ for (const sequence of sequencesForAddingDash) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -420,7 +417,7 @@ for (const sequence of sequencesForAddingDash) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

@@ -3,11 +3,13 @@ import type { Vec2 } from 'domain/entities/vec2';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { type Bond, BondType } from 'domain/entities/CoreBond';
 import type { BaseRenderer } from 'application/render';
-import { AtomLabel, Elements } from 'domain/constants';
+import { AtomLabel, type CoreAtomLabel, Elements } from 'domain/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 import type { AtomCIP } from './types';
+import type { AtomList } from 'domain/entities/atomList';
+import { isGenericAtom } from 'domain/helpers/isGenericAtom';
 
 export enum AtomRadical {
   None,
@@ -24,6 +26,7 @@ export interface AtomProperties {
   alias?: string | null;
   cip?: AtomCIP | null;
   stereoLabel?: string | null;
+  atomList?: AtomList | null;
 }
 
 export class Atom extends DrawingEntity {
@@ -34,33 +37,10 @@ export class Atom extends DrawingEntity {
     position: Vec2,
     public monomer: BaseMonomer,
     public atomIdInMicroMode: number,
-    public label: AtomLabel,
+    public label: CoreAtomLabel,
     public properties: AtomProperties = {},
   ) {
     super(position);
-  }
-
-  public get center() {
-    return this.position;
-  }
-
-  public addBond(bond: Bond | MonomerToAtomBond) {
-    if (!this.bonds.includes(bond)) {
-      this.bonds.push(bond);
-    }
-  }
-
-  public deleteBond(bondId: number) {
-    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
-  }
-
-  public setRenderer(renderer: AtomRenderer) {
-    this.renderer = renderer;
-    super.setBaseRenderer(renderer as BaseRenderer);
-  }
-
-  public get isCarbon() {
-    return this.label === AtomLabel.C;
   }
 
   private calculateConnections() {
@@ -71,25 +51,28 @@ export class Atom extends DrawingEntity {
         connectionsAmount += 1;
       } else {
         switch (bond.type) {
-          case BondType.Single:
+          case BondType.Single: {
             connectionsAmount += 1;
             break;
-          case BondType.Double:
+          }
+          case BondType.Double: {
             connectionsAmount += 2;
             break;
-          case BondType.Triple:
+          }
+          case BondType.Triple: {
             connectionsAmount += 3;
             break;
+          }
           case BondType.Dative:
-          case BondType.Hydrogen:
+          case BondType.Hydrogen: {
             break;
-          case BondType.Aromatic:
-            if (this.bonds.length === 1) {
-              return -1;
-            }
-            return this.bonds.length;
-          default:
+          }
+          case BondType.Aromatic: {
+            return this.bonds.length === 1 ? -1 : this.bonds.length;
+          }
+          default: {
             return -1;
+          }
         }
       }
     }
@@ -97,47 +80,18 @@ export class Atom extends DrawingEntity {
     return connectionsAmount;
   }
 
-  public get hasAlias() {
-    return Boolean(this.properties.alias);
-  }
-
-  public get hasRadical() {
-    return isNumber(this.properties.radical) && this.properties.radical !== 0;
-  }
-
-  public get hasCharge() {
-    return isNumber(this.properties.charge) && this.properties.charge !== 0;
-  }
-
-  public get hasExplicitValence() {
-    return (
-      isNumber(this.properties.explicitValence) &&
-      this.properties.explicitValence !== -1
-    );
-  }
-
-  public get hasExplicitIsotope() {
-    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
-  }
-
-  public get hasBadValence() {
-    const { hydrogenAmount } = this.calculateValence();
-    return hydrogenAmount < 0;
-  }
-
-  public get hasStereoLabel() {
-    return Boolean(this.properties.stereoLabel);
-  }
-
   private get radicalAmount() {
     switch (this.properties.radical) {
       case AtomRadical.Single:
-      case AtomRadical.Triplet:
+      case AtomRadical.Triplet: {
         return 2;
-      case AtomRadical.Doublet:
+      }
+      case AtomRadical.Doublet: {
         return 1;
-      default:
+      }
+      default: {
         return 0;
+      }
     }
   }
 
@@ -206,7 +160,78 @@ export class Atom extends DrawingEntity {
     return radicalAmount + connectionAmount + absoluteCharge;
   }
 
+  public get center() {
+    return this.position;
+  }
+
+  public addBond(bond: Bond | MonomerToAtomBond) {
+    if (!this.bonds.includes(bond)) {
+      this.bonds.push(bond);
+    }
+  }
+
+  public deleteBond(bondId: number) {
+    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
+  }
+
+  public setRenderer(renderer: AtomRenderer) {
+    this.renderer = renderer;
+    super.setBaseRenderer(renderer as BaseRenderer);
+  }
+
+  public get isCarbon() {
+    return this.label === AtomLabel.C;
+  }
+
+  public get hasAlias() {
+    return Boolean(this.properties.alias);
+  }
+
+  public get hasRadical() {
+    return isNumber(this.properties.radical) && this.properties.radical !== 0;
+  }
+
+  public get hasCharge() {
+    return isNumber(this.properties.charge) && this.properties.charge !== 0;
+  }
+
+  public get hasExplicitValence() {
+    return (
+      isNumber(this.properties.explicitValence) &&
+      this.properties.explicitValence !== -1
+    );
+  }
+
+  public get hasExplicitIsotope() {
+    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
+  }
+
+  // Atom lists and generic atoms (A, Q, X, …) match several elements, so they
+  // have no implicit hydrogens and no bad valence, the same as `Atom.isQuery`
+  // in molecules mode.
+  public get isQueryAtom() {
+    return Boolean(this.properties.atomList) || isGenericAtom(this.label);
+  }
+
+  public get hasBadValence() {
+    const { hydrogenAmount } = this.calculateValence();
+    return hydrogenAmount < 0;
+  }
+
+  public get hasStereoLabel() {
+    return Boolean(this.properties.stereoLabel);
+  }
+
   calculateValence() {
+    if (this.isQueryAtom) {
+      return {
+        valence: this.hasExplicitValence
+          ? (this.properties.explicitValence as number)
+          : this.calculateConnections(),
+        hydrogenAmount: 0,
+      };
+    }
+
     if (this.hasExplicitValence) {
       const valence = this.properties.explicitValence as number;
       const hydrogenAmount = valence - this.valenceWithoutHydrogen;

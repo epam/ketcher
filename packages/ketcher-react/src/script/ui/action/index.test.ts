@@ -1,46 +1,48 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { vi } from 'vitest';
+
 import action from './index';
-jest.mock('./atoms', () => ({}));
-jest.mock('./copyAs', () => jest.fn());
-jest.mock('./copyImageToClipboard', () => jest.fn());
-jest.mock('./debug', () => ({}));
-jest.mock('../component/cliparea/cliparea', () => ({
-  exec: jest.fn(),
+vi.mock('./atoms', () => ({ default: {} }));
+vi.mock('./copyAs', () => ({ default: vi.fn() }));
+vi.mock('./copyImageToClipboard', () => ({ default: vi.fn() }));
+vi.mock('./debug', () => ({ default: {} }));
+vi.mock('../component/cliparea/cliparea', () => ({
+  canExecuteClipboardCommand: vi.fn(),
 }));
-jest.mock('./isHidden', () => jest.fn(() => false));
-jest.mock('./server', () => ({}));
-jest.mock('./templates', () => ({}));
-jest.mock('./tools', () => ({}));
-jest.mock('./zoom', () => ({}));
-jest.mock('./help', () => ({
+vi.mock('./isHidden', () => ({ default: vi.fn(() => false) }));
+vi.mock('./server', () => ({ default: {} }));
+vi.mock('./templates', () => ({ default: {} }));
+vi.mock('./tools', () => ({ default: {} }));
+vi.mock('./zoom', () => ({ default: {} }));
+vi.mock('./help', () => ({
   __esModule: true,
   default: {
     help: {
       enabledInViewOnly: true,
-      action: jest.fn(),
-      hidden: jest.fn(() => false),
+      action: vi.fn(),
+      hidden: vi.fn(() => false),
     },
   },
 }));
-jest.mock('./functionalGroups', () => ({}));
-jest.mock('./fullscreen', () => ({}));
-jest.mock('../state/shared', () => ({
-  openInfoModal: jest.fn(),
-  removeStructAction: jest.fn(),
+vi.mock('./functionalGroups', () => ({ default: {} }));
+vi.mock('./fullscreen', () => ({ default: {} }));
+vi.mock('../state/shared', () => ({
+  openInfoModal: vi.fn(),
+  removeStructAction: vi.fn(),
 }));
 
-const createEditor = (isMonomerCreationWizardActive: boolean) =>
-  ({
-    isMonomerCreationWizardActive,
-    render: {
-      options: {
-        viewOnlyMode: false,
-      },
+const createEditor = (isMonomerCreationWizardActive: boolean) => ({
+  isMonomerCreationWizardActive,
+  render: {
+    options: {
+      viewOnlyMode: false,
     },
-  } as any);
+  },
+});
 
 const getDisabledState = (actionName: 'settings' | 'help' | 'about') =>
-  action[actionName].disabled as (editor: any) => boolean;
+  action[actionName].disabled as unknown as (
+    editor: ReturnType<typeof createEditor>,
+  ) => boolean;
 
 describe('toolbar action state for monomer creation wizard', () => {
   it('disables settings while the wizard is active', () => {

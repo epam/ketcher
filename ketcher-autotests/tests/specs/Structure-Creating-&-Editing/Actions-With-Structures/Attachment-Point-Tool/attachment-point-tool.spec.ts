@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  waitForPageInit,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
@@ -809,10 +806,6 @@ test.describe('Attachment Point Tool', () => {
 });
 
 test.describe('Attachment Point Tool', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
   test('Clean Up and Layout distorted chain with attachment points', async () => {
     /*
     Test case: EPMLSOPKET-1654

@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -73,6 +71,7 @@ test.describe('Monomer bond tool', () => {
       MacroBondOption.EditAttachmentPoints,
     );
     await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
+    await AttachmentPointsDialog(page).cancel();
   });
 
   test('Case 3: Check that "Select Connection Points" dialogues have their title changed to "Select Attachment Points" in opened context window', async () => {

@@ -186,7 +186,8 @@
                     -1.448,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -507,8 +508,7 @@
             "y": -2.75
         },
         "alias": "dW",
-        "templateId": "dW___D-Tryptophan",
-        "seqid": 4
+        "templateId": "dW___D-Tryptophan"
     },
     "monomer4": {
         "type": "monomer",

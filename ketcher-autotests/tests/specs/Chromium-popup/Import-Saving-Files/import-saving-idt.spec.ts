@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import {
@@ -83,7 +80,7 @@ test.describe('Import-Saving .idt Files', () => {
   ];
 
   const toExpectedName = (s: string) =>
-    s.replace(/(?:^\/+)|(?:\/+$)/g, '').replace(/\//g, '-');
+    s.replace(/^\/+/, '').replace(/\/+$/, '').replaceAll('/', '-');
 
   for (const fileName of fileNames) {
     const expectedFile = `IDT/${toExpectedName(fileName)}-expected.idt`;

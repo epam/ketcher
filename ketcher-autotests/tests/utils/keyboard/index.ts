@@ -1,5 +1,6 @@
-import { Page } from '@playwright/test';
-import * as os from 'os';
+import { expect, Page } from '@playwright/test';
+import * as os from 'node:os';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { waitForRender } from '../common/loaders/waitForRender';
 
 let cachedAltModifier: string | null = null;
@@ -18,37 +19,36 @@ export async function arrangeAsARingByKeyboard(page: Page) {
 }
 
 export async function resetZoomLevelToDefault(page: Page) {
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`ControlOrMeta+0`);
-  });
+  await page.keyboard.press(`ControlOrMeta+0`);
+  await expect(CommonTopRightToolbar(page).zoomSelector).toContainText('100%');
 }
 
 export async function zoomOutByKeyboard(
   page: Page,
-  options: { repeat: number; timeout?: number } = { repeat: 1 },
+  { repeat = 1, timeout }: { repeat?: number; timeout?: number } = {},
 ) {
-  for (let i = 0; i < options.repeat; i++) {
+  for (let i = 0; i < repeat; i++) {
     await waitForRender(
       page,
       async () => {
         await page.keyboard.press(`ControlOrMeta+Minus`);
       },
-      options.timeout,
+      timeout,
     );
   }
 }
 
 export async function zoomInByKeyboard(
   page: Page,
-  options: { repeat: number; timeout?: number } = { repeat: 1 },
+  { repeat = 1, timeout }: { repeat?: number; timeout?: number } = {},
 ) {
-  for (let i = 0; i < options.repeat; i++) {
+  for (let i = 0; i < repeat; i++) {
     await waitForRender(
       page,
       async () => {
         await page.keyboard.press(`ControlOrMeta+Equal`);
       },
-      options.timeout,
+      timeout,
     );
   }
 }

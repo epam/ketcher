@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -309,8 +307,7 @@ test('6. Switching from Flex to Sequence and back to Flex mode does not change l
         2. Switch to Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -368,8 +365,7 @@ test('8. Switching from Micro mode to Sequence and back to Micromolecules mode d
         3. Take screenshot to withness monomer
     */
   // switching to Sequence to change default Macro mode
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
     LayoutMode.Sequence,
   );
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -549,8 +545,9 @@ test(
         2. Switch to Snake mode, Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -615,8 +612,7 @@ test(
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
         4. Take screenshot to withness layour remain unchanged
     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

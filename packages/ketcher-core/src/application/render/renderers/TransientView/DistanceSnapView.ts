@@ -1,4 +1,3 @@
-import { TransientView } from './TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
@@ -10,9 +9,7 @@ export type DistanceSnapViewParams = {
   alignedMonomers: BaseMonomer[] | undefined;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export class DistanceSnapView extends TransientView {
+export class DistanceSnapView {
   public static readonly viewName = 'DistanceSnapView';
 
   public static show(
@@ -58,10 +55,10 @@ export class DistanceSnapView extends TransientView {
     sortedMonomers.forEach((monomer, index, monomers) => {
       const monomerPositionInPixels = Coordinates.modelToCanvas(monomer.center);
       const nextMonomer =
-        index < monomers.length - 1 ? monomers[index + 1] : null;
+        index < monomers.length - 1 ? monomers[index + 1] : undefined;
       const nextMonomerPositionInPixels = nextMonomer
         ? Coordinates.modelToCanvas(nextMonomer.center)
-        : null;
+        : undefined;
 
       if (alignment === 'horizontal') {
         transientLayer

@@ -201,8 +201,7 @@
             "y": -1.25
         },
         "alias": "R",
-        "templateId": "R___Arginine",
-        "seqid": 1
+        "templateId": "R___Arginine"
     },
     "monomerTemplate-R___Arginine": {
         "type": "monomerTemplate",
@@ -230,7 +229,8 @@
                     -2,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -450,6 +450,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "R"
     },

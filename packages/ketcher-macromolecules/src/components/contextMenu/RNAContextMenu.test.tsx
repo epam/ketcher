@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { RnaBuilder } from 'components/monomerLibrary/RnaBuilder';
@@ -21,9 +24,8 @@ import { MONOMER_TYPES } from 'src/constants';
 import { EditorClassName } from 'ketcher-react';
 import mockedPresets from './mockedPresets.json';
 
-jest.mock('../../../src/helpers/dom.ts', () => {
+vi.mock('../../../src/helpers/dom.ts', () => {
   return {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     scrollToElement: () => {},
   };
 });
@@ -65,8 +67,8 @@ const monomerData = [
   },
 ];
 describe('RNA ContextMenu', () => {
-  const editPreset = jest.fn();
-  const duplicatePreset = jest.fn();
+  const editPreset = vi.fn();
+  const duplicatePreset = vi.fn();
   const initialState = {
     library: {
       searchFilter: '',
@@ -86,9 +88,10 @@ describe('RNA ContextMenu', () => {
   };
 
   it('should render contextMenu correctly', () => {
-    render(
+    const { container } = render(
       withThemeAndStoreProvider(
         <div className={EditorClassName}>
+          <div className="Ketcher-macromolecules-root" />
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -98,15 +101,18 @@ describe('RNA ContextMenu', () => {
         initialState,
       ),
     );
+    const portalRoot = container.querySelector('.Ketcher-macromolecules-root');
+    expect(portalRoot).not.toBeNull();
     const presetCard = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(presetCard);
     expect(screen.getByTestId('deletepreset')).toBeInTheDocument();
   });
 
   it("should disable 'Delete Preset' menu when trying to delete default preset", () => {
-    render(
+    const { container } = render(
       withThemeAndStoreProvider(
         <div className={EditorClassName}>
+          <div className="Ketcher-macromolecules-root" />
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -116,6 +122,8 @@ describe('RNA ContextMenu', () => {
         initialState,
       ),
     );
+    const portalRoot = container.querySelector('.Ketcher-macromolecules-root');
+    expect(portalRoot).not.toBeNull();
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
     const deleteMenu = screen.getByTestId('deletepreset');
@@ -123,9 +131,10 @@ describe('RNA ContextMenu', () => {
   });
 
   it("should enable 'Delete Preset' when trying to delete non-default preset", () => {
-    render(
+    const { container } = render(
       withThemeAndStoreProvider(
         <div className={EditorClassName}>
+          <div className="Ketcher-macromolecules-root" />
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -136,6 +145,8 @@ describe('RNA ContextMenu', () => {
         initialState,
       ),
     );
+    const portalRoot = container.querySelector('.Ketcher-macromolecules-root');
+    expect(portalRoot).not.toBeNull();
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
     const deleteMenu = screen.getByTestId('deletepreset');

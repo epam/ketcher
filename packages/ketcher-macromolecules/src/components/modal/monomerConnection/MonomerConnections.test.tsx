@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
+
 import React from 'react';
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
@@ -5,8 +8,7 @@ import { Struct, Peptide } from 'ketcher-core';
 import { MonomerConnection } from './MonomerConnections';
 import { configureAppStore } from '../../../state/store';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-jest.spyOn(React, 'useEffect').mockImplementation(() => {});
+vi.spyOn(React, 'useEffect').mockImplementation(() => {});
 
 const mockStore = configureAppStore({});
 const monomerData = {
@@ -29,13 +31,14 @@ const secondPeptide = new Peptide({
   props: { ...monomerData.props, Name: 'Second peptide' },
 });
 
-firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-firstPeptide.monomerItem.props.MonomerCaps = { R1: 'H', R2: 'H' };
-secondPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-secondPeptide.monomerItem.props.MonomerCaps = { R1: 'O', R2: 'O' };
+// A single free attachment point is preselected, so its leaving group shows.
+firstPeptide.attachmentPointsToBonds = { R1: null };
+firstPeptide.monomerItem.props.MonomerCaps = { R1: 'H' };
+secondPeptide.attachmentPointsToBonds = { R1: null };
+secondPeptide.monomerItem.props.MonomerCaps = { R1: 'OH' };
 
 const mockProps = {
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   isModalOpen: true,
   firstMonomer: firstPeptide,
   secondMonomer: secondPeptide,
@@ -59,7 +62,7 @@ describe('MonomerConnections modal', () => {
     });
     it('should be displayed as OH when O is provided', () => {
       renderComponent();
-      expect(screen.getAllByTestId('leaving-group-value')[2]).toHaveTextContent(
+      expect(screen.getAllByTestId('leaving-group-value')[1]).toHaveTextContent(
         'OH',
       );
     });

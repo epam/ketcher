@@ -18,7 +18,10 @@ export class SugarRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
-  constructor(public monomer: Sugar, scale?: number) {
+  constructor(
+    public monomer: Sugar,
+    scale?: number,
+  ) {
     super(
       monomer,
       SUGAR_HOVERED_ELEMENT_ID,
@@ -36,10 +39,9 @@ export class SugarRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return undefined;
-    }
-    return { backgroundId: '#sugar-modified-background', requiresFill: true };
+    return this.monomer.monomerItem.props.unresolved
+      ? undefined
+      : { backgroundId: '#sugar-modified-background', requiresFill: true };
   }
 
   protected getMonomerColor(theme) {

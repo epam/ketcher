@@ -166,8 +166,7 @@
             "y": -1.25
         },
         "alias": "T",
-        "templateId": "T___Threonine",
-        "seqid": 1
+        "templateId": "T___Threonine"
     },
     "monomerTemplate-T___Threonine": {
         "type": "monomerTemplate",
@@ -187,7 +186,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -228,7 +228,8 @@
                     0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -357,6 +358,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "T"
     },

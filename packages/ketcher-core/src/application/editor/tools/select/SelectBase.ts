@@ -6,7 +6,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +15,8 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type HydrogenBond,
-  type PolymerBond,
-  BaseMonomer,
-  Vec2,
-} from 'domain/entities';
+import { HydrogenBond, PolymerBond, BaseMonomer, Vec2 } from 'domain/entities';
+import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
 import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -32,10 +28,9 @@ import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
-import {
-  type DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-  SequenceRenderer,
-} from 'application/render';
+import { SequenceRenderer } from 'application/render';
+import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import type { MonomersAlignment } from 'application/editor/tools/types';
 import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
@@ -89,24 +84,39 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center' = 'standby';
+    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
+    'standby';
+  /**
+  Controls whether auto-scroll is active during a selection drag.
+  Override to `false` in subclasses that should not auto-scroll
+  (e.g. SelectLasso, where the lasso shape would distort on scroll).
+  */
+  protected readonly autoScrollEnabled: boolean = true;
 
   protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
+  protected rotationCenter: Vec2 | undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
+  protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
+  private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
+  private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
+  private autoScrollRequestAnimationFrameID: number | null = null;
+  private autoScrollDelta: Vec2 = new Vec2(0, 0);
+
+  /**
+  Reads renderer data from d3-bound event targets (`target.__data__`).
+  Returns undefined when an event target has no renderer payload.
+  */
+  private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
+    return (event.target as { __data__?: T } | null)?.__data__;
+  }
 
   constructor(protected readonly editor: CoreEditor) {
     this.destroy();
@@ -131,11 +141,10 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
-      shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
-    } else {
-      shouldStartMove = true;
-    }
+    shouldStartMove =
+      this.editor.mode.modeName === 'sequence-layout-mode'
+        ? !(renderer instanceof BaseSequenceItemRenderer)
+        : true;
     if (shouldStartMove) this.mode = 'moving';
   }
 
@@ -171,8 +180,13 @@ abstract class SelectBase implements BaseTool {
         return;
       }
 
-      const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey);
+      const isModKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+      this.mousedownEntity(
+        renderer,
+        event.shiftKey,
+        isModKeyPressed,
+        event.altKey,
+      );
     }
   }
 
@@ -220,7 +234,8 @@ abstract class SelectBase implements BaseTool {
     this.mode = 'rotating';
     this.rotationCenter =
       this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter() ??
+      undefined;
 
     if (!this.rotationCenter) {
       this.mode = 'standby';
@@ -245,19 +260,21 @@ abstract class SelectBase implements BaseTool {
 
     const bbox =
       this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    if (bbox) {
-      const viewParams = this.buildRotationViewParams(
-        this.rotationCenter,
-        bbox,
-        this.rotationStartAngle,
-      );
-      this.editor.transientDrawingView.showRotation({
-        ...viewParams,
-        rotationAngle: 0,
-        isRotating: true,
-      });
-      this.editor.transientDrawingView.update();
+    if (!bbox) {
+      return;
     }
+
+    const viewParams = this.buildRotationViewParams(
+      this.rotationCenter,
+      bbox,
+      this.rotationStartAngle,
+    );
+    this.editor.transientDrawingView.showRotation({
+      ...viewParams,
+      rotationAngle: 0,
+      isRotating: true,
+    });
+    this.editor.transientDrawingView.update();
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
@@ -265,7 +282,8 @@ abstract class SelectBase implements BaseTool {
     event.preventDefault();
 
     if (
-      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length
+      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length >
+      0
     ) {
       return;
     }
@@ -280,8 +298,9 @@ abstract class SelectBase implements BaseTool {
 
   protected mousedownEntity(
     renderer: BaseRenderer,
-    shiftKey = false,
-    modKey = false,
+    isShiftKeyPressed = false,
+    isModKeyPressed = false,
+    isAltKeyPressed = false,
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
@@ -297,10 +316,12 @@ abstract class SelectBase implements BaseTool {
       drawingEntitiesToSelect.push(renderer.drawingEntity);
     }
 
-    if (!shiftKey && !modKey) {
+    const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
+    const isChainSelectionModKey = isModKeyPressed && isSequenceItem;
+
+    if (!isShiftKeyPressed && !isChainSelectionModKey && !isAltKeyPressed) {
       this.startMoveIfNeeded(renderer);
-      const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
-      if (renderer.drawingEntity.selected && !isSequenceItem) {
+      if (!isSequenceItem && renderer.drawingEntity.selected) {
         return;
       }
       modelChanges.merge(
@@ -312,7 +333,7 @@ abstract class SelectBase implements BaseTool {
           drawingEntitiesToSelect,
         );
       modelChanges.merge(selectModelChanges);
-    } else if (shiftKey) {
+    } else if (isShiftKeyPressed) {
       if (renderer.drawingEntity.selected) {
         return;
       }
@@ -325,25 +346,55 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         );
       modelChanges.merge(selectModelChanges);
-    } else if (renderer instanceof BaseSequenceItemRenderer && modKey) {
+    } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside || node instanceof Nucleotide) {
-            return node.monomers;
-          } else {
-            return node.monomer;
-          }
+          return node instanceof Nucleoside || node instanceof Nucleotide
+            ? node.monomers
+            : node.monomer;
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
       const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
-      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
+      drawingEntities = [...drawingEntities, ...bondsInsideCurrentChain];
       modelChanges.merge(
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
         ),
+      );
+    } else if (
+      isAltKeyPressed &&
+      this.editor.mode.modeName !== 'sequence-layout-mode' &&
+      renderer.drawingEntity instanceof BaseMonomer
+    ) {
+      // Alt + drag on a monomer in Flex/Snake mode selects and moves
+      // the whole chain it belongs to (#4451). Sequence mode keeps its own
+      // Ctrl/Cmd-based gesture above, untouched.
+      this.startMoveIfNeeded(renderer);
+      const connectedMonomers = getAllConnectedMonomersRecursively(
+        renderer.drawingEntity,
+      );
+      connectedMonomers.forEach((connectedMonomer) =>
+        connectedMonomer.turnOnSelection(),
+      );
+      // A bond's `firstMonomer` is fixed at construction, so checking it here
+      // (rather than just `.selected` on both ends) naturally visits each
+      // intra-chain bond exactly once instead of twice.
+      const bondsInsideChain = connectedMonomers.flatMap((connectedMonomer) =>
+        connectedMonomer.bonds.filter(
+          (bond): bond is PolymerBond | HydrogenBond =>
+            (bond instanceof PolymerBond || bond instanceof HydrogenBond) &&
+            bond.firstMonomer === connectedMonomer &&
+            Boolean(bond.secondMonomer?.selected),
+        ),
+      );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.selectDrawingEntities([
+          ...connectedMonomers,
+          ...bondsInsideChain,
+        ]),
       );
     }
 
@@ -367,7 +418,7 @@ abstract class SelectBase implements BaseTool {
 
   protected abstract updateSelectionViewParams(): void;
 
-  protected abstract onSelectionMove(isShiftPressed: boolean);
+  protected abstract onSelectionMove(isShiftPressed: boolean): void;
 
   static calculateAngleSnap(
     monomerPositionPlusCursorDelta: Vec2,
@@ -461,8 +512,8 @@ abstract class SelectBase implements BaseTool {
     threshold: number,
     pointToCheckOnAnotherAxis: number,
     snappingPointOnAnotherAxis: number,
-    thresholdOnAnotherAxis,
-  ) {
+    thresholdOnAnotherAxis: number,
+  ): boolean {
     return (
       pointToCheck < snappingPoint + threshold &&
       pointToCheck > snappingPoint - threshold &&
@@ -498,7 +549,7 @@ abstract class SelectBase implements BaseTool {
         );
 
         if (
-          SelectBase.needApplyGroupCenterSnapForOneAxis(
+          this.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.x,
             pairCenter.x,
             HalfMonomerSize,
@@ -517,7 +568,7 @@ abstract class SelectBase implements BaseTool {
             showGroupCenterSnapping: true,
           });
         } else if (
-          SelectBase.needApplyGroupCenterSnapForOneAxis(
+          this.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.y,
             pairCenter.y,
             HalfMonomerSize,
@@ -564,7 +615,7 @@ abstract class SelectBase implements BaseTool {
     snapAlignment: MonomersAlignment,
     distance: number,
   ) {
-    const alignment = SelectBase.determineAlignment(
+    const alignment = this.determineAlignment(
       firstMonomer.center,
       secondMonomer.center,
     );
@@ -600,7 +651,7 @@ abstract class SelectBase implements BaseTool {
     const remainingAlignedMonomers: BaseMonomer[] = [];
 
     const traverse = (currentMonomer: BaseMonomer) => {
-      const nextMonomers = SelectBase.getNextMonomers(
+      const nextMonomers = this.getNextMonomers(
         currentMonomer,
         visitedMonomers,
       );
@@ -610,7 +661,7 @@ abstract class SelectBase implements BaseTool {
         }
 
         if (
-          SelectBase.checkMonomersAlignment(
+          this.checkMonomersAlignment(
             currentMonomer,
             nextMonomer,
             alignment,
@@ -648,7 +699,7 @@ abstract class SelectBase implements BaseTool {
       return { distanceSnapPosition: null };
     }
 
-    const alignment = SelectBase.determineAlignment(
+    const alignment = this.determineAlignment(
       connectedMonomer.center,
       monomerForAlignment.center,
     );
@@ -695,7 +746,7 @@ abstract class SelectBase implements BaseTool {
       connectedMonomer,
       monomerForAlignment,
     ];
-    const additionalAlignedMonomers = SelectBase.findRemainingAlignedMonomers(
+    const additionalAlignedMonomers = this.findRemainingAlignedMonomers(
       monomerForAlignment,
       alignedMonomers,
       alignment,
@@ -762,14 +813,14 @@ abstract class SelectBase implements BaseTool {
     ];
 
     const additionalAlignedMonomersFromOneSide =
-      SelectBase.findRemainingAlignedMonomers(
+      this.findRemainingAlignedMonomers(
         firstConnectedMonomer,
         alignedMonomers,
         alignment,
         snapDistance,
       );
     const additionalAlignedMonomersFromOtherSide =
-      SelectBase.findRemainingAlignedMonomers(
+      this.findRemainingAlignedMonomers(
         secondConnectedMonomer,
         alignedMonomers,
         alignment,
@@ -795,7 +846,7 @@ abstract class SelectBase implements BaseTool {
   ) {
     const secondShortestBond = initialMonomer.polymerBondsSortedByLength[1];
     if (!secondShortestBond) {
-      return SelectBase.calculateSideDistanceSnap(
+      return this.calculateSideDistanceSnap(
         cursorPosition,
         initialMonomer,
         connectedMonomer,
@@ -805,33 +856,31 @@ abstract class SelectBase implements BaseTool {
     const secondConnectedMonomer =
       secondShortestBond.getAnotherMonomer(initialMonomer);
     if (!secondConnectedMonomer) {
-      return SelectBase.calculateSideDistanceSnap(
+      return this.calculateSideDistanceSnap(
         cursorPosition,
         initialMonomer,
         connectedMonomer,
       );
     }
 
-    const alignment = SelectBase.determineAlignment(
+    const alignment = this.determineAlignment(
       connectedMonomer.center,
       secondConnectedMonomer.center,
     );
 
-    if (!alignment) {
-      return SelectBase.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    return SelectBase.calculateInBetweenDistanceSnap(
-      cursorPosition,
-      initialMonomer,
-      connectedMonomer,
-      secondConnectedMonomer,
-      alignment,
-    );
+    return !alignment
+      ? this.calculateSideDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+        )
+      : this.calculateInBetweenDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+          secondConnectedMonomer,
+          alignment,
+        );
   }
 
   private tryToSnap(event: MouseEvent, movementDelta: Vec2) {
@@ -844,11 +893,11 @@ abstract class SelectBase implements BaseTool {
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
-    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+    const modifierKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const externalConnectionsToSelection =
       this.editor.drawingEntitiesManager.externalConnectionsToSelection;
 
-    if (modKeyPressed || externalConnectionsToSelection.length === 0) {
+    if (modifierKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
 
@@ -915,26 +964,26 @@ abstract class SelectBase implements BaseTool {
           return emptyResult;
         }
 
-        const showAngleSnapping = Boolean(angleSnapPosition);
-        const showBondLengthSnapping = Boolean(bondLengthSnapPosition);
-        const showDistanceSnapping =
-          !showBondLengthSnapping && Boolean(distanceSnapPosition);
+        const shouldShowAngleSnapping = Boolean(angleSnapPosition);
+        const shouldShowBondLengthSnapping = Boolean(bondLengthSnapPosition);
+        const shouldShowDistanceSnapping =
+          !shouldShowBondLengthSnapping && Boolean(distanceSnapPosition);
 
         if (
-          !showAngleSnapping &&
-          !showBondLengthSnapping &&
-          !showDistanceSnapping
+          !shouldShowAngleSnapping &&
+          !shouldShowBondLengthSnapping &&
+          !shouldShowDistanceSnapping
         ) {
           return emptyResult;
         }
 
         return {
           snapPosition: snapPosition.sub(selectedMonomer.position),
-          showAngleSnapping,
+          showAngleSnapping: shouldShowAngleSnapping,
           bond,
           connectedMonomer,
-          showBondLengthSnapping,
-          showDistanceSnapping,
+          showBondLengthSnapping: shouldShowBondLengthSnapping,
+          showDistanceSnapping: shouldShowDistanceSnapping,
           showGroupCenterSnapping: false,
           alignment,
           alignedMonomers,
@@ -969,7 +1018,78 @@ abstract class SelectBase implements BaseTool {
       return a.connectionLength - b.connectionLength;
     });
 
-    return snappingOptions[0] || emptyResult;
+    return snappingOptions[0] ?? emptyResult;
+  }
+
+  private handleAutoScrollDuringSelection(event: MouseEvent) {
+    if (!this.autoScrollEnabled) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const canvasWrapperNode = this.editor.zoomTool.canvasWrapper?.node();
+    if (!canvasWrapperNode) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    const rect = canvasWrapperNode.getBoundingClientRect();
+    const threshold = SelectBase.AUTO_SCROLL_EDGE_THRESHOLD;
+
+    const distanceFromTop = event.clientY - rect.top;
+    const distanceFromBottom = rect.bottom - event.clientY;
+    const distanceFromLeft = event.clientX - rect.left;
+    const distanceFromRight = rect.right - event.clientX;
+
+    // Note: D3 zoom translateBy moves viewport, not content.
+    // Negative values move viewport up (content appears to scroll down)
+    // Positive values move viewport down (content appears to scroll up)
+    let deltaX = 0;
+    let deltaY = 0;
+
+    if (distanceFromTop < threshold) {
+      deltaY = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromBottom < threshold) {
+      deltaY = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (distanceFromLeft < threshold) {
+      deltaX = SelectBase.AUTO_SCROLL_SPEED;
+    } else if (distanceFromRight < threshold) {
+      deltaX = -SelectBase.AUTO_SCROLL_SPEED;
+    }
+
+    if (deltaX === 0 && deltaY === 0) {
+      this.cancelAutoScroll();
+      return;
+    }
+
+    this.autoScrollDelta.x = deltaX;
+    this.autoScrollDelta.y = deltaY;
+
+    if (this.autoScrollRequestAnimationFrameID === null) {
+      this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
+        this.performAutoScroll(),
+      );
+    }
+  }
+
+  private performAutoScroll() {
+    if (
+      this.mode !== 'selecting' ||
+      this.autoScrollRequestAnimationFrameID === null
+    ) {
+      this.autoScrollRequestAnimationFrameID = null;
+      return;
+    }
+
+    this.editor.zoomTool.scrollBy(
+      this.autoScrollDelta.x,
+      this.autoScrollDelta.y,
+    );
+    this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
+      this.performAutoScroll(),
+    );
   }
 
   mousemove(event: MouseEvent) {
@@ -978,6 +1098,7 @@ abstract class SelectBase implements BaseTool {
     }
 
     if (this.mode === 'selecting') {
+      this.handleAutoScrollDuringSelection(event);
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
       return;
@@ -1059,28 +1180,28 @@ abstract class SelectBase implements BaseTool {
         });
       } else {
         const {
-          showAngleSnapping,
+          showAngleSnapping: shouldShowAngleSnapping,
           connectedMonomer,
           bond,
-          showBondLengthSnapping,
-          showDistanceSnapping,
+          showBondLengthSnapping: shouldShowBondLengthSnapping,
+          showDistanceSnapping: shouldShowDistanceSnapping,
           alignment,
           alignedMonomers,
         } = snapResult;
 
-        if (showAngleSnapping) {
+        if (shouldShowAngleSnapping) {
           this.editor.transientDrawingView.showAngleSnap({
             connectedMonomer,
             polymerBond: bond,
-            isBondLengthSnapped: showBondLengthSnapping,
+            isBondLengthSnapped: shouldShowBondLengthSnapping,
           });
         }
 
-        if (showBondLengthSnapping) {
+        if (shouldShowBondLengthSnapping) {
           this.editor.transientDrawingView.showBondSnap(bond);
         }
 
-        if (showDistanceSnapping) {
+        if (shouldShowDistanceSnapping) {
           this.editor.transientDrawingView.showDistanceSnap({
             alignment,
             alignedMonomers,
@@ -1131,7 +1252,7 @@ abstract class SelectBase implements BaseTool {
         if (hasMonomerSelection) {
           const firstMonomerCurrentPosition = selectedMonomers[0]?.position;
           const actualMovementDelta =
-            this.firstMonomerPositionBeforeMove && firstMonomerCurrentPosition
+            firstMonomerCurrentPosition && this.firstMonomerPositionBeforeMove
               ? Vec2.diff(
                   firstMonomerCurrentPosition,
                   this.firstMonomerPositionBeforeMove,
@@ -1173,8 +1294,11 @@ abstract class SelectBase implements BaseTool {
     }
   }
 
-  mouseOverDrawingEntity(event) {
-    const renderer = event.target.__data__;
+  mouseOverDrawingEntity(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (!renderer) {
+      return;
+    }
     const modelChanges =
       this.editor.drawingEntitiesManager.intendToSelectDrawingEntity(
         renderer.drawingEntity,
@@ -1182,8 +1306,11 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  mouseLeaveDrawingEntity(event) {
-    const renderer: BaseRenderer = event.target.__data__;
+  mouseLeaveDrawingEntity(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (!renderer) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.cancelIntentionToSelectDrawingEntity(
@@ -1192,13 +1319,17 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseOverPolymerBond(event) {
+  public mouseOverPolymerBond(event: MouseEvent): void {
     if (event.buttons === 1) {
       return;
     }
 
-    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
+    const renderer = SelectBase.getRendererFromEvent<
+      FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer
+    >(event);
+    if (!renderer) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -1207,10 +1338,11 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseLeavePolymerBond(event) {
-    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
-    if (!renderer.polymerBond) {
+  public mouseLeavePolymerBond(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<
+      FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer
+    >(event);
+    if (!renderer?.polymerBond) {
       return;
     }
 
@@ -1259,8 +1391,8 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const viewParams = this.buildRotationViewParams(center, bbox);
-    this.editor.transientDrawingView.showRotation(viewParams);
+    const viewParameters = this.buildRotationViewParams(center, bbox);
+    this.editor.transientDrawingView.showRotation(viewParameters);
     this.editor.transientDrawingView.update();
   }
 
@@ -1302,19 +1434,21 @@ abstract class SelectBase implements BaseTool {
 
       const bbox =
         this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-      if (bbox && this.rotationCenter) {
-        const viewParams = this.buildRotationViewParams(
-          this.rotationCenter,
-          bbox,
-          this.rotationStartAngle,
-        );
-        this.editor.transientDrawingView.showRotation({
-          ...viewParams,
-          rotationAngle: angleDelta,
-          isRotating: true,
-        });
-        this.editor.transientDrawingView.update();
+      if (!bbox || !this.rotationCenter) {
+        return;
       }
+
+      const viewParams = this.buildRotationViewParams(
+        this.rotationCenter,
+        bbox,
+        this.rotationStartAngle,
+      );
+      this.editor.transientDrawingView.showRotation({
+        ...viewParams,
+        rotationAngle: angleDelta,
+        isRotating: true,
+      });
+      this.editor.transientDrawingView.update();
     });
   }
 
@@ -1326,8 +1460,8 @@ abstract class SelectBase implements BaseTool {
       Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
     ) {
       this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
+      this.rotationCenter = undefined;
+      this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
       this.updateRotationView();
@@ -1342,29 +1476,42 @@ abstract class SelectBase implements BaseTool {
     history.update(modelChanges);
 
     this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
+    this.rotationCenter = undefined;
+    this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
     this.updateRotationView();
   }
 
+  private cancelAutoScroll() {
+    if (this.autoScrollRequestAnimationFrameID !== null) {
+      cancelAnimationFrame(this.autoScrollRequestAnimationFrameID);
+      this.autoScrollRequestAnimationFrameID = null;
+    }
+    this.autoScrollDelta.x = 0;
+    this.autoScrollDelta.y = 0;
+  }
+
   destroy() {
+    this.cancelAutoScroll();
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
     this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (this.editor.selectedTool?.name !== 'eraser-tool') {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
-
-      this.editor.renderersContainer.update(modelChanges);
+    if (this.editor.selectedTool?.name === 'eraser-tool') {
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public stopMovement() {
+    this.cancelAutoScroll();
     this.mode = 'standby';
     this.editor.transientDrawingView.clear();
   }

@@ -6,26 +6,100 @@ on:
 
 jobs:
   review:
+    # The label that was just added starts the run, not any review label that
+    # happens to sit on the pull request: adding an unrelated label while a
+    # review label is still there would otherwise start a second review.
     if: |
-      contains(github.event.pull_request.labels.*.name, 'Run Claude Review') &&
+      (
+        github.event.label.name == 'Run Claude Review' ||
+        github.event.label.name == 'Claude Review: Opus'
+      ) &&
       !contains(github.event.pull_request.title, 'Autotests')
     runs-on: ubuntu-latest
+    environment: ai-workflows
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: write
-      id-token: write
+      issues: write # the hub removes the label that started the run
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      # The hub, the lens and role prompts, scripts/review-panel.mjs and the
+      # .memory-bank documents all come from the base branch, so a pull
+      # request cannot change the logic, the prompts or the rules of its own
+      # review. This replaces the "Align agent config with master" step that
+      # claude-code-action needed.
+      - name: Checkout the base branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 1
+          persist-credentials: false
 
-      - name: PR Review with Progress Tracking
-        uses: anthropics/claude-code-action@v1
+      # The pull request checkout is data: the model runs read it with Read,
+      # Grep and Glob, and the hub reads the diff from it with git. Nothing
+      # from it is installed or executed. fetch-depth: 0 is needed because the
+      # hub asks git for the merge base of the base and head commits, and for
+      # the head of an earlier round after a force push.
+      - name: Checkout the pull request head as data
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
+          path: pr-head
+          fetch-depth: 0
+          persist-credentials: false
 
-          prompt: "/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}"
-          claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment"
-            --model "claude-opus-4-7"
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+
+      # The hub uses four root dev dependencies (@octokit/rest, diff, execa,
+      # p-map). The workspaces hold the editor packages and the Playwright
+      # suite, which no review step needs.
+      - name: Install the hub dependencies
+        run: npm ci --workspaces=false --ignore-scripts
+
+      # Pinned on purpose. 2.1.81 does not know --safe-mode and a run fails at
+      # once, so before raising this version run the isolation check of task
+      # 4.5 in openspec/changes/archive/2026-11-25-review-agent/tasks.md: one
+      # `claude -p --safe-mode --restricted` call that must not load a
+      # CLAUDE.md, a hook or an MCP server from the working tree.
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code@2.1.319
+
+      # The REVIEW_* variables are repository variables, so a maintainer can
+      # change a model without a pull request. An unset variable is empty and
+      # leaves the default in scripts/review/config.mjs. The brief on the pull
+      # request carries the result; the run log of the hub (review-run.json,
+      # with the dropped findings and the cost) stays on the runner and is not
+      # kept, because in a public repository a job log and an artifact are
+      # both public.
+      - name: Review the pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          REVIEW_FINDER_MODEL: ${{ vars.REVIEW_FINDER_MODEL }}
+          REVIEW_VERIFIER_MODEL: ${{ vars.REVIEW_VERIFIER_MODEL }}
+          REVIEW_STRONG_MODEL: ${{ vars.REVIEW_STRONG_MODEL }}
+        run: >-
+          node scripts/review/index.mjs
+          --pr ${{ github.event.pull_request.number }}
+          --base-dir .
+          --pr-dir pr-head
+
+      # The hub takes the review labels off itself when the run ends, also
+      # after an error. A job that GitHub cancels or times out runs no code of
+      # the hub at all, so the label would stay on and the next round would
+      # need it taken off by hand. A label that is already gone is not an
+      # error here.
+      - name: Take the review labels off
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh pr edit ${{ github.event.pull_request.number }}
+          --repo ${{ github.repository }}
+          --remove-label 'Run Claude Review'
+          --remove-label 'Claude Review: Opus'
+          || true

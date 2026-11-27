@@ -186,7 +186,8 @@
                     -0.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -235,7 +236,8 @@
                     -1.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -456,8 +458,7 @@
             "y": -4.25
         },
         "alias": "ThrPO3",
-        "templateId": "ThrPO3___O-phospho-L-threonine",
-        "seqid": 7
+        "templateId": "ThrPO3___O-phospho-L-threonine"
     },
     "monomer7": {
         "type": "monomer",

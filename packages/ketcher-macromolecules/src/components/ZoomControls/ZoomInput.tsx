@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,9 @@ import {
   useCallback,
   RefObject,
 } from 'react';
+import { isTouchDevice } from 'ketcher-react';
 import { StyledInput } from 'components/ZoomControls/styles';
-import {
-  hotkeysShortcuts,
-  updateInputString,
-} from 'components/ZoomControls/helpers';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 interface ZoomInputProps {
   onZoomSubmit: () => void;
@@ -51,12 +49,14 @@ export const ZoomInput = ({
       if (!zoomShortcuts.includes(event.key))
         event.nativeEvent.stopImmediatePropagation();
 
-      if (event.key === 'Enter') {
-        onZoomSubmit();
-        inputEl.select();
+      if (event.key !== 'Enter') {
+        return;
       }
+
+      onZoomSubmit();
+      inputEl.select();
     },
-    [onZoomSubmit, inputRef, hotkeysShortcuts],
+    [onZoomSubmit, inputRef],
   );
 
   const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
@@ -64,17 +64,13 @@ export const ZoomInput = ({
     el.select();
   };
 
+  // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
-    updateInputString(currentZoom, inputEl);
-    if (document.activeElement === inputEl) {
-      inputEl?.select();
+    if (isTouchDevice) {
+      return;
     }
-  }, [currentZoom, inputRef]);
 
-  // Focus on input field upon mounting
-  useEffect(() => {
-    const inputEl = inputRef.current;
     inputEl?.focus();
     inputEl?.select();
   }, [inputRef]);
@@ -83,8 +79,10 @@ export const ZoomInput = ({
     <StyledInput
       ref={inputRef}
       data-testid="zoom-value"
+      defaultValue={`${currentZoom}%`}
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
+      inputMode="numeric"
     />
   );
 };

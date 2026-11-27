@@ -163,7 +163,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -405,7 +406,6 @@
             "y": -4.25
         },
         "alias": "meC",
-        "templateId": "meC___N-Methyl-Cysteine",
-        "seqid": 8
+        "templateId": "meC___N-Methyl-Cysteine"
     }
 }

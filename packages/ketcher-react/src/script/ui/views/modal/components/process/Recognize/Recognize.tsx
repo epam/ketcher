@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,14 +15,13 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
+import { useTranslation } from 'react-i18next';
 import { changeImage, changeVersion } from '../../../../../state/options';
+import type { RecognizeImageFile } from '../../../../../state/options/types';
 
 import { Dialog } from '../../../../components';
 import Input from '../../../../../component/form/Input/Input';
 import OpenButton from '../../../../../component/view/openbutton';
-import type { FileContent } from '../../../../../component/view/openButton.types';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import classes from './Recognize.module.less';
 import { connect } from 'react-redux';
@@ -33,10 +32,9 @@ import { DialogActionButton } from 'src/script/ui/views/modal/components/documen
 import { Icon, StructRender } from 'components';
 import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
+import type { AppDispatch } from 'src/script/ui/state/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
-type RecognizeImageFile = File | FileContent | null;
-
 function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
@@ -56,6 +54,7 @@ function FooterContent({
   copyHandler,
   isAddToCanvasDisabled,
 }: Readonly<FooterContentProps>) {
+  const { t } = useTranslation('dialogs');
   return (
     <div className={classes.footerContent}>
       <OpenButton
@@ -65,7 +64,7 @@ function FooterContent({
         className={classes.openButton}
       >
         <Icon name="open" />
-        <span>Change image</span>
+        <span>{t('process.recognize.changeImage')}</span>
       </OpenButton>
       <div>
         <DialogActionButton
@@ -73,15 +72,15 @@ function FooterContent({
           disabled={!structStr}
           clickHandler={openHandler}
           styles={classes.secondaryButton}
-          label="Open as new Project"
+          label={t('process.recognize.openAsNewProject')}
         />
         <DialogActionButton
           key="copyButton"
           disabled={!structStr || isAddToCanvasDisabled}
           clickHandler={copyHandler}
           styles={classes.primaryButton}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+          label={t('shared.addToCanvas')}
+          title={t('shared.addToCanvasTooltip')}
         />
       </div>
     </div>
@@ -112,6 +111,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     ...partProps
   } = prop;
   const { onRecognize, onImage, onChangeImago, ...props } = partProps;
+  const { t } = useTranslation('dialogs');
   const [canPreviewImage, setCanPreviewImage] = useState(true);
   const result = () =>
     structStr && !(structStr instanceof Promise)
@@ -142,7 +142,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
   return (
     <Dialog
-      title="Import Structure from Image"
+      title={t('process.recognize.dialogTitle')}
       className={classes.recognize}
       params={{ ...props, onOk }}
       result={result}
@@ -163,23 +163,21 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
     >
       <div className={classes.topBody}>
         <label className={classes.imagoVersion}>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
-          Imago version
+          {t('process.recognize.imagoVersionLabel')}
           <Input
             type="text"
             schema={{
               enum: imagoVersions,
-              enumNames: range(1, imagoVersions.length + 1).map(
-                (i) => `Version ${i}`,
+              enumNames: range(1, imagoVersions.length + 1).map((i) =>
+                t('process.recognize.imagoVersionOption', { number: i }),
               ),
             }}
             value={version}
-            onChange={onChangeImago}
+            onChange={(val) => onChangeImago(val as string)}
           />
-          {/* eslint-enable jsx-a11y/label-has-associated-control */}
         </label>
-        <span>Original image</span>
-        <span>Recognized structure preview</span>
+        <span>{t('process.recognize.originalImage')}</span>
+        <span>{t('process.recognize.recognizedStructurePreview')}</span>
       </div>
 
       <div className={classes.imagesContainer}>
@@ -198,29 +196,29 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
           {file && isImage(file) && !canPreviewImage && (
             <div className={classes.messageContainer}>
               <p>
-                Preview of '{file.type}' MIME type is not supported by current
-                browser
+                {t('process.recognize.previewNotSupported', {
+                  type: file.type,
+                })}
               </p>
             </div>
           )}
           {(!file || (!isImage(file) && clearFile())) && (
             <div className={classes.messageContainer}>
-              <p>Please choose image</p>
+              <p>{t('process.recognize.pleaseChooseImage')}</p>
             </div>
           )}
         </div>
         <div className={classes.output}>
           {structStr &&
-            // in Edge 38: instanceof Promise always `false`
-            (structStr instanceof Promise || typeof structStr !== 'string' ? (
-              <div className={classes.messageContainer}>
-                <LoadingCircles />
-              </div>
-            ) : (
+            (typeof structStr === 'string' ? (
               <StructRender
                 className={classes.struct}
                 struct={structStr as unknown as Struct}
               />
+            ) : (
+              <div className={classes.messageContainer}>
+                <LoadingCircles />
+              </div>
             ))}
         </div>
       </div>
@@ -232,7 +230,8 @@ type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
+  const URL =
+    globalThis.URL || (globalThis.window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
@@ -259,9 +258,7 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-const mapDispatchToProps = (
-  dispatch: ThunkDispatch<RecognizeState, undefined, AnyAction>,
-) => ({
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>
     dispatch(recognize(file, ver)),
@@ -270,7 +267,6 @@ const mapDispatchToProps = (
     const res = result as { structStr: string; fragment: boolean };
     dispatch(
       load(res.structStr as unknown as Struct, {
-        rescale: true,
         fragment: res.fragment,
       }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4

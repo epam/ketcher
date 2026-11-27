@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,39 +15,47 @@
  ***************************************************************************/
 
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import type { ReactNode } from 'react';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { type Mock, vi } from 'vitest';
+import type { Editor } from '../../../../editor';
+import styles from './RnaPresetTabs.module.less';
 
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
 import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 
+type HighlightObject = {
+  atoms?: number[];
+  bonds?: number[];
+  color?: string;
+  outline?: boolean;
+};
+
 // Mock the Icon component to avoid module resolution issues
-jest.mock('components', () => ({
+vi.mock('components', () => ({
   Icon: ({ name }: { name: string }) => <div data-testid={`icon-${name}`} />,
 }));
 
 // Mock the selectors
-jest.mock('../../../state/editor/selectors', () => ({
+vi.mock('../../../state/editor/selectors', () => ({
   selectionSelector: (state) => state.editor?.selection,
   editorMonomerCreationStateSelector: (state) =>
     state.editor?.monomerCreationState,
 }));
 
 // Mock useAppContext
-jest.mock('../../../../../hooks', () => ({
+vi.mock('../../../../../hooks', () => ({
   useAppContext: () => ({
     ketcherId: 'test-ketcher-id',
   }),
 }));
 
 // Mock MonomerCreationWizardFields to avoid additional dependencies
-jest.mock('./MonomerCreationWizardFields', () => ({
+vi.mock('./MonomerCreationWizardFields', () => ({
   __esModule: true,
   default: ({
     assignedAttachmentPoints,
@@ -71,22 +79,35 @@ jest.mock('./MonomerCreationWizardFields', () => ({
   ),
 }));
 
-jest.mock('./components/AttachmentPoint/AttachmentPoint', () => ({
+vi.mock('./components/AttachmentPoint/AttachmentPoint', () => ({
   __esModule: true,
   default: ({ name }: { name: string }) => <div>{name}</div>,
 }));
 
 // Create a mock store
 const createMockStore = (
-  selection = { atoms: [], bonds: [] },
-  monomerCreationState = {
-    assignedAttachmentPoints: new Map(),
+  selection?: {
+    atoms?: number[];
+    bonds?: number[];
+  },
+  monomerCreationState?: {
+    assignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   },
 ) => {
+  const resolvedSelection = {
+    atoms: [],
+    bonds: [],
+    ...selection,
+  };
+  const resolvedMonomerCreationState = {
+    assignedAttachmentPoints: new Map<AttachmentPointName, [number, number]>(),
+    ...monomerCreationState,
+  };
+
   const reducer = combineReducers({
     editor: () => ({
-      selection,
-      monomerCreationState,
+      selection: resolvedSelection,
+      monomerCreationState: resolvedMonomerCreationState,
     }),
   });
   return createStore(reducer);
@@ -95,22 +116,22 @@ const createMockStore = (
 // Mock Editor with highlights API
 const createMockEditor = () => {
   const highlightsMock = {
-    clear: jest.fn(),
-    create: jest.fn(),
-    getAll: jest.fn(() => []),
+    clear: vi.fn(),
+    create: vi.fn(),
+    getAll: vi.fn(() => []),
   };
 
   return {
     highlights: highlightsMock,
-    selection: jest.fn(),
-    struct: jest.fn(() => ({
+    selection: vi.fn(),
+    struct: vi.fn(() => ({
       atoms: new Map(),
       bonds: new Map(),
       halfBonds: new Map(),
     })),
-    reassignAttachmentPoint: jest.fn(),
-    changeLeavingAtomLabel: jest.fn(),
-    removeAttachmentPoint: jest.fn(),
+    reassignAttachmentPoint: vi.fn(),
+    changeLeavingAtomLabel: vi.fn(),
+    removeAttachmentPoint: vi.fn(),
     render: {
       ctab: {
         molecule: {
@@ -118,10 +139,17 @@ const createMockEditor = () => {
         },
       },
     },
-    update: jest.fn(),
-    setVisibleAssignedAttachmentPoints: jest.fn(),
-    setConnectionAttachmentPoints: jest.fn(),
-  } as any;
+    update: vi.fn(),
+    setVisibleAssignedAttachmentPoints: vi.fn(),
+    setConnectionAttachmentPoints: vi.fn(),
+  } as unknown as Editor & {
+    highlights: {
+      clear: Mock;
+      create: Mock;
+      getAll: Mock;
+    };
+    struct: Mock;
+  };
 };
 
 // Helper to create initial wizard state
@@ -183,17 +211,17 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
 describe('RnaPresetTabs - applyHighlights function', () => {
   let mockEditor: ReturnType<typeof createMockEditor>;
   let mockStore: ReturnType<typeof createMockStore>;
-  let mockDispatch: jest.Mock;
-  let mockOnPhosphatePositionChange: jest.Mock;
+  let mockDispatch: Mock;
+  let mockOnPhosphatePositionChange: Mock;
   let wizardState: RnaPresetWizardState;
 
   beforeEach(() => {
     mockEditor = createMockEditor();
     mockStore = createMockStore();
-    mockDispatch = jest.fn();
-    mockOnPhosphatePositionChange = jest.fn();
+    mockDispatch = vi.fn();
+    mockOnPhosphatePositionChange = vi.fn();
     wizardState = createInitialWizardState();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should clear existing highlights when structure exists and tab is clicked', () => {
@@ -290,10 +318,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     const createCalls = mockEditor.highlights.create.mock.calls;
 
     // Flatten all calls to get all highlight objects
-    const allHighlights = createCalls.flat();
+    const allHighlights = createCalls.flat() as HighlightObject[];
 
-    const baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    const sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    const baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    const sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
 
     expect(baseHighlight).toMatchObject({
       atoms: [1, 2, 3],
@@ -345,13 +373,11 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
     // Get all create calls and flatten
     const createCalls = mockEditor.highlights.create.mock.calls;
-    const allHighlights = createCalls.flat();
+    const allHighlights = createCalls.flat() as HighlightObject[];
 
-    const baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    const sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
-    const phosphateHighlight = allHighlights.find((h: any) =>
-      h.atoms?.includes(7),
-    );
+    const baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    const sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
+    const phosphateHighlight = allHighlights.find((h) => h.atoms?.includes(7));
 
     // Base should have inactive color + outline
     expect(baseHighlight).toMatchObject({
@@ -440,16 +466,16 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(baseTab);
 
     let createCalls = mockEditor.highlights.create.mock.calls;
-    let allHighlights = createCalls.flat();
+    let allHighlights = createCalls.flat() as HighlightObject[];
 
-    let baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    let sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    let baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    let sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
 
     // Base should be active
     expect(baseHighlight).toBeDefined();
     expect(sugarHighlight).toBeDefined();
-    expect(baseHighlight.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
-    expect(sugarHighlight.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
+    expect(baseHighlight?.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
+    expect(sugarHighlight?.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
 
     // Clear the mock to start fresh
     mockEditor.highlights.create.mockClear();
@@ -459,16 +485,16 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(sugarTab);
 
     createCalls = mockEditor.highlights.create.mock.calls;
-    allHighlights = createCalls.flat();
+    allHighlights = createCalls.flat() as HighlightObject[];
 
-    baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
-    sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    baseHighlight = allHighlights.find((h) => h.atoms?.includes(1));
+    sugarHighlight = allHighlights.find((h) => h.atoms?.includes(4));
 
     // Now sugar should be active and base should be inactive
     expect(sugarHighlight).toBeDefined();
     expect(baseHighlight).toBeDefined();
-    expect(sugarHighlight.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
-    expect(baseHighlight.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
+    expect(sugarHighlight?.color).toBe(ACTIVE_HIGHLIGHT_COLOR);
+    expect(baseHighlight?.color).toBe(INACTIVE_HIGHLIGHT_COLOR);
   });
 
   it('should clear highlights but not create new ones when tab has no structure', () => {
@@ -885,17 +911,17 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
   let mockEditor: ReturnType<typeof createMockEditor>;
   let mockStore: ReturnType<typeof createMockStore>;
-  let mockDispatch: jest.Mock;
-  let mockOnPhosphatePositionChange: jest.Mock;
+  let mockDispatch: Mock;
+  let mockOnPhosphatePositionChange: Mock;
   let wizardState: RnaPresetWizardState;
 
   beforeEach(() => {
     mockEditor = createMockEditor();
     mockStore = createMockStore();
-    mockDispatch = jest.fn();
-    mockOnPhosphatePositionChange = jest.fn();
+    mockDispatch = vi.fn();
+    mockOnPhosphatePositionChange = vi.fn();
     wizardState = createInitialWizardState();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const renderTabs = () =>
@@ -916,16 +942,16 @@ describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
   const tabErrors = () => ({
     preset: screen
       .getByTestId('nucleotide-preset-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
     base: screen
       .getByTestId('nucleotide-base-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
     sugar: screen
       .getByTestId('nucleotide-sugar-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
     phosphate: screen
       .getByTestId('nucleotide-phosphate-tab')
-      .classList.contains('errorTab'),
+      .classList.contains(styles.errorTab),
   });
 
   it('highlights only the missing components when only a base is defined', () => {
@@ -978,6 +1004,8 @@ describe('RnaPresetTabs - missing-component tab highlighting (#10247)', () => {
 
     renderTabs();
 
-    expect(screen.getByTestId('nucleotide-preset-tab')).toHaveClass('errorTab');
+    expect(screen.getByTestId('nucleotide-preset-tab')).toHaveClass(
+      styles.errorTab,
+    );
   });
 });

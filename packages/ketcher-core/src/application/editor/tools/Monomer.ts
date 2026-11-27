@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,8 @@ import {
   AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
 import type { MonomerOrAmbiguousType } from 'domain/types';
-import type { Command } from 'domain/entities/Command';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Coordinates } from '../shared/coordinates';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
@@ -32,45 +31,43 @@ class MonomerTool implements BaseTool {
   private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
 
   private monomerPreviewRenderer:
-    | BaseMonomerRenderer
-    | AmbiguousMonomerRenderer
-    | undefined;
+    BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
+
+  private readonly monomer: MonomerOrAmbiguousType;
 
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
+
   constructor(
     private readonly editor: CoreEditor,
-    private readonly monomer: MonomerOrAmbiguousType,
+    ...arguments_: unknown[]
   ) {
-    this.editor = editor;
+    const [monomer] = arguments_ as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    let modelChanges: Command;
     const position = Coordinates.canvasToModel(
       new Vec2(
         this.editor.lastCursorPositionOfCanvas.x,
         this.editor.lastCursorPositionOfCanvas.y,
       ),
     );
-    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-      modelChanges = this.editor.drawingEntitiesManager.addAmbiguousMonomer(
-        this.monomer,
-        position,
-      );
-    } else {
-      modelChanges = this.editor.drawingEntitiesManager.addMonomer(
-        this.monomer,
-        // We convert monomer coordinates from pixels to angstroms
-        // because the model layer (like BaseMonomer) should not work with pixels
-        position,
-      );
-    }
+    const modelChanges = isAmbiguousMonomerLibraryItem(this.monomer)
+      ? this.editor.drawingEntitiesManager.addAmbiguousMonomer(
+          this.monomer,
+          position,
+        )
+      : this.editor.drawingEntitiesManager.addMonomer(
+          this.monomer,
+          // We convert monomer coordinates from pixels to angstroms
+          // because the model layer (like BaseMonomer) should not work with pixels
+          position,
+        );
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
@@ -95,27 +92,29 @@ class MonomerTool implements BaseTool {
   }
 
   public mouseover() {
-    if (!this.monomerPreview) {
-      if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-        const variantMonomer = new AmbiguousMonomer(this.monomer);
-        this.monomerPreview = variantMonomer;
-        this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
-          variantMonomer,
-          this.MONOMER_PREVIEW_SCALE_FACTOR,
-        );
-      } else {
-        const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
-
-        this.monomerPreview = new Monomer(this.monomer);
-        this.monomerPreviewRenderer = new MonomerRenderer(
-          this.monomerPreview,
-          this.MONOMER_PREVIEW_SCALE_FACTOR,
-          false,
-        );
-      }
-
-      this.monomerPreviewRenderer?.show(this.editor.theme);
+    if (this.monomerPreview) {
+      return;
     }
+
+    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
+      const variantMonomer = new AmbiguousMonomer(this.monomer);
+      this.monomerPreview = variantMonomer;
+      this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
+        variantMonomer,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+      );
+    } else {
+      const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
+
+      this.monomerPreview = new Monomer(this.monomer);
+      this.monomerPreviewRenderer = new MonomerRenderer(
+        this.monomerPreview,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+        false,
+      );
+    }
+
+    this.monomerPreviewRenderer?.show(this.editor.theme);
   }
 
   hidePreview() {

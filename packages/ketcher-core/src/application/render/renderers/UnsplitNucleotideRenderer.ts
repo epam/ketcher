@@ -7,6 +7,10 @@ import {
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import {
+  type HighlightPathData,
+  createNucleotideHighlightPath,
+} from 'application/render/renderers/monomerHighlightShapes';
 
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
@@ -19,7 +23,10 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
-  constructor(public monomer: UnsplitNucleotide, scale?: number) {
+  constructor(
+    public monomer: UnsplitNucleotide,
+    scale?: number,
+  ) {
     super(
       monomer,
       NUCLEOTIDE_HOVERED_ELEMENT_ID,
@@ -29,18 +36,21 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
     );
   }
 
+  public getHighlightPath(offset = 0): HighlightPathData {
+    const { width, height } = this.monomerSize;
+    return createNucleotideHighlightPath(this.center, width, height, offset);
+  }
+
   public get textColor() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return 'white';
-    }
-    return super.textColor;
+    return this.monomer.monomerItem.props.unresolved
+      ? 'white'
+      : super.textColor;
   }
 
   protected getMonomerColor(theme) {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return UNRESOLVED_MONOMER_COLOR;
-    }
-    return super.getMonomerColor(theme);
+    return this.monomer.monomerItem.props.unresolved
+      ? UNRESOLVED_MONOMER_COLOR
+      : super.getMonomerColor(theme);
   }
 
   protected appendBody(

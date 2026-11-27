@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
 import { cloneElement, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
@@ -82,8 +83,9 @@ const ControlsPanel = styled('div')`
   justify-content: space-between;
   gap: 0px;
   height: 36px;
-  padding: 0px 22px;
+  padding: 0px;
   background-color: #ffffff;
+  border-radius: 4px;
   box-shadow: 0px 2px 5px rgba(103, 104, 132, 0.15);
 
   .group {
@@ -94,24 +96,6 @@ const ControlsPanel = styled('div')`
 
   & * {
     box-sizing: border-box;
-  }
-
-  @media only screen {
-    @container (min-width: 1024px) {
-      height: 40px;
-      gap: 0px;
-      padding-bottom: 0;
-      .group {
-        gap: 4px;
-      }
-    }
-  }
-
-  @media only screen {
-    @container (min-width: 1920px) {
-      height: 64px;
-      gap: 12px;
-    }
   }
 `;
 
@@ -160,6 +144,7 @@ export const TopToolbar = ({
   customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
+  const { t } = useTranslation('toolbar');
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
@@ -192,7 +177,7 @@ export const TopToolbar = ({
     >
       <BtnsWpapper>
         <TopToolbarIconButton
-          title="Clear Canvas"
+          title={t('menu.clear')}
           onClick={onClear}
           iconName="clear"
           shortcut={shortcuts.clear}
@@ -207,6 +192,7 @@ export const TopToolbar = ({
           hiddenButtons={hiddenButtons}
           disabledButtons={disabledButtons}
         />
+        <Divider />
         <ClipboardControls
           onCopy={onCopy}
           onCopyMol={onCopyMol}

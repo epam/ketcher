@@ -289,8 +289,7 @@
             "y": -1.25
         },
         "alias": "P",
-        "templateId": "P___Proline",
-        "seqid": 1
+        "templateId": "P___Proline"
     },
     "monomerTemplate-P___Proline": {
         "type": "monomerTemplate",
@@ -310,7 +309,8 @@
                     0.209,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -461,6 +461,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "P"
     },

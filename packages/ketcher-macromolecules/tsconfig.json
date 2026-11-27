@@ -24,7 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["jest", "node", "react", "react-dom"],
+    "types": ["vitest/globals", "node", "react", "react-dom"],
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
@@ -36,14 +36,10 @@
       "theming/*": ["./src/theming/*"],
       "helpers": ["./src/helpers"],
       "helpers/*": ["./src/helpers/*"],
-      "src/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "transform": "@zerollup/ts-transform-paths",
-        "exclude": ["*"]
-      }
-    ]
+      "src/*": ["./src/*"],
+      "ketcher-react": ["./src/types/ketcher-react"],
+      "ketcher-react/*": ["./src/types/ketcher-react/*"]
+    }
   },
   "include": ["src"]
 }

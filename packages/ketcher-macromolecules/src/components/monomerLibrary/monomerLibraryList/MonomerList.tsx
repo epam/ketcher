@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import { MonomerListContainer } from './styles';
 import { IMonomerListProps } from './types';
 import {
@@ -33,7 +34,6 @@ import {
   MonomerGroups,
 } from '../../../constants';
 import { MonomerItemType } from 'ketcher-core';
-import { selectEditorActiveTool } from 'state/common';
 import {
   selectFilteredPresets,
   selectPresetsInFavorites,
@@ -57,17 +57,17 @@ const MonomerList = ({
   duplicatePreset,
   editPreset,
 }: IMonomerListProps) => {
+  const { t } = useTranslation(['macromoleculesDialogs', 'macromolecules']);
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
-  const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
 
-  const items = !isFavoriteTab
-    ? selectMonomersInCategory(monomers, libraryName)
-    : ({
+  const items = isFavoriteTab
+    ? ({
         monomers: selectMonomersInFavorites(monomers),
         presets: selectPresetsInFavorites(presets),
-      } as Favorites);
+      } as Favorites)
+    : selectMonomersInCategory(monomers, libraryName);
 
   const monomerGroups = selectMonomerGroups(
     isFavoriteTab
@@ -77,32 +77,26 @@ const MonomerList = ({
   const ambiguousMonomers = isFavoriteTab
     ? selectAmbiguousMonomersInFavorites(monomers)
     : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
-  const [selectedMonomers, setSelectedMonomers] = useState('');
-
-  useEffect(() => {
-    if (activeTool !== 'monomer') {
-      setSelectedMonomers('');
-    }
-  }, [activeTool]);
-
   return (
     <MonomerListContainer>
-      {isFavoriteTab && monomerGroups.length > 0 && <div>Monomers</div>}
+      {isFavoriteTab && monomerGroups.length > 0 && (
+        <div>{t('monomerLibrary.monomersSectionHeader')}</div>
+      )}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
+        const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
         return (
           <MonomerGroup
             key={groupTitle}
-            title={groups.length === 1 ? undefined : groupTitle}
+            title={groups.length === 1 ? undefined : resolvedTitle}
             items={groupItems}
             libraryName={libraryName}
             onItemClick={onItemClick}
-            selectedMonomerUniqueKey={selectedMonomers}
           />
         );
       })}
       {isFavoriteTab && (items as Favorites).presets.length > 0 && (
         <>
-          <div>Presets</div>
+          <div>{t('monomerLibrary.presetsSectionHeader')}</div>
           <RnaPresetGroup
             duplicatePreset={duplicatePreset}
             editPreset={editPreset}
@@ -113,14 +107,14 @@ const MonomerList = ({
       <>
         {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
           ambiguousMonomers.map((group) => {
+            const resolvedTitle = resolveLocalizedTitle(group.groupTitle, t);
             return (
               <MonomerGroup
                 key={group.groupTitle}
-                title={group.groupTitle}
+                title={resolvedTitle}
                 items={group.groupItems}
                 libraryName={libraryName}
                 onItemClick={onItemClick}
-                selectedMonomerUniqueKey={selectedMonomers}
               />
             );
           })}

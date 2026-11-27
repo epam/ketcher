@@ -3,8 +3,7 @@
  * Tests migration from namespaced format back to flat format
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
-
+import { vi } from 'vitest';
 import { SettingsMigration } from '../SettingsMigration';
 
 describe('SettingsMigration', () => {
@@ -57,7 +56,7 @@ describe('SettingsMigration', () => {
     });
 
     it('should handle non-object input', () => {
-      const migrated = SettingsMigration.migrate('not an object' as any);
+      const migrated = SettingsMigration.migrate('not an object');
 
       expect(migrated).toEqual({});
     });
@@ -92,7 +91,7 @@ describe('SettingsMigration', () => {
       const namespacedFormat = {
         render: {
           atomColoring: false,
-          bondThickness: 2.0,
+          bondThickness: 2,
           font: '30px Arial',
           showStereoFlags: true,
         },
@@ -102,7 +101,7 @@ describe('SettingsMigration', () => {
 
       expect(migrated).toEqual({
         atomColoring: false,
-        bondThickness: 2.0,
+        bondThickness: 2,
         font: '30px Arial',
         showStereoFlags: true,
       });
@@ -300,7 +299,7 @@ describe('SettingsMigration', () => {
 
     beforeAll(() => {
       originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(
-        global,
+        globalThis,
         'localStorage',
       );
     });
@@ -308,13 +307,13 @@ describe('SettingsMigration', () => {
     beforeEach(() => {
       mockLocalStorage = {};
 
-      Object.defineProperty(global, 'localStorage', {
+      Object.defineProperty(globalThis, 'localStorage', {
         value: {
-          getItem: jest.fn((key: string) => mockLocalStorage[key] || null),
-          setItem: jest.fn((key: string, value: string) => {
+          getItem: vi.fn((key: string) => mockLocalStorage[key] || null),
+          setItem: vi.fn((key: string, value: string) => {
             mockLocalStorage[key] = value;
           }),
-          removeItem: jest.fn((key: string) => {
+          removeItem: vi.fn((key: string) => {
             delete mockLocalStorage[key];
           }),
         },
@@ -326,12 +325,12 @@ describe('SettingsMigration', () => {
     afterEach(() => {
       if (originalLocalStorageDescriptor) {
         Object.defineProperty(
-          global,
+          globalThis,
           'localStorage',
           originalLocalStorageDescriptor,
         );
       } else {
-        Reflect.deleteProperty(global, 'localStorage');
+        Reflect.deleteProperty(globalThis, 'localStorage');
       }
     });
 
@@ -411,7 +410,7 @@ describe('SettingsMigration', () => {
     });
 
     it('should handle localStorage not available', () => {
-      Object.defineProperty(global, 'localStorage', {
+      Object.defineProperty(globalThis, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
         },

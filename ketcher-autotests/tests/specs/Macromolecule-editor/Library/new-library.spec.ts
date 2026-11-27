@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
 import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
@@ -8,7 +6,6 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForRender } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -22,6 +19,7 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { DragonGhostElement } from '@tests/pages/macromolecules/canvas/DragonGhostElement';
 import {
   FavoriteStarSymbol,
   RNASection,
@@ -818,11 +816,10 @@ for (const monomer of monomerToDrag) {
     if (!monomerBoundingBox) throw new Error('Monomer element not found');
 
     await page.mouse.down();
-    await page.mouse.move(
-      monomerBoundingBox?.x - 10,
-      monomerBoundingBox?.y - 10,
-    );
-    await waitForRender(page);
+    await page.mouse.move(monomerBoundingBox.x - 10, monomerBoundingBox.y - 10);
+    await DragonGhostElement(page).dragonGhostElement.waitFor({
+      state: 'visible',
+    });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -869,11 +866,10 @@ for (const monomer of monomerToDrag) {
     if (!monomerBoundingBox) throw new Error('Monomer element not found');
 
     await page.mouse.down();
-    await page.mouse.move(
-      monomerBoundingBox?.x - 10,
-      monomerBoundingBox?.y - 10,
-    );
-    await waitForRender(page);
+    await page.mouse.move(monomerBoundingBox.x - 10, monomerBoundingBox.y - 10);
+    await DragonGhostElement(page).dragonGhostElement.waitFor({
+      state: 'visible',
+    });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1112,18 +1108,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
 
     if (
-      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
-      const monomersOnCanvas = getMonomerLocator(page, monomer);
-      const resultedBond = await bondTwoMonomers(
-        page,
-        monomersOnCanvas.nth(0),
-        monomersOnCanvas.nth(1),
-        AttachmentPoint.R2,
-        AttachmentPoint.R1,
-      );
-      await expect(resultedBond).toHaveCount(1);
-    } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
       }).first();
@@ -1134,6 +1120,16 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
+      );
+      await expect(resultedBond).toHaveCount(1);
+    } else {
+      const monomersOnCanvas = getMonomerLocator(page, monomer);
+      const resultedBond = await bondTwoMonomers(
+        page,
+        monomersOnCanvas.nth(0),
+        monomersOnCanvas.nth(1),
         AttachmentPoint.R2,
         AttachmentPoint.R1,
       );
@@ -1165,17 +1161,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
 
     if (
-      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
-      const monomersOnCanvas = getMonomerLocator(page, monomer);
-      await bondTwoMonomers(
-        page,
-        monomersOnCanvas.nth(0),
-        monomersOnCanvas.nth(1),
-        AttachmentPoint.R2,
-        AttachmentPoint.R1,
-      );
-    } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
       }).first();
@@ -1186,6 +1173,15 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
+      );
+    } else {
+      const monomersOnCanvas = getMonomerLocator(page, monomer);
+      await bondTwoMonomers(
+        page,
+        monomersOnCanvas.nth(0),
+        monomersOnCanvas.nth(1),
         AttachmentPoint.R2,
         AttachmentPoint.R1,
       );
@@ -1912,7 +1908,7 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
 
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 500, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
@@ -1947,7 +1943,7 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
 
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 500, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -44,7 +43,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
 
 let page: Page;
 
@@ -178,7 +177,7 @@ test('Select monomers and pass a bond', async () => {
   await bondTwoMonomers(page, peptide2, peptide1);
   const errorMessage =
     "There can't be more than 1 bond between the first and the second monomer";
-  expect(await NotificationBanner(page).getNotificationText()).toEqual(
+  expect(await NotificationBannerOnMacro(page).getNotificationText()).toEqual(
     errorMessage,
   );
 });

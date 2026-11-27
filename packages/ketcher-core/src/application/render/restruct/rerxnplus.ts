@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,10 @@ import type ReStruct from './restruct';
 import type { RenderOptions } from '../render.types';
 
 class ReRxnPlus extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   item: RxnPlus;
 
   constructor(plus: RxnPlus) {
@@ -33,16 +37,11 @@ class ReRxnPlus extends ReObject {
     this.item = plus;
   }
 
-  static isSelectable(): boolean {
-    return true;
-  }
-
   hoverPath(render: Render) {
     const p = Scale.modelToCanvas(this.item.pp, render.options);
     const s = render.options.microModeScale;
-    /* eslint-disable no-mixed-operators */
+
     return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
-    /* eslint-enable no-mixed-operators */
   }
 
   drawHover(render: Render) {
@@ -65,7 +64,7 @@ class ReRxnPlus extends ReObject {
     const centre = Scale.modelToCanvas(this.item.pp, options);
     const path = draw.plus(render.paper, centre, options);
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
     path.node?.setAttribute('data-testid', 'rxn-plus');
   }

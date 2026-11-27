@@ -1,4 +1,5 @@
 import { ItemParams } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import {
@@ -9,7 +10,8 @@ import {
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
+  isRnaBuilderSequenceEditMode,
+  setContextMenuActive,
 } from 'state/common';
 import {
   NodesSelection,
@@ -46,6 +48,7 @@ import {
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
 import { PointerEvent } from 'react';
+import { useMonomerCreationMenu } from '../useMonomerCreationMenu';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -73,19 +76,33 @@ export const SequenceItemContextMenu = ({
   contextMenuEvent,
   isPasteAvailable = true,
 }: SequenceItemContextMenuType) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
-  const menuProps = generateSequenceContextMenuProps(selections);
+  const menuProps = generateSequenceContextMenuProps(selections, t);
   const selectedMonomers: BaseMonomer[] =
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;
     }) || [];
+  const clickedRenderer = (
+    contextMenuEvent?.target as
+      (EventTarget & { __data__?: BaseSequenceItemRenderer }) | undefined
+  )?.__data__;
+  const monomersToEdit =
+    selectedMonomers.length > 0
+      ? selectedMonomers
+      : (clickedRenderer?.node?.monomers ?? []);
+  const monomerCreationMenu = useMonomerCreationMenu(
+    editor,
+    monomersToEdit,
+    (selections?.flat().length ?? 0) <= 1 && monomersToEdit.length > 1,
+  );
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
     contextMenuEvent,
   );
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
@@ -121,20 +138,20 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.copy,
-      title: 'Copy',
+      title: t('contextMenu.copy'),
       icon: <Icon name={'copyMenu' as IconName} />,
       disabled: selectedMonomers?.length === 0,
     },
     {
       name: SequenceItemContextMenuNames.paste,
-      title: 'Paste',
+      title: t('contextMenu.paste'),
       icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: !isPasteAvailable,
       separator: true,
     },
     {
       name: SequenceItemContextMenuNames.editSequence,
-      title: 'Edit sequence',
+      title: t('contextMenu.sequenceItem.editSequence'),
       disabled: false,
       hidden: ({
         props,
@@ -144,27 +161,27 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.startNewSequence,
-      title: 'Start new sequence',
+      title: t('contextMenu.sequenceItem.startNewSequence'),
       disabled: false,
       separator: isAntisenseBlockVisible || isHydrogenBondBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
-      title: 'Create RNA antisense strand',
+      title: t('contextMenu.sequenceItem.createRnaAntisenseStrand'),
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
         !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
-      title: 'Create DNA antisense strand',
+      title: t('contextMenu.sequenceItem.createDnaAntisenseStrand'),
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
         !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.establishHydrogenBond,
-      title: 'Establish Hydrogen Bonds',
+      title: t('contextMenu.sequenceItem.establishHydrogenBonds'),
       disabled: ({
         props,
       }: {
@@ -184,7 +201,7 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
-      title: 'Remove hydrogen bonds',
+      title: t('contextMenu.sequenceItem.removeHydrogenBonds'),
       disabled: ({
         props,
       }: {
@@ -206,9 +223,8 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
-      title: 'Modify in RNA Builder...',
-      disabled:
-        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
+      title: t('contextMenu.sequenceItem.modifyInRnaBuilder'),
+      disabled: !menuProps?.isSelectedOnlyNucleoelements,
       hidden: ({
         props,
       }: {
@@ -222,27 +238,33 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.modifyAminoAcids,
-      title: 'Modify amino acids',
+      title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
       separator: true,
     },
+    ...monomerCreationMenu.menuItems,
     {
       name: SequenceItemContextMenuNames.delete,
-      title: 'Delete',
+      title: t('contextMenu.delete'),
       disabled: selectedMonomers?.length === 0,
       icon: <Icon name={'deleteMenu' as IconName} />,
     },
   ];
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
+    if (monomerCreationMenu.handleMenuChange(menuItemId)) return;
     if (!editor) {
       return;
     }
 
     switch (true) {
-      case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
+      case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder: {
+        // Deactivate the context menu so its capture-phase Escape listener
+        // stops swallowing the first Escape press. Without this the user has
+        // to press Escape twice to leave RNA Builder mode.
+        dispatch(setContextMenuActive(false));
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));
@@ -263,23 +285,31 @@ export const SequenceItemContextMenu = ({
           );
         }
         break;
-      case menuItemId === SequenceItemContextMenuNames.startNewSequence:
+      }
+      case menuItemId === SequenceItemContextMenuNames.startNewSequence: {
         editor.events.startNewSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case menuItemId === SequenceItemContextMenuNames.editSequence:
+      }
+      case menuItemId === SequenceItemContextMenuNames.editSequence: {
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case menuItemId === SequenceItemContextMenuNames.createRnaAntisenseStrand:
+      }
+      case menuItemId ===
+        SequenceItemContextMenuNames.createRnaAntisenseStrand: {
         editor.events.createAntisenseChain.dispatch(false);
         break;
-      case menuItemId === SequenceItemContextMenuNames.createDnaAntisenseStrand:
+      }
+      case menuItemId ===
+        SequenceItemContextMenuNames.createDnaAntisenseStrand: {
         editor.events.createAntisenseChain.dispatch(true);
         break;
-      case menuItemId === SequenceItemContextMenuNames.establishHydrogenBond:
+      }
+      case menuItemId === SequenceItemContextMenuNames.establishHydrogenBond: {
         editor.events.establishHydrogenBond.dispatch(
           props.sequenceItemRenderer,
         );
         break;
+      }
       case menuItemId === SequenceItemContextMenuNames.deleteHydrogenBond: {
         const sequenceViewModel = SequenceRenderer.sequenceViewModel;
         const monomerToChain =
@@ -300,37 +330,37 @@ export const SequenceItemContextMenu = ({
 
         selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
           if (
-            selectedTwoStrandedNode.antisenseChain &&
-            selectedTwoStrandedNode.antisenseNode &&
-            !(
-              selectedTwoStrandedNode.antisenseNode instanceof
-                EmptySequenceNode ||
-              selectedTwoStrandedNode.antisenseNode instanceof
-                BackBoneSequenceNode
+            !selectedTwoStrandedNode.antisenseChain ||
+            !selectedTwoStrandedNode.antisenseNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              EmptySequenceNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              BackBoneSequenceNode
+          ) {
+            return;
+          }
+
+          if (
+            !antisenseChainToSelectedNodeMap.has(
+              selectedTwoStrandedNode.antisenseChain,
             )
           ) {
-            if (
-              !antisenseChainToSelectedNodeMap.has(
-                selectedTwoStrandedNode.antisenseChain,
-              )
-            ) {
-              antisenseChainToSelectedNodeMap.set(
-                selectedTwoStrandedNode.antisenseChain,
-                new Set(),
-              );
-            }
-
-            const antisenseChainSelectedNodes =
-              antisenseChainToSelectedNodeMap.get(
-                selectedTwoStrandedNode.antisenseChain,
-              );
-
-            if (!antisenseChainSelectedNodes) {
-              return;
-            }
-
-            antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
+            antisenseChainToSelectedNodeMap.set(
+              selectedTwoStrandedNode.antisenseChain,
+              new Set(),
+            );
           }
+
+          const antisenseChainSelectedNodes =
+            antisenseChainToSelectedNodeMap.get(
+              selectedTwoStrandedNode.antisenseChain,
+            );
+
+          if (!antisenseChainSelectedNodes) {
+            return;
+          }
+
+          antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
         });
 
         let isGoingToDeleteAllHydrogenBondsForAnyChain = false;
@@ -372,9 +402,10 @@ export const SequenceItemContextMenu = ({
 
         if (isGoingToDeleteAllHydrogenBondsForAnyChain) {
           editor.events.openConfirmationDialog.dispatch({
-            title: 'Deletion of all Hydrogen Bonds',
-            confirmationText:
-              'Deleting all hydrogen bonds will cause the separation of two chains. Do you wish to proceed?',
+            title: t('contextMenu.sequenceItem.deleteAllHydrogenBondsTitle'),
+            confirmationText: t(
+              'contextMenu.sequenceItem.deleteAllHydrogenBondsConfirm',
+            ),
             onConfirm: () => {
               editor.events.deleteHydrogenBond.dispatch(
                 props.sequenceItemRenderer,
@@ -398,17 +429,21 @@ export const SequenceItemContextMenu = ({
         });
         break;
       }
-      case menuItemId === 'copy':
+      case menuItemId === 'copy': {
         editor.events.copySelectedStructure.dispatch();
         break;
-      case menuItemId === 'paste':
+      }
+      case menuItemId === 'paste': {
         editor.events.pasteFromClipboard.dispatch();
         break;
-      case menuItemId === 'delete':
+      }
+      case menuItemId === 'delete': {
         editor.events.deleteSelectedStructure.dispatch();
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
   };
 
@@ -424,6 +459,7 @@ export const SequenceItemContextMenu = ({
           id={CONTEXT_MENU_ID.FOR_SEQUENCE}
           handleMenuChange={handleMenuChange}
           menuItems={menuItems}
+          onVisibilityChange={monomerCreationMenu.onVisibilityChange}
         ></ContextMenu>,
         ketcherEditorRootElement,
       )

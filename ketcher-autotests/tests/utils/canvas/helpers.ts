@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable no-useless-escape */
 import {
   LocatorScreenshotOptions,
   Page,
@@ -7,8 +5,10 @@ import {
   Locator,
 } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
-import { emptyFunction } from '../common/helpers';
-import { waitForRender } from '../common/loaders/waitForRender';
+import {
+  waitForCustomEvent,
+  waitForRender,
+} from '../common/loaders/waitForRender';
 import { waitForSpinnerFinishedWork } from '../common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
@@ -19,7 +19,6 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
@@ -40,7 +39,7 @@ export async function takeElementScreenshot(
 ) {
   if (options?.hideMonomerPreview) {
     await page.evaluate(() => {
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
     });
     await MonomerPreviewTooltip(page).waitForBecomeHidden();
   }
@@ -92,14 +91,19 @@ export async function takePageScreenshot(
     hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
-  await expect(page).toHaveScreenshot(options);
+  await expect(page).toHaveScreenshot({
+    ...options,
+    stylePath: options?.hideMacromoleculeEditorScrollBars
+      ? scrollBarHideCssPath
+      : undefined,
+  });
 }
 
 export async function takePresetsScreenshot(
   page: Page,
   options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  await takeElementScreenshot(page, page.getByTestId('rna-accordion'), options);
+  await takeElementScreenshot(page, Library(page).rnaTab.rnaAccordion, options);
 }
 
 export async function takeRNABuilderScreenshot(
@@ -113,7 +117,7 @@ export async function takeRNABuilderScreenshot(
 ) {
   await takeElementScreenshot(
     page,
-    page.getByTestId('rna-editor-expanded'),
+    Library(page).rnaTab.rnaEditor.rnaEditorBody,
     options,
   );
 }
@@ -128,15 +132,12 @@ export async function takeMonomerLibraryScreenshot(
     hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
-  if (options?.hideMacromoleculeEditorScrollBars) {
-    // That works only for Macromolecule editor
-    await page.keyboard.press(`ControlOrMeta+KeyB`);
-  }
-  await takeElementScreenshot(
-    page,
-    page.getByTestId('monomer-library'),
-    options,
-  );
+  await takeElementScreenshot(page, Library(page).libraryBody, {
+    ...options,
+    stylePath: options?.hideMacromoleculeEditorScrollBars
+      ? scrollBarHideCssPath
+      : undefined,
+  });
 }
 
 export async function takeEditorScreenshot(
@@ -150,12 +151,16 @@ export async function takeEditorScreenshot(
     stylePath?: string | string[];
   },
 ) {
-  if (options?.hideMacromoleculeEditorScrollBars) {
-    // That works only for Macromolecule editor
-    await page.keyboard.press(`ControlOrMeta+KeyB`);
-    options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
-  }
-  await takeElementScreenshot(page, await getVisibleCanvas(page), options);
+  const stylePath = options?.stylePath;
+  await takeElementScreenshot(page, await getVisibleCanvas(page), {
+    ...options,
+    stylePath: options?.hideMacromoleculeEditorScrollBars
+      ? [
+          ...(typeof stylePath === 'string' ? [stylePath] : stylePath || []),
+          scrollBarHideCssPath,
+        ]
+      : stylePath,
+  });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
@@ -238,14 +243,7 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
-
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyC`, options),
-  );
+  await pressClipboardShortcut(page, 'KeyC', 'copyOrCutComplete', options);
 }
 
 export async function cutToClipboardByKeyboard(
@@ -256,14 +254,7 @@ export async function cutToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
-
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyX`, options),
-  );
+  await pressClipboardShortcut(page, 'KeyX', 'copyOrCutComplete', options);
 }
 
 export async function pasteFromClipboardByKeyboard(
@@ -274,14 +265,39 @@ export async function pasteFromClipboardByKeyboard(
       }
     | undefined,
 ) {
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. For ex. - select object on the screen can took time
-  await waitForRender(page, emptyFunction);
+  await pressClipboardShortcut(page, 'KeyV', 'pasteComplete', options);
+}
 
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),
-  );
+async function pressClipboardShortcut(
+  page: Page,
+  key: 'KeyC' | 'KeyX' | 'KeyV',
+  eventName: 'copyOrCutComplete' | 'pasteComplete',
+  options?: { delay?: number },
+) {
+  const isEditingText = await page.evaluate(() => {
+    const element = document.activeElement;
+    return (
+      element instanceof HTMLElement &&
+      !element.hasAttribute('data-cliparea') &&
+      (element instanceof HTMLTextAreaElement ||
+        (element instanceof HTMLInputElement &&
+          !['button', 'submit', 'reset'].includes(element.type)) ||
+        element.isContentEditable)
+    );
+  });
+  const press = async () =>
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await page.keyboard.press(`ControlOrMeta+${key}`, options),
+    );
+
+  if (isEditingText) {
+    await press();
+    return;
+  }
+
+  const eventReceived = await waitForCustomEvent(page, eventName, 5000, press);
+  expect(eventReceived, `${eventName} was not received`).toBe(true);
 }
 
 export async function undoByKeyboard(
@@ -320,10 +336,29 @@ export async function selectCanvasArea(
   await dragMouseTo(page, secondCorner.x, secondCorner.y);
 }
 
+/**
+ * Rubber-band selection around the union of the given locators' bounding boxes.
+ * Selects the rectangle area-selection tool, then drags from the top-left to
+ * the bottom-right of the combined box (with a small padding).
+ */
+export async function rubberBandSelect(
+  page: Page,
+  locators: Locator[],
+  padding = 10,
+): Promise<void> {
+  const boxes: NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>[] = [];
+  for (const locator of locators) {
+    boxes.push((await locator.boundingBox())!);
+  }
+  const minX = Math.min(...boxes.map((box) => box.x)) - padding;
+  const minY = Math.min(...boxes.map((box) => box.y)) - padding;
+  const maxX = Math.max(...boxes.map((box) => box.x + box.width)) + padding;
+  const maxY = Math.max(...boxes.map((box) => box.y + box.height)) + padding;
+  await selectCanvasArea(page, { x: minX, y: minY }, { x: maxX, y: maxY });
+}
+
 export async function getVisibleCanvas(page: Page): Promise<Locator> {
-  const canvas = page
-    .locator(`[data-testid="${KETCHER_CANVAS}"]:visible`)
-    .first();
+  const canvas = page.locator(`[data-testid="ketcher-canvas"]:visible`).first();
   await canvas.waitFor({
     state: 'visible',
     timeout: 10000,

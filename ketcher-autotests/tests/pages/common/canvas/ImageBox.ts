@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 
 type ImageBoxLocators = {
@@ -14,61 +13,58 @@ type ImageBoxLocators = {
 };
 
 export const ImageBox = async (page: Page, imageBox?: Locator) => {
-  let imageBoxId;
-  if (imageBox) {
-    imageBoxId = await imageBox.getAttribute('data-image-id');
-  } else {
-    imageBoxId = null;
-  }
+  const imageBoxId = imageBox
+    ? ((await imageBox.getAttribute('data-image-id')) ?? undefined)
+    : undefined;
   const locators: ImageBoxLocators = {
     imageBoxBody:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(`[data-testid="image"][data-image-id="${imageBoxId}"]`),
     topLeftHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-topLeftPosition"][data-image-id="${imageBoxId}"]`,
           ),
     topMiddleHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-topMiddlePosition"][data-image-id="${imageBoxId}"]`,
           ),
     topRightHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-topRightPosition"][data-image-id="${imageBoxId}"]`,
           ),
     leftMiddleHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-leftMiddlePosition"][data-image-id="${imageBoxId}"]`,
           ),
     rightMiddleHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-rightMiddlePosition"][data-image-id="${imageBoxId}"]`,
           ),
     bottomLeftHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-bottomLeftPosition"][data-image-id="${imageBoxId}"]`,
           ),
     bottomMiddleHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-bottomMiddlePosition"][data-image-id="${imageBoxId}"]`,
           ),
     bottomRightHandle:
-      imageBoxId === null
+      imageBoxId === undefined
         ? page.locator('[data-testid="__missing-image-box-id__"]')
         : page.locator(
             `[data-testid="imageResize-bottomRightPosition"][data-image-id="${imageBoxId}"]`,

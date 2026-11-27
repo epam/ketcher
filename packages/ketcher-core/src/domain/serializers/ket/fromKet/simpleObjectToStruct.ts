@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,12 @@
 import { SimpleObject } from 'domain/entities/simpleObject';
 import type { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
+import type { KetSimpleObjectNode } from './types';
 
-export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
+export function simpleObjectToStruct(
+  ketItem: KetSimpleObjectNode,
+  struct: Struct,
+): Struct {
   const object = ketItem.data;
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);

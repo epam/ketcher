@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -20,6 +17,7 @@ import {
   deleteByKeyboard,
   moveMouseAway,
   takeElementScreenshot,
+  waitForRender,
 } from '@utils';
 import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
 import {
@@ -925,10 +923,12 @@ test.describe('Image files', () => {
 
       await page.mouse.move(startX, startY);
       await page.mouse.down();
-      await page.mouse.move(startX + handle.moveX, startY + handle.moveY, {
-        steps: 10,
+      await waitForRender(page, async () => {
+        await page.mouse.move(startX + handle.moveX, startY + handle.moveY, {
+          steps: 10,
+        });
+        await page.mouse.up();
       });
-      await page.mouse.up();
 
       await takeEditorScreenshot(page);
     }

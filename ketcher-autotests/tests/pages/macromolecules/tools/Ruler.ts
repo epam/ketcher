@@ -1,5 +1,6 @@
-/* eslint-disable no-magic-numbers */
-/* tests/pages/macromolecules/tools/Ruler.ts */
+/*
+tests/pages/macromolecules/tools/Ruler.ts
+*/
 import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 import { keyboardPressOnCanvas } from '@utils/keyboard';

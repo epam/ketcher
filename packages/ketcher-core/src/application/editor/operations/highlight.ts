@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,7 @@ export class HighlightAdd extends BaseOperation {
     rgroupAttachmentPoints: Array<number>,
     color: string,
     highlightId?: number,
-    outline?: boolean,
+    hasOutline?: boolean,
   ) {
     super(OperationType.ADD_HIGHLIGHT);
     this.data = {
@@ -48,12 +48,18 @@ export class HighlightAdd extends BaseOperation {
       rgroupAttachmentPoints,
       color,
       highlightId,
-      outline,
+      outline: hasOutline,
     };
   }
 
   execute(restruct: ReStruct) {
-    const { atoms, bonds, rgroupAttachmentPoints, color, outline } = this.data;
+    const {
+      atoms,
+      bonds,
+      rgroupAttachmentPoints,
+      color,
+      outline: hasOutline,
+    } = this.data;
 
     if (!color) {
       return;
@@ -65,13 +71,13 @@ export class HighlightAdd extends BaseOperation {
       bonds,
       rgroupAttachmentPoints,
       color,
-      outline,
+      outline: hasOutline,
     });
 
-    if (typeof this.data.highlightId !== 'number') {
-      this.data.highlightId = struct.highlights.add(highlight);
-    } else {
+    if (typeof this.data.highlightId === 'number') {
       struct.highlights.set(this.data.highlightId, highlight);
+    } else {
+      this.data.highlightId = struct.highlights.add(highlight);
     }
 
     notifyChanged(restruct, atoms, bonds, rgroupAttachmentPoints);
@@ -112,23 +118,25 @@ export class HighlightDelete extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    if (typeof this.data.highlightId === 'number') {
-      const struct = restruct.molecule;
-
-      const highlightToRemove = struct.highlights.get(this.data.highlightId);
-      if (typeof highlightToRemove === 'undefined') {
-        return;
-      }
-
-      const { atoms, bonds, color } = highlightToRemove;
-
-      this.data.atoms = atoms;
-      this.data.bonds = bonds;
-      this.data.color = color;
-
-      struct.highlights.delete(this.data.highlightId);
-      notifyChanged(restruct, atoms, bonds);
+    if (typeof this.data.highlightId !== 'number') {
+      return;
     }
+
+    const struct = restruct.molecule;
+
+    const highlightToRemove = struct.highlights.get(this.data.highlightId);
+    if (highlightToRemove === undefined) {
+      return;
+    }
+
+    const { atoms, bonds, color } = highlightToRemove;
+
+    this.data.atoms = atoms;
+    this.data.bonds = bonds;
+    this.data.color = color;
+
+    struct.highlights.delete(this.data.highlightId);
+    notifyChanged(restruct, atoms, bonds);
   }
 
   invert() {
@@ -188,36 +196,37 @@ export class HighlightUpdate extends BaseOperation {
 
     const highlightToUpdate = struct.highlights.get(highlightId);
 
-    if (highlightToUpdate) {
-      // saving data of existing highlight
-      const {
-        atoms: oldAtoms,
-        bonds: oldBonds,
-        rgroupAttachmentPoints: oldRgroupAttachmentPoints,
-        color: oldColor,
-      } = highlightToUpdate;
-      this.oldData = {
-        atoms: oldAtoms,
-        bonds: oldBonds,
-        rgroupAttachmentPoints: oldRgroupAttachmentPoints,
-        color: oldColor,
-        highlightId,
-      };
-
-      // creating new highlight with new data
-      const updatedHighlight = new Highlight({
-        atoms,
-        bonds,
-        rgroupAttachmentPoints,
-        color,
-      });
-
-      // setting the new highlight
-      struct.highlights.set(this.newData.highlightId, updatedHighlight);
-
-      // notify atoms from both collections that repaint is needed
-      notifyChanged(restruct, [...atoms, ...oldAtoms], [...bonds, ...oldBonds]);
+    if (!highlightToUpdate) {
+      return;
     }
+    // saving data of existing highlight
+    const {
+      atoms: oldAtoms,
+      bonds: oldBonds,
+      rgroupAttachmentPoints: oldRgroupAttachmentPoints,
+      color: oldColor,
+    } = highlightToUpdate;
+    this.oldData = {
+      atoms: oldAtoms,
+      bonds: oldBonds,
+      rgroupAttachmentPoints: oldRgroupAttachmentPoints,
+      color: oldColor,
+      highlightId,
+    };
+
+    // creating new highlight with new data
+    const updatedHighlight = new Highlight({
+      atoms,
+      bonds,
+      rgroupAttachmentPoints,
+      color,
+    });
+
+    // setting the new highlight
+    struct.highlights.set(this.newData.highlightId, updatedHighlight);
+
+    // notify atoms from both collections that repaint is needed
+    notifyChanged(restruct, [...atoms, ...oldAtoms], [...bonds, ...oldBonds]);
   }
 
   invert() {
@@ -237,14 +246,13 @@ export class HighlightUpdate extends BaseOperation {
     const highlight = restruct.molecule.highlights.get(
       this.newData.highlightId,
     );
-    if (!highlight) return false;
-    return (
-      highlight.color === this.newData.color &&
-      highlight.atoms.length === this.newData.atoms.length &&
-      highlight.bonds.length === this.newData.bonds.length &&
-      highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
-      highlight.bonds.every((id, i) => this.newData.bonds[i] === id)
-    );
+    return !highlight
+      ? false
+      : highlight.color === this.newData.color &&
+          highlight.atoms.length === this.newData.atoms.length &&
+          highlight.bonds.length === this.newData.bonds.length &&
+          highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
+          highlight.bonds.every((id, i) => this.newData.bonds[i] === id);
   }
 }
 
@@ -261,7 +269,7 @@ function notifyChanged(
 
   if (atoms) {
     atoms.forEach((atomId) => {
-      if (typeof reAtoms.get(atomId) !== 'undefined') {
+      if (reAtoms.get(atomId) !== undefined) {
         restruct.markAtom(atomId, 1);
       }
     });
@@ -269,7 +277,7 @@ function notifyChanged(
 
   if (bonds) {
     bonds.forEach((bondId) => {
-      if (typeof reBonds.get(bondId) !== 'undefined') {
+      if (reBonds.get(bondId) !== undefined) {
         restruct.markBond(bondId, 1);
       }
     });
@@ -277,7 +285,7 @@ function notifyChanged(
 
   if (rgroupAttachmentPoints) {
     rgroupAttachmentPoints.forEach((rgroupAPid) => {
-      if (typeof reRgroupAttachmentPoints.get(rgroupAPid) !== 'undefined') {
+      if (reRgroupAttachmentPoints.get(rgroupAPid) !== undefined) {
         restruct.markRgroupAttachmentPoint(rgroupAPid, 1);
       }
     });

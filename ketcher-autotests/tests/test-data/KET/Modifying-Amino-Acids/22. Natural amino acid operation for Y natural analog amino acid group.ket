@@ -470,7 +470,8 @@
                     -1.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -734,8 +735,7 @@
             "y": -1.25
         },
         "alias": "Y",
-        "templateId": "Y___Tyrosine",
-        "seqid": 2
+        "templateId": "Y___Tyrosine"
     },
     "monomer2": {
         "type": "monomer",

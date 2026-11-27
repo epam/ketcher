@@ -166,8 +166,7 @@
             "y": -1.25
         },
         "alias": "W",
-        "templateId": "W___Tryptophan",
-        "seqid": 1
+        "templateId": "W___Tryptophan"
     },
     "monomerTemplate-W___Tryptophan": {
         "type": "monomerTemplate",
@@ -187,7 +186,8 @@
                     -1.448,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -474,6 +474,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "W"
     },

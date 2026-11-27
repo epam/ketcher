@@ -128,7 +128,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -335,8 +336,7 @@
             "y": -1.25
         },
         "alias": "dE",
-        "templateId": "dE___D-Glutamic acid",
-        "seqid": 3
+        "templateId": "dE___D-Glutamic acid"
     },
     "monomer3": {
         "type": "monomer",

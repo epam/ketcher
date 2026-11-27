@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,23 +15,89 @@
  ***************************************************************************/
 
 import { Vec2 } from './vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
+
+interface RelativeBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface AbsoluteBox {
+  min: Vec2;
+  max: Vec2;
+}
 
 export class Box2Abs {
+  static fromRelBox(relBox: RelativeBox): Box2Abs {
+    return new Box2Abs(
+      relBox.x,
+      relBox.y,
+      relBox.x + relBox.width,
+      relBox.y + relBox.height,
+    );
+  }
+
+  static union(b1: Box2Abs, b2: Box2Abs): Box2Abs {
+    return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1));
+  }
+
+  static segmentIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
+    const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
+    const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
+    const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
+    const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
+
+    // Check for collinearity and overlapping cases
+    return dc === 0 && dd === 0 && da === 0 && db === 0
+      ? Box2Abs.#isPointOnSegment(a, b, c) ||
+          Box2Abs.#isPointOnSegment(a, b, d) ||
+          Box2Abs.#isPointOnSegment(c, d, a) ||
+          Box2Abs.#isPointOnSegment(c, d, b)
+      : dc * dd < 0 && da * db < 0;
+  }
+
+  // Helper function to check if a point is on a line segment
+  static #isPointOnSegment(
+    segPointA: Vec2,
+    segPointB: Vec2,
+    point: Vec2,
+  ): boolean {
+    const minX = Math.min(segPointA.x, segPointB.x);
+    const maxX = Math.max(segPointA.x, segPointB.x);
+    const minY = Math.min(segPointA.y, segPointB.y);
+    const maxY = Math.max(segPointA.y, segPointB.y);
+
+    return (
+      point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
+    );
+  }
+
   readonly p0: Vec2;
   readonly p1: Vec2;
 
   constructor();
   constructor(p: Vec2);
+  constructor(box: AbsoluteBox);
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
-  constructor(...args: Array<any>) {
-    if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
-      this.p0 = args[0].min;
-      this.p1 = args[0].max;
-    }
-
-    if (args.length === 2) {
+  constructor(
+    ...args:
+      | []
+      | [Vec2]
+      | [Vec2, Vec2]
+      | [number, number, number, number]
+      | [AbsoluteBox]
+  ) {
+    if (args.length === 1 && args[0] instanceof Vec2) {
+      this.p0 = args[0];
+      this.p1 = args[0];
+    } else if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
+      const boxArg = args[0] as AbsoluteBox;
+      this.p0 = boxArg.min;
+      this.p1 = boxArg.max;
+    } else if (args.length === 2) {
       this.p0 = args[0];
       this.p1 = args[1];
     } else if (args.length === 4) {
@@ -42,7 +108,7 @@ export class Box2Abs {
       this.p1 = new Vec2();
     } else {
       throw new Error(
-        'Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!',
+        'Box2Abs constructor only accepts a point, box bounds, 2 vectors, 4 numbers, or no args!',
       );
     }
   }
@@ -61,13 +127,13 @@ export class Box2Abs {
   }
 
   include(p: Vec2): Box2Abs {
-    assert(p != null);
+    assert(p != undefined);
 
     return new Box2Abs(this.p0.min(p), this.p1.max(p));
   }
 
-  contains(p: Vec2, ext = 0.0): boolean {
-    assert(p != null);
+  contains(p: Vec2, ext = 0): boolean {
+    assert(p != undefined);
 
     return (
       p.x >= this.p0.x - ext &&
@@ -81,7 +147,7 @@ export class Box2Abs {
     return new Box2Abs(this.p0.add(d), this.p1.add(d));
   }
 
-  transform(f: (p: Vec2, options: any) => Vec2, options: any): Box2Abs {
+  transform<T>(f: (p: Vec2, options: T) => Vec2, options: T): Box2Abs {
     assert(typeof f === 'function');
 
     return new Box2Abs(f(this.p0, options), f(this.p1, options));
@@ -102,51 +168,5 @@ export class Box2Abs {
   hasZeroArea() {
     const size = this.sz();
     return size.x === 0 && size.y === 0;
-  }
-
-  static fromRelBox(relBox: any): Box2Abs {
-    return new Box2Abs(
-      relBox.x,
-      relBox.y,
-      relBox.x + relBox.width,
-      relBox.y + relBox.height,
-    );
-  }
-
-  static union(b1: Box2Abs, b2: Box2Abs): Box2Abs {
-    return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1));
-  }
-
-  static segmentIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
-    const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
-    const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
-    const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
-    const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
-
-    if (dc === 0 && dd === 0 && da === 0 && db === 0) {
-      // Check for collinearity and overlapping cases
-      return (
-        Box2Abs.#isPointOnSegment(a, b, c) ||
-        Box2Abs.#isPointOnSegment(a, b, d) ||
-        Box2Abs.#isPointOnSegment(c, d, a) ||
-        Box2Abs.#isPointOnSegment(c, d, b)
-      );
-    } else return dc * dd < 0 && da * db < 0;
-  }
-
-  // Helper function to check if a point is on a line segment
-  static #isPointOnSegment(
-    segPointA: Vec2,
-    segPointB: Vec2,
-    point: Vec2,
-  ): boolean {
-    const minX = Math.min(segPointA.x, segPointB.x);
-    const maxX = Math.max(segPointA.x, segPointB.x);
-    const minY = Math.min(segPointA.y, segPointB.y);
-    const maxY = Math.max(segPointA.y, segPointB.y);
-
-    return (
-      point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
-    );
   }
 }

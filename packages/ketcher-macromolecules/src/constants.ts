@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +92,8 @@ export const SEQUENCE_TYPE_STORAGE_KEY = 'ketcher_polymer_sequence_type';
 
 // It's set as Z, so it will always be put in the end when alphabetically sorting groups by code
 export const NoNaturalAnalogueGroupCode = 'Z';
-export const NoNaturalAnalogueGroupTitle = 'No natural analogue';
+export const NoNaturalAnalogueGroupTitle =
+  'macromolecules:library.noNaturalAnalogue';
 
 export const DNA_TEMPLATE_NAME_PART = 'thymine';
 export const RNA_TEMPLATE_NAME_PART = 'uracil';

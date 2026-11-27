@@ -3,22 +3,21 @@ function castAtomPropToType(property, value) {
     exactChangeFlag: Number,
     unsaturatedAtom: Number,
   };
-  if (typesMapping[property]) {
-    return typesMapping[property](value);
-  }
-  return value;
+  return typesMapping[property] ? typesMapping[property](value) : value;
 }
 
 export function updateOnlyChangedProperties(
   unchangedElement,
   userChangedElement,
 ) {
-  const updatedKeys = Object.getOwnPropertyNames(userChangedElement).filter(
-    (key) => userChangedElement[key] !== '',
+  const updatedKeys = new Set(
+    Object.getOwnPropertyNames(userChangedElement).filter(
+      (key) => userChangedElement[key] !== '',
+    ),
   );
   return Object.getOwnPropertyNames(unchangedElement).reduce(
     (updatedElement, key) => {
-      updatedElement[key] = updatedKeys.includes(key)
+      updatedElement[key] = updatedKeys.has(key)
         ? castAtomPropToType(key, userChangedElement[key])
         : unchangedElement[key];
       return updatedElement;

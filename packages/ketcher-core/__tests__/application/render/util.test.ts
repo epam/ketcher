@@ -1,5 +1,5 @@
 import { HalfBond } from 'domain/entities';
-import util from './../../../src/application/render/util';
+import utility from './../../../src/application/render/util';
 
 describe('util', () => {
   describe('updateHalfBondCoordinates()', () => {
@@ -18,17 +18,17 @@ describe('util', () => {
     it('should not update the coordinates if y-coordinates are different', () => {
       hb2.p.y = hb2.p.y + 1;
 
-      const result = util.updateHalfBondCoordinates(hb1, hb2, xShift);
+      const result = utility.updateHalfBondCoordinates(hb1, hb2, xShift);
       expect(result).toEqual([hb1, hb2]);
     });
     it('should update the coordinates if x-coordinate of hb1 is less than hb2', () => {
-      const result = util.updateHalfBondCoordinates(hb1, hb2, xShift);
+      const result = utility.updateHalfBondCoordinates(hb1, hb2, xShift);
 
       expect(result[0].p.x).toBe(101);
     });
     it('should update the coordinates if x-coordinate of hb2 is less than hb1', () => {
       hb2.p.x = 90;
-      const result = util.updateHalfBondCoordinates(hb1, hb2, xShift);
+      const result = utility.updateHalfBondCoordinates(hb1, hb2, xShift);
       expect(result[0].p.x).toBe(99);
     });
   });

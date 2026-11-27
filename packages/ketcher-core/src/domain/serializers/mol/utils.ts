@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,16 +24,16 @@ import type { Atom } from 'domain/entities/atom';
 import type { SGroup } from 'domain/entities/sgroup';
 
 /**
- * Bounding box with min and max coordinates
- */
+Bounding box with min and max coordinates
+*/
 interface BoundingBox {
   min: Vec2;
   max: Vec2;
 }
 
 /**
- * Formatted information for mol file parsing/serialization
- */
+Formatted information for mol file parsing/serialization
+*/
 interface FmtInfo {
   bondTypeMap: Record<number, number>;
   bondStereoMap: Record<number, number>;
@@ -53,8 +53,8 @@ interface FmtInfo {
 }
 
 /**
- * Categorized molecules organized by fragment type
- */
+Categorized molecules organized by fragment type
+*/
 interface CategorizedMolecules {
   bbReact: BoundingBox[];
   bbAgent: BoundingBox[];
@@ -87,54 +87,60 @@ function paddedNum(
 }
 
 /**
- * Parse a decimal integer from string
- * @param str - The string to parse
- * @returns The parsed integer, or 0 if parsing fails
- */
+Parse a decimal integer from string
+@param str - The string to parse
+@returns The parsed integer, or 0 if parsing fails
+*/
 function parseDecimalInt(str: string): number {
-  /* reader */
+  /*
+  reader
+  */
   const val = Number.parseInt(str, 10);
 
   return Number.isNaN(val) ? 0 : val;
 }
 
 /**
- * Partition a line string into parts of varying lengths
- * @param str - The string to partition
- * @param parts - Array of lengths for each part
- * @param withspace - Whether there's a space between parts (default: false)
- * @returns Array of string parts
- */
+Partition a line string into parts of varying lengths
+@param str - The string to partition
+@param parts - Array of lengths for each part
+@param hasSpaceBetweenParts - Whether there's a space between parts (default: false)
+@returns Array of string parts
+*/
 function partitionLine(
   str: string,
   parts: number[],
-  withspace: boolean = false,
+  hasSpaceBetweenParts: boolean = false,
 ): string[] {
-  /* reader */
+  /*
+  reader
+  */
   const res: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
-    if (withspace) shift++;
+    if (hasSpaceBetweenParts) shift++;
     shift += parts[i];
   }
   return res;
 }
 
 /**
- * Partition a line string into fixed-length parts
- * @param str - The string to partition
- * @param itemLength - Length of each item
- * @param withspace - Whether there's a space between items (default: false)
- * @returns Array of string parts
- */
+Partition a line string into fixed-length parts
+@param str - The string to partition
+@param itemLength - Length of each item
+@param hasSpaceBetweenParts - Whether there's a space between items (default: false)
+@returns Array of string parts
+*/
 function partitionLineFixed(
   str: string,
   itemLength: number,
-  withspace: boolean = false,
+  hasSpaceBetweenParts: boolean = false,
 ): string[] {
-  /* reader */
+  /*
+  reader
+  */
   const res: string[] = [];
-  const step = withspace ? itemLength + 1 : itemLength;
+  const step = hasSpaceBetweenParts ? itemLength + 1 : itemLength;
   let shift = 0;
   while (shift < str.length) {
     res.push(str.slice(shift, shift + itemLength));
@@ -198,10 +204,10 @@ const fmtInfo: FmtInfo = {
 };
 
 /**
- * Calculate the median bond length across molecules
- * @param mols - Array of molecules (Struct instances)
- * @returns Median bond length, or 1 if no positive bond length exists
- */
+Calculate the median bond length across molecules
+@param mols - Array of molecules (Struct instances)
+@returns Median bond length, or 1 if no positive bond length exists
+*/
 function calculateMedianBondLength(mols: Struct[]): number {
   const lengths: number[] = [];
   for (const mol of mols) {
@@ -229,12 +235,12 @@ function rescaleMolecules(mols: Struct[]): void {
 }
 
 /**
- * Determine the fragment type based on index
- * @param index - Index of the molecule
- * @param nReactants - Number of reactants
- * @param nProducts - Number of products
- * @returns Fragment type (Reactant, Product, or Agent)
- */
+Determine the fragment type based on index
+@param index - Index of the molecule
+@param nReactants - Number of reactants
+@param nProducts - Number of products
+@returns Fragment type (Reactant, Product, or Agent)
+*/
 function getFragmentType(
   index: number,
   nReactants: number,
@@ -250,12 +256,12 @@ function getFragmentType(
 }
 
 /**
- * Categorize molecules into reactants, products, and agents
- * @param mols - Array of molecules
- * @param nReactants - Number of reactants
- * @param nProducts - Number of products
- * @returns Categorized molecules and their bounding boxes
- */
+Categorize molecules into reactants, products, and agents
+@param mols - Array of molecules
+@param nReactants - Number of reactants
+@param nProducts - Number of products
+@returns Categorized molecules and their bounding boxes
+*/
 function categorizeMolecules(
   mols: Struct[],
   nReactants: number,
@@ -295,24 +301,24 @@ function categorizeMolecules(
 }
 
 /**
- * Shift a molecule and merge it into the result
- * @param ret - Result structure to merge into
- * @param mol - Molecule to shift and merge
- * @param bb - Bounding box of the molecule
- * @param xorig - X origin for shifting
- * @param over - Whether to shift vertically over (true) or center (false)
- * @returns Width of the shifted molecule
- */
+Shift a molecule and merge it into the result
+@param ret - Result structure to merge into
+@param mol - Molecule to shift and merge
+@param bb - Bounding box of the molecule
+@param xorig - X origin for shifting
+@param isAboveReactionArrow - Whether to shift vertically over (true) or center (false)
+@returns Width of the shifted molecule
+*/
 function shiftMol(
   ret: Struct,
   mol: Struct,
   bb: BoundingBox,
   xorig: number,
-  over: boolean,
+  isAboveReactionArrow: boolean,
 ): number {
   const d = new Vec2(
     xorig - bb.min.x,
-    over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
+    isAboveReactionArrow ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
   );
   mol.atoms.forEach((atom: Atom) => {
     atom.pp.add_(d);
@@ -328,15 +334,15 @@ function shiftMol(
 }
 
 /**
- * Layout reaction fragments (reactants, agents, products)
- * @param ret - Result structure to add molecules to
- * @param molReact - Reactant molecules
- * @param bbReact - Reactant bounding boxes
- * @param molAgent - Agent molecules
- * @param bbAgent - Agent bounding boxes
- * @param molProd - Product molecules
- * @param bbProd - Product bounding boxes
- */
+Layout reaction fragments (reactants, agents, products)
+@param ret - Result structure to add molecules to
+@param molReact - Reactant molecules
+@param bbReact - Reactant bounding boxes
+@param molAgent - Agent molecules
+@param bbAgent - Agent bounding boxes
+@param molProd - Product molecules
+@param bbProd - Product bounding boxes
+*/
 function layoutReactionFragments(
   ret: Struct,
   molReact: Struct[],
@@ -362,12 +368,12 @@ function layoutReactionFragments(
 }
 
 /**
- * Merge molecules without layout
- * @param ret - Result structure to merge into
- * @param molReact - Reactant molecules
- * @param molAgent - Agent molecules
- * @param molProd - Product molecules
- */
+Merge molecules without layout
+@param ret - Result structure to merge into
+@param molReact - Reactant molecules
+@param molAgent - Agent molecules
+@param molProd - Product molecules
+*/
 function mergeWithoutLayout(
   ret: Struct,
   molReact: Struct[],
@@ -380,10 +386,10 @@ function mergeWithoutLayout(
 }
 
 /**
- * Add plus signs between molecule fragments
- * @param ret - Result structure to add plus signs to
- * @param boundingBoxes - Bounding boxes of molecules
- */
+Add plus signs between molecule fragments
+@param ret - Result structure to add plus signs to
+@param boundingBoxes - Bounding boxes of molecules
+*/
 function addPlusSigns(ret: Struct, boundingBoxes: BoundingBox[]): void {
   for (let j = 0; j < boundingBoxes.length - 1; ++j) {
     const bb1 = boundingBoxes[j];
@@ -397,10 +403,10 @@ function addPlusSigns(ret: Struct, boundingBoxes: BoundingBox[]): void {
 }
 
 /**
- * Aggregate multiple bounding boxes into one
- * @param boundingBoxes - Array of bounding boxes to aggregate
- * @returns Aggregated bounding box, or null if input is empty
- */
+Aggregate multiple bounding boxes into one
+@param boundingBoxes - Array of bounding boxes to aggregate
+@returns Aggregated bounding box, or null if input is empty
+*/
 function aggregateBoundingBoxes(
   boundingBoxes: BoundingBox[],
 ): BoundingBox | null {
@@ -420,11 +426,11 @@ function aggregateBoundingBoxes(
 }
 
 /**
- * Create a reaction arrow between two bounding boxes
- * @param bb1 - First bounding box (reactants)
- * @param bb2 - Second bounding box (products)
- * @returns Reaction arrow instance
- */
+Create a reaction arrow between two bounding boxes
+@param bb1 - First bounding box (reactants)
+@param bb2 - Second bounding box (products)
+@returns Reaction arrow instance
+*/
 function createReactionArrow(
   bb1: BoundingBox | null,
   bb2: BoundingBox | null,
@@ -439,12 +445,12 @@ function createReactionArrow(
     });
   }
 
-  let v1: Vec2 | null = bb1
+  let v1: Vec2 | undefined = bb1
     ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2)
-    : null;
-  let v2: Vec2 | null = bb2
+    : undefined;
+  let v2: Vec2 | undefined = bb2
     ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2)
-    : null;
+    : undefined;
 
   if (!v1 && v2) {
     v1 = new Vec2(v2.x - defaultOffset, v2.y);
@@ -472,14 +478,14 @@ function createReactionArrow(
 }
 
 /**
- * Merge multiple molecules into a single reaction structure
- * @param mols - Array of molecules to merge
- * @param nReactants - Number of reactant molecules
- * @param nProducts - Number of product molecules
- * @param _nAgents - Number of agent molecules (currently unused, kept for API compatibility)
- * @param shouldReactionRelayout - Whether to layout fragments (default: false)
- * @returns Merged reaction structure
- */
+Merge multiple molecules into a single reaction structure
+@param mols - Array of molecules to merge
+@param nReactants - Number of reactant molecules
+@param nProducts - Number of product molecules
+@param _nAgents - Number of agent molecules (currently unused, kept for API compatibility)
+@param shouldReactionRelayout - Whether to layout fragments (default: false)
+@returns Merged reaction structure
+*/
 function rxnMerge(
   mols: Struct[],
   nReactants: number,
@@ -487,7 +493,9 @@ function rxnMerge(
   _nAgents: number,
   shouldReactionRelayout?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ret = new Struct();
 
   if (SHOULD_RESCALE_MOLECULES) {
@@ -525,16 +533,18 @@ function rxnMerge(
 }
 
 /**
- * Merge R-group scaffold with R-groups
- * @param scaffold - Scaffold structure
- * @param rgroups - R-groups organized by ID
- * @returns Merged R-group structure
- */
+Merge R-group scaffold with R-groups
+@param scaffold - Scaffold structure
+@param rgroups - R-groups organized by ID
+@returns Merged R-group structure
+*/
 function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ret = new Struct();
 
-  scaffold.mergeInto(ret, null, null, false, true);
+  scaffold.mergeInto(ret, undefined, undefined, false, true);
 
   Object.keys(rgroups).forEach((id: string) => {
     const rgid = Number.parseInt(id, 10);

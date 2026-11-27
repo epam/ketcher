@@ -9,6 +9,7 @@ import type {
   IKetIdtAliases,
 } from 'application/formatters/types/ket';
 import type { CoreEditor } from 'application/editor/Editor';
+import type { STRAND_TYPE } from 'domain/constants';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -125,7 +126,8 @@ export interface IRnaLabeledPreset
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;
   nodeIndexOverall: number;
-  hasAntisense: boolean;
+  strandType: STRAND_TYPE;
+  isInSelectedAntisensePair?: boolean;
   baseLabel?: string;
   sugarLabel?: string;
   phosphateLabel?: string;
@@ -152,7 +154,7 @@ export type PeptideToolOptions = MonomerItemType;
 
 export type ToolConstructorInterface = new (
   editor: CoreEditor,
-  ...args: unknown[]
+  ...arguments_: unknown[]
 ) => Tool | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;

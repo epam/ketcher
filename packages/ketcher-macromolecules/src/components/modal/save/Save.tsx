@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, type MouseEvent } from 'react';
+import { useMemo, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { localizeOptions } from 'helpers/localizeOptions';
 import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
@@ -49,15 +50,23 @@ import {
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-const options: Array<Option & { id: SupportedFormats }> = [
+const optionsConfig: Array<Option & { id: SupportedFormats }> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'sequence', label: 'Sequence (1-letter code)' },
-  { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
+  {
+    id: 'sequence',
+    label: 'Sequence (1-letter code)',
+    labelKey: 'save.formats.sequence1Letter',
+  },
+  {
+    id: 'sequence-3-letter',
+    label: 'Sequence (3-letter code)',
+    labelKey: 'save.formats.sequence3Letter',
+  },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
-  { id: 'svg', label: 'SVG Document' },
+  { id: 'svg', label: 'SVG Document', labelKey: 'save.formats.svgDocument' },
   { id: 'helm', label: 'HELM' },
   { id: 'biln', label: 'BILN' },
 ];
@@ -91,6 +100,7 @@ export const Save = ({
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
   const { t } = useTranslation('macromoleculesDialogs');
+  const options = useMemo(() => localizeOptions(optionsConfig, t), [t]);
   const dispatch = useAppDispatch();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = provideEditorInstance();
@@ -130,7 +140,7 @@ export const Save = ({
       }
       if (
         !isHelmCompatible(
-          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          [...editor.drawingEntitiesManager.monomers.values()],
           editor.monomersLibrary,
         )
       ) {
@@ -150,6 +160,14 @@ export const Save = ({
         if (!isValid) {
           throw new Error(t('save.sequenceTypeRecognitionError'));
         }
+      }
+      // FASTA cannot represent a mix of RNA and DNA (both collapse to the same
+      // letter codes). IDT can, so this check is intentionally FASTA-only.
+      if (
+        fileFormat === 'fasta' &&
+        editor.drawingEntitiesManager.hasRnaAndDnaMix()
+      ) {
+        throw new Error(t('save.sequenceTypeRecognitionError'));
       }
       const formatProperties = getPropertiesByFormat(fileFormat);
       // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
@@ -210,8 +228,8 @@ export const Save = ({
       return;
     }
 
-    navigator.clipboard.writeText(struct).catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    void navigator.clipboard.writeText(struct).catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });
   };
@@ -222,6 +240,8 @@ export const Save = ({
       isOpen={isModalOpen}
       onClose={onClose}
       testId="save-structure-dialog"
+      isDraggable
+      isResizable={false}
     >
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">

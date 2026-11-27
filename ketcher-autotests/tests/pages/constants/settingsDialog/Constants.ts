@@ -65,6 +65,8 @@ export enum ServerSetting {
   IgnorePseudoatomsAtMass = 'mass-skip-error-on-pseudoatoms-input-span',
   AddRsitesAtMassCalculation = 'gross-formula-add-rsites-input-span',
   AddIsotopesAtMassCalculation = 'gross-formula-add-isotopes-input-span',
+  SkipSuperatomsAtAromatization = 'aromatize-skip-superatoms-input-span',
+  DearomatizeOnFileLoad = 'dearomatize-on-load-input-span',
 }
 
 export enum ThreeDViewerSetting {
@@ -208,6 +210,8 @@ export const switcherOptions: AllSettingsOptions[] = [
   ServerSetting.IgnorePseudoatomsAtMass,
   ServerSetting.AddRsitesAtMassCalculation,
   ServerSetting.AddIsotopesAtMassCalculation,
+  ServerSetting.SkipSuperatomsAtAromatization,
+  ServerSetting.DearomatizeOnFileLoad,
   OptionsForDebuggingSetting.ShowAtomIds,
   OptionsForDebuggingSetting.ShowBondsIds,
   OptionsForDebuggingSetting.ShowHalfBondsIds,

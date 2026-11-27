@@ -9,19 +9,17 @@ jobs:
     if: >
       github.event.label.name == 'Run TA creation workflow' &&
       (
-        github.event.issue.issue_type.name == 'Feature' ||
         github.event.issue.type.name == 'Feature' ||
-        github.event.issue.issue_type == 'Feature' ||
         github.event.issue.type == 'Feature'
       )
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ai-workflows
     permissions:
-      contents: write
       issues: write
-      pull-requests: read
     steps:
       - name: Generate test scenarios and create Autotest Request
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
@@ -94,7 +92,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Autotests: ${featureTitle}`,
-              body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
+              body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${checklistMatches.join('\n')}`,
               labels: ['Autotests'],
               type: 'Task',
             });
@@ -106,4 +104,3 @@ jobs:
               issue_number: issue.number,
               body: `Autotest Request created: ${createdIssue.html_url}\n\nWhen the automation checklist is ready for implementation, add 'Run TA creation workflow' label to that issue to generate the autotests PR.`,
             });
-            

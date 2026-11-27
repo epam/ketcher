@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,7 +42,7 @@ export const ZoomControls = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentZoom, setCurrentZoom] = useState<number>(100);
   const [containerElement, setContainerElement] =
-    useState<HTMLDivElement | null>(null);
+    useState<HTMLDivElement | null>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const editor = useAppSelector(selectEditor);
@@ -54,7 +54,14 @@ export const ZoomControls = () => {
     }
 
     const handler = () => {
-      setCurrentZoom(Math.round(zoomTool.getZoomLevel() * 100));
+      const newZoom = Math.round(zoomTool.getZoomLevel() * 100);
+      setCurrentZoom(newZoom);
+
+      const inputEl = inputRef.current;
+      updateInputString(newZoom, inputEl);
+      if (document.activeElement === inputEl) {
+        inputEl?.select();
+      }
     };
 
     zoomTool.subscribeOnZoomEvent(handler);

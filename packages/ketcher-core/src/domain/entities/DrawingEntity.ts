@@ -20,112 +20,24 @@ export abstract class DrawingEntity {
     },
   ) {
     this._position = _position || new Vec2(0, 0);
-    if (this.config?.generateId === true) {
-      this.id = id;
-      id++;
-    }
-  }
-
-  moveRelative(position: Vec2) {
-    this._position.x += position.x;
-    this._position.y += position.y;
-  }
-
-  public moveAbsolute(position: Vec2) {
-    this._position = position;
-  }
-
-  get position() {
-    return this._position;
-  }
-
-  public turnOnHover() {
-    this.hovered = true;
-  }
-
-  public turnOffHover() {
-    this.hovered = false;
-  }
-
-  public turnOnSelection() {
-    this.selected = true;
-  }
-
-  public turnOffSelection() {
-    this.selected = false;
-  }
-
-  public abstract get center(): Vec2;
-
-  public selectIfLocatedInRectangle(
-    rectangleTopLeftPoint: Vec2,
-    rectangleBottomRightPoint: Vec2,
-    isPreviousSelected = false,
-    shiftKey = false,
-  ) {
-    assert(this.baseRenderer);
-    const prevSelectedValue = this.selected;
-    const selectionPoints = this.baseRenderer.selectionPoints || [
-      Coordinates.modelToCanvas(this.center),
-    ];
-    let isSelected = false;
-
-    selectionPoints.forEach((point) => {
-      const locatedInRectangle =
-        rectangleBottomRightPoint.x > point.x &&
-        rectangleBottomRightPoint.y > point.y &&
-        rectangleTopLeftPoint.x < point.x &&
-        rectangleTopLeftPoint.y < point.y;
-      if (shiftKey) {
-        isSelected = isPreviousSelected || locatedInRectangle;
-      } else {
-        isSelected = locatedInRectangle;
-      }
-    });
-
-    if (isSelected) {
-      this.turnOnSelection();
-    } else {
-      this.turnOffSelection();
+    if (this.config?.generateId !== true) {
+      return;
     }
 
-    return prevSelectedValue !== this.selected;
-  }
-
-  public selectIfLocatedInPolygon(
-    polygonPoints: Vec2[],
-    isPreviousSelected = false,
-    shiftKey = false,
-  ) {
-    assert(this.baseRenderer);
-    const prevSelectedValue = this.selected;
-    const selectionPoints = this.baseRenderer.selectionPoints || [
-      Coordinates.modelToCanvas(this.center),
-    ];
-    let isSelected = false;
-
-    selectionPoints.forEach((point) => {
-      const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
-      if (shiftKey) {
-        isSelected = isPreviousSelected || locatedInPolygon;
-      } else {
-        isSelected = locatedInPolygon;
-      }
-    });
-
-    if (isSelected) {
-      this.turnOnSelection();
-    } else {
-      this.turnOffSelection();
-    }
-
-    return prevSelectedValue !== this.selected;
+    this.id = id;
+    id++;
   }
 
   private isPointInPolygon(r: Vec2[], p: Vec2) {
+    const lastPoint = r.at(-1);
+
+    if (!lastPoint) {
+      return false;
+    }
+
     const d = new Vec2(0, 1);
     const n = d.rotate(Math.PI / 2);
-    let v0 = Vec2.diff(r[r.length - 1], p);
+    let v0 = Vec2.diff(lastPoint, p);
     let n0 = Vec2.dot(n, v0);
     let d0 = Vec2.dot(d, v0);
     let w0 = new Vec2(0, 0);
@@ -163,6 +75,98 @@ export abstract class DrawingEntity {
       flag0 = flag1;
     }
     return counter % 2 !== 0;
+  }
+
+  moveRelative(position: Vec2) {
+    this._position.x += position.x;
+    this._position.y += position.y;
+  }
+
+  public moveAbsolute(position: Vec2) {
+    this._position = position;
+  }
+
+  get position() {
+    return this._position;
+  }
+
+  public turnOnHover() {
+    this.hovered = true;
+  }
+
+  public turnOffHover() {
+    this.hovered = false;
+  }
+
+  public turnOnSelection() {
+    this.selected = true;
+  }
+
+  public turnOffSelection() {
+    this.selected = false;
+  }
+
+  public abstract get center(): Vec2;
+
+  public selectIfLocatedInRectangle(
+    rectangleTopLeftPoint: Vec2,
+    rectangleBottomRightPoint: Vec2,
+    isPreviousSelected = false,
+    isShiftKeyPressed = false,
+  ) {
+    assert(this.baseRenderer);
+    const prevSelectedValue = this.selected;
+    const selectionPoints = this.baseRenderer.selectionPoints || [
+      Coordinates.modelToCanvas(this.center),
+    ];
+    let isSelected = false;
+
+    selectionPoints.forEach((point) => {
+      const isLocatedInRectangle =
+        rectangleBottomRightPoint.x > point.x &&
+        rectangleBottomRightPoint.y > point.y &&
+        rectangleTopLeftPoint.x < point.x &&
+        rectangleTopLeftPoint.y < point.y;
+      isSelected = isShiftKeyPressed
+        ? isPreviousSelected || isLocatedInRectangle
+        : isLocatedInRectangle;
+    });
+
+    if (isSelected) {
+      this.turnOnSelection();
+    } else {
+      this.turnOffSelection();
+    }
+
+    return prevSelectedValue !== this.selected;
+  }
+
+  public selectIfLocatedInPolygon(
+    polygonPoints: Vec2[],
+    isPreviousSelected = false,
+    isShiftKeyPressed = false,
+  ) {
+    assert(this.baseRenderer);
+    const prevSelectedValue = this.selected;
+    const selectionPoints = this.baseRenderer.selectionPoints || [
+      Coordinates.modelToCanvas(this.center),
+    ];
+    let isSelected = false;
+
+    selectionPoints.forEach((point) => {
+      const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
+      isSelected = isShiftKeyPressed
+        ? isPreviousSelected || locatedInPolygon
+        : locatedInPolygon;
+    });
+
+    if (isSelected) {
+      this.turnOnSelection();
+    } else {
+      this.turnOffSelection();
+    }
+
+    return prevSelectedValue !== this.selected;
   }
 
   public setBaseRenderer(renderer: BaseRenderer) {

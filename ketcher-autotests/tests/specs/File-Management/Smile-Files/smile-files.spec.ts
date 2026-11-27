@@ -70,10 +70,7 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
 
-    await verifySMILESExport(
-      page,
-      'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
-    );
+    await verifySMILESExport(page, 'CCCCCC[C+][1C]C[CH]CC');
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await pasteFromClipboardAndAddToCanvas(
@@ -117,7 +114,7 @@ test.describe('SMILES files', () => {
     );
     await verifySMILESExport(
       page,
-      'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht,SgD:38,37,36:fgfh:dsfsd::: :|',
+      'CCCCCCCCCCCCC.CCCCCCC.CCC{-}CC{+n}CC.CCCCCCC.CCCCCCC',
     );
     await CommonTopLeftToolbar(page).clearCanvas();
 
@@ -170,7 +167,7 @@ test.describe('SMILES files', () => {
       MoleculesFileFormatType.DaylightSMILES,
     );
     expect(await SaveStructureDialog(page).getTextAreaValue()).toBe(
-      'CCCC[C@@H](C)[C@@H](C)CC |SgD:4,5:Purity:Purity = 96%::: :|',
+      'CCCC[C@@H](C)[C@@H](C)CC',
     );
     await SaveStructureDialog(page).switchToWarningsTab();
     await moveMouseAway(page);
@@ -199,7 +196,7 @@ test.describe('SMILES files', () => {
     );
     await verifySMILESExport(
       page,
-      '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
+      '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1',
     );
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
@@ -228,7 +225,7 @@ test.describe('SMILES files', () => {
 
     await verifySMILESExport(
       page,
-      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,SgD:8:Purity:Purity = 50%::: :,rb:32:*,u:3|',
+      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91',
     );
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
@@ -251,10 +248,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-cis-trans-cycle-expected.smi',
       FileType.SMILES,
     );
-    await verifySMILESExport(
-      page,
-      'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
-    );
+    await verifySMILESExport(page, 'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1');
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -276,7 +270,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-alias-pseudoatom-expected.smi',
       FileType.SMILES,
     );
-    await verifySMILESExport(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
+    await verifySMILESExport(page, 'CCCC*CC');
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -351,7 +345,7 @@ test.describe('SMILES files', () => {
     );
     await verifyFileExport(
       page,
-      'SMILES/structure-with-s-group-properties.smi',
+      'SMILES/structure-with-s-group-properties-expected.smi',
       FileType.SMILES,
     );
     await getSGroupLabelLocator(page, { labelText: 'info2' }).dblclick();

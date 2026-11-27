@@ -47,8 +47,8 @@ const PanelBox = styled('div')`
 
 const theme = createTheme(defaultTheme);
 
-const getHiddenButtonsConfig = (btnArr: string[]): ButtonsConfig => {
-  return btnArr.reduce((acc, button) => {
+const getHiddenButtonsConfig = (buttonArray: string[]): ButtonsConfig => {
+  return buttonArray.reduce((acc, button) => {
     if (button) acc[button] = { hidden: true };
 
     return acc;
@@ -87,10 +87,12 @@ const App = () => {
             staticResourcesUrl={process.env.PUBLIC_URL}
             buttons={getHiddenButtonsConfig(hiddenButtons)}
             structServiceProvider={structServiceProvider}
-            errorHandler={(err) => console.log(err)}
+            errorHandler={(error) => console.log(error)}
             onInit={(ketcher: Ketcher) => {
-              (global as any).ketcher = ketcher;
-              (global as any).KetcherFunctions = KetcherAPI(global.ketcher);
+              (globalThis as any).ketcher = ketcher;
+              (globalThis as any).KetcherFunctions = KetcherAPI(
+                globalThis.ketcher,
+              );
             }}
           />
         </KetcherBox>

@@ -75,7 +75,7 @@ export default function ButtonGroup<T>({
       rowGap: hasNumeric && isTwoTextButtons ? 0 : undefined,
       flexWrap: hasNumeric && isTwoTextButtons ? undefined : ('wrap' as const),
       flexDirection: hasNumeric ? undefined : ('column' as const),
-      gap: !hasNumeric ? GRID_GAP : undefined,
+      gap: hasNumeric ? undefined : GRID_GAP,
     }),
     [hasNumeric, isTwoTextButtons],
   );

@@ -174,8 +174,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
     ).open();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -336,8 +337,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.D_OAla);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();

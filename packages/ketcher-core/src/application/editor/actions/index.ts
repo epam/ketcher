@@ -1,6 +1,7 @@
 export * from './action';
 export * from './aromaticFusing';
 export * from './atom';
+export * from './attachmentGroup';
 export * from './atomMerge';
 export * from './basic';
 export * from './bond';
@@ -20,5 +21,5 @@ export * from './sgroup';
 export * from './simpleobject';
 export * from './template';
 export * from './text';
-export * from './utils';
+export * from './utilities';
 export * from './highlight';

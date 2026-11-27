@@ -16,7 +16,7 @@ const useBondSGroupEdit = () => {
 
   const handler = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const sGroups = Array.from(sGroupsRef.current);
+    const sGroups = [...sGroupsRef.current];
     SGroupTool.sgroupDialog(editor, sGroups[0]);
   }, [ketcherId]);
 
@@ -52,10 +52,9 @@ const useBondSGroupEdit = () => {
     const struct: ReStruct = editor.render.ctab;
     const [sgGroupId] = sGroupsRef.current;
     const sgroup = struct.sgroups.get(sgGroupId)?.item;
-    if (sgroup?.isSuperatomWithoutLabel) {
-      return true;
-    }
-    return sGroupsRef.current.size === 0;
+    return sgroup?.isSuperatomWithoutLabel
+      ? true
+      : sGroupsRef.current.size === 0;
   }, [ketcherId]);
 
   return [handler, disabled, hidden] as const;

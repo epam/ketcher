@@ -8,7 +8,7 @@ import {
   CONFIGS,
   eslintCounts,
   firstLine,
-  hitUsageLimit,
+  accountFailure,
   insideCheckout,
   modelArgs,
   modelEnv,
@@ -214,6 +214,16 @@ describe('parseModelOutput', () => {
     });
   });
 
+  it('stops on a login failure', () => {
+    const loggedOut = run({
+      subtype: 'success',
+      is_error: true,
+      api_error_status: 401,
+      result: 'Not logged in',
+    });
+    assert.ok(accountFailure(loggedOut));
+  });
+
   it('reports a failed run and the usage limit', () => {
     const limited = run({
       subtype: 'success',
@@ -222,7 +232,7 @@ describe('parseModelOutput', () => {
       result: 'limit',
     });
     assert.equal(limited.ok, false);
-    assert.ok(hitUsageLimit(limited));
+    assert.ok(accountFailure(limited));
     assert.match(
       run({ subtype: 'error_max_budget_usd' }).error,
       /error_max_budget_usd/,
@@ -235,7 +245,7 @@ describe('parseModelOutput', () => {
     });
     assert.equal(garbage.ok, false);
     assert.equal(garbage.durationMs, 7);
-    assert.ok(!hitUsageLimit(garbage));
+    assert.ok(!accountFailure(garbage));
   });
 });
 

@@ -299,12 +299,13 @@ export function parseModelOutput({ exitCode, stdout, stderr, durationMs }) {
 }
 
 /**
- * Whether a generation failed on the account's usage limit. Such a result is
- * not the model's, so it must not be saved.
+ * Whether a generation failed on the account rather than on the task: not
+ * logged in, no access, or the usage limit. Such a result is not the
+ * model's, so it is not saved, and the eval stops.
  * @param {{ error?: string }} generation
  */
-export const hitUsageLimit = (generation) =>
-  /HTTP 429/.test(generation?.error ?? '');
+export const accountFailure = (generation) =>
+  /HTTP (?:401|403|429)/.test(generation?.error ?? '');
 
 const VERSION_LINE = /^\s*\*\s*Version:?\s+(\S+)/gm;
 const TEST_TASK_LINE = /^\s*\*\s*Test task:?\s+(\S+)/gm;
@@ -643,7 +644,7 @@ async function checkSpecs({
 
 /**
  * Runs one entry under one configuration and returns its result, or
- * undefined when the usage limit stopped the model run.
+ * `{ stopped }` when the account stopped the model run (see accountFailure).
  * @param {object} options
  * @param {any} options.entry
  * @param {EvalConfig} options.config
@@ -677,8 +678,8 @@ async function runEntry({ entry, config, base, checkout, template, settings }) {
       stderr: child.timedOut ? 'timed out' : (child.stderr ?? ''),
       durationMs: Date.now() - started,
     });
-    if (hitUsageLimit(generation)) {
-      return undefined;
+    if (accountFailure(generation)) {
+      return { stopped: generation.error };
     }
     // As the workflow does after the Claude step.
     const moved = await execa(
@@ -836,9 +837,9 @@ async function main(args) {
           template,
           settings,
         });
-        if (!result) {
+        if (result.stopped) {
           console.log(
-            'Usage limit reached: this result is not saved and the eval stops. Rerun this configuration and the issues after it once the limit resets.',
+            `#${entry.issue} ${config.name}: ${result.stopped}\nThe account stopped the run: this result is not saved and the eval stops. Log in, or wait for the usage limit to reset, then rerun this configuration and the issues after it.`,
           );
           return;
         }

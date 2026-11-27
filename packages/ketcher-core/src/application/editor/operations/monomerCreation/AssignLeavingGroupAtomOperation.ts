@@ -5,6 +5,7 @@ import { assert } from 'utilities';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 import type { AttachmentPointName } from 'domain/types';
 import type Restruct from 'application/render/restruct/restruct';
+import { AssignAttachmentAtomOperation } from './AssignAttachmentAtomOperation';
 
 export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];
@@ -57,12 +58,15 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
   }
 
   invert() {
-    const leavingAtomId = this.atomPair[1];
+    const [attachmentAtomId, leavingAtomId] = this.atomPair;
 
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    return new AssignLeavingGroupAtomOperation(
+    // Restore the exact pair: on redo the leaving atom does not exist yet.
+    return new AssignAttachmentAtomOperation(
       this.monomerCreationState,
+      attachmentAtomId,
       leavingAtomId,
+      this.attachmentPointName,
+      this._assignedAttachmentPoints,
     );
   }
 }

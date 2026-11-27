@@ -1,0 +1,128 @@
+{
+  "pr": 12783,
+  "head": "1c707106e1815ed949a4ecce76094e12d8afc429",
+  "config": "haiku-finders-sonnet-verifier",
+  "models": {
+    "finder": "claude-haiku-5-5",
+    "verifier": "claude-sonnet-5-5"
+  },
+  "findersFrom": "haiku-finders-haiku-verifier",
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-core/src/application/editor/actions/sgroup.ts",
+      "line": 600,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New filter re-implements the SRU type check that SGroup.isSRUSGroup already provides.",
+      "scenario": "`.filter((sgroup) => sgroup !== sG && sgroup.type === 'SRU')` repeats `SGroup.isSRUSGroup` (`packages/ketcher-core/src/domain/entities/sgroup.ts:923`). If the SRU definition changes, this filter and the other SRU checks in the file drift apart. Use `SGroup.isSRUSGroup(sgroup)` here, as the other SRU checks can also use it.",
+      "references": [
+        "packages/ketcher-core/src/domain/entities/sgroup.ts:923"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts",
+      "line": 137,
+      "otherLocations": [
+        "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:59",
+        "packages/ketcher-core/__tests__/application/editor/actions/sgroup.test.ts:134",
+        "packages/ketcher-core/__tests__/application/editor/actions/sgroup.test.ts:178"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The new test adds `as unknown as RenderOptions` and `as unknown as HTMLElement` casts to satisfy the Render constructor.",
+      "scenario": "The stub options object is cast without checking its shape. If Render later reads a field such as `options.scale` or a DOM method, the test still compiles and fails only at runtime or passes with a wrong stub. Lines 137 and 138 are the added lines.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts",
+      "line": 138,
+      "otherLocations": [
+        "packages/ketcher-core/__tests__/application/editor/actions/sgroup.test.ts:135",
+        "packages/ketcher-core/__tests__/application/editor/actions/sgroup.test.ts:179"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The new test rebuilds the Render and ReStruct setup inline instead of using the existing `createRestruct` helper.",
+      "scenario": "sgroup.test.ts already defines `createRestruct(struct)` at line 58, which builds the same Render, options and ReStruct. The copied setup repeats the casts, so a later change to the setup must be made in several test files. Extract the helper to a shared test utility and import it in both files.",
+      "references": [
+        "packages/ketcher-core/__tests__/application/editor/actions/sgroup.test.ts:58"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/actions/sgroup.ts",
+      "line": 610,
+      "otherLocations": [
+        "packages/ketcher-core/src/application/editor/actions/sgroup.ts:779"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The label change and the CalcImplicitH follow-up are written as two separate ops at each site.",
+      "scenario": "Both sites now add `AtomAttr(aid, 'label', ...)` followed by `CalcImplicitH([aid])`. A future site that changes a label and forgets the recalculation leaves implicitH stale, which is the bug this PR fixes. A small helper such as `setAtomLabelAndRecalcH(action, aid, label)` would keep the pair together. The atomMerge.ts line 164 also pairs them, so it is a third site to consider.",
+      "references": [
+        "packages/ketcher-core/src/application/editor/actions/sgroup.ts:779"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:137",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The new test adds `as unknown as RenderOptions` and `as unknown as HTMLElement` casts to satisfy the Render constructor.",
+      "scenario": "The new test builds `{ scale, width, height }` and casts it with `as unknown as RenderOptions`, then casts `document` with `as unknown as HTMLElement`. TypeScript no longer checks the stub against `RenderOptions`. If `Render` or `ReStruct` later reads another option field, the test compiles and fails only at runtime, or passes against a wrong stub. Lines 137-138 are added by the diff. The same casts at atomMerge.test.ts:59-60 and in sgroup.test.ts already existed and are not part of this finding.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "03045947e3d534ec"
+    },
+    {
+      "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:138",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The new test rebuilds the Render and ReStruct setup inline instead of using the existing `createRestruct` helper.",
+      "scenario": "The new atomMerge test builds options, Render and ReStruct inline with the same casts as `createRestruct` in sgroup.test.ts:58, which is a non-exported local helper. A later change to the setup has to be made in each copy. Extract the helper to a shared test utility and import it in both files. Only atomMerge.test.ts:138 is part of the diff, and the other cited locations aren't.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "1800841b3003fde6"
+    },
+    {
+      "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:600",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New filter re-implements the SRU type check that SGroup.isSRUSGroup already provides.",
+      "scenario": "The new filter in `fromSgroupDeletion` checks the SRU type with a string literal instead of the existing `SGroup.isSRUSGroup(sgroup)`, so a change to the SRU definition would not reach this filter.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "9d2f9e0dc7be5fc5"
+    }
+  ],
+  "dropped": 1,
+  "failed": [],
+  "ranModels": [
+    "claude-sonnet-5-5"
+  ],
+  "runs": 6,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.02288333,
+    "finderUsd": 0.02288333,
+    "verifierUsd": 0.29709070000000004,
+    "totalUsd": 0.31997403
+  },
+  "time": {
+    "initialFinderMs": 39425,
+    "totalMs": 76303
+  }
+}

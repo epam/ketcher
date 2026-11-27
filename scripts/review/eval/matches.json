@@ -1,4 +1,531 @@
 {
   "description": "Judgement of every confirmed finding of the eval runs, per configuration and pull request. `finderHits` lists the expected findings some finder raised before verification. Each confirmed finding is `match` (it is the expected finding in `expected`), `valid` (a real defect the maintainer did not raise), `false-positive`, or `todo`. Run `node scripts/review/eval/report.mjs --draft` to add the findings not judged yet.",
-  "runs": {}
+  "runs": {
+    "sonnet-finders-sonnet-verifier": {
+      "10447": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "c1304452475381d5",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "29f6172cb5ae4144",
+            "location": "packages/ketcher-macromolecules/src/constants.ts:86",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit: the Record<string, string> annotation makes `as const` a no-op."
+          },
+          {
+            "fingerprint": "8d1637e65cfdbf44",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:39",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): createAminoAcid and createNonAminoAcid build the same object."
+          },
+          {
+            "fingerprint": "675a509017fa5a82",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:69",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit: a boolean guard parameter; near the maintainer point but it does not say the match belongs inside checkMonomerMatch."
+          }
+        ]
+      },
+      "12363": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "1f76696b9573e78c",
+            "location": "packages/ketcher-core/src/application/editor/editorEvents.ts:88",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): each payload union is written in the interface and again in the initializer."
+          }
+        ]
+      },
+      "12473": {
+        "finderHits": ["12473-ts-ignore", "12473-shared-drag-type"],
+        "confirmed": [
+          {
+            "fingerprint": "816f22a7f8379bf7",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+            "expected": "12473-ts-ignore",
+            "verdict": "match",
+            "note": "Says the @ts-ignore stays above an assignment that already casts through unknown."
+          },
+          {
+            "fingerprint": "95f4a22cd54bf01c",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:42",
+            "expected": "12473-shared-drag-type",
+            "verdict": "match",
+            "note": "Partial match: names the duplicated MergeItems alias of the new drag context, not the whole shared base type."
+          }
+        ]
+      },
+      "12695": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "df3c7d48860378d3",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "b93ba7840240d932",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:41",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "Two guards at two layers (null panel, empty point list); defensive, not a defect."
+          }
+        ]
+      },
+      "12783": {
+        "finderHits": [],
+        "confirmed": []
+      }
+    },
+    "haiku-finders-haiku-verifier": {
+      "10447": {
+        "finderHits": ["10447-match-in-check"],
+        "confirmed": [
+          {
+            "fingerprint": "7fc2d59548eb8b12",
+            "location": "packages/ketcher-macromolecules/src/constants.ts:59",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit: the Record<string, string> annotation makes `as const` a no-op."
+          },
+          {
+            "fingerprint": "d5cc8b621187ad45",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:27",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): createAminoAcid and createNonAminoAcid build the same object."
+          },
+          {
+            "fingerprint": "de1ada674f8def27",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:173",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit: the test title says \"failing code\" for a three-letter code."
+          },
+          {
+            "fingerprint": "955a31586fadd589",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:69",
+            "expected": "10447-match-in-check",
+            "verdict": "match",
+            "note": "Same point as the maintainer: the three-letter match runs beside checkMonomerMatch instead of inside it."
+          }
+        ]
+      },
+      "12363": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "b854d4ec067a7912",
+            "location": "packages/ketcher-core/src/application/editor/editorEvents.ts:182",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Weak but valid: the Record<..., Subscription> local widens the typed events so the reset compiles."
+          },
+          {
+            "fingerprint": "f0f0c1040575d122",
+            "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:23",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "A named alias that matches its sibling *EditResult types; not worth a comment."
+          }
+        ]
+      },
+      "12473": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "eef551020f694fa2",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R5) on the expected line, but it asks to remove the cast, not the @ts-ignore, so it is not the maintainer point."
+          },
+          {
+            "fingerprint": "974e3dd8026de007",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:306",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): Vec2.degrees_to_radians exists and the PR edits this line."
+          }
+        ]
+      },
+      "12695": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "fff4533d0c2e02ea",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "99c10d406d0e191f",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:22",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          }
+        ]
+      },
+      "12783": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "03045947e3d534ec",
+            "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:137",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "1800841b3003fde6",
+            "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:138",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R9): the test copies createRestruct of sgroup.test.ts line for line."
+          },
+          {
+            "fingerprint": "9d2f9e0dc7be5fc5",
+            "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:600",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): SGroup.isSRUSGroup does the same type check."
+          }
+        ]
+      }
+    },
+    "haiku-finders-sonnet-verifier": {
+      "10447": {
+        "finderHits": ["10447-match-in-check"],
+        "confirmed": [
+          {
+            "fingerprint": "46b666c73daccbbd",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "d5cc8b621187ad45",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:27",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): createAminoAcid and createNonAminoAcid build the same object."
+          },
+          {
+            "fingerprint": "de1ada674f8def27",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:173",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit: the test title says \"failing code\" for a three-letter code."
+          }
+        ]
+      },
+      "12363": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "bca5780db5c45e8f",
+            "location": "packages/ketcher-core/src/application/editor/editor.types.ts:135",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: core types elementEdit as Partial<AtomAttributes>, react as ElementEditResult with `content`."
+          },
+          {
+            "fingerprint": "f0f0c1040575d122",
+            "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:23",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "A named alias that matches its sibling *EditResult types; not worth a comment."
+          },
+          {
+            "fingerprint": "780bb7b62b6963c9",
+            "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:33",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R9): tool/sgroup.ts already declares a local SGroupDialogResult."
+          }
+        ]
+      },
+      "12473": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "eef551020f694fa2",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R5) on the expected line, but it asks to remove the cast, not the @ts-ignore, so it is not the maintainer point."
+          },
+          {
+            "fingerprint": "974e3dd8026de007",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:306",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): Vec2.degrees_to_radians exists and the PR edits this line."
+          }
+        ]
+      },
+      "12695": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "fff4533d0c2e02ea",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "99c10d406d0e191f",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:22",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          }
+        ]
+      },
+      "12783": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "03045947e3d534ec",
+            "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:137",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "1800841b3003fde6",
+            "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:138",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R9): the test copies createRestruct of sgroup.test.ts line for line."
+          },
+          {
+            "fingerprint": "9d2f9e0dc7be5fc5",
+            "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:600",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): SGroup.isSRUSGroup does the same type check."
+          }
+        ]
+      }
+    },
+    "sonnet-finders-haiku-verifier": {
+      "10447": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "c1304452475381d5",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "38d9e2a68d5deab6",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:624",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "Every other field in checkMonomerMatch also matches by substring, so the three-letter code behaves like the rest of the search."
+          },
+          {
+            "fingerprint": "29f6172cb5ae4144",
+            "location": "packages/ketcher-macromolecules/src/constants.ts:86",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit: the Record<string, string> annotation makes `as const` a no-op."
+          },
+          {
+            "fingerprint": "8d1637e65cfdbf44",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:27",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): createAminoAcid and createNonAminoAcid build the same object."
+          }
+        ]
+      },
+      "12363": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "1f76696b9573e78c",
+            "location": "packages/ketcher-core/src/application/editor/editorEvents.ts:88",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): each payload union is written in the interface and again in the initializer."
+          }
+        ]
+      },
+      "12473": {
+        "finderHits": ["12473-ts-ignore", "12473-shared-drag-type"],
+        "confirmed": [
+          {
+            "fingerprint": "816f22a7f8379bf7",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+            "expected": "12473-ts-ignore",
+            "verdict": "match",
+            "note": "Says the @ts-ignore stays above an assignment that already casts through unknown."
+          },
+          {
+            "fingerprint": "95f4a22cd54bf01c",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:42",
+            "expected": "12473-shared-drag-type",
+            "verdict": "match",
+            "note": "Partial match: names the duplicated MergeItems alias of the new drag context, not the whole shared base type."
+          }
+        ]
+      },
+      "12695": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "df3c7d48860378d3",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "b93ba7840240d932",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:9",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "Two guards at two layers (null panel, empty point list); defensive, not a defect."
+          }
+        ]
+      },
+      "12783": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "5fe378e10246573a",
+            "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:610",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "Two ops at two sites; a helper for the pair is not worth a comment."
+          }
+        ]
+      }
+    },
+    "opus-finders-opus-verifier": {
+      "10447": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "6e9c4c7e722843b5",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "a12f2bdbca17a66c",
+            "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:564",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): AmbiguousMonomer.getMonomerClass gives the class of the components; the claim that this file already uses it is wrong."
+          }
+        ]
+      },
+      "12363": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "3ff3c28f67acd78e",
+            "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:19",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: core types elementEdit as Partial<AtomAttributes>, react as ElementEditResult with `content`."
+          },
+          {
+            "fingerprint": "5bce12a75c8887d3",
+            "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:23",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "A named alias that matches its sibling *EditResult types; not worth a comment."
+          },
+          {
+            "fingerprint": "81e1d3e6a5d93dfb",
+            "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:33",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R9): tool/sgroup.ts already declares a local SGroupDialogResult."
+          }
+        ]
+      },
+      "12473": {
+        "finderHits": ["12473-shared-drag-type"],
+        "confirmed": [
+          {
+            "fingerprint": "31ddd3db45737780",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R5) on the expected line, but it asks to remove the cast, not the @ts-ignore, so it is not the maintainer point."
+          },
+          {
+            "fingerprint": "c2f6093f8334b477",
+            "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:42",
+            "expected": "12473-shared-drag-type",
+            "verdict": "match",
+            "note": "Partial match: names the duplicated MergeItems alias of the new drag context, not the whole shared base type."
+          }
+        ]
+      },
+      "12695": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "4cd99269ac40c984",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "334d4c648febb26a",
+            "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:41",
+            "expected": null,
+            "verdict": "false-positive",
+            "note": "Two guards at two layers (null panel, empty point list); defensive, not a defect."
+          }
+        ]
+      },
+      "12783": {
+        "finderHits": [],
+        "confirmed": [
+          {
+            "fingerprint": "0eb16c76049c976b",
+            "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:137",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: R5 covers `as unknown as` casts in test stubs; the maintainer did not raise it."
+          },
+          {
+            "fingerprint": "4d4946c7d0125df4",
+            "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:600",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid nit (R9): SGroup.isSRUSGroup does the same type check."
+          }
+        ]
+      }
+    }
+  }
 }

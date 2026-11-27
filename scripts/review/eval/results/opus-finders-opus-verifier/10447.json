@@ -1,0 +1,132 @@
+{
+  "pr": 10447,
+  "head": "1180f13b9b00e1e72ca769fd5e208325bfcbde7e",
+  "config": "opus-finders-opus-verifier",
+  "models": {
+    "finder": "claude-opus-5-5",
+    "verifier": "claude-opus-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 70,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:29",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:46",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:131"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test fixtures use casts that hide members missing from the mocked monomers and state.",
+      "scenario": "`createAmbiguous` builds the object `{ label, id, isAmbiguous, subtype, options, monomers: [{ monomerItem: { props: { MonomerClass } } }] }` and ends with `as unknown as AmbiguousMonomerType`. The components have no `label`, `MonomerName` or `Name`, and the template has no `idtAliases`. `struct: {} as MonomerItemType['struct']` stubs the struct the same way, and `buildState` ends with `as RootState`. Because of the casts, the type checker never sees that these shapes differ from the real types. Suppose a later change to `selectFilteredMonomers` reads a component field, for example `c.monomerItem.props.MonomerName.toUpperCase()`. The test then throws at runtime instead of failing to compile. The fixtures also give every ambiguous template the id `ambiguous-<label>`, while the real ids in monomers.ket are like `_A___Alanine_C___Cysteine...`. `checkMonomerMatch(…, label, id)` searches the id, so in the real library a query for 'Ala' also returns the ambiguous X. The test 'Ala does not return Adenine' asserts length 1 and cannot catch this. Build the fixtures as fully typed objects, or narrow them with a type guard.",
+      "references": []
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts",
+      "line": 564,
+      "severity": "nit",
+      "id": "R9",
+      "otherLocations": [],
+      "claim": "New inline check for an all-amino-acid ambiguous monomer repeats `AmbiguousMonomer.getMonomerClass`, which this file already relies on.",
+      "scenario": "New line: `components.every((c) => c.monomerItem.props.MonomerClass === KetMonomerClass.AminoAcid)`. Existing code at `packages/ketcher-core/src/domain/entities/AmbiguousMonomer.ts:73` (`public static getMonomerClass(monomers: BaseMonomer[])`) already decides an ambiguous monomer's class from its components. It goes through `resolveMonomerClass`, which also treats `MonomerType === 'PEPTIDE'` as an amino acid. The same file uses it at `librarySlice.ts:253-261` (`new AmbiguousMonomer(libraryItem, ...).monomerClass`) to put ambiguous items under Peptides. The new check reads raw `props.MonomerClass` instead. So an ambiguous peptide whose components have only `MonomerType: 'PEPTIDE'` would be listed under Ambiguous Peptides but would not match its three-letter code. Any later change to how ambiguous classes are resolved would also miss this copy. Use `components.length > 0 && AmbiguousMonomer.getMonomerClass(components) === KetMonomerClass.AminoAcid`, keeping the length guard because `getMonomerClass` reads `monomers[0]`.",
+      "references": [
+        "packages/ketcher-core/src/domain/entities/AmbiguousMonomer.ts:73",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:253"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 71,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:29",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:46",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:129"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The new test stubs use `as unknown as AmbiguousMonomerType` and other casts to get past the type checker.",
+      "scenario": "`createAmbiguous` returns a partial object (`monomers: [{ monomerItem: { props: { MonomerClass } } }]`, with no `idtAliases` or full props) cast through `as unknown as AmbiguousMonomerType`. `{} as MonomerItemType['struct']` and `{...} as RootState` do the same thing. If `selectFilteredMonomers` later reads a member the stub leaves out, such as `monomerItem.props.Name`, the test still compiles and then fails or passes for the wrong reason. Build complete fixtures, or use typed factory helpers, so the compiler can check the shape.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/constants.ts",
+      "line": 59,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "This adds a second hand-kept list of peptide one-letter codes next to the one ketcher-core already has.",
+      "scenario": "ketcher-core already lists the natural and ambiguous peptide letters in `peptideNaturalAnalogues` and `StandardAmbiguousPeptide`/`peptideAmbiguousSymbols`. The new `AMINO_ACID_ONE_TO_THREE_LETTER_CODE` in ketcher-macromolecules lists the same letter set again under a different key type, `Record<string, string>`. If someone adds a peptide letter to the core enum, nothing makes them update this map, so the three-letter search silently misses it. Put the three-letter map in ketcher-core next to `StandardAmbiguousPeptide`, keyed by those constants. Also, `as const` has no effect here because the explicit `Record<string, string>` annotation widens the type.",
+      "references": [
+        "packages/ketcher-core/src/domain/constants/monomers.ts:34",
+        "packages/ketcher-core/src/domain/constants/monomers.ts:63",
+        "packages/ketcher-core/src/domain/constants/monomers.ts:71"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts",
+      "line": 69,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:564"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "Each caller works out the amino-acid class check and passes it in as a boolean flag, instead of the helper owning that check.",
+      "scenario": "`matchesAminoAcidThreeLetterCode(code, isAminoAcid, filter)` makes each branch work out 'is this an amino acid' on its own. The ambiguous branch does it with an inline `components.every(...MonomerClass === AminoAcid)`, and the plain branch with `props.MonomerClass === KetMonomerClass.AminoAcid`. The class gate, which is what this feature needs to stop 'Ala' matching Adenine, is therefore spread over two call sites, and a third caller can pass `true` without checking. Have the helper take the item and decide the class itself, for example on top of the ambiguous item's `monomerClass`, the way `isPeptideOrAmbiguousPeptide` does.",
+      "references": [
+        "packages/ketcher-core/src/domain/helpers/monomers.ts:388"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test fixtures use casts that hide members missing from the mocked monomers and state.",
+      "scenario": "`createAmbiguous` returns `{ label, id, isAmbiguous, subtype, options, monomers: [{ monomerItem: { props: { MonomerClass } } }] }` and casts it with `as unknown as AmbiguousMonomerType` (line 71). The component monomerItems have no `label`, `struct`, `MonomerName` or `Name`. The fixtures also stub `struct: {} as MonomerItemType['struct']` (lines 29 and 46) and cast the partial store with `as RootState` (line 129). Because of these casts, the type checker never compares the fixtures with the real types. Suppose a later change to `selectFilteredMonomers` reads a component field such as `c.monomerItem.props.Name.toLowerCase()`. The test then throws at runtime instead of failing to compile. Build fully typed fixtures, or correct the types, instead of casting.",
+      "lenses": [
+        "correctness",
+        "code-quality"
+      ],
+      "fingerprint": "6e9c4c7e722843b5"
+    },
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:564",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New inline check for an all-amino-acid ambiguous monomer repeats `AmbiguousMonomer.getMonomerClass`, which this file already relies on.",
+      "scenario": "To decide whether an ambiguous library item is all amino acids, the new search filter reads raw `props.MonomerClass` on each component. Existing code in the same file uses `AmbiguousMonomer.getMonomerClass` to decide this (librarySlice.ts:253-261, AmbiguousMonomer.ts:73). That helper goes through `resolveMonomerClass`, which also treats `MonomerType === 'PEPTIDE'` as an amino acid. So the library can list an ambiguous item under Peptides while the three-letter search skips it, if its components have `MonomerType: 'PEPTIDE'` but no `MonomerClass`. The two copies can also drift apart later. Fix: `components.length > 0 && AmbiguousMonomer.getMonomerClass(components) === KetMonomerClass.AminoAcid`. Keep the length guard because `getMonomerClass` reads `monomers[0]`.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "a12f2bdbca17a66c"
+    }
+  ],
+  "dropped": 2,
+  "failed": [],
+  "ranModels": [
+    "claude-opus-5-5"
+  ],
+  "runs": 8,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.8710986000000001,
+    "finderUsd": 0.8710986000000001,
+    "verifierUsd": 0.7660258,
+    "totalUsd": 1.6371244
+  },
+  "time": {
+    "initialFinderMs": 47851,
+    "totalMs": 93431
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "pr": 12695,
+  "head": "c4497219e06ded8555e168e8822678ec1b954158",
+  "config": "haiku-finders-haiku-verifier",
+  "models": {
+    "finder": "claude-haiku-5-5",
+    "verifier": "claude-haiku-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx",
+      "line": 14,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:22"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stubs Render with a double-cast `as unknown as Render`, which hides any member the stub lacks.",
+      "scenario": "SGroupDataRender reads only render.clientArea today. If a later change makes it read another Render member, such as a canvas or scale property, TypeScript still accepts the test and the stub returns undefined at runtime, so the test fails with a confusing error or passes for the wrong reason. Build a typed partial with a narrow helper or a Pick<Render, 'clientArea'> fixture instead of a cast.",
+      "references": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:15"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx",
+      "line": 22,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test builds the SGroup stub with `{ hovering } as unknown as SGroup`, a double cast that hides missing SGroup members.",
+      "scenario": "The stub has only a `hovering` field. If the component later reads another SGroup member, such as the sGroup id or type, the cast still compiles and the test receives undefined at runtime. Type the fixture as a partial of SGroup, or narrow the value at the component boundary, rather than casting it through unknown.",
+      "references": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:33"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx",
+      "line": 41,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The new `removed` early return duplicates the empty-points guard that already returns null a few lines later.",
+      "scenario": "For a removed hover, attrs is null, so rectCoords becomes [], calculateMiddleCoordsForRect returns [], the destructured sides are undefined, and the guard at lines 52-62 returns null. The explicit `removed` branch reaches the same result through a second path, so a reader must check two places to learn when the panel is hidden. Keeping the branch documents intent, so this is a judgment call; drop it if the empty-points guard is enough.",
+      "references": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:52"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stubs Render with a double-cast `as unknown as Render`, which hides any member the stub lacks.",
+      "scenario": "The test stubs Render with `} as unknown as Render;` (line 14) and SGroup with `as unknown as SGroup` (line 22). SGroupDataRender.tsx:15 reads render?.clientArea and passes render to CoordinateTransformation.canvasToView, so a later change that reads another Render member would still compile, and the stub would return undefined at runtime. Use a typed partial fixture or a Pick<Render, 'clientArea'> helper instead of the double cast.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "fff4533d0c2e02ea"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:22",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test builds the SGroup stub with `{ hovering } as unknown as SGroup`, a double cast that hides missing SGroup members.",
+      "scenario": "The SGroup stub is `{ hovering } as unknown as SGroup` (test line 22). It holds only `hovering`. Today SGroupDataRender.tsx reads only `sGroup.hovering` (lines 29 and 33), so the test passes. If a later change makes the component read another SGroup member (for example `sGroup.id` or `sGroup.type`), the cast still compiles, the test gets undefined, and the failure shows up at runtime rather than at type-check. Line 14 (`editorRender ... as unknown as Render`) is a second instance of the same cast pattern and should be fixed in the same change. Fix: type the fixture from the real type, or make the component accept only the fields it uses (for example `Pick<SGroup, 'hovering'>`) so no cast is needed.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "99c10d406d0e191f"
+    }
+  ],
+  "dropped": 1,
+  "failed": [],
+  "ranModels": [
+    "claude-haiku-5-5"
+  ],
+  "runs": 7,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.01392498,
+    "finderUsd": 0.01392498,
+    "verifierUsd": 0.01295616,
+    "totalUsd": 0.026881139999999998
+  },
+  "time": {
+    "initialFinderMs": 19217,
+    "totalMs": 39447
+  }
+}

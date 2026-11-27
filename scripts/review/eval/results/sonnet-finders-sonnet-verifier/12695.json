@@ -1,0 +1,83 @@
+{
+  "pr": 12695,
+  "head": "c4497219e06ded8555e168e8822678ec1b954158",
+  "config": "sonnet-finders-sonnet-verifier",
+  "models": {
+    "finder": "claude-sonnet-5-5",
+    "verifier": "claude-sonnet-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx",
+      "line": 13,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:23"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test stubs use `as unknown as Render` and `as unknown as SGroup` casts that turn off the type check.",
+      "scenario": "`editorRender` and `{ hovering } as unknown as SGroup` hide any member the component reads later. If `getPanelPositionRelativeToRect` starts reading another `Render` or `SGroup` field, the stub gives `undefined` and the test fails at runtime instead of at compile time. Build typed partial fixtures, or narrow the stub with a helper.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx",
+      "line": 41,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/helpers.ts:9"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The new `removed` guard and the empty-path guard in helpers.ts both fix the same crash, so one of them is redundant.",
+      "scenario": "For `{ removed: true, attrs: null }`, `attrs?.path ?? []` already gives `[]`. The helper now returns `[]` for that input, and the `!middle…` check returns null. The `removed` early return changes nothing. It also adds a Raphael-internal `removed` flag to the local cast type, and that flag has no declared type. Keep one guard, either the helper's empty-path check or the `removed` check.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test stubs use `as unknown as Render` and `as unknown as SGroup` casts that turn off the type check.",
+      "scenario": "The test stubs `Render` with `{ clientArea } as unknown as Render` (line 14) and `SGroup` with `{ hovering } as unknown as SGroup` (line 22). If the component or `getPanelPositionRelativeToRect` later reads another member of either type, the stub returns undefined. The test then fails at runtime, not at compile time. The line numbers in the report were off by one or two; the casts are at lines 14 and 22.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "df3c7d48860378d3"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:41",
+      "severity": "nit",
+      "id": "none",
+      "claim": "The new `removed` guard and the empty-path guard in helpers.ts both fix the same crash, so one of them is redundant.",
+      "scenario": "For `sGroup.hovering = { removed: true, attrs: null }`, `rectCoords` is `[]`. `calculateMiddleCoordsForRect([])` returns `[]` through the new `rectCoords.length === 0` guard. The destructured values are undefined, so the check at line 52 returns null. The `removed` early return gives the same result, and it adds an untyped Raphael-internal flag to the local cast type.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "b93ba7840240d932"
+    }
+  ],
+  "dropped": 0,
+  "failed": [],
+  "ranModels": [
+    "claude-sonnet-5-5"
+  ],
+  "runs": 6,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.1650317,
+    "finderUsd": 0.1650317,
+    "verifierUsd": 0.1350847,
+    "totalUsd": 0.3001164
+  },
+  "time": {
+    "initialFinderMs": 12212,
+    "totalMs": 228059
+  }
+}

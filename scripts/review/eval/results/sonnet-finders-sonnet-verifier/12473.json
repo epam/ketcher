@@ -1,0 +1,86 @@
+{
+  "pr": 12473,
+  "head": "076c2272728f4b0c005bbc011abd7d9c4d477c32",
+  "config": "sonnet-finders-sonnet-verifier",
+  "models": {
+    "finder": "claude-sonnet-5-5",
+    "verifier": "claude-sonnet-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+      "line": 42,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/tool/fragmentSelection.ts:47"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New local `MergeItems` alias repeats the same `ReturnType<typeof getItemsToFuse>` alias that select.types.ts already declares.",
+      "scenario": "`select/select.types.ts:17` declares `type MergeItems = ReturnType<typeof getItemsToFuse>` (not exported), and `fragmentSelection.ts:47` inlines it. rotate.ts now adds a third copy. If `getItemsToFuse` changes its return shape or the alias needs adjusting, each copy needs its own edit. Export the alias from one place, for example `select.types.ts`, and import it here.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/select/select.types.ts:17"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts",
+      "line": 312,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The change adds an `as unknown as RotateTool['dragCtx']` cast to the test stub, and the `@ts-ignore` above it stays.",
+      "scenario": "The stub `{ action: { operations: [], perform } }` lacks `xy0` and `angle1`, which `RotateDragContext` requires, and `action` is not a real `Action`. The double cast hides both gaps. A later change that reads `dragCtx.xy0` in `mouseup` or `mousemove` would throw at runtime in this test without a type error. The cast makes the `@ts-ignore` above it redundant for the `dragCtx` type, but the ignore stays and keeps hiding the private-member access. Build a stub with the required fields, such as `xy0: new Vec2()` and `angle1: 0`, and a real `Action`. Then the cast needs no `unknown` step.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:44"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The change adds an `as unknown as RotateTool['dragCtx']` cast to the test stub, and the `@ts-ignore` above it stays.",
+      "scenario": "The test assigns a stub with only `action` to `dragCtx`. `RotateDragContext` requires `xy0` and `angle1`, and the stub's `action` is not a real `Action`. The `as unknown as` double cast hides both gaps. If `mouseup` or `mousemove` later reads `dragCtx.xy0`, the test fails at runtime with no type error. The stub should carry the required fields and a real `Action`.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "816f22a7f8379bf7"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:42",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New local `MergeItems` alias repeats the same `ReturnType<typeof getItemsToFuse>` alias that select.types.ts already declares.",
+      "scenario": "rotate.ts:42 declares `type MergeItems = ReturnType<typeof getItemsToFuse>;`. select/select.types.ts:17 declares the same alias without exporting it. chain.ts:39 declares it too, and fragmentSelection.ts:47 inlines it. If getItemsToFuse's return shape changes, each copy has to be edited on its own. The alias should be exported from one place and imported here.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "95f4a22cd54bf01c"
+    }
+  ],
+  "dropped": 0,
+  "failed": [],
+  "ranModels": [
+    "claude-sonnet-5-5"
+  ],
+  "runs": 7,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.2461624,
+    "finderUsd": 0.2461624,
+    "verifierUsd": 0.1272144,
+    "totalUsd": 0.3733768
+  },
+  "time": {
+    "initialFinderMs": 15125,
+    "totalMs": 30638
+  }
+}

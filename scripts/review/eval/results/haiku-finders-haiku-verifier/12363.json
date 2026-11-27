@@ -1,0 +1,129 @@
+{
+  "pr": 12363,
+  "head": "651cde97dfac704e15e534a0a1c2bbc7ece57b40",
+  "config": "haiku-finders-haiku-verifier",
+  "models": {
+    "finder": "claude-haiku-5-5",
+    "verifier": "claude-haiku-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/editor/Editor.types.ts",
+      "line": 33,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New exported SGroupDialogResult duplicates an identical local interface that already exists in sgroup.ts.",
+      "scenario": "The diff adds `export interface SGroupDialogResult { type?: string; attrs: {...} }` at Editor.types.ts:33, but sgroup.ts:43 already declares the same shape as a local interface and keeps using it at sgroup.ts:799 and :855. Two copies of the shape now exist. If the dialog result gains a field, the Editor.event.sgroupEdit type (Editor.ts:301) and the sgroup.ts handler can drift apart. Importing the exported type into sgroup.ts and deleting its local copy would give one definition.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/sgroup.ts:43"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/apoint.utils.ts",
+      "line": 32,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "`?? null` coerces undefined at the call site to fit the callee's parameter type.",
+      "scenario": "`fromRGroupAttachmentPointUpdate` declares `attachmentPoints: AttachmentPoints | null` (rgroupAttachmentPoint.ts:15). The caller's `currentAttachmentPoints` is `AttachmentPoints | undefined`, so the diff patches the call site with `?? null` instead of stating the type the caller really has. The next caller hits the same mismatch and copies the coalescing. Widen the callee parameter to accept `undefined`, or fix the caller's type where it is declared.",
+      "references": [
+        "packages/ketcher-core/src/application/editor/actions/rgroupAttachmentPoint.ts:15"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/editor.types.ts",
+      "line": 135,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:298"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "The `elementEdit` result type is declared twice with different shapes, and the copies have diverged.",
+      "scenario": "The core `IEditorEvents.elementEdit` is `PipelineSubscription<unknown, Promise<Partial<AtomAttributes>>>`, while the react `Editor.event.elementEdit` uses the new `ElementEditResult = Partial<AtomAttributes> & { content?: string }`. Code that reads the result through the core interface cannot see `content`, and code that reads it through the react type can. Keep one exported type and reference it from both places, so a field added to one result cannot go missing from the other.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/Editor.types.ts:19"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.types.ts",
+      "line": 23,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:305"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "`BondEditResult` is a pure alias of `Bond` that adds a name and no shape.",
+      "scenario": "`export type BondEditResult = Bond;` only renames `Bond`, and it is used once, in `bondEdit: PipelineSubscription<Bond[], Promise<BondEditResult>>` (Editor.ts:305). A reader has to check whether the alias hides a different shape. Use `Bond` directly.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:305"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/editorEvents.ts",
+      "line": 182,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "Widening `editorEvents` to `Record<keyof IEditorEvents, Subscription>` erases each event's payload type to make the write compile.",
+      "scenario": "`resetEditorEvents` now writes through `Record<keyof IEditorEvents, Subscription>`, so every key accepts any `Subscription`, and the per-event generics (e.g. `selectMonomer: Subscription<MonomerItemType>`) are no longer checked on reset. A reset that assigns the wrong subscription type to a key compiles silently. Use a typed mapping helper, or keep the declared type and confine the single widening to one place.",
+      "references": [
+        "packages/ketcher-core/src/application/editor/editorEvents.ts:97"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-core/src/application/editor/editorEvents.ts:182",
+      "severity": "nit",
+      "id": "none",
+      "claim": "Widening `editorEvents` to `Record<keyof IEditorEvents, Subscription>` erases each event's payload type to make the write compile.",
+      "scenario": "Line 182 types the object as Record<keyof IEditorEvents, Subscription>, so the write at line 184 (`events[key] = new Subscription()`) accepts any Subscription for any key. A future edit that assigns a Subscription of the wrong payload type to a specific key during reset would compile without error. Nothing breaks today, since every reset writes `new Subscription()`. This is a loss of type precision, not a runtime bug.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "b854d4ec067a7912"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:23",
+      "severity": "nit",
+      "id": "none",
+      "claim": "`BondEditResult` is a pure alias of `Bond` that adds a name and no shape.",
+      "scenario": "`export type BondEditResult = Bond;` (Editor.types.ts:23) is a pure rename of `Bond`. It is imported at Editor.ts:107 and used once, in `bondEdit: PipelineSubscription<Bond[], Promise<BondEditResult>>` at Editor.ts:299. A reader must check whether the alias hides a different shape. Using `Bond` directly, or keeping the alias with a comment explaining its purpose, would remove that doubt.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "f0f0c1040575d122"
+    }
+  ],
+  "dropped": 2,
+  "failed": [
+    "verifier packages/ketcher-react/src/script/editor/Editor.types.ts:33"
+  ],
+  "ranModels": [
+    "claude-haiku-5-5"
+  ],
+  "runs": 10,
+  "failedRuns": 1,
+  "cost": {
+    "initialFinderUsd": 0.03146143,
+    "finderUsd": 0.03146143,
+    "verifierUsd": 0.02951498,
+    "totalUsd": 0.060976409999999995
+  },
+  "time": {
+    "initialFinderMs": 44593,
+    "totalMs": 81775
+  }
+}

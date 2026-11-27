@@ -1,0 +1,127 @@
+{
+  "pr": 12473,
+  "head": "076c2272728f4b0c005bbc011abd7d9c4d477c32",
+  "config": "haiku-finders-haiku-verifier",
+  "models": {
+    "finder": "claude-haiku-5-5",
+    "verifier": "claude-haiku-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts",
+      "line": 312,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stub is cast with `as unknown as RotateTool['dragCtx']`, which hides the missing required fields.",
+      "scenario": "The stub `{ action: { operations: [], perform } }` lacks the required `xy0` and `angle1` of RotateDragContext. The cast suppresses that mismatch, so a later test that reads `dragCtx.xy0` gets undefined with no type error. Fix: build the stub with the required fields (for example `xy0: new Vec2(0, 0), angle1: 0`) and cast only the Action part, or type the object so it satisfies RotateDragContext without a cast.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:42"
+      ]
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+      "line": 306,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "Inline degrees-to-radians conversion repeats the existing `Vec2.degrees_to_radians` helper.",
+      "scenario": "The changed line `const angleInRadians = ((dragCtx.angle ?? 0) * Math.PI) / 180;` recomputes what `Vec2.degrees_to_radians` (packages/ketcher-core/src/domain/entities/vec2.ts:310) already returns. The conversion is now written in several places, so a later change to the helper will not reach this call. Using `Vec2.degrees_to_radians(dragCtx.angle ?? 0)` removes the duplicate.",
+      "references": [
+        "packages/ketcher-core/src/domain/entities/vec2.ts:310"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts",
+      "line": 312,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R5",
+      "claim": "New `as unknown as` cast in the test stub hides the missing members of dragCtx.",
+      "scenario": "The stub `{ action: { operations: [], perform } }` omits required `xy0` and `angle1`, and the double cast hides that. A later test that reads `dragCtx.xy0` gets undefined with no type error. Build a real `new Action()` with the fields the test needs, or supply the full RotateDragContext shape, instead of casting.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:184"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+      "line": 306,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:240",
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:241"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "`angle` and `action` are set together but typed as independent optionals, and `?? 0` papers over the gap.",
+      "scenario": "mousemove writes `dragCtx.angle` (line 240) and `dragCtx.action` (line 241) as a pair, yet `RotateDragContext` (rotate.ts:77 class field) lets either be absent. Line 306 falls back to `?? 0` when angle is missing, so a future edit that sets action without angle rotates monomers by 0 with no signal. One optional group, such as `{ angle, action }` set as a unit, would make the pairing explicit.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:77"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+      "line": 237,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R6",
+      "claim": "`'angle' in dragCtx` is redundant now that `angle` is an optional field compared by value.",
+      "scenario": "When `angle` is absent, `dragCtx.angle !== rotateAngleInDegrees` is already true because undefined never equals a number. The `in` guard adds a second test of the same condition. Dropping it to `if (dragCtx.angle !== rotateAngleInDegrees)` keeps behaviour and matches the optional type.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:77"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stub is cast with `as unknown as RotateTool['dragCtx']`, which hides the missing required fields.",
+      "scenario": "The stub `{ action: { operations: [], perform: () => undefined } }` omits the required `xy0` and `angle1` of RotateDragContext. The `as unknown as RotateTool['dragCtx']` cast at line 312 suppresses the type error for the missing members, so a later change that reads `dragCtx.xy0` or `dragCtx.angle1` in this test gets undefined with no compile error.",
+      "lenses": [
+        "correctness",
+        "code-quality"
+      ],
+      "fingerprint": "eef551020f694fa2"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:306",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "Inline degrees-to-radians conversion repeats the existing `Vec2.degrees_to_radians` helper.",
+      "scenario": "The changed line `const angleInRadians = ((dragCtx.angle ?? 0) * Math.PI) / 180;` recomputes what `Vec2.degrees_to_radians` (packages/ketcher-core/src/domain/entities/vec2.ts:310) already returns. Using `Vec2.degrees_to_radians(dragCtx.angle ?? 0)` would remove the duplicate, provided the file's `import type { Vec2 }` (rotate.ts:21) becomes a value import.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "974e3dd8026de007"
+    }
+  ],
+  "dropped": 2,
+  "failed": [],
+  "ranModels": [
+    "claude-haiku-5-5"
+  ],
+  "runs": 10,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.01891553,
+    "finderUsd": 0.01891553,
+    "verifierUsd": 0.016212610000000002,
+    "totalUsd": 0.03512814
+  },
+  "time": {
+    "initialFinderMs": 25239,
+    "totalMs": 55110
+  }
+}

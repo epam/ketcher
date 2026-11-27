@@ -1,0 +1,60 @@
+{
+  "pr": 12783,
+  "head": "1c707106e1815ed949a4ecce76094e12d8afc429",
+  "config": "sonnet-finders-haiku-verifier",
+  "models": {
+    "finder": "claude-sonnet-5-5",
+    "verifier": "claude-haiku-5-5"
+  },
+  "findersFrom": "sonnet-finders-sonnet-verifier",
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/actions/sgroup.ts",
+      "line": 610,
+      "otherLocations": [
+        "packages/ketcher-core/src/application/editor/actions/sgroup.ts:779"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The pair 'set label, then CalcImplicitH' is hand-copied at two sites, so the two ops must be kept together by memory.",
+      "scenario": "A third place that toggles an atom between `*` and `C` (or a later edit to one of these two sites) can add the AtomAttr label op without the CalcImplicitH op. The atom then keeps stale implicit hydrogens, which is the bug this PR fixes. A small helper that adds both ops (for example `addLabelChange(action, aid, label)`) would keep the pair in one place.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:610",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The pair 'set label, then CalcImplicitH' is hand-copied at two sites, so the two ops must be kept together by memory.",
+      "scenario": "No current failure. The label-change-plus-CalcImplicitH pair is written out at sgroup.ts:609-610 and sgroup.ts:778-779. A later edit to one site, or a third site that changes a star atom's label, can add the AtomAttr op without the CalcImplicitH op, leaving stale implicit hydrogens, the bug this PR fixes. A helper such as addLabelChange(action, aid, label) would keep the pair in one place.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "5fe378e10246573a"
+    }
+  ],
+  "dropped": 0,
+  "failed": [],
+  "ranModels": [
+    "claude-haiku-5-5"
+  ],
+  "runs": 2,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.2095975,
+    "finderUsd": 0.2095975,
+    "verifierUsd": 0.00617419,
+    "totalUsd": 0.21577169
+  },
+  "time": {
+    "initialFinderMs": 18503,
+    "totalMs": 42474
+  }
+}

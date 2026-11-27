@@ -49,6 +49,12 @@ const REPO_ROOT = resolve(HERE, '../../..');
 
 /** @type {EvalConfig[]} */
 export const CONFIGS = [
+  // The default of config.mjs, the baseline the cheaper models are measured against.
+  {
+    name: 'opus-finders-opus-verifier',
+    finder: 'claude-opus-5-5',
+    verifier: 'claude-opus-5-5',
+  },
   {
     name: 'sonnet-finders-sonnet-verifier',
     finder: 'claude-sonnet-5-5',

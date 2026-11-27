@@ -163,7 +163,10 @@ export function setExpandMonomerSGroup(
   const struct = restruct.molecule;
 
   const sGroup = struct.sgroups.get(sgid);
-  assert(sGroup != undefined);
+  assert(
+    sGroup !== undefined,
+    `setExpandMonomerSGroup: S-group with id ${sgid} was not found`,
+  );
 
   if (attributes.expanded === sGroup.isExpanded()) {
     return action;
@@ -172,6 +175,40 @@ export function setExpandMonomerSGroup(
   Object.keys(attributes).forEach((key) => {
     action.addOp(new SGroupAttribute(sgid, key, attributes[key]));
   });
+
+  action.mergeWith(
+    fromMonomerSGroupExpansionLayout(restruct, sgid, attributes.expanded),
+  );
+
+  SGroup.getAtoms(struct, sGroup).forEach((aid) => {
+    action.mergeWith(
+      fromAtomsAttributes(restruct, aid, restruct.atoms.get(aid)?.a, false),
+    );
+  });
+
+  return action.perform(restruct);
+}
+
+/**
+ * Builds, without performing, the operations that keep the drawing consistent
+ * when a monomer S-group switches between collapsed and expanded: outside
+ * fragments are shifted so they do not overlap the shown or hidden atoms, and
+ * stereo on bonds to neighboring monomers is resolved.
+ */
+function fromMonomerSGroupExpansionLayout(
+  restruct: Restruct,
+  sgid: number,
+  expanded: boolean,
+) {
+  const action = new Action();
+
+  const struct = restruct.molecule;
+
+  const sGroup = struct.sgroups.get(sgid);
+  assert(
+    sGroup !== undefined,
+    `fromMonomerSGroupExpansionLayout: S-group with id ${sgid} was not found`,
+  );
 
   const sGroupAtoms: Set<number> = new Set(SGroup.getAtoms(struct, sGroup));
   const attachmentPoints = sGroup.getAttachmentPoints();
@@ -251,8 +288,8 @@ export function setExpandMonomerSGroup(
 
       let hasEffectiveCurrentStereo = hasCurrentStereo;
       let hasEffectiveOtherStereo = hasOtherStereo;
-      if (attributes.expanded !== otherMonomerIsExpanded) {
-        if (hasCurrentStereo && attributes.expanded) {
+      if (expanded !== otherMonomerIsExpanded) {
+        if (hasCurrentStereo && expanded) {
           hasEffectiveOtherStereo = false;
         } else if (otherMonomerIsExpanded && hasOtherStereo) {
           hasEffectiveCurrentStereo = false;
@@ -495,9 +532,7 @@ export function setExpandMonomerSGroup(
           horizontalOffset,
         (shouldMoveVertically ? 1 : 0) * verticalDirection * baseVerticalOffset,
       );
-      const finalMoveVector = attributes.expanded
-        ? moveVector
-        : moveVector.negated();
+      const finalMoveVector = expanded ? moveVector : moveVector.negated();
 
       const movableSGroupAtoms = SGroup.getAtoms(struct, movableSGroup);
       movableSGroupAtoms.forEach((aid) => {
@@ -551,22 +586,14 @@ export function setExpandMonomerSGroup(
       );
     }
 
-    const finalMoveVector = attributes.expanded
-      ? moveVector
-      : moveVector.negated();
+    const finalMoveVector = expanded ? moveVector : moveVector.negated();
 
     intactAtoms.forEach((atomId) => {
       action.addOp(new AtomMove(atomId, finalMoveVector));
     });
   });
 
-  sGroupAtoms.forEach((aid) => {
-    action.mergeWith(
-      fromAtomsAttributes(restruct, aid, restruct.atoms.get(aid)?.a, false),
-    );
-  });
-
-  return action.perform(restruct);
+  return action;
 }
 
 export function sGroupAttributeAction(id, attributes) {
@@ -598,6 +625,13 @@ export function fromSgroupDeletion(
       }
     });
   });
+
+  // A collapsed monomer shows only its label, so its neighbors sit next to the
+  // label. Once the grouping is gone all its atoms are visible, so move the
+  // neighbors the same way "Expand monomer" does to avoid overlaps.
+  if (sG instanceof MonomerMicromolecule && !sG.isExpanded()) {
+    action.mergeWith(fromMonomerSGroupExpansionLayout(restruct, id, true));
+  }
 
   if (sG?.type === 'SRU') {
     struct.sGroupsRecalcCrossBonds();
@@ -720,6 +754,12 @@ export function fromSgroupDeletion(
   }
 
   action.mergeWith(sGroupAttributeAction(id, attributes));
+
+  // Hydrogens and valence of the group atoms were computed while they were
+  // hidden behind the grouping, so recompute them for the plain structure.
+  // `atoms` is the S-group's own list, which the removal above empties before
+  // this operation runs, so pass a copy.
+  action.addOp(new CalcImplicitH([...atoms]));
 
   if (shouldPerform) {
     action = action.perform(restruct);

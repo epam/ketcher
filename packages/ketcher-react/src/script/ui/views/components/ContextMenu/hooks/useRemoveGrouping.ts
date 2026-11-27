@@ -13,9 +13,10 @@ type Params = ItemEventParams<MacromoleculeContextMenuProps>;
 Returns a handler that removes the S-group grouping for each monomer in the
 context (mirrors `useFunctionalGroupRemove` but typed for macromolecule props).
 
-Per the spec (1.1.4), if a collapsed monomer's abbreviation is deleted the
-underlying `fromSgroupDeletion` action already expands the monomer atoms
-before removing the S-group, so no extra step is needed here.
+Per the spec (1.1.4), a collapsed monomer behaves like an expanded one:
+`fromSgroupDeletion` moves the neighbors aside for the atoms that become
+visible and recalculates hydrogens and valence in the same undoable action,
+so no extra step is needed here.
 */
 const useRemoveGrouping = () => {
   const { ketcherId } = useAppContext();

@@ -441,6 +441,122 @@ describe('setExpandMonomerSGroup', () => {
   });
 });
 
+describe('fromSgroupDeletion', () => {
+  /**
+   * A two-atom monomer C0-C1 whose attachment atom C0 is bonded to a plain
+   * outside atom N. The monomer's label sits between its atoms, at (1, 0), so
+   * while it is collapsed N is drawn next to the label.
+   */
+  const buildMonomerWithOutsideNeighbor = ({
+    expanded,
+  }: {
+    expanded: boolean;
+  }) => {
+    const struct = new Struct();
+    const attachmentAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const innerAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(2, 0) }),
+    );
+    const outsideAtomId = struct.atoms.add(
+      new Atom({ label: 'N', pp: new Vec2(-1, 0) }),
+    );
+    [
+      [attachmentAtomId, innerAtomId],
+      [attachmentAtomId, outsideAtomId],
+    ].forEach(([begin, end]) => {
+      const bond = new Bond({ begin, end, type: Bond.PATTERN.TYPE.SINGLE });
+      const bondId = struct.bonds.add(bond);
+      struct.bondInitHalfBonds(bondId, bond);
+    });
+    struct.initNeighbors();
+
+    const sgroupId = createMonomerSGroup(struct, attachmentAtomId);
+    struct.atomAddToSGroup(sgroupId, innerAtomId);
+    addAttachmentPoint(struct, sgroupId, attachmentAtomId, 1);
+    const sgroup = struct.sgroups.get(sgroupId);
+    if (sgroup) {
+      sgroup.data.expanded = expanded;
+      sgroup.pp = new Vec2(1, 0);
+    }
+
+    const restruct = createRestruct(struct);
+
+    return {
+      struct,
+      restruct,
+      sgroupId,
+      attachmentAtomId,
+      innerAtomId,
+      outsideAtomId,
+    };
+  };
+
+  it('moves the neighbors of a collapsed monomer the same way "Expand monomer" does (#11312)', () => {
+    const { struct, restruct, sgroupId, attachmentAtomId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(struct.sgroups.has(sgroupId)).toBe(false);
+    expect(struct.atoms.get(attachmentAtomId)?.pp).toEqual(new Vec2(0, 0));
+    // Shifted by attachment atom - contracted label = (0, 0) - (1, 0), which
+    // keeps the C0-N bond at its original length.
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-2, 0));
+  });
+
+  it('does not move the neighbors of an already expanded monomer', () => {
+    const { struct, restruct, sgroupId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: true });
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-1, 0));
+  });
+
+  it('moves nothing before the caller performs the action (shouldPerform = false)', () => {
+    const { struct, restruct, sgroupId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+
+    const action = fromSgroupDeletion(restruct, sgroupId, false);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-1, 0));
+    expect(struct.sgroups.has(sgroupId)).toBe(true);
+
+    action.perform(restruct);
+
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-2, 0));
+  });
+
+  it('undoes the neighbor move together with the grouping removal (#11311)', () => {
+    const { struct, restruct, sgroupId, outsideAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+
+    const inverted = fromSgroupDeletion(restruct, sgroupId);
+    inverted.perform(restruct);
+
+    expect(struct.sgroups.has(sgroupId)).toBe(true);
+    expect(struct.atoms.get(outsideAtomId)?.pp).toEqual(new Vec2(-1, 0));
+  });
+
+  it('recalculates hydrogens of the group atoms (#11314)', () => {
+    const { struct, restruct, sgroupId, attachmentAtomId } =
+      buildMonomerWithOutsideNeighbor({ expanded: false });
+    // Stale values, as if computed while the atoms were hidden by the grouping.
+    const attachmentAtom = struct.atoms.get(attachmentAtomId);
+    if (attachmentAtom) {
+      attachmentAtom.implicitH = 99;
+      attachmentAtom.badConn = true;
+    }
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(struct.atoms.get(attachmentAtomId)?.implicitH).toBe(2);
+    expect(struct.atoms.get(attachmentAtomId)?.badConn).toBe(false);
+  });
+});
+
 describe('star atoms at the ends of an SRU polymer', () => {
   const createPolymer = () => {
     const struct = new Struct();

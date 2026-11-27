@@ -18,7 +18,7 @@ Use remote only when the change touches the remote struct service, the `/v2` cli
 
 ## Launch
 
-The app starts with the Vite dev server (`example/vite.config.js`). It serves the package sources live, so no build is needed and the `dist` folders in the packages can be stale without harm. A fresh start takes a few seconds. Do not use `npm run serve:*`: it serves `example/dist`, which is not built by default.
+The app starts with the Vite dev server (`example/vite.config.js`). It serves the package sources live, so no build is needed and the `dist` folders in the packages can be stale without harm. A fresh start takes a few seconds. The dev server serves only `index.html`. The other host pages (two editors, Show/Hide, popup) need the production build in [modules/example-app.md](../../../.memory-bank/modules/example-app.md); use `npm run serve:*` only for them, with the recipes in [features/host-pages.md](features/host-pages.md).
 
 ```sh
 node .agents/skills/verify-ketcher/scripts/server.mjs start                      # standalone, port 4002
@@ -52,7 +52,7 @@ node $D open --mode macromolecules && node $D open --mode molecules && node $D e
 ```sh
 D=.agents/skills/verify-ketcher/scripts/drive.mjs
 node $D start                                  # headless; add --headed to watch; --url for another URL
-node $D open --mode molecules                  # or macromolecules
+node $D open --mode molecules                  # or macromolecules; --no-ketcher only loads the page
 node $D load --text 'CCO'                      # paste dialog, as a user would; autodetects the format
 node $D load --file path/to/x.ket              # same, from a file's text
 node $D load --text 'PEPTIDE1{A.C.D}$$$$V2.0' --type HELM   # macromolecules: pick the content type
@@ -66,6 +66,8 @@ node $D press --key ControlOrMeta+z       # not Control: macOS needs Meta; focus
 node $D export --format ket --out FILE         # ket mol mol3000 smiles extsmiles smarts cml rxn sdf inchi inchikey cdxml fasta idt axolabs seq1 seq3
 node $D screenshot --out FILE
 node $D errors --out FILE                      # console errors, page errors, failed requests, HTTP >= 400
+node $D workers                                # Web Workers created and terminated since the last open
+node $D wait --ms 40000                        # let a late timeout fire before you judge a pass
 node $D stop                                   # closes the browser and the daemon
 ```
 

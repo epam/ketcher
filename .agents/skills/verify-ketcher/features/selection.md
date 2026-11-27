@@ -1,6 +1,6 @@
 # Selection
 
-A user selects parts of a structure and acts on the selection, for example deletes it. Behavior is owned by [openspec/specs/selection/spec.md](../../../../openspec/specs/selection/spec.md).
+A user selects parts of a structure and acts on the selection, for example deletes it. Behavior is owned by [.memory-bank/features/selection.md](../../../../.memory-bank/features/selection.md).
 
 ## Sub-features
 

@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Provider as StoreProvider } from 'react-redux';
@@ -8,10 +8,10 @@ import { configureAppStore, RootState } from 'state';
 import { defaultTheme } from 'theming/defaultTheme';
 
 class MockIntersectionObserver {
-  observe = jest.fn();
-  disconnect = jest.fn();
-  unobserve = jest.fn();
-  takeRecords = jest.fn();
+  observe = vi.fn();
+  disconnect = vi.fn();
+  unobserve = vi.fn();
+  takeRecords = vi.fn();
 }
 
 Object.defineProperty(globalThis, 'IntersectionObserver', {

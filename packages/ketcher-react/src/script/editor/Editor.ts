@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -45,7 +44,7 @@ import {
   Coordinates,
   Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
   fromDescriptorsAlign,
   fromMultipleMove,
@@ -92,7 +91,6 @@ import {
   LayerMap,
   Visel,
   paperPathFromSVGElement,
-  fromFragmentDeletion,
   assert,
 } from 'ketcher-core';
 import {
@@ -399,10 +397,9 @@ class Editor implements KetcherEditor {
   isDitrty(): boolean {
     const position = this.historyPtr;
     const length = this.historyStack.length;
-    if (!length || !this.#origin) {
-      return false;
-    }
-    return !isEqual(this.historyStack[position - 1], this.#origin);
+    return !length || !this.#origin
+      ? false
+      : !isEqual(this.historyStack[position - 1], this.#origin);
   }
 
   setOrigin(): void {
@@ -442,8 +439,8 @@ class Editor implements KetcherEditor {
     return this._tool;
   }
 
-  clear() {
-    this.struct(new Struct());
+  clear(ignoreHistory = false) {
+    this.struct(new Struct(), true, undefined, undefined, ignoreHistory);
   }
 
   renderAndRecoordinateStruct(
@@ -451,10 +448,11 @@ class Editor implements KetcherEditor {
     shouldCenterStruct = true,
     x?: number,
     y?: number,
+    ignoreHistory = false,
   ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
 
-    this.update(action, this.isMonomerCreationWizardActive);
+    this.update(action, ignoreHistory || this.isMonomerCreationWizardActive);
 
     if (shouldCenterStruct) {
       this.centerStruct();
@@ -473,6 +471,7 @@ class Editor implements KetcherEditor {
     shouldCenterStruct = true,
     x?: number,
     y?: number,
+    ignoreHistory = false,
   ): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
@@ -488,6 +487,7 @@ class Editor implements KetcherEditor {
       shouldCenterStruct,
       x,
       y,
+      ignoreHistory,
     );
 
     this.hoverIcon.create();
@@ -568,11 +568,11 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Determines whether structure position should be preserved when applying options.
-   * Preserves atom coordinates only when viewOnlyMode is being set/changed on existing structure.
-   * This prevents structures from shifting when enabling/disabling viewOnlyMode.
-   * In all other cases (opening files, changing settings), structures are centered as before.
-   */
+  Determines whether structure position should be preserved when applying options.
+  Preserves atom coordinates only when viewOnlyMode is being set/changed on existing structure.
+  This prevents structures from shifting when enabling/disabling viewOnlyMode.
+  In all other cases (opening files, changing settings), structures are centered as before.
+  */
   private shouldPreserveStructPosition(
     options: Record<string, unknown> | undefined,
     struct: Struct,
@@ -585,14 +585,16 @@ class Editor implements KetcherEditor {
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
     const isViewOnlyEnabled = this.render.options.viewOnlyMode;
     if (
-      (!wasViewOnlyEnabled && isViewOnlyEnabled === true) ||
-      (wasViewOnlyEnabled && isViewOnlyEnabled === false)
+      (wasViewOnlyEnabled || isViewOnlyEnabled !== true) &&
+      (!wasViewOnlyEnabled || isViewOnlyEnabled !== false)
     ) {
-      // We need to reset the tool to make sure it was recreated
-      this.tool('select');
-      this.event.change.dispatch('force');
-      ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
+      return;
     }
+
+    // We need to reset the tool to make sure it was recreated
+    this.tool('select');
+    this.event.change.dispatch('force');
+    ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
   }
 
   zoom(value?: number, event?: WheelEvent) {
@@ -612,12 +614,12 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Moves the structure so that its center is in the center of the view.
-   *
-   * @param viewportElement optional element that covers the part of the
-   * canvas the structure should be centered in (e.g. the area left free by
-   * the monomer creation wizard's panels). The whole canvas is used if omitted.
-   */
+  Moves the structure so that its center is in the center of the view.
+
+  @param viewportElement optional element that covers the part of the
+  canvas the structure should be centered in (e.g. the area left free by
+  the monomer creation wizard's panels). The whole canvas is used if omitted.
+  */
   centerStruct(viewportElement?: HTMLElement) {
     const structure = this.render.ctab;
 
@@ -667,11 +669,11 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Zooms and centers the structure loaded into the monomer creation wizard
-   * so that it fits the area left free by the wizard's panels.
-   *
-   * @param viewportElement the element that covers the available viewport
-   */
+  Zooms and centers the structure loaded into the monomer creation wizard
+  so that it fits the area left free by the wizard's panels.
+
+  @param viewportElement the element that covers the available viewport
+  */
   public fitStructToMonomerCreationViewport(viewportElement: HTMLElement) {
     if (this.render.ctab.molecule.atoms.size === 0) {
       return;
@@ -856,9 +858,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Restricts which assigned attachment points are rendered on the canvas.
-   * Pass undefined to show all assigned attachment points (e.g. on Preset tab).
-   */
+  Restricts which assigned attachment points are rendered on the canvas.
+  Pass undefined to show all assigned attachment points (e.g. on Preset tab).
+  */
   public setVisibleAssignedAttachmentPoints(
     points: Map<AttachmentPointName, [number, number]> | undefined,
   ) {
@@ -888,10 +890,10 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Highlights a specific atom by its ID on the canvas (for use when the
-   * AP name alone is ambiguous, e.g. two components sharing the same AP name).
-   * Pass null to clear the highlight.
-   */
+  Highlights a specific atom by its ID on the canvas (for use when the
+  AP name alone is ambiguous, e.g. two components sharing the same AP name).
+  Pass null to clear the highlight.
+  */
   public highlightAtomById(atomId: number | null) {
     if (atomId === null) {
       this.render.ctab.setSelection(null);
@@ -915,22 +917,20 @@ class Editor implements KetcherEditor {
   ]);
 
   private static isBondSuitableForAttachmentPoint(bond: Bond) {
-    if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-      return false;
-    }
-
-    return this.suitableAttachmentPointStereoTypes.has(bond.stereo);
+    return bond.type !== Bond.PATTERN.TYPE.SINGLE
+      ? false
+      : this.suitableAttachmentPointStereoTypes.has(bond.stereo);
   }
 
   /**
-   * Derives the "attachment atom -> candidate leaving atoms" map straight from a
-   * struct: every terminal atom held by a bond that can carry an attachment
-   * point is a leaving group candidate for its only neighbour.
-   *
-   * `isMonomerCreationWizardEnabled` builds the same information from the
-   * canvas selection, but it never runs when an existing monomer is opened for
-   * editing, so that path needs this instead.
-   */
+  Derives the "attachment atom -> candidate leaving atoms" map straight from a
+  struct: every terminal atom held by a bond that can carry an attachment
+  point is a leaving group candidate for its only neighbour.
+
+  `isMonomerCreationWizardEnabled` builds the same information from the
+  canvas selection, but it never runs when an existing monomer is opened for
+  editing, so that path needs this instead.
+  */
   private static collectPotentialAttachmentPoints(
     struct: Struct,
     excludedLeavingAtomIds: Set<number> = new Set(),
@@ -1004,11 +1004,7 @@ class Editor implements KetcherEditor {
     }
 
     const halfBond = struct.halfBonds.get(neighborHalfBondId);
-    if (!halfBond) {
-      return null;
-    }
-
-    return struct.bonds.get(halfBond.bid) ?? null;
+    return !halfBond ? null : (struct.bonds.get(halfBond.bid) ?? null);
   }
 
   public get isMonomerCreationWizardEnabled() {
@@ -1018,6 +1014,10 @@ class Editor implements KetcherEditor {
     this.potentialLeavingAtomsForManualAssignment = [];
 
     if (this.isMonomerCreationWizardActive) {
+      return false;
+    }
+
+    if (!provideEditorInstance()) {
       return false;
     }
 
@@ -1179,7 +1179,7 @@ class Editor implements KetcherEditor {
         nonLeavingAtoms.has(bond.begin) && nonLeavingAtoms.has(bond.end),
     );
 
-    if (nonLeavingAtomBonds.size < 1) {
+    if (nonLeavingAtomBonds.size === 0) {
       return false;
     }
 
@@ -1187,7 +1187,7 @@ class Editor implements KetcherEditor {
       this.isBondSuitableForAttachmentPoint(bond),
     );
 
-    return suitableBonds.size >= 1;
+    return suitableBonds.size > 0;
   }
 
   static isStructureImpure(struct: Struct) {
@@ -1286,7 +1286,7 @@ class Editor implements KetcherEditor {
           atomIds.add(atomId);
         });
       }
-      if (!atomIds.size) {
+      if (atomIds.size === 0) {
         throw new Error('Select a structure to create or edit a monomer.');
       }
       const bonds = [...struct.bonds.entries()]
@@ -1356,53 +1356,57 @@ class Editor implements KetcherEditor {
       }
       monomer.monomerItem.attachmentPoints?.forEach((point, index) => {
         if (
-          monomer.isAttachmentPointUsed(monomer.listOfAttachmentPoints[index])
+          !monomer.isAttachmentPointUsed(monomer.listOfAttachmentPoints[index])
         ) {
-          const template = monomer.monomerItem.struct;
-          const attachmentAtom = template.atoms.get(point.attachmentAtom);
-          if (attachmentAtom?.label === 'R#') {
-            // Legacy templates use a terminal R-group itself as the AP.
-            const bonds = [...template.bonds.values()].filter(
-              (bond) =>
-                bond.begin === point.attachmentAtom ||
-                bond.end === point.attachmentAtom,
-            );
-            if (bonds.length !== 1) {
-              throw new Error(
-                'Cannot expand a non-terminal attachment placeholder.',
-              );
-            }
-            const neighborId =
-              bonds[0].begin === point.attachmentAtom
-                ? bonds[0].end
-                : bonds[0].begin;
-            const placeholderId = atomMap.get(point.attachmentAtom);
-            const attachmentId = atomMap.get(neighborId);
-            assert(isNumber(placeholderId) && isNumber(attachmentId));
-            attachmentPlaceholders.set(placeholderId, attachmentId);
-            leavingAtoms.add(placeholderId);
-          }
-          point.leavingGroup?.atoms.forEach((id) => {
-            const atomId = atomMap.get(id);
-            if (isNumber(atomId)) leavingAtoms.add(atomId);
-          });
+          return;
         }
+
+        const template = monomer.monomerItem.struct;
+        const attachmentAtom = template.atoms.get(point.attachmentAtom);
+        if (attachmentAtom?.label === 'R#') {
+          // Legacy templates use a terminal R-group itself as the AP.
+          const bonds = [...template.bonds.values()].filter(
+            (bond) =>
+              bond.begin === point.attachmentAtom ||
+              bond.end === point.attachmentAtom,
+          );
+          if (bonds.length !== 1) {
+            throw new Error(
+              'Cannot expand a non-terminal attachment placeholder.',
+            );
+          }
+          const neighborId =
+            bonds[0].begin === point.attachmentAtom
+              ? bonds[0].end
+              : bonds[0].begin;
+          const placeholderId = atomMap.get(point.attachmentAtom);
+          const attachmentId = atomMap.get(neighborId);
+          assert(isNumber(placeholderId) && isNumber(attachmentId));
+          attachmentPlaceholders.set(placeholderId, attachmentId);
+          leavingAtoms.add(placeholderId);
+        }
+        point.leavingGroup?.atoms.forEach((id) => {
+          const atomId = atomMap.get(id);
+          if (isNumber(atomId)) leavingAtoms.add(atomId);
+        });
       });
     });
     [...struct.sgroups.entries()].forEach(([id, group]) => {
       if (
-        group.isMonomer &&
-        group.atoms.every((atomId) => selectedAtoms.has(atomId))
+        !group.isMonomer ||
+        !group.atoms.every((atomId) => selectedAtoms.has(atomId))
       ) {
-        struct.sGroupDelete(id);
-        [...struct.functionalGroups.entries()].forEach(
-          ([fgId, functionalGroup]) => {
-            if (functionalGroup.relatedSGroupId === id) {
-              struct.functionalGroups.delete(fgId);
-            }
-          },
-        );
+        return;
       }
+
+      struct.sGroupDelete(id);
+      [...struct.functionalGroups.entries()].forEach(
+        ([fgId, functionalGroup]) => {
+          if (functionalGroup.relatedSGroupId === id) {
+            struct.functionalGroups.delete(fgId);
+          }
+        },
+      );
     });
     leavingAtoms.forEach((id) => {
       struct.atoms.delete(id);
@@ -1429,15 +1433,15 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Opens the wizard for monomer sgroups that are already present in the
-   * current struct. `sgroupIds[0]` is the monomer being edited; the rest only
-   * matter for "edit all instances", where they scope the update to the user's
-   * selection.
-   *
-   * Both entry points funnel through here: the "Edit Monomer" dialog in
-   * molecules mode, and the macromolecules context menu (which loads the
-   * converted struct into this editor first).
-   */
+  Opens the wizard for monomer sgroups that are already present in the
+  current struct. `sgroupIds[0]` is the monomer being edited; the rest only
+  matter for "edit all instances", where they scope the update to the user's
+  selection.
+
+  Both entry points funnel through here: the "Edit Monomer" dialog in
+  molecules mode, and the macromolecules context menu (which loads the
+  converted struct into this editor first).
+  */
   openEditMonomerWizard(sgroupIds: number[], shouldEditAllInstances = false) {
     const struct = this.struct();
     const primarySgroup = struct.sgroups.get(sgroupIds[0]);
@@ -1510,7 +1514,10 @@ class Editor implements KetcherEditor {
       );
     const initialValues =
       mode === 'library'
-        ? getLibraryEditInitialValues(libraryItem)
+        ? getLibraryEditInitialValues(
+            libraryItem,
+            provideEditorInstance()?.monomersLibraryParsedJson,
+          )
         : { ...getEditInstanceInitialValues(libraryItem), libraryOnly: true };
     this.struct(structure, false);
     this.openMonomerCreationWizard(
@@ -1530,11 +1537,32 @@ class Editor implements KetcherEditor {
     }
   }
 
+  /**
+  The wizard's uniqueness checks read the default monomers library, which
+  loads lazily. The selection can change, another request can open the
+  wizard, or the user can switch to macromolecules mode while it loads, so
+  the wizard is checked again before it opens.
+  */
+  async openMonomerCreationWizardWhenLibraryLoaded() {
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
+    if (
+      !window.isPolymerEditorTurnedOn &&
+      this.isMonomerCreationWizardEnabled
+    ) {
+      this.openMonomerCreationWizard();
+    }
+  }
+
   openMonomerCreationWizard(
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
   ) {
+    if (!provideEditorInstance()) {
+      return;
+    }
+
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
       this.selection() ?? {
@@ -2428,10 +2456,7 @@ class Editor implements KetcherEditor {
     const replacementSourceSGroup = sourceSGroup;
     this.setMonomerExpandedState(replacementSourceSGroup, isSourceExpanded);
 
-    const restrictToIds =
-      selectedSGroupIds && selectedSGroupIds.length > 1
-        ? new Set(selectedSGroupIds)
-        : null;
+    const restrictToIds = selectedSGroupIds ? new Set(selectedSGroupIds) : null;
 
     [...struct.sgroups.entries()].forEach(([sgId, sgroup]) => {
       const sgroupWithMonomer = sgroup as SGroup & EditableSGroupMonomer;
@@ -2721,22 +2746,48 @@ class Editor implements KetcherEditor {
     );
 
     this.closeMonomerCreationWizard(false, false);
-    const loadOriginalAction = fromNewCanvas(
-      this.render.ctab,
-      this.originalStruct,
+    const remainingAtomIdMap = new Map<number, number>();
+    const remainingStruct = this.originalStruct.clone(
+      new Pile(
+        Array.from(this.originalStruct.atoms.keys()).filter(
+          (atomId) => !selectedOriginalAtoms.has(atomId),
+        ),
+      ),
+      undefined,
+      false,
+      remainingAtomIdMap,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+      new Pile(this.originalStruct.attachmentGroups.keys()),
     );
+    const selectedSGroupIds = editAllInitialValues?.selectedSGroupIds;
+    const remainingSelectedSGroupIds =
+      selectedSGroupIds && selectedSGroupIds.length > 1
+        ? selectedSGroupIds.flatMap((sgroupId) => {
+            const originalSGroup = this.originalStruct.sgroups.get(sgroupId);
+            const originalAtomId = originalSGroup?.atoms.find((atomId) =>
+              remainingAtomIdMap.has(atomId),
+            );
+            const atomId = isNumber(originalAtomId)
+              ? remainingAtomIdMap.get(originalAtomId)
+              : undefined;
+            const sgroup = isNumber(atomId)
+              ? remainingStruct.getGroupFromAtomId(atomId)
+              : undefined;
+            return sgroup ? [sgroup.id] : [];
+          })
+        : undefined;
+    const loadOriginalAction = fromNewCanvas(this.render.ctab, remainingStruct);
     this.update(loadOriginalAction, true);
     this.event.change.dispatch();
 
     // this.struct() defers render via setTimeout, so wait for that.
     this.finishMonomerWizardAfterMerge(() => {
-      // Delete selected atoms (ignoreHistory — intermediate step).
-      const newAction = new Action();
-      newAction.mergeWith(
-        fromFragmentDeletion(this.render.ctab, this.originalSelection),
-      );
-      this.update(newAction, true);
-
       // Merge wizard struct (with SGroups) into the canvas molecule.
       const atomIdMap = new Map<number, number>();
       structFromWizard.mergeInto(
@@ -2797,11 +2848,16 @@ class Editor implements KetcherEditor {
           return;
         }
 
+        const remappedBond = bond.clone();
+        const outsideEndpoint = isBeginSelected ? 'end' : 'begin';
+        const outsideAtomId = remainingAtomIdMap.get(bond[outsideEndpoint]);
+        assert(isNumber(outsideAtomId));
+        remappedBond[outsideEndpoint] = outsideAtomId;
         this.reconcileExternalBonds(
           attachmentAtomIdsWithExternalBonds,
           finalAssignedAttachmentPoints,
           struct,
-          bond,
+          remappedBond,
           atomIdMap,
           originalToSelectedAtomsIdMap,
           isBeginSelected ? 'begin' : 'end',
@@ -2845,37 +2901,35 @@ class Editor implements KetcherEditor {
           editAllInitialValues.originalType,
           editAllInitialValues.originalSymbol,
           sourceMonomerExpanded,
-          editAllInitialValues.selectedSGroupIds,
+          remainingSelectedSGroupIds,
         );
         struct.sGroupsRecalcCrossBonds();
       }
 
-      // The CanvasLoad swaps the canvas from the current (post-mutation)
-      // state to a clean clone. Undo reverses the swap, restoring the
-      // pre-mutation originalStruct.
-      //
-      // Never re-center here: the merge above deliberately restored every
-      // monomer to the coordinates it had before the wizard opened (see
-      // `monomerShiftVector`), and centering would shift the whole struct to
-      // the middle of the view box again. Coming back from macro mode that
-      // shift is permanent — the monomer would land in the canvas center on
-      // every edit.
-      this.struct(
-        this.struct().clone(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          true,
-        ),
-        false,
+      const mergedStruct = this.struct().clone(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true,
       );
+      // Cloning retains fragments, whose stereo-atom lists may predate import.
+      mergedStruct.atoms.forEach((atom, atomId) => {
+        if (atom.stereoLabel) {
+          mergedStruct.frags
+            .get(atom.fragment)
+            ?.updateStereoAtom(mergedStruct, atomId, atom.fragment, true);
+        }
+      });
+      // Record a swap from the untouched original, not the intermediate merge.
+      this.update(fromNewCanvas(this.render.ctab, this.originalStruct), true);
+      this.struct(mergedStruct, false);
 
       const createdMonomers = new Set(
         monomersData.map(({ monomer }) => monomer),
@@ -2911,15 +2965,15 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Deletes macro-canvas bonds (PolymerBond / MonomerToAtomBond) for attachment
-   * points that were in use at wizard-open time but are no longer present in the
-   * new monomer template saved by the wizard.
-   *
-   * "Moved" APs (same name, different atom) do not require macro-canvas bond
-   * changes — the PolymerBond continues to reference the monomer by AP name.
-   * The micromolecule struct bond endpoint is already corrected by
-   * updateBondEndpointByAttachmentPoint.
-   */
+  Deletes macro-canvas bonds (PolymerBond / MonomerToAtomBond) for attachment
+  points that were in use at wizard-open time but are no longer present in the
+  new monomer template saved by the wizard.
+
+  "Moved" APs (same name, different atom) do not require macro-canvas bond
+  changes — the PolymerBond continues to reference the monomer by AP name.
+  The micromolecule struct bond endpoint is already corrected by
+  updateBondEndpointByAttachmentPoint.
+  */
 
   private reconcileExternalBonds(
     attachmentAtomIdsWithExternalBonds: Map<
@@ -2980,9 +3034,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Finds the attachment point name whose attachment atom matches the given
-   * wizard atom id, or undefined when none matches.
-   */
+  Finds the attachment point name whose attachment atom matches the given
+  wizard atom id, or undefined when none matches.
+  */
   private findAttachmentPointForAtom(
     attachmentAtomIdsWithExternalBonds: Map<
       AttachmentPointName,
@@ -3007,9 +3061,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Adds a clone of the bond with the given endpoint re-pointed to the provided
-   * merged-struct atom. No-op when the target atom id is unknown.
-   */
+  Adds a clone of the bond with the given endpoint re-pointed to the provided
+  merged-struct atom. No-op when the target atom id is unknown.
+  */
   private rebindExternalBondEndpoint(
     struct: Struct,
     bond: Bond,
@@ -3117,7 +3171,7 @@ class Editor implements KetcherEditor {
     }
 
     // Change the atom label using fromAtomsAttrs
-    const action = fromAtomsAttrs(
+    const action = fromAtomsAttributes(
       this.render.ctab,
       leavingAtomId,
       { label: newLeavingAtomLabel },
@@ -3366,10 +3420,10 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Auto-assigns atoms to RNA preset components when new bonds are added.
-   * If one atom belongs to a component and the other doesn't belong to any,
-   * the unassigned atom (and the bond) is added to the same component.
-   */
+  Auto-assigns atoms to RNA preset components when new bonds are added.
+  If one atom belongs to a component and the other doesn't belong to any,
+  the unassigned atom (and the bond) is added to the same component.
+  */
   private autoAssignAtomToRnaComponent(bondId: number) {
     const rnaComponentAtoms = this.monomerCreationState?.rnaComponentAtoms;
 
@@ -3490,9 +3544,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Adds an atom and bond to an RNA preset component and fires an event
-   * so the wizard can update its state.
-   */
+  Adds an atom and bond to an RNA preset component and fires an event
+  so the wizard can update its state.
+  */
   private addAtomsAndBondsToRnaComponent(
     componentKey: RnaPresetComponentKey,
     atomIds: number[],
@@ -3579,10 +3633,12 @@ class Editor implements KetcherEditor {
   }
 
   private unsubscribeFromChangeEventInMonomerCreationWizard() {
-    if (this.changeEventSubscriber) {
-      this.unsubscribe('change', this.changeEventSubscriber);
-      this.changeEventSubscriber = null;
+    if (!this.changeEventSubscriber) {
+      return;
     }
+
+    this.unsubscribe('change', this.changeEventSubscriber);
+    this.changeEventSubscriber = null;
   }
 
   private collectChangesForMonomerCreationStateInvalidation(
@@ -3627,7 +3683,7 @@ class Editor implements KetcherEditor {
 
     for (const [operation, ids] of changesMap.entries()) {
       switch (operation) {
-        case OperationType.ATOM_DELETE:
+        case OperationType.ATOM_DELETE: {
           {
             // Invalidate assigned attachment points – check if any of the atoms in the atom pair is deleted
             const attachmentPointsToInvalidate = [
@@ -3709,6 +3765,7 @@ class Editor implements KetcherEditor {
             this.removeAtomsAndBondsFromRnaComponents([...ids.values()], []);
           }
           break;
+        }
 
         case OperationType.BOND_ATTR: {
           for (const id of ids.values()) {
@@ -3837,17 +3894,12 @@ class Editor implements KetcherEditor {
 
                 const leavingAtomIds =
                   potentialAttachmentPoints.get(attachmentAtomId);
-                if (leavingAtomIds) {
-                  potentialAttachmentPoints.set(
-                    attachmentAtomId,
-                    new Set(leavingAtomIds).add(leavingAtomId),
-                  );
-                } else {
-                  potentialAttachmentPoints.set(
-                    attachmentAtomId,
-                    new Set([leavingAtomId]),
-                  );
-                }
+                potentialAttachmentPoints.set(
+                  attachmentAtomId,
+                  leavingAtomIds
+                    ? new Set(leavingAtomIds).add(leavingAtomId)
+                    : new Set([leavingAtomId]),
+                );
               });
             }
 
@@ -3866,8 +3918,9 @@ class Editor implements KetcherEditor {
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     }
 
@@ -3893,11 +3946,10 @@ class Editor implements KetcherEditor {
     let shouldSelectAll = false;
     this._selection = null;
     let resolvedCi: Record<string, number[]> | null;
-    if (typeof ci === 'object' && ci !== null) {
-      resolvedCi = ci as Record<string, number[]>;
-    } else {
-      resolvedCi = null;
-    }
+    resolvedCi =
+      typeof ci === 'object' && ci !== null
+        ? (ci as Record<string, number[]>)
+        : null;
 
     if (ci === 'all') {
       shouldSelectAll = true;
@@ -3925,14 +3977,14 @@ class Editor implements KetcherEditor {
           res[key] = [...resolvedCi[key]];
       });
 
-      if (Object.keys(res).length !== 0) {
+      if (Object.keys(res).length > 0) {
         this._selection = res;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
         this.explicitSelected().atoms ?? [],
       );
-      if (stereoFlags.length !== 0) {
+      if (stereoFlags.length > 0) {
         if (this._selection?.enhancedFlags) {
           this._selection.enhancedFlags = [
             ...new Set([...this._selection.enhancedFlags, ...stereoFlags]),
@@ -4149,8 +4201,9 @@ class Editor implements KetcherEditor {
         break;
       }
 
-      default:
+      default: {
         this.event[eventName].add(handler);
+      }
     }
 
     return subscriber;
@@ -4177,10 +4230,11 @@ class Editor implements KetcherEditor {
         break;
       }
 
-      default:
+      default: {
         this.event[eventName].remove(
           subscriber.handler as (action?: unknown) => void,
         );
+      }
     }
   }
 
@@ -4323,9 +4377,9 @@ class Editor implements KetcherEditor {
 }
 
 /**
- * Main button pressed, usually the left button or the un-initialized state
- * See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
- */
+Main button pressed, usually the left button or the un-initialized state
+See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+*/
 function isMouseMainButtonPressed(event: MouseEvent) {
   return event.button === 0;
 }
@@ -4347,15 +4401,17 @@ function resetSelectionOnCanvasClick(
 
 function updateLastCursorPosition(editor: Editor, event: Event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
-  if (events.includes(event.type) && event instanceof MouseEvent) {
-    const clientAreaBoundingBox =
-      editor.render.clientArea.getBoundingClientRect();
-
-    editor.lastCursorPosition = {
-      x: event.clientX - clientAreaBoundingBox.x,
-      y: event.clientY - clientAreaBoundingBox.y,
-    };
+  if (!events.includes(event.type) || !(event instanceof MouseEvent)) {
+    return;
   }
+
+  const clientAreaBoundingBox =
+    editor.render.clientArea.getBoundingClientRect();
+
+  editor.lastCursorPosition = {
+    x: event.clientX - clientAreaBoundingBox.x,
+    y: event.clientY - clientAreaBoundingBox.y,
+  };
 }
 
 function isContextMenuClosed(contextMenu: ContextMenuInfo) {
@@ -4550,21 +4606,22 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
 
       // Generate Paper.js paths from all SVG elements
-      let combinedPath: paper.PathItem | null = null;
+      let combinedPath: InstanceType<typeof paperjs.PathItem> | null = null;
       const options = render.options;
       const hoverVisel = new Visel('mergedHover');
       const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
-        if (item?.node instanceof SVGElement) {
-          elements.push(item.node);
-          item.node.remove();
+        if (!(item?.node instanceof SVGElement)) {
+          return;
         }
+
+        elements.push(item.node);
+        item.node.remove();
       });
 
       for (const element of elements) {
-        const paperPath = paperPathFromSVGElement(element) as
-          paper.Path | paper.CompoundPath | undefined;
+        const paperPath = paperPathFromSVGElement(element);
 
         if (!paperPath) {
           continue;
@@ -4574,11 +4631,7 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
           paperPath.closePath();
         }
 
-        if (combinedPath) {
-          combinedPath = combinedPath.unite(paperPath);
-        } else {
-          combinedPath = paperPath;
-        }
+        combinedPath = combinedPath ? combinedPath.unite(paperPath) : paperPath;
       }
 
       if (!combinedPath) {

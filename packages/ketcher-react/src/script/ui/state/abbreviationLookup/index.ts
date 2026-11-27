@@ -71,8 +71,9 @@ function abbreviationLookupReducer(
       };
     }
 
-    default:
+    default: {
       return state;
+    }
   }
 }
 

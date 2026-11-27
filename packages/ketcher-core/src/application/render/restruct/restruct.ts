@@ -68,6 +68,33 @@ class ReStruct {
     [MULTITAIL_ARROW_KEY]: ReMultitailArrow,
   } as const;
 
+  private initialized = false;
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+  private readonly ccFragmentType: Pool<number> = new Pool();
+  private structChanged = false;
+
+  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
+  private readonly atomsChanged: Map<number, 1> = new Map();
+  private readonly attachmentGroupsChanged: Map<number, 1> = new Map();
+  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
+    new Map();
+  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
+  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
+  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
+    new Map();
+  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
+  private readonly textsChanged: Map<number, ReText> = new Map();
+  private readonly imagesChanged = new Map<number, ReImage>();
+  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
+  private snappingBonds: number[] = [];
+
+  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
+  // are not visel-bound; we track them here to clear and rebuild each render.
+  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
+
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
@@ -91,38 +118,8 @@ class ReStruct {
   public images = new Map<number, ReImage>();
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
-  private initialized = false;
-  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
-    LayerMap,
-    RaphaelPath
-  >;
-
   public connectedComponents: Pool<Pile<number>> = new Pool();
-  private readonly ccFragmentType: Pool<number> = new Pool();
-
-  private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
-
-  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
-  private readonly atomsChanged: Map<number, 1> = new Map();
-  private readonly attachmentGroupsChanged: Map<number, 1> = new Map();
-  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
-    new Map();
-
-  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
-  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
-  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
-    new Map();
-
-  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private readonly textsChanged: Map<number, ReText> = new Map();
-  private readonly imagesChanged = new Map<number, ReImage>();
-  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
-  private snappingBonds: number[] = [];
-
-  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
-  // are not visel-bound; we track them here to clear and rebuild each render.
-  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
 
   constructor(
     molecule,
@@ -178,7 +175,7 @@ class ReStruct {
     molecule.rgroupAttachmentPoints.forEach(
       (item: RGroupAttachmentPoint, id: number) => {
         const reAtom = this.atoms.get(item.atomId);
-        assert(reAtom != null);
+        assert(reAtom != undefined);
         this.rgroupAttachmentPoints.set(
           id,
           new ReRGroupAttachmentPoint(item, reAtom),
@@ -206,7 +203,7 @@ class ReStruct {
     return this.rgroupAttachmentPoints.filter((_id, reItem) => {
       const atomId = reItem.item.atomId;
       const atom = this.molecule.atoms.get(atomId);
-      assert(atom != null);
+      assert(atom != undefined);
       return !FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
@@ -222,7 +219,7 @@ class ReStruct {
     if (!cc) return;
 
     cc.delete(aid);
-    if (cc.size < 1) this.connectedComponents.delete(atom.component);
+    if (cc.size === 0) this.connectedComponents.delete(atom.component);
 
     atom.component = -1;
   }
@@ -443,15 +440,15 @@ class ReStruct {
   }
 
   /**
-   * Why?
-   * we can't use just getVBoxObj and the center for atoms
-   * because this will lead incorrect center position for the move atom around it
-   * because of atom's vBox contain text label with is not constant after flip/rotate
-   * and this lead to unstable flip tool work
-   */
+  Why?
+  we can't use just getVBoxObj and the center for atoms
+  because this will lead incorrect center position for the move atom around it
+  because of atom's vBox contain text label with is not constant after flip/rotate
+  and this lead to unstable flip tool work
+  */
 
   getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
-    let boundingBox: Box2Abs | null = null;
+    let boundingBox: Box2Abs | undefined;
 
     for (const atomId of selection.atoms ?? []) {
       const reAtom = this.atoms.get(atomId);
@@ -459,7 +456,9 @@ class ReStruct {
       const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
-        boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);
+        boundingBox == undefined
+          ? atomBox
+          : Box2Abs.union(boundingBox, atomBox);
     }
     const selectionExceptAtoms = { ...selection };
     delete selectionExceptAtoms.atoms;
@@ -499,13 +498,15 @@ class ReStruct {
     Object.keys(ReStruct.maps).forEach((elementKey) => {
       selection[elementKey]?.forEach((elementId) => {
         const element = this[elementKey].get(elementId);
-        if (element) {
-          const box = element.getVBoxObj(this.render);
-          if (box) {
-            boundingBox = boundingBox
-              ? Box2Abs.union(boundingBox, box)
-              : box.clone();
-          }
+        if (!element) {
+          return;
+        }
+
+        const box = element.getVBoxObj(this.render);
+        if (box) {
+          boundingBox = boundingBox
+            ? Box2Abs.union(boundingBox, box)
+            : box.clone();
         }
       });
     });
@@ -587,16 +588,18 @@ class ReStruct {
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
       if (
-        shouldForce ||
-        attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
+        !shouldForce &&
+        !attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
       ) {
-        attachmentGroup.recalculatePosition(this.molecule.atoms);
-        this.attachmentGroupsChanged.set(id, 1);
-        attachmentGroup.neighbors.forEach((halfBondId) => {
-          const halfBond = this.molecule.halfBonds.get(halfBondId);
-          if (halfBond) this.markBond(halfBond.bid, 1);
-        });
+        return;
       }
+
+      attachmentGroup.recalculatePosition(this.molecule.atoms);
+      this.attachmentGroupsChanged.set(id, 1);
+      attachmentGroup.neighbors.forEach((halfBondId) => {
+        const halfBond = this.molecule.halfBonds.get(halfBondId);
+        if (halfBond) this.markBond(halfBond.bid, 1);
+      });
     });
 
     this.atomsChanged.forEach((_value, aid) =>
@@ -684,12 +687,12 @@ class ReStruct {
   }
 
   /**
-   * Draws RNA preset components whose tab is not active (#9441) as a single
-   * clean outline. Each "outline" highlight's per-atom/bond selection contours
-   * are merged into one path, and an SVG feMorphology filter turns the filled
-   * union into a single perimeter stroke (so the structure stays visible
-   * inside). Rebuilt every render since it spans many atoms/bonds.
-   */
+  Draws RNA preset components whose tab is not active (#9441) as a single
+  clean outline. Each "outline" highlight's per-atom/bond selection contours
+  are merged into one path, and an SVG feMorphology filter turns the filled
+  union into a single perimeter stroke (so the structure stays visible
+  inside). Rebuilt every render since it spans many atoms/bonds.
+  */
   showHighlightOutlines(): void {
     this.highlightOutlinePaths.forEach((entry) => entry.remove());
     this.highlightOutlinePaths = [];
@@ -873,7 +876,7 @@ class ReStruct {
     this.frags.forEach((frag) => {
       const path = frag.draw(this.render);
       if (path) {
-        this.addReObjectPath(LayerMap.data, frag.visel, path, null, true);
+        this.addReObjectPath(LayerMap.data, frag.visel, path, undefined, true);
       }
       // TODO fragment selection & highlighting
     });
@@ -922,7 +925,7 @@ class ReStruct {
         (previousVBox, attachmentPointId) => {
           const attachmentPoint =
             this.rgroupAttachmentPoints.get(attachmentPointId);
-          assert(attachmentPoint != null);
+          assert(attachmentPoint != undefined);
           const currentVBox = attachmentPoint.getVBoxObj(this.render);
           return previousVBox && currentVBox
             ? Box2Abs.union(previousVBox, currentVBox)
@@ -931,15 +934,13 @@ class ReStruct {
         null as Box2Abs | null,
       );
 
-      if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
-        allAtomAttachmentPointsVBox = Box2Abs.union(
-          allAtomAttachmentPointsVBox,
-          oneAtomAttachmentPointsVBox,
-        );
-      } else {
-        allAtomAttachmentPointsVBox =
-          allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox;
-      }
+      allAtomAttachmentPointsVBox =
+        allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox
+          ? Box2Abs.union(
+              allAtomAttachmentPointsVBox,
+              oneAtomAttachmentPointsVBox,
+            )
+          : (allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox);
     });
 
     return allAtomAttachmentPointsVBox;
@@ -1169,11 +1170,11 @@ function scaleVisel(visel, s) {
 }
 
 /**
- * SelectionPlate could be an item then value would be in it
- * or it could be a set of items then removed value need to be check on at least one of items in set
- * @param item
- * @returns {boolean}
- */
+SelectionPlate could be an item then value would be in it
+or it could be a set of items then removed value need to be check on at least one of items in set
+@param item
+@returns {boolean}
+*/
 function isSelectionSvgObjectExists(item) {
   return (
     item &&

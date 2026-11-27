@@ -8,7 +8,7 @@ const diffOf = (path, added = []) =>
     'index 1111111..2222222 100644',
     `--- a/${path}`,
     `+++ b/${path}`,
-    '@@ -1,1 +1,2 @@',
+    `@@ -1,1 +1,${1 + added.length} @@`,
     ' unchanged',
     ...added.map((line) => `+${line}`),
   ].join('\n');
@@ -31,6 +31,26 @@ test('parseDiff keeps the new path of a rename and only lines added in hunks', (
   assert.deepEqual(parseDiff(diff), [{ path: 'new.ts', added: ['after'] }]);
 });
 
+test('a source file whose name git quotes gets its lenses', () => {
+  // git quotes a path with non-ASCII characters and escapes them in octal.
+  const diff = [
+    'diff --git "a/packages/ketcher-core/src/\\303\\251.ts" "b/packages/ketcher-core/src/\\303\\251.ts"',
+    'index 1111111..2222222 100644',
+    '--- "a/packages/ketcher-core/src/\\303\\251.ts"',
+    '+++ "b/packages/ketcher-core/src/\\303\\251.ts"',
+    '@@ -1 +1,2 @@',
+    ' unchanged',
+    '+const label = atom.label;',
+  ].join('\n');
+  assert.deepEqual(parseDiff(diff), [
+    {
+      path: 'packages/ketcher-core/src/é.ts',
+      added: ['const label = atom.label;'],
+    },
+  ]);
+  assert.deepEqual(lensesFor(diff), ['correctness', 'reuse', 'code-quality']);
+});
+
 test('a diff of skills and docs outside the memory bank gets no lens', () => {
   assert.deepEqual(
     lensesFor(
@@ -48,11 +68,25 @@ test('a test-only change gets code-quality and not correctness', () => {
   );
 });
 
-test('plain source code gets correctness and code-quality', () => {
+test('plain source code gets correctness, reuse and code-quality', () => {
   assert.deepEqual(
     lensesFor(diffOf('packages/ketcher-react/src/script/ui/App.tsx', ['a'])),
-    ['correctness', 'code-quality'],
+    ['correctness', 'reuse', 'code-quality'],
   );
+});
+
+test('reuse comes with any source change and not with tests or docs', () => {
+  assert.ok(
+    lensesFor(diffOf('packages/ketcher-core/src/utilities/x.ts')).includes(
+      'reuse',
+    ),
+  );
+  assert.ok(
+    !lensesFor(diffOf('packages/ketcher-core/src/domain/x.test.ts')).includes(
+      'reuse',
+    ),
+  );
+  assert.ok(!lensesFor(diffOf('README.md')).includes('reuse'));
 });
 
 test('a render file or a cloneDeep in source brings performance', () => {
@@ -66,6 +100,17 @@ test('a render file or a cloneDeep in source brings performance', () => {
       diffOf('packages/ketcher-react/src/a.ts', ['const s = cloneDeep(x);']),
     ).includes('performance'),
   );
+});
+
+test('a build config change brings performance', () => {
+  for (const path of [
+    'packages/ketcher-react/vite.config.mjs',
+    'packages/ketcher-standalone/scripts/build.mjs',
+    'packages/ketcher-standalone/build-variants.mjs',
+    'build-config/replace-values.mjs',
+  ]) {
+    assert.ok(lensesFor(diffOf(path)).includes('performance'), path);
+  }
 });
 
 test('an HTML sink added to source brings security; the same text in a test does not', () => {

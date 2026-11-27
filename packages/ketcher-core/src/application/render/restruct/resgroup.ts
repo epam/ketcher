@@ -29,7 +29,7 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
-import BracketParams from '../bracket-params';
+import BracketParams from '../bracket-parameters';
 import type {
   Element as RaphaelElement,
   RaphaelPaper,
@@ -51,9 +51,13 @@ interface SGroupdrawBracketsOptions {
 }
 
 class ReSGroup extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
+  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
   public item: SGroup | undefined;
   public render!: Render;
-  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
 
   constructor(sgroup: SGroup) {
     super('sgroup');
@@ -63,15 +67,11 @@ class ReSGroup extends ReObject {
     this.item = sgroup;
   }
 
-  static isSelectable(): boolean {
-    return false;
-  }
-
   /**
-   * @param remol {ReStruct}
-   * @param sgroup {SGroup}
-   * @returns {*}
-   */
+  @param remol {ReStruct}
+  @param sgroup {SGroup}
+  @returns {*}
+  */
   draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
@@ -128,8 +128,9 @@ class ReSGroup extends ReObject {
         }
         case 'queryComponent':
         case 'GEN':
-        default:
+        default: {
           break;
+        }
       }
 
       // DAT S-Groups do not have brackets
@@ -212,62 +213,64 @@ class ReSGroup extends ReObject {
     const options = render.options;
     const paper = render.paper;
     const sGroupItem = this.item;
-    if (sGroupItem) {
-      const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
-      const functionalGroups = render.ctab.molecule.functionalGroups;
-      const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
-      const otherHovers = paper.set();
-
-      if (
-        FunctionalGroup.isContractedFunctionalGroup(
-          sGroupItem.id,
-          functionalGroups,
-        )
-      ) {
-        sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
-          options.hoverStyle,
-        );
-        hoversToCombine.push(sGroupItem.hovering);
-      } else if (!this.selected) {
-        sGroupItem.hovering = paper
-          .path(
-            'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-            toFixed(a0.x),
-            toFixed(a0.y),
-            toFixed(a1.x),
-            toFixed(a1.y),
-            toFixed(b1.x),
-            toFixed(b1.y),
-            toFixed(b0.x),
-            toFixed(b0.y),
-          )
-          .attr(options.hoverStyle);
-        otherHovers.push(sGroupItem.hovering);
-      }
-
-      SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
-        const atom = render?.ctab?.atoms?.get(aid);
-
-        hoversToCombine.push(atom?.makeHoverPlate(render));
-      });
-      SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
-        hoversToCombine.push(
-          render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
-        );
-      });
-
-      const combinedPathData = uniteHoverPaths(hoversToCombine);
-      if (!combinedPathData) {
-        return;
-      }
-
-      render.ctab.addReObjectPath(
-        LayerMap.hovering,
-        this.visel,
-        paper.path(combinedPathData).attr(options.hoverStyle),
-      );
-      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
+    if (!sGroupItem) {
+      return;
     }
+
+    const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
+    const functionalGroups = render.ctab.molecule.functionalGroups;
+    const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
+    const otherHovers = paper.set();
+
+    if (
+      FunctionalGroup.isContractedFunctionalGroup(
+        sGroupItem.id,
+        functionalGroups,
+      )
+    ) {
+      sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
+        options.hoverStyle,
+      );
+      hoversToCombine.push(sGroupItem.hovering);
+    } else if (!this.selected) {
+      sGroupItem.hovering = paper
+        .path(
+          'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
+          toFixed(a0.x),
+          toFixed(a0.y),
+          toFixed(a1.x),
+          toFixed(a1.y),
+          toFixed(b1.x),
+          toFixed(b1.y),
+          toFixed(b0.x),
+          toFixed(b0.y),
+        )
+        .attr(options.hoverStyle);
+      otherHovers.push(sGroupItem.hovering);
+    }
+
+    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+      const atom = render?.ctab?.atoms?.get(aid);
+
+      hoversToCombine.push(atom?.makeHoverPlate(render));
+    });
+    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
+      hoversToCombine.push(
+        render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
+      );
+    });
+
+    const combinedPathData = uniteHoverPaths(hoversToCombine);
+    if (!combinedPathData) {
+      return;
+    }
+
+    render.ctab.addReObjectPath(
+      LayerMap.hovering,
+      this.visel,
+      paper.path(combinedPathData).attr(options.hoverStyle),
+    );
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
   }
 
   setHover(isHovered: boolean, render: Render) {
@@ -314,21 +317,23 @@ class ReSGroup extends ReObject {
   show(restruct: ReStruct): void {
     const render = restruct.render;
     const sgroup = this.item;
-    if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
-      const remol = render.ctab;
-      const path = this.draw(remol, sgroup);
-      const shouldIncludeInBoundingBox = !(
-        sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
-      );
-      restruct.addReObjectPath(
-        LayerMap.data,
-        this.visel,
-        path,
-        null,
-        shouldIncludeInBoundingBox,
-      );
-      this.setHover(this.hover, render); // TODO: fix this
+    if (!sgroup || sgroup.data.fieldName === 'MRV_IMPLICIT_H') {
+      return;
     }
+
+    const remol = render.ctab;
+    const path = this.draw(remol, sgroup);
+    const shouldIncludeInBoundingBox = !(
+      sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
+    );
+    restruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      path,
+      undefined,
+      shouldIncludeInBoundingBox,
+    );
+    this.setHover(this.hover, render); // TODO: fix this
   }
 }
 
@@ -557,19 +562,21 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
 
   SGroup.getAtoms(restruct.molecule, sgroup).forEach((aid) => {
     const atom = restruct.atoms.get(aid);
-    if (atom) {
-      const p = Scale.modelToCanvas(atom.a.pp, options);
-      const bb = atom.visel.boundingBox;
-      if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
-      p.x += options.lineWidth; // shift a bit to the right
-      const nameI = showValue(paper, p, sgroup, options);
-      const boxI = util.relBox(nameI.getBBox());
-      nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
-      set.push(nameI);
-      let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
-      sboxI = sboxI.transform(Scale.canvasToModel, render.options);
-      sgroup.areas.push(sboxI);
+    if (!atom) {
+      return;
     }
+
+    const p = Scale.modelToCanvas(atom.a.pp, options);
+    const bb = atom.visel.boundingBox;
+    if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
+    p.x += options.lineWidth; // shift a bit to the right
+    const nameI = showValue(paper, p, sgroup, options);
+    const boxI = util.relBox(nameI.getBBox());
+    nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
+    set.push(nameI);
+    let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
+    sboxI = sboxI.transform(Scale.canvasToModel, render.options);
+    sgroup.areas.push(sboxI);
   });
 
   return set;
@@ -607,10 +614,10 @@ function getBracketParameters(bracketBox: Box2Abs, direction: Vec2) {
 }
 
 /**
- * @param sgroup {SGroup}
- * @param render {Render}
- * @returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
- */
+@param sgroup {SGroup}
+@param render {Render}
+@returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
+*/
 function getHighlighPathInfo(
   sgroup: SGroup,
   render: Render,

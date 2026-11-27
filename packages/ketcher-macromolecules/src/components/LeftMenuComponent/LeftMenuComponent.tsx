@@ -48,39 +48,37 @@ export function LeftMenuComponent() {
           testId="hand"
           disabled={isSettingsPanelOpen}
         />
-        <Menu.Group>
-          <Menu.Submenu
-            testId="select-drop-down-button"
+        <Menu.Submenu
+          testId="select-drop-down-button"
+          disabled={isSettingsPanelOpen}
+          subMenuId={SELECT_SUBMENU_ID}
+          needOpenByMenuItemClick={true}
+        >
+          <Menu.Item
+            itemId="select-rectangle"
+            title={t('leftMenu.selectRectangle', {
+              shortcut: hotkeysShortcuts.switchSelectTool,
+            })}
+            testId="select-rectangle"
             disabled={isSettingsPanelOpen}
-            subMenuId={SELECT_SUBMENU_ID}
-            needOpenByMenuItemClick={true}
-          >
-            <Menu.Item
-              itemId="select-rectangle"
-              title={t('leftMenu.selectRectangle', {
-                shortcut: hotkeysShortcuts.switchSelectTool,
-              })}
-              testId="select-rectangle"
-              disabled={isSettingsPanelOpen}
-            />
-            <Menu.Item
-              itemId="select-lasso"
-              title={t('leftMenu.lassoSelection', {
-                shortcut: hotkeysShortcuts.switchSelectTool,
-              })}
-              testId="select-lasso"
-              disabled={isSettingsPanelOpen}
-            />
-            <Menu.Item
-              itemId="select-structure"
-              title={t('leftMenu.structureSelection', {
-                shortcut: hotkeysShortcuts.switchSelectTool,
-              })}
-              testId="select-structure"
-              disabled={isSettingsPanelOpen}
-            />
-          </Menu.Submenu>
-        </Menu.Group>
+          />
+          <Menu.Item
+            itemId="select-lasso"
+            title={t('leftMenu.lassoSelection', {
+              shortcut: hotkeysShortcuts.switchSelectTool,
+            })}
+            testId="select-lasso"
+            disabled={isSettingsPanelOpen}
+          />
+          <Menu.Item
+            itemId="select-structure"
+            title={t('leftMenu.structureSelection', {
+              shortcut: hotkeysShortcuts.switchSelectTool,
+            })}
+            testId="select-structure"
+            disabled={isSettingsPanelOpen}
+          />
+        </Menu.Submenu>
         <Menu.Item
           itemId="erase"
           title={t('leftMenu.erase', { shortcut: hotkeysShortcuts.erase })}

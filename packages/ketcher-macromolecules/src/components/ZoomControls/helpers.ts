@@ -1,18 +1,11 @@
-import {
-  generateMenuShortcuts,
-  hotkeysConfiguration,
-  ZoomTool,
-} from 'ketcher-core';
+import { generateMenuShortcuts, hotkeysConfig, ZoomTool } from 'ketcher-core';
 
 export const hotkeysShortcuts =
-  generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
+  generateMenuShortcuts<typeof hotkeysConfig>(hotkeysConfig);
 
 export const getIntegerFromString = (zoomInput: string | undefined): number => {
   const zoomNumber = Number.parseInt(zoomInput ?? '');
-  if (Number.isNaN(zoomNumber)) {
-    return 0;
-  }
-  return zoomNumber;
+  return Number.isNaN(zoomNumber) ? 0 : zoomNumber;
 };
 
 export const getValidZoom = (zoom: number, currentZoom: number): number => {

@@ -18,7 +18,6 @@ import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { NotificationBannerOnMicro } from '@tests/pages/molecules/canvas/NotificationBannerOnMicro';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -201,8 +200,9 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await expect(NotificationBannerOnMicro(page).message).not.toBeVisible();
 
     // Verify the preset was not created by switching to macro mode and checking library
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const canceledPreset = {
       alias: 'CanceledPreset',
       testId: 'CanceledPreset_CncB_CncS_CncP',

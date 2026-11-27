@@ -34,23 +34,23 @@ const findSettingsService = (
 };
 
 /**
- * React hook to access settings from ketcher-core settings service
- * Provides reactive access to settings with update methods
- *
- * @example
- * ```typescript
- * const { settings, updateSettings, loadPreset } = useSettings();
- *
- * // Read settings
- * console.log(settings?.resetToSelect);
- *
- * // Update settings
- * await updateSettings({ atomColoring: false });
- *
- * // Load preset
- * await loadPreset('acs');
- * ```
- */
+React hook to access settings from ketcher-core settings service
+Provides reactive access to settings with update methods
+
+@example
+```typescript
+const { settings, updateSettings, loadPreset } = useSettings();
+
+// Read settings
+console.log(settings?.resetToSelect);
+
+// Update settings
+await updateSettings({ atomColoring: false });
+
+// Load preset
+await loadPreset('acs');
+```
+*/
 export function useSettings() {
   const dispatch = useAppDispatch();
   const { ketcherId } = useAppContext();

@@ -59,7 +59,14 @@ export function parseMoleculeNode(
   }
 
   const atomIdMap = new Map<number, number>();
-  currentStruct.mergeInto(resultingStruct, null, null, false, false, atomIdMap);
+  currentStruct.mergeInto(
+    resultingStruct,
+    undefined,
+    undefined,
+    false,
+    false,
+    atomIdMap,
+  );
   moleculeAtomIdMaps.set(moleculeId, atomIdMap);
 }
 
@@ -243,14 +250,18 @@ export function addHapticConnectionsToStruct(
       return;
     }
 
-    if (endpoint1.type === 'attachmentGroup' && endpoint2.type === 'atom') {
-      addHapticBondToStruct(struct, endpoint2, endpoint1);
-      hasHapticConnections = true;
+    if (endpoint1.type !== 'attachmentGroup' || endpoint2.type !== 'atom') {
+      return;
     }
+
+    addHapticBondToStruct(struct, endpoint2, endpoint1);
+    hasHapticConnections = true;
   });
 
-  if (hasHapticConnections) {
-    struct.clearFragments();
-    struct.markFragments();
+  if (!hasHapticConnections) {
+    return;
   }
+
+  struct.clearFragments();
+  struct.markFragments();
 }

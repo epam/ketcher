@@ -17,7 +17,7 @@
 import {
   AtomDelete,
   AttachmentGroupDelete,
-  AttachmentGroupAttr,
+  AttachmentGroupAttribute,
   BondDelete,
   CalcImplicitH,
   ImageDelete,
@@ -34,7 +34,7 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
 import { assert } from 'utilities';
-import { atomGetDegree, formatSelection } from './utils';
+import { atomGetDegree, formatSelection } from './utilities';
 import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
@@ -56,23 +56,25 @@ function fromBondDeletion(
 
   if (restruct.sgroups?.size > 0) {
     restruct.sgroups.forEach((sgroup) => {
-      if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
-        const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
-        const endAtomConnectedToBond = restruct.bonds.get(bid)?.b.end;
-
-        removeAttachmentPointFromSuperatom(
-          sgroup,
-          beginAtomConnectedToBond,
-          endAtomConnectedToBond,
-          action,
-          restruct,
-        );
+      if (sgroup.item?.type !== 'SUP') {
+        return;
       }
+
+      const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
+      const endAtomConnectedToBond = restruct.bonds.get(bid)?.b.end;
+
+      removeAttachmentPointFromSuperatom(
+        sgroup,
+        beginAtomConnectedToBond,
+        endAtomConnectedToBond,
+        action,
+        restruct,
+      );
     });
   }
 
   const bond = restruct.molecule.bonds.get(bid);
-  assert(bond != null);
+  assert(bond != undefined);
   const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
@@ -106,7 +108,7 @@ function fromBondDeletion(
   const atomIds = [bond.begin, bond.end].filter((id) =>
     restruct.molecule.atoms.has(id),
   );
-  if (atomIds.length) {
+  if (atomIds.length > 0) {
     action.addOp(new CalcImplicitH(atomIds).perform(restruct));
   }
   if (atomIds.length === 2) {
@@ -128,7 +130,7 @@ export function fromOneBondDeletion(restruct, id) {
 }
 
 export function fromFragmentDeletion(restruct, rawSelection) {
-  assert(rawSelection != null);
+  assert(rawSelection != undefined);
 
   let action = new Action();
   const atomsToRemove: Array<number> = [];
@@ -164,7 +166,9 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     if (remainingAtomIds.length < 2) {
       selection.attachmentGroups.push(id);
     } else {
-      action.addOp(new AttachmentGroupAttr(id, 'atomIds', remainingAtomIds));
+      action.addOp(
+        new AttachmentGroupAttribute(id, 'atomIds', remainingAtomIds),
+      );
     }
   });
   selection.attachmentGroups = [...new Set(selection.attachmentGroups)];
@@ -176,21 +180,25 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
-    if (sgroup?.isSuperatomWithoutLabel) {
-      const attachmentPoints = sgroup.getAttachmentPoints();
-      attachmentPoints.forEach((attachmentPoint) => {
-        if (
-          attachmentPoint.atomId === atomId &&
-          isNumber(attachmentPoint.leaveAtomId) &&
-          !selection.atoms.includes(attachmentPoint.leaveAtomId)
-        ) {
-          action.addOp(
-            new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
-          );
-          action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
-        }
-      });
+    if (!sgroup?.isSuperatomWithoutLabel) {
+      return;
     }
+
+    const attachmentPoints = sgroup.getAttachmentPoints();
+    attachmentPoints.forEach((attachmentPoint) => {
+      if (
+        attachmentPoint.atomId !== atomId ||
+        !isNumber(attachmentPoint.leaveAtomId) ||
+        selection.atoms.includes(attachmentPoint.leaveAtomId)
+      ) {
+        return;
+      }
+
+      action.addOp(
+        new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
+      );
+      action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
+    });
   });
 
   selection.atoms.forEach((aid) => {

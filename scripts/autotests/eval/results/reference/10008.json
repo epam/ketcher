@@ -1,0 +1,163 @@
+{
+  "issue": 10008,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Monomer-creation/8852-preset-structure-additions.spec.ts"
+  ],
+  "expectedSpecName": "8852-Additions-to-the-structure-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": false,
+  "checklist": 10,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Monomer-creation/8852-preset-structure-additions.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify that additions connected to Base become part of Base component",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify that additions connected to Sugar become part of Sugar component",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify that additions connected to Phosphate become part of Phosphate component",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify that unconnected additions do not belong to any component and block preset saving",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify that previously unconnected structure becomes part of Sugar when connected to Sugar",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify behavior when structure connected to one component is subsequently extended to another component",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify behavior when part of a component structure is disconnected and reconnected to another component",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify that adding and removing simple extensions to a component does not break component continuity",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify that additions made before components are defined are handled correctly once components are defined",
+          "caseNumber": 10,
+          "skip": false
+        }
+      ],
+      "testCount": 10,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 10,
+      "versionLines": 10,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Additions to the structure:  > Case 1 - Verify that additions connected to Base become part of Base component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 2 - Verify that additions connected to Sugar become part of Sugar component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 3 - Verify that additions connected to Phosphate become part of Phosphate component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 4 - Verify that unconnected additions do not belong to any component and block preset saving",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 6 - Verify that previously unconnected structure becomes part of Sugar when connected to Sugar",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 7 - Verify behavior when structure connected to one component is subsequently extended to another component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 8 - Verify behavior when part of a component structure is disconnected and reconnected to another component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 9 - Verify that adding and removing simple extensions to a component does not break component continuity",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure:  > Case 10 - Verify that additions made before components are defined are handled correctly once components are defined",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 10,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 36622
+}

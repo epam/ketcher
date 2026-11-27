@@ -1,0 +1,151 @@
+{
+  "issue": 10013,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/10013-monomer-properties-attributes-panel.spec.ts"
+  ],
+  "expectedSpecName": "8778-Only-show-the-possible-monomer-properties-in-the-attributes-panel-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": false,
+  "checklist": 9,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/10013-monomer-properties-attributes-panel.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - CHEM monomer type shows only appropriate properties",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Amino acid monomer type shows all required properties",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Sugar monomer type shows appropriate properties",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Base monomer type shows appropriate properties",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Phosphate monomer type shows appropriate properties",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Nucleotide (monomer) type shows appropriate properties",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Nucleotide (preset) type shows preset-level properties only",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Dynamic updates when switching between monomer types",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Fields visibility validation for covered monomer types",
+          "caseNumber": 9,
+          "skip": false
+        }
+      ],
+      "testCount": 9,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 9,
+      "versionLines": 9,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 1 - CHEM monomer type shows only appropriate properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 2 - Amino acid monomer type shows all required properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 3 - Sugar monomer type shows appropriate properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 4 - Base monomer type shows appropriate properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 5 - Phosphate monomer type shows appropriate properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 6 - Nucleotide (monomer) type shows appropriate properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 7 - Nucleotide (preset) type shows preset-level properties only",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 8 - Dynamic updates when switching between monomer types",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Monomer properties attributes panel visibility rules:  > Case 9 - Fields visibility validation for covered monomer types",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 9,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 31420
+}

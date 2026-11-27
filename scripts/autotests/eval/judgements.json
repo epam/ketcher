@@ -1,0 +1,4 @@
+{
+  "description": "Hand judgements of the generated specs, by configuration and then issue number. `cases` has one verdict per checklist item, in checklist order: covered (a test checks what the item asks for), partial (a test exists but misses part of the item), skipped (test.skip with a reason that holds), missing (no test), wrong (the test checks something else, or would pass on a broken app). `conventions` counts the testing.md and R15 breaks a reviewer would raise. Judge against the issue and the merged reference spec, with the result's files and Playwright reports at hand.",
+  "judgements": {}
+}

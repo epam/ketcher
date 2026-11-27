@@ -22,9 +22,9 @@ const ButtonBox = styled('div')`
 `;
 
 const selectHandler = (input) => {
-  const arr = input.split(',');
-  const numberArr = arr.map((item) => Number.parseInt(item));
-  KetcherFunctions.selectAtomsById(numberArr);
+  const array = input.split(',');
+  const numberArray = array.map((item) => Number.parseInt(item));
+  KetcherFunctions.selectAtomsById(numberArray);
 };
 
 export const InputSelect = () => {

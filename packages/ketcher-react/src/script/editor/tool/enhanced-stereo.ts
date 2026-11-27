@@ -16,7 +16,7 @@
 
 import {
   findStereoAtoms,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromStereoFlagUpdate,
 } from 'ketcher-core';
 
@@ -24,31 +24,35 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
 class EnhancedStereoTool implements Tool {
-  private readonly editor: Editor;
-  private readonly stereoAtoms: Array<number>;
   isNotActiveTool: true;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     const selection = editor.selection();
-    this.editor = editor;
     this.isNotActiveTool = true;
 
-    this.stereoAtoms = findStereoAtoms(
+    const stereoAtoms = findStereoAtoms(
       editor.struct(),
-      selection ? selection.atoms || [] : [...editor.struct().atoms.keys()],
+      selection
+        ? selection.atoms || []
+        : Array.from(editor.struct().atoms.keys()),
     );
-
-    if (this.stereoAtoms.length === 0) {
+    if (stereoAtoms.length === 0) {
       return;
     }
 
-    EnhancedStereoTool.changeAtomsStereoAction(
-      this.editor,
-      this.stereoAtoms,
-    ).then((action) => action && editor.update(action));
+    void (async () => {
+      const action = await EnhancedStereoTool.changeAtomsStereoAction(
+        editor,
+        stereoAtoms,
+      );
+      if (action) editor.update(action);
+    })();
   }
 
-  static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
+  static async changeAtomsStereoAction(
+    editor: Editor,
+    stereoAtoms: Array<number>,
+  ) {
     const struct = editor.struct();
     const restruct = editor.render.ctab;
     const stereoLabels = stereoAtoms.map((stereoAtom) => {
@@ -62,34 +66,32 @@ class EnhancedStereoTool implements Tool {
       stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
     });
 
-    return res.then((stereoLabel) => {
-      if (!stereoLabel) {
-        return null;
-      }
+    const stereoLabel = await res;
+    if (!stereoLabel) {
+      return null;
+    }
 
-      const action = stereoAtoms.reduce(
-        (acc, stereoAtom) => {
-          const frid = struct.atoms.get(stereoAtom)?.fragment;
-          const frag =
-            frid === undefined ? null : restruct.molecule.frags.get(frid);
+    const action = stereoAtoms.reduce(
+      (acc, stereoAtom) => {
+        const frid = struct.atoms.get(stereoAtom)?.fragment;
+        const frag =
+          frid === undefined ? null : restruct.molecule.frags.get(frid);
 
-          if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
-          }
-          return acc;
+        return frag?.stereoAtoms
+          ? acc.mergeWith(fromStereoFlagUpdate(restruct, frid))
+          : acc;
+      },
+      fromAtomsAttributes(
+        restruct,
+        stereoAtoms,
+        {
+          stereoLabel,
         },
-        fromAtomsAttrs(
-          restruct,
-          stereoAtoms,
-          {
-            stereoLabel,
-          },
-          false,
-        ),
-      );
-      action.operations.reverse();
-      return action;
-    });
+        false,
+      ),
+    );
+    action.operations.reverse();
+    return action;
   }
 }
 

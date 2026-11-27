@@ -1,3 +1,4 @@
+import { type Mock, type MockInstance } from 'vitest';
 import {
   type IKetMonomerTemplate,
   type Ketcher,
@@ -10,9 +11,9 @@ import {
 } from 'ketcher-core';
 import { saveLibraryMonomer } from './MonomerCreationWizard.library';
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
-  provideEditorInstance: jest.fn(),
+vi.mock('ketcher-core', async () => ({
+  ...(await vi.importActual('ketcher-core')),
+  provideEditorInstance: vi.fn(),
 }));
 
 describe('saving library wizard changes', () => {
@@ -50,11 +51,11 @@ describe('saving library wizard changes', () => {
       MonomerClass: KetMonomerClass.AminoAcid,
     },
   };
-  const update = jest.fn();
-  const conversion = jest.fn();
-  const dispatch = jest.fn();
-  const scheduleReplacement = jest.fn();
-  let persist: jest.SpyInstance;
+  const update = vi.fn();
+  const conversion = vi.fn();
+  const dispatch = vi.fn();
+  const scheduleReplacement = vi.fn();
+  let persist: MockInstance;
   const ketcher = {
     id: 'test',
     ensureMonomersLibraryDataInSdfFormat: conversion,
@@ -62,12 +63,12 @@ describe('saving library wizard changes', () => {
   } as unknown as Ketcher;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    persist = jest
+    vi.clearAllMocks();
+    persist = vi
       .spyOn(SettingsManager, 'addMonomerLibraryUpdate')
       .mockImplementation();
     conversion.mockResolvedValue('sdf');
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    (provideEditorInstance as Mock).mockReturnValue({
       monomersLibraryParsedJson: {
         'monomerTemplate-original': {
           ...template,
@@ -84,7 +85,7 @@ describe('saving library wizard changes', () => {
     });
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   it('supersedes the library entry when the code and the type are unchanged, retaining properties without controls', async () => {
     await saveLibraryMonomer(
@@ -149,7 +150,7 @@ describe('saving library wizard changes', () => {
   });
 
   it('rejects a changed code that another monomer of the same class already uses', async () => {
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    (provideEditorInstance as Mock).mockReturnValue({
       monomersLibraryParsedJson: {
         'monomerTemplate-original': { ...template, id: 'original', alias: 'A' },
       },

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
   updateFormState,
@@ -47,7 +47,7 @@ import {
   KETCHER_ROOT_NODE_CSS_SELECTOR,
 } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
-import i18n from 'src/i18n/i18n';
+import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 import { saveAs } from 'file-saver';
 
 interface SettingsProps extends BaseProps {
@@ -91,6 +91,11 @@ const SettingsDialog = (props: Props) => {
     ),
   );
 
+  const languageOptions = SUPPORTED_LANGUAGES.map(({ code, label }) => ({
+    value: code,
+    label,
+  }));
+
   const atomsTab = {
     key: 'atoms',
     label: t('dialogs:meta.settings.atomsTab'),
@@ -127,7 +132,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="bondSpacing"
-          hint={t('settings:fields.bondSpacing.extraLabel')}
+          hint="settings:fields.bondSpacing.extraLabel"
           hintAlign="right"
         />
         <Field
@@ -144,7 +149,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="hashSpacing"
-          hint={t('dialogs:meta.settings.hashSpacingTooltip')}
+          hint="dialogs:meta.settings.hashSpacingTooltip"
           component={MeasureInput}
           labelPos={false}
           extraName="hashSpacingUnit"
@@ -159,12 +164,12 @@ const SettingsDialog = (props: Props) => {
       <fieldset>
         <Field
           name="showStereoFlags"
-          hint={t('dialogs:meta.settings.showStereoFlagsTooltip')}
+          hint="dialogs:meta.settings.showStereoFlagsTooltip"
           data-testid="show-stereo-flags"
         />
         <Field
           name="stereoLabelStyle"
-          hint={t('dialogs:meta.settings.stereoLabelStyleTooltip')}
+          hint="dialogs:meta.settings.stereoLabelStyleTooltip"
           component={Select}
           className={classes.stackedField}
           options={getSelectOptionsFromSchema(
@@ -175,19 +180,19 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="colorOfAbsoluteCenters"
-          hint={t('dialogs:meta.settings.colorOfAbsoluteCentersTooltip')}
+          hint="dialogs:meta.settings.colorOfAbsoluteCentersTooltip"
           component={ColorPicker}
           data-testid="color-of-absolute-centers"
         />
         <Field
           name="colorOfAndCenters"
-          hint={t('dialogs:meta.settings.colorOfAndCentersTooltip')}
+          hint="dialogs:meta.settings.colorOfAndCentersTooltip"
           component={ColorPicker}
           data-testid="color-of-and-centers"
         />
         <Field
           name="colorOfOrCenters"
-          hint={t('dialogs:meta.settings.colorOfOrCentersTooltip')}
+          hint="dialogs:meta.settings.colorOfOrCentersTooltip"
           component={ColorPicker}
           data-testid="color-of-or-centers"
         />
@@ -203,7 +208,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="autoFadeOfStereoLabels"
-          hint={t('dialogs:meta.settings.autoFadeOfStereoLabelsTooltip')}
+          hint="dialogs:meta.settings.autoFadeOfStereoLabelsTooltip"
           data-testid="auto-fade-of-stereo-labels"
         />
         <Field name="absFlagLabel" data-testid="abs-flag-label" />
@@ -212,7 +217,7 @@ const SettingsDialog = (props: Props) => {
         <Field name="mixedFlagLabel" data-testid="mixed-flag-label" />
         <Field
           name="ignoreChiralFlag"
-          hint={t('dialogs:meta.settings.ignoreChiralFlagTooltip')}
+          hint="dialogs:meta.settings.ignoreChiralFlagTooltip"
           data-testid="ignore-chiral-flag"
         />
       </fieldset>
@@ -225,7 +230,7 @@ const SettingsDialog = (props: Props) => {
       <fieldset>
         <Field
           name="reactionComponentMarginSize"
-          hint={t('dialogs:meta.settings.reactionComponentMarginSizeTooltip')}
+          hint="dialogs:meta.settings.reactionComponentMarginSizeTooltip"
           component={MeasureInput}
           labelPos={false}
           extraName="reactionComponentMarginSizeUnit"
@@ -249,6 +254,18 @@ const SettingsDialog = (props: Props) => {
     label: t('dialogs:meta.settings.generalTab'),
     content: (
       <fieldset>
+        {SUPPORTED_LANGUAGES.length > 1 && (
+          <Label title="settings:language.title" data-testid="language">
+            <span>
+              <Select
+                value={i18n.language}
+                onChange={(lng) => i18n.changeLanguage(lng)}
+                options={languageOptions}
+                data-testid="language-select"
+              />
+            </span>
+          </Label>
+        )}
         <Field
           name="resetToSelect"
           component={Select}
@@ -258,7 +275,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="rotationStep"
-          hint={t('dialogs:meta.settings.rotationStepTooltip')}
+          hint="dialogs:meta.settings.rotationStepTooltip"
           data-testid="rotation-step"
           className={classes.stackedMeasureInput}
         />
@@ -284,7 +301,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="imageResolution"
-          hint={t('dialogs:meta.settings.imageResolutionTooltip')}
+          hint="dialogs:meta.settings.imageResolutionTooltip"
           component={Select}
           className={classes.stackedField}
           options={getSelectOptionsFromSchema(
@@ -324,13 +341,13 @@ const SettingsDialog = (props: Props) => {
       <fieldset>
         <Field
           name="showValenceWarnings"
-          hint={t('dialogs:meta.settings.showValenceWarningsTooltip')}
+          hint="dialogs:meta.settings.showValenceWarningsTooltip"
           data-testid="show-valence-warnings"
         />
         <fieldset disabled={!appOpts.server}>
           <Field
             name="ignore-stereochemistry-errors"
-            hint={t('dialogs:meta.settings.ignoreStereochemistryErrorsTooltip')}
+            hint="dialogs:meta.settings.ignoreStereochemistryErrorsTooltip"
             data-testid="ignore-stereochemistry-errors"
           />
           <Field
@@ -349,28 +366,28 @@ const SettingsDialog = (props: Props) => {
         <fieldset disabled={!appOpts.server}>
           <Field
             name="smart-layout"
-            hint={t('dialogs:meta.settings.smartLayoutTooltip')}
+            hint="dialogs:meta.settings.smartLayoutTooltip"
             data-testid="smart-layout"
           />
         </fieldset>
         <Field
           name="showAtomIds"
-          hint={t('dialogs:meta.settings.showAtomIdsTooltip')}
+          hint="dialogs:meta.settings.showAtomIdsTooltip"
           data-testid="show-atom-ids"
         />
         <Field
           name="showBondIds"
-          hint={t('dialogs:meta.settings.showBondIdsTooltip')}
+          hint="dialogs:meta.settings.showBondIdsTooltip"
           data-testid="show-bond-ids"
         />
         <Field
           name="showHalfBondIds"
-          hint={t('dialogs:meta.settings.showHalfBondIdsTooltip')}
+          hint="dialogs:meta.settings.showHalfBondIdsTooltip"
           data-testid="show-half-bond-ids"
         />
         <Field
           name="showLoopIds"
-          hint={t('dialogs:meta.settings.showLoopIdsTooltip')}
+          hint="dialogs:meta.settings.showLoopIdsTooltip"
           data-testid="show-loop-ids"
         />
       </fieldset>

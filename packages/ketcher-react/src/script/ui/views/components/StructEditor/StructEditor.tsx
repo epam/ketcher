@@ -93,21 +93,25 @@ function setupEditor(
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (props[eventName] !== oldProps[eventName]) {
-      if (oldProps[eventName]) {
-        editor.event[name].remove(oldProps[eventName]);
-      }
+    if (props[eventName] === oldProps[eventName]) {
+      return;
+    }
 
-      if (props[eventName]) {
-        editor.event[name].add(props[eventName]);
-      }
+    if (oldProps[eventName]) {
+      editor.event[name].remove(oldProps[eventName]);
+    }
+
+    if (props[eventName]) {
+      editor.event[name].add(props[eventName]);
     }
   });
 
-  if (struct !== oldProps.struct || haveOptionsChanged) {
-    editor.render.unobserveCanvasResize();
-    editor.render.observeCanvasResize();
+  if (struct === oldProps.struct && !haveOptionsChanged) {
+    return;
   }
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
@@ -122,27 +126,26 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   editor!: Editor;
   editorRef: RefObject<HTMLDivElement | null>;
   logRef: RefObject<HTMLDivElement | null>;
-
-  constructor(props: StructEditorProps) {
-    super(props);
-    this.state = {
-      enableCursor: false,
-      tooltip: '',
-    };
-    this.editorRef = createRef();
-    this.logRef = createRef();
-  }
-
+  private zoomDeltaAccumulator = 0;
   handleWheel = (event: WheelEvent) => {
     if (event.ctrlKey) {
       event.preventDefault();
 
-      const zoomDelta = event.deltaY > 0 ? -1 : 1;
+      // Accumulate scroll delta for smoother zoom on touchpad
+      // Only trigger zoom when accumulated delta exceeds threshold
+      const ZOOM_THRESHOLD = 50;
+      this.zoomDeltaAccumulator += Math.abs(event.deltaY);
 
-      if (zoomDelta === 1) {
-        this.props.onZoomIn?.(event);
-      } else {
-        this.props.onZoomOut?.(event);
+      if (this.zoomDeltaAccumulator >= ZOOM_THRESHOLD) {
+        const zoomDelta = event.deltaY > 0 ? -1 : 1;
+
+        if (zoomDelta === 1) {
+          this.props.onZoomIn?.(event);
+        } else {
+          this.props.onZoomOut?.(event);
+        }
+
+        this.zoomDeltaAccumulator = 0;
       }
     } else {
       this.scrollCanvas(event);
@@ -154,10 +157,20 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     }
   };
 
+  constructor(props: StructEditorProps) {
+    super(props);
+    this.state = {
+      enableCursor: false,
+      tooltip: '',
+    };
+    this.editorRef = createRef();
+    this.logRef = createRef();
+  }
+
   // TODO https://github.com/epam/ketcher/issues/3472
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   scrollCanvas(event: WheelEvent) {
     if (event.shiftKey) {
       this.handleHorizontalScroll(event);
@@ -167,8 +180,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   handleHorizontalScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
@@ -182,9 +195,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * For mouse wheel and touchpad
-   * @param {WheelEvent} event
-   */
+  For mouse wheel and touchpad
+  @param {WheelEvent} event
+  */
   handleScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
@@ -312,8 +325,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     });
 

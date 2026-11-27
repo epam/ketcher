@@ -74,7 +74,6 @@ export class TextUpdate extends BaseOperation {
   isDummy(restruct?: ReStruct) {
     if (!restruct) return false;
     const text = restruct.molecule.texts.get(this.data.id);
-    if (!text) return false;
-    return text.content === this.data.content;
+    return !text ? false : text.content === this.data.content;
   }
 }

@@ -20,11 +20,11 @@ import type { CurrentAppState } from '../state/store.types';
 import type { SerializationType, StructSerializer } from '../../../types';
 
 /**
- * Copies the selected structure to clipboard in the specified format (MOL or KET).
- * Simple objects and text objects are not supported in MOL format.
- *
- * @param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
- */
+Copies the selected structure to clipboard in the specified format (MOL or KET).
+Simple objects and text objects are not supported in MOL format.
+
+@param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
+*/
 export default function copyAs(type: SerializationType): void {
   const { editor } = (
     globalThis as typeof globalThis & { currentState: CurrentAppState }
@@ -61,7 +61,7 @@ export default function copyAs(type: SerializationType): void {
     }
 
     const hasSimpleObjectsOrTexts = Boolean(
-      struct.simpleObjects.size || struct.texts.size,
+      struct.simpleObjects.size > 0 || struct.texts.size > 0,
     );
 
     // MOL format doesn't support simple objects and text objects

@@ -166,8 +166,7 @@
             "y": -1.25
         },
         "alias": "T",
-        "templateId": "T___Threonine",
-        "seqid": 1
+        "templateId": "T___Threonine"
     },
     "monomerTemplate-T___Threonine": {
         "type": "monomerTemplate",

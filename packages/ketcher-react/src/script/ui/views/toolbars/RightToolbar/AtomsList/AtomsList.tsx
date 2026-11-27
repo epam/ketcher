@@ -18,14 +18,15 @@ import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
-import type { Tools, UiActionAction } from '../../../../action';
+import type { UiActionAction } from '../../../../action';
+import type { ToolbarStatus } from '../../toolbar.types';
 import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
 
 interface AtomsListProps {
   atoms: string[];
-  status: Tools;
+  status: ToolbarStatus;
   active?: {
     tool?: string;
     opts: {

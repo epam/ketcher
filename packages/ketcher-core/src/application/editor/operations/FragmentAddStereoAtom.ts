@@ -19,11 +19,11 @@ import { OperationPriority, OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class FragmentAddStereoAtom extends BaseOperation {
-  readonly data: { frid: number; aid: number };
   static InverseConstructor: new (
     fragmentId: number,
     atomId: number,
   ) => BaseOperation;
+  readonly data: { frid: number; aid: number };
 
   constructor(fragmentId: number, atomId: number) {
     super(
@@ -36,10 +36,12 @@ class FragmentAddStereoAtom extends BaseOperation {
   execute(restruct: ReStruct) {
     const { aid, frid } = this.data;
     const frag = restruct.molecule.frags.get(frid);
-    if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, true);
-      BaseOperation.invalidateEnhancedFlag(restruct, frid);
+    if (!frag) {
+      return;
     }
+
+    frag.updateStereoAtom(restruct.molecule, aid, frid, true);
+    BaseOperation.invalidateEnhancedFlag(restruct, frid);
   }
 
   invert() {

@@ -118,23 +118,25 @@ export class HighlightDelete extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    if (typeof this.data.highlightId === 'number') {
-      const struct = restruct.molecule;
-
-      const highlightToRemove = struct.highlights.get(this.data.highlightId);
-      if (highlightToRemove === undefined) {
-        return;
-      }
-
-      const { atoms, bonds, color } = highlightToRemove;
-
-      this.data.atoms = atoms;
-      this.data.bonds = bonds;
-      this.data.color = color;
-
-      struct.highlights.delete(this.data.highlightId);
-      notifyChanged(restruct, atoms, bonds);
+    if (typeof this.data.highlightId !== 'number') {
+      return;
     }
+
+    const struct = restruct.molecule;
+
+    const highlightToRemove = struct.highlights.get(this.data.highlightId);
+    if (highlightToRemove === undefined) {
+      return;
+    }
+
+    const { atoms, bonds, color } = highlightToRemove;
+
+    this.data.atoms = atoms;
+    this.data.bonds = bonds;
+    this.data.color = color;
+
+    struct.highlights.delete(this.data.highlightId);
+    notifyChanged(restruct, atoms, bonds);
   }
 
   invert() {
@@ -194,36 +196,37 @@ export class HighlightUpdate extends BaseOperation {
 
     const highlightToUpdate = struct.highlights.get(highlightId);
 
-    if (highlightToUpdate) {
-      // saving data of existing highlight
-      const {
-        atoms: oldAtoms,
-        bonds: oldBonds,
-        rgroupAttachmentPoints: oldRgroupAttachmentPoints,
-        color: oldColor,
-      } = highlightToUpdate;
-      this.oldData = {
-        atoms: oldAtoms,
-        bonds: oldBonds,
-        rgroupAttachmentPoints: oldRgroupAttachmentPoints,
-        color: oldColor,
-        highlightId,
-      };
-
-      // creating new highlight with new data
-      const updatedHighlight = new Highlight({
-        atoms,
-        bonds,
-        rgroupAttachmentPoints,
-        color,
-      });
-
-      // setting the new highlight
-      struct.highlights.set(this.newData.highlightId, updatedHighlight);
-
-      // notify atoms from both collections that repaint is needed
-      notifyChanged(restruct, [...atoms, ...oldAtoms], [...bonds, ...oldBonds]);
+    if (!highlightToUpdate) {
+      return;
     }
+    // saving data of existing highlight
+    const {
+      atoms: oldAtoms,
+      bonds: oldBonds,
+      rgroupAttachmentPoints: oldRgroupAttachmentPoints,
+      color: oldColor,
+    } = highlightToUpdate;
+    this.oldData = {
+      atoms: oldAtoms,
+      bonds: oldBonds,
+      rgroupAttachmentPoints: oldRgroupAttachmentPoints,
+      color: oldColor,
+      highlightId,
+    };
+
+    // creating new highlight with new data
+    const updatedHighlight = new Highlight({
+      atoms,
+      bonds,
+      rgroupAttachmentPoints,
+      color,
+    });
+
+    // setting the new highlight
+    struct.highlights.set(this.newData.highlightId, updatedHighlight);
+
+    // notify atoms from both collections that repaint is needed
+    notifyChanged(restruct, [...atoms, ...oldAtoms], [...bonds, ...oldBonds]);
   }
 
   invert() {
@@ -243,14 +246,13 @@ export class HighlightUpdate extends BaseOperation {
     const highlight = restruct.molecule.highlights.get(
       this.newData.highlightId,
     );
-    if (!highlight) return false;
-    return (
-      highlight.color === this.newData.color &&
-      highlight.atoms.length === this.newData.atoms.length &&
-      highlight.bonds.length === this.newData.bonds.length &&
-      highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
-      highlight.bonds.every((id, i) => this.newData.bonds[i] === id)
-    );
+    return !highlight
+      ? false
+      : highlight.color === this.newData.color &&
+          highlight.atoms.length === this.newData.atoms.length &&
+          highlight.bonds.length === this.newData.bonds.length &&
+          highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
+          highlight.bonds.every((id, i) => this.newData.bonds[i] === id);
   }
 }
 

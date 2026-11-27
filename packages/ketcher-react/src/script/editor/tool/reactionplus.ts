@@ -18,21 +18,14 @@ import {
   fromMultipleMove,
   fromPlusAddition,
   CoordinateTransformation,
-  type Vec2,
-  type Action,
 } from 'ketcher-core';
 import type Editor from '../Editor';
-import type { Tool } from './Tool';
+import type { MoveDragContext, Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
-
-interface ReactionPlusDragContext {
-  xy0: Vec2;
-  action?: Action;
-}
 
 class ReactionPlusTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: ReactionPlusDragContext | undefined;
+  private dragCtx: MoveDragContext | undefined;
 
   constructor(editor: Editor) {
     this.editor = editor;
@@ -43,11 +36,13 @@ class ReactionPlusTool implements Tool {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 
-    if (ci?.map === 'rxnPluses') {
-      this.editor.hover(null);
-      this.editor.selection({ rxnPluses: [ci.id] });
-      this.dragCtx = { xy0: CoordinateTransformation.pageToModel(event, rnd) };
+    if (ci?.map !== 'rxnPluses') {
+      return;
     }
+
+    this.editor.hover(null);
+    this.editor.selection({ rxnPluses: [ci.id] });
+    this.dragCtx = { xy0: CoordinateTransformation.pageToModel(event, rnd) };
   }
 
   mousemove(event: PointerEvent) {

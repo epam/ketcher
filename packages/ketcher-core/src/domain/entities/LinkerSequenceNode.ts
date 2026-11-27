@@ -13,6 +13,39 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class LinkerSequenceNode {
+  public static isValidPartForLinker(
+    monomer?: BaseMonomer,
+  ): monomer is BaseMonomer {
+    return (
+      monomer instanceof Chem ||
+      monomer instanceof Phosphate ||
+      monomer instanceof RNABase ||
+      (monomer instanceof Sugar &&
+        !isValidNucleotide(monomer) &&
+        !isValidNucleoside(monomer)) ||
+      (monomer instanceof AmbiguousMonomer &&
+        (monomer.monomerClass === KetMonomerClass.CHEM ||
+          monomer.monomerClass === KetMonomerClass.Sugar ||
+          monomer.monomerClass === KetMonomerClass.Phosphate ||
+          monomer.monomerClass === KetMonomerClass.Base))
+    );
+  }
+
+  public static isPartOfLinker(monomer?: BaseMonomer) {
+    if (!monomer) {
+      return false;
+    }
+
+    const previousMonomerInChain = getPreviousMonomerInChain(monomer);
+    const nextMonomerInChain = getNextMonomerInChain(monomer);
+
+    return (
+      LinkerSequenceNode.isValidPartForLinker(monomer) &&
+      (LinkerSequenceNode.isValidPartForLinker(previousMonomerInChain) ||
+        LinkerSequenceNode.isValidPartForLinker(nextMonomerInChain))
+    );
+  }
+
   constructor(
     public monomer: BaseMonomer,
     private readonly firstMonomerInChain?: BaseMonomer,
@@ -57,38 +90,5 @@ export class LinkerSequenceNode {
 
   public get modified() {
     return false;
-  }
-
-  public static isValidPartForLinker(
-    monomer?: BaseMonomer,
-  ): monomer is BaseMonomer {
-    return (
-      monomer instanceof Chem ||
-      monomer instanceof Phosphate ||
-      monomer instanceof RNABase ||
-      (monomer instanceof Sugar &&
-        !isValidNucleotide(monomer) &&
-        !isValidNucleoside(monomer)) ||
-      (monomer instanceof AmbiguousMonomer &&
-        (monomer.monomerClass === KetMonomerClass.CHEM ||
-          monomer.monomerClass === KetMonomerClass.Sugar ||
-          monomer.monomerClass === KetMonomerClass.Phosphate ||
-          monomer.monomerClass === KetMonomerClass.Base))
-    );
-  }
-
-  public static isPartOfLinker(monomer?: BaseMonomer) {
-    if (!monomer) {
-      return false;
-    }
-
-    const previousMonomerInChain = getPreviousMonomerInChain(monomer);
-    const nextMonomerInChain = getNextMonomerInChain(monomer);
-
-    return (
-      this.isValidPartForLinker(monomer) &&
-      (this.isValidPartForLinker(previousMonomerInChain) ||
-        this.isValidPartForLinker(nextMonomerInChain))
-    );
   }
 }

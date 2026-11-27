@@ -16,7 +16,7 @@
 
 import {
   AtomMove,
-  BondAttr,
+  BondAttribute,
   EnhancedFlagMove,
   EnhancedFlagClear,
   MultitailArrowMove,
@@ -32,7 +32,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import type { ReStruct } from 'application/render';
-import { getRelSGroupsBySelection, structSelection } from './utils';
+import { getRelatedSGroupsBySelection, structSelection } from './utilities';
 import { Action } from './action';
 import type { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
@@ -206,12 +206,14 @@ export const flipBonds = (
     }
 
     if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN));
+      action.addOp(
+        new BondAttribute(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN),
+      );
       return;
     }
 
     if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
-      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
+      action.addOp(new BondAttribute(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
     }
   });
 };
@@ -225,7 +227,7 @@ function fromStructureFlip(
   const struct = reStruct.molecule;
   const action = new Action();
 
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
+  const sGroups = getRelatedSGroupsBySelection(struct, selection?.atoms ?? []);
 
   // Monomer sgroups present in the selection, regardless of their
   // expanded/collapsed state.
@@ -311,7 +313,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
   }
 
   if (selection.atoms) {
-    const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
+    const sgroups = getRelatedSGroupsBySelection(struct, selection.atoms);
 
     // Monomer sgroups present in the selection, regardless of their
     // expanded/collapsed state.

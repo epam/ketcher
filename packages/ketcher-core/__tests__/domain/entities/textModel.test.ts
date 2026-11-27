@@ -113,3 +113,27 @@ describe('text conversion and KET save', () => {
     expect(textNodes).toHaveLength(1);
   });
 });
+
+describe('text copies keep the text', () => {
+  it('mergeInto copies a text into the clone used by export', () => {
+    const source = new DrawingEntitiesManager();
+    source.addText(CONTENT, new Vec2(1, 1));
+    const { mergedDrawingEntities } = source.mergeInto(
+      new DrawingEntitiesManager(),
+    );
+
+    expect(mergedDrawingEntities.texts.size).toBe(1);
+  });
+
+  it('filterSelection copies a selected text', () => {
+    const source = new DrawingEntitiesManager();
+    source.addText(CONTENT, new Vec2(1, 1));
+    const [text] = source.texts.values();
+    text.turnOnSelection();
+
+    const filtered = source.filterSelection();
+
+    expect(filtered.texts.size).toBe(1);
+    expect([...filtered.texts.values()][0].content).toBe(CONTENT);
+  });
+});

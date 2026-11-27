@@ -2679,6 +2679,18 @@ export class DrawingEntitiesManager {
       );
     });
 
+    this.texts.forEach((text) => {
+      const textAddCommand = targetDrawingEntitiesManager.addText(
+        text.content,
+        text.position,
+        text.pos,
+      );
+      const addedText = textAddCommand.operations[0].text as CoreText;
+
+      command.merge(textAddCommand);
+      mergedDrawingEntities.texts.set(addedText.id, addedText);
+    });
+
     this.images.forEach((image) => {
       const state = image.getState();
       const imageAddCommand = targetDrawingEntitiesManager.addImage(
@@ -2812,6 +2824,12 @@ export class DrawingEntitiesManager {
           entity.mode,
           entity.pos[0],
           entity.pos[1],
+        );
+      } else if (entity instanceof CoreText) {
+        filteredDrawingEntitiesManager.addText(
+          entity.content,
+          entity.position,
+          entity.pos,
         );
       } else if (entity instanceof CoreImage) {
         const state = entity.getState();

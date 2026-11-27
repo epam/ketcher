@@ -240,6 +240,24 @@ The system SHALL ensure that its position is constrained to keep it visible with
 - **AND** positioning works both at the page origin and in an offset popup
 - **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
 
+### Requirement: Static objects in macromolecules mode
+
+The system SHALL offer the static-object tools (lines, rectangles, ellipses, text boxes, images) in the macromolecules left toolbar, in a section of their own, with the same icons as molecules mode. Static objects SHALL keep their position and size when layout changes, and SHALL be visible and editable after switching between the two modes.
+
+#### Scenario: Drawing a static object in macromolecules mode
+
+- **WHEN** the user picks a shape from the shapes section and drags on the canvas
+- **THEN** one object of that shape is created, the tool returns to selection, and the object can be selected, moved, resized, deleted and undone
+
+#### Scenario: Static objects survive a mode switch
+
+- **WHEN** the user draws static objects in macromolecules mode and switches to molecules mode, or back
+- **THEN** the same objects are shown in the other mode, at the same place relative to each other, and can be edited there
+
+#### Scenario: Layout does not move static objects
+
+- **WHEN** the user switches between sequence, snake and flex layouts
+- **THEN** static objects keep their position
 ## User interaction
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.
@@ -266,7 +284,7 @@ The system SHALL ensure that its position is constrained to keep it visible with
 
 - The eraser is disabled in sequence layout mode.
 - Bond preview and _Edit Attachment Points…_ are unavailable for hydrogen bonds.
-- Across modes: molecules drawn in one mode are **visible but not editable** in the other; monomers appear as full abbreviations (not shapes/letters) in molecules mode until expanded.
+- Across modes: molecules drawn in one mode are **visible but not editable** in the other; monomers appear as full abbreviations (not shapes/letters) in molecules mode until expanded. Static objects (lines, rectangles, ellipses, text boxes, images) are editable in both modes.
 - Some polymer properties are computed only for natural analogues and/or double-stranded sequences.
 
 ## Related

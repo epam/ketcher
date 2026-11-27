@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { RichTextEditor } from 'ketcher-react';
-import { EditorHistory, type CoreEditor } from 'ketcher-core';
+import {
+  EditorHistory,
+  provideEditorInstance,
+  type CoreEditor,
+} from 'ketcher-core';
 import { TextEditorProps } from 'components/modal/modalContainer';
 import { Modal } from 'components/shared/modal';
 import { ActionButton } from 'components/shared/actionButton';
-import { useAppSelector } from 'hooks';
-import { selectEditor } from 'state/common';
 
 export const applyTextEdit = (
   editor: CoreEditor,
@@ -38,7 +40,7 @@ export const TextEditorModal = ({
   onClose,
 }: TextEditorProps) => {
   const { t } = useTranslation(['macromoleculesDialogs', 'common']);
-  const editor = useAppSelector(selectEditor);
+  const editor = provideEditorInstance();
 
   return (
     <Modal

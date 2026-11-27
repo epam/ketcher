@@ -19,8 +19,7 @@ import {
   fromImageResize,
   fromMultipleMove,
   fromSimpleObjectHandleDrag,
-  fromTextDeletion,
-  fromTextUpdating,
+  fromTextEdit,
   FunctionalGroup,
   getAttachmentGroupIdForHapticBondHalf,
   getHoverToFuse,
@@ -657,10 +656,13 @@ class SelectTool implements Tool {
 
       void dialog
         .then(({ content }) => {
-          if (!content) {
-            editor.update(fromTextDeletion(struct, ci.id));
-          } else if (content !== text?.content) {
-            editor.update(fromTextUpdating(struct, ci.id, content));
+          const action = fromTextEdit(struct, {
+            id: ci.id,
+            originalContent: text?.content ?? '',
+            nextContent: content ?? '',
+          });
+          if (action) {
+            editor.update(action);
           }
         })
         .catch((error) => {

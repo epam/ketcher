@@ -15,7 +15,8 @@
  ***************************************************************************/
 import type { ReSGroup } from 'application/render';
 import { assert } from 'utilities';
-import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
+import { FunctionalGroupsProvider } from '../helpers/functionalGroupsProvider';
+import { SaltsAndSolventsProvider } from '../helpers/saltsAndSolventsProvider';
 import type { Atom } from './atom';
 import type { Bond } from './bond';
 import type { Pool } from './pool';

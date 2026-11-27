@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -67,11 +67,11 @@ const actinides: Element[] = Elements.filter(
 function rowPartition(elements: Element[]): Row[] {
   return elements.reduce((result: Row[], item: Element) => {
     const row = result[item.period - 1];
-    if (!row) {
-      result.push([item]);
-    } else {
+    if (row) {
       if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
       row.push(item);
+    } else {
+      result.push([item]);
     }
     return result;
   }, []);
@@ -89,10 +89,6 @@ interface ElementsTableProps {
 }
 
 class ElementsTable extends Component<ElementsTableProps> {
-  shouldComponentUpdate(nextProps: ElementsTableProps): boolean {
-    return nextProps.value !== this.props.value;
-  }
-
   getAtomClassNames = (item: Element): string[] => {
     const { selected } = this.props;
 
@@ -112,6 +108,10 @@ class ElementsTable extends Component<ElementsTableProps> {
       return styles[className as keyof typeof styles];
     });
   };
+
+  shouldComponentUpdate(nextProps: ElementsTableProps): boolean {
+    return nextProps.value !== this.props.value;
+  }
 
   render(): JSX.Element {
     const { currentEvents, onAtomSelect, onDoubleClick } = this.props;

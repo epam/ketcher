@@ -18,6 +18,8 @@ export type SelectionViewParams =
   SelectionRectangleViewParams | SelectionLassoViewParams;
 
 export class SelectionView {
+  public static readonly viewName = 'SelectionView';
+
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: SelectionViewParams,
@@ -41,23 +43,23 @@ export class SelectionView {
       return;
     }
 
-    if (params.type === 'lasso') {
-      // A closed curve gives the same outline the molecules mode draws:
-      // one path back to the starting point, without a filled area.
-      const line = d3Line()
-        .x((d) => d[0])
-        .y((d) => d[1])
-        .curve(curveLinearClosed);
-
-      transientLayer
-        .append('path')
-        .datum(params.path)
-        .attr('d', line)
-        .attr('fill', 'none')
-        .attr('stroke', SELECTION_OUTLINE_COLOR)
-        .attr('style', 'pointer-events: none');
+    if (params.type !== 'lasso') {
+      return;
     }
-  }
 
-  public static readonly viewName = 'SelectionView';
+    // A closed curve gives the same outline the molecules mode draws:
+    // one path back to the starting point, without a filled area.
+    const line = d3Line()
+      .x((d) => d[0])
+      .y((d) => d[1])
+      .curve(curveLinearClosed);
+
+    transientLayer
+      .append('path')
+      .datum(params.path)
+      .attr('d', line)
+      .attr('fill', 'none')
+      .attr('stroke', SELECTION_OUTLINE_COLOR)
+      .attr('style', 'pointer-events: none');
+  }
 }

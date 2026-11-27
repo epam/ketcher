@@ -14,7 +14,7 @@ function isSingleUpBond(bond: Bond): boolean {
 
 // A bond is "bold stereo" when both of its atoms are the wide end of a
 // neighboring Single Up bond. Mirrors micro-mode checkStereoBold in rebond.ts
-// (includeBoldStereoBond = false: only the wide-end match counts here).
+// (shouldIncludeBoldStereoBond = false: only the wide-end match counts here).
 function isBoldStereoBond(bond: Bond, viewModel: ViewModel): boolean {
   const halfEdges = viewModel.bondsToHalfEdges.get(bond);
   if (!halfEdges) {
@@ -32,13 +32,13 @@ function isBoldStereoBond(bond: Bond, viewModel: ViewModel): boolean {
 }
 
 // Find a neighboring half-edge (at the same atom) belonging to a Single Up bond
-// whose wide end (secondAtom) meets this atom. With includeBold, a neighboring
+// whose wide end (secondAtom) meets this atom. With shouldIncludeBold, a neighboring
 // bold-stereo bond also qualifies even if its wide end points elsewhere — this
-// mirrors the includeBoldStereoBond branch of micro-mode findIncomingStereoUpBond.
+// mirrors the shouldIncludeBoldStereoBond branch of micro-mode findIncomingStereoUpBond.
 function findIncomingStereoUpHalfEdge(
   halfEdge: HalfEdge,
   currentBond: Bond,
-  includeBold: boolean,
+  shouldIncludeBold: boolean,
   viewModel: ViewModel,
 ): HalfEdge | undefined {
   for (const neighbor of [
@@ -54,7 +54,7 @@ function findIncomingStereoUpHalfEdge(
     }
     if (
       neighborBond.secondAtom === halfEdge.firstAtom ||
-      (includeBold && isBoldStereoBond(neighborBond, viewModel))
+      (shouldIncludeBold && isBoldStereoBond(neighborBond, viewModel))
     ) {
       return neighbor;
     }
@@ -65,14 +65,14 @@ function findIncomingStereoUpHalfEdge(
 // Compute the two endpoint offsets for one end of a bold-stereo parallelogram.
 // Mirrors stereoUpBondGetCoordinates from rebond.ts.
 function getBoldStereoEndpoints(
-  halfEdgeDir: Vec2,
-  neighborHalfEdgeDir: Vec2,
+  halfEdgeDirection: Vec2,
+  neighborHalfEdgeDirection: Vec2,
   atomPos: Vec2,
 ): [Vec2, Vec2] {
-  const cos = Vec2.dot(halfEdgeDir, neighborHalfEdgeDir);
-  const sin = Vec2.cross(halfEdgeDir, neighborHalfEdgeDir);
+  const cos = Vec2.dot(halfEdgeDirection, neighborHalfEdgeDirection);
+  const sin = Vec2.cross(halfEdgeDirection, neighborHalfEdgeDirection);
   const cosHalf = Math.sqrt(0.5 * (1 - cos));
-  const biss = neighborHalfEdgeDir.rotateSC(
+  const biss = neighborHalfEdgeDirection.rotateSC(
     (sin >= 0 ? -1 : 1) * cosHalf,
     Math.sqrt(0.5 * (1 + cos)),
   );
@@ -94,7 +94,7 @@ class SingleUpBondPathRenderer {
     const currentBond = firstHalfEdge.bond;
 
     // Neighbors used to align each end's wide edge. Mirrors micro-mode
-    // neihbid1/neihbid2 (findIncomingUpBonds, includeBoldStereoBond = true):
+    // neihbid1/neihbid2 (findIncomingUpBonds, shouldIncludeBoldStereoBond = true):
     // a wide end shared with an adjacent up/bold bond is snapped to that
     // bond's edge so the join is seamless rather than leaving a sliver.
     const startNeighbor = findIncomingStereoUpHalfEdge(

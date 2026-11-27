@@ -31,6 +31,10 @@ import {
 } from 'application/render/renderers/TransientView/GroupCenterSnapView';
 import { type RotationViewParams, RotationView } from './RotationView';
 import {
+  type BondInsertionIndicatorViewParams,
+  BondInsertionIndicatorView,
+} from './BondInsertionIndicatorView';
+import {
   type ReplacementHighlightViewParams,
   ReplacementHighlightView,
 } from './ReplacementHighlightView';
@@ -200,7 +204,7 @@ export class TransientDrawingView {
     selectedMonomerToConnect?: BaseMonomer,
   ) {
     this.addView(AutochainPreviewView.viewName, {
-      show: AutochainPreviewView.show,
+      show: (layer, params) => AutochainPreviewView.show(layer, params),
       params: { monomerOrRnaItem, position, selectedMonomerToConnect },
     });
   }
@@ -222,7 +226,7 @@ export class TransientDrawingView {
 
   public showRotation(params: RotationViewParams) {
     this.addView(RotationView.viewName, {
-      show: RotationView.show,
+      show: (layer, viewParams) => RotationView.show(layer, viewParams),
       params,
       topLayer: true,
     });
@@ -234,7 +238,8 @@ export class TransientDrawingView {
 
   public showReplacementHighlight(params: ReplacementHighlightViewParams) {
     this.addView(ReplacementHighlightView.viewName, {
-      show: ReplacementHighlightView.show,
+      show: (layer, viewParams) =>
+        ReplacementHighlightView.show(layer, viewParams),
       params,
       topLayer: true,
     });
@@ -242,6 +247,19 @@ export class TransientDrawingView {
 
   public hideReplacementHighlight() {
     this.removeView(ReplacementHighlightView.viewName);
+  }
+
+  public showBondInsertionIndicator(params: BondInsertionIndicatorViewParams) {
+    this.addView(BondInsertionIndicatorView.viewName, {
+      show: (layer, viewParams) =>
+        BondInsertionIndicatorView.show(layer, viewParams),
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideBondInsertionIndicator() {
+    this.removeView(BondInsertionIndicatorView.viewName);
   }
 
   public clear() {

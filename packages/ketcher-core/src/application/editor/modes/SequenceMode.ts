@@ -34,7 +34,9 @@ import {
   ReinitializeModeOperation,
   RestoreSequenceCaretPositionOperation,
 } from 'application/editor/operations/modes';
-import { assert } from 'utilities';
+import { assert, KetcherLogger, PLAIN_TEXT_MIME_TYPE } from 'utilities';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import { ketcherProvider } from 'application/ketcherProvider';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
@@ -66,7 +68,7 @@ import {
   getMonomerNaturalAnalogue,
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
-  itemCarriesBase,
+  hasBase,
   resolveMirroredBaseTarget,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -130,15 +132,15 @@ interface StrandRun {
 }
 
 /**
- * Splits the selection into maximal contiguous runs of positions whose
- * monomer on one strand is selected, every sense run first and then every
- * antisense run. A position with both strands selected appears in one run of
- * each, so replacement and its pre-checks reach every selected monomer while
- * each run stays one strand -- which the replacement loop's chain-order
- * iteration and previous-node seed depend on. Sense runs come first because
- * replacing a node re-bonds its hydrogen-bond partner to the new monomer, and
- * the antisense pass must find the new sense monomer there.
- */
+Splits the selection into maximal contiguous runs of positions whose
+monomer on one strand is selected, every sense run first and then every
+antisense run. A position with both strands selected appears in one run of
+each, so replacement and its pre-checks reach every selected monomer while
+each run stays one strand -- which the replacement loop's chain-order
+iteration and previous-node seed depend on. Sense runs come first because
+replacing a node re-bonds its hydrogen-bond partner to the new monomer, and
+the antisense pass must find the new sense monomer there.
+*/
 function splitSelectionsIntoStrandRuns(
   selections: TwoStrandedNodesSelection,
 ): StrandRun[] {
@@ -183,28 +185,30 @@ export class SequenceMode extends BaseMode {
     super('sequence-layout-mode', previousMode);
   }
 
-  public get isEditMode() {
-    return this._isEditMode;
-  }
+  private async getSequenceForClipboard(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    serializedKet: string,
+  ): Promise<string | undefined> {
+    if (
+      drawingEntitiesManager.monomers.size === 0 ||
+      !drawingEntitiesManager.validateIfApplicableForFasta()
+    ) {
+      return undefined;
+    }
 
-  public set isEditMode(isEditMode) {
-    this._isEditMode = isEditMode;
-  }
+    try {
+      const editor = provideEditorInstance();
+      const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+      const result = await indigo.convert(serializedKet, {
+        outputFormat: ChemicalMimeType.SEQUENCE,
+      });
 
-  public get isEditInRNABuilderMode() {
-    return this._isEditInRNABuilderMode;
-  }
+      return result.struct;
+    } catch (error) {
+      KetcherLogger.error('SequenceMode.ts::getSequenceForClipboard', error);
 
-  public set isEditInRNABuilderMode(isEditInRNABuilderMode) {
-    this._isEditInRNABuilderMode = isEditInRNABuilderMode;
-  }
-
-  public get isAntisenseEditMode() {
-    return this._isAntisenseEditMode;
-  }
-
-  public get isSyncEditMode() {
-    return this._isSyncEditMode;
+      return undefined;
+    }
   }
 
   private get needToEditSense() {
@@ -230,6 +234,68 @@ export class SequenceMode extends BaseMode {
     this.initialize(false, false, false);
   }
 
+  protected async writeToClipboard(
+    serializedKet: string,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): Promise<void> {
+    try {
+      const ketMimeType = `web ${ChemicalMimeType.KET}`;
+      const sequence = this.getSequenceForClipboard(
+        drawingEntitiesManager,
+        serializedKet,
+      );
+      const plainText = (async () => {
+        const sequenceString = await sequence;
+        return new Blob([sequenceString ?? serializedKet], {
+          type: PLAIN_TEXT_MIME_TYPE,
+        });
+      })();
+
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [ketMimeType]: new Blob([serializedKet], { type: ketMimeType }),
+          [PLAIN_TEXT_MIME_TYPE]: plainText,
+        }),
+      ]);
+    } catch (error) {
+      KetcherLogger.info(
+        'Cannot write multiple formats to the clipboard, falling back to KET only',
+        error,
+      );
+
+      try {
+        await navigator.clipboard.writeText(serializedKet);
+      } catch (writeError) {
+        KetcherLogger.error('SequenceMode.ts::writeToClipboard', writeError);
+        throw writeError;
+      }
+    }
+  }
+
+  public get isEditMode() {
+    return this._isEditMode;
+  }
+
+  public set isEditMode(isEditMode) {
+    this._isEditMode = isEditMode;
+  }
+
+  public get isEditInRNABuilderMode() {
+    return this._isEditInRNABuilderMode;
+  }
+
+  public set isEditInRNABuilderMode(isEditInRNABuilderMode) {
+    this._isEditInRNABuilderMode = isEditInRNABuilderMode;
+  }
+
+  public get isAntisenseEditMode() {
+    return this._isAntisenseEditMode;
+  }
+
+  public get isSyncEditMode() {
+    return this._isSyncEditMode;
+  }
+
   public turnOnSyncEditMode() {
     this._isSyncEditMode = true;
     this.initialize(false, false, false);
@@ -247,23 +313,23 @@ export class SequenceMode extends BaseMode {
   }
 
   public initialize(
-    needScroll = true,
-    needRemoveSelection = true,
-    needReArrangeChains = true,
-    forceRecalculateAntisense = false,
+    shouldScroll = true,
+    shouldRemoveSelection = true,
+    shouldReArrangeChains = true,
+    shouldForceRecalculateAntisense = false,
   ) {
-    const command = super.initialize(needRemoveSelection);
+    const command = super.initialize(shouldRemoveSelection);
     const editor = provideEditorInstance();
 
     editor.zoomTool.forgetRememberedZoomTransform();
     editor.drawingEntitiesManager.clearCanvas();
 
     const needRecalculateOldAntisense =
-      !this.isEditMode || forceRecalculateAntisense;
+      !this.isEditMode || shouldForceRecalculateAntisense;
 
     // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
     // only recalculate after changes in the sequence
-    const modelChanges = needReArrangeChains
+    const modelChanges = shouldReArrangeChains
       ? editor.drawingEntitiesManager.applySnakeLayout(
           true,
           false,
@@ -285,7 +351,7 @@ export class SequenceMode extends BaseMode {
       chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
     )?.scaledMonomerPositionForSequence;
 
-    if (firstMonomerPosition && needScroll && !this.isFirstInit) {
+    if (firstMonomerPosition && shouldScroll && !this.isFirstInit) {
       zoom.scrollTo(firstMonomerPosition);
     }
     this.isFirstInit = false;
@@ -310,7 +376,7 @@ export class SequenceMode extends BaseMode {
 
   public turnOnEditMode(
     sequenceItemRenderer?: BaseSequenceItemRenderer,
-    needToRemoveSelection = true,
+    shouldRemoveSelection = true,
   ) {
     const editor = provideEditorInstance();
 
@@ -321,16 +387,16 @@ export class SequenceMode extends BaseMode {
     }
 
     this.isEditMode = true;
-    this.initialize(false, needToRemoveSelection, false);
+    this.initialize(false, shouldRemoveSelection, false);
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
-  public turnOffEditMode(needToRemoveSelection = true) {
+  public turnOffEditMode(shouldRemoveSelection = true) {
     if (!this.isEditMode) return;
     const editor = provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, needToRemoveSelection, true);
+    this.initialize(false, shouldRemoveSelection, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -343,11 +409,11 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
 
-  public turnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
+  public turnOffSequenceEditInRNABuilderMode(shouldRemoveSelection = true) {
     const editor = provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
-    this.initialize(false, needToRemoveSelection, false);
+    this.initialize(false, shouldRemoveSelection, false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
@@ -368,13 +434,15 @@ export class SequenceMode extends BaseMode {
 
     SequenceRenderer.startNewSequence(indexOfRowBefore);
 
-    if (SequenceRenderer.caretPosition === -1) {
-      const lastTwoStrandedNode =
-        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+    if (SequenceRenderer.caretPosition !== -1) {
+      return;
+    }
 
-      if (lastTwoStrandedNode) {
-        SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
-      }
+    const lastTwoStrandedNode =
+      SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+
+    if (lastTwoStrandedNode) {
+      SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
     }
   }
 
@@ -512,7 +580,7 @@ export class SequenceMode extends BaseMode {
           );
         }
         // Update Base monomerItem object
-        if (nodeToModify.rnaBase && baseMonomerItem) {
+        if (baseMonomerItem && nodeToModify.rnaBase) {
           const editedBase = nodeToModify.rnaBase;
           const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
           // Captured before the edit: the ambiguous branch below replaces
@@ -523,25 +591,18 @@ export class SequenceMode extends BaseMode {
           const partnerBeforeEdit = getHydrogenBondedPartner(editedBase);
           const wasEditedBaseEligible = isBaseEligibleForDuplexSync(editedBase);
 
-          if (
-            editedBase.monomerItem.isAmbiguous ||
-            baseMonomerItem.isAmbiguous
-          ) {
-            modelChanges.merge(
-              replaceMonomer(
-                editor.drawingEntitiesManager,
-                editedBase,
-                baseMonomerItem,
-              ),
-            );
-          } else {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.modifyMonomerItem(
-                editedBase,
-                baseMonomerItem,
-              ),
-            );
-          }
+          modelChanges.merge(
+            editedBase.monomerItem.isAmbiguous || baseMonomerItem.isAmbiguous
+              ? replaceMonomer(
+                  editor.drawingEntitiesManager,
+                  editedBase,
+                  baseMonomerItem,
+                )
+              : editor.drawingEntitiesManager.modifyMonomerItem(
+                  editedBase,
+                  baseMonomerItem,
+                ),
+          );
 
           const mirroredBaseCommand = createMirroredBaseCommand({
             drawingEntitiesManager: editor.drawingEntitiesManager,
@@ -620,7 +681,7 @@ export class SequenceMode extends BaseMode {
     const isClickedOnSequenceItem =
       eventData instanceof BaseSequenceItemRenderer;
 
-    if (this.isEditMode && isClickedOnSequenceItem) {
+    if (isClickedOnSequenceItem && this.isEditMode) {
       this.unselectAllEntities();
     }
   }
@@ -665,39 +726,41 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
-      let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
-
-      // Case when user clicks between symbols. In this case renderer stored in eventData
-      // is already destroyed during rerender in mousedownBetweenSequenceItems handler
-      if (!sequenceItemBoundingBox) {
-        sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
-          eventData.node.monomer,
-        )?.rootBoundingClientRect;
-      }
-
-      if (!sequenceItemBoundingBox) {
-        return;
-      }
-
-      const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
-        ? event.clientX >
-          sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
-        : false;
-
-      SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
-
-      if (isRightSideOfSequenceItemClicked) {
-        SequenceRenderer.moveCaretForwardOrToRowEnd();
-      }
-
-      SequenceRenderer.resetLastUserDefinedCaretPosition();
-
-      this.unselectAllEntities();
-      this.selectionStarted = true;
-      this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
-      this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
+    if (!isEventOnSequenceItem || !this.isEditMode || event.shiftKey) {
+      return;
     }
+
+    let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
+
+    // Case when user clicks between symbols. In this case renderer stored in eventData
+    // is already destroyed during rerender in mousedownBetweenSequenceItems handler
+    if (!sequenceItemBoundingBox) {
+      sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
+        eventData.node.monomer,
+      )?.rootBoundingClientRect;
+    }
+
+    if (!sequenceItemBoundingBox) {
+      return;
+    }
+
+    const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
+      ? event.clientX >
+        sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
+      : false;
+
+    SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
+
+    if (isRightSideOfSequenceItemClicked) {
+      SequenceRenderer.moveCaretForwardOrToRowEnd();
+    }
+
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+    this.unselectAllEntities();
+    this.selectionStarted = true;
+    this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
+    this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
   }
 
   public mousemove(event: MouseEvent) {
@@ -896,12 +959,12 @@ export class SequenceMode extends BaseMode {
     secondNodeToConnect: SequenceNode | undefined,
     modelChanges: Command,
     newNodePosition: Vec2,
-    addPhosphateIfNeeded = true,
+    shouldAddPhosphateIfNeeded = true,
   ) {
     if (
       !firstNodeToConnect ||
-      firstNodeToConnect instanceof EmptySequenceNode ||
       !secondNodeToConnect ||
+      firstNodeToConnect instanceof EmptySequenceNode ||
       secondNodeToConnect instanceof EmptySequenceNode
     ) {
       return;
@@ -921,31 +984,25 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    if (
-      addPhosphateIfNeeded &&
-      firstNodeToConnect instanceof Nucleoside &&
-      ((secondNodeToConnect instanceof Nucleotide &&
-        !secondNodeToConnect.isFiveEndPhosphate) ||
-        secondNodeToConnect instanceof Nucleoside ||
-        (secondNodeToConnect instanceof MonomerSequenceNode &&
-          secondNodeToConnect.monomer instanceof Phosphate &&
-          secondNodeToConnect.monomer.hydrogenBonds.length))
-    ) {
-      modelChanges.merge(
-        this.bondNodesThroughNewPhosphate(
-          newNodePosition,
-          firstNodeToConnect.lastMonomerInNode,
-          secondNodeToConnect.firstMonomerInNode,
-        ),
-      );
-    } else {
-      modelChanges.merge(
-        this.tryToCreatePolymerBond(
-          firstNodeToConnect.lastMonomerInNode,
-          secondNodeToConnect.firstMonomerInNode,
-        ),
-      );
-    }
+    modelChanges.merge(
+      shouldAddPhosphateIfNeeded &&
+        firstNodeToConnect instanceof Nucleoside &&
+        ((secondNodeToConnect instanceof Nucleotide &&
+          !secondNodeToConnect.isFiveEndPhosphate) ||
+          secondNodeToConnect instanceof Nucleoside ||
+          (secondNodeToConnect instanceof MonomerSequenceNode &&
+            secondNodeToConnect.monomer instanceof Phosphate &&
+            secondNodeToConnect.monomer.hydrogenBonds.length > 0))
+        ? this.bondNodesThroughNewPhosphate(
+            newNodePosition,
+            firstNodeToConnect.lastMonomerInNode,
+            secondNodeToConnect.firstMonomerInNode,
+          )
+        : this.tryToCreatePolymerBond(
+            firstNodeToConnect.lastMonomerInNode,
+            secondNodeToConnect.firstMonomerInNode,
+          ),
+    );
   }
 
   private deleteBondToNextNodeInChain(
@@ -1164,14 +1221,10 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ??
         twoStrandedNodeInSameChainAfterSelection;
-      let nodeInSameChainAfterSelection =
-        potentialNodeInSameChainAfterSelection;
-      if (
+      const nodeInSameChainAfterSelection =
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
-      ) {
-        nodeInSameChainAfterSelection =
-          potentialNodeInSameChainAfterSelection.secondConnectedNode;
-      }
+          ? potentialNodeInSameChainAfterSelection.secondConnectedNode
+          : potentialNodeInSameChainAfterSelection;
       const previouseNodeInBackbone =
         strandType === STRAND_TYPE.SENSE
           ? nodeBeforeSelection
@@ -1238,8 +1291,8 @@ export class SequenceMode extends BaseMode {
         !nodeInSameChainBeforeSelection &&
         nodeAfterSelection &&
         selectionStartNode &&
-        !(nodeAfterSelection instanceof EmptySequenceNode) &&
-        nodeAfterSelection === nodeInSameChainAfterSelection
+        nodeAfterSelection === nodeInSameChainAfterSelection &&
+        !(nodeAfterSelection instanceof EmptySequenceNode)
       ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.moveMonomer(
@@ -1257,14 +1310,14 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
-        const sensePhosphateAdditionallyDeleted =
+        const isSensePhosphateAdditionallyDeleted =
           nodeBeforeSelection === nodeInSameChainBeforeSelection &&
           nodeBeforeSelection instanceof Nucleotide &&
           selectionStartNode instanceof Nucleoside &&
           (!nodeAfterSelection ||
             nodeAfterSelection instanceof EmptySequenceNode);
 
-        if (sensePhosphateAdditionallyDeleted) {
+        if (isSensePhosphateAdditionallyDeleted) {
           // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
@@ -1298,9 +1351,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              sensePhosphateAdditionallyDeleted
-                ? nodeBeforeSelection.firstMonomerInNode
-                : nodeBeforeSelection.lastMonomerInNode,
+              nodeBeforeSelection.lastMonomerInNode,
               nodeAfterSelection.firstMonomerInNode,
             ),
           );
@@ -1313,14 +1364,14 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
-        const antisensePhosphateAdditionallyDeleted =
+        const isAntisensePhosphateAdditionallyDeleted =
           nodeAfterSelection === nodeInSameChainAfterSelection &&
           nodeAfterSelection instanceof Nucleotide &&
           selectionEndNode instanceof Nucleoside &&
           (!nodeBeforeSelection ||
             nodeBeforeSelection instanceof EmptySequenceNode);
 
-        if (antisensePhosphateAdditionallyDeleted) {
+        if (isAntisensePhosphateAdditionallyDeleted) {
           // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
@@ -1354,9 +1405,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              antisensePhosphateAdditionallyDeleted
-                ? nodeAfterSelection.firstMonomerInNode
-                : nodeAfterSelection.lastMonomerInNode,
+              nodeAfterSelection.lastMonomerInNode,
               nodeBeforeSelection.firstMonomerInNode,
             ),
           );
@@ -1397,7 +1446,7 @@ export class SequenceMode extends BaseMode {
       const modelChanges = new Command();
       let nodesToDelete: TwoStrandedNodesSelection;
 
-      if (selections.length) {
+      if (selections.length > 0) {
         nodesToDelete = selections;
 
         const senseNodesToDelete = nodesToDelete.filter((selectionRange) =>
@@ -1466,8 +1515,8 @@ export class SequenceMode extends BaseMode {
           this.needToEditAntisense &&
           nodeToDelete.antisenseNode &&
           // Do not delete empty antisense node and connect prev and next nodes if delete empty node in one chain (no need to connect previous and current chains)
-          (!(nodeToDelete.antisenseNode instanceof EmptySequenceNode) ||
-            !previousNodeInSameChain)
+          (!previousNodeInSameChain ||
+            !(nodeToDelete.antisenseNode instanceof EmptySequenceNode))
         ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
             modelChanges.merge(
@@ -1566,17 +1615,12 @@ export class SequenceMode extends BaseMode {
           const previousTwoStrandedNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
 
-          if (this.isAntisenseEditMode) {
-            this.deleteBondToNextNodeInChain(
-              currentTwoStrandedNode?.antisenseNode,
-              modelChanges,
-            );
-          } else {
-            this.deleteBondToNextNodeInChain(
-              previousTwoStrandedNodeInSameChain?.senseNode,
-              modelChanges,
-            );
-          }
+          this.deleteBondToNextNodeInChain(
+            this.isAntisenseEditMode
+              ? currentTwoStrandedNode?.antisenseNode
+              : previousTwoStrandedNodeInSameChain?.senseNode,
+            modelChanges,
+          );
 
           modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
@@ -1625,9 +1669,9 @@ export class SequenceMode extends BaseMode {
             currentTwoStrandedNode,
           );
           if (
+            nextNucleotideFromCurrent !== undefined &&
             hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
             !hasValidAntisense(currentTwoStrandedNode) &&
-            nextNucleotideFromCurrent !== undefined &&
             !hasValidAntisense(nextNucleotideFromCurrent)
           ) {
             let nextNodeWithAntisense = currentTwoStrandedNode
@@ -1822,14 +1866,14 @@ export class SequenceMode extends BaseMode {
             selectionsBeforeDeletion.every((selectionRange) => {
               const firstNode = selectionRange[0]?.node;
               const lastNode = selectionRange.at(-1)?.node;
-              const prevInSameChain = firstNode
+              const previousInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
-                : null;
+                : undefined;
               const nextInSameChain = lastNode
                 ? SequenceRenderer.getNextNodeInSameChain(lastNode)
-                : null;
+                : undefined;
               return (
-                !prevInSameChain &&
+                !previousInSameChain &&
                 (!nextInSameChain ||
                   nextInSameChain.senseNode instanceof EmptySequenceNode)
               );
@@ -1867,7 +1911,7 @@ export class SequenceMode extends BaseMode {
           if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode && !isEnteringSymbolP
+              !isEnteringSymbolP && this.isAntisenseEditMode
                 ? DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
@@ -1886,41 +1930,35 @@ export class SequenceMode extends BaseMode {
             senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
-          const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
-          const prevAntisense =
+          const previousSense = previousTwoStrandedNodeInSameChain?.senseNode;
+          const previousAntisense =
             previousTwoStrandedNodeInSameChain?.antisenseNode;
-          const currSense = currentTwoStrandedNode?.senseNode;
-          const currAntisense = currentTwoStrandedNode?.antisenseNode;
+          const currentSense = currentTwoStrandedNode?.senseNode;
+          const currentAntisense = currentTwoStrandedNode?.antisenseNode;
 
-          const prevHasRealSenseAndAntisense =
-            !!prevSense &&
-            !(prevSense instanceof EmptySequenceNode) &&
-            !!prevAntisense;
+          const hasPrevRealSenseAndAntisense =
+            !!previousSense &&
+            !(previousSense instanceof EmptySequenceNode) &&
+            !!previousAntisense;
 
-          const currHasAntisenseWithNonEmptyContent =
-            !!currAntisense &&
-            (!(currSense instanceof EmptySequenceNode) ||
-              !(currAntisense instanceof EmptySequenceNode));
+          const hasCurrAntisenseWithNonEmptyContent =
+            !!currentAntisense &&
+            (!(currentSense instanceof EmptySequenceNode) ||
+              !(currentAntisense instanceof EmptySequenceNode));
 
           const shouldEditAntisenseInSyncMode =
-            prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;
-
-          const shouldEditAntisenseInAsyncMode =
-            !(prevAntisense instanceof EmptySequenceNode) ||
-            !(currAntisense instanceof EmptySequenceNode);
+            hasPrevRealSenseAndAntisense || hasCurrAntisenseWithNonEmptyContent;
 
           if (
             this.needToEditAntisense &&
-            (this.isSyncEditMode
-              ? shouldEditAntisenseInSyncMode
-              : shouldEditAntisenseInAsyncMode)
+            (!this.isSyncEditMode || shouldEditAntisenseInSyncMode)
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode ||
+              isEnteringSymbolP ||
+                this.isAntisenseEditMode ||
                 (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
-                  editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
-                isEnteringSymbolP
+                  editor.sequenceTypeEnterMode !== SequenceType.RNA)
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
@@ -1937,9 +1975,9 @@ export class SequenceMode extends BaseMode {
             }
 
             if (
-              this.isSyncEditMode &&
               antisenseNodeCreationResult &&
               senseNodeToConnect &&
+              this.isSyncEditMode &&
               (senseNodeToConnect instanceof Nucleotide ||
                 senseNodeToConnect instanceof Nucleoside)
             ) {
@@ -1998,8 +2036,8 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           const arrowKey = event.key;
           if (
-            SequenceRenderer.caretPosition === 0 &&
-            arrowKey === 'ArrowLeft'
+            arrowKey === 'ArrowLeft' &&
+            SequenceRenderer.caretPosition === 0
           ) {
             return;
           }
@@ -2077,19 +2115,19 @@ export class SequenceMode extends BaseMode {
   }
 
   private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {
-    if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R1 === null;
-    }
-
-    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+    return (
+      (entity instanceof BaseMonomer
+        ? entity.attachmentPointsToBonds.R1
+        : entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1) === null
+    );
   }
 
   private isR2Free(entity?: SequenceNode | BaseMonomer): boolean {
-    if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R2 === null;
-    }
-
-    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 === null;
+    return (
+      (entity instanceof BaseMonomer
+        ? entity.attachmentPointsToBonds.R2
+        : entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2) === null
+    );
   }
 
   private areR1R2Free(
@@ -2173,7 +2211,7 @@ export class SequenceMode extends BaseMode {
     const hasPhosphateAtChainEnd =
       chainsCollection?.lastNode?.monomer?.isPhosphate;
 
-    if (!SequenceRenderer.isCaretAtChainEnd && hasPhosphateAtChainEnd) {
+    if (hasPhosphateAtChainEnd && !SequenceRenderer.isCaretAtChainEnd) {
       nextCaretPosition -= 1;
     }
 
@@ -2261,14 +2299,15 @@ export class SequenceMode extends BaseMode {
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
+        return [
+          ...acc,
+          ...monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
               fromMonomer: monomer,
             };
           }),
-        );
+        ];
       },
       [] as PreservedHydrogenBonds[],
     );
@@ -2465,22 +2504,23 @@ export class SequenceMode extends BaseMode {
             strandType,
           );
 
-          if (editedBase) {
-            const mirroredBaseCommand = createMirroredBaseCommand({
-              drawingEntitiesManager: editor.drawingEntitiesManager,
-              editedBase,
-              previousNaturalAnalogue,
-              newBaseMonomerItem: monomerItem,
-              isSyncEditMode: this.isSyncEditMode,
-              resolveBaseLibraryItem: (label) =>
-                getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
-              partner: partnerBeforeEdit,
-              wasEditedBaseEligible,
-            });
+          if (!editedBase) {
+            return;
+          }
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: monomerItem,
+            isSyncEditMode: this.isSyncEditMode,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
+          });
 
-            if (mirroredBaseCommand) {
-              modelChanges.merge(mirroredBaseCommand);
-            }
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
           }
         });
       },
@@ -2496,7 +2536,7 @@ export class SequenceMode extends BaseMode {
   private checkIfNewMonomerCouldEstablishConnections(
     selectedNode: SequenceNode,
     monomerItem: MonomerItemType | undefined,
-    sideChainConnections?: boolean,
+    hasSideChainConnections?: boolean,
   ) {
     if (!monomerItem?.attachmentPoints) {
       return false;
@@ -2510,7 +2550,7 @@ export class SequenceMode extends BaseMode {
     const oldMonomerBonds: [
       AttachmentPointName,
       PolymerBond | MonomerToAtomBond | null | undefined,
-    ][] = sideChainConnections
+    ][] = hasSideChainConnections
       ? (Object.entries(selectedNode.monomer.attachmentPointsToBonds) as [
           AttachmentPointName,
           PolymerBond | MonomerToAtomBond | null | undefined,
@@ -2530,7 +2570,7 @@ export class SequenceMode extends BaseMode {
       if (
         !bond ||
         (!(bond instanceof MonomerToAtomBond) &&
-          (sideChainConnections
+          (hasSideChainConnections
             ? !bond.isSideChainConnection
             : !bond.isBackBoneChainConnection))
       ) {
@@ -2557,13 +2597,13 @@ export class SequenceMode extends BaseMode {
   private getFirstMissingAttachmentPoint(
     selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
-    sideChainConnections?: boolean,
+    hasSideChainConnections?: boolean,
   ): AttachmentPointName | null {
     const newMonomerAttachmentPoints = monomerItem.attachmentPoints
       ? BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
           monomerItem.attachmentPoints,
         )
-      : null;
+      : undefined;
 
     for (const { strandType, selectionRange } of splitSelectionsIntoStrandRuns(
       selections,
@@ -2582,10 +2622,10 @@ export class SequenceMode extends BaseMode {
           !this.checkIfNewMonomerCouldEstablishConnections(
             selectedNode,
             monomerItem,
-            sideChainConnections,
+            hasSideChainConnections,
           )
         ) {
-          if (sideChainConnections || !newMonomerAttachmentPoints) {
+          if (hasSideChainConnections || !newMonomerAttachmentPoints) {
             return AttachmentPointName.R1;
           }
 
@@ -2650,7 +2690,7 @@ export class SequenceMode extends BaseMode {
   private selectionsCantPreserveConnectionsWithPreset(
     selections: TwoStrandedNodesSelection,
     preset: IRnaPreset,
-    sideChainConnections?: boolean,
+    hasSideChainConnections?: boolean,
   ) {
     return splitSelectionsIntoStrandRuns(selections).some(
       ({ strandType, selectionRange }) =>
@@ -2667,7 +2707,7 @@ export class SequenceMode extends BaseMode {
               !this.checkIfNewMonomerCouldEstablishConnections(
                 selectedNode,
                 monomer,
-                sideChainConnections,
+                hasSideChainConnections,
               ),
           );
         }),
@@ -2678,13 +2718,13 @@ export class SequenceMode extends BaseMode {
     const previousTwoStrandedNodeInSameChain =
       SequenceRenderer.previousNodeInSameChain;
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-    const currentNodeIsNotEmpty = !(
+    const isCurrentNodeNotEmpty = !(
       currentTwoStrandedNode?.senseNode instanceof EmptySequenceNode
     );
 
     let missingAttachmentPoint: AttachmentPointName | null = null;
 
-    const previousMonomerHasR2 = Boolean(
+    const hasPreviousMonomerR2 = Boolean(
       previousTwoStrandedNodeInSameChain?.senseNode?.lastMonomerInNode.hasAttachmentPoint(
         AttachmentPointName.R2,
       ),
@@ -2692,14 +2732,14 @@ export class SequenceMode extends BaseMode {
     const newMonomerHasR1 = newNode.firstMonomerInNode.hasAttachmentPoint(
       AttachmentPointName.R1,
     );
-    const rightSideInsertImpossible =
+    const isRightSideInsertImpossible =
       Boolean(previousTwoStrandedNodeInSameChain) &&
-      (!previousMonomerHasR2 || !newMonomerHasR1);
-    if (rightSideInsertImpossible && !newMonomerHasR1) {
+      (!hasPreviousMonomerR2 || !newMonomerHasR1);
+    if (isRightSideInsertImpossible && !newMonomerHasR1) {
       missingAttachmentPoint = AttachmentPointName.R1;
     }
 
-    const nextMonomerHasR1 = Boolean(
+    const hasNextMonomerR1 = Boolean(
       currentTwoStrandedNode?.senseNode?.firstMonomerInNode.hasAttachmentPoint(
         AttachmentPointName.R1,
       ),
@@ -2707,49 +2747,49 @@ export class SequenceMode extends BaseMode {
     const newMonomerHasR2 = newNode.lastMonomerInNode.hasAttachmentPoint(
       AttachmentPointName.R2,
     );
-    const leftSideInsertImpossible =
+    const isLeftSideInsertImpossible =
       Boolean(currentTwoStrandedNode) &&
-      currentNodeIsNotEmpty &&
-      (!nextMonomerHasR1 || !newMonomerHasR2);
-    if (leftSideInsertImpossible && !newMonomerHasR2) {
+      isCurrentNodeNotEmpty &&
+      (!hasNextMonomerR1 || !newMonomerHasR2);
+    if (isLeftSideInsertImpossible && !newMonomerHasR2) {
       missingAttachmentPoint = AttachmentPointName.R2;
     }
 
-    const nodeCanBeInserted =
-      !rightSideInsertImpossible && !leftSideInsertImpossible;
+    const canInsertNode =
+      !isRightSideInsertImpossible && !isLeftSideInsertImpossible;
 
     return {
-      nodeCanBeInserted,
+      nodeCanBeInserted: canInsertNode,
       missingAttachmentPoint,
     };
   }
 
   /**
-   * Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
-   * through the library. Refuses, and reports the refusal, when sync
-   * editing is on, the selection holds both strands of at least one
-   * eligible hydrogen-bonded pair, and the clicked item would set a new
-   * base.
-   *
-   * It lives here, called from both library entry points before any
-   * confirmation dialog, rather than inside the replacement loops: a
-   * refusal raised from inside the loop arrives only after the user has
-   * already confirmed a destructive-sounding dialog, and keying it off the
-   * item's monomer class let unsplit nucleotides through, rewriting the
-   * sense base while propagation was suppressed for the very same
-   * both-strands selection.
-   *
-   * Returns true when the caller must stop.
-   */
+  Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
+  through the library. Refuses, and reports the refusal, when sync
+  editing is on, the selection holds both strands of at least one
+  eligible hydrogen-bonded pair, and the clicked item would set a new
+  base.
+
+  It lives here, called from both library entry points before any
+  confirmation dialog, rather than inside the replacement loops: a
+  refusal raised from inside the loop arrives only after the user has
+  already confirmed a destructive-sounding dialog, and keying it off the
+  item's monomer class let unsplit nucleotides through, rewriting the
+  sense base while propagation was suppressed for the very same
+  both-strands selection.
+
+  Returns true when the caller must stop.
+  */
   private refuseIfBaseModificationBlocked(
     selections: TwoStrandedNodesSelection,
     newBaseCarryingItem: MonomerOrAmbiguousType | undefined,
   ): boolean {
-    if (!this.isSyncEditMode || !newBaseCarryingItem) {
+    if (!newBaseCarryingItem || !this.isSyncEditMode) {
       return false;
     }
 
-    if (!itemCarriesBase(newBaseCarryingItem)) {
+    if (!hasBase(newBaseCarryingItem)) {
       return false;
     }
 
@@ -2840,9 +2880,9 @@ export class SequenceMode extends BaseMode {
       );
       const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
 
-      const { nodeCanBeInserted, missingAttachmentPoint } =
+      const { nodeCanBeInserted: canInsertNode, missingAttachmentPoint } =
         this.checkNodeInsertionPossibility(newMonomerSequenceNode);
-      if (!nodeCanBeInserted) {
+      if (!canInsertNode) {
         const message =
           missingAttachmentPoint &&
           `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
@@ -2885,21 +2925,19 @@ export class SequenceMode extends BaseMode {
       position,
     ) as Sugar;
 
-    let rnaBaseMonomer: RNABase | AmbiguousMonomer | null = null;
-    if (rnaBase) {
-      rnaBaseMonomer = editor.drawingEntitiesManager.createMonomer(
-        rnaBase,
-        position,
-      ) as RNABase;
-    }
+    const rnaBaseMonomer: RNABase | AmbiguousMonomer | null = rnaBase
+      ? (editor.drawingEntitiesManager.createMonomer(
+          rnaBase,
+          position,
+        ) as RNABase)
+      : null;
 
-    let phosphateMonomer: Phosphate | null = null;
-    if (phosphate) {
-      phosphateMonomer = editor.drawingEntitiesManager.createMonomer(
-        phosphate,
-        position,
-      ) as Phosphate;
-    }
+    const phosphateMonomer: Phosphate | null = phosphate
+      ? (editor.drawingEntitiesManager.createMonomer(
+          phosphate,
+          position,
+        ) as Phosphate)
+      : null;
 
     let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
 
@@ -2945,14 +2983,15 @@ export class SequenceMode extends BaseMode {
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
+        return [
+          ...acc,
+          ...monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
               fromMonomer: monomer,
             };
           }),
-        );
+        ];
       },
       [] as PreservedHydrogenBonds[],
     );
@@ -3133,22 +3172,23 @@ export class SequenceMode extends BaseMode {
           // A preset with no base sets no new natural analogue, so there is
           // nothing to mirror; resolveMirroredBaseLabel would refuse it
           // anyway, but skipping here keeps the intent explicit.
-          if (editedBase && preset.base) {
-            const mirroredBaseCommand = createMirroredBaseCommand({
-              drawingEntitiesManager: editor.drawingEntitiesManager,
-              editedBase,
-              previousNaturalAnalogue,
-              newBaseMonomerItem: preset.base,
-              isSyncEditMode: this.isSyncEditMode,
-              resolveBaseLibraryItem: (label) =>
-                getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
-              partner: partnerBeforeEdit,
-              wasEditedBaseEligible,
-            });
+          if (!editedBase || !preset.base) {
+            return;
+          }
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: preset.base,
+            isSyncEditMode: this.isSyncEditMode,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
+          });
 
-            if (mirroredBaseCommand) {
-              modelChanges.merge(mirroredBaseCommand);
-            }
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
           }
         });
       },
@@ -3218,10 +3258,10 @@ export class SequenceMode extends BaseMode {
 
       assert(newPresetNode);
 
-      const { nodeCanBeInserted, missingAttachmentPoint } =
+      const { nodeCanBeInserted: canInsertNode, missingAttachmentPoint } =
         this.checkNodeInsertionPossibility(newPresetNode);
 
-      if (!nodeCanBeInserted) {
+      if (!canInsertNode) {
         const message =
           missingAttachmentPoint &&
           `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
@@ -3265,8 +3305,8 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.previousNodeInSameChain;
 
     if (
-      nextNodeToConnect instanceof EmptySequenceNode &&
-      previousNodeToConnect
+      previousNodeToConnect &&
+      nextNodeToConnect instanceof EmptySequenceNode
     ) {
       if (
         !previousTwoStrandedNodeInSameChain?.antisenseNode &&
@@ -3334,21 +3374,19 @@ export class SequenceMode extends BaseMode {
       return { modelChanges, node: newPhosphateNode };
     }
 
-    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      return this.handlePeptideNodeAddition(
-        enteredSymbol,
-        newNodePosition,
-        nextNodeToConnect,
-        previousNodeToConnect,
-      );
-    } else {
-      return this.handleRnaDnaNodeAddition(
-        enteredSymbol,
-        newNodePosition,
-        nextNodeToConnect,
-        previousNodeToConnect,
-      );
-    }
+    return editor.sequenceTypeEnterMode === SequenceType.PEPTIDE
+      ? this.handlePeptideNodeAddition(
+          enteredSymbol,
+          newNodePosition,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        )
+      : this.handleRnaDnaNodeAddition(
+          enteredSymbol,
+          newNodePosition,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        );
   }
 
   private showMergeWarningModal(message?: string | null) {
@@ -3366,9 +3404,9 @@ export class SequenceMode extends BaseMode {
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
     nextNodeToConnect?: SequenceNode | null,
     previousNodeToConnect?: SequenceNode,
-    needConnectWithPreviousNodeInChain = true,
-    needConnectWithNextNodeInChain = true,
-    addPhosphateIfNeeded = true,
+    shouldConnectWithPreviousNodeInChain = true,
+    shouldConnectWithNextNodeInChain = true,
+    shouldAddPhosphateIfNeeded = true,
   ) {
     const chainsCollection =
       chainsCollectionOrNode instanceof ChainsCollection
@@ -3389,18 +3427,18 @@ export class SequenceMode extends BaseMode {
     const firstNodeOfNewFragment = chainsCollection.firstNode;
     const newNodePosition = this.getNewNodePosition();
 
-    if (needConnectWithPreviousNodeInChain) {
+    if (shouldConnectWithPreviousNodeInChain) {
       this.deleteBondToNextNodeInChain(previousNodeInSameChain, modelChanges);
       this.connectNodes(
         previousNodeInSameChain,
         firstNodeOfNewFragment,
         modelChanges,
         newNodePosition,
-        addPhosphateIfNeeded,
+        shouldAddPhosphateIfNeeded,
       );
     }
 
-    if (needConnectWithNextNodeInChain) {
+    if (shouldConnectWithNextNodeInChain) {
       // For antisense chains at the end (no previousNodeInSameChain, but has currentNode),
       // the parameters are swapped, so we need to reverse the connection order
       const isAntisenseEndCase =
@@ -3413,7 +3451,7 @@ export class SequenceMode extends BaseMode {
           firstNodeOfNewFragment,
           modelChanges,
           newNodePosition,
-          addPhosphateIfNeeded,
+          shouldAddPhosphateIfNeeded,
         );
       } else {
         // Normal case: connect newMonomer.R2 → nextMonomer.R1
@@ -3422,7 +3460,7 @@ export class SequenceMode extends BaseMode {
           currentNode,
           modelChanges,
           newNodePosition,
-          addPhosphateIfNeeded,
+          shouldAddPhosphateIfNeeded,
         );
       }
     }
@@ -3582,7 +3620,7 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const selections = SequenceRenderer.selections;
 
-    if (selections.length) {
+    if (selections.length > 0) {
       selections.forEach((selectionRange) => {
         selectionRange.forEach((nodeSelection) => {
           modelChanges.merge(
@@ -3613,7 +3651,7 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const selections = SequenceRenderer.selections;
 
-    if (selections.length) {
+    if (selections.length > 0) {
       selections.forEach((selectionRange) => {
         selectionRange.forEach((nodeSelection) => {
           modelChanges.merge(

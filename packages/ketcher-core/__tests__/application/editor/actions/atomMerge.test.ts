@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import type { RenderOptions } from 'application/render/render.types';
 import { ReStruct } from 'application/render/restruct';
 import {
   Atom,
+  Bond,
   SGroup,
   SGroupAttachmentPoint,
   Struct,
@@ -99,5 +100,48 @@ describe('fromAtomMerge', () => {
       action = fromAtomMerge(restruct as ReStruct, srcId, dstId);
     }).not.toThrow();
     expect(action?.operations).toHaveLength(0);
+  });
+
+  it('recalculates the hydrogens of the atom a star atom is merged into', () => {
+    const struct = new Struct();
+    const firstId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0), fragment: 0 }),
+    );
+    const secondId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0), fragment: 0 }),
+    );
+    const starId = struct.atoms.add(
+      new Atom({ label: '*', pp: new Vec2(2, 0), fragment: 0 }),
+    );
+    const thirdId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(3, 0), fragment: 0 }),
+    );
+    const firstBond = new Bond({
+      begin: firstId,
+      end: secondId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    struct.bondInitHalfBonds(struct.bonds.add(firstBond), firstBond);
+    const starBond = new Bond({
+      begin: thirdId,
+      end: starId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    struct.bondInitHalfBonds(struct.bonds.add(starBond), starBond);
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    restruct.assignConnectedComponents();
+
+    fromAtomMerge(restruct, starId, secondId);
+
+    expect(struct.atoms.get(secondId)?.label).toBe('C');
+    expect(struct.atoms.get(secondId)?.implicitH).toBe(2);
   });
 });

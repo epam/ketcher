@@ -30,14 +30,18 @@ type AttachmentPointGeometry = {
 };
 
 class ReRGroupAttachmentPoint extends ReObject {
-  item: RGroupAttachmentPoint;
-  reAtom: ReAtom;
-  lineDirectionVector: Vec2 = new Vec2();
-
   static readonly LINE_OUTLINE_WIDTH = 0.36;
   static readonly OUTLINE_PADDING = 0.15;
   static readonly CURVE_OUTLINE_WIDTH = 1;
   static readonly CURVE_OUTLINE_HEIGHT = 0.42;
+
+  static isSelectable() {
+    return true;
+  }
+
+  item: RGroupAttachmentPoint;
+  reAtom: ReAtom;
+  lineDirectionVector: Vec2 = new Vec2();
 
   constructor(item: RGroupAttachmentPoint, reAtom: ReAtom) {
     super('rgroupAttachmentPoint');
@@ -76,10 +80,6 @@ class ReRGroupAttachmentPoint extends ReObject {
       this.normalizedLineDirectionVector,
       length,
     );
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   getOutlinePoints(isHighlight = false) {
@@ -201,8 +201,8 @@ class ReRGroupAttachmentPoint extends ReObject {
     );
     this.addTestAttributes(attachmentPointShape);
 
-    const showLabel = isAttachmentPointLabelRequired(restruct);
-    if (showLabel) {
+    const shouldShowLabel = isAttachmentPointLabelRequired(restruct);
+    if (shouldShowLabel) {
       // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
       const labelText = this.item.type === 'primary' ? '1' : '2';
       showAttachmentPointLabel(
@@ -226,11 +226,13 @@ class ReRGroupAttachmentPoint extends ReObject {
         highlightColor = highlight.color;
       }
     });
-    if (isHighlighted) {
-      const style = { fill: highlightColor, stroke: 'none' };
-      const path = this.makeHighlightePlate(restruct, style);
-      restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
+    if (!isHighlighted) {
+      return;
     }
+
+    const style = { fill: highlightColor, stroke: 'none' };
+    const path = this.makeHighlightePlate(restruct, style);
+    restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
   }
 
   private addTestAttributes(attachmentPointShape: AttachmentPointShape) {

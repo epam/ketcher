@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * Scans src/locales/<locale>/ for this package's six namespaces and
- * generates src/i18n/localeResources.generated.ts — static imports plus
- * BASE_RESOURCES ('en') and EXTRA_LOCALE_RESOURCES (every other *complete*
- * locale). Keeps imports static (required for Rollup to tree-shake unused
- * locales out of the English-only default build) while removing the need
- * to hand-edit i18n.ts every time a locale is added or removed — adding a
- * language is "drop files under src/locales/<code>/, rerun this script."
- *
- * A locale missing any of the six namespace files is skipped with a
- * warning rather than included half-translated (i18next would silently
- * fall back to English per-key, which is a worse failure mode than just
- * not offering the language yet).
- */
+Scans src/locales/<locale>/ for this package's six namespaces and
+generates src/i18n/localeResources.generated.ts — static imports plus
+BASE_RESOURCES ('en') and EXTRA_LOCALE_RESOURCES (every other *complete*
+locale). Keeps imports static (required for Rollup to tree-shake unused
+locales out of the English-only default build) while removing the need
+to hand-edit i18n.ts every time a locale is added or removed — adding a
+language is "drop files under src/locales/<code>/, rerun this script."
+
+A locale missing any of the six namespace files is skipped with a
+warning rather than included half-translated (i18next would silently
+fall back to English per-key, which is a worse failure mode than just
+not offering the language yet).
+*/
 import { existsSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

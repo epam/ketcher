@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import ButtonGroup from './ToggleButtonGroup';
 import classes from './ToggleButtonGroup.module.less';
 import i18n from 'src/i18n/i18n';
@@ -29,7 +30,7 @@ describe('ButtonGroup', () => {
     { label: 'Label 2', value: '2' },
     { label: '', value: '3' },
   ];
-  const onClickMock = jest.fn();
+  const onClickMock = vi.fn();
   const defaultValue = '2';
 
   beforeEach(() => {

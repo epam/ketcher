@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
+  provideEditorInstance,
   type EditMonomerVariant,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
@@ -60,8 +61,11 @@ const EditMonomer = (props: Props) => {
     onOk(true);
   };
 
-  const handleEditMonomer = (editAllInstances = false) => {
-    if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {
+  const handleEditMonomer = async (shouldEditAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
+    if (editor.openEditMonomerWizard(fgIds, shouldEditAllInstances)) {
       onOk(true);
     }
   };

@@ -6,7 +6,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -83,7 +83,7 @@ import {
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { validate } from 'domain/serializers/ket/validate';
+import { isValidKet } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { isNumber } from 'lodash';
 import {
@@ -124,16 +124,17 @@ import type {
   KetMoleculeNode,
   KetReactionNode,
   KetSimpleObjectNode,
+  KetTextNode,
 } from 'domain/serializers/ket/types';
 
 type KetMicromoleculeDefinition =
   | KetSimpleObjectNode
   | KetReactionNode
   | KetMoleculeNode
+  | KetTextNode
   | {
       type?:
         | 'rgroup'
-        | 'text'
         | typeof MULTITAIL_ARROW_SERIALIZE_KEY
         | typeof IMAGE_SERIALIZE_KEY;
       stereoFlagPosition?: Point;
@@ -217,30 +218,31 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
       imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
-    default:
+    default: {
       break;
+    }
   }
 }
 
 export class KetSerializer implements Serializer<Struct> {
-  private static _monomerFactory: MonomerFactoryFn | null = null;
+  private static _monomerFactory: MonomerFactoryFn | undefined;
 
   public static setMonomerFactory(factory: MonomerFactoryFn): void {
     KetSerializer._monomerFactory = factory;
   }
 
   private static getMonomerFactory(): MonomerFactoryFn {
-    if (!KetSerializer._monomerFactory) {
+    if (!this._monomerFactory) {
       throw new Error(
         'KetSerializer: monomerFactory has not been initialized. Call KetSerializer.setMonomerFactory() before using serializer features that require it.',
       );
     }
-    return KetSerializer._monomerFactory;
+    return this._monomerFactory;
   }
 
   deserializeMicromolecules(content: string): Struct {
     const ket = JSON.parse(content);
-    if (!validate(ket)) {
+    if (!isValidKet(ket)) {
       throw new Error('Cannot deserialize input JSON.');
     }
 
@@ -370,11 +372,13 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push(imageToKet(item));
           break;
         }
-        case MULTITAIL_ARROW_SERIALIZE_KEY:
+        case MULTITAIL_ARROW_SERIALIZE_KEY: {
           result.root.nodes.push(multitailArrowToKet(item));
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
     });
 
@@ -388,11 +392,11 @@ export class KetSerializer implements Serializer<Struct> {
       originalAtomToKetLocation,
       attachmentGroupLocations,
     );
-    if (connections.length) {
+    if (connections.length > 0) {
       result.root.connections = connections;
     }
 
-    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
+    return JSON.stringify({ ket_version: '2.0.0', ...result }, undefined, 4);
   }
 
   private validateMonomerNodeTemplate(
@@ -430,26 +434,26 @@ export class KetSerializer implements Serializer<Struct> {
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'ketSerializer.ts::KetSerializer::parseAndValidateMacromolecules',
-        e,
+        error,
       );
       return { error: true };
     }
-    let error = false;
+    let hasError = false;
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];
 
       if (nodeDefinition?.type === 'monomer') {
-        error = this.validateMonomerNodeTemplate(
+        hasError = this.validateMonomerNodeTemplate(
           nodeDefinition,
           parsedFileContent,
           editor,
         );
       }
     });
-    if (error) {
+    if (hasError) {
       return { error: true };
     }
     parsedFileContent.root.connections?.forEach(
@@ -458,7 +462,7 @@ export class KetSerializer implements Serializer<Struct> {
       },
     );
     return {
-      error,
+      error: hasError,
       parsedFileContent,
     };
   }
@@ -621,8 +625,9 @@ export class KetSerializer implements Serializer<Struct> {
           command.merge(monomerAdditionCommand);
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
     const fileContentForMicromolecules =
@@ -768,8 +773,9 @@ export class KetSerializer implements Serializer<Struct> {
 
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
 
@@ -893,7 +899,7 @@ export class KetSerializer implements Serializer<Struct> {
   serializeMacromolecules(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needSetSelection = false,
+    shouldSetSelection = false,
   ) {
     const fileContent: IKetMacromoleculesContentRootProperty = {
       root: {
@@ -923,16 +929,16 @@ export class KetSerializer implements Serializer<Struct> {
 
         monomerItem.struct.mergeInto(
           struct,
-          null,
-          null,
+          undefined,
+          undefined,
           false,
           false,
           atomIdMap,
-          null,
-          null,
-          null,
-          null,
-          null,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
           bondIdMap,
         );
         monomerToAtomIdMap.set(monomer, atomIdMap);
@@ -989,7 +995,7 @@ export class KetSerializer implements Serializer<Struct> {
           ...(isTransformationDefined && {
             transformation: modifyTransformation(transformation),
           }),
-          selected: (needSetSelection && monomer.selected) || undefined,
+          selected: (shouldSetSelection && monomer.selected) || undefined,
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
 
@@ -1040,7 +1046,7 @@ export class KetSerializer implements Serializer<Struct> {
               polymerBond,
               monomerIdMap,
             ) as IKetConnectionEndPoint),
-        selected: (needSetSelection && polymerBond.selected) || undefined,
+        selected: (shouldSetSelection && polymerBond.selected) || undefined,
       });
     });
 
@@ -1069,30 +1075,35 @@ export class KetSerializer implements Serializer<Struct> {
           moleculeId: `mol${struct.atoms.get(globalAtomId)?.fragment}`,
           atomId: String(monomerToAtomBond.atom.atomIdInMicroMode),
         } as IKetConnectionEndPoint,
-        selected: (needSetSelection && monomerToAtomBond.selected) || undefined,
+        selected:
+          (shouldSetSelection && monomerToAtomBond.selected) || undefined,
       });
     });
 
-    if (needSetSelection) {
+    if (shouldSetSelection) {
       drawingEntitiesManager.atoms.forEach((atom) => {
-        if (atom.selected) {
-          const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
-          const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+        if (!atom.selected) {
+          return;
+        }
 
-          if (isNumber(globalAtomId)) {
-            moleculesSelection.atoms.push(globalAtomId);
-          }
+        const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
+        const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+
+        if (isNumber(globalAtomId)) {
+          moleculesSelection.atoms.push(globalAtomId);
         }
       });
 
       drawingEntitiesManager.bonds.forEach((bond) => {
-        if (bond.selected) {
-          const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
-          const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+        if (!bond.selected) {
+          return;
+        }
 
-          if (isNumber(globalBondId)) {
-            moleculesSelection.bonds.push(globalBondId);
-          }
+        const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
+        const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+
+        if (isNumber(globalBondId)) {
+          moleculesSelection.bonds.push(globalBondId);
         }
       });
     }
@@ -1159,26 +1170,28 @@ export class KetSerializer implements Serializer<Struct> {
       > = new Map();
       attachmentPoints.forEach((attachmentPoint) => {
         if (
-          isNumber(attachmentPoint.leaveAtomId) &&
-          Atom.isHiddenLeavingGroupAtom(
+          !isNumber(attachmentPoint.leaveAtomId) ||
+          !Atom.isHiddenLeavingGroupAtom(
             struct,
             attachmentPoint.leaveAtomId,
             true,
             true,
           )
         ) {
-          const attachmentPointClone = new SGroupAttachmentPoint(
-            attachmentPoint.atomId,
-            undefined,
-            attachmentPoint.attachmentId,
-            attachmentPoint.attachmentPointNumber,
-          );
-          attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
-          sgroup.atoms.splice(
-            sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
-            1,
-          );
+          return;
         }
+
+        const attachmentPointClone = new SGroupAttachmentPoint(
+          attachmentPoint.atomId,
+          undefined,
+          attachmentPoint.attachmentId,
+          attachmentPoint.attachmentPointNumber,
+        );
+        attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
+        sgroup.atoms.splice(
+          sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
+          1,
+        );
       });
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {
@@ -1196,7 +1209,7 @@ export class KetSerializer implements Serializer<Struct> {
     drawingEntitiesManager = new DrawingEntitiesManager(),
     selection?: EditorSelection,
     isBeautified = true, // TODO make false by default
-    needSetSelectionToMacromolecules = false,
+    shouldSetSelectionToMacromolecules = false,
   ) {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
     struct.enableInitiallySelected();
@@ -1217,7 +1230,7 @@ export class KetSerializer implements Serializer<Struct> {
     } = this.serializeMacromolecules(
       new Struct(),
       drawingEntitiesManager,
-      needSetSelectionToMacromolecules,
+      shouldSetSelectionToMacromolecules,
     );
 
     if (selection === undefined) {
@@ -1228,7 +1241,7 @@ export class KetSerializer implements Serializer<Struct> {
     }
 
     // need for selection population to atoms and bonds from macromolecules mode
-    if (needSetSelectionToMacromolecules) {
+    if (shouldSetSelectionToMacromolecules) {
       populateStructWithSelection(micromoleculesStruct, moleculesSelection);
     }
 
@@ -1252,7 +1265,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     return JSON.stringify(
       fileContent,
-      null,
+      undefined,
       isBeautified ? 4 : undefined,
     ) as unknown as string;
   }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,7 @@ export function prepareStructForKet(struct: Struct) {
     // RGroups writing
     rgroup.frags.forEach((frid) => rgFrags.add(frid));
 
-    const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
+    const fragsAtoms = [...rgroup.frags.values()].reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
       new Pile<number>(),
     );
@@ -41,7 +41,7 @@ export function prepareStructForKet(struct: Struct) {
     });
   }
 
-  const filteredFragmentIds = Array.from(struct.frags.keys()).filter(
+  const filteredFragmentIds = [...struct.frags.keys()].filter(
     (fid) => !rgFrags.has(fid),
   );
   addMolecules(ketNodes, filteredFragmentIds, struct);
@@ -98,17 +98,19 @@ export function prepareStructForKet(struct: Struct) {
   });
 
   ketNodes.forEach((ketNode) => {
-    if (ketNode.fragment) {
-      const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
-      const filteredSGroups = sgroups.filter((sg: SGroup) =>
-        sg.atoms.every((atom) => atom !== undefined),
-      );
-      const filteredSGroupsMap = new Pool<SGroup>();
-      filteredSGroups.forEach((sg, index) => {
-        filteredSGroupsMap.set(index, sg);
-      });
-      ketNode.fragment.sgroups = filteredSGroupsMap;
+    if (!ketNode.fragment) {
+      return;
     }
+
+    const sgroups: SGroup[] = [...ketNode.fragment.sgroups.values()];
+    const filteredSGroups = sgroups.filter((sg: SGroup) =>
+      sg.atoms.every((atom) => atom !== undefined),
+    );
+    const filteredSGroupsMap = new Pool<SGroup>();
+    filteredSGroups.forEach((sg, index) => {
+      filteredSGroupsMap.set(index, sg);
+    });
+    ketNode.fragment.sgroups = filteredSGroupsMap;
   });
 
   // TODO: check if this sorting operation is needed
@@ -122,10 +124,10 @@ function getFragmentCenter(struct, atomSet) {
 }
 
 /**
- * Merge fragments which are in the same S-Groups to one fragment(molecule)
- * and add new fragments(molecules) to KetNodes
- * See: https://github.com/epam/ketcher/issues/2142
- */
+Merge fragments which are in the same S-Groups to one fragment(molecule)
+and add new fragments(molecules) to KetNodes
+See: https://github.com/epam/ketcher/issues/2142
+*/
 function addMolecules(
   ketNodes: KetFileNode[],
   fragmentIds: number[],
@@ -136,9 +138,9 @@ function addMolecules(
     fragmentIds,
     struct,
   );
-  const mergedFragments = Pile.unionIntersections(
-    Array.from(sGroupFragmentsMap.values()),
-  );
+  const mergedFragments = Pile.unionIntersections([
+    ...sGroupFragmentsMap.values(),
+  ]);
 
   mergedFragments.forEach((fragments) => {
     let atomSet = new Pile<number>();
@@ -148,7 +150,7 @@ function addMolecules(
     const sourceAtomIdMap = new Map<number, number>();
     ketNodes.push({
       type: 'molecule',
-      fragment: struct.clone(atomSet, null, false, sourceAtomIdMap),
+      fragment: struct.clone(atomSet, undefined, false, sourceAtomIdMap),
       sourceAtomIdMap,
       center: getFragmentCenter(struct, atomSet),
     });
@@ -156,17 +158,17 @@ function addMolecules(
 }
 
 /**
- * @example Give `fragmentIds` is `[0, 1]`,
- * and S-Group0 includes fragment0 and fragment1,
- * and S-Group1 includes fragment1,
- * then return value should be
- * ```
- * {
- *   0: [0, 1],
- *   1: [1]
- * }
- * ```
- */
+@example Give `fragmentIds` is `[0, 1]`,
+and S-Group0 includes fragment0 and fragment1,
+and S-Group1 includes fragment1,
+then return value should be
+```
+{
+  0: [0, 1],
+  1: [1]
+}
+```
+*/
 function generateSGroupFragmentsMap(
   ketNodes: KetFileNode[],
   fragmentIds: number[],
@@ -190,15 +192,22 @@ function generateSGroupFragmentsMap(
       });
     });
 
-    if (!hasAtomInSGroup) {
-      const sourceAtomIdMap = new Map<number, number>();
-      ketNodes.push({
-        type: 'molecule',
-        fragment: struct.clone(atomsInFragment, null, false, sourceAtomIdMap),
-        sourceAtomIdMap,
-        center: getFragmentCenter(struct, atomsInFragment),
-      });
+    if (hasAtomInSGroup) {
+      return;
     }
+
+    const sourceAtomIdMap = new Map<number, number>();
+    ketNodes.push({
+      type: 'molecule',
+      fragment: struct.clone(
+        atomsInFragment,
+        undefined,
+        false,
+        sourceAtomIdMap,
+      ),
+      sourceAtomIdMap,
+      center: getFragmentCenter(struct, atomsInFragment),
+    });
   });
 
   return sGroupFragmentsMap;

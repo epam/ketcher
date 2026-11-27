@@ -55,9 +55,9 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
             const adjustedX = x - left + transform.k * 15;
             const adjustedY = y - top + transform.k * 15;
             const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
-            const mouseWithinCanvas =
+            const isMouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;
-            if (mouseWithinCanvas) {
+            if (isMouseWithinCanvas) {
               // Re-evaluate the replacement target at the exact drop position
               // before dispatching the place event. The last drag (mousemove)
               // event may have fired at a slightly different cursor position,

@@ -95,12 +95,14 @@ export async function applyEnhancedStereochemistry(
   await EnhancedStereochemistry(page)[selectRadioButton].check();
 
   switch (selectRadioButton) {
-    case EnhancedStereochemistryRadio.AddToAndGroup:
+    case EnhancedStereochemistryRadio.AddToAndGroup: {
       await EnhancedStereochemistry(page).selectAddToAndGroup(dropdownValue);
       break;
-    case EnhancedStereochemistryRadio.AddToOrGroup:
+    }
+    case EnhancedStereochemistryRadio.AddToOrGroup: {
       await EnhancedStereochemistry(page).selectAddToOrGroup(dropdownValue);
       break;
+    }
   }
 
   await EnhancedStereochemistry(page).apply();

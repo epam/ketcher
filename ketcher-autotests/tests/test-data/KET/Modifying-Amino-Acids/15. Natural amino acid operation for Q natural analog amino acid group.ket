@@ -57,8 +57,7 @@
             "y": -1.25
         },
         "alias": "Q",
-        "templateId": "Q___Glutamine",
-        "seqid": 1
+        "templateId": "Q___Glutamine"
     },
     "monomerTemplate-Q___Glutamine": {
         "type": "monomerTemplate",

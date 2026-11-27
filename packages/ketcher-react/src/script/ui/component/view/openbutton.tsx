@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,10 +71,11 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
   initOpener(server?: unknown) {
     const requestId = ++this.initOpenerRequestId;
     if (server) {
-      fileOpener(server).then((opener: OpenerFunction) => {
+      void (async () => {
+        const opener = await fileOpener(server);
         if (!this.isMounted || requestId !== this.initOpenerRequestId) return;
         this.setState({ opener });
-      });
+      })();
     } else {
       this.setState({ opener: undefined });
     }
@@ -85,8 +86,18 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
     const noop = () => null;
     const { onLoad = noop, onError = noop } = this.props;
 
-    if (this.state.opener && files?.length) {
-      this.state.opener(files[0]).then(onLoad, onError);
+    const opener = this.state.opener;
+    if (opener && files?.length) {
+      void (async () => {
+        let content: FileContent;
+        try {
+          content = await opener(files[0]);
+        } catch (error) {
+          onError(error as Error);
+          return;
+        }
+        onLoad(content);
+      })();
     } else if (files?.length) {
       onLoad(files[0]);
     }

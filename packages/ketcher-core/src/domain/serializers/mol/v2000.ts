@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,13 +31,17 @@ import sGroup from './parseSGroup';
 import utils from './utils';
 import type { AtomMap, SGroupMap } from './mol.types';
 
-const loadRGroupFragments = true; // TODO: set to load the fragments
+const shouldLoadRGroupFragments = true; // TODO: set to load the fragments
 
-/** M-property block: string keys (CHG, alias, …) map to per-atom pools */
+/**
+M-property block: string keys (CHG, alias, …) map to per-atom pools
+*/
 type MPropertyProps = Map<string, Pool<string | number | AtomList>>;
 
 function parseAtomLine(atomLine: string): Atom {
-  /* reader */
+  /*
+  reader
+  */
   const atomSplit = utils.partitionLine(
     atomLine,
     utils.fmtInfo.atomLinePartition,
@@ -72,7 +76,9 @@ function parseAtomLine(atomLine: string): Atom {
 }
 
 function parseBondLine(bondLine: string): Bond {
-  /* reader */
+  /*
+  reader
+  */
   const bondSplit = utils.partitionLine(
     bondLine,
     utils.fmtInfo.bondLinePartition,
@@ -96,14 +102,16 @@ function parseAtomListLine(atomListLine: string): {
   aid: number;
   atomList: AtomList;
 } {
-  /* reader */
+  /*
+  reader
+  */
   const split = utils.partitionLine(
     atomListLine,
     utils.fmtInfo.atomListHeaderPartition,
   );
 
   const number = utils.parseDecimalInt(split[0]) - 1;
-  const notList = split[2].trim() === 'T';
+  const isNotList = split[2].trim() === 'T';
   const count = utils.parseDecimalInt(split[4].trim());
 
   const ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength);
@@ -118,15 +126,15 @@ function parseAtomListLine(atomListLine: string): {
   return {
     aid: number,
     atomList: new AtomList({
-      notList,
+      notList: isNotList,
       ids: list,
     }),
   };
 }
 
 /**
- * Handles 'A' property lines (atom alias/pseudo)
- */
+Handles 'A' property lines (atom alias/pseudo)
+*/
 function handleAliasProperty(
   line: string,
   ctabLines: string[],
@@ -151,8 +159,8 @@ function handleAliasProperty(
 }
 
 /**
- * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
- */
+Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
+*/
 function handleSimpleAtomProperty(
   propName: string,
   propertyData: string,
@@ -177,8 +185,8 @@ function handleSimpleAtomProperty(
 }
 
 /**
- * Handles SUB (substitution count) property
- */
+Handles SUB (substitution count) property
+*/
 function handleSubstitutionProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -198,8 +206,8 @@ function handleSubstitutionProperty(
 }
 
 /**
- * Handles RGP (rgroup label) property
- */
+Handles RGP (rgroup label) property
+*/
 function handleRGroupProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -223,8 +231,8 @@ function handleRGroupProperty(
 }
 
 /**
- * Handles LOG (rgroup logic) property
- */
+Handles LOG (rgroup logic) property
+*/
 function handleRGroupLogic(
   propertyData: string,
   rLogic: Record<number, RGroupAttributes>,
@@ -246,8 +254,8 @@ function handleRGroupLogic(
 }
 
 /**
- * Handles ALS (atom list) property
- */
+Handles ALS (atom list) property
+*/
 function handleAtomListProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -277,8 +285,8 @@ function handleAtomListProperty(
 }
 
 /**
- * Handles SMT/SCL (sGroup subscript/class) properties
- */
+Handles SMT/SCL (sGroup subscript/class) properties
+*/
 function handleSGroupDataProperty(
   type: string,
   propertyData: string,
@@ -295,8 +303,8 @@ function handleSGroupDataProperty(
 }
 
 /**
- * Handles SDS (sGroup expanded state) property
- */
+Handles SDS (sGroup expanded state) property
+*/
 function handleSGroupExpandedProperty(
   propertyData: string,
   sGroups: SGroupMap,
@@ -309,8 +317,8 @@ function handleSGroupExpandedProperty(
 }
 
 /**
- * Handles SAP (sGroup attachment point) property
- */
+Handles SAP (sGroup attachment point) property
+*/
 function handleSGroupAttachmentProperty(
   propertyData: string,
   sGroups: SGroupMap,
@@ -323,9 +331,9 @@ function handleSGroupAttachmentProperty(
 }
 
 /**
- * Processes M-type property line
- */
-function processMPropertyLine(
+Processes M-type property line
+*/
+function shouldStopAfterProcessingMPropertyLine(
   type: string,
   propertyData: string,
   props: MPropertyProps,
@@ -333,98 +341,124 @@ function processMPropertyLine(
   rLogic: Record<number, RGroupAttributes>,
 ): boolean {
   switch (type) {
-    case 'END':
+    case 'END': {
       return true; // Signal to break loop
-    case 'CHG':
+    }
+    case 'CHG': {
       handleSimpleAtomProperty('charge', propertyData, props);
       break;
-    case 'RAD':
+    }
+    case 'RAD': {
       handleSimpleAtomProperty('radical', propertyData, props);
       break;
-    case 'ISO':
+    }
+    case 'ISO': {
       handleSimpleAtomProperty('isotope', propertyData, props);
       break;
-    case 'RBC':
+    }
+    case 'RBC': {
       handleSimpleAtomProperty('ringBondCount', propertyData, props);
       break;
-    case 'SUB':
+    }
+    case 'SUB': {
       handleSubstitutionProperty(propertyData, props);
       break;
-    case 'UNS':
+    }
+    case 'UNS': {
       handleSimpleAtomProperty('unsaturatedAtom', propertyData, props);
       break;
-    case 'RGP':
+    }
+    case 'RGP': {
       handleRGroupProperty(propertyData, props);
       break;
-    case 'LOG':
+    }
+    case 'LOG': {
       handleRGroupLogic(propertyData, rLogic);
       break;
-    case 'APO':
+    }
+    case 'APO': {
       handleSimpleAtomProperty('attachmentPoints', propertyData, props);
       break;
-    case 'ALS':
+    }
+    case 'ALS': {
       handleAtomListProperty(propertyData, props);
       break;
-    case 'STY':
+    }
+    case 'STY': {
       sGroup.initSGroup(sGroups, propertyData);
       break;
-    case 'SST':
+    }
+    case 'SST': {
       sGroup.applySGroupProp(sGroups, 'subtype', propertyData);
       break;
-    case 'SLB':
+    }
+    case 'SLB': {
       sGroup.applySGroupProp(sGroups, 'label', propertyData, true);
       break;
-    case 'SPL':
+    }
+    case 'SPL': {
       sGroup.applySGroupProp(sGroups, 'parent', propertyData, true, true);
       break;
-    case 'SCN':
+    }
+    case 'SCN': {
       sGroup.applySGroupProp(sGroups, 'connectivity', propertyData);
       break;
-    case 'SAL':
+    }
+    case 'SAL': {
       sGroup.applySGroupArrayProp(sGroups, 'atoms', propertyData, -1);
       break;
-    case 'SBL':
+    }
+    case 'SBL': {
       sGroup.applySGroupArrayProp(sGroups, 'bonds', propertyData, -1);
       break;
-    case 'SPA':
+    }
+    case 'SPA': {
       sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
       break;
+    }
     case 'SMT':
-    case 'SCL':
+    case 'SCL': {
       handleSGroupDataProperty(type, propertyData, sGroups);
       break;
-    case 'SDT':
+    }
+    case 'SDT': {
       sGroup.applyDataSGroupDesc(sGroups, propertyData);
       break;
-    case 'SDD':
+    }
+    case 'SDD': {
       sGroup.applyDataSGroupInfoLine(sGroups, propertyData);
       break;
-    case 'SCD':
+    }
+    case 'SCD': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, false);
       break;
-    case 'SED':
+    }
+    case 'SED': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, true);
       break;
-    case 'SDS':
+    }
+    case 'SDS': {
       handleSGroupExpandedProperty(propertyData, sGroups);
       break;
-    case 'SAP':
+    }
+    case 'SAP': {
       handleSGroupAttachmentProperty(propertyData, sGroups);
       break;
+    }
   }
 
   return false; // Continue loop
 }
 
 /**
- * @param ctab
- * @param ctabLines
- * @param shift
- * @param end
- * @param sGroups
- * @param rLogic
- * @returns { Pool }
- */
+@param ctab
+@param ctabLines
+@param shift
+@param end
+@param sGroups
+@param rLogic
+@returns { Pool }
+*/
 function parsePropertyLines(
   _ctab: Struct,
   ctabLines: string[],
@@ -433,7 +467,9 @@ function parsePropertyLines(
   sGroups: SGroupMap,
   rLogic: Record<number, RGroupAttributes>,
 ): MPropertyProps {
-  /* reader */
+  /*
+  reader
+  */
   const props = new Map<string, Pool<string | number | AtomList>>();
 
   while (shift < end) {
@@ -444,7 +480,7 @@ function parsePropertyLines(
     } else if (line.startsWith('M')) {
       const type = line.slice(3, 6);
       const propertyData = line.slice(6);
-      const shouldBreak = processMPropertyLine(
+      const shouldBreak = shouldStopAfterProcessingMPropertyLine(
         type,
         propertyData,
         props,
@@ -464,16 +500,18 @@ function parsePropertyLines(
 }
 
 /**
- * @param atoms { Pool }
- * @param values { Pool }
- * @param propId { string }
- */
+@param atoms { Pool }
+@param values { Pool }
+@param propId { string }
+*/
 function applyAtomProp(
   atoms: Pool<Atom>,
   values: Pool<string | number | AtomList>,
   propId: string,
 ): void {
-  /* reader */
+  /*
+  reader
+  */
   values.forEach((propVal, aid) => {
     const atom = atoms.get(aid);
     if (atom) {
@@ -483,10 +521,10 @@ function applyAtomProp(
 }
 
 /**
- * Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
- * This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
- * @param struct { Struct }
- */
+Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
+This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
+@param struct { Struct }
+*/
 function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
   struct.atoms.forEach((atom, atomId) => {
     if (!atom.attachmentPoints) {
@@ -517,17 +555,20 @@ function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
 function parseCTabV2000(
   ctabLines: string[],
   countsSplit: string[],
-  ignoreChiralFlag?: boolean,
+  shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ctab = new Struct();
   let i: number;
   const atomCount = utils.parseDecimalInt(countsSplit[0]);
   const bondCount = utils.parseDecimalInt(countsSplit[1]);
   const atomListCount = utils.parseDecimalInt(countsSplit[2]);
-  const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1 || ignoreChiralFlag;
+  const isAbs =
+    utils.parseDecimalInt(countsSplit[4]) === 1 || shouldIgnoreChiralFlag;
   const isAnd =
-    utils.parseDecimalInt(countsSplit[4]) === 0 && !ignoreChiralFlag;
+    utils.parseDecimalInt(countsSplit[4]) === 0 && !shouldIgnoreChiralFlag;
   const stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
   const propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
   let shift = 0;
@@ -545,10 +586,10 @@ function parseCTabV2000(
   bonds.forEach((bond) => {
     const beginAtom = ctab.atoms.get(bond.begin);
     if (beginAtom) {
-      if (bond.stereo && isAbs) {
+      if (isAbs && bond.stereo) {
         beginAtom.stereoLabel = StereoLabel.Abs;
       }
-      if (bond.stereo && isAnd) {
+      if (isAnd && bond.stereo) {
         beginAtom.stereoLabel = `${StereoLabel.And}1`;
       }
     }
@@ -615,7 +656,10 @@ function parseCTabV2000(
   return ctab;
 }
 
-function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
+function parseRg2000(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
   let i = 1;
@@ -655,14 +699,14 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     }
   }
 
-  const core = parseCTab(coreLines, ignoreChiralFlag);
+  const core = parseCTab(coreLines, shouldIgnoreChiralFlag);
   const frag: Record<number, Struct[]> = {};
-  if (loadRGroupFragments) {
+  if (shouldLoadRGroupFragments) {
     for (const strId in fragmentLines) {
       const id = Number.parseInt(strId, 10);
       frag[id] = [];
       for (const fragmentLine of fragmentLines[id]) {
-        frag[id].push(parseCTab(fragmentLine, ignoreChiralFlag));
+        frag[id].push(parseCTab(fragmentLine, shouldIgnoreChiralFlag));
       }
     }
   }
@@ -672,9 +716,11 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
 function parseRxn2000(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
-  ignoreChiralFlag?: boolean,
+  shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -693,9 +739,9 @@ function parseRxn2000(
     const lines = ctabLines.slice(0, n);
     let struct: Struct;
     if (lines[0].startsWith('$MDL')) {
-      struct = parseRg2000(lines, ignoreChiralFlag);
+      struct = parseRg2000(lines, shouldIgnoreChiralFlag);
     } else {
-      struct = parseCTab(lines.slice(3), ignoreChiralFlag);
+      struct = parseCTab(lines.slice(3), shouldIgnoreChiralFlag);
       struct.name = lines[0].trim();
     }
     mols.push(struct);
@@ -710,18 +756,25 @@ function parseRxn2000(
   );
 }
 
-function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  /* reader */
+function parseCTab(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
+  /*
+  reader
+  */
   const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition,
   );
   ctabLines = ctabLines.slice(1);
-  return parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
+  return parseCTabV2000(ctabLines, countsSplit, shouldIgnoreChiralFlag);
 }
 
 function labelsListToIds(labels: string[]): number[] {
-  /* reader */
+  /*
+  reader
+  */
   const ids: number[] = [];
   for (const label of labels) {
     const element = Elements.get(label.trim());
@@ -734,24 +787,26 @@ function labelsListToIds(labels: string[]): number[] {
 }
 
 /**
- * @param hdr
- * @param lst
- * @returns { Pool }
- */
+@param hdr
+@param lst
+@returns { Pool }
+*/
 function parsePropertyLineAtomList(
   hdr: string[],
   lst: string[],
 ): Pool<AtomList> {
-  /* reader */
+  /*
+  reader
+  */
   const aid = utils.parseDecimalInt(hdr[1]) - 1;
   const count = utils.parseDecimalInt(hdr[2]);
-  const notList = hdr[4].trim() === 'T';
+  const isNotList = hdr[4].trim() === 'T';
   const ids = labelsListToIds(lst.slice(0, count));
   const ret = new Pool<AtomList>();
   ret.set(
     aid,
     new AtomList({
-      notList,
+      notList: isNotList,
       ids,
     }),
   );

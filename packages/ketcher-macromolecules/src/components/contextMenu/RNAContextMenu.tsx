@@ -7,7 +7,7 @@ import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
 import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
-import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { isRnaBuilderSequenceEditMode } from 'state/common';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import { LIBRARY_TAB_INDEX } from '../../constants';
 
@@ -20,7 +20,7 @@ export const RNAContextMenu = () => {
   );
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const RNAMenus = [
     {
@@ -43,21 +43,24 @@ export const RNAContextMenu = () => {
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
-      case 'duplicateandedit':
+      case 'duplicateandedit': {
         props.duplicatePreset(activePresetForContextMenu);
         if (selectedTabIndex !== RNA_TAB_INDEX) {
           dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
         }
         break;
-      case 'edit':
+      }
+      case 'edit': {
         props.editPreset(activePresetForContextMenu);
         if (selectedTabIndex !== RNA_TAB_INDEX) {
           dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
         }
         break;
-      case 'deletepreset':
+      }
+      case 'deletepreset': {
         dispatch(openModal('delete'));
         break;
+      }
     }
   };
 

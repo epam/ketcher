@@ -17,6 +17,12 @@ The system SHALL ensure that its editable contents are previewed and, on confirm
 - **WHEN** the user opens a file in a supported format
 - **THEN** its editable contents are previewed and, on confirmation, the parsed structure is placed on the canvas
 
+#### Scenario: Opening a PPTX with a detached expanded abbreviation
+
+- **WHEN** a PPTX contains an embedded structure with two disconnected components, one of which is a labeled SUP group smaller than the other
+- **THEN** the preview places the SUP label above the upper-right edge of the main component
+- **AND** opening or adding the structure uses the same normalized coordinates
+
 ### Requirement: Format auto-recognition in molecules mode
 
 The system SHALL ensure that the format is recognized automatically without the user selecting it.

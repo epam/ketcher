@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from 'src/i18n/i18n';
 import {
   type PhosphatePosition,
+  getAttachmentPointRenamesForPhosphatePositionChange,
   getLeavingAtomForAttachmentPoint,
 } from './RnaPresetAttachmentPointValidation';
 import {
@@ -265,6 +266,14 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   );
 
   const handlePhosphatePositionChange = (position: PhosphatePosition) => {
+    getAttachmentPointRenamesForPhosphatePositionChange(
+      phosphatePosition,
+      position,
+      componentAttachmentPoints.sugar,
+      componentAttachmentPoints.phosphate,
+    ).forEach(([currentName, newName]) => {
+      editor.reassignAttachmentPoint(currentName, newName);
+    });
     onPhosphatePositionChange(position);
   };
 

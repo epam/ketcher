@@ -4502,6 +4502,45 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public resizeSimpleObjectPoint(
+    simpleObject: CoreSimpleObject,
+    pointIndex: number,
+    modelPosition: Vec2,
+  ) {
+    const command = new Command();
+    const fromPoints = simpleObject.mapPoints(
+      (point) => new Vec2(point.x, point.y),
+    );
+    const toPoints = fromPoints.map((point, index) =>
+      index === pointIndex ? new Vec2(modelPosition.x, modelPosition.y) : point,
+    ) as [Vec2, Vec2];
+
+    command.addOperation(
+      new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+    );
+
+    return command;
+  }
+
+  public createSimpleObjectResizeHistoryCommand(
+    simpleObject: CoreSimpleObject,
+    startPoints: [Vec2, Vec2],
+  ) {
+    const command = new Command();
+    const currentPoints = simpleObject.mapPoints(
+      (point) => new Vec2(point.x, point.y),
+    );
+
+    command.addOperation(
+      new SimpleObjectTransformOperation(
+        simpleObject,
+        startPoints,
+        currentPoints,
+      ),
+    );
+
+    return command;
+  }
   public deleteSimpleObject(simpleObject: CoreSimpleObject) {
     const command = new Command();
     const operation = new SimpleObjectDeleteOperation(

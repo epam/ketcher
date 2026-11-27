@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,6 +20,8 @@ import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
 import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
+import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
 import { Command } from 'domain/entities/Command';
 import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -85,8 +87,12 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
-    'standby';
+    | 'moving'
+    | 'selecting'
+    | 'standby'
+    | 'rotating'
+    | 'rotating-center'
+    | 'resizing' = 'standby';
   /**
   Controls whether auto-scroll is active during a selection drag.
   Override to `false` in subclasses that should not auto-scroll
@@ -96,6 +102,13 @@ abstract class SelectBase implements BaseTool {
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | undefined;
+  private simpleObjectResize:
+    | {
+        simpleObject: CoreSimpleObject;
+        pointIndex: number;
+        startPoints: [Vec2, Vec2];
+      }
+    | undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
@@ -170,6 +183,16 @@ abstract class SelectBase implements BaseTool {
       }
       this.onSelectionStart();
     } else {
+      const handleIndex = SelectBase.getSimpleObjectHandleIndex(event.target);
+      const handleRenderer = event.target?.__data__;
+      if (
+        handleIndex !== undefined &&
+        handleRenderer instanceof SimpleObjectRenderer
+      ) {
+        this.startSimpleObjectResize(handleRenderer, handleIndex);
+        return;
+      }
+
       const renderer = event.target?.__data__;
 
       if (!renderer || !(renderer instanceof BaseRenderer)) {
@@ -190,6 +213,60 @@ abstract class SelectBase implements BaseTool {
         event.altKey,
       );
     }
+  }
+
+  private static getSimpleObjectHandleIndex(
+    target: EventTarget | null,
+  ): number | undefined {
+    const attribute = (target as Element | null)?.getAttribute?.(
+      'data-point-index',
+    );
+    return attribute == null ? undefined : Number(attribute);
+  }
+
+  private startSimpleObjectResize(
+    renderer: SimpleObjectRenderer,
+    pointIndex: number,
+  ) {
+    this.mode = 'resizing';
+    this.simpleObjectResize = {
+      simpleObject: renderer.simpleObject,
+      pointIndex,
+      startPoints: renderer.simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      ),
+    };
+  }
+
+  private updateSimpleObjectResize() {
+    if (!this.simpleObjectResize) {
+      return;
+    }
+
+    const { simpleObject, pointIndex } = this.simpleObjectResize;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.resizeSimpleObjectPoint(
+        simpleObject,
+        pointIndex,
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  private finishSimpleObjectResize() {
+    const resize = this.simpleObjectResize;
+    this.mode = 'standby';
+    this.simpleObjectResize = undefined;
+    if (!resize) {
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.createSimpleObjectResizeHistoryCommand(
+        resize.simpleObject,
+        resize.startPoints,
+      );
+    EditorHistory.getInstance(this.editor).update(modelChanges);
   }
 
   private getCanvasBbox(bbox: {
@@ -1109,6 +1186,11 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    if (this.mode === 'resizing') {
+      this.updateSimpleObjectResize();
+      return;
+    }
+
     if (this.mode === 'rotating') {
       this.handleRotationMove(event);
       return;
@@ -1235,6 +1317,11 @@ abstract class SelectBase implements BaseTool {
     const history = EditorHistory.getInstance(this.editor);
 
     try {
+      if (this.mode === 'resizing') {
+        this.finishSimpleObjectResize();
+        return;
+      }
+
       if (this.mode === 'rotating') {
         this.finishRotation();
         return;

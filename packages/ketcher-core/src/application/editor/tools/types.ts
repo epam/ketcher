@@ -1,4 +1,4 @@
-export enum ToolName {
+﻿export enum ToolName {
   monomer = 'monomer',
   preset = 'preset',
   selectRectangle = 'select-rectangle',
@@ -9,6 +9,9 @@ export enum ToolName {
   erase = 'erase',
   clear = 'clear',
   hand = 'hand',
+  shapeRectangle = 'shape-rectangle',
+  shapeEllipse = 'shape-ellipse',
+  shapeLine = 'shape-line',
 }
 
 export enum MACROMOLECULES_BOND_TYPES {

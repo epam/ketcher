@@ -1,4 +1,4 @@
-﻿import type { Vec2 } from 'domain/entities/vec2';
+﻿import { Vec2 } from 'domain/entities/vec2';
 
 export interface RectangleGeometry {
   x: number;
@@ -50,4 +50,14 @@ export function getEllipseGeometry([start, end]: [
 
 export function getLineGeometry([start, end]: [Vec2, Vec2]): LineGeometry {
   return { x1: start.x, y1: start.y, x2: end.x, y2: end.y };
+}
+
+export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
+  const diff = Vec2.diff(position1, position0);
+  const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y;
+  return new Vec2(
+    position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
+    position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
+    0,
+  );
 }

@@ -10,14 +10,20 @@ import {
   getLineGeometry,
   getRectangleGeometry,
 } from 'application/render/renderers/simpleObjectGeometry';
-import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import {
+  SELECTION_COLOR,
+  SELECTION_OUTLINE_COLOR,
+} from 'application/render/renderers/constants';
 
 const SHAPE_STROKE_WIDTH = 2;
 const HOVER_COLOR = '#0097A8';
+const HANDLE_RADIUS = 4;
 
 export class SimpleObjectRenderer extends BaseRenderer {
   private selectionElement:
     D3SvgElementSelection<SVGRectElement, void> | undefined;
+
+  private handleElements: D3SvgElementSelection<SVGCircleElement, void>[] = [];
 
   constructor(public simpleObject: CoreSimpleObject) {
     super(simpleObject);
@@ -126,8 +132,10 @@ export class SimpleObjectRenderer extends BaseRenderer {
 
     if (this.simpleObject.selected) {
       this.appendSelection();
+      this.appendHandles();
     } else {
       this.removeSelection();
+      this.removeHandles();
     }
   }
 
@@ -151,6 +159,36 @@ export class SimpleObjectRenderer extends BaseRenderer {
   private removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
+  }
+
+  private appendHandles() {
+    this.removeHandles();
+    if (!this.rootElement) {
+      return;
+    }
+
+    const rootElement = this.rootElement;
+    this.handleElements = this.canvasPoints.map(
+      (point, index) =>
+        rootElement
+          .append('circle')
+          .attr('cx', point.x)
+          .attr('cy', point.y)
+          .attr('r', HANDLE_RADIUS)
+          .attr('fill', '#FFF')
+          .attr('stroke', SELECTION_OUTLINE_COLOR)
+          .attr('class', 'dynamic-element')
+          .attr('data-point-index', index)
+          .datum(this) as never as D3SvgElementSelection<
+          SVGCircleElement,
+          void
+        >,
+    );
+  }
+
+  private removeHandles() {
+    this.handleElements.forEach((handle) => handle.remove());
+    this.handleElements = [];
   }
 
   protected appendHover(): void {
@@ -209,5 +247,6 @@ export class SimpleObjectRenderer extends BaseRenderer {
     super.remove();
     this.removeHover();
     this.removeSelection();
+    this.removeHandles();
   }
 }

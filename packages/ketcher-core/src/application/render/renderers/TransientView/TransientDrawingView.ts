@@ -1,4 +1,4 @@
-import { select } from 'd3';
+﻿import { select } from 'd3';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -25,6 +25,10 @@ import {
 import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
 import type { MonomerItemType } from 'domain/types';
 import { type SelectionViewParams, SelectionView } from './SelectionView';
+import {
+  type SimpleObjectPreviewViewParams,
+  SimpleObjectPreviewView,
+} from './SimpleObjectPreviewView';
 import {
   type GroupCenterSnapViewParams,
   GroupCentersnapView,
@@ -222,6 +226,18 @@ export class TransientDrawingView {
 
   public hideSelection() {
     this.removeView(SelectionView.viewName);
+  }
+
+  public showSimpleObjectPreview(params: SimpleObjectPreviewViewParams) {
+    this.addView(SimpleObjectPreviewView.viewName, {
+      show: SimpleObjectPreviewView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideSimpleObjectPreview() {
+    this.removeView(SimpleObjectPreviewView.viewName);
   }
 
   public showRotation(params: RotationViewParams) {

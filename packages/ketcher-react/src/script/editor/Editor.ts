@@ -136,6 +136,7 @@ import {
   getLibraryEditInitialValues,
   isSameMonomerType,
 } from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utils';
+import { getLeavingAtomForAttachmentPoint } from '../ui/views/components/MonomerCreationWizard/RnaPresetAttachmentPointValidation';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -1213,6 +1214,7 @@ class Editor implements KetcherEditor {
   } | null = null;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
+  private isReplayingHistory = false;
   private changeEventSubscriber: EditorSubscriber<ChangeEventData[]> | null =
     null;
 
@@ -3585,6 +3587,82 @@ class Editor implements KetcherEditor {
     );
   }
 
+  private assignFreedRnaConnectionAttachmentPoints() {
+    const state = this.monomerCreationState;
+    const lastHistoryAction = this.historyStack[this.historyPtr - 1];
+    if (!state?.connectionAttachmentPoints || !lastHistoryAction) {
+      return;
+    }
+
+    const struct = this.struct();
+
+    state.connectionAttachmentPoints.forEach(
+      ([attachmentAtomId, connectedAtomId], attachmentPointName) => {
+        const componentKey = this.getRnaComponentForAtom(attachmentAtomId);
+        const connectedComponentKey =
+          this.getRnaComponentForAtom(connectedAtomId);
+        const attachmentAtomPosition = struct.atoms.get(attachmentAtomId)?.pp;
+        const connectedAtomPosition = struct.atoms.get(connectedAtomId)?.pp;
+
+        if (
+          !componentKey ||
+          !connectedComponentKey ||
+          componentKey === connectedComponentKey ||
+          !attachmentAtomPosition ||
+          !connectedAtomPosition ||
+          struct.findBondId(attachmentAtomId, connectedAtomId) !== null
+        ) {
+          return;
+        }
+
+        const leavingAtomLabel = getLeavingAtomForAttachmentPoint(
+          {
+            base: KetMonomerClass.Base,
+            sugar: KetMonomerClass.Sugar,
+            phosphate: KetMonomerClass.Phosphate,
+          }[componentKey],
+          attachmentPointName,
+        );
+
+        const leavingAtomPosition = connectedAtomPosition.rotateAroundOrigin(
+          60,
+          attachmentAtomPosition,
+        );
+
+        const [bondAdditionAction, , leavingAtomId, leavingBondId] =
+          fromBondAddition(
+            this.render.ctab,
+            {
+              type: Bond.PATTERN.TYPE.SINGLE,
+              stereo: Bond.PATTERN.STEREO.NONE,
+            },
+            attachmentAtomId,
+            { label: leavingAtomLabel },
+            undefined,
+            leavingAtomPosition,
+          );
+
+        const assignAction = new Action([
+          new AssignAttachmentAtomOperation(
+            state,
+            attachmentAtomId,
+            leavingAtomId,
+            state.assignedAttachmentPoints.has(attachmentPointName)
+              ? undefined
+              : attachmentPointName,
+          ),
+        ]).perform(this.render.ctab);
+
+        lastHistoryAction.mergeWith(assignAction).mergeWith(bondAdditionAction);
+        this.addAtomsAndBondsToRnaComponent(
+          componentKey,
+          [leavingAtomId],
+          [leavingBondId],
+        );
+      },
+    );
+  }
+
   private removeAtomsAndBondsFromRnaComponents(
     atomIds: number[],
     bondIds: number[],
@@ -3915,6 +3993,10 @@ class Editor implements KetcherEditor {
         case OperationType.BOND_DELETE: {
           this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
 
+          if (!this.isReplayingHistory) {
+            this.assignFreedRnaConnectionAttachmentPoints();
+          }
+
           break;
         }
 
@@ -4094,9 +4176,6 @@ class Editor implements KetcherEditor {
       this.historyStack,
     );
 
-    const ketcherChangeEvent = ketcherProvider.getKetcher(
-      this.ketcherId,
-    ).changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -4112,18 +4191,31 @@ class Editor implements KetcherEditor {
 
     this.historyStack[this.historyPtr] = action;
 
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch();
-    } else {
-      this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch(action);
-    }
+    this.dispatchHistoryChange(action);
 
     this.render.ctab.needRecalculateVisibleAtomsAndBonds = true;
     this.render.update();
 
     KetcherLogger.log('Editor.undo(), end');
+  }
+
+  private dispatchHistoryChange(action?: Action) {
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
+
+    this.isReplayingHistory = true;
+    try {
+      if (this._tool instanceof toolsMap.paste) {
+        this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
+        ketcherChangeEvent.dispatch();
+      } else {
+        this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
+        ketcherChangeEvent.dispatch(action);
+      }
+    } finally {
+      this.isReplayingHistory = false;
+    }
   }
 
   redo() {
@@ -4133,9 +4225,6 @@ class Editor implements KetcherEditor {
       this.historyStack,
     );
 
-    const ketcherChangeEvent = ketcherProvider.getKetcher(
-      this.ketcherId,
-    ).changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -4155,13 +4244,7 @@ class Editor implements KetcherEditor {
       this.historyPtr++;
     }
 
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch();
-    } else {
-      this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch(action);
-    }
+    this.dispatchHistoryChange(action);
 
     this.render.ctab.needRecalculateVisibleAtomsAndBonds = true;
     this.render.update();

@@ -46,6 +46,12 @@ async function moveStructureToNewPosition(page: Page) {
   await page.mouse.up();
 }
 
+// Selected text object has rotation center handle in its middle that intercepts pointer events,
+// so we need to clear selection before clicking on the text
+async function clearSelection(page: Page) {
+  await clickOnCanvas(page, 10, 10);
+}
+
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -99,6 +105,7 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas(page, 'KET/test-text-object.ket');
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).cancel();
+    await clearSelection(page);
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).selectAllText();
     await deleteByKeyboard(page);
@@ -149,6 +156,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).addText('123');
     await TextEditorDialog(page).cancel();
 
+    await clearSelection(page);
     await getTextLabelLocator(page, { text: '+++' }).dblclick();
     await TextEditorDialog(page).addText('Test');
     await TextEditorDialog(page).apply();
@@ -161,6 +169,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).addText('123');
     await TextEditorDialog(page).cancel();
 
+    await clearSelection(page);
     await getTextLabelLocator(page, {
       text: 'Ketcher is a tool to draw molecular structures and chemical reactions',
     }).dblclick();
@@ -238,8 +247,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
-    await selectAllStructuresOnCanvas(page);
-    await getTextLabelLocator(page, { text: 'Test123' }).click();
+    await clearSelection(page);
     await moveStructureToNewPosition(page);
     await takeEditorScreenshot(page);
   });
@@ -253,8 +261,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
-    await selectAllStructuresOnCanvas(page);
-    await getTextLabelLocator(page, { text: 'ABC123' }).click();
+    await clearSelection(page);
     await moveStructureToNewPosition(page);
     await zoomInByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);

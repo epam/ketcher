@@ -35,6 +35,7 @@ describe('Rotate controller', () => {
     const visibleAtoms = [1];
     const editor = {
       selection,
+      explicitSelected: () => ({}),
       tool,
       render: {
         paper,
@@ -78,6 +79,7 @@ describe('Rotate controller', () => {
     const visibleAtoms = [0, 1];
     const controller = new RotateController({
       selection: () => null,
+      explicitSelected: () => ({}),
       tool: () => NonSelectTool,
       render: {
         paper,

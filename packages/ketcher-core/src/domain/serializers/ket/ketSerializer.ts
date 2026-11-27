@@ -1,4 +1,4 @@
-﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -26,6 +26,10 @@ import {
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { SimpleObject as MicromoleculeSimpleObject } from 'domain/entities/simpleObject';
+import {
+  Image as MicromoleculeImage,
+  type KetFileImageNode,
+} from 'domain/entities/image';
 import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
@@ -117,7 +121,6 @@ import {
 } from './hapticKet';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import type {
@@ -1137,6 +1140,13 @@ export class KetSerializer implements Serializer<Struct> {
       });
 
       struct.rxnPluses.add(micromoleculeRxnPlus);
+    });
+
+    drawingEntitiesManager.images.forEach((image) => {
+      const state = image.getState();
+      struct.images.add(
+        new MicromoleculeImage(image.bitmap, state.center, state.halfSize),
+      );
     });
 
     drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {

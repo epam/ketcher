@@ -26,7 +26,8 @@
     "hydrogenBond": "Enlace de hidrógeno (2)",
     "shapeRectangle": "Forma de rectángulo",
     "shapeEllipse": "Forma de elipse",
-    "shapeLine": "Forma de línea"
+    "shapeLine": "Forma de línea",
+    "addImage": "Añadir imagen"
   },
   "floatingTools": {
     "flipHorizontally": "Voltear horizontalmente",

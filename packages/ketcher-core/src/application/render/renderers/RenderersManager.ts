@@ -1,4 +1,4 @@
-﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -42,6 +42,8 @@ import { MultitailArrowRenderer } from 'application/render/renderers/MultitailAr
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import type { CoreImage } from 'domain/entities/CoreImage';
+import { ImageRenderer } from 'application/render/renderers/ImageRenderer';
 import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
@@ -595,6 +597,16 @@ export class RenderersManager {
     const simpleObjectRenderer = new SimpleObjectRenderer(simpleObject);
 
     simpleObjectRenderer.show();
+  }
+
+  public addImage(image: CoreImage) {
+    const imageRenderer = new ImageRenderer(image);
+
+    imageRenderer.show();
+  }
+
+  public deleteImage(image: CoreImage) {
+    image.baseRenderer?.remove();
   }
 
   public deleteSimpleObject(simpleObject: CoreSimpleObject) {

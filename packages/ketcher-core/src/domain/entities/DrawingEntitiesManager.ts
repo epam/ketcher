@@ -135,6 +135,12 @@ import {
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
 import { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import { CoreImage, type CoreImageState } from 'domain/entities/CoreImage';
+import {
+  ImageAddOperation,
+  ImageDeleteOperation,
+  ImageStateOperation,
+} from 'domain/entities/CoreImageOperations';
 import type { SimpleObjectMode } from 'domain/entities/simpleObject';
 import {
   SimpleObjectAddOperation,
@@ -232,6 +238,7 @@ export class DrawingEntitiesManager {
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
   public simpleObjects: Map<number, CoreSimpleObject> = new Map();
+  public images: Map<number, CoreImage> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
   public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
@@ -359,6 +366,7 @@ export class DrawingEntitiesManager {
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
       ...(this.simpleObjects as Map<number, DrawingEntity>),
+      ...(this.images as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
     ];
   }
@@ -516,6 +524,8 @@ export class DrawingEntitiesManager {
       return this.deleteRxnPlus(drawingEntity);
     } else if (drawingEntity instanceof CoreSimpleObject) {
       return this.deleteSimpleObject(drawingEntity);
+    } else if (drawingEntity instanceof CoreImage) {
+      return this.deleteImage(drawingEntity);
     } else if (drawingEntity instanceof CoreStereoFlag) {
       return this.deleteStereoFlag(drawingEntity);
     } else {
@@ -682,6 +692,7 @@ export class DrawingEntitiesManager {
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
       ...this.simpleObjects.values(),
+      ...this.images.values(),
       ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
@@ -2452,6 +2463,7 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.rxnPluses = new Pool();
     this.micromoleculesHiddenEntities.multitailArrows = new Pool();
     this.micromoleculesHiddenEntities.simpleObjects = new Pool();
+    this.micromoleculesHiddenEntities.images = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -2655,6 +2667,19 @@ export class DrawingEntitiesManager {
       );
     });
 
+    this.images.forEach((image) => {
+      const state = image.getState();
+      const imageAddCommand = targetDrawingEntitiesManager.addImage(
+        image.bitmap,
+        state.center,
+        state.halfSize,
+      );
+      const addedImage = imageAddCommand.operations[0].image as CoreImage;
+
+      command.merge(imageAddCommand);
+      mergedDrawingEntities.images.set(addedImage.id, addedImage);
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -2775,6 +2800,13 @@ export class DrawingEntitiesManager {
           entity.mode,
           entity.pos[0],
           entity.pos[1],
+        );
+      } else if (entity instanceof CoreImage) {
+        const state = entity.getState();
+        filteredDrawingEntitiesManager.addImage(
+          entity.bitmap,
+          state.center,
+          state.halfSize,
         );
       }
     });
@@ -4540,6 +4572,89 @@ export class DrawingEntitiesManager {
     );
 
     return command;
+  }
+  private deleteImageModelChange(image: CoreImage) {
+    this.images.delete(image.id);
+  }
+
+  private addImageModelChange(image: CoreImage) {
+    this.images.set(image.id, image);
+
+    return image;
+  }
+
+  public addImage(
+    bitmap: string,
+    center: Vec2,
+    halfSize: Vec2,
+    initiallySelected?: initiallySelectedType,
+  ) {
+    const image = new CoreImage(
+      bitmap,
+      center,
+      halfSize,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    const command = new Command();
+    const operation = new ImageAddOperation(
+      (existing?: CoreImage) => this.addImageModelChange(existing ?? image),
+      this.deleteImageModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteImage(image: CoreImage) {
+    const command = new Command();
+    command.addOperation(
+      new ImageDeleteOperation(
+        image,
+        this.deleteImageModelChange.bind(this),
+        this.addImageModelChange.bind(this),
+      ),
+    );
+
+    return command;
+  }
+
+  public resizeImage(image: CoreImage, topLeft: Vec2, bottomRight: Vec2) {
+    const command = new Command();
+    const fromState = image.getState();
+    command.addOperation(
+      new ImageStateOperation(
+        image,
+        fromState,
+        CoreImage.stateFromCorners(topLeft, bottomRight),
+      ),
+    );
+
+    return command;
+  }
+
+  public createImageResizeHistoryCommand(
+    image: CoreImage,
+    startState: CoreImageState,
+  ) {
+    const command = new Command();
+
+    command.addOperation(
+      new ImageStateOperation(image, startState, image.getState()),
+    );
+
+    return command;
+  }
+
+  public getSelectedImageStates(): Map<number, CoreImageState> {
+    const states = new Map<number, CoreImageState>();
+    this.images.forEach((image) => {
+      if (image.selected) {
+        states.set(image.id, image.getState());
+      }
+    });
+
+    return states;
   }
   public deleteSimpleObject(simpleObject: CoreSimpleObject) {
     const command = new Command();

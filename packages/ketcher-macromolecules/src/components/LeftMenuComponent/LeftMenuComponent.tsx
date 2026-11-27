@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -115,6 +115,12 @@ export function LeftMenuComponent() {
             disabled={isDisabled}
           />
         </Menu.Submenu>
+        <Menu.Item
+          itemId="images"
+          title={t('leftMenu.addImage')}
+          testId="images"
+          disabled={isDisabled}
+        />
       </Menu.Group>
       <Menu.Group>
         <Menu.Submenu

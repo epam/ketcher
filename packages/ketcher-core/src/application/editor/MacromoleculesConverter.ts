@@ -1,4 +1,4 @@
-﻿import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -7,6 +7,7 @@ import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
 import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
 import { SimpleObject as MicromoleculesSimpleObject } from 'domain/entities/simpleObject';
+import { Image as MicromoleculesImage } from 'domain/entities/image';
 import { SGroup } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -392,6 +393,13 @@ export class MacromoleculesConverter {
       const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
 
       reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
+    });
+
+    drawingEntitiesManager.images.forEach((image) => {
+      const state = image.getState();
+      struct.images.add(
+        new MicromoleculesImage(image.bitmap, state.center, state.halfSize),
+      );
     });
 
     drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {
@@ -963,6 +971,15 @@ export class MacromoleculesConverter {
       );
 
       command.merge(simpleObjectAddCommand);
+    });
+
+    struct.images.forEach((image) => {
+      const center = image.center();
+      drawingEntitiesManager.addImage(
+        image.bitmap,
+        center,
+        image.getBottomRightPosition().sub(center),
+      );
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);

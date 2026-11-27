@@ -8,5 +8,6 @@ describe('LeftMenuComponent shapes section', () => {
 
     expect(screen.getByTestId('shapes-drop-down-button')).toBeTruthy();
     expect(screen.getByTestId('shape-rectangle')).toBeTruthy();
+    expect(screen.getByTestId('images')).toBeTruthy();
   });
 });

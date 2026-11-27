@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import { ToolName } from 'application/editor/tools/types';
 import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
 import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
 import { SimpleObjectTool } from 'application/editor/tools/SimpleObject';
+import { ImageTool } from 'application/editor/tools/Image';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
@@ -40,6 +41,7 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.shapeRectangle]: SimpleObjectTool,
   [ToolName.shapeEllipse]: SimpleObjectTool,
   [ToolName.shapeLine]: SimpleObjectTool,
+  [ToolName.image]: ImageTool,
 };
 
 export * from './Tool';

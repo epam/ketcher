@@ -8,6 +8,7 @@ import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import type { CoreImage } from 'domain/entities/CoreImage';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 
 export interface Operation {
@@ -21,6 +22,7 @@ export interface Operation {
   multitailArrow?: MultitailArrow;
   rxnPlus?: RxnPlus;
   simpleObject?: CoreSimpleObject;
+  image?: CoreImage;
   sgroupDrawingEntity?: SGroupDrawingEntity;
   execute(renderersManager: RenderersManager): void;
   invert(renderersManager: RenderersManager): void;

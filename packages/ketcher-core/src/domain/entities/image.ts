@@ -150,6 +150,11 @@ export class Image extends BaseMicromoleculeEntity {
     this.halfSize = this.halfSize.scaled(scale);
   }
 
+  rescale(scale: number): void {
+    this._center = this._center.scaled(scale);
+    this.halfSize = this.halfSize.scaled(scale);
+  }
+
   center(): Vec2 {
     return this._center;
   }

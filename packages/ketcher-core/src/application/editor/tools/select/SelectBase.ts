@@ -22,6 +22,8 @@ import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
 import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import { ImageRenderer } from 'application/render/renderers/ImageRenderer';
+import type { CoreImage, CoreImageState } from 'domain/entities/CoreImage';
 import { Command } from 'domain/entities/Command';
 import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -102,6 +104,13 @@ abstract class SelectBase implements BaseTool {
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | undefined;
+  private imageResize:
+    | {
+        image: CoreImage;
+        cornerIndex: number;
+        startState: CoreImageState;
+      }
+    | undefined;
   private simpleObjectResize:
     | {
         simpleObject: CoreSimpleObject;
@@ -192,6 +201,13 @@ abstract class SelectBase implements BaseTool {
         this.startSimpleObjectResize(handleRenderer, handleIndex);
         return;
       }
+      if (
+        handleIndex !== undefined &&
+        handleRenderer instanceof ImageRenderer
+      ) {
+        this.startImageResize(handleRenderer, handleIndex);
+        return;
+      }
 
       const renderer = event.target?.__data__;
 
@@ -238,7 +254,53 @@ abstract class SelectBase implements BaseTool {
     };
   }
 
+  private startImageResize(renderer: ImageRenderer, cornerIndex: number) {
+    this.mode = 'resizing';
+    this.imageResize = {
+      image: renderer.image,
+      cornerIndex,
+      startState: renderer.image.getState(),
+    };
+  }
+
+  private updateImageResize() {
+    if (!this.imageResize) {
+      return;
+    }
+
+    const { image, cornerIndex } = this.imageResize;
+    const pointer = Coordinates.canvasToModel(
+      this.editor.lastCursorPositionOfCanvas,
+    );
+    const modelChanges = this.editor.drawingEntitiesManager.resizeImage(
+      image,
+      cornerIndex === 0 ? pointer : image.position,
+      cornerIndex === 0 ? image.bottomRight : pointer,
+    );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  private finishImageResize() {
+    const resize = this.imageResize;
+    this.mode = 'standby';
+    this.imageResize = undefined;
+    if (!resize) {
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.createImageResizeHistoryCommand(
+        resize.image,
+        resize.startState,
+      );
+    EditorHistory.getInstance(this.editor).update(modelChanges);
+  }
+
   private updateSimpleObjectResize() {
+    if (this.imageResize) {
+      this.updateImageResize();
+      return;
+    }
     if (!this.simpleObjectResize) {
       return;
     }
@@ -254,6 +316,10 @@ abstract class SelectBase implements BaseTool {
   }
 
   private finishSimpleObjectResize() {
+    if (this.imageResize) {
+      this.finishImageResize();
+      return;
+    }
     const resize = this.simpleObjectResize;
     this.mode = 'standby';
     this.simpleObjectResize = undefined;

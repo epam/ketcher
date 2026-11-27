@@ -26,7 +26,8 @@
     "hydrogenBond": "Hydrogen Bond (2)",
     "shapeRectangle": "Shape Rectangle",
     "shapeEllipse": "Shape Ellipse",
-    "shapeLine": "Shape Line"
+    "shapeLine": "Shape Line",
+    "addImage": "Add Image"
   },
   "floatingTools": {
     "flipHorizontally": "Flip horizontally",

@@ -44,23 +44,14 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
     assert(atomPair);
 
     if (assignedAttachmentPoints.has(this.newName)) {
-      const existingAtomPair = assignedAttachmentPoints.get(this.newName);
-      assert(existingAtomPair);
-
-      assignedAttachmentPoints.set(this.newName, atomPair);
-      assignedAttachmentPoints.set(this.currentName, existingAtomPair);
-
-      BaseOperation.invalidateAtom(restruct, atomPair[0]);
-      BaseOperation.invalidateAtom(restruct, atomPair[1]);
-      BaseOperation.invalidateAtom(restruct, existingAtomPair[0]);
-      BaseOperation.invalidateAtom(restruct, existingAtomPair[1]);
-    } else {
-      assignedAttachmentPoints.set(this.newName, atomPair);
-      assignedAttachmentPoints.delete(this.currentName);
-
-      BaseOperation.invalidateAtom(restruct, atomPair[0]);
-      BaseOperation.invalidateAtom(restruct, atomPair[1]);
+      return;
     }
+
+    assignedAttachmentPoints.set(this.newName, atomPair);
+    assignedAttachmentPoints.delete(this.currentName);
+
+    BaseOperation.invalidateAtom(restruct, atomPair[0]);
+    BaseOperation.invalidateAtom(restruct, atomPair[1]);
   }
 
   invert() {

@@ -1,6 +1,6 @@
 # Reactions
 
-A user builds a reaction from reactants, a reaction arrow, plus signs, and products, or pastes one as reaction SMILES. Auto-Mapping numbers matching atoms on both sides. Behavior is owned by [openspec/specs/reactions/spec.md](../../../../openspec/specs/reactions/spec.md).
+A user builds a reaction from reactants, a reaction arrow, plus signs, and products, or pastes one as reaction SMILES. Auto-Mapping numbers matching atoms on both sides. Behavior is owned by [.memory-bank/features/reactions.md](../../../../.memory-bank/features/reactions.md).
 
 ## Sub-features
 

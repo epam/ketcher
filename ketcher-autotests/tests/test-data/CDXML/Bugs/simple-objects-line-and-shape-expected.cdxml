@@ -16,9 +16,9 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1" BoundingBox="0.000000 352.500000 567.076111 -0.000000">
+    <page HeightPages="1" WidthPages="1" BoundingBox="0.000000 349.500000 564.826050 -0.000000">
         <fragment id="4"/>
-        <graphic id="5" BoundingBox="369.076080 125.999992 567.076111 252.750000" GraphicType="Line"/>
-        <graphic id="6" BoundingBox="315.076080 352.500000 519.076050 231.750000" Center3D="417.076050 292.125000 0" MajorAxisEnd3D="519.076050 292.125000 0" MinorAxisEnd3D="417.076050 352.500000 0" GraphicType="Oval"/>
+        <graphic id="5" BoundingBox="366.826080 123.000000 564.826050 249.750000" GraphicType="Line"/>
+        <graphic id="6" BoundingBox="312.826080 349.500000 516.826111 228.750000" Center3D="414.826111 289.125000 0" MajorAxisEnd3D="516.826111 289.125000 0" MinorAxisEnd3D="414.826111 349.500000 0" GraphicType="Oval"/>
     </page>
 </CDXML>

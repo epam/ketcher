@@ -30,10 +30,7 @@ const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
   action,
 ) => {
   const { type, payload } = action;
-  if (type === 'UPDATE_FLOATING_TOOLS') {
-    return { ...state, ...payload };
-  }
-  return state;
+  return type === 'UPDATE_FLOATING_TOOLS' ? { ...state, ...payload } : state;
 };
 
 export default floatingToolsReducer;

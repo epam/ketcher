@@ -200,5 +200,5 @@ export function isEstablishHydrogenBondDisabled(
 }
 
 export function isNodeContainHydrogenBonds(node: SequenceNode | undefined) {
-  return node?.monomers.some((monomer) => monomer.hydrogenBonds.length !== 0);
+  return node?.monomers.some((monomer) => monomer.hydrogenBonds.length > 0);
 }

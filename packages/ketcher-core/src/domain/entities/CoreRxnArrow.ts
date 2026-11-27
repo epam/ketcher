@@ -18,20 +18,20 @@ export class RxnArrow extends DrawingEntity {
     super();
   }
 
-  public get startPosition() {
-    return this.startEndPosition[0];
-  }
-
   private set startPosition(newStartPosition: Vec2) {
     this.startEndPosition[0] = newStartPosition;
   }
 
-  public get endPosition() {
-    return this.startEndPosition[1];
-  }
-
   private set endPosition(newEndPosition: Vec2) {
     this.startEndPosition[1] = newEndPosition;
+  }
+
+  public get startPosition() {
+    return this.startEndPosition[0];
+  }
+
+  public get endPosition() {
+    return this.startEndPosition[1];
   }
 
   public get center(): Vec2 {

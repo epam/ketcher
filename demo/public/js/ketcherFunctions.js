@@ -1,12 +1,15 @@
 const KetcherAPI = (ketcherInstance) => {
   return {
     // Accepts CTAB as string
-    renderFromCtab: function (str) {
-      ketcherInstance.setMolecule(str);
+    renderFromCtab: function (string_) {
+      ketcherInstance.setMolecule(string_);
     },
 
     clearSelection: function () {
-      ketcherInstance.editor.selection(null);
+      // Explicit argument on purpose: selection() with none is the getter,
+      // since the API branches on arguments.length. undefined here is what
+      // clears the selection.
+      ketcherInstance.editor.selection(undefined);
     },
 
     selectAll: function () {
@@ -26,7 +29,7 @@ const KetcherAPI = (ketcherInstance) => {
     getSelectedAtomId: function () {
       const selection = ketcherInstance.editor.selection();
       if (!selection?.atoms) {
-        return null;
+        return;
       }
 
       let atoms = selection.atoms.join(', ');

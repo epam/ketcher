@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import './index.less';
+import * as editorStyles from './index.less';
 
 import init, { type Config } from './script';
 import { type RefObject, useCallback, useEffect, useRef } from 'react';
@@ -30,6 +30,9 @@ import {
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
 import type { KetcherBuilder } from './script/builders';
+
+// Bind the Less import so it stays in JS but is erased from declarations.
+void editorStyles;
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -84,35 +87,51 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       appRoot: appRootRef.current,
     });
 
-    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
-      cleanupRef.current = cleanup;
-      ketcherBuilderRef.current = builder;
-      ketcherRef.current = ketcher;
-      setServerRef.current = setServer;
-      initialProps.onSetKetcherId?.(ketcher.id);
+    const initPromise = initPromiseRef.current;
+    if (initPromise) {
+      void (async () => {
+        const { ketcher, cleanup, builder, setServer } = await initPromise;
+        cleanupRef.current = cleanup;
+        ketcherBuilderRef.current = builder;
+        ketcherRef.current = ketcher;
+        setServerRef.current = setServer;
+        initialProps.onSetKetcherId?.(ketcher.id);
 
-      if (ketcher && typeof initialProps.onInit === 'function') {
+        if (!ketcher || typeof initialProps.onInit !== 'function') {
+          return;
+        }
+
         initialProps.onInit(ketcher);
         const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
         globalThis.dispatchEvent(ketcherInitEvent);
-      }
-    });
+      })();
+    }
   }, []);
 
   useEffect(() => {
     if (initPromiseRef.current === null) {
       initKetcher();
     } else {
-      initPromiseRef.current?.finally(() => {
-        initKetcher();
-      });
+      const initPromise = initPromiseRef.current;
+      void (async () => {
+        try {
+          await initPromise;
+        } finally {
+          initKetcher();
+        }
+      })();
     }
 
     return () => {
-      initPromiseRef.current?.then(() => {
-        cleanupRef.current?.();
-        appRootRef.current?.unmount();
-      });
+      const initPromise = initPromiseRef.current;
+      if (initPromise) {
+        void (async () => {
+          await initPromise;
+          cleanupRef.current?.();
+          appRootRef.current?.unmount();
+          ketcherBuilderRef.current?.destroy();
+        })();
+      }
     };
   }, [initKetcher]);
 

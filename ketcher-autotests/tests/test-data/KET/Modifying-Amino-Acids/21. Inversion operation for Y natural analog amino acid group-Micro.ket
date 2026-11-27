@@ -855,8 +855,7 @@
             "y": -4.25
         },
         "alias": "dY",
-        "templateId": "dY___D-Tyrosine",
-        "seqid": 14
+        "templateId": "dY___D-Tyrosine"
     },
     "monomer14": {
         "type": "monomer",

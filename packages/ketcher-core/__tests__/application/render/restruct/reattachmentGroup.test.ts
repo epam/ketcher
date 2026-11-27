@@ -3,7 +3,7 @@ import { Render, ReStruct } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'domain/entities';
 
-jest.mock('application/render/restruct/hoverPath', () => ({
+vi.mock('application/render/restruct/hoverPath', () => ({
   uniteHoverPaths: (hoverPaths: Array<{ remove?: () => void }>) => {
     hoverPaths.forEach((hoverPath) => hoverPath.remove?.());
     return hoverPaths.length > 0 ? 'M 0 0 L 1 0 L 1 1 Z' : undefined;

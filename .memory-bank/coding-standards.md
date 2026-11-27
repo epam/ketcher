@@ -30,7 +30,7 @@ Conventions that hold in the repo today. Each one names its evidence: a lint rul
 
 ## Tests
 
-- Unit tests run on Jest. Each package has a `test:unit` script. Evidence: `"test:unit": "jest"` in `packages/ketcher-core/package.json:43`, and `jest --passWithNoTests` in the other three packages.
+- Unit tests run on Vitest. Each package has a `test:unit` script and a `test:related` script for the files a branch changes. Evidence: `"test:unit": "vitest run"` and `"test:related": "vitest related --passWithNoTests"` in `packages/ketcher-react/package.json:44,46`.
 - E2E tests run on Playwright. Their conventions live in `.memory-bank/testing/testing.md`. Evidence: `ketcher-autotests/playwright.config.ts`.
 
 ## Tooling and process

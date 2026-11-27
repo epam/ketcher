@@ -20,11 +20,11 @@ import style from '../../../../../components/styles/consts';
 const VerticalDivider = styled('hr')`
   margin: 0px 6px;
   flex-shrink: 0;
-  height: 45%;
+  height: 18px;
   align-self: center;
   border-width: 0px thin 0px 0px;
   border-style: solid;
-  border-color: ${style.color.darkGrey};
+  border-color: ${style.color.divider};
 `;
 
 const HorizontalDividerElement = styled('hr')`

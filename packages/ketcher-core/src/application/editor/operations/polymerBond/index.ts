@@ -82,14 +82,14 @@ export class PolymerBondMoveOperation implements Operation {
 }
 
 /**
- * Snaps a polymer bond's endpoints to the current positions of its linked
- * monomers by calling `moveToLinkedEntities()` and then re-rendering.
- *
- * Unlike `PolymerBondMoveOperation`, this operation is fully symmetric:
- * both `execute` and `invert` snap the bond to its monomers' current
- * positions. This makes it suitable for undo-safe chain-shift operations
- * where monomers are moved and bonds must follow in both directions.
- */
+Snaps a polymer bond's endpoints to the current positions of its linked
+monomers by calling `moveToLinkedEntities()` and then re-rendering.
+
+Unlike `PolymerBondMoveOperation`, this operation is fully symmetric:
+both `execute` and `invert` snap the bond to its monomers' current
+positions. This makes it suitable for undo-safe chain-shift operations
+where monomers are moved and bonds must follow in both directions.
+*/
 export class PolymerBondSnapToMonomersOperation implements Operation {
   constructor(public polymerBond: PolymerBond) {}
 
@@ -172,7 +172,7 @@ export class SelectLayoutModeOperation implements Operation {
     public _onExecute: () => void,
     public _onInvert: () => void,
     public mode: LayoutMode,
-    public prevMode,
+    public previousMode,
     private readonly onChangeComplete?: () => void,
   ) {
     this.onExecute = _onExecute;
@@ -197,10 +197,10 @@ export class SelectLayoutModeOperation implements Operation {
 }
 
 export class ReconnectPolymerBondOperation implements Operation {
-  public polymerBond;
   constructor(
     private readonly reconnectPolymerBondModelChange: () => PolymerBond,
     private readonly revertReconnectPolymerBondModelChange: () => PolymerBond,
+    public polymerBond: PolymerBond,
   ) {}
 
   public execute(renderersManager: RenderersManager) {

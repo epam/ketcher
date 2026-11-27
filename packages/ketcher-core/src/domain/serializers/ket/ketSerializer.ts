@@ -218,13 +218,14 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
       imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
-    default:
+    default: {
       break;
+    }
   }
 }
 
 export class KetSerializer implements Serializer<Struct> {
-  private static _monomerFactory: MonomerFactoryFn | null = null;
+  private static _monomerFactory: MonomerFactoryFn | undefined;
 
   public static setMonomerFactory(factory: MonomerFactoryFn): void {
     KetSerializer._monomerFactory = factory;
@@ -371,11 +372,13 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push(imageToKet(item));
           break;
         }
-        case MULTITAIL_ARROW_SERIALIZE_KEY:
+        case MULTITAIL_ARROW_SERIALIZE_KEY: {
           result.root.nodes.push(multitailArrowToKet(item));
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
     });
 
@@ -389,11 +392,11 @@ export class KetSerializer implements Serializer<Struct> {
       originalAtomToKetLocation,
       attachmentGroupLocations,
     );
-    if (connections.length) {
+    if (connections.length > 0) {
       result.root.connections = connections;
     }
 
-    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
+    return JSON.stringify({ ket_version: '2.0.0', ...result }, undefined, 4);
   }
 
   private validateMonomerNodeTemplate(
@@ -622,8 +625,9 @@ export class KetSerializer implements Serializer<Struct> {
           command.merge(monomerAdditionCommand);
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
     const fileContentForMicromolecules =
@@ -769,8 +773,9 @@ export class KetSerializer implements Serializer<Struct> {
 
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
 
@@ -924,16 +929,16 @@ export class KetSerializer implements Serializer<Struct> {
 
         monomerItem.struct.mergeInto(
           struct,
-          null,
-          null,
+          undefined,
+          undefined,
           false,
           false,
           atomIdMap,
-          null,
-          null,
-          null,
-          null,
-          null,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
           bondIdMap,
         );
         monomerToAtomIdMap.set(monomer, atomIdMap);
@@ -1077,24 +1082,28 @@ export class KetSerializer implements Serializer<Struct> {
 
     if (shouldSetSelection) {
       drawingEntitiesManager.atoms.forEach((atom) => {
-        if (atom.selected) {
-          const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
-          const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+        if (!atom.selected) {
+          return;
+        }
 
-          if (isNumber(globalAtomId)) {
-            moleculesSelection.atoms.push(globalAtomId);
-          }
+        const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
+        const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+
+        if (isNumber(globalAtomId)) {
+          moleculesSelection.atoms.push(globalAtomId);
         }
       });
 
       drawingEntitiesManager.bonds.forEach((bond) => {
-        if (bond.selected) {
-          const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
-          const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+        if (!bond.selected) {
+          return;
+        }
 
-          if (isNumber(globalBondId)) {
-            moleculesSelection.bonds.push(globalBondId);
-          }
+        const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
+        const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+
+        if (isNumber(globalBondId)) {
+          moleculesSelection.bonds.push(globalBondId);
         }
       });
     }
@@ -1161,26 +1170,28 @@ export class KetSerializer implements Serializer<Struct> {
       > = new Map();
       attachmentPoints.forEach((attachmentPoint) => {
         if (
-          isNumber(attachmentPoint.leaveAtomId) &&
-          Atom.isHiddenLeavingGroupAtom(
+          !isNumber(attachmentPoint.leaveAtomId) ||
+          !Atom.isHiddenLeavingGroupAtom(
             struct,
             attachmentPoint.leaveAtomId,
             true,
             true,
           )
         ) {
-          const attachmentPointClone = new SGroupAttachmentPoint(
-            attachmentPoint.atomId,
-            undefined,
-            attachmentPoint.attachmentId,
-            attachmentPoint.attachmentPointNumber,
-          );
-          attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
-          sgroup.atoms.splice(
-            sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
-            1,
-          );
+          return;
         }
+
+        const attachmentPointClone = new SGroupAttachmentPoint(
+          attachmentPoint.atomId,
+          undefined,
+          attachmentPoint.attachmentId,
+          attachmentPoint.attachmentPointNumber,
+        );
+        attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
+        sgroup.atoms.splice(
+          sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
+          1,
+        );
       });
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {
@@ -1254,7 +1265,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     return JSON.stringify(
       fileContent,
-      null,
+      undefined,
       isBeautified ? 4 : undefined,
     ) as unknown as string;
   }

@@ -19,15 +19,16 @@ import { OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class UpdateIfThen extends BaseOperation {
-  readonly rgid_new: number;
-  readonly rgid_old: number;
-  readonly ifThenHistory: Map<number, number>;
-  readonly skipRgids: Array<number>;
   static InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     history: Map<number, number>,
   ) => BaseOperation;
+
+  readonly rgid_new: number;
+  readonly rgid_old: number;
+  readonly ifThenHistory: Map<number, number>;
+  readonly skipRgids: Array<number>;
 
   constructor(rgNew: number, rgOld: number, skipRgids: Array<number> = []) {
     super(OperationType.UPDATE_IF_THEN);
@@ -41,11 +42,13 @@ class UpdateIfThen extends BaseOperation {
     const struct = restruct.molecule;
 
     struct.rgroups.forEach((rg, rgid) => {
-      if (rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid)) {
-        rg.ifthen = this.rgid_new;
-        this.ifThenHistory.set(rgid, this.rgid_old);
-        struct.rgroups.set(rgid, rg);
+      if (rg.ifthen !== this.rgid_old || this.skipRgids.includes(rgid)) {
+        return;
       }
+
+      rg.ifthen = this.rgid_new;
+      this.ifThenHistory.set(rgid, this.rgid_old);
+      struct.rgroups.set(rgid, rg);
     });
   }
 

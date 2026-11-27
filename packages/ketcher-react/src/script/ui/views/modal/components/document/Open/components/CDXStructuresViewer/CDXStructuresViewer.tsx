@@ -75,8 +75,9 @@ export const CDXStructuresViewer = ({
 
   const getImage = useCallback(
     (str, index) => {
-      parseStruct(str, server)
-        .then((parsedStruct) => {
+      void (async () => {
+        try {
+          const parsedStruct = await parseStruct(str, server);
           const { struct, positionAdjusted } =
             normalizePptxStructure(parsedStruct);
           const structStr = positionAdjusted
@@ -90,15 +91,15 @@ export const CDXStructuresViewer = ({
               expandSgroups: !positionAdjusted,
             },
           }));
-        })
-        .catch((error) => {
+        } catch (error) {
           setItemsMap((state) => ({
             ...state,
             [index]: {
               error: error instanceof Error ? error.message : String(error),
             },
           }));
-        });
+        }
+      })();
     },
     [server],
   );

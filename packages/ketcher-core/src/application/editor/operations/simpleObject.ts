@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
+import { makeCircleFromEllipse } from 'application/render/renderers/simpleObjectGeometry';
 import { Vec2 } from 'domain/entities/vec2';
 
 import Base from './BaseOperation';
@@ -320,14 +321,4 @@ export class SimpleObjectResize extends Base {
     const { d } = this.data;
     return d.x === 0 && d.y === 0;
   }
-}
-
-export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
-  const diff = Vec2.diff(position1, position0);
-  const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y;
-  return new Vec2(
-    position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
-    position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
-    0,
-  );
 }

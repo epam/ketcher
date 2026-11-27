@@ -4,6 +4,7 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { Chem } from 'domain/entities/Chem';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
@@ -58,6 +59,19 @@ export function getRenderedStructuresBbox(
         ? monomerPosition.y
         : Math.max(bottom, monomerPosition.y);
   });
+
+  if (!drawingEntities) {
+    editor.drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {
+      simpleObject
+        .mapPoints((point) => Coordinates.modelToCanvas(point))
+        .forEach((point) => {
+          left = left === undefined ? point.x : Math.min(left, point.x);
+          right = right === undefined ? point.x : Math.max(right, point.x);
+          top = top === undefined ? point.y : Math.min(top, point.y);
+          bottom = bottom === undefined ? point.y : Math.max(bottom, point.y);
+        });
+    });
+  }
 
   if (includePolymerBonds) {
     editor.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {

@@ -80,6 +80,12 @@
     "importFailed": "Import failed: {message}",
     "exportFailed": "Export failed"
   },
+  "textEditor": {
+    "title": "Text Editor",
+    "toolbar": "Text formatting toolbar",
+    "fontSize": "Font Size",
+    "text": "Text:"
+  },
   "confirmationDialog": {
     "defaultTitle": "Confirm your action"
   },

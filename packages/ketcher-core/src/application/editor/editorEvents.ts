@@ -29,6 +29,7 @@ export interface IEditorEvents {
   error: Subscription;
   openErrorModal: Subscription;
   openMonomerConnectionModal: Subscription;
+  openTextEditor: Subscription;
   openInsertionConnectionModal: Subscription;
   createInsertionBondsViaModal: Subscription<CreateInsertionBondsViaModalPayload>;
   mouseOverPolymerBond: Subscription;
@@ -112,6 +113,7 @@ export const editorEvents: IEditorEvents = {
   error: new Subscription(),
   openErrorModal: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
+  openTextEditor: new Subscription(),
   openInsertionConnectionModal: new Subscription(),
   createInsertionBondsViaModal:
     new Subscription<CreateInsertionBondsViaModalPayload>(),

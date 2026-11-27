@@ -1239,7 +1239,7 @@ export class Struct {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
 
-    this.images.forEach((image) => image.rescaleSize(scale));
+    this.images.forEach((image) => image.rescale(scale));
     this.multitailArrows.forEach((multitailArrow) =>
       multitailArrow.rescaleSize(scale),
     );

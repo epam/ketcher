@@ -134,6 +134,25 @@ import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
+import { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import { CoreImage, type CoreImageState } from 'domain/entities/CoreImage';
+import { CoreText, type CoreTextState } from 'domain/entities/CoreText';
+import {
+  TextAddOperation,
+  TextDeleteOperation,
+  TextStateOperation,
+} from 'domain/entities/CoreTextOperations';
+import {
+  ImageAddOperation,
+  ImageDeleteOperation,
+  ImageStateOperation,
+} from 'domain/entities/CoreImageOperations';
+import type { SimpleObjectMode } from 'domain/entities/simpleObject';
+import {
+  SimpleObjectAddOperation,
+  SimpleObjectDeleteOperation,
+  SimpleObjectTransformOperation,
+} from 'domain/entities/CoreSimpleObjectOperations';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
@@ -224,6 +243,9 @@ export class DrawingEntitiesManager {
   public rxnArrows: Map<number, RxnArrow> = new Map();
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
+  public simpleObjects: Map<number, CoreSimpleObject> = new Map();
+  public images: Map<number, CoreImage> = new Map();
+  public texts: Map<number, CoreText> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
   public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
@@ -350,6 +372,9 @@ export class DrawingEntitiesManager {
       ...(this.rxnArrows as Map<number, DrawingEntity>),
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
+      ...(this.simpleObjects as Map<number, DrawingEntity>),
+      ...(this.images as Map<number, DrawingEntity>),
+      ...(this.texts as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
     ];
   }
@@ -505,6 +530,12 @@ export class DrawingEntitiesManager {
       return this.deleteMultitailArrow(drawingEntity);
     } else if (drawingEntity instanceof RxnPlus) {
       return this.deleteRxnPlus(drawingEntity);
+    } else if (drawingEntity instanceof CoreSimpleObject) {
+      return this.deleteSimpleObject(drawingEntity);
+    } else if (drawingEntity instanceof CoreImage) {
+      return this.deleteImage(drawingEntity);
+    } else if (drawingEntity instanceof CoreText) {
+      return this.deleteText(drawingEntity);
     } else if (drawingEntity instanceof CoreStereoFlag) {
       return this.deleteStereoFlag(drawingEntity);
     } else {
@@ -670,6 +701,9 @@ export class DrawingEntitiesManager {
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
+      ...this.simpleObjects.values(),
+      ...this.images.values(),
+      ...this.texts.values(),
       ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
@@ -785,6 +819,22 @@ export class DrawingEntitiesManager {
       );
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      if (!simpleObject.selected) {
+        return;
+      }
+
+      const fromPoints = simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      );
+      const toPoints = simpleObject.mapPoints((point) =>
+        point.rotateAroundOrigin(angleInDegrees, center),
+      );
+
+      command.addOperation(
+        new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+      );
+    });
     this.polymerBonds.forEach((drawingEntity) => {
       if (
         drawingEntity.selected ||
@@ -879,6 +929,24 @@ export class DrawingEntitiesManager {
       );
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      if (!simpleObject.selected) {
+        return;
+      }
+
+      const fromPoints = simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      );
+      const toPoints = simpleObject.mapPoints((point) =>
+        flipDirection === 'horizontal'
+          ? new Vec2(2 * center.x - point.x, point.y)
+          : new Vec2(point.x, 2 * center.y - point.y),
+      );
+
+      command.addOperation(
+        new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+      );
+    });
     this.polymerBonds.forEach((drawingEntity) => {
       if (
         drawingEntity.selected ||
@@ -2405,6 +2473,9 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.rxnArrows = new Pool();
     this.micromoleculesHiddenEntities.rxnPluses = new Pool();
     this.micromoleculesHiddenEntities.multitailArrows = new Pool();
+    this.micromoleculesHiddenEntities.simpleObjects = new Pool();
+    this.micromoleculesHiddenEntities.images = new Pool();
+    this.micromoleculesHiddenEntities.texts = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -2591,6 +2662,48 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.rxnPluses.set(addedPlus.id, addedPlus);
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      const simpleObjectAddCommand =
+        targetDrawingEntitiesManager.addSimpleObject(
+          simpleObject.mode,
+          simpleObject.pos[0],
+          simpleObject.pos[1],
+        );
+      const addedSimpleObject = simpleObjectAddCommand.operations[0]
+        .simpleObject as CoreSimpleObject;
+
+      command.merge(simpleObjectAddCommand);
+      mergedDrawingEntities.simpleObjects.set(
+        addedSimpleObject.id,
+        addedSimpleObject,
+      );
+    });
+
+    this.texts.forEach((text) => {
+      const textAddCommand = targetDrawingEntitiesManager.addText(
+        text.content,
+        text.position,
+        text.pos,
+      );
+      const addedText = textAddCommand.operations[0].text as CoreText;
+
+      command.merge(textAddCommand);
+      mergedDrawingEntities.texts.set(addedText.id, addedText);
+    });
+
+    this.images.forEach((image) => {
+      const state = image.getState();
+      const imageAddCommand = targetDrawingEntitiesManager.addImage(
+        image.bitmap,
+        state.center,
+        state.halfSize,
+      );
+      const addedImage = imageAddCommand.operations[0].image as CoreImage;
+
+      command.merge(imageAddCommand);
+      mergedDrawingEntities.images.set(addedImage.id, addedImage);
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -2706,6 +2819,25 @@ export class DrawingEntitiesManager {
           entity.initiallySelected,
           entity,
         );
+      } else if (entity instanceof CoreSimpleObject) {
+        filteredDrawingEntitiesManager.addSimpleObject(
+          entity.mode,
+          entity.pos[0],
+          entity.pos[1],
+        );
+      } else if (entity instanceof CoreText) {
+        filteredDrawingEntitiesManager.addText(
+          entity.content,
+          entity.position,
+          entity.pos,
+        );
+      } else if (entity instanceof CoreImage) {
+        const state = entity.getState();
+        filteredDrawingEntitiesManager.addImage(
+          entity.bitmap,
+          state.center,
+          state.halfSize,
+        );
       }
     });
 
@@ -2782,6 +2914,11 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addRxnPlus(rxnPlus);
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      editor.renderersContainer.deleteSimpleObject(simpleObject);
+      editor.renderersContainer.addSimpleObject(simpleObject);
+    });
+
     this.sgroups.forEach((sgroup) => {
       editor.renderersContainer.deleteSGroup(sgroup);
       editor.renderersContainer.addSGroup(sgroup);
@@ -2839,6 +2976,10 @@ export class DrawingEntitiesManager {
 
     this.rxnPluses.forEach((rxnPlus) => {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
+    });
+
+    this.simpleObjects.forEach((simpleObject) => {
+      editor.renderersContainer.deleteSimpleObject(simpleObject);
     });
 
     this.stereoFlags.forEach((stereoFlag) => {
@@ -4389,6 +4530,239 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private deleteSimpleObjectModelChange(simpleObject: CoreSimpleObject) {
+    this.simpleObjects.delete(simpleObject.id);
+  }
+
+  private addSimpleObjectModelChange(simpleObject: CoreSimpleObject) {
+    this.simpleObjects.set(simpleObject.id, simpleObject);
+
+    return simpleObject;
+  }
+
+  public addSimpleObject(
+    mode: SimpleObjectMode,
+    start: Vec2,
+    end: Vec2,
+    initiallySelected?: initiallySelectedType,
+  ) {
+    const simpleObject = new CoreSimpleObject(
+      mode,
+      start,
+      end,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    const command = new Command();
+    const operation = new SimpleObjectAddOperation(
+      (existing?: CoreSimpleObject) =>
+        this.addSimpleObjectModelChange(existing ?? simpleObject),
+      this.deleteSimpleObjectModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public resizeSimpleObjectPoint(
+    simpleObject: CoreSimpleObject,
+    pointIndex: number,
+    modelPosition: Vec2,
+  ) {
+    const command = new Command();
+    const fromPoints = simpleObject.mapPoints(
+      (point) => new Vec2(point.x, point.y),
+    );
+    const toPoints = fromPoints.map((point, index) =>
+      index === pointIndex ? new Vec2(modelPosition.x, modelPosition.y) : point,
+    ) as [Vec2, Vec2];
+
+    command.addOperation(
+      new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+    );
+
+    return command;
+  }
+
+  public createSimpleObjectResizeHistoryCommand(
+    simpleObject: CoreSimpleObject,
+    startPoints: [Vec2, Vec2],
+  ) {
+    const command = new Command();
+    const currentPoints = simpleObject.mapPoints(
+      (point) => new Vec2(point.x, point.y),
+    );
+
+    command.addOperation(
+      new SimpleObjectTransformOperation(
+        simpleObject,
+        startPoints,
+        currentPoints,
+      ),
+    );
+
+    return command;
+  }
+  private deleteImageModelChange(image: CoreImage) {
+    this.images.delete(image.id);
+  }
+
+  private addImageModelChange(image: CoreImage) {
+    this.images.set(image.id, image);
+
+    return image;
+  }
+
+  public addImage(
+    bitmap: string,
+    center: Vec2,
+    halfSize: Vec2,
+    initiallySelected?: initiallySelectedType,
+  ) {
+    const image = new CoreImage(
+      bitmap,
+      center,
+      halfSize,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    const command = new Command();
+    const operation = new ImageAddOperation(
+      (existing?: CoreImage) => this.addImageModelChange(existing ?? image),
+      this.deleteImageModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteImage(image: CoreImage) {
+    const command = new Command();
+    command.addOperation(
+      new ImageDeleteOperation(
+        image,
+        this.deleteImageModelChange.bind(this),
+        this.addImageModelChange.bind(this),
+      ),
+    );
+
+    return command;
+  }
+
+  public resizeImage(image: CoreImage, topLeft: Vec2, bottomRight: Vec2) {
+    const command = new Command();
+    const fromState = image.getState();
+    command.addOperation(
+      new ImageStateOperation(
+        image,
+        fromState,
+        CoreImage.stateFromCorners(topLeft, bottomRight),
+      ),
+    );
+
+    return command;
+  }
+
+  public createImageResizeHistoryCommand(
+    image: CoreImage,
+    startState: CoreImageState,
+  ) {
+    const command = new Command();
+
+    command.addOperation(
+      new ImageStateOperation(image, startState, image.getState()),
+    );
+
+    return command;
+  }
+
+  public getSelectedImageStates(): Map<number, CoreImageState> {
+    const states = new Map<number, CoreImageState>();
+    this.images.forEach((image) => {
+      if (image.selected) {
+        states.set(image.id, image.getState());
+      }
+    });
+
+    return states;
+  }
+  private deleteTextModelChange(text: CoreText) {
+    this.texts.delete(text.id);
+  }
+
+  private addTextModelChange(text: CoreText) {
+    this.texts.set(text.id, text);
+
+    return text;
+  }
+
+  public addText(content: string, position: Vec2, pos: Vec2[] = []) {
+    const text = new CoreText(content, position);
+    text.pos = pos.map((point) => new Vec2(point.x, point.y));
+    const command = new Command();
+    const operation = new TextAddOperation(
+      (existing?: CoreText) => this.addTextModelChange(existing ?? text),
+      this.deleteTextModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteText(text: CoreText) {
+    const command = new Command();
+
+    command.addOperation(
+      new TextDeleteOperation(
+        text,
+        this.deleteTextModelChange.bind(this),
+        this.addTextModelChange.bind(this),
+      ),
+    );
+
+    return command;
+  }
+
+  public updateText(text: CoreText, content: string) {
+    const command = new Command();
+    const fromState = text.getState();
+
+    command.addOperation(
+      new TextStateOperation(text, fromState, {
+        content,
+        position: fromState.position,
+      }),
+    );
+
+    return command;
+  }
+
+  public createTextUpdateHistoryCommand(
+    text: CoreText,
+    startState: CoreTextState,
+  ) {
+    const command = new Command();
+
+    command.addOperation(
+      new TextStateOperation(text, startState, text.getState()),
+    );
+
+    return command;
+  }
+  public deleteSimpleObject(simpleObject: CoreSimpleObject) {
+    const command = new Command();
+    const operation = new SimpleObjectDeleteOperation(
+      simpleObject,
+      this.deleteSimpleObjectModelChange.bind(this),
+      this.addSimpleObjectModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
   private deleteRxnPlusModelChange(rxnPlus: RxnPlus) {
     this.rxnPluses.delete(rxnPlus.id);
   }
@@ -4522,6 +4896,7 @@ export class DrawingEntitiesManager {
 
   public createRotationHistoryCommand(
     initialPositions: Map<number, Vec2>,
+    initialSimpleObjectPoints: Map<number, [Vec2, Vec2]> = new Map(),
   ): Command {
     const command = new Command();
     const zeroOffset = new Vec2(0, 0);
@@ -4608,7 +4983,35 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      const fromPoints = initialSimpleObjectPoints.get(simpleObject.id);
+      if (!simpleObject.selected || !fromPoints) {
+        return;
+      }
+
+      const toPoints = simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      );
+      command.addOperation(
+        new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+      );
+    });
+
     return command;
+  }
+
+  public getSelectedSimpleObjectPoints(): Map<number, [Vec2, Vec2]> {
+    const points = new Map<number, [Vec2, Vec2]>();
+    this.simpleObjects.forEach((simpleObject) => {
+      if (simpleObject.selected) {
+        points.set(
+          simpleObject.id,
+          simpleObject.mapPoints((point) => new Vec2(point.x, point.y)),
+        );
+      }
+    });
+
+    return points;
   }
 
   private deleteStereoFlagModelChange(stereoFlag: CoreStereoFlag) {

@@ -26,6 +26,11 @@ import util from './util';
 import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { toFixed } from 'utilities';
 import { PathBuilder } from './pathBuilder';
+import {
+  getEllipseGeometry,
+  getLineGeometry,
+  getRectangleGeometry,
+} from './renderers/simpleObjectGeometry';
 
 export const ARROW_HEAD_LENGHT = 0.25; // 10
 export const ARROW_HEAD_WIDTH = 0.125; // 5
@@ -53,12 +58,8 @@ function getUnbalancedArrowHeadOffset(options: RenderOptions) {
 }
 
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
-  return paper.rect(
-    toFixed(Math.min(points[0].x, points[1].x)),
-    toFixed(Math.min(points[0].y, points[1].y)),
-    toFixed(Math.abs(points[1].x - points[0].x)),
-    toFixed(Math.abs(points[1].y - points[0].y)),
-  );
+  const { x, y, width, height } = getRectangleGeometry(points);
+  return paper.rect(toFixed(x), toFixed(y), toFixed(width), toFixed(height));
 }
 
 function rectangleArrowHighlightAndSelection(
@@ -81,15 +82,8 @@ function rectangleArrowHighlightAndSelection(
 }
 
 function ellipse(paper: RaphaelPaper, points: [Vec2, Vec2]) {
-  const rad = Vec2.diff(points[1], points[0]);
-  const rx = rad.x / 2;
-  const ry = rad.y / 2;
-  return paper.ellipse(
-    points[0].x + rx,
-    points[0].y + ry,
-    Math.abs(rx),
-    Math.abs(ry),
-  );
+  const { cx, cy, rx, ry } = getEllipseGeometry(points);
+  return paper.ellipse(cx, cy, rx, ry);
 }
 
 function polyline(paper: RaphaelPaper, points: Vec2[]) {
@@ -101,9 +95,8 @@ function polyline(paper: RaphaelPaper, points: Vec2[]) {
 }
 
 function line(paper: RaphaelPaper, points: [Vec2, Vec2]) {
-  const path = ['M', points[0].x, points[0].y];
-  path.push('L', points[1].x, points[1].y);
-  return paper.path(path);
+  const { x1, y1, x2, y2 } = getLineGeometry(points);
+  return paper.path(['M', x1, y1, 'L', x2, y2]);
 }
 
 function arrow(

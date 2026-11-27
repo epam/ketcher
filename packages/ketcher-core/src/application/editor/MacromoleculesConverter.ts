@@ -6,6 +6,9 @@ import { Pile } from 'domain/entities/pile';
 import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
 import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
+import { SimpleObject as MicromoleculesSimpleObject } from 'domain/entities/simpleObject';
+import { Image as MicromoleculesImage } from 'domain/entities/image';
+import { Text as MicromoleculesText } from 'domain/entities/text';
 import { SGroup } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -391,6 +394,33 @@ export class MacromoleculesConverter {
       const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
 
       reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
+    });
+
+    drawingEntitiesManager.texts.forEach((text) => {
+      struct.texts.add(
+        new MicromoleculesText({
+          content: text.content,
+          position: text.position,
+          pos: text.pos,
+        }),
+      );
+    });
+
+    drawingEntitiesManager.images.forEach((image) => {
+      const state = image.getState();
+      struct.images.add(
+        new MicromoleculesImage(image.bitmap, state.center, state.halfSize),
+      );
+    });
+
+    drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {
+      struct.simpleObjects.add(
+        new MicromoleculesSimpleObject({
+          mode: simpleObject.mode,
+          pos: simpleObject.pos,
+          initiallySelected: simpleObject.initiallySelected,
+        }),
+      );
     });
 
     struct.findConnectedComponents();
@@ -941,6 +971,30 @@ export class MacromoleculesConverter {
       );
 
       command.merge(rxnPlusAddCommand);
+    });
+
+    struct.simpleObjects.forEach((simpleObject) => {
+      const simpleObjectAddCommand = drawingEntitiesManager.addSimpleObject(
+        simpleObject.mode,
+        simpleObject.pos[0],
+        simpleObject.pos[1],
+        simpleObject.initiallySelected,
+      );
+
+      command.merge(simpleObjectAddCommand);
+    });
+
+    struct.images.forEach((image) => {
+      const center = image.center();
+      drawingEntitiesManager.addImage(
+        image.bitmap,
+        center,
+        image.getBottomRightPosition().sub(center),
+      );
+    });
+
+    struct.texts.forEach((text) => {
+      drawingEntitiesManager.addText(text.content, text.position, text.pos);
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);

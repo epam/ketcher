@@ -44,7 +44,8 @@ export type ModalName =
   | 'monomerConnection'
   | 'insertionConnection'
   | 'confirmationDialog'
-  | 'settings';
+  | 'settings'
+  | 'textEditor';
 
 export const modalSlice = createSlice({
   name: 'modal',

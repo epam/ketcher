@@ -1,4 +1,6 @@
-export const SELECT_SUBMENU_ID = 'select-submenu';
+﻿export const SELECT_SUBMENU_ID = 'select-submenu';
+
+export const SHAPES_SUBMENU_ID = 'shapes-submenu';
 
 export const MACRO_SELECTION_TOOL_OPTIONS = {
   'select-rectangle': 'rectangle',

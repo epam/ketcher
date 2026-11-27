@@ -83,4 +83,9 @@ async function buildKetcherAsync({
 export default buildKetcherAsync;
 
 export * from './ui/views/toolbars/ArrowScroll';
+export {
+  RichTextEditor,
+  serializeTextEditor,
+  type TextEditorLabels,
+} from './ui/views/modal/components/Text/TextEditor';
 export * from './ui/views/toolbars/ToolbarGroupItem/ToolbarMultiToolItem/usePortalStyle';

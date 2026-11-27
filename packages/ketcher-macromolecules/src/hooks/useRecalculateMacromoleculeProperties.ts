@@ -43,12 +43,15 @@ export const useRecalculateMacromoleculeProperties = () => {
       const selectionDrawingEntitiesManager =
         editor.drawingEntitiesManager.filterSelection();
       const ketSerializer = new KetSerializer();
-      const hasNoSelection =
-        !selectionDrawingEntitiesManager.hasDrawingEntities;
-      const drawingEntitiesManagerToCalculateProperties =
-        selectionDrawingEntitiesManager.hasDrawingEntities
-          ? selectionDrawingEntitiesManager
-          : editor.drawingEntitiesManager;
+      const hasSelectedStructure =
+        selectionDrawingEntitiesManager.allEntitiesArray.some(
+          (entity) =>
+            !selectionDrawingEntitiesManager.simpleObjects.has(entity.id),
+        );
+      const hasNoSelection = !hasSelectedStructure;
+      const drawingEntitiesManagerToCalculateProperties = hasSelectedStructure
+        ? selectionDrawingEntitiesManager
+        : editor.drawingEntitiesManager;
       const chainsCollection = ChainsCollection.fromMonomers([
         ...drawingEntitiesManagerToCalculateProperties.monomers.values(),
       ]);

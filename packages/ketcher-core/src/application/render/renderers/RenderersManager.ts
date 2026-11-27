@@ -41,6 +41,12 @@ import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import type { CoreImage } from 'domain/entities/CoreImage';
+import type { CoreText } from 'domain/entities/CoreText';
+import { TextRenderer } from 'application/render/renderers/TextRenderer';
+import { ImageRenderer } from 'application/render/renderers/ImageRenderer';
+import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
@@ -587,6 +593,36 @@ export class RenderersManager {
 
   public deleteRxnPlus(rxnPlus: RxnPlus) {
     rxnPlus.renderer?.remove();
+  }
+
+  public addSimpleObject(simpleObject: CoreSimpleObject) {
+    const simpleObjectRenderer = new SimpleObjectRenderer(simpleObject);
+
+    simpleObjectRenderer.show();
+  }
+
+  public addImage(image: CoreImage) {
+    const imageRenderer = new ImageRenderer(image);
+
+    imageRenderer.show();
+  }
+
+  public addText(text: CoreText) {
+    const textRenderer = new TextRenderer(text);
+
+    textRenderer.show();
+  }
+
+  public deleteText(text: CoreText) {
+    text.baseRenderer?.remove();
+  }
+
+  public deleteImage(image: CoreImage) {
+    image.baseRenderer?.remove();
+  }
+
+  public deleteSimpleObject(simpleObject: CoreSimpleObject) {
+    simpleObject.baseRenderer?.remove();
   }
 
   public addStereoFlag(stereoFlag: CoreStereoFlag) {

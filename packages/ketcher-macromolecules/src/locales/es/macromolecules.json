@@ -23,7 +23,12 @@
     "structureSelection": "Selección de estructura ({shortcut})",
     "erase": "Borrar ({shortcut})",
     "singleBond": "Enlace simple (1)",
-    "hydrogenBond": "Enlace de hidrógeno (2)"
+    "hydrogenBond": "Enlace de hidrógeno (2)",
+    "shapeRectangle": "Forma de rectángulo",
+    "shapeEllipse": "Forma de elipse",
+    "shapeLine": "Forma de línea",
+    "addImage": "Añadir imagen",
+    "addText": "Añadir texto"
   },
   "floatingTools": {
     "flipHorizontally": "Voltear horizontalmente",

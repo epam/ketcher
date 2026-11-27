@@ -18,6 +18,10 @@ import {
 } from './monomerCreation.helpers';
 
 type DrawingEntitiesManager = CoreEditor['drawingEntitiesManager'];
+type StaticObject =
+  DrawingEntitiesManager['simpleObjects'] extends Map<number, infer T>
+    ? T
+    : never;
 
 const createMonomer = (
   code = 'A',
@@ -50,6 +54,7 @@ describe('macromolecule monomer creation menu', () => {
       monomerToAtomBonds: new Map(),
       rxnArrows: new Map(),
       rxnPluses: new Map(),
+      simpleObjects: new Map(),
       multitailArrows: new Map(),
       get monomersArray() {
         return [...this.monomers.values()];
@@ -70,6 +75,18 @@ describe('macromolecule monomer creation menu', () => {
     expect(canCreateMonomer(manager, [first, second])).toBe(false);
     const bond = new PolymerBond(first, second);
     manager.polymerBonds.set(bond.id, bond);
+    expect(canCreateMonomer(manager, [first, second])).toBe(true);
+  });
+
+  it('does not offer creation while a selected static object is present', () => {
+    const first = createMonomer();
+    const second = createMonomer('C');
+    const bond = new PolymerBond(first, second);
+    manager.polymerBonds.set(bond.id, bond);
+    const staticObject = { selected: true } as unknown as StaticObject;
+    manager.simpleObjects.set(1, staticObject);
+    expect(canCreateMonomer(manager, [first, second])).toBe(false);
+    staticObject.selected = false;
     expect(canCreateMonomer(manager, [first, second])).toBe(true);
   });
 

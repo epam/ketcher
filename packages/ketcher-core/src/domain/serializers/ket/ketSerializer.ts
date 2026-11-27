@@ -25,6 +25,12 @@ import {
   MultitailArrow as MicromoleculeMultitailArrow,
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
+import { SimpleObject as MicromoleculeSimpleObject } from 'domain/entities/simpleObject';
+import { Text as MicromoleculeText } from 'domain/entities/text';
+import {
+  Image as MicromoleculeImage,
+  type KetFileImageNode,
+} from 'domain/entities/image';
 import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
@@ -116,7 +122,6 @@ import {
 } from './hapticKet';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import type {
@@ -1136,6 +1141,33 @@ export class KetSerializer implements Serializer<Struct> {
       });
 
       struct.rxnPluses.add(micromoleculeRxnPlus);
+    });
+
+    drawingEntitiesManager.texts.forEach((text) => {
+      struct.texts.add(
+        new MicromoleculeText({
+          content: text.content,
+          position: text.position,
+          pos: text.pos,
+        }),
+      );
+    });
+
+    drawingEntitiesManager.images.forEach((image) => {
+      const state = image.getState();
+      struct.images.add(
+        new MicromoleculeImage(image.bitmap, state.center, state.halfSize),
+      );
+    });
+
+    drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {
+      struct.simpleObjects.add(
+        new MicromoleculeSimpleObject({
+          mode: simpleObject.mode,
+          pos: simpleObject.pos,
+          initiallySelected: simpleObject.initiallySelected,
+        }),
+      );
     });
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);

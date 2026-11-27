@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,6 +20,10 @@ import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
 import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
+import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import { ImageRenderer } from 'application/render/renderers/ImageRenderer';
+import type { CoreImage, CoreImageState } from 'domain/entities/CoreImage';
 import { Command } from 'domain/entities/Command';
 import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -84,8 +88,12 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
-    'standby';
+    | 'moving'
+    | 'selecting'
+    | 'standby'
+    | 'rotating'
+    | 'rotating-center'
+    | 'resizing' = 'standby';
   /**
   Controls whether auto-scroll is active during a selection drag.
   Override to `false` in subclasses that should not auto-scroll
@@ -95,10 +103,25 @@ abstract class SelectBase implements BaseTool {
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | undefined;
+  private imageResize:
+    | {
+        image: CoreImage;
+        cornerIndex: number;
+        startState: CoreImageState;
+      }
+    | undefined;
+  private simpleObjectResize:
+    | {
+        simpleObject: CoreSimpleObject;
+        pointIndex: number;
+        startPoints: [Vec2, Vec2];
+      }
+    | undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
+  protected rotationStartSimpleObjectPoints = new Map<number, [Vec2, Vec2]>();
   protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
@@ -168,6 +191,23 @@ abstract class SelectBase implements BaseTool {
       }
       this.onSelectionStart();
     } else {
+      const handleIndex = SelectBase.getSimpleObjectHandleIndex(event.target);
+      const handleRenderer = event.target?.__data__;
+      if (
+        handleIndex !== undefined &&
+        handleRenderer instanceof SimpleObjectRenderer
+      ) {
+        this.startSimpleObjectResize(handleRenderer, handleIndex);
+        return;
+      }
+      if (
+        handleIndex !== undefined &&
+        handleRenderer instanceof ImageRenderer
+      ) {
+        this.startImageResize(handleRenderer, handleIndex);
+        return;
+      }
+
       const renderer = event.target?.__data__;
 
       if (!renderer || !(renderer instanceof BaseRenderer)) {
@@ -188,6 +228,110 @@ abstract class SelectBase implements BaseTool {
         event.altKey,
       );
     }
+  }
+
+  private static getSimpleObjectHandleIndex(
+    target: EventTarget | null,
+  ): number | undefined {
+    const attribute = (target as Element | null)?.getAttribute?.(
+      'data-point-index',
+    );
+    return attribute == null ? undefined : Number(attribute);
+  }
+
+  private startSimpleObjectResize(
+    renderer: SimpleObjectRenderer,
+    pointIndex: number,
+  ) {
+    this.mode = 'resizing';
+    this.simpleObjectResize = {
+      simpleObject: renderer.simpleObject,
+      pointIndex,
+      startPoints: renderer.simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      ),
+    };
+  }
+
+  private startImageResize(renderer: ImageRenderer, cornerIndex: number) {
+    this.mode = 'resizing';
+    this.imageResize = {
+      image: renderer.image,
+      cornerIndex,
+      startState: renderer.image.getState(),
+    };
+  }
+
+  private updateImageResize() {
+    if (!this.imageResize) {
+      return;
+    }
+
+    const { image, cornerIndex } = this.imageResize;
+    const pointer = Coordinates.canvasToModel(
+      this.editor.lastCursorPositionOfCanvas,
+    );
+    const modelChanges = this.editor.drawingEntitiesManager.resizeImage(
+      image,
+      cornerIndex === 0 ? pointer : image.position,
+      cornerIndex === 0 ? image.bottomRight : pointer,
+    );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  private finishImageResize() {
+    const resize = this.imageResize;
+    this.mode = 'standby';
+    this.imageResize = undefined;
+    if (!resize) {
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.createImageResizeHistoryCommand(
+        resize.image,
+        resize.startState,
+      );
+    EditorHistory.getInstance(this.editor).update(modelChanges);
+  }
+
+  private updateSimpleObjectResize() {
+    if (this.imageResize) {
+      this.updateImageResize();
+      return;
+    }
+    if (!this.simpleObjectResize) {
+      return;
+    }
+
+    const { simpleObject, pointIndex } = this.simpleObjectResize;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.resizeSimpleObjectPoint(
+        simpleObject,
+        pointIndex,
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  private finishSimpleObjectResize() {
+    if (this.imageResize) {
+      this.finishImageResize();
+      return;
+    }
+    const resize = this.simpleObjectResize;
+    this.mode = 'standby';
+    this.simpleObjectResize = undefined;
+    if (!resize) {
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.createSimpleObjectResizeHistoryCommand(
+        resize.simpleObject,
+        resize.startPoints,
+      );
+    EditorHistory.getInstance(this.editor).update(modelChanges);
   }
 
   private getCanvasBbox(bbox: {
@@ -240,6 +384,7 @@ abstract class SelectBase implements BaseTool {
     if (!this.rotationCenter) {
       this.mode = 'standby';
       this.rotationStartPositions.clear();
+      this.rotationStartSimpleObjectPoints.clear();
       return;
     }
 
@@ -249,6 +394,8 @@ abstract class SelectBase implements BaseTool {
         new Vec2(entity.position),
       ]),
     );
+    this.rotationStartSimpleObjectPoints =
+      this.editor.drawingEntitiesManager.getSelectedSimpleObjectPoints();
 
     const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
     const cursorPos = this.editor.lastCursorPositionOfCanvas;
@@ -1104,6 +1251,11 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    if (this.mode === 'resizing') {
+      this.updateSimpleObjectResize();
+      return;
+    }
+
     if (this.mode === 'rotating') {
       this.handleRotationMove(event);
       return;
@@ -1230,6 +1382,11 @@ abstract class SelectBase implements BaseTool {
     const history = EditorHistory.getInstance(this.editor);
 
     try {
+      if (this.mode === 'resizing') {
+        this.finishSimpleObjectResize();
+        return;
+      }
+
       if (this.mode === 'rotating') {
         this.finishRotation();
         return;
@@ -1464,6 +1621,7 @@ abstract class SelectBase implements BaseTool {
       this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
+      this.rotationStartSimpleObjectPoints.clear();
       this.updateRotationView();
       return;
     }
@@ -1471,6 +1629,7 @@ abstract class SelectBase implements BaseTool {
     const modelChanges =
       this.editor.drawingEntitiesManager.createRotationHistoryCommand(
         this.rotationStartPositions,
+        this.rotationStartSimpleObjectPoints,
       );
 
     history.update(modelChanges);
@@ -1480,6 +1639,7 @@ abstract class SelectBase implements BaseTool {
     this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
+    this.rotationStartSimpleObjectPoints.clear();
     this.updateRotationView();
   }
 

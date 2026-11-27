@@ -3079,7 +3079,8 @@ export class CoreEditor {
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
       globalThis._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
-      !this.drawingEntitiesManager.hasMonomers
+      (!this.drawingEntitiesManager.hasMonomers &&
+        this.drawingEntitiesManager.simpleObjects.size === 0)
     ) {
       return;
     }

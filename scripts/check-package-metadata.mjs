@@ -58,8 +58,6 @@ const DTS_RUNTIME_DECLARATION =
 const DTS_REEXPORT = /^export (\*(?: as \w+)?|\{([^}]*)\}) from /gm;
 const DTS_WITHOUT_JS_EXEMPTIONS = {
   'ketcher-core': [
-    // AtomCIP and BondCIP enums; no emitted .js references them.
-    'dist/domain/entities/types.d.ts',
     // Barrels that re-export runtime values but emit no .js. Each re-exported
     // value still ships from its own emitted .js, and no emitted .js imports
     // these paths. The package has no `exports` map, so a deep runtime import

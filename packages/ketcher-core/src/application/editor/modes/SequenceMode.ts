@@ -176,13 +176,16 @@ export class SequenceMode extends BaseMode {
   private _isEditInRNABuilderMode = false;
   private _isAntisenseEditMode = false;
   private _isSyncEditMode = true;
-  private isFirstInit = true;
+  private isFirstInit: boolean;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
 
   constructor(previousMode?: LayoutMode) {
     super('sequence-layout-mode', previousMode);
+    // Only the initial editor load skips the scroll; a switch from another mode must scroll
+    this.isFirstInit =
+      previousMode === undefined || previousMode === 'sequence-layout-mode';
   }
 
   private async getSequenceForClipboard(

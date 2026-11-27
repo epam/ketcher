@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1701,7 +1701,7 @@ function rgroupAttachmentPoint(
 }
 
 // Wave glyph dimensions in path-local units (derived from attachmentPointSvgPathString).
-// x spans +13 to âˆ’13.1 â†’ perpendicular half-extent 13.1; y max = 5.2 â†’ far-along extent.
+// x spans +13 to −13.1 → perpendicular half-extent 13.1; y max = 5.2 → far-along extent.
 export const AP_PATH_SCALE = 39.8;
 export const AP_WAVE_HALF_PERP = 13.1;
 export const AP_WAVE_FAR_ALONG = 5.2;

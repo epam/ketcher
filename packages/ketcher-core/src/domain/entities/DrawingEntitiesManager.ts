@@ -1,4 +1,4 @@
-﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   type AmbiguousMonomerType,
   type MonomerItemType,
@@ -4987,11 +4987,11 @@ export class DrawingEntitiesManager {
     //
     // When the caller already resolved which canvas monomers correspond to the
     // dragged preset (same-geometry preset replacement), it passes them via
-    // `originalComponentsOverride` â€” this is the reliable source because it was
+    // `originalComponentsOverride` — this is the reliable source because it was
     // computed from the dragged preset's structure (handling left-side
     // phosphates and two-component presets correctly).
     //
-    // Otherwise (e.g. presetâ†’single-monomer replacement) `oldSugar` is treated
+    // Otherwise (e.g. preset→single-monomer replacement) `oldSugar` is treated
     // as a single-element "preset" so the monomer gets deleted and its bonds
     // are re-routed to the matching new preset component.
     const originalComponents: BaseMonomer[] =
@@ -5004,7 +5004,7 @@ export class DrawingEntitiesManager {
     // constructor, so we must snapshot bond state here while the model is
     // still intact.
     //
-    // We also build a bondâ†’originalComponent map at snapshot time so that
+    // We also build a bond→originalComponent map at snapshot time so that
     // findNewPresetComponentForBond can look up which component owned a bond
     // without re-collecting bonds from already-deleted monomers.
     const allOriginalBonds: ReturnType<typeof collectMonomerBonds> = [];
@@ -5021,7 +5021,7 @@ export class DrawingEntitiesManager {
     }
 
     // Separate external bonds (to monomers outside this preset) from
-    // internal intra-preset bonds â€” we need external bonds for re-establishment.
+    // internal intra-preset bonds — we need external bonds for re-establishment.
     const externalBonds = allOriginalBonds.filter(
       (record) => !originalComponents.includes(record.otherEntity),
     );
@@ -5107,7 +5107,7 @@ export class DrawingEntitiesManager {
   Computes the canvas positions for the base and phosphate components of a
   preset, given the sugar position.
 
-  When the new preset has a left-side (5â€²) phosphate, `addRnaPreset` will
+  When the new preset has a left-side (5′) phosphate, `addRnaPreset` will
   internally swap the sugar and phosphate Vec2 arguments so that:
     - the value passed as `_phosphatePosition` becomes the actual sugar position
     - the value passed as `_sugarPosition` becomes the actual phosphate position
@@ -5115,9 +5115,9 @@ export class DrawingEntitiesManager {
   To keep the sugar anchored at `sugarPosition` after the swap we must pass
   the phosphate offset in the **negative X** direction (to the left).  After
   the swap the sugar lands at `sugarPosition` and the phosphate lands at
-  `sugarPosition âˆ’ SnakeLayoutCellWidth` â€” matching the left-phosphate layout.
+  `sugarPosition − SnakeLayoutCellWidth` — matching the left-phosphate layout.
 
-  For a right-side (3â€²) phosphate no swap occurs, so the phosphate is placed
+  For a right-side (3′) phosphate no swap occurs, so the phosphate is placed
   at `sugarPosition + SnakeLayoutCellWidth` as before.
   */
   private computePresetPositions(
@@ -5190,7 +5190,7 @@ export class DrawingEntitiesManager {
       return newComponents.find(isPhosphateOrAmbiguousPhosphate);
     }
 
-    // Standalone monomer (not a recognised RNA component type) â€” route its
+    // Standalone monomer (not a recognised RNA component type) — route its
     // bonds to the new preset component whose AP is free, using the priority
     // order defined in the spec: sugar > phosphate > base.
     const newSugar = newComponents.find(isSugarOrAmbiguousSugar);

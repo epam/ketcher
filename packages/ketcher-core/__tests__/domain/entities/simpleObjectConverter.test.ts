@@ -117,4 +117,29 @@ describe('MacromoleculesConverter simple objects', () => {
     expect(restored.pos[1].x).toBeCloseTo(30);
     expect(restored.pos[1].y).toBeCloseTo(40);
   });
+  it('keeps a macro simple object through a KET copy and paste', () => {
+    const manager = new DrawingEntitiesManager();
+    manager.addSimpleObject(
+      SimpleObjectMode.ellipse,
+      new Vec2(1, 1),
+      new Vec2(4, 3),
+    );
+    const serializer = new KetSerializer();
+    const serialized = serializer.serialize(
+      manager.micromoleculesHiddenEntities.clone(),
+      manager,
+    );
+
+    const drawingEntitiesManager =
+      serializer.deserializeToDrawingEntities(
+        serialized,
+      )?.drawingEntitiesManager;
+
+    const [pasted] = [
+      ...(drawingEntitiesManager?.simpleObjects.values() ?? []),
+    ];
+    expect(drawingEntitiesManager?.simpleObjects.size).toBe(1);
+    expect(pasted.mode).toBe(SimpleObjectMode.ellipse);
+    expect(pasted.pos).toEqual([new Vec2(1, 1), new Vec2(4, 3)]);
+  });
 });

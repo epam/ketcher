@@ -71,6 +71,7 @@ export class SimpleObjectRenderer extends BaseRenderer {
     this.appendShape();
     this.appendHoverAreaElement();
     this.drawSelection();
+    this.rootElement.selectAll('*').datum(this);
   }
 
   private appendShape() {
@@ -168,6 +169,7 @@ export class SimpleObjectRenderer extends BaseRenderer {
     >;
 
     this.setContourAttributes(this.hoverElement);
+    this.hoverElement.datum(this);
   }
 
   protected removeHover(): void {

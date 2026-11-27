@@ -1,6 +1,7 @@
-import { Vec2 } from 'domain/entities/vec2';
+﻿import { Vec2 } from 'domain/entities/vec2';
 import { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
 import { SimpleObjectMode } from 'domain/entities/simpleObject';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -25,5 +26,20 @@ describe('RenderersManager simple objects', () => {
     expect(
       document.querySelector('[data-testid="simple-object"] rect'),
     ).toBeFalsy();
+  });
+  it('removes the drawn shape when the object is erased', () => {
+    createPolymerEditorCanvas();
+    const renderersManager = createRenderersManager();
+    const manager = new DrawingEntitiesManager();
+    manager
+      .addSimpleObject(SimpleObjectMode.line, new Vec2(0, 0), new Vec2(2, 0))
+      .operations[0].execute(renderersManager);
+    const [simpleObject] = manager.simpleObjects.values();
+
+    manager
+      .deleteDrawingEntity(simpleObject)
+      .operations[0].execute(renderersManager);
+
+    expect(document.querySelector('[data-testid="simple-object"]')).toBeFalsy();
   });
 });

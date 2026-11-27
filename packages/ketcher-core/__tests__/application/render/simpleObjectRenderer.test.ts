@@ -4,6 +4,7 @@ import { SimpleObjectMode } from 'domain/entities/simpleObject';
 import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 describe('SimpleObjectRenderer', () => {
   it('draws a rectangle inside a simple-object group', () => {
@@ -85,5 +86,40 @@ describe('SimpleObjectRenderer', () => {
 
     hoverArea?.dispatchEvent(new Event('mouseout'));
     expect(group?.querySelector('rect[stroke="#0097A8"]')).toBeFalsy();
+  });
+  it('binds the renderer to the clickable shape so the select tools can find it', () => {
+    createPolymerEditorCanvas();
+    new SimpleObjectRenderer(
+      new CoreSimpleObject(
+        SimpleObjectMode.line,
+        new Vec2(0, 0),
+        new Vec2(3, 1),
+      ),
+    ).show();
+
+    const shape = document.querySelector('[data-testid="simple-object"] line');
+
+    expect(
+      (shape as unknown as { __data__?: unknown }).__data__,
+    ).toBeInstanceOf(SimpleObjectRenderer);
+  });
+
+  it('selects the simple object when a selection rectangle covers it', () => {
+    createPolymerEditorCanvas();
+    const simpleObject = new CoreSimpleObject(
+      SimpleObjectMode.rectangle,
+      new Vec2(0, 0),
+      new Vec2(2, 2),
+    );
+    new SimpleObjectRenderer(simpleObject).show();
+    const center = Coordinates.modelToCanvas(simpleObject.center);
+
+    const changed = simpleObject.selectIfLocatedInRectangle(
+      new Vec2(center.x - 500, center.y - 500),
+      new Vec2(center.x + 500, center.y + 500),
+    );
+
+    expect(changed).toBe(true);
+    expect(simpleObject.selected).toBe(true);
   });
 });

@@ -34,6 +34,10 @@ class TestMode extends BaseMode {
     super('flex-layout-mode');
   }
 
+  get keyboardEventHandlers() {
+    return {};
+  }
+
   getNewNodePosition() {
     return new Vec2(0, 0);
   }

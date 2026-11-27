@@ -183,9 +183,7 @@ export abstract class BaseMode {
     });
   }
 
-  get keyboardEventHandlers(): KeyboardEventHandlers {
-    return {};
-  }
+  abstract get keyboardEventHandlers(): KeyboardEventHandlers;
 
   abstract getNewNodePosition(): Vec2;
 

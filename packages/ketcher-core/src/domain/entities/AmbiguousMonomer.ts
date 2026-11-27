@@ -38,42 +38,6 @@ export const MONOMER_CLASS_TO_CONSTRUCTOR = {
 };
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
-  public static getMonomerClass(monomers: BaseMonomer[]): ResolvedMonomerClass {
-    const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
-
-    const hasDifferentMonomerTypes = monomers.some((monomer) => {
-      const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
-
-      return monomerClass !== monomerClassToCompare;
-    });
-
-    return hasDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
-  }
-
-  private static getAttachmentPoints(monomers: BaseMonomer[]) {
-    const monomersAttachmentPoints = monomers.map(
-      (monomer) => monomer.listOfAttachmentPoints,
-    );
-    const possibleAttachmentPoints = monomersAttachmentPoints.flat();
-    const attachmentPoints = possibleAttachmentPoints.filter(
-      (attachmentPointName) => {
-        return monomersAttachmentPoints.every((monomerAttachmentPoints) =>
-          monomerAttachmentPoints.includes(attachmentPointName),
-        );
-      },
-    );
-
-    return attachmentPoints.map((attachmentPointName) => {
-      return {
-        label: attachmentPointName,
-        leavingGroup: {
-          atoms: [],
-        },
-        attachmentAtom: -1,
-      };
-    });
-  }
-
   public monomers: BaseMonomer[];
   public monomerClass: KetMonomerClass;
   public subtype: KetAmbiguousMonomerTemplateSubType;
@@ -110,8 +74,54 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
       variantMonomerItem.monomers,
+      variantMonomerItem.subtype,
     );
     this.subtype = variantMonomerItem.subtype;
+  }
+
+  public static getMonomerClass(
+    monomers: BaseMonomer[],
+    subtype?: KetAmbiguousMonomerTemplateSubType,
+  ): ResolvedMonomerClass {
+    // HELM mixtures (`+`) represent an indeterminate chemical component rather
+    // than an RNA part that can be assembled into a nucleotide.
+    if (subtype === KetAmbiguousMonomerTemplateSubType.MIXTURE) {
+      return KetMonomerClass.CHEM;
+    }
+
+    const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
+
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
+      const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
+
+      return monomerClass !== monomerClassToCompare;
+    });
+
+    return hasDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
+  }
+
+  private static getAttachmentPoints(monomers: BaseMonomer[]) {
+    const monomersAttachmentPoints = monomers.map(
+      (monomer) => monomer.listOfAttachmentPoints,
+    );
+    const possibleAttachmentPoints = monomersAttachmentPoints.flat();
+    const attachmentPoints = possibleAttachmentPoints.filter(
+      (attachmentPointName) => {
+        return monomersAttachmentPoints.every((monomerAttachmentPoints) =>
+          monomerAttachmentPoints.includes(attachmentPointName),
+        );
+      },
+    );
+
+    return attachmentPoints.map((attachmentPointName) => {
+      return {
+        label: attachmentPointName,
+        leavingGroup: {
+          atoms: [],
+        },
+        attachmentAtom: -1,
+      };
+    });
   }
 
   public get monomerCaps() {

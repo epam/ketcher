@@ -41,6 +41,7 @@ import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
@@ -588,6 +589,10 @@ export class RenderersManager {
   public deleteRxnPlus(rxnPlus: RxnPlus) {
     rxnPlus.renderer?.remove();
   }
+
+  public addSimpleObject(_simpleObject: CoreSimpleObject) {}
+
+  public deleteSimpleObject(_simpleObject: CoreSimpleObject) {}
 
   public addStereoFlag(stereoFlag: CoreStereoFlag) {
     const stereoFlagRenderer = new StereoFlagRenderer(stereoFlag);

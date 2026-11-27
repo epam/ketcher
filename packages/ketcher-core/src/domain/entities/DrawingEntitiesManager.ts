@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   type AmbiguousMonomerType,
   type MonomerItemType,
@@ -134,6 +134,12 @@ import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
+import { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import type { SimpleObjectMode } from 'domain/entities/simpleObject';
+import {
+  SimpleObjectAddOperation,
+  SimpleObjectDeleteOperation,
+} from 'domain/entities/CoreSimpleObjectOperations';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
@@ -224,6 +230,7 @@ export class DrawingEntitiesManager {
   public rxnArrows: Map<number, RxnArrow> = new Map();
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
+  public simpleObjects: Map<number, CoreSimpleObject> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
   public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
@@ -350,6 +357,7 @@ export class DrawingEntitiesManager {
       ...(this.rxnArrows as Map<number, DrawingEntity>),
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
+      ...(this.simpleObjects as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
     ];
   }
@@ -505,6 +513,8 @@ export class DrawingEntitiesManager {
       return this.deleteMultitailArrow(drawingEntity);
     } else if (drawingEntity instanceof RxnPlus) {
       return this.deleteRxnPlus(drawingEntity);
+    } else if (drawingEntity instanceof CoreSimpleObject) {
+      return this.deleteSimpleObject(drawingEntity);
     } else if (drawingEntity instanceof CoreStereoFlag) {
       return this.deleteStereoFlag(drawingEntity);
     } else {
@@ -4389,6 +4399,53 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private deleteSimpleObjectModelChange(simpleObject: CoreSimpleObject) {
+    this.simpleObjects.delete(simpleObject.id);
+  }
+
+  private addSimpleObjectModelChange(simpleObject: CoreSimpleObject) {
+    this.simpleObjects.set(simpleObject.id, simpleObject);
+
+    return simpleObject;
+  }
+
+  public addSimpleObject(
+    mode: SimpleObjectMode,
+    start: Vec2,
+    end: Vec2,
+    initiallySelected?: initiallySelectedType,
+  ) {
+    const simpleObject = new CoreSimpleObject(
+      mode,
+      start,
+      end,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    const command = new Command();
+    const operation = new SimpleObjectAddOperation(
+      (existing?: CoreSimpleObject) =>
+        this.addSimpleObjectModelChange(existing ?? simpleObject),
+      this.deleteSimpleObjectModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteSimpleObject(simpleObject: CoreSimpleObject) {
+    const command = new Command();
+    const operation = new SimpleObjectDeleteOperation(
+      simpleObject,
+      this.deleteSimpleObjectModelChange.bind(this),
+      this.addSimpleObjectModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
   private deleteRxnPlusModelChange(rxnPlus: RxnPlus) {
     this.rxnPluses.delete(rxnPlus.id);
   }
@@ -4793,11 +4850,11 @@ export class DrawingEntitiesManager {
     //
     // When the caller already resolved which canvas monomers correspond to the
     // dragged preset (same-geometry preset replacement), it passes them via
-    // `originalComponentsOverride` — this is the reliable source because it was
+    // `originalComponentsOverride` â€” this is the reliable source because it was
     // computed from the dragged preset's structure (handling left-side
     // phosphates and two-component presets correctly).
     //
-    // Otherwise (e.g. preset→single-monomer replacement) `oldSugar` is treated
+    // Otherwise (e.g. presetâ†’single-monomer replacement) `oldSugar` is treated
     // as a single-element "preset" so the monomer gets deleted and its bonds
     // are re-routed to the matching new preset component.
     const originalComponents: BaseMonomer[] =
@@ -4810,7 +4867,7 @@ export class DrawingEntitiesManager {
     // constructor, so we must snapshot bond state here while the model is
     // still intact.
     //
-    // We also build a bond→originalComponent map at snapshot time so that
+    // We also build a bondâ†’originalComponent map at snapshot time so that
     // findNewPresetComponentForBond can look up which component owned a bond
     // without re-collecting bonds from already-deleted monomers.
     const allOriginalBonds: ReturnType<typeof collectMonomerBonds> = [];
@@ -4827,7 +4884,7 @@ export class DrawingEntitiesManager {
     }
 
     // Separate external bonds (to monomers outside this preset) from
-    // internal intra-preset bonds — we need external bonds for re-establishment.
+    // internal intra-preset bonds â€” we need external bonds for re-establishment.
     const externalBonds = allOriginalBonds.filter(
       (record) => !originalComponents.includes(record.otherEntity),
     );
@@ -4913,7 +4970,7 @@ export class DrawingEntitiesManager {
   Computes the canvas positions for the base and phosphate components of a
   preset, given the sugar position.
 
-  When the new preset has a left-side (5′) phosphate, `addRnaPreset` will
+  When the new preset has a left-side (5â€²) phosphate, `addRnaPreset` will
   internally swap the sugar and phosphate Vec2 arguments so that:
     - the value passed as `_phosphatePosition` becomes the actual sugar position
     - the value passed as `_sugarPosition` becomes the actual phosphate position
@@ -4921,9 +4978,9 @@ export class DrawingEntitiesManager {
   To keep the sugar anchored at `sugarPosition` after the swap we must pass
   the phosphate offset in the **negative X** direction (to the left).  After
   the swap the sugar lands at `sugarPosition` and the phosphate lands at
-  `sugarPosition − SnakeLayoutCellWidth` — matching the left-phosphate layout.
+  `sugarPosition âˆ’ SnakeLayoutCellWidth` â€” matching the left-phosphate layout.
 
-  For a right-side (3′) phosphate no swap occurs, so the phosphate is placed
+  For a right-side (3â€²) phosphate no swap occurs, so the phosphate is placed
   at `sugarPosition + SnakeLayoutCellWidth` as before.
   */
   private computePresetPositions(
@@ -4996,7 +5053,7 @@ export class DrawingEntitiesManager {
       return newComponents.find(isPhosphateOrAmbiguousPhosphate);
     }
 
-    // Standalone monomer (not a recognised RNA component type) — route its
+    // Standalone monomer (not a recognised RNA component type) â€” route its
     // bonds to the new preset component whose AP is free, using the priority
     // order defined in the spec: sugar > phosphate > base.
     const newSugar = newComponents.find(isSugarOrAmbiguousSugar);

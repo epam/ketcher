@@ -1,4 +1,12 @@
-import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
+import {
+  AttachmentGroup,
+  Atom,
+  Bond,
+  Render,
+  Struct,
+  Vec2,
+} from 'ketcher-core';
+import type { RaphaelSet } from 'raphael';
 import Editor from '../Editor';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -14,9 +22,15 @@ describe('Rotate controller', () => {
    * Select one atom / functional group using Select Tool
    */
   it(`hides for only one visible atom`, () => {
-    // @ts-ignore
-    const tool = () => new SelectTool();
-    const paper = jest.fn();
+    const ketcherId = '1';
+    const mockEditor = new Editor(
+      ketcherId,
+      document as unknown as HTMLElement,
+      {},
+      {},
+    );
+    const tool = () => new SelectTool(mockEditor, 'rectangle');
+    const paper = vi.fn();
     const selection = () => null;
     const visibleAtoms = [1];
     const editor = {
@@ -32,21 +46,17 @@ describe('Rotate controller', () => {
       },
     };
     const controller = new RotateController(editor as any);
-    // @ts-ignore
-    controller.rotateTool.getCenter = () => new Vec2();
+    controller['rotateTool'].getCenter = () => new Vec2();
     expect(tool()).toBeInstanceOf(SelectTool);
     expect(selection()).toBe(null);
 
-    // @ts-ignore
-    controller.show();
+    controller['show']();
     expect(paper).toHaveBeenCalledTimes(0);
 
     visibleAtoms.push(2);
-    // @ts-ignore
-    controller.rotateTool.getCenter = () => new Vec2();
+    controller['rotateTool'].getCenter = () => new Vec2();
     expect(() => {
-      // @ts-ignore
-      controller.show();
+      controller['show']();
     }).toThrow();
   });
 
@@ -64,7 +74,7 @@ describe('Rotate controller', () => {
       {},
     );
     const NonSelectTool = new RotateTool(editor, undefined);
-    const paper = jest.fn();
+    const paper = vi.fn();
     const visibleAtoms = [0, 1];
     const controller = new RotateController({
       selection: () => null,
@@ -72,19 +82,16 @@ describe('Rotate controller', () => {
       render: {
         paper,
         ctab: {
-          // @ts-ignore
           molecule: {
             getSelectedVisibleAtoms: () => visibleAtoms,
           },
         },
       },
     } as any);
-    // @ts-ignore
-    controller.rotateTool.getCenter = () => new Vec2();
+    controller['rotateTool'].getCenter = () => new Vec2();
     expect(visibleAtoms.length).toBeGreaterThan(1);
 
-    // @ts-ignore
-    controller.show();
+    controller['show']();
 
     expect(paper).toHaveBeenCalledTimes(0);
   });
@@ -101,7 +108,7 @@ describe('Rotate controller', () => {
       {},
       {},
     );
-    editor.rotateController.rerender = jest.fn();
+    editor.rotateController.rerender = vi.fn();
 
     editor.zoom(2);
 
@@ -114,17 +121,15 @@ describe('Rotate controller', () => {
    */
   it('can be only dragged by left mouse button', () => {
     const controller = new RotateController({ selection: () => null } as any);
-    const changeCrossColor = jest.fn();
-    // @ts-ignore
-    controller.cross = {
+    const changeCrossColor = vi.fn();
+    controller['cross'] = {
       attr: changeCrossColor,
-    };
+    } as unknown as RaphaelSet;
 
-    // @ts-ignore
-    controller.dragStart({
+    controller['dragStart']({
       buttons: 2, // Right button
       stopPropagation: () => null,
-    });
+    } as unknown as MouseEvent);
 
     expect(changeCrossColor).toHaveBeenCalledTimes(0);
   });
@@ -136,20 +141,16 @@ describe('Rotate controller', () => {
    */
   test('center changes with `scale` and `offset`', () => {
     const controller = new RotateController({ selection: () => null } as any);
-    // @ts-ignore
-    controller.originalCenter = new Vec2(1, 1);
-    // @ts-ignore
-    controller.editor.render = {
+    controller['originalCenter'] = new Vec2(1, 1);
+    controller['editor'].render = {
       options: {
         microModeScale: 2,
         offset: new Vec2(1, 1),
       },
     } as any;
 
-    // @ts-ignore
-    expect(controller.center.x).toBe(3);
-    // @ts-ignore
-    expect(controller.center.y).toBe(3);
+    expect(controller['center'].x).toBe(3);
+    expect(controller['center'].y).toBe(3);
   });
 
   it('rotates a fully selected structure with an attachment group', () => {
@@ -202,35 +203,32 @@ describe('Rotate controller', () => {
 
   it('adds test id to rotation center handle hitbox', () => {
     const cross = {
-      attr: jest.fn().mockReturnThis(),
+      attr: vi.fn().mockReturnThis(),
     };
     const circle = {
-      attr: jest.fn().mockReturnThis(),
+      attr: vi.fn().mockReturnThis(),
       node: { dataset: {} as DOMStringMap },
     };
     const crossSet = {
-      push: jest.fn(),
-      translate: jest.fn(),
+      push: vi.fn(),
+      translate: vi.fn(),
     };
 
     const controller = new RotateController({ selection: () => null } as any);
-    // @ts-ignore
-    controller.originalCenter = new Vec2(1, 1);
-    // @ts-ignore
-    controller.editor.render = {
+    controller['originalCenter'] = new Vec2(1, 1);
+    controller['editor'].render = {
       paper: {
-        path: jest.fn().mockReturnValue(cross),
-        circle: jest.fn().mockReturnValue(circle),
-        set: jest.fn().mockReturnValue(crossSet),
+        path: vi.fn().mockReturnValue(cross),
+        circle: vi.fn().mockReturnValue(circle),
+        set: vi.fn().mockReturnValue(crossSet),
       },
       options: {
         microModeScale: 1,
         offset: new Vec2(),
       } as any,
-    };
+    } as Render;
 
-    // @ts-ignore
-    controller.drawCross();
+    controller['drawCross']();
 
     expect(circle.node.dataset.testid).toBe('rotation-center-handle');
     expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
@@ -306,12 +304,11 @@ describe('Rotate controller', () => {
       {},
     );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
-    // @ts-ignore
-    editor.rotateController.rotateTool.dragCtx = {
+    editor.rotateController['rotateTool'].dragCtx = {
       action: { operations: [], perform: () => undefined },
-    };
+    } as unknown as RotateTool['dragCtx'];
     editor.rotateController.isRotating = true;
-    const updateRender = jest.spyOn(editor.render, 'update');
+    const updateRender = vi.spyOn(editor.render, 'update');
 
     editor.rotateController.revert();
     const selectTool = new SelectTool(editor, 'rectangle');

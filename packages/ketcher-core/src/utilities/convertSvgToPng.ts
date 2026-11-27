@@ -3,11 +3,11 @@ const SVG_MIME_TYPE = 'image/svg+xml';
 const DEFAULT_BACKGROUND_COLOR = '#ffffff';
 
 /**
- * Rasterizes an SVG document into a PNG blob.
- *
- * @param svg serialized SVG document with explicit width and height
- * @param scale pixel density of the result (e.g. 2 for retina displays)
- */
+Rasterizes an SVG document into a PNG blob.
+
+@param svg serialized SVG document with explicit width and height
+@param scale pixel density of the result (e.g. 2 for retina displays)
+*/
 export const convertSvgToPng = (svg: string, scale = 1): Promise<Blob> =>
   new Promise((resolve, reject) => {
     const url = URL.createObjectURL(new Blob([svg], { type: SVG_MIME_TYPE }));

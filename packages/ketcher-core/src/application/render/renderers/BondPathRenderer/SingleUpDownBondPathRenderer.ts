@@ -11,19 +11,19 @@ class SingleUpDownBondPathRenderer {
 
     // TODO: Ensure proper naming for variables below
     let d = endPosition.sub(startPosition);
-    const len = d.length();
+    const length_ = d.length();
     d = d.normalized();
     const interval = 0.6 * BondWidth;
     const linesNumber =
-      Math.max(Math.floor((len - BondWidth) / (BondWidth + interval)), 0) + 2;
-    const step = len / (linesNumber - 0.5);
+      Math.max(Math.floor((length_ - BondWidth) / (BondWidth + interval)), 0) +
+      2;
+    const step = length_ / (linesNumber - 0.5);
 
     const bsp = 0.7 * StereoBondWidth;
 
     let path = `M${startPosition.x},${startPosition.y}`;
-    let sectionStartPosition: typeof startPosition;
     for (let i = 0; i < linesNumber; ++i) {
-      sectionStartPosition = startPosition
+      const sectionStartPosition = startPosition
         .addScaled(d, step * (i + 0.5))
         .addScaled(
           firstHalfEdge.leftNormal,

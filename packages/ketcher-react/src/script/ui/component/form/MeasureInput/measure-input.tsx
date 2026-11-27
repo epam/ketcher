@@ -97,11 +97,7 @@ const getNewInternalValue = (
 
   const { isNewFloat, float } = getNewFloat(endorcedValue);
 
-  if (isNewFloat) {
-    return float as string;
-  }
-
-  return endorcedValue;
+  return isNewFloat ? (float as string) : endorcedValue;
 };
 
 const MeasureInput = ({

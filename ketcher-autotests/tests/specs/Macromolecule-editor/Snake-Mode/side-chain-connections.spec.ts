@@ -3,7 +3,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
-  waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
@@ -1043,9 +1042,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/17.ket`,
     );
 
-    await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     await takeEditorScreenshot(page);
   });
@@ -1055,23 +1052,18 @@ test.describe('Side chain connections', () => {
     /*  
       Case 18: Check that display of side-chain connections does not visually change when switching between Micro and Macro modes
     */
-    await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
 
     await openFileAndAddToCanvasMacro(
       page,
       `KET/Side-Chain-Connections/18.ket`,
     );
 
-    await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
-    await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);

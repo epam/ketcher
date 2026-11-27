@@ -36,10 +36,12 @@ export function findHapticBondAttachmentGroupTarget(
 
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
     const distance = Vec2.dist(pointerPosition, attachmentGroup.a.pp);
-    if (distance <= closestDistance) {
-      closestAttachmentGroupId = id;
-      closestDistance = distance;
+    if (distance > closestDistance) {
+      return;
     }
+
+    closestAttachmentGroupId = id;
+    closestDistance = distance;
   });
 
   return closestAttachmentGroupId;
@@ -91,14 +93,12 @@ export class HapticBondToolHelper {
     beginAtomOrProps: AtomValidationInput,
     endAtomOrProps: AtomValidationInput,
   ) {
-    if (!this.isHapticBondType()) {
-      return true;
-    }
-
-    return isHapticBondPairAllowed(
-      this.getAtomForValidation(molecule, beginAtomOrProps),
-      this.getAtomForValidation(molecule, endAtomOrProps),
-    );
+    return !this.isHapticBondType()
+      ? true
+      : isHapticBondPairAllowed(
+          this.getAtomForValidation(molecule, beginAtomOrProps),
+          this.getAtomForValidation(molecule, endAtomOrProps),
+        );
   }
 
   getBondPairValidationFailure(

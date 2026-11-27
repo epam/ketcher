@@ -18,17 +18,17 @@ import type { Bond } from 'domain/entities/bond';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { ReStruct } from 'application/render';
 import {
-  AtomAttr,
+  AtomAttribute,
   FragmentAddStereoAtom,
   FragmentDeleteStereoAtom,
 } from '../operations';
 import { Action } from './action';
 import { getStereoAtomsMap } from './helpers';
 
-export function fromStereoAtomAttrs(
+export function fromStereoAtomAttributes(
   restruct,
   aid,
-  attrs,
+  attributes,
   shouldReverse,
 ): Action {
   const action = new Action();
@@ -37,20 +37,24 @@ export function fromStereoAtomAttrs(
   if (atom && !(sgroup instanceof MonomerMicromolecule)) {
     const frid = atom.fragment;
 
-    if ('stereoParity' in attrs) {
+    if ('stereoParity' in attributes) {
       action.addOp(
-        new AtomAttr(aid, 'stereoParity', attrs.stereoParity).perform(restruct),
+        new AtomAttribute(aid, 'stereoParity', attributes.stereoParity).perform(
+          restruct,
+        ),
       );
     }
-    if ('stereoLabel' in attrs) {
+    if ('stereoLabel' in attributes) {
       action.addOp(
-        new AtomAttr(aid, 'stereoLabel', attrs.stereoLabel).perform(restruct),
+        new AtomAttribute(aid, 'stereoLabel', attributes.stereoLabel).perform(
+          restruct,
+        ),
       );
-      if (attrs.stereoLabel === null) {
-        action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct));
-      } else {
-        action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct));
-      }
+      action.addOp(
+        attributes.stereoLabel === null
+          ? new FragmentDeleteStereoAtom(frid, aid).perform(restruct)
+          : new FragmentAddStereoAtom(frid, aid).perform(restruct),
+      );
     }
     if (shouldReverse) action.operations.reverse();
   }
@@ -86,10 +90,10 @@ export function fromBondStereoUpdate(
 
   const stereoAtomsMap = getStereoAtomsMap(struct, fragmentStereoBonds, bond);
 
-  stereoAtomsMap.forEach((stereoProp, aId) => {
-    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
+  stereoAtomsMap.forEach((stereoProperty, aId) => {
+    if (struct.atoms.get(aId)?.stereoLabel !== stereoProperty.stereoLabel) {
       action.mergeWith(
-        fromStereoAtomAttrs(restruct, aId, stereoProp, shouldReverse),
+        fromStereoAtomAttributes(restruct, aId, stereoProperty, shouldReverse),
       );
     }
   });

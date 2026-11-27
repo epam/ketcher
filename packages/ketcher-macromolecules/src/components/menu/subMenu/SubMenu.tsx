@@ -75,7 +75,7 @@ const SubMenu = ({
   const selectedMenuGroupItem = useAppSelector(
     selectSelectedMenuGroupItem(subMenuId),
   );
-  const lastActiveOption = subMenuId ? selectedMenuGroupItem : null;
+  const lastActiveOption = subMenuId ? selectedMenuGroupItem : undefined;
   const handleDropDownClick = () => {
     if (disabled) return;
     setOpen((prev) => !prev);

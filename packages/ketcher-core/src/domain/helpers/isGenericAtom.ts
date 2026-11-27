@@ -17,13 +17,13 @@
 import { genericsList } from 'domain/constants/generics';
 
 /**
- * Returns true if the given label is a generic / pseudo query atom label
- * (e.g. A, AH, Q, QH, M, MH, X, XH, *, R, G, ALK, ARY, …) as defined in
- * the Ketcher Generics table.
- *
- * Atom-list marker labels ('L', 'L#') are NOT generics — they represent a set
- * of element alternatives encoded in the atomList property.
- */
+Returns true if the given label is a generic / pseudo query atom label
+(e.g. A, AH, Q, QH, M, MH, X, XH, *, R, G, ALK, ARY, …) as defined in
+the Ketcher Generics table.
+
+Atom-list marker labels ('L', 'L#') are NOT generics — they represent a set
+of element alternatives encoded in the atomList property.
+*/
 export function isGenericAtom(label: string): boolean {
   return genericsList.includes(label);
 }

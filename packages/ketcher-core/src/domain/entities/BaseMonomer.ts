@@ -189,19 +189,15 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get R1AttachmentPoint(): AttachmentPointName | undefined {
-    if (this.attachmentPointsToBonds.R1 === null) {
-      return AttachmentPointName.R1;
-    }
-
-    return undefined;
+    return this.attachmentPointsToBonds.R1 === null
+      ? AttachmentPointName.R1
+      : undefined;
   }
 
   public get R2AttachmentPoint(): AttachmentPointName | undefined {
-    if (this.attachmentPointsToBonds.R2 === null) {
-      return AttachmentPointName.R2;
-    }
-
-    return undefined;
+    return this.attachmentPointsToBonds.R2 === null
+      ? AttachmentPointName.R2
+      : undefined;
   }
 
   public get hasFreeAttachmentPoint() {
@@ -363,10 +359,9 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get availableAttachmentPointForBondEnd() {
-    if (this.chosenSecondAttachmentPointForBond) {
-      return this.chosenSecondAttachmentPointForBond;
-    }
-    return this.firstFreeAttachmentPoint;
+    return this.chosenSecondAttachmentPointForBond
+      ? this.chosenSecondAttachmentPointForBond
+      : this.firstFreeAttachmentPoint;
   }
 
   public hasAttachmentPoint(attachmentPointName: AttachmentPointName) {
@@ -526,11 +521,9 @@ export abstract class BaseMonomer extends DrawingEntity {
       .filter((_, sgroup) => sgroup.isSuperatomWithoutLabel)
       ?.get(0);
 
-    if (!superatomWithoutLabel) {
-      return [];
-    }
-
-    return superatomWithoutLabel.getAttachmentPoints();
+    return !superatomWithoutLabel
+      ? []
+      : superatomWithoutLabel.getAttachmentPoints();
   }
 
   public getAttachmentPointDictFromAtoms(): AttachmentPointsToBonds {

@@ -27,14 +27,14 @@ import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
-  #path: Element | null = null;
+  static isSelectable() {
+    return true;
+  }
+
+  #path: Element | undefined;
 
   constructor() {
     super('enhancedFlag');
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   hoverPath(render: Render): Element {
@@ -63,8 +63,9 @@ class ReEnhancedFlag extends ReObject {
     options: RenderOptions,
   ): Element | null {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
-    if (!this.#path?.attrs) return null;
-    return this.hoverPath(restruct.render).attr(options.selectionStyle);
+    return !this.#path?.attrs
+      ? null
+      : this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
   show(restruct: ReStruct, fragmentId: number, options: RenderOptions): void {
@@ -111,7 +112,7 @@ class ReEnhancedFlag extends ReObject {
       LayerMap.data,
       this.visel,
       this.#path,
-      null,
+      undefined,
       true,
     );
   }

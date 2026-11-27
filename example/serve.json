@@ -9,6 +9,10 @@
       "destination": "/duo.html"
     },
     {
+      "source": "/closable",
+      "destination": "/closable.html"
+    },
+    {
       "source": "/iframe",
       "destination": "/iframe.html"
     },

@@ -20,7 +20,6 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { WarningMessageDialog } from '@tests/pages/molecules/canvas/createMonomer/WarningDialog';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -557,8 +556,7 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await createMonomerDialog.submit();
 
   await WarningMessageDialog(page).ok();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, {
     monomerAlias: 'TempNucleotide1',
   });

@@ -48,31 +48,6 @@ const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
 };
 
 export class FunctionalGroup {
-  readonly #sgroup: SGroup;
-
-  constructor(sgroup: SGroup) {
-    assert(sgroup != null);
-
-    this.#sgroup = sgroup;
-    sgroup.setFunctionalGroup(this);
-  }
-
-  get name(): string {
-    return this.#sgroup.data.name;
-  }
-
-  get relatedSGroupId(): number {
-    return this.#sgroup.id;
-  }
-
-  get isExpanded(): boolean {
-    return Boolean(this.#sgroup.data.expanded);
-  }
-
-  get relatedSGroup(): SGroup {
-    return this.#sgroup;
-  }
-
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance();
     const functionalGroups = provider.getFunctionalGroupsList();
@@ -125,7 +100,7 @@ export class FunctionalGroup {
     id: number,
   ) {
     const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
-    assert(rgroupAttachmentPoint != null);
+    assert(rgroupAttachmentPoint != undefined);
     const attachedAtom = rgroupAttachmentPoint.atomId;
     return this.atomsInFunctionalGroup(molecule.functionalGroups, attachedAtom);
   }
@@ -246,7 +221,7 @@ export class FunctionalGroup {
     struct: Struct,
   ) {
     const bond = struct.bonds.get(halfBond.bid);
-    assert(bond != null);
+    assert(bond != undefined);
     return this.isBondInContractedFunctionalGroup(
       bond,
       struct.sgroups,
@@ -265,12 +240,39 @@ export class FunctionalGroup {
       }
     } else {
       functionalGroups.forEach((fg) => {
-        if (fg.relatedSGroupId === sgroup) {
-          isFunctionalGroup = true;
-          isExpanded = fg.isExpanded;
+        if (fg.relatedSGroupId !== sgroup) {
+          return;
         }
+
+        isFunctionalGroup = true;
+        isExpanded = fg.isExpanded;
       });
     }
     return !isExpanded && isFunctionalGroup;
+  }
+
+  readonly #sgroup: SGroup;
+
+  constructor(sgroup: SGroup) {
+    assert(sgroup != undefined);
+
+    this.#sgroup = sgroup;
+    sgroup.setFunctionalGroup(this);
+  }
+
+  get name(): string {
+    return this.#sgroup.data.name;
+  }
+
+  get relatedSGroupId(): number {
+    return this.#sgroup.id;
+  }
+
+  get isExpanded(): boolean {
+    return Boolean(this.#sgroup.data.expanded);
+  }
+
+  get relatedSGroup(): SGroup {
+    return this.#sgroup;
   }
 }

@@ -71,28 +71,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.calculateIsSnakeBond();
   }
 
-  // TODO: Delete.
-  public get isSnake(): true {
-    return true;
-  }
-
   private get isHydrogenBond() {
     return this.polymerBond instanceof HydrogenBond;
-  }
-
-  public get rootBBox(): DOMRect | undefined {
-    const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
-  }
-
-  public get width(): number {
-    return this.rootBBox?.width ?? 0;
-  }
-
-  public get height(): number {
-    return this.rootBBox?.height ?? 0;
   }
 
   private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
@@ -110,6 +90,24 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  // TODO: Delete.
+  public get isSnake(): true {
+    return true;
+  }
+
+  public get rootBBox(): DOMRect | undefined {
+    const rootNode = this.rootElement?.node();
+    return !rootNode ? undefined : rootNode.getBBox();
+  }
+
+  public get width(): number {
+    return this.rootBBox?.width ?? 0;
+  }
+
+  public get height(): number {
+    return this.rootBBox?.height ?? 0;
   }
 
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
@@ -242,10 +240,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       (cells.length === 2 ||
         cells.reduce(
           (isStraight: boolean, cell: Cell, index: number): boolean => {
-            if (!isStraight || index === 0 || index === cells.length - 1) {
-              return isStraight;
-            }
-            return cell.x === firstCell.x && !cell.monomer;
+            return !isStraight || index === 0 || index === cells.length - 1
+              ? isStraight
+              : cell.x === firstCell.x && !cell.monomer;
           },
           true,
         )) &&
@@ -881,7 +878,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', SELECTION_COLOR)
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
           .attr('d', this.path)

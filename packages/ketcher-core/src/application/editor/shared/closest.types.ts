@@ -18,41 +18,41 @@ import type { ReStruct } from 'application/render';
 import type { Vec2 } from 'domain/entities/vec2';
 
 /**
- * Represents the result of finding the closest atom.
- * Contains the atom ID and the distance to it.
- */
+Represents the result of finding the closest atom.
+Contains the atom ID and the distance to it.
+*/
 export interface ClosestAtom {
   id: number;
   dist: number;
 }
 
 /**
- * Represents an item to skip when searching for the closest element.
- * Used to exclude a specific atom from the closest search.
- */
+Represents an item to skip when searching for the closest element.
+Used to exclude a specific atom from the closest search.
+*/
 export interface ClosestSkipItem {
   map: 'atoms';
   id: number;
 }
 
 /**
- * Function type for finding the closest atom to a given position.
- * @param restruct - The render structure containing atoms and their positions
- * @param pos - The position to search from
- * @param skip - Optional atom to skip during the search
- * @param minDist - Optional minimum distance threshold
- * @returns The closest atom with its distance, or null if none found
- */
+Function type for finding the closest atom to a given position.
+@param restruct - The render structure containing atoms and their positions
+@param pos - The position to search from
+@param skip - Optional atom to skip during the search
+@param minDist - Optional minimum distance threshold
+@returns The closest atom with its distance, or null if none found
+*/
 export type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
   skip: ClosestSkipItem | null,
-  minDist: number | null,
+  minDistribution: number | null,
 ) => ClosestAtom | null;
 
 /**
- * Default export interface for the closest module.
- */
+Default export interface for the closest module.
+*/
 export interface ClosestModule {
   atom: FindClosestAtom;
 }

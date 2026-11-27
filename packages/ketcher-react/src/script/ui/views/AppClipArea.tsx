@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -17,10 +16,15 @@
 
 import ClipArea from '../component/cliparea/cliparea';
 import { connect } from 'react-redux';
+import type { Action } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { initClipboard } from '../state/hotkeys';
+import type { StoreState } from '../state/store.types';
 
-const AppClipArea = connect(null, (dispatch) => dispatch(initClipboard as any))(
-  ClipArea as any,
-);
+const AppClipArea = connect(
+  null,
+  (dispatch: ThunkDispatch<StoreState, unknown, Action<string>>) =>
+    dispatch(initClipboard),
+)(ClipArea);
 
 export default AppClipArea;

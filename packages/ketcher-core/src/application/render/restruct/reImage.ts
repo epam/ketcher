@@ -25,22 +25,22 @@ interface ClosestReferencePosition {
 }
 
 export class ReImage extends ReObject {
-  private selectionPointsSet: RaphaelSet;
-  private selectionHitTargetsSet: RaphaelSet;
-
-  private setSelectionPointsVisibility(visible: boolean) {
-    this.selectionPointsSet?.attr({
-      opacity: visible ? 1 : 0,
-      'pointer-events': visible ? 'all' : 'none',
-    });
-  }
-
   static isSelectable(): boolean {
     return true;
   }
 
+  private selectionPointsSet: RaphaelSet;
+  private selectionHitTargetsSet: RaphaelSet;
+
   constructor(public image: Image) {
     super(IMAGE_KEY);
+  }
+
+  private setSelectionPointsVisibility(isVisible: boolean) {
+    this.selectionPointsSet?.attr({
+      opacity: isVisible ? 1 : 0,
+      'pointer-events': isVisible ? 'all' : 'none',
+    });
   }
 
   private getScaledPointWithOffset(
@@ -191,8 +191,8 @@ export class ReImage extends ReObject {
         element.node.setAttribute('pointer-events', 'none');
       }
       if (hitTarget.node?.setAttribute) {
-        hitTarget.node.setAttribute('data-testid', `imageResize-${key}`);
-        hitTarget.node.setAttribute('data-image-id', imageId);
+        hitTarget.node.dataset.testid = `imageResize-${key}`;
+        hitTarget.node.dataset.imageId = String(imageId);
         hitTarget.node.setAttribute('pointer-events', 'all');
       }
 
@@ -231,9 +231,8 @@ export class ReImage extends ReObject {
       dimensions.x,
       dimensions.y,
     );
-    image.node.setAttribute('data-testid', 'image');
-    image.node.setAttribute(
-      'data-image-id',
+    image.node.dataset.testid = 'image';
+    image.node.dataset.imageId = String(
       restruct.molecule.images.keyOf(this.image),
     );
     restruct.addReObjectPath(LayerMap.images, this.visel, image);

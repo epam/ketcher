@@ -501,8 +501,7 @@
             "y": -1.25
         },
         "alias": "G",
-        "templateId": "G___Glycine",
-        "seqid": 2
+        "templateId": "G___Glycine"
     },
     "monomer2": {
         "type": "monomer",

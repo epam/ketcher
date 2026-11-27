@@ -18,12 +18,12 @@
     </colortable>
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
-            <n id="5" p="342.119324 224.252228"/>
-            <n id="6" p="394.028381 224.237686"/>
-            <n id="7" p="368.122986 209.249008"/>
-            <n id="8" p="394.028381 254.265976"/>
-            <n id="9" p="342.119324 254.400620"/>
-            <n id="10" p="368.188477 269.250977"/>
+            <n id="5" p="339.908356 221.258148"/>
+            <n id="6" p="391.796936 221.243607"/>
+            <n id="7" p="365.901733 206.260849"/>
+            <n id="8" p="391.796936 251.260040"/>
+            <n id="9" p="339.908356 251.394623"/>
+            <n id="10" p="365.967194 266.239166"/>
             <b id="14" B="7" E="5" Order="2"/>
             <b id="15" B="5" E="9"/>
             <b id="16" B="9" E="10" Order="2"/>
@@ -31,7 +31,7 @@
             <b id="18" B="8" E="6" Order="2"/>
             <b id="19" B="6" E="7"/>
         </fragment>
-        <arrow id="11" BoundingBox="539.880615 240.749985 416.073853 240.749985" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="539.880615 240.749985 0.000000" Tail3D="416.073853 240.749985 0.000000"/>
+        <arrow id="11" BoundingBox="537.591675 237.749405 413.833679 237.749405" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="537.591675 237.749405 0.000000" Tail3D="413.833679 237.749405 0.000000"/>
         <scheme>
             <step ReactionStepReactants="4" ReactionStepArrows="11"/>
         </scheme>

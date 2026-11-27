@@ -50,7 +50,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     this.data.attachmentPointId = attachmentPointId;
 
     const reAtom = restruct.atoms.get(atomId);
-    assert(reAtom != null);
+    assert(reAtom != undefined);
     restruct.rgroupAttachmentPoints.set(
       attachmentPointId,
       new ReRGroupAttachmentPoint(newAttachmentPoint, reAtom),
@@ -59,7 +59,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
 
   invert() {
     if (this.data.attachmentPointId === undefined) {
-      throw Error(`Inverted attachmentPointId doesn't exist`);
+      throw new Error(`Inverted attachmentPointId doesn't exist`);
     }
     const inverted = new RGroupAttachmentPointAdd.InverseConstructor();
     inverted.data = this.data;

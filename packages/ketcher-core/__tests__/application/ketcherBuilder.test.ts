@@ -2,10 +2,6 @@
 // import { Editor } from 'application/editor';
 // import { KetcherBuilder } from 'application/ketcherBuilder';
 // import { StructServiceProvider } from 'domain/services';
-// import { mock } from 'jest-mock-extended';
-
-export {};
-
 // skipped until cyclic reference is resolved
 
 describe.skip('build()', () => {

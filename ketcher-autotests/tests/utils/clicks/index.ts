@@ -55,7 +55,7 @@ export async function clickOnCanvas(
   page: Page,
   x: number,
   y: number,
-  options: {
+  options?: {
     /**
      * Defaults to `left`.
      */
@@ -75,8 +75,14 @@ export async function clickOnCanvas(
      *      * Time to wait canvas event for for waitForRenderTimeOut.
      */
     from?: 'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter';
-  } = { from: 'canvasTopLeft' },
+  },
 ) {
+  const {
+    from = 'canvasTopLeft',
+    waitForRenderTimeOut,
+    ...clickOptions
+  } = options ?? {};
+
   await waitForRender(
     page,
     async () => {
@@ -110,15 +116,15 @@ export async function clickOnCanvas(
       const relativeAxisCenter = await getRelativeAxisCenter(
         page,
         await getVisibleCanvas(page),
-        options.from ?? 'canvasTopLeft',
+        from,
       );
       await page.mouse.click(
         relativeAxisCenter.x + x,
         relativeAxisCenter.y + y,
-        options,
+        clickOptions,
       );
     },
-    options?.waitForRenderTimeOut,
+    waitForRenderTimeOut,
   );
 }
 
@@ -141,14 +147,14 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
 export async function clickInTheMiddleOfTheCanvas(
   page: Page,
   button: MouseButton = 'left',
-  options: {
+  options?: {
     waitForMergeInitialization?: boolean;
     waitForRenderTimeOut?: number;
-  } = {},
+  },
 ) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
 
-  if (options.waitForMergeInitialization) {
+  if (options?.waitForMergeInitialization) {
     const canvas = await getVisibleCanvas(page);
     const box = await canvas.boundingBox();
     if (!box) {
@@ -173,7 +179,7 @@ export async function clickInTheMiddleOfTheCanvas(
 
   await clickOnCanvas(page, x, y, {
     button,
-    waitForRenderTimeOut: options.waitForRenderTimeOut,
+    waitForRenderTimeOut: options?.waitForRenderTimeOut,
   });
 }
 

@@ -80,9 +80,9 @@ const hasBondBetweenComponents = (
 };
 
 /**
- * RNA preset component connections allow only a single bond with none, up, or
- * down stereo, matching Ketcher's attachment-point bond rules.
- */
+RNA preset component connections allow only a single bond with none, up, or
+down stereo, matching Ketcher's attachment-point bond rules.
+*/
 const isValidConnectionBond = (
   bond: Pick<Bond, 'begin' | 'end'> & Partial<Pick<Bond, 'type' | 'stereo'>>,
 ) => {
@@ -131,15 +131,17 @@ const countRnaPresetConnectionBonds = (
 
   wizardStruct.bonds.forEach((bond) => {
     if (
-      hasBondBetweenComponents(
+      !hasBondBetweenComponents(
         bond,
         firstComponentAtomIds,
         secondComponentAtomIds,
       )
     ) {
-      count += 1;
-      hasInvalidBond = hasInvalidBond || !isValidConnectionBond(bond);
+      return;
     }
+
+    count += 1;
+    hasInvalidBond = hasInvalidBond || !isValidConnectionBond(bond);
   });
 
   return { count, hasInvalidBond };
@@ -169,16 +171,16 @@ export const getRnaPresetStructureValidationResult = (
     atomComponentCount.set(atomId, (atomComponentCount.get(atomId) ?? 0) + 1);
   });
 
-  const hasAtomsInMultipleComponents = Array.from(
-    atomComponentCount.entries(),
-  ).some(([atomId, componentCount]) => {
-    if (componentCount > 1) {
-      problematicAtomIds.add(atomId);
-      return true;
-    }
+  const hasAtomsInMultipleComponents = [...atomComponentCount.entries()].some(
+    ([atomId, componentCount]) => {
+      if (componentCount > 1) {
+        problematicAtomIds.add(atomId);
+        return true;
+      }
 
-    return false;
-  });
+      return false;
+    },
+  );
 
   if (hasAtomsInMultipleComponents) {
     issues.push('rnaPresetAtomsInMultipleComponents');
@@ -186,10 +188,12 @@ export const getRnaPresetStructureValidationResult = (
 
   let hasAtomsOutsideComponents = false;
   wizardStruct.atoms.forEach((_, atomId) => {
-    if (!atomComponentCount.has(atomId)) {
-      hasAtomsOutsideComponents = true;
-      problematicAtomIds.add(atomId);
+    if (atomComponentCount.has(atomId)) {
+      return;
     }
+
+    hasAtomsOutsideComponents = true;
+    problematicAtomIds.add(atomId);
   });
 
   if (hasAtomsOutsideComponents) {

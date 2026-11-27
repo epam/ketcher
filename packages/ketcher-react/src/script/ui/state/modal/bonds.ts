@@ -1,4 +1,9 @@
-import { type Bond, Action, fromBondsAttrs, KetcherLogger } from 'ketcher-core';
+import {
+  type Bond,
+  Action,
+  fromBondsAttributes,
+  KetcherLogger,
+} from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
 export function updateSelectedBonds({
@@ -7,14 +12,14 @@ export function updateSelectedBonds({
   editor,
 }: {
   bonds: number[];
-  changeBondPromise: Promise<Bond>;
+  changeBondPromise: Bond | PromiseLike<Bond>;
   editor;
 }) {
   const action = new Action();
   const struct = editor.render.ctab;
   const { molecule } = struct;
   if (bonds) {
-    Promise.resolve(changeBondPromise)
+    void Promise.resolve(changeBondPromise)
       .then((userChangedBond) => {
         bonds.forEach((bondId) => {
           const unchangedBond = molecule.bonds.get(bondId);
@@ -23,7 +28,7 @@ export function updateSelectedBonds({
             userChangedBond,
           );
           action.mergeWith(
-            fromBondsAttrs(
+            fromBondsAttributes(
               struct,
               bondId,
               bondWithChangedProperties as Bond,
@@ -33,8 +38,8 @@ export function updateSelectedBonds({
         });
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('bonds.ts::updateSelectedBonds', e);
+      .catch((error) => {
+        KetcherLogger.error('bonds.ts::updateSelectedBonds', error);
       });
   }
 }

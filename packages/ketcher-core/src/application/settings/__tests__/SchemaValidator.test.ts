@@ -16,7 +16,7 @@ const {
   assertDefined,
 }: {
   assertDefined: AssertDefined;
-} = require('../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
+} = require('../../../../__tests__/utilities/assertDefined.ts'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 describe('SchemaValidator', () => {
   let validator: SchemaValidator;
@@ -131,7 +131,7 @@ describe('SchemaValidator', () => {
     it('should validate partial render settings', () => {
       const partial = {
         atomColoring: false,
-        bondThickness: 2.0,
+        bondThickness: 2,
       };
 
       const result = validator.validatePartial(partial);

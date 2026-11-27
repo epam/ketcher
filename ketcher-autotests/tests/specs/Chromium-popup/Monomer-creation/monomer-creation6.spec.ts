@@ -20,7 +20,6 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { WarningMessageDialog } from '@tests/pages/molecules/canvas/createMonomer/WarningDialog';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -557,8 +556,7 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await createMonomerDialog.submit();
 
   await WarningMessageDialog(page).ok();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, {
     monomerAlias: 'TempNucleotide1',
   });
@@ -665,7 +663,9 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: true,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -707,7 +707,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: false,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -753,8 +755,6 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   const presetSection = NucleotidePresetSection(page);
 
   await LeftToolbar(page).createMonomer();
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await dialog.selectType(MonomerType.NucleotidePreset);
 

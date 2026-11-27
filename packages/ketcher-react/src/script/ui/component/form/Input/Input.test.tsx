@@ -1,6 +1,10 @@
-import { render } from '@testing-library/react';
+import React from 'react';
+import { vi } from 'vitest';
+
+import { render, screen } from '@testing-library/react';
 
 import Input from './Input';
+import { GenericInput } from './Input';
 
 describe('Input component should be rendered correctly', () => {
   it('should render slider according to props', () => {
@@ -14,7 +18,7 @@ describe('Input component should be rendered correctly', () => {
         description: 'slider',
         default: true,
       },
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...sliderProps} />);
@@ -27,7 +31,7 @@ describe('Input component should be rendered correctly', () => {
       name: 'Name',
       value: true,
       type: 'checkbox',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...checkboxProps} />);
@@ -35,16 +39,118 @@ describe('Input component should be rendered correctly', () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
+  it('normalizes commas in numeric input values', () => {
+    const value = GenericInput.val(
+      { target: { type: 'number', value: '1,25' } },
+      { type: 'number' },
+    );
+
+    expect(value).toBe('1.25');
+  });
+
   it('should render textarea if no schema provided and type is textarea', () => {
     const textareaProps = {
       name: 'Name',
       value: 'value',
       type: 'textarea',
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     const { asFragment } = render(<Input {...textareaProps} />);
 
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('should autofocus input when autoFocus prop is true', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: vi.fn(),
+      autoFocus: true,
+    };
+
+    render(<Input {...inputProps} />);
+    const input = screen.getByRole('textbox');
+
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('should allow imperative focus via ref object', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: vi.fn(),
+    };
+
+    const ref = React.createRef<HTMLInputElement>();
+    render(<Input {...inputProps} ref={ref} />);
+    const input = screen.getByRole('textbox');
+
+    // Initially not focused
+    expect(document.activeElement).not.toBe(input);
+
+    // Focus via ref
+    ref.current?.focus();
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('should call callback ref with input element', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: vi.fn(),
+    };
+
+    const callbackRef = vi.fn();
+    render(<Input {...inputProps} ref={callbackRef} />);
+
+    expect(callbackRef).toHaveBeenCalledWith(expect.any(HTMLInputElement));
+  });
+
+  it('should focus when isFocused prop is provided', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: vi.fn(),
+      isFocused: true,
+    };
+
+    render(<Input {...inputProps} />);
+    const input = screen.getByRole('textbox');
+
+    // Should be focused because isFocused is true
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('should not leak isFocused prop to DOM element', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: vi.fn(),
+      isFocused: true,
+    };
+
+    render(<Input {...inputProps} />);
+    const input = screen.getByRole('textbox');
+
+    // The isFocused prop should not appear as an attribute on the DOM element
+    expect(input).not.toHaveAttribute('isFocused');
+    expect(input).not.toHaveAttribute('isfocused');
+  });
+
+  it('should not leak isFocused prop to DOM element when false', () => {
+    const inputProps = {
+      name: 'test',
+      value: 'test value',
+      onChange: vi.fn(),
+      isFocused: false,
+    };
+
+    render(<Input {...inputProps} />);
+    const input = screen.getByRole('textbox');
+
+    // The isFocused prop should not appear as an attribute on the DOM element
+    expect(input).not.toHaveAttribute('isFocused');
+    expect(input).not.toHaveAttribute('isfocused');
   });
 });

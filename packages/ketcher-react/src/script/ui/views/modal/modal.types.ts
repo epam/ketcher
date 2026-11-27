@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-interface BaseProps {
+interface BaseProps<TResult = Record<string, unknown>> {
   className: string;
   formState: {
     errors: Record<string, string>;
-    result: Record<string, any>;
+    result: TResult;
     valid: boolean;
   };
 }
 
-interface BaseCallProps {
+interface BaseCallProps<TResult = unknown> {
   onCancel: () => void;
-  onOk: (result: any) => void;
+  onOk: (result: TResult) => void;
 }
 
 interface ModalContainerProps {

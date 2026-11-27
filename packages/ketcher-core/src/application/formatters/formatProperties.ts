@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   molV3000: new SupportedFormatProperties(
     'MDL Molfile V3000',
@@ -49,6 +50,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.Rxn,
     ['.rxn'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   rxnV3000: new SupportedFormatProperties(
     'MDL Rxnfile V3000',
@@ -62,11 +64,14 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.DaylightSmiles,
     ['.smi', '.smiles'],
     true,
+    { 'smiles-saving-format': 'daylight' },
   ),
   smilesExt: new SupportedFormatProperties(
     'Extended SMILES',
     ChemicalMimeType.ExtendedSmiles,
     ['.cxsmi', '.cxsmiles'],
+    false,
+    { 'smiles-saving-format': 'chemaxon' },
   ),
   smarts: new SupportedFormatProperties(
     'Daylight SMARTS',
@@ -182,6 +187,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.RDF,
     ['.rdf'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   rdfV3000: new SupportedFormatProperties(
     'RDF V3000',

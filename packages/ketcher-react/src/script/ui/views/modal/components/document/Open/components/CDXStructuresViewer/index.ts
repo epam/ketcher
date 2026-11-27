@@ -1,3 +1,1 @@
-import CDXStructuresViewer from './CDXStructuresViewer';
-
-export default CDXStructuresViewer;
+export { default } from './CDXStructuresViewer';

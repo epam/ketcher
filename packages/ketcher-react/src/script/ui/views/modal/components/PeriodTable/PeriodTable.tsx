@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@ import type { Dispatch } from 'redux';
 import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
+import i18n from 'src/i18n/i18n';
 
 interface TableOwnProps {
   type?: PeriodTableType;
@@ -60,6 +61,77 @@ interface TableState {
 }
 
 class Table extends Component<TableProps, TableState> {
+  changeType = (type: PeriodTableType) => {
+    const isPreviousListChoice =
+      this.state.type === 'list' || this.state.type === 'not-list';
+    const isCurrentListChoice = type === 'list' || type === 'not-list';
+    if (isPreviousListChoice && isCurrentListChoice) {
+      this.setState({ type });
+    } else {
+      this.setState({
+        type,
+        value: type === 'atom' || type === 'gen' ? null : [],
+      });
+    }
+  };
+
+  headerContent = () => (
+    <div className={classes.dialogHeader}>
+      <Icon name="period-table" />
+      <span>{i18n.t('dialogs:periodTable.headerTitle')}</span>
+    </div>
+  );
+
+  selected = (label: string): boolean => {
+    const { type, value } = this.state;
+    return type === 'atom' || type === 'gen'
+      ? value === label
+      : Array.isArray(value) && value.includes(label);
+  };
+
+  onAtomSelect = (label?: string) => {
+    if (!label) {
+      return;
+    }
+
+    const { type, value } = this.state;
+    const normalizedValue = Array.isArray(value) ? value : [];
+    const newValue =
+      type === 'atom' || type === 'gen' ? label : xor([label], normalizedValue);
+    this.setState({ value: newValue });
+  };
+
+  onAtomActivate = (label?: string) => {
+    if (label) {
+      this.onAtomSelect(label);
+    }
+    const result = this.result();
+    const { type } = this.state;
+    if (result && type === 'atom') {
+      this.props.onOk(this.result());
+    }
+  };
+
+  result = (): PeriodTableResult => {
+    const { type, value } = this.state;
+    if (!value || (Array.isArray(value) && value.length === 0)) {
+      return null;
+    }
+    if (type === 'atom') {
+      return { label: value as string, pseudo: null };
+    } else if (type === 'gen') {
+      return { type, label: value as string, pseudo: value as string };
+    }
+    return { type, values: value as string[] };
+  };
+
+  currentEvents = (element: Element) => {
+    return {
+      onMouseEnter: () => this.setState({ current: element, isInfo: true }),
+      onMouseLeave: () => this.setState({ isInfo: false }),
+    };
+  };
+
   constructor(props: TableProps) {
     super(props);
     const heliumElement = Elements.get(2);
@@ -78,77 +150,6 @@ class Table extends Component<TableProps, TableState> {
       isInfo: false,
     };
   }
-
-  changeType = (type: PeriodTableType) => {
-    const prevChoice =
-      this.state.type === 'list' || this.state.type === 'not-list';
-    const currentChoice = type === 'list' || type === 'not-list';
-    if (prevChoice && currentChoice) {
-      this.setState({ type });
-    } else {
-      this.setState({
-        type,
-        value: type === 'atom' || type === 'gen' ? null : [],
-      });
-    }
-  };
-
-  headerContent = () => (
-    <div className={classes.dialogHeader}>
-      <Icon name="period-table" />
-      <span>Periodic Table</span>
-    </div>
-  );
-
-  selected = (label: string): boolean => {
-    const { type, value } = this.state;
-    return type === 'atom' || type === 'gen'
-      ? value === label
-      : Array.isArray(value) && value.includes(label);
-  };
-
-  onAtomSelect = (label?: string) => {
-    if (label) {
-      const { type, value } = this.state;
-      const normalizedValue = Array.isArray(value) ? value : [];
-      const newValue =
-        type === 'atom' || type === 'gen'
-          ? label
-          : xor([label], normalizedValue);
-      this.setState({ value: newValue });
-    }
-  };
-
-  onAtomActivate = (label?: string) => {
-    if (label) {
-      this.onAtomSelect(label);
-    }
-    const result = this.result();
-    const { type } = this.state;
-    if (result && type === 'atom') {
-      this.props.onOk(this.result());
-    }
-  };
-
-  result = (): PeriodTableResult => {
-    const { type, value } = this.state;
-    if (!value || (Array.isArray(value) && !value.length)) {
-      return null;
-    }
-    if (type === 'atom') {
-      return { label: value as string, pseudo: null };
-    } else if (type === 'gen') {
-      return { type, label: value as string, pseudo: value as string };
-    }
-    return { type, values: value as string[] };
-  };
-
-  currentEvents = (element: Element) => {
-    return {
-      onMouseEnter: () => this.setState({ current: element, isInfo: true }),
-      onMouseLeave: () => this.setState({ isInfo: false }),
-    };
-  };
 
   render() {
     const { value } = this.state;
@@ -169,16 +170,16 @@ class Table extends Component<TableProps, TableState> {
         params={dialogParams}
         result={this.result}
         buttons={['Cancel', 'OK']}
-        buttonsNameMap={{ OK: 'Add' }}
+        buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
         needMargin={false}
         footerContent={
-          !this.props.isNestedModal ? (
+          this.props.isNestedModal ? undefined : (
             <TypeChoice
               value={this.state.type}
               onChange={this.changeType}
               disabled={this.props.isMonomerCreationWizardActive}
             />
-          ) : undefined
+          )
         }
       >
         <div className={classes.periodTable}>
@@ -214,8 +215,7 @@ function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
   ) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<TableStateProps>;
+    return !atom ? {} : ({ ...fromElement(atom) } as Partial<TableStateProps>);
   }
 
   return {};

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +25,8 @@ export const MonomerPreviewContainer = styled.span<{ preset?: boolean }>`
   font-weight: 500;
   line-height: normal;
   color: ${(props) => props.theme.ketcher.color.text.lightgrey};
-  padding-left: ${({ preset }) => (preset ? '0' : '8px')};
-  border-left: ${({ preset }) => (preset ? 'none' : '1px solid #D9DCEA')};
+  padding-inline-start: ${({ preset }) => (preset ? '0' : '8px')};
+  border-inline-start: ${({ preset }) => (preset ? 'none' : '1px solid #D9DCEA')};
 `;
 
 export const MonomerPreviewText = styled.p`
@@ -35,7 +35,7 @@ export const MonomerPreviewText = styled.p`
 
 export const MonomerPreviewTitle = styled.span`
   color: #7c7c7c;
-  margin-right: 4px;
+  margin-inline-end: 4px;
 `;
 
 export const MonomerPreviewList = styled.span`

@@ -742,6 +742,9 @@ test.describe('Calculated Values Tools', () => {
     'Check', 'Cancel', 'Apply', X buttons
     */
     await IndigoFunctionsToolbar(page).checkStructure();
+    await expect(StructureCheckDialog(page).idsExplanation).toHaveText(
+      "Some checks will return atom or bond IDs for the elements causing the error. To visualize them toggle on the 'Show Atom IDs' and 'Show Bond IDs' in the 'Debugging' section of Settings.",
+    );
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,6 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  expandSGroupWithMultipleAttachmentPoint,
   KetcherLogger,
 } from 'ketcher-core';
 
@@ -85,97 +84,99 @@ class SGroupTool implements Tool {
     this.editor.rotateController.rerender();
     this.editor.update(true);
 
-    if (selection.atoms) {
-      const selectedAtoms = this.editor.selection()?.atoms;
-
-      const sgroups: Pool<SGroup> = molecule.sgroups;
-      const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
-        atoms: [],
-        bonds: [],
-      };
-      let actualSgroupId;
-      let atomsResult: Array<number> = [];
-      let extraAtoms;
-      const functionalGroups = molecule.functionalGroups;
-      const result: Array<number> = [];
-
-      const id = sgroups.find((_, sgroup) =>
-        isEqual(sgroup.atoms, selectedAtoms),
-      );
-
-      if (selectedAtoms && functionalGroups.size) {
-        for (const atom of selectedAtoms) {
-          const atomId = FunctionalGroup.atomsInFunctionalGroup(
-            functionalGroups,
-            atom,
-          );
-
-          if (atomId == null) {
-            extraAtoms = true;
-          }
-
-          const atomFromStruct =
-            atomId !== null ? struct.atoms.get(atomId)?.a : null;
-
-          if (atomFromStruct) {
-            for (const sgId of atomFromStruct.sgs.values()) {
-              actualSgroupId = sgId;
-            }
-          }
-
-          if (
-            atomFromStruct &&
-            (FunctionalGroup.isAtomInContractedFunctionalGroup(
-              atomFromStruct,
-              sgroups,
-              functionalGroups,
-            ) ||
-              SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
-          ) {
-            const sgroupAtoms =
-              actualSgroupId !== undefined
-                ? SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
-                : undefined;
-            const sgroupBonds =
-              actualSgroupId !== undefined &&
-              SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
-            if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
-              newSelected.atoms.push(...sgroupAtoms);
-              newSelected.bonds.push(...sgroupBonds);
-            }
-          }
-
-          if (atomFromStruct && atomId !== null) {
-            atomsResult.push(atomId);
-          }
-        }
-      }
-      if (extraAtoms) {
-        atomsResult = [];
-      }
-
-      if (atomsResult?.length > 0) {
-        for (const id of atomsResult) {
-          const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id,
-          );
-
-          if (fgId !== null && !result.includes(fgId)) {
-            result.push(fgId);
-          }
-        }
-      }
-
-      if (result.length) {
-        this.editor.selection(null);
-        dispatchMonomerOrGroupDialog(this.editor, result);
-        return;
-      }
-
-      SGroupTool.sgroupDialog(this.editor, id);
-      this.isNotActiveTool = true;
+    if (!selection.atoms) {
+      return;
     }
+
+    const selectedAtoms = this.editor.selection()?.atoms;
+
+    const sgroups: Pool<SGroup> = molecule.sgroups;
+    const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
+      atoms: [],
+      bonds: [],
+    };
+    let actualSgroupId;
+    let atomsResult: Array<number> = [];
+    let hasExtraAtoms;
+    const functionalGroups = molecule.functionalGroups;
+    const result: Array<number> = [];
+
+    const id = sgroups.find((_, sgroup) =>
+      isEqual(sgroup.atoms, selectedAtoms),
+    );
+
+    if (selectedAtoms && functionalGroups.size > 0) {
+      for (const atom of selectedAtoms) {
+        const atomId = FunctionalGroup.atomsInFunctionalGroup(
+          functionalGroups,
+          atom,
+        );
+
+        if (atomId == null) {
+          hasExtraAtoms = true;
+        }
+
+        const atomFromStruct =
+          atomId === null ? null : struct.atoms.get(atomId)?.a;
+
+        if (atomFromStruct) {
+          for (const sgId of atomFromStruct.sgs.values()) {
+            actualSgroupId = sgId;
+          }
+        }
+
+        if (
+          atomFromStruct &&
+          (FunctionalGroup.isAtomInContractedFunctionalGroup(
+            atomFromStruct,
+            sgroups,
+            functionalGroups,
+          ) ||
+            SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
+        ) {
+          const sgroupAtoms =
+            actualSgroupId === undefined
+              ? undefined
+              : SGroup.getAtoms(molecule, sgroups.get(actualSgroupId));
+          const sgroupBonds =
+            actualSgroupId !== undefined &&
+            SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
+          if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
+            newSelected.atoms.push(...sgroupAtoms);
+            newSelected.bonds.push(...sgroupBonds);
+          }
+        }
+
+        if (atomFromStruct && atomId !== null) {
+          atomsResult.push(atomId);
+        }
+      }
+    }
+    if (hasExtraAtoms) {
+      atomsResult = [];
+    }
+
+    if (atomsResult?.length > 0) {
+      for (const id of atomsResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id,
+        );
+
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId);
+        }
+      }
+    }
+
+    if (result.length > 0) {
+      this.editor.selection(null);
+      dispatchMonomerOrGroupDialog(this.editor, result);
+      return;
+    }
+
+    SGroupTool.sgroupDialog(this.editor, id);
+    this.isNotActiveTool = true;
   }
 
   mousedown(event: MouseEvent) {
@@ -188,13 +189,13 @@ class SGroupTool implements Tool {
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci?.map === 'atoms' && functionalGroups.size) {
+    if (ci?.map === 'atoms' && functionalGroups.size > 0) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
       );
       const atomFromStruct =
-        atomId !== null ? struct.atoms.get(atomId)?.a : null;
+        atomId === null ? null : struct.atoms.get(atomId)?.a;
 
       if (
         atomFromStruct &&
@@ -211,14 +212,14 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci?.map === 'bonds' && functionalGroups.size) {
+    if (ci?.map === 'bonds' && functionalGroups.size > 0) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
         ci.id,
       );
       const bondFromStruct =
-        bondId !== null ? struct.bonds.get(bondId)?.b : null;
+        bondId === null ? null : struct.bonds.get(bondId)?.b;
 
       if (
         bondFromStruct &&
@@ -235,7 +236,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci?.map === 'functionalGroups' && functionalGroups.size) {
+    if (ci?.map === 'functionalGroups' && functionalGroups.size > 0) {
       const sgroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
@@ -315,10 +316,10 @@ class SGroupTool implements Tool {
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     const atomsResult: Array<number> = [];
-    let extraAtoms = false;
+    let hasExtraAtoms = false;
 
-    if (!selected || !functionalGroups.size || !selected.atoms) {
-      return { atomsResult, extraAtoms };
+    if (!selected || functionalGroups.size === 0 || !selected.atoms) {
+      return { atomsResult, extraAtoms: hasExtraAtoms };
     }
 
     const sgroups = struct.sgroups;
@@ -330,7 +331,7 @@ class SGroupTool implements Tool {
       );
 
       if (atomId == null) {
-        extraAtoms = true;
+        hasExtraAtoms = true;
         continue;
       }
 
@@ -356,7 +357,7 @@ class SGroupTool implements Tool {
       atomsResult.push(atomId);
     }
 
-    return { atomsResult, extraAtoms };
+    return { atomsResult, extraAtoms: hasExtraAtoms };
   }
 
   private getActualSgroupId(atomFromStruct: Atom): number | undefined {
@@ -401,10 +402,12 @@ class SGroupTool implements Tool {
       struct.sgroups.get(actualSgroupId)?.item,
     );
 
-    if (atom === sgroupAtoms[0]) {
-      newSelected.atoms.push(...sgroupAtoms);
-      newSelected.bonds.push(...sgroupBonds);
+    if (atom !== sgroupAtoms[0]) {
+      return;
     }
+
+    newSelected.atoms.push(...sgroupAtoms);
+    newSelected.bonds.push(...sgroupBonds);
   }
 
   private processSelectedBonds(
@@ -414,10 +417,10 @@ class SGroupTool implements Tool {
     struct: ReStruct,
   ) {
     const bondsResult: Array<number> = [];
-    let extraBonds = false;
+    let hasExtraBonds = false;
 
-    if (!selected || !functionalGroups.size || !selected.bonds) {
-      return { bondsResult, extraBonds };
+    if (!selected || functionalGroups.size === 0 || !selected.bonds) {
+      return { bondsResult, extraBonds: hasExtraBonds };
     }
 
     for (const bond of selected.bonds) {
@@ -428,7 +431,7 @@ class SGroupTool implements Tool {
       );
 
       if (bondId === null) {
-        extraBonds = true;
+        hasExtraBonds = true;
         continue;
       }
 
@@ -438,7 +441,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    return { bondsResult, extraBonds };
+    return { bondsResult, extraBonds: hasExtraBonds };
   }
 
   private expandFunctionalGroupSelection(
@@ -472,7 +475,7 @@ class SGroupTool implements Tool {
     struct: ReStruct,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
-    if (!atomsResult.length) {
+    if (atomsResult.length === 0) {
       return;
     }
 
@@ -501,7 +504,7 @@ class SGroupTool implements Tool {
     struct: ReStruct,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
-    if (!bondsResult.length) {
+    if (bondsResult.length === 0) {
       return;
     }
 
@@ -527,12 +530,12 @@ class SGroupTool implements Tool {
   private collectFunctionalGroupIds(
     atomsResult: Array<number>,
     bondsResult: Array<number>,
-    extraAtoms: boolean,
-    extraBonds: boolean,
+    hasExtraAtoms: boolean,
+    hasExtraBonds: boolean,
     functionalGroups: Pool<FunctionalGroup>,
     molecule: Struct,
   ): Array<number> {
-    if (extraAtoms || extraBonds) {
+    if (hasExtraAtoms || hasExtraBonds) {
       return [];
     }
 
@@ -607,11 +610,9 @@ class SGroupTool implements Tool {
     newSelected: { atoms: Array<number>; bonds: Array<number> },
     molecule: Struct,
   ) {
-    if (this.lassoHelper.running()) {
-      return this.handleLassoSelection(newSelected, molecule);
-    }
-
-    return this.handleClickSelection(event, ci);
+    return this.lassoHelper.running()
+      ? this.handleLassoSelection(newSelected, molecule)
+      : this.handleClickSelection(event, ci);
   }
 
   private handleLassoSelection(
@@ -668,11 +669,10 @@ class SGroupTool implements Tool {
       };
     }
 
-    if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-      return { id: ci.id, selection: null };
-    }
-
-    return { id: null, selection: null };
+    return {
+      id: ci.map === 'sgroups' || ci.map === 'sgroupData' ? ci.id : null,
+      selection: null,
+    };
   }
 
   private shouldOpenDialog(id, selection): boolean {
@@ -742,10 +742,12 @@ class SGroupTool implements Tool {
       molecule,
     );
 
-    if (this.shouldOpenDialog(id, selection)) {
-      this.editor.selection(selection);
-      SGroupTool.sgroupDialog(this.editor, id);
+    if (!this.shouldOpenDialog(id, selection)) {
+      return;
     }
+
+    this.editor.selection(selection);
+    SGroupTool.sgroupDialog(this.editor, id);
   }
 
   cancel() {
@@ -755,16 +757,16 @@ class SGroupTool implements Tool {
     this.editor.selection(null);
   }
 
-  static sgroupDialog(editor: Editor, id: number | null) {
+  static async sgroupDialog(editor: Editor, id: number | null) {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() ?? {};
-    const sg = id !== null ? struct.sgroups.get(id) : null;
+    const sg = id === null ? null : struct.sgroups.get(id);
 
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
-    if (sg?.isMonomer && id !== null) {
+    if (id !== null && sg?.isMonomer) {
       editor.event.editMonomer.dispatch({ fgIds: [id], variant: 'single' });
-      return Promise.resolve();
+      return;
     }
 
     if (sg?.isMonomer) {
@@ -796,59 +798,55 @@ class SGroupTool implements Tool {
       attrs,
     });
 
-    return Promise.resolve(res)
-      .then((newSg: SGroupDialogResult) => {
-        // TODO: check before signal
-        const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
-        const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
+    try {
+      const newSg = (await Promise.resolve(res)) as SGroupDialogResult;
+      // TODO: check before signal
+      const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
+      const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
+      if (
+        !isDataSGroup && // when data s-group separates
+        !isQuerySGroup &&
+        checkOverlapping(struct, 'common', selection.atoms)
+      ) {
+        editor.event.message.dispatch({
+          error: 'Partial S-group overlapping is not allowed.',
+        });
+      } else {
         if (
-          !isDataSGroup && // when data s-group separates
+          !sg &&
+          !isDataSGroup &&
           !isQuerySGroup &&
-          checkOverlapping(struct, 'common', selection.atoms)
+          (!selection.atoms || selection.atoms.length === 0)
         ) {
-          editor.event.message.dispatch({
-            error: 'Partial S-group overlapping is not allowed.',
-          });
-        } else {
-          if (
-            !sg &&
-            !isDataSGroup &&
-            !isQuerySGroup &&
-            (!selection.atoms || selection.atoms.length === 0)
-          ) {
-            return;
-          }
-
-          const canReplaceExistingDataSg =
-            sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
-
-          if (sg && canReplaceExistingDataSg) {
-            const action = fromSeveralSgroupAddition(
-              restruct,
-              newSg.type,
-              sg.atoms,
-              newSg.attrs,
-            ).mergeWith(fromSgroupDeletion(restruct, id));
-
-            action.mergeWith(expandSGroupWithMultipleAttachmentPoint(restruct));
-
-            editor.update(action);
-            editor.selection(selection);
-            return;
-          }
-          const result = isQuerySGroup
-            ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
-            : fromContextType(id, editor, newSg, selection);
-
-          if (result) {
-            editor.update(result.action);
-          }
-          editor.selection(null);
+          return;
         }
-      })
-      .catch((e) => {
-        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
-      });
+        const canReplaceExistingDataSg =
+          sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
+
+        if (sg && canReplaceExistingDataSg) {
+          const action = fromSeveralSgroupAddition(
+            restruct,
+            newSg.type,
+            sg.atoms,
+            newSg.attrs,
+          ).mergeWith(fromSgroupDeletion(restruct, id));
+
+          editor.update(action);
+          editor.selection(selection);
+          return;
+        }
+        const result = isQuerySGroup
+          ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
+          : fromContextType(id, editor, newSg, selection);
+
+        if (result) {
+          editor.update(result.action);
+        }
+        editor.selection(null);
+      }
+    } catch (e) {
+      KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+    }
   }
 }
 
@@ -860,7 +858,7 @@ function createQueryComponentSGroup(
   sg: SGroup | null | undefined,
 ) {
   const struct = editor.render.ctab.molecule;
-  if (!selection.atoms && sg) {
+  if (sg && !selection.atoms) {
     if (!sg.atoms) {
       editor.errorHandler?.('Cannot convert to a query component');
       return;
@@ -883,17 +881,17 @@ function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
     return SgContexts.Atom;
   }
 
-  if (manyComponentsSelected(restruct, sgAtoms)) {
+  if (areMultipleComponentsSelected(restruct, sgAtoms)) {
     return SgContexts.Multifragment;
   }
 
-  if (singleComponentSelected(restruct, sgAtoms)) {
+  if (isSingleComponentSelected(restruct, sgAtoms)) {
     return SgContexts.Fragment;
   }
 
   const atomSet = new Pile(sgAtoms);
 
-  const sgBonds = Array.from(struct.bonds.values()).filter(
+  const sgBonds = [...struct.bonds.values()].filter(
     (bond: Bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
@@ -904,10 +902,9 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
   const struct = restruct.molecule;
 
   if (selection.atoms && !selection.bonds) {
-    if (manyComponentsSelected(restruct, selection.atoms)) {
-      return SgContexts.Multifragment;
-    }
-    return SgContexts.Atom;
+    return areMultipleComponentsSelected(restruct, selection.atoms)
+      ? SgContexts.Multifragment
+      : SgContexts.Atom;
   }
 
   const bonds = (selection.bonds ?? [])
@@ -925,11 +922,14 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
     (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
-  if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected) {
+  if (
+    isSingleComponentSelected(restruct, selection.atoms) &&
+    allBondsSelected
+  ) {
     return SgContexts.Fragment;
   }
 
-  return manyComponentsSelected(restruct, selection.atoms)
+  return areMultipleComponentsSelected(restruct, selection.atoms)
     ? SgContexts.Multifragment
     : SgContexts.Group;
 }
@@ -941,7 +941,7 @@ function fromContextType(
   currSelection: Selection,
 ) {
   const restruct = editor.render.ctab;
-  const sg = id !== null ? restruct.molecule.sgroups.get(id) : undefined;
+  const sg = id === null ? undefined : restruct.molecule.sgroups.get(id);
   const sourceAtoms = sg?.atoms ?? currSelection.atoms ?? [];
   const context = newSg.attrs.context;
 
@@ -992,11 +992,14 @@ function anyChainedBonds(bonds: Array<Bond>) {
   return false;
 }
 
-function singleComponentSelected(restruct: ReStruct, atoms: Array<number>) {
+function isSingleComponentSelected(restruct: ReStruct, atoms: Array<number>) {
   return countOfSelectedComponents(restruct, atoms) === 1;
 }
 
-function manyComponentsSelected(restruct: ReStruct, atoms: Array<number>) {
+function areMultipleComponentsSelected(
+  restruct: ReStruct,
+  atoms: Array<number>,
+) {
   return countOfSelectedComponents(restruct, atoms) > 1;
 }
 
@@ -1006,7 +1009,7 @@ function countOfSelectedComponents(
 ): number {
   const atomSet = new Pile<number>(atoms);
 
-  return Array.from(restruct.connectedComponents.values()).reduce(
+  return [...restruct.connectedComponents.values()].reduce(
     (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );

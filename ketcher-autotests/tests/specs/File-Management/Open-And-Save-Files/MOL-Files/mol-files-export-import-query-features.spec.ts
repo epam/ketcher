@@ -1,7 +1,6 @@
 import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   SdfFileFormat,
@@ -25,10 +24,6 @@ test.beforeEach(async ({ MoleculesCanvas: _ }) => {
 });
 
 test.describe('Open Ketcher', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
   test('1. Aromaticity: User can export and load back molecules with Aromaticity query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 1

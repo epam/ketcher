@@ -57,16 +57,16 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public get rootBBox() {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
+    return !rootNode ? undefined : rootNode.getBBox();
   }
 
   public get rootBoundingClientRect() {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
+    return !rootNode ? undefined : rootNode.getBoundingClientRect();
+  }
 
-    return rootNode.getBoundingClientRect();
+  public get labelTooltipText(): string | null {
+    return null;
   }
 
   public get width() {
@@ -89,7 +89,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return undefined;
   }
 
-  public abstract show(theme, force?: boolean): void;
+  public abstract show(theme, shouldForce?: boolean): void;
   public abstract drawSelection(): void;
   public abstract moveSelection(): void;
   protected abstract appendHover(

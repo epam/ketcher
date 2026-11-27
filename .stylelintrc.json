@@ -4,7 +4,10 @@
     {
       "files": ["**/*.less"],
       "extends": ["stylelint-config-standard-less"],
-      "customSyntax": "postcss-less"
+      "customSyntax": "postcss-less",
+      "rules": {
+        "declaration-property-value-no-unknown": null
+      }
     }
   ],
   "rules": {
@@ -12,7 +15,7 @@
     "selector-pseudo-class-no-unknown": [
       true,
       {
-        "ignorePseudoClasses": ["global"]
+        "ignorePseudoClasses": ["global", "local"]
       }
     ],
     "selector-class-pattern": null

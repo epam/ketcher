@@ -20,8 +20,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
-const DELTA = 200;
-
 test.describe('Chain Tool verification', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -41,7 +39,7 @@ test.describe('Chain Tool verification', () => {
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(page, center.x + DELTA, center.y);
+    await dragMouseTo(page, center.x + 200, center.y);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
       force: true,
@@ -82,7 +80,7 @@ test.describe('Chain Tool verification', () => {
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(page, center.x + DELTA, center.y);
+    await dragMouseTo(page, center.x + 220, center.y);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await page.keyboard.down('Shift');
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({

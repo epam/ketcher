@@ -3,7 +3,10 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import {
+  type ResolvedMonomerClass,
+  resolveMonomerClass,
+} from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
@@ -21,6 +24,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import { compareStrings } from 'utilities';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -40,7 +44,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
-    generateId = true,
+    shouldGenerateId = true,
   ) {
     const variantMonomerLabel =
       variantMonomerItem.subtype ===
@@ -52,6 +56,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     super(
       {
         label: variantMonomerLabel,
+        seqId: variantMonomerItem.seqId,
         props: {
           MonomerNaturalAnalogCode: '',
           MonomerName: variantMonomerLabel,
@@ -64,7 +69,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         isAmbiguous: true,
       },
       position,
-      { generateId },
+      { generateId: shouldGenerateId },
     );
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
@@ -77,7 +82,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public static getMonomerClass(
     monomers: BaseMonomer[],
     subtype?: KetAmbiguousMonomerTemplateSubType,
-  ) {
+  ): ResolvedMonomerClass {
     // HELM mixtures (`+`) represent an indeterminate chemical component rather
     // than an RNA part that can be assembled into a nucleotide.
     if (subtype === KetAmbiguousMonomerTemplateSubType.MIXTURE) {
@@ -86,17 +91,13 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
-    const containDifferentMonomerTypes = monomers.some((monomer) => {
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
       const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
       return monomerClass !== monomerClassToCompare;
     });
 
-    if (containDifferentMonomerTypes) {
-      return KetMonomerClass.CHEM;
-    }
-
-    return monomerClass;
+    return hasDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
   }
 
   private static getAttachmentPoints(monomers: BaseMonomer[]) {
@@ -128,9 +129,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
     this.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.MonomerCaps) {
-        if (!monomerCaps) {
-          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
-        } else {
+        if (monomerCaps) {
           for (const [attachmentPointName, label] of Object.entries(
             monomer.monomerItem.props.MonomerCaps,
           )) {
@@ -140,6 +139,8 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
               monomerCaps[attachmentPointName] = '';
             }
           }
+        } else {
+          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
         }
       }
     });
@@ -151,7 +152,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public get isModification() {
     const ownTemplateIds = this.variantMonomerItem.options
       .map((option) => option.templateId)
-      .sort();
+      .sort(compareStrings);
 
     const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
 
@@ -165,7 +166,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
       const libraryTemplateIds = libraryItem.options
         .map((option) => option.templateId)
-        .sort();
+        .sort(compareStrings);
 
       return (
         libraryTemplateIds.length === ownTemplateIds.length &&

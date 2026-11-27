@@ -7,7 +7,7 @@ import type {
   BondsContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';
-import { noOperation } from '../utils';
+import { getEditableBondIds, noOperation } from '../utils';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
@@ -18,28 +18,31 @@ const useBondEdit = () => {
   const handler = useCallback(
     async ({ props }: Params) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-      const bondIds = props?.bondIds ?? [];
+      const bondIds = getEditableBondIds(editor.struct(), props?.bondIds ?? []);
+      if (bondIds.length === 0) return;
+
       const molecule = editor.render.ctab;
       try {
         const bonds = mapBondIdsToBonds(bondIds, molecule);
         const changeBondPromise = await editor.event.bondEdit.dispatch(bonds);
         updateSelectedBonds({ bonds: bondIds, changeBondPromise, editor });
-      } catch (e) {
-        KetcherLogger.error('useBondEdit.ts::useBondEdit::handler', e);
+      } catch (error) {
+        KetcherLogger.error('useBondEdit.ts::useBondEdit::handler', error);
         noOperation();
       }
     },
     [ketcherId],
   );
 
-  const disabled = useCallback(({ props }: Params) => {
-    const selectedBondIds = props?.bondIds;
-    if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
-      return false;
-    }
-
-    return true;
-  }, []);
+  const disabled = useCallback(
+    ({ props }: Params) => {
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+      return (
+        getEditableBondIds(editor.struct(), props?.bondIds ?? []).length === 0
+      );
+    },
+    [ketcherId],
+  );
 
   return [handler, disabled] as const;
 };

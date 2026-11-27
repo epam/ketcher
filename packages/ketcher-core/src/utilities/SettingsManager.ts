@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import { KetcherLogger } from './KetcherLogger';
 import type { LayoutMode } from 'application/editor/modes/types';
+import type { ValenceMode } from 'application/settings/types';
 
 export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
@@ -33,21 +34,21 @@ const DefaultEditorLineLength: EditorLineLength = {
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
 /**
- * Shape of the selection tool persisted in local storage.
- * Mirrors the `ActionObj` used by the UI reducer that assigns it,
- * but is kept minimal here to avoid coupling `ketcher-core` to
- * UI-layer action types.
- */
+Shape of the selection tool persisted in local storage.
+Mirrors the `ActionObj` used by the UI reducer that assigns it,
+but is kept minimal here to avoid coupling `ketcher-core` to
+UI-layer action types.
+*/
 export interface PersistedSelectionTool {
   tool: 'select';
   opts?: unknown;
 }
 
 /**
- * Editor mode for selection tool persistence.
- * - 'macro': Macromolecules mode (ketcher-macromolecules package)
- * - 'micro': Micromolecules mode (ketcher-react package)
- */
+Editor mode for selection tool persistence.
+- 'macro': Macromolecules mode (ketcher-macromolecules package)
+- 'micro': Micromolecules mode (ketcher-react package)
+*/
 export type EditorMode = 'macro' | 'micro';
 
 interface SavedSettings {
@@ -66,6 +67,7 @@ interface SavedOptions {
 export class SettingsManager {
   private static disableCustomQueryValue?: boolean;
   private static persistMonomerLibraryUpdatesValue = true;
+  private static valenceModeValue: ValenceMode = 'default';
 
   static getSettings(): SavedSettings {
     try {
@@ -74,10 +76,10 @@ export class SettingsManager {
       );
       delete settings.selectionTool;
       return settings;
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
-        e,
+        error,
       );
       return {} as SavedSettings;
     }
@@ -108,8 +110,11 @@ export class SettingsManager {
       }
 
       return optionsFromLocalStorage;
-    } catch (e) {
-      KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', e);
+    } catch (error) {
+      KetcherLogger.error(
+        'SettingsManager.ts::SettingsManager::getOptions',
+        error,
+      );
       return {} as SavedOptions;
     }
   }
@@ -122,9 +127,9 @@ export class SettingsManager {
   }
 
   /**
-   * Get the persisted selection tool for the specified editor mode.
-   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
-   */
+  Get the persisted selection tool for the specified editor mode.
+  @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+  */
   static getSelectionTool(mode: EditorMode) {
     const settings = this.getSettings();
     const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
@@ -132,10 +137,10 @@ export class SettingsManager {
   }
 
   /**
-   * Save the selection tool for the specified editor mode.
-   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
-   * @param selectionTool - The selection tool to persist
-   */
+  Save the selection tool for the specified editor mode.
+  @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+  @param selectionTool - The selection tool to persist
+  */
   static setSelectionTool(
     mode: EditorMode,
     selectionTool: PersistedSelectionTool | undefined,
@@ -163,7 +168,7 @@ export class SettingsManager {
       ...newEditorLineLength,
     };
 
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent<EditorLineLength>(SetEditorLineLengthAction, {
         detail: editorLineLength,
       }),
@@ -213,10 +218,12 @@ export class SettingsManager {
 
   static addMonomerLibraryUpdate(newUpdate: string) {
     const updates = this.monomerLibraryUpdates;
-    if (!updates.includes(newUpdate)) {
-      updates.push(newUpdate);
-      this.monomerLibraryUpdates = updates;
+    if (updates.includes(newUpdate)) {
+      return;
     }
+
+    updates.push(newUpdate);
+    this.monomerLibraryUpdates = updates;
   }
 
   static get persistMonomerLibraryUpdates(): boolean {
@@ -225,5 +232,13 @@ export class SettingsManager {
 
   static set persistMonomerLibraryUpdates(value: boolean | undefined) {
     this.persistMonomerLibraryUpdatesValue = value ?? true;
+  }
+
+  static get valenceMode(): ValenceMode {
+    return this.valenceModeValue;
+  }
+
+  static set valenceMode(valenceMode: ValenceMode | undefined) {
+    this.valenceModeValue = valenceMode ?? 'default';
   }
 }

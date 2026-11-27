@@ -66,15 +66,15 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const pos = item.pos;
 
-    let distribution: number = point.calculateDistanceToLine([pos[0], pos[1]]);
+    let distance: number = point.calculateDistanceToLine([pos[0], pos[1]]);
 
     if (RxnArrow.isElliptical(item)) {
       // currently an elliptical arrow is highlighted if a pointer is close to one of the 3 virtual lines
       // that form a triangle from the arrow's 3 reference points
       // TODO: make a better detection (maybe rectangular, so it's similar to visual highlight/selection)
       const [startPoint, endPoint, middlePoint] = this.getReferencePoints();
-      distribution = Math.min(
-        distribution,
+      distance = Math.min(
+        distance,
         point.calculateDistanceToLine([startPoint, middlePoint]),
         point.calculateDistanceToLine([middlePoint, endPoint]),
       );
@@ -83,23 +83,23 @@ class ReRxnArrow extends ReObject {
     const referencePoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null;
     // distance is a smallest between dist to figure and it's reference points
-    distribution = Math.min(distRef.minDist, distribution);
-    return { minDist: distribution, refPoint: referencePoint };
+    distance = Math.min(distRef.minDist, distance);
+    return { minDist: distance, refPoint: referencePoint };
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const distribution: MinDistanceWithReferencePoint[] = [];
+    const distances: MinDistanceWithReferencePoint[] = [];
     const referencePoints = this.getReferencePoints();
     referencePoints.forEach((rp) => {
-      distribution.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
+      distances.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDistribution: MinDistanceWithReferencePoint = distribution.reduce(
+    const minDistance: MinDistanceWithReferencePoint = distances.reduce(
       (acc, current) => (acc.minDist < current.minDist ? acc : current),
       { minDist: Infinity, refPoint: null },
     );
 
-    return minDistribution;
+    return minDistance;
   }
 
   hoverPath(render: Render) {

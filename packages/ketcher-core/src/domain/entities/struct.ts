@@ -1053,27 +1053,26 @@ export class Struct {
   }
 
   getAvgClosestAtomDistance(): number {
-    let totalDistribution = 0;
-    let minDistribution;
+    let totalDistance = 0;
+    let minDistance;
     const keys = [...this.atoms.keys()];
     let k;
     let j;
     for (k = 0; k < keys.length; ++k) {
-      minDistribution = -1;
+      minDistance = -1;
       for (j = 0; j < keys.length; ++j) {
         if (j === k) continue;
         const atomJ = this.atoms.get(keys[j]);
         const atomK = this.atoms.get(keys[k]);
         assert(atomJ, `Atom ${keys[j]} not found`);
         assert(atomK, `Atom ${keys[k]} not found`);
-        const distribution = Vec2.dist(atomJ.pp, atomK.pp);
-        if (minDistribution < 0 || minDistribution > distribution)
-          minDistribution = distribution;
+        const distance = Vec2.dist(atomJ.pp, atomK.pp);
+        if (minDistance < 0 || minDistance > distance) minDistance = distance;
       }
-      totalDistribution += minDistribution;
+      totalDistance += minDistance;
     }
 
-    return keys.length > 0 ? totalDistribution / keys.length : -1;
+    return keys.length > 0 ? totalDistance / keys.length : -1;
   }
 
   checkBondExists(begin: number, end: number): boolean {

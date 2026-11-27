@@ -290,13 +290,9 @@ export class Chain {
     let nodeIndex = this.length - 1;
 
     for (let i = this.subChains.length - 1; i >= 0; i--) {
-      for (
-        let index_ = this.subChains[i].nodes.length - 1;
-        index_ >= 0;
-        index_--
-      ) {
+      for (let j = this.subChains[i].nodes.length - 1; j >= 0; j--) {
         callback({
-          node: this.subChains[i].nodes[index_],
+          node: this.subChains[i].nodes[j],
           subChain: this.subChains[i],
           nodeIndex,
         });

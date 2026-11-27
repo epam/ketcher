@@ -63,7 +63,7 @@ class ReSimpleObject extends ReObject {
     const item = this.item;
     const mode = item.mode;
     const pos = item.pos;
-    let distribution: number;
+    let distance: number;
 
     switch (mode) {
       case SimpleObjectMode.ellipse: {
@@ -74,7 +74,7 @@ class ReSimpleObject extends ReObject {
         const pointToCenter = Vec2.diff(point, center);
         // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
         // in such case distance need to be calculated as a distance between line and current point
-        distribution =
+        distance =
           rx === 0 || ry === 0
             ? point.calculateDistanceToLine([pos[0], pos[1]])
             : Math.abs(
@@ -122,11 +122,11 @@ class ReSimpleObject extends ReObject {
             distances.push(point.x - topX, bottomX - point.x);
           }
         }
-        distribution = Math.min(...distances);
+        distance = Math.min(...distances);
         break;
       }
       case SimpleObjectMode.line: {
-        distribution = point.calculateDistanceToLine([pos[0], pos[1]]);
+        distance = point.calculateDistanceToLine([pos[0], pos[1]]);
         break;
       }
 
@@ -138,23 +138,23 @@ class ReSimpleObject extends ReObject {
     const refPoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null;
     // distance is a smallest between dist to figure and it's reference points
-    distribution = Math.min(distRef.minDist, distribution);
-    return { minDist: distribution, refPoint };
+    distance = Math.min(distRef.minDist, distance);
+    return { minDist: distance, refPoint };
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const distribution: Array<MinDistanceWithReferencePoint> = [];
+    const distances: Array<MinDistanceWithReferencePoint> = [];
     const referencePoints = this.getReferencePoints();
     referencePoints.forEach((rp) => {
-      distribution.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
+      distances.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDistribution: MinDistanceWithReferencePoint = distribution.reduce(
+    const minDistance: MinDistanceWithReferencePoint = distances.reduce(
       (acc, current) => (acc.minDist < current.minDist ? acc : current),
       { minDist: Infinity, refPoint: null },
     );
 
-    return minDistribution;
+    return minDistance;
   }
 
   getReferencePoints(): Array<Vec2> {

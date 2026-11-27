@@ -5,12 +5,13 @@
 // finding and the code; this script only counts.
 //
 // Usage:
-//   node scripts/review/eval/report.mjs [--draft]
+//   node scripts/review/eval/report.mjs [--draft] [--size small|large]
 //     [--set <file>] [--results <dir>] [--matches <file>]
 //
 // --draft adds every confirmed finding that matches.json does not judge yet,
 // with verdict `todo` and, when one is close, a suggested expected finding.
-// The report counts `todo` as unjudged.
+// The report counts `todo` as unjudged. --size scores only the entries of
+// that size; an entry without `size` is small.
 
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -268,8 +269,27 @@ export function reportRows(runs, matches) {
   );
 }
 
+/**
+ * The eval set with only the entries of the given size, or all of them.
+ * @param {{ entries: { size?: string }[] }} set
+ * @param {string} [size]
+ */
+export function entriesOfSize(set, size) {
+  if (!size) {
+    return set;
+  }
+  if (!['small', 'large'].includes(size)) {
+    throw new Error('--size takes small or large');
+  }
+  return {
+    ...set,
+    entries: set.entries.filter((entry) => (entry.size ?? 'small') === size),
+  };
+}
+
 const OPTIONS = {
   draft: { type: 'boolean', default: false },
+  size: { type: 'string' },
   set: { type: 'string', default: join(HERE, 'eval-set.json') },
   results: { type: 'string', default: join(HERE, 'results') },
   matches: { type: 'string', default: join(HERE, 'matches.json') },
@@ -278,7 +298,10 @@ const OPTIONS = {
 /** @param {string[]} args */
 function main(args) {
   const { values } = parseArgs({ args, options: OPTIONS, strict: true });
-  const set = JSON.parse(readFileSync(resolve(values.set), 'utf8'));
+  const set = entriesOfSize(
+    JSON.parse(readFileSync(resolve(values.set), 'utf8')),
+    values.size,
+  );
   const matchesPath = resolve(values.matches);
   const matches = existsSync(matchesPath)
     ? JSON.parse(readFileSync(matchesPath, 'utf8'))

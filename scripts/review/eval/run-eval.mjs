@@ -330,6 +330,12 @@ export function summarize({ entry, config, log, records, wallMs, source }) {
     ranModels: log.ranModels ?? [],
     runs: records.length,
     failedRuns: records.filter((record) => !record.ok).length,
+    // Why runs failed, each reason once, so a usage limit or an expired token shows.
+    runErrors: [
+      ...new Set(
+        records.filter((record) => !record.ok).map((record) => record.error),
+      ),
+    ],
     cost: {
       initialFinderUsd: source
         ? source.cost.initialFinderUsd
@@ -500,6 +506,14 @@ async function printPlan(settings, entries) {
   );
 }
 
+/**
+ * Whether a run of the round failed on the account's usage limit. Such a
+ * round is incomplete, so it must not replace an earlier result.
+ * @param {{ runErrors?: (string | undefined)[] }} result
+ */
+export const hitUsageLimit = (result) =>
+  (result.runErrors ?? []).some((reason) => /HTTP 429/.test(reason ?? ''));
+
 /** @param {string[]} args */
 async function main(args) {
   const settings = parseCommandLine(args);
@@ -533,10 +547,25 @@ async function main(args) {
         repo: set.repo,
         source,
       });
-      writeJson(resultPath(settings.resultsDir, config.name, entry.pr), result);
       console.log(
         `#${entry.pr} ${config.name}: ${result.confirmed.length} confirmed, $${result.cost.totalUsd.toFixed(2)}, ${Math.round(result.time.totalMs / 1000)} s${result.error ? ', ERROR' : ''}`,
       );
+      if (result.error) {
+        console.log(`  round error: ${result.error}`);
+      }
+      if (result.failedRuns > 0) {
+        console.log(`  ${result.failedRuns} failed runs:`);
+        for (const reason of result.runErrors) {
+          console.log(`  - ${reason}`);
+        }
+      }
+      if (hitUsageLimit(result)) {
+        console.log(
+          'Usage limit reached: this result is not saved and the eval stops. Rerun this configuration and the PRs after it once the limit resets.',
+        );
+        return;
+      }
+      writeJson(resultPath(settings.resultsDir, config.name, entry.pr), result);
     }
   }
 }

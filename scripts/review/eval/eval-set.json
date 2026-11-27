@@ -1,5 +1,5 @@
 {
-  "description": "Merged epam/ketcher pull requests that the review hub is measured on. `head` is the commit the maintainer reviewed, `base` the master commit it branched from. An entry with expected findings measures recall; an entry without them was approved with no comment, so every confirmed finding there is checked for a false positive.",
+  "description": "Merged epam/ketcher pull requests that the review hub is measured on. `head` is the commit the maintainer reviewed, `base` the master commit it branched from. An entry with expected findings measures recall; an entry without them was approved with no comment, so every confirmed finding there is checked for a false positive. `size: \"large\"` marks a PR with a large diff; an entry without it is small, and the report scores the two sizes apart with --size.",
   "repo": "epam/ketcher",
   "entries": [
     {
@@ -84,6 +84,204 @@
       "base": "97f6a4349fe5a0ec459ce60741161cdb9489192e",
       "head": "1c707106e1815ed949a4ecce76094e12d8afc429",
       "expected": []
+    },
+    {
+      "pr": 7767,
+      "title": "#7441 – Allow for modification of the attachment points in the monomer creation wizard",
+      "kind": "with-findings",
+      "size": "large",
+      "base": "5db829efebf24f43b40a625c185f787db302e28b",
+      "head": "33741bf3f217dd7c5372cf1eec84f31c46093cb1",
+      "expected": [
+        {
+          "id": "7767-mutating-reduce",
+          "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+          "line": 604,
+          "rule": "none",
+          "summary": "The reduce callback mutates its accumulator, which hides the data flow; return a new value each iteration or use forEach.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316822541"
+        },
+        {
+          "id": "7767-extract-render-step",
+          "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+          "line": 633,
+          "rule": "none",
+          "summary": "The rest of this render code should move into a function whose name says what it draws.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316836477"
+        },
+        {
+          "id": "7767-handler-cleanup",
+          "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+          "line": 695,
+          "rule": "R11",
+          "summary": "The event handlers attached here are never removed.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316833639"
+        },
+        {
+          "id": "7767-unexplained-timeout",
+          "file": "packages/ketcher-react/src/script/editor/tool/create-monomer.ts",
+          "line": 9,
+          "rule": "none",
+          "summary": "The setTimeout has no comment saying why it is needed.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316843346"
+        },
+        {
+          "id": "7767-atom-label-enum",
+          "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+          "line": 752,
+          "rule": "R9",
+          "summary": "The hydrogen label is the string 'H' instead of the AtomLabel enum (also at line 848).",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316847029"
+        },
+        {
+          "id": "7767-commented-out-code",
+          "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+          "line": 981,
+          "rule": "R8",
+          "summary": "A block of commented-out code is left in place.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316889929"
+        },
+        {
+          "id": "7767-parent-selectors",
+          "file": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx",
+          "line": 65,
+          "rule": "none",
+          "summary": "The popup lists many parent selectors to detect outside clicks; one class or data attribute on the elements would be sturdier.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316915384"
+        },
+        {
+          "id": "7767-magic-number",
+          "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx",
+          "line": 54,
+          "rule": "R9",
+          "summary": "The number 8 is a literal that the code already uses elsewhere; it should be one shared constant.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316917801"
+        },
+        {
+          "id": "7767-unused-file",
+          "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useRemoveAttachmentPoint.ts",
+          "line": 1,
+          "rule": "R8",
+          "summary": "The change leaves this hook file unused; delete it.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316925490"
+        },
+        {
+          "id": "7767-window-event-instances",
+          "file": "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.tsx",
+          "line": 288,
+          "rule": "none",
+          "summary": "The wizard listens for a window-level event, so with several Ketcher instances on a page every instance reacts.",
+          "comment": "https://github.com/epam/ketcher/pull/7767#discussion_r2316927629"
+        }
+      ]
+    },
+    {
+      "pr": 10371,
+      "title": "#9549 Color Picker UI",
+      "kind": "with-findings",
+      "size": "large",
+      "base": "347beb2db1f1d7c32a4737b1e1110547a7b0e8e6",
+      "head": "fcc393571d09d3909fc977cb766cfe9bb7c79683",
+      "expected": [
+        {
+          "id": "10371-bloated-component",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+          "line": 63,
+          "rule": "none",
+          "summary": "ColorPicker handles popup state and positioning, settings persistence, the presets grid and the custom colors; split the grid and the custom colors into components.",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3528838021"
+        },
+        {
+          "id": "10371-repeated-default",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+          "line": 77,
+          "rule": "R9",
+          "summary": "The same default value is also the initial useState value; extract a constant.",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3528842221"
+        },
+        {
+          "id": "10371-derived-custom-colors",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+          "line": 85,
+          "rule": "R11",
+          "summary": "Custom colors are a separate state kept in sync with settings; derive them from settings instead.",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3529307649"
+        },
+        {
+          "id": "10371-effect-on-open",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+          "line": 86,
+          "rule": "R11",
+          "summary": "The effect depends on isOpen, so it writes settings each time the dropdown opens, even with no action; write them when an action is applied.",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3529272183"
+        },
+        {
+          "id": "10371-reuse-mui-popover",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+          "line": 141,
+          "rule": "R9",
+          "summary": "The dropdown open, close and positioning are written from scratch; the app already uses MUI primitives for this (ModeControl, ElementWithPopover).",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3528859045"
+        },
+        {
+          "id": "10371-saturation-reset",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+          "line": 144,
+          "rule": "none",
+          "summary": "A hex color with saturation below 100 jumps to saturation 100 as soon as the hue or lightness knob moves.",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3529238743"
+        },
+        {
+          "id": "10371-shorthand-names",
+          "file": "packages/ketcher-react/src/script/ui/component/form/colorPicker/ColorPicker.utils.ts",
+          "line": 59,
+          "rule": "R10",
+          "summary": "The color utilities use shorthand parameter and variable names.",
+          "comment": "https://github.com/epam/ketcher/pull/10371#discussion_r3529214001"
+        }
+      ]
+    },
+    {
+      "pr": 10045,
+      "title": "#8188 No error if data structure doesn't comply with data structure of sdf and CTFile formats specification",
+      "kind": "with-findings",
+      "size": "large",
+      "base": "9aad72bd201c60f542968b8dc1f5290c692fe2c5",
+      "head": "d9cb55bdbb151df9ac46800036a305f58b0c2cdb",
+      "expected": [
+        {
+          "id": "10045-duplicate-guard",
+          "file": "packages/ketcher-core/src/domain/serializers/ket/ketSerializer.ts",
+          "line": 373,
+          "rule": "none",
+          "summary": "The same early-return guard is written twice in a row.",
+          "comment": "https://github.com/epam/ketcher/pull/10045#discussion_r3282982039"
+        },
+        {
+          "id": "10045-client-sdf-parsing",
+          "file": "packages/ketcher-core/src/application/ketcher.ts",
+          "line": 761,
+          "rule": "none",
+          "summary": "The change parses SDF on the client; parsing formats is the job of Indigo, the backend.",
+          "comment": "https://github.com/epam/ketcher/pull/10045#discussion_r3282995782"
+        },
+        {
+          "id": "10045-reducer-error-handling",
+          "file": "packages/ketcher-macromolecules/src/state/common/editorSlice.ts",
+          "line": 162,
+          "rule": "none",
+          "summary": "The error handling spread through the reducer should sit in one try-catch inside initializeMonomersLibraryFromKetcher.",
+          "comment": "https://github.com/epam/ketcher/pull/10045#discussion_r3283024035"
+        },
+        {
+          "id": "10045-nested-ternary",
+          "file": "packages/ketcher-macromolecules/src/state/common/editorSlice.ts",
+          "line": 172,
+          "rule": "none",
+          "summary": "A nested ternary operator.",
+          "comment": "https://github.com/epam/ketcher/pull/10045#discussion_r3283018172"
+        }
+      ]
     }
   ]
 }

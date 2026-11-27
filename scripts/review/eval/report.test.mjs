@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import {
   configRow,
   draftMatches,
+  entriesOfSize,
   renderTable,
   scoreEntry,
   suggestExpected,
@@ -224,4 +225,18 @@ test('matches.json judges only findings with a known verdict', () => {
       }
     }
   }
+});
+
+test('the size filter keeps the entries of one size', () => {
+  const set = { entries: [{ pr: 1 }, { pr: 2, size: 'large' }] };
+  assert.deepEqual(
+    entriesOfSize(set, 'small').entries.map((entry) => entry.pr),
+    [1],
+  );
+  assert.deepEqual(
+    entriesOfSize(set, 'large').entries.map((entry) => entry.pr),
+    [2],
+  );
+  assert.equal(entriesOfSize(set, undefined), set);
+  assert.throws(() => entriesOfSize(set, 'huge'), /small or large/);
 });

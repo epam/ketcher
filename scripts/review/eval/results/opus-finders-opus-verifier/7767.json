@@ -1,0 +1,395 @@
+{
+  "pr": 7767,
+  "head": "33741bf3f217dd7c5372cf1eec84f31c46093cb1",
+  "config": "opus-finders-opus-verifier",
+  "models": {
+    "finder": "claude-opus-5-5",
+    "verifier": "claude-opus-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 786,
+      "otherLocations": [],
+      "severity": "blocker",
+      "id": "none",
+      "claim": "The attachment atom comes from the leaving atom's first neighbour, which may not be the bond into the selection.",
+      "scenario": "Take propylbenzene and select only the ring. The outside CH2 leaving atom has two half-bonds. If `leavingAtom?.neighbors[0]` points at the other CH2 outside the selection, `originalToSelectedAtomsIdMap.get(attachmentAtomId)` returns undefined and `assert(selectedStructAttachmentAtomId !== undefined)` throws, so the wizard never opens. The old code used the bond itself. Also, an outside atom bonded to two selected atoms (a partly selected ring) is pushed twice into potentialLeavingAtoms and gets cloned twice.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 757,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "A terminal R-group atom whose only neighbour is outside the selection has no half-bond in selectedStruct, so an assert throws.",
+      "scenario": "Select only a terminal R1 atom, or an R-atom plus atoms that don't include its neighbour. isMonomerCreationWizardEnabled accepts it because `atom.neighbors.length === 1` is counted in the original struct. In the cloned selectedStruct the atom has no neighbours, so `selectedStruct.halfBonds.get(undefined)?.end` is undefined and `assert(selectedStructAttachmentAtomId !== undefined)` throws in openMonomerCreationWizard.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 888,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:971"
+      ],
+      "severity": "blocker",
+      "id": "none",
+      "claim": "Saving serializes leaving atoms that were never assigned, and the bond attachment-point numbering is commented out.",
+      "scenario": "Open the wizard on a selection with two outside bonds and assign only one leaving group. `ketSerializer.serialize(this.render.ctab.molecule)` still includes the other cloned outside atom (for example a C) as an ordinary monomer atom. Also, the old loop that set `bond.beginSuperatomAttachmentPointNumber` on the outside bonds is commented out, so the new superatom's outside bonds have no attachment-point numbers after saving.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 848,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:1020"
+      ],
+      "severity": "major",
+      "id": "R3",
+      "claim": "Atom labels are changed directly on Struct instead of through a Command and operations.",
+      "scenario": "assignLeavingGroupAtom sets `leavingAtom.label = 'H'` and reassignAttachmentPointAtom sets `atom.label = atomLabel` directly, then call render.update. No history entry is created, so undo cannot reverse them. removeAttachmentPoint also never restores the original label, so after Assign then Remove the potential leaving atom stays H.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 1049,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "reassignAttachmentPoint edits the Map in place without replacing monomerCreationState, so the wizard list goes stale.",
+      "scenario": "Edit R1 to R3 in the popup. assignLeavingGroupAtom and removeAttachmentPoint use `Object.assign({}, ...)` to change the reference, but this method does not. editorMonomerCreationStateSelector returns the same object, so the wizard's Attachment points panel keeps showing R1 while the canvas label shows R3.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx",
+      "line": 44,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "The attachment atom also matches an assigned pair, so 'Edit connection point' changes the attachment atom's element.",
+      "scenario": "`atomsPair.includes(selectedAtomId)` matches both the attachment atom and the leaving atom. Right-click the attachment carbon of R1 and choose Edit. handleEditClick sends `atomId: selectedAtomId`, which is the carbon. Choosing OH in the popup calls reassignAttachmentPointAtom on the carbon and turns the monomer's core atom into O.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx",
+      "line": 97,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:104"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "The Edit and Remove handlers are attached to the 16px Icon, not to the menu Item, so clicking the text does nothing.",
+      "scenario": "Right-click an assigned leaving atom and click the words 'Remove assignment'. The `<Item>` has no onClick (and no {...props}); only `<Icon onClick={handleRemoveClick}>` does. The menu closes and the assignment stays.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/ContextMenuTrigger.tsx",
+      "line": 111,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/ContextMenuTrigger.tsx:149"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "The wizard's editing block now runs only when there is no selection, so with a selection the bond and selection menus open.",
+      "scenario": "With the wizard open (the tool now switches to select), select some atoms and right-click a bond outside the selection. Line 150 clears the selection and opens the bond ClosestItem menu with no wizard check, so Delete and the bond type options can edit the structure. Right-clicking inside a selection opens the Selection menu without the check as well.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.tsx",
+      "line": 216,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "The order check compares with `numbers[-1]` when no R1 or R2 exists, so a gap at R3 passes.",
+      "scenario": "With assigned points [R4] or [R5, R6], startingIndex stays 0. At i = 0 the check is `4 - undefined`, which is NaN, and `NaN > 1` is false, so the check passes. The rule says only R1 and R2 may be skipped, so these should be rejected because R3 is missing.",
+      "references": []
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx",
+      "line": 19,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The R1–R8 option list is built from a literal 8 and template strings, but the AttachmentPointName enum already lists those names.",
+      "scenario": "`Array.from({ length: 8 }).map((_, i) => ({ value: `R${i + 1}`, ... }))` produces plain strings, so `handleNameChange` has to cast them with `value as AttachmentPointName`. The list could come from the existing enum at `domain/types/monomers.ts:29` (R1..R8, filtering out HYDROGEN). As written, the options and the enum are two separate sources for the same names, and the cast hides any difference between them.",
+      "references": [
+        "packages/ketcher-core/src/domain/types/monomers.ts:29"
+      ]
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx",
+      "line": 40,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The popup writes its own outside-click document listener, but the package already has a useClickOutside hook for this.",
+      "scenario": "`packages/ketcher-react/src/hooks/useClickOutside.ts:3` already adds a document listener and calls the callback when the click lands outside `targetRef`. The new effect repeats that, using `mousedown` and an extra check that ignores MUI dropdown elements. A better approach is to extend the hook with an event-type option and an ignore predicate, then call it here. Otherwise a fix to the hook will not reach this popup, and the popup's handling of MUI portals will not reach FontControl.",
+      "references": [
+        "packages/ketcher-react/src/hooks/useClickOutside.ts:3"
+      ]
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+      "line": 700,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:76"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The diff builds AttachmentPointClickData and dispatches MonomerCreationAttachmentPointClickEvent in two places.",
+      "scenario": "reatom.ts builds `{ atomId, atomLabel, attachmentPointName, position: Coordinates.modelToView(...) }` and calls `window.dispatchEvent(new CustomEvent(MonomerCreationAttachmentPointClickEvent, { detail }))`. The context-menu hook repeats the same construction and dispatch. If the payload changes (for example, a ketcherId is added so that several editors on one page do not react to each other's clicks), both copies have to be updated. A helper exported next to the event in `customEvents.ts` would give one place to change.",
+      "references": []
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+      "line": 626,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:40"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The lookup from an atom id to its attachment point name in assignedAttachmentPoints is written twice, and the two copies already differ.",
+      "scenario": "reatom.ts runs `Array.from(assignedAttachmentPoints.keys()).find(key => ... atomsPair[1] === aid)`, which matches only the leaving atom. The hook runs the same scan with `atomsPair.includes(selectedAtomId)`, which matches the leaving atom or the attachment atom. As a result, the canvas label and the context menu can disagree about whether an atom has an assigned point. One helper in ketcher-core next to MonomerCreationState would keep the two in sync.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 848,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:1020"
+      ],
+      "severity": "major",
+      "id": "R3",
+      "claim": "Leaving-atom labels are written straight onto Struct atoms instead of going through an Action/operation.",
+      "scenario": "In the wizard, use 'Assign as a leaving group' (label becomes 'H') or change the atom in the popup (label becomes 'O'), then press Undo. History has no record of the change, so undo skips it or undoes an earlier edit, and the history no longer matches the canvas.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 1026,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "reassignAttachmentPoint changes the state map in place and skips the new-object step its sibling methods use.",
+      "scenario": "assignLeavingGroupAtom and removeAttachmentPoint end with `this.monomerCreationState = Object.assign({}, ...)` so the Redux selector sees a change. reassignAttachmentPoint leaves that step out. Renaming R3→R1 in the popup redraws the canvas label, but the wizard's 'Attachment points' list keeps showing R3. Every new mutator has to remember this hand-written immutability rule. Put it in one helper, or make the setter replace the object.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 705,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:572"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "Wizard session state is split between Render.monomerCreationState and several Editor fields, and close never resets the Editor fields.",
+      "scenario": "closeMonomerCreationWizard clears only render.monomerCreationState. originalStruct, originalSelection, selectedToOriginalAtomsIdMap, terminalRGroupAtoms and potentialLeavingAtoms keep their values. openMonomerCreationWizard only calls .set() on selectedToOriginalAtomsIdMap and never clears it, so a second wizard session with a smaller selection still holds id mappings from the first. convertMonomerAttachmentPointsToSGroupAttachmentPoints then receives those stale mappings. Keeping the whole session in one state object would let close reset all of it.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 971,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R8",
+      "claim": "The old bond attachment-number logic is left behind as a commented-out block with a TODO.",
+      "scenario": "saveNewMonomer still builds sGroupAttachmentPoints, but the loop that wrote beginSuperatomAttachmentPointNumber onto outside bonds is now commented out and refers to the deleted singleBondsToOutsideOfSelection field. Delete the dead block, or keep the behaviour by rewriting the loop.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+      "line": 625,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:40",
+        "packages/ketcher-core/src/application/render/restruct/reatom.ts:700",
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:75"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The lookup from atom to attachment-point name and the click-event dispatch are each written twice.",
+      "scenario": "reatom.ts and useMakeLeavingGroupAtomMenuItem both scan assignedAttachmentPoints.keys() with an assert-and-get. They already disagree: one matches only the leaving atom (`atomsPair[1] === aid`), the other matches either atom (`atomsPair.includes`). Both also build AttachmentPointClickData and call window.dispatchEvent by hand. Put the lookup and the dispatch in one shared helper each.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx",
+      "line": 54,
+      "otherLocations": [
+        "packages/ketcher-core/src/domain/helpers/attachmentPointCalculations.ts:284",
+        "packages/ketcher-react/src/script/editor/Editor.ts:648",
+        "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx:19"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The limit of 8 attachment points is a magic number repeated in four files.",
+      "scenario": "Changing the maximum number of R-groups means editing the core helper, the Editor enablement check, the context-menu limit and the popup option list separately. Missing one gives a menu that allows a 9th point that the helper then throws on. Define one exported constant and use it in all four places.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.tsx",
+      "line": 400,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx:93"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The new code adds casts to satisfy types: one is redundant, the other hides an unchecked string.",
+      "scenario": "`entry as [AttachmentPointName, [number, number]]` repeats the type that Map.entries() already gives, so a later change to the map's type compiles without an error here. `value as AttachmentPointName` takes an unchecked Select string, so any wrong option value reaches editor.reassignAttachmentPoint. Type the options as AttachmentPointName, or narrow with a type guard.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+      "line": 700,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "A8",
+      "claim": "Attachment-point clicks go out as a global window event, so every mounted wizard receives them.",
+      "scenario": "With two Ketcher editors on one page, each MonomerCreationWizard adds a window listener for MonomerCreationAttachmentPointClickEvent. Clicking an R-label in editor A also opens the edit popup in editor B, and B uses A's atomId. The event carries no ketcherId and is not scoped to the editor that owns it.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 786,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R6",
+      "claim": "Optional chaining on leavingAtom comes right after assert(leavingAtom).",
+      "scenario": "`leavingAtom?.neighbors[0]` follows `assert(leavingAtom)` a few lines earlier, so the `?.` can never short-circuit. It suggests the atom may be missing when the assert already rules that out.",
+      "references": []
+    },
+    {
+      "lens": "performance",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 1023,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:866",
+        "packages/ketcher-react/src/script/editor/Editor.ts:1052",
+        "packages/ketcher-react/src/script/editor/Editor.ts:1069"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "Changing one leaving-group atom or one R-label calls render.update(true), which redraws the whole structure.",
+      "scenario": "With the wizard open, the user picks 'OH' in the attachment point popup. reassignAttachmentPointAtom changes one atom's label, then calls this.render.update(true). That calls ReStruct.update(force=true), which throws away and redraws every atom, bond and visel of the monomer, plus every new R-label set and its hover and click handlers in ReAtom.show. Assign, reassign and remove do the same for a change that touches only the leaving atom and its attachment atom. Marking only those atoms with restruct.markAtom(atomId, 1) (restruct.ts:339) and then calling render.update(false) redraws just them. This matters for large selections.",
+      "references": [
+        "packages/ketcher-core/src/application/render/restruct/restruct.ts:339",
+        "packages/ketcher-core/src/application/render/raphaelRender.ts:229"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.ts:786",
+      "severity": "blocker",
+      "id": "none",
+      "claim": "The attachment atom comes from the leaving atom's first neighbour, which may not be the bond into the selection.",
+      "scenario": "Draw propylbenzene and select only the ring. The outside alpha CH2 is a potential leaving atom with two half-bonds: one to the ring and one to the next CH2. Struct.atomSortNeighbors sorts neighbors by half-bond angle, so `neighbors[0]` can point at the outside CH2. Then `originalToSelectedAtomsIdMap.get(attachmentAtomId)` returns undefined and `assert(selectedStructAttachmentAtomId !== undefined)` throws in openMonomerCreationWizard, so the wizard does not open. The old code took the attachment atom from the bond to the outside atom itself.",
+      "lenses": [
+        "correctness"
+      ],
+      "fingerprint": "757db8283fea5a75"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.ts:971",
+      "severity": "blocker",
+      "id": "none",
+      "claim": "Saving serializes leaving atoms that were never assigned, and the bond attachment-point numbering is commented out.",
+      "scenario": "Select a fragment with two simple single bonds to outside atoms, for example two carbons, then open the wizard. `openMonomerCreationWizard` clones both outside atoms into the selected struct and lists both as potential attachment points. Assign only one of them as a leaving group and save. `saveNewMonomer` serializes the whole molecule, so the template's atoms and bonds still include the unassigned C as an ordinary monomer atom with no leaving group. Then the loop that used to set `bond.beginSuperatomAttachmentPointNumber` on the original outside bonds is commented out. The new superatom's outside bonds keep no attachment-point numbers, which the old code set before this change.",
+      "lenses": [
+        "correctness"
+      ],
+      "fingerprint": "67e1ae133c346fa9"
+    },
+    {
+      "location": "packages/ketcher-core/src/application/render/restruct/reatom.ts:626",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The lookup from atom to attachment-point name and the click-event dispatch are each written twice.",
+      "scenario": "reatom.ts:626-631 and useMakeLeavingGroupAtomMenuItem.tsx:40-46 both scan assignedAttachmentPoints.keys(), then call get() and assert on each key to find the attachment-point name for an atom. The two copies have already drifted apart: the renderer matches only the leaving atom, and the context menu matches either the attachment atom or the leaving atom. Both places also build AttachmentPointClickData and dispatch MonomerCreationAttachmentPointClickEvent on window by hand (reatom.ts:690-708, useMakeLeavingGroupAtomMenuItem.tsx:68-82). One shared lookup helper and one shared dispatch helper, for example next to customEvents.ts in ketcher-core, would keep the two in sync.",
+      "lenses": [
+        "code-quality",
+        "reuse"
+      ],
+      "fingerprint": "1d01239e54143c19"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.ts:848",
+      "severity": "major",
+      "id": "R3",
+      "claim": "Atom labels are changed directly on Struct instead of through a Command and operations.",
+      "scenario": "assignLeavingGroupAtom (Editor.ts:848) sets `leavingAtom.label = 'H'` and reassignAttachmentPointAtom (Editor.ts:1020) sets `atom.label = atomLabel` directly on render.ctab.molecule, then call render.update(true). No Command of operations is built and editor.update is not called, so no history entry is created and undo cannot reverse the label change. removeAttachmentPoint only moves the pair back to potentialAttachmentPoints and never restores the original label, so after Assign then Remove the potential leaving atom stays H.",
+      "lenses": [
+        "correctness",
+        "code-quality"
+      ],
+      "fingerprint": "68040e9c465c3980"
+    },
+    {
+      "location": "packages/ketcher-core/src/application/render/restruct/reatom.ts:700",
+      "severity": "blocker",
+      "id": "A8",
+      "claim": "Attachment-point clicks go out as a global window event, so every mounted wizard receives them.",
+      "scenario": "Put two Ketcher editors on one page. Each StructEditor renders a MonomerCreationWizard, and each wizard adds its own window listener for MonomerCreationAttachmentPointClickEvent when it mounts. Clicking an R-label in editor A sends the event on window, and nothing in it says which editor it came from. Every wizard on the page runs setAttachmentPointEditPopupData with A's atomId and attachment point name. If editor B also has its wizard open, B shows the edit popup. A choice made there calls B's editor.reassignAttachmentPoint or reassignAttachmentPointAtom with A's atomId, which edits B's structure. If B's wizard is closed, the stale data stays in B's state and the popup appears later, when B opens its wizard.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "d880fb7828db5854"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.ts:971",
+      "severity": "major",
+      "id": "R8",
+      "claim": "The old bond attachment-number logic is left behind as a commented-out block with a TODO.",
+      "scenario": "In saveNewMonomer, sGroupAttachmentPoints is still built and passed to fromSgroupAddition at line 989. The loop that wrote beginSuperatomAttachmentPointNumber onto bonds leading out of the selection is now a commented-out block with a TODO (lines 971-981). That block refers to singleBondsToOutsideOfSelection, which this diff removes, so it cannot be uncommented as written. Either delete the dead block or bring the behaviour back by rewriting the loop with the new leaving-group state.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "dccdea7b25c7bfaa"
+    }
+  ],
+  "dropped": 4,
+  "failed": [],
+  "ranModels": [
+    "claude-opus-5-5"
+  ],
+  "runs": 16,
+  "failedRuns": 0,
+  "runErrors": [],
+  "cost": {
+    "initialFinderUsd": 2.257078,
+    "finderUsd": 2.257078,
+    "verifierUsd": 4.3794152,
+    "totalUsd": 6.6364932
+  },
+  "time": {
+    "initialFinderMs": 88823,
+    "totalMs": 180874
+  }
+}

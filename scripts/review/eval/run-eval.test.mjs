@@ -11,6 +11,7 @@ import { FINDINGS_SCHEMA, VERDICT_SCHEMA } from '../schemas.mjs';
 import {
   CONFIGS,
   evalGitHub,
+  hitUsageLimit,
   parseCommandLine,
   planEntry,
   prCheckout,
@@ -169,7 +170,14 @@ test('a result with reused finders adds their cost and time', () => {
     time: { initialFinderMs: 4000 },
   };
   const records = [
-    { role: 'verifier', phase: 'after', costUsd: 0.25, startMs: 0, endMs: 1 },
+    {
+      role: 'verifier',
+      phase: 'after',
+      ok: true,
+      costUsd: 0.25,
+      startMs: 0,
+      endMs: 1,
+    },
   ];
   const result = summarize({
     entry: ENTRY,
@@ -183,6 +191,30 @@ test('a result with reused finders adds their cost and time', () => {
   assert.equal(result.cost.finderUsd, 1.5);
   assert.equal(result.time.totalMs, 5000);
   assert.equal(result.cost.initialFinderUsd, 1.5);
+  assert.deepEqual(result.runErrors, []);
+});
+
+test('a result lists each reason a run failed once', () => {
+  const failed = {
+    role: 'finder',
+    phase: 'finders',
+    costUsd: 0,
+    startMs: 0,
+    endMs: 1,
+  };
+  const result = summarize({
+    entry: ENTRY,
+    config: CONFIGS[0],
+    log: { confirmed: [], findings: [] },
+    records: [
+      { ...failed, ok: false, error: 'run failed (HTTP 429): limit' },
+      { ...failed, ok: false, error: 'run failed (HTTP 429): limit' },
+      { ...failed, ok: true },
+    ],
+    wallMs: 1,
+  });
+  assert.equal(result.failedRuns, 2);
+  assert.deepEqual(result.runErrors, ['run failed (HTTP 429): limit']);
 });
 
 test('a round runs as a dry run on the configured models', async () => {
@@ -285,4 +317,19 @@ test('the checkout fetches a missing commit and adds a worktree', async () => {
   assert.ok(calls.includes(`fetch --quiet origin ${ENTRY.head}`));
   assert.ok(!calls.includes(`fetch --quiet origin ${ENTRY.base}`));
   assert.ok(calls.includes(`worktree add --detach ${dir} ${ENTRY.head}`));
+});
+
+test('a usage limit failure marks the round as incomplete', () => {
+  assert.equal(
+    hitUsageLimit({
+      runErrors: ["run failed (HTTP 429): You've hit your 5-hour limit"],
+    }),
+    true,
+  );
+  assert.equal(
+    hitUsageLimit({ runErrors: ['stopped after 900000 ms'] }),
+    false,
+  );
+  assert.equal(hitUsageLimit({ runErrors: [undefined] }), false);
+  assert.equal(hitUsageLimit({}), false);
 });

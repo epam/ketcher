@@ -2,6 +2,58 @@
   "description": "Judgement of every confirmed finding of the eval runs, per configuration and pull request. `finderHits` lists the expected findings some finder raised before verification. Each confirmed finding is `match` (it is the expected finding in `expected`), `valid` (a real defect the maintainer did not raise), `false-positive`, or `todo`. Run `node scripts/review/eval/report.mjs --draft` to add the findings not judged yet.",
   "runs": {
     "sonnet-finders-sonnet-verifier": {
+      "7767": {
+        "finderHits": [
+          "7767-magic-number",
+          "7767-commented-out-code",
+          "7767-parent-selectors",
+          "7767-unexplained-timeout"
+        ],
+        "confirmed": [
+          {
+            "fingerprint": "a85ff1a2447846ab",
+            "location": "packages/ketcher-react/src/script/editor/Editor.ts:786",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: neighbors[0] of an outside atom with several neighbours can be another outside atom, so the assert throws or the wrong selected atom is used."
+          },
+          {
+            "fingerprint": "ecbebe256e93580e",
+            "location": "packages/ketcher-react/src/script/editor/Editor.ts:807",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: potentialAttachmentPoints is a Map keyed by attachment atom, so a selected atom with two outside neighbours keeps only the last one, and the first cannot be assigned."
+          },
+          {
+            "fingerprint": "f8b11d3bba338b30",
+            "location": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx:43",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R5): `value as AttachmentPointName` passes an unchecked string on; the event.target casts could be guards."
+          },
+          {
+            "fingerprint": "d3152e3ca7cde333",
+            "location": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:44",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: atomsPair.includes matches the attachment atom too, so Edit connection point on it relabels the attachment atom."
+          },
+          {
+            "fingerprint": "af53e2c9fb316e36",
+            "location": "packages/ketcher-core/src/application/render/restruct/reatom.ts:629",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R9): the lookup and dispatch copies, as in the Opus finding. Not the maintainer point, which asks to move the render code into a named function."
+          },
+          {
+            "fingerprint": "fafaaf57ae13f3f4",
+            "location": "packages/ketcher-core/src/domain/helpers/attachmentPointCalculations.ts:284",
+            "expected": "7767-magic-number",
+            "verdict": "match",
+            "note": "Match: the limit of 8 repeated as a literal; the maintainer pointed at the copy in useMakeLeavingGroupAtomMenuItem.tsx."
+          }
+        ]
+      },
       "10447": {
         "finderHits": [],
         "confirmed": [
@@ -424,6 +476,57 @@
       }
     },
     "opus-finders-opus-verifier": {
+      "7767": {
+        "finderHits": [
+          "7767-commented-out-code",
+          "7767-window-event-instances",
+          "7767-magic-number"
+        ],
+        "confirmed": [
+          {
+            "fingerprint": "757db8283fea5a75",
+            "location": "packages/ketcher-react/src/script/editor/Editor.ts:786",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: neighbors[0] of an outside atom with several neighbours can be another outside atom, so the assert throws or the wrong selected atom is used; the bond into the selection is the right source."
+          },
+          {
+            "fingerprint": "67e1ae133c346fa9",
+            "location": "packages/ketcher-react/src/script/editor/Editor.ts:971",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid: saveNewMonomer serializes the whole wizard struct, so potential leaving atoms that were never assigned stay in the template. The commented-out half is the R8 finding."
+          },
+          {
+            "fingerprint": "1d01239e54143c19",
+            "location": "packages/ketcher-core/src/application/render/restruct/reatom.ts:626",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R9): the atom-to-name lookup and the click dispatch are copied in reatom.ts and useMakeLeavingGroupAtomMenuItem.tsx, and the lookups already differ ([1] vs includes)."
+          },
+          {
+            "fingerprint": "68040e9c465c3980",
+            "location": "packages/ketcher-react/src/script/editor/Editor.ts:848",
+            "expected": null,
+            "verdict": "valid",
+            "note": "Valid (R3): assignLeavingGroupAtom and reassignAttachmentPointAtom set atom.label directly, outside a Command. Same line as the AtomLabel point, but a different defect."
+          },
+          {
+            "fingerprint": "d880fb7828db5854",
+            "location": "packages/ketcher-core/src/application/render/restruct/reatom.ts:700",
+            "expected": "7767-window-event-instances",
+            "verdict": "match",
+            "note": "Match: same point as the maintainer, seen from the dispatch side: the click goes out on window, so every mounted wizard reacts (A8)."
+          },
+          {
+            "fingerprint": "dccdea7b25c7bfaa",
+            "location": "packages/ketcher-react/src/script/editor/Editor.ts:971",
+            "expected": "7767-commented-out-code",
+            "verdict": "match",
+            "note": "Match: the commented-out bond attachment-number block in saveNewMonomer."
+          }
+        ]
+      },
       "10447": {
         "finderHits": [],
         "confirmed": [

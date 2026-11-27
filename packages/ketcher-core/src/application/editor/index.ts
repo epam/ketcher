@@ -28,6 +28,7 @@ export * from './actions';
 export * from './shared/constants';
 export * from './shared/coordinates';
 export * from './shared/customEvents';
+export * from './shared/readImageFile';
 export * from './editor.types';
 export * from './Editor';
 export * from './editorSingleton';

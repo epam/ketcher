@@ -131,6 +131,18 @@ export function LeftMenuComponent() {
             disabled={isDisabled}
           />
         </Menu.Submenu>
+        <Menu.Item
+          itemId="text"
+          title={t('toolbar:tools.addText')}
+          testId="text"
+          disabled={isDisabled}
+        />
+        <Menu.Item
+          itemId="images"
+          title={t('toolbar:tools.addImage')}
+          testId="images"
+          disabled={isDisabled}
+        />
       </Menu.Group>
     </Menu>
   );

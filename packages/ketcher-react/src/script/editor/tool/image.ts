@@ -12,12 +12,12 @@ import {
   fromImageResize,
   IMAGE_VALIDATION_MESSAGES,
   SUPPORTED_IMAGE_MIME_TYPES,
+  readImageFile,
 } from 'ketcher-core';
 import type { Tool } from './Tool';
 import type Editor from '../Editor';
 import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';
-import { readImageFile } from '../utils/readImageFile';
 
 const TAG = 'tool/image.ts';
 

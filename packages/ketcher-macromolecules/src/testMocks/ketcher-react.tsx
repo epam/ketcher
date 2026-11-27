@@ -241,3 +241,9 @@ export const useSettingsPanelDrag = () => ({
   getBounds: () => null,
   setPreferredHeight: () => undefined,
 });
+
+export const TextEditorDialog = ({
+  initialContent,
+}: {
+  initialContent: string;
+}) => <div data-testid="text-editor-dialog">{initialContent}</div>;

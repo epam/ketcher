@@ -1,10 +1,10 @@
+import type { Vec2 } from 'domain/entities/vec2';
 import {
   type ImageValidationError,
-  type Vec2,
   imageHalfSizePx,
   validateImageDimensions,
   validateImageMimeType,
-} from 'ketcher-core';
+} from 'domain/staticObjects/image';
 
 export type ImageFileReadResult =
   | { dataUrl: string; halfSizePx: Vec2 }

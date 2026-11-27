@@ -12,6 +12,8 @@ export enum ToolName {
   shapeEllipse = 'shape-ellipse',
   shapeRectangle = 'shape-rectangle',
   shapeLine = 'shape-line',
+  text = 'text',
+  image = 'images',
 }
 
 export enum MACROMOLECULES_BOND_TYPES {

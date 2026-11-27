@@ -25,6 +25,7 @@ import {
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
   ConfirmationDialogOnlyProps,
+  TextEditorModalOnlyProps,
   InsertionConnectionOnlyProps,
   MonomerConnectionOnlyProps,
 } from 'components/modal/modalContainer';
@@ -136,6 +137,8 @@ export const EditorEvents = () => {
     const handleOpenConfirmationDialog = (
       additionalProps: ConfirmationDialogOnlyProps,
     ) => dispatch(openModal({ name: 'confirmationDialog', additionalProps }));
+    const handleOpenTextEditor = (additionalProps: TextEditorModalOnlyProps) =>
+      dispatch(openModal({ name: 'textEditor', additionalProps }));
 
     if (editor) {
       editor.events.error.add(handleError);
@@ -147,6 +150,7 @@ export const EditorEvents = () => {
         handleOpenInsertionConnectionModal,
       );
       editor.events.openConfirmationDialog.add(handleOpenConfirmationDialog);
+      editor.events.openTextEditor.add(handleOpenTextEditor);
       editor.events.selectTool.add(selectToolHandler);
 
       // Initialize with saved selection tool or default to rectangle
@@ -172,6 +176,7 @@ export const EditorEvents = () => {
       editor?.events.openConfirmationDialog.remove(
         handleOpenConfirmationDialog,
       );
+      editor?.events.openTextEditor.remove(handleOpenTextEditor);
     };
   }, [editor, dispatch]);
 

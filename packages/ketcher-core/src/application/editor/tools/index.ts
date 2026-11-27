@@ -29,6 +29,10 @@ import {
   LineShapeTool,
   RectangleShapeTool,
 } from 'application/editor/tools/StaticShape';
+import {
+  StaticImageTool,
+  StaticTextTool,
+} from 'application/editor/tools/StaticTextAndImage';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
@@ -44,6 +48,8 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.shapeEllipse]: EllipseShapeTool,
   [ToolName.shapeRectangle]: RectangleShapeTool,
   [ToolName.shapeLine]: LineShapeTool,
+  [ToolName.text]: StaticTextTool,
+  [ToolName.image]: StaticImageTool,
 };
 
 export * from './Tool';

@@ -42,6 +42,8 @@ import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
 import { StaticObjectResizeGesture } from './StaticObjectResizeGesture';
+import { StaticObjectRenderer } from 'application/render/renderers/StaticObjectRenderer';
+import { editStaticText } from 'application/editor/tools/StaticTextAndImage';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -1318,6 +1320,22 @@ abstract class SelectBase implements BaseTool {
       this.stopMovement();
       this.setSelectedEntities();
     }
+  }
+
+  dblclick(event: MouseEvent) {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (
+      !(renderer instanceof StaticObjectRenderer) ||
+      renderer.staticObject.content.type !== 'text'
+    ) {
+      return;
+    }
+
+    editStaticText(
+      this.editor,
+      renderer.staticObject,
+      renderer.staticObject.content.position,
+    );
   }
 
   mouseOverDrawingEntity(event: MouseEvent): void {

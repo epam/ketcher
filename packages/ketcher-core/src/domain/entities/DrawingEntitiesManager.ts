@@ -139,6 +139,7 @@ import type { SimpleObjectMode } from 'domain/entities/simpleObject';
 import {
   SimpleObjectAddOperation,
   SimpleObjectDeleteOperation,
+  SimpleObjectTransformOperation,
 } from 'domain/entities/CoreSimpleObjectOperations';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
@@ -680,6 +681,7 @@ export class DrawingEntitiesManager {
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
+      ...this.simpleObjects.values(),
       ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
@@ -795,6 +797,22 @@ export class DrawingEntitiesManager {
       );
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      if (!simpleObject.selected) {
+        return;
+      }
+
+      const fromPoints = simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      );
+      const toPoints = simpleObject.mapPoints((point) =>
+        point.rotateAroundOrigin(angleInDegrees, center),
+      );
+
+      command.addOperation(
+        new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+      );
+    });
     this.polymerBonds.forEach((drawingEntity) => {
       if (
         drawingEntity.selected ||
@@ -889,6 +907,24 @@ export class DrawingEntitiesManager {
       );
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      if (!simpleObject.selected) {
+        return;
+      }
+
+      const fromPoints = simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      );
+      const toPoints = simpleObject.mapPoints((point) =>
+        flipDirection === 'horizontal'
+          ? new Vec2(2 * center.x - point.x, point.y)
+          : new Vec2(point.x, 2 * center.y - point.y),
+      );
+
+      command.addOperation(
+        new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+      );
+    });
     this.polymerBonds.forEach((drawingEntity) => {
       if (
         drawingEntity.selected ||
@@ -4579,6 +4615,7 @@ export class DrawingEntitiesManager {
 
   public createRotationHistoryCommand(
     initialPositions: Map<number, Vec2>,
+    initialSimpleObjectPoints: Map<number, [Vec2, Vec2]> = new Map(),
   ): Command {
     const command = new Command();
     const zeroOffset = new Vec2(0, 0);
@@ -4665,7 +4702,35 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      const fromPoints = initialSimpleObjectPoints.get(simpleObject.id);
+      if (!simpleObject.selected || !fromPoints) {
+        return;
+      }
+
+      const toPoints = simpleObject.mapPoints(
+        (point) => new Vec2(point.x, point.y),
+      );
+      command.addOperation(
+        new SimpleObjectTransformOperation(simpleObject, fromPoints, toPoints),
+      );
+    });
+
     return command;
+  }
+
+  public getSelectedSimpleObjectPoints(): Map<number, [Vec2, Vec2]> {
+    const points = new Map<number, [Vec2, Vec2]>();
+    this.simpleObjects.forEach((simpleObject) => {
+      if (simpleObject.selected) {
+        points.set(
+          simpleObject.id,
+          simpleObject.mapPoints((point) => new Vec2(point.x, point.y)),
+        );
+      }
+    });
+
+    return points;
   }
 
   private deleteStereoFlagModelChange(stereoFlag: CoreStereoFlag) {

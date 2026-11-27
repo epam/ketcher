@@ -1,6 +1,7 @@
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
 import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export class SimpleObjectAddOperation implements Operation {
   public simpleObject: CoreSimpleObject;
@@ -53,5 +54,23 @@ export class SimpleObjectDeleteOperation implements Operation {
   public invert(renderersManager: RenderersManager) {
     this.addSimpleObjectChangeModel(this.simpleObject);
     renderersManager.addSimpleObject(this.simpleObject);
+  }
+}
+
+export class SimpleObjectTransformOperation implements Operation {
+  constructor(
+    public simpleObject: CoreSimpleObject,
+    public fromPoints: [Vec2, Vec2],
+    public toPoints: [Vec2, Vec2],
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.simpleObject.setPoints(this.toPoints);
+    renderersManager.redrawDrawingEntity(this.simpleObject);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.simpleObject.setPoints(this.fromPoints);
+    renderersManager.redrawDrawingEntity(this.simpleObject);
   }
 }

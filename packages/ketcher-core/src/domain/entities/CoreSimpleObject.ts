@@ -31,4 +31,15 @@ export class CoreSimpleObject extends DrawingEntity {
   public moveAbsolute(position: Vec2): void {
     this.moveRelative(Vec2.diff(position, this.pos[0]));
   }
+
+  public mapPoints(transform: (point: Vec2) => Vec2): [Vec2, Vec2] {
+    return [transform(this.pos[0]), transform(this.pos[1])];
+  }
+
+  public setPoints(points: [Vec2, Vec2]): void {
+    this.pos = [
+      new Vec2(points[0].x, points[0].y),
+      new Vec2(points[1].x, points[1].y),
+    ];
+  }
 }

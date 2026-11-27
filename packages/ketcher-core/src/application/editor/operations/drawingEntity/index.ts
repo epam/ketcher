@@ -1,10 +1,11 @@
-import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+﻿import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseBond } from 'domain/entities/BaseBond';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
@@ -72,6 +73,7 @@ export class DrawingEntityMoveOperation implements Operation {
       this.drawingEntity instanceof RxnArrow ||
       this.drawingEntity instanceof MultitailArrow ||
       this.drawingEntity instanceof RxnPlus ||
+      this.drawingEntity instanceof CoreSimpleObject ||
       this.drawingEntity instanceof CoreStereoFlag
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);

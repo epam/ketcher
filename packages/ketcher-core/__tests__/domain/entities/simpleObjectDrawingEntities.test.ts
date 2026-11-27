@@ -9,6 +9,8 @@ function createRenderersManagerMock() {
     deleteSimpleObject: vi.fn(),
     reinitializeViewModel: vi.fn(),
     runPostRenderMethods: vi.fn(),
+    moveDrawingEntity: vi.fn(),
+    redrawDrawingEntity: vi.fn(),
   } as unknown as RenderersManager;
 }
 
@@ -56,5 +58,101 @@ describe('DrawingEntitiesManager simple objects', () => {
     deleteCommand.invert(renderersManager);
 
     expect(manager.simpleObjects.get(simpleObject.id)).toBe(simpleObject);
+  });
+
+  it('moves both points of a selected simple object and restores them on invert', () => {
+    const manager = new DrawingEntitiesManager();
+    const renderersManager = createRenderersManagerMock();
+    manager
+      .addSimpleObject(
+        SimpleObjectMode.rectangle,
+        new Vec2(0, 0),
+        new Vec2(2, 2),
+      )
+      .execute(renderersManager);
+    const [simpleObject] = manager.simpleObjects.values();
+    simpleObject.turnOnSelection();
+    const moveCommand = manager.moveSelectedDrawingEntities(new Vec2(5, 1));
+
+    moveCommand.execute(renderersManager);
+
+    expect(simpleObject.pos[0]).toEqual(new Vec2(5, 1));
+    expect(simpleObject.pos[1]).toEqual(new Vec2(7, 3));
+
+    moveCommand.invert(renderersManager);
+
+    expect(simpleObject.pos[0]).toEqual(new Vec2(0, 0));
+    expect(simpleObject.pos[1]).toEqual(new Vec2(2, 2));
+  });
+
+  it('rotates both points of a selected simple object and restores them on invert', () => {
+    const manager = new DrawingEntitiesManager();
+    const renderersManager = createRenderersManagerMock();
+    manager
+      .addSimpleObject(SimpleObjectMode.line, new Vec2(1, 0), new Vec2(3, 0))
+      .execute(renderersManager);
+    const [simpleObject] = manager.simpleObjects.values();
+    simpleObject.turnOnSelection();
+    const rotateCommand = manager.rotateSelectedDrawingEntities(
+      new Vec2(0, 0),
+      90,
+    );
+
+    rotateCommand.execute(renderersManager);
+
+    expect(Math.abs(simpleObject.pos[0].x)).toBeCloseTo(0);
+    expect(Math.abs(simpleObject.pos[0].y)).toBeCloseTo(1);
+    expect(Math.abs(simpleObject.pos[1].x)).toBeCloseTo(0);
+    expect(Math.abs(simpleObject.pos[1].y)).toBeCloseTo(3);
+
+    rotateCommand.invert(renderersManager);
+
+    expect(simpleObject.pos[0]).toEqual(new Vec2(1, 0));
+    expect(simpleObject.pos[1]).toEqual(new Vec2(3, 0));
+  });
+
+  it('mirrors both points of a selected simple object when flipped horizontally', () => {
+    const manager = new DrawingEntitiesManager();
+    const renderersManager = createRenderersManagerMock();
+    manager
+      .addSimpleObject(SimpleObjectMode.line, new Vec2(1, 0), new Vec2(3, 0))
+      .execute(renderersManager);
+    const [simpleObject] = manager.simpleObjects.values();
+    simpleObject.turnOnSelection();
+    const flipCommand = manager.flipSelectedDrawingEntities('horizontal');
+
+    flipCommand.execute(renderersManager);
+
+    expect(simpleObject.pos[1].x - simpleObject.pos[0].x).toBeCloseTo(-2);
+    expect(simpleObject.pos[0].y).toBeCloseTo(0);
+    expect(simpleObject.pos[1].y).toBeCloseTo(0);
+
+    flipCommand.invert(renderersManager);
+
+    expect(simpleObject.pos[0]).toEqual(new Vec2(1, 0));
+    expect(simpleObject.pos[1]).toEqual(new Vec2(3, 0));
+  });
+  it('records a rotation drag so undo restores the starting points', () => {
+    const manager = new DrawingEntitiesManager();
+    const renderersManager = createRenderersManagerMock();
+    manager
+      .addSimpleObject(SimpleObjectMode.line, new Vec2(1, 0), new Vec2(3, 0))
+      .execute(renderersManager);
+    const [simpleObject] = manager.simpleObjects.values();
+    simpleObject.turnOnSelection();
+    const startPoints = manager.getSelectedSimpleObjectPoints();
+
+    manager
+      .rotateSelectedDrawingEntities(new Vec2(0, 0), 90)
+      .execute(renderersManager);
+    const historyCommand = manager.createRotationHistoryCommand(
+      new Map(),
+      startPoints,
+    );
+
+    historyCommand.invert(renderersManager);
+
+    expect(simpleObject.pos[0]).toEqual(new Vec2(1, 0));
+    expect(simpleObject.pos[1]).toEqual(new Vec2(3, 0));
   });
 });

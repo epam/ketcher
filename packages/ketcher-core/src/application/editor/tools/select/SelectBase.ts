@@ -100,6 +100,7 @@ abstract class SelectBase implements BaseTool {
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
+  protected rotationStartSimpleObjectPoints = new Map<number, [Vec2, Vec2]>();
   protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
@@ -241,6 +242,7 @@ abstract class SelectBase implements BaseTool {
     if (!this.rotationCenter) {
       this.mode = 'standby';
       this.rotationStartPositions.clear();
+      this.rotationStartSimpleObjectPoints.clear();
       return;
     }
 
@@ -250,6 +252,8 @@ abstract class SelectBase implements BaseTool {
         new Vec2(entity.position),
       ]),
     );
+    this.rotationStartSimpleObjectPoints =
+      this.editor.drawingEntitiesManager.getSelectedSimpleObjectPoints();
 
     const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
     const cursorPos = this.editor.lastCursorPositionOfCanvas;
@@ -1467,6 +1471,7 @@ abstract class SelectBase implements BaseTool {
       this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
+      this.rotationStartSimpleObjectPoints.clear();
       this.updateRotationView();
       return;
     }
@@ -1474,6 +1479,7 @@ abstract class SelectBase implements BaseTool {
     const modelChanges =
       this.editor.drawingEntitiesManager.createRotationHistoryCommand(
         this.rotationStartPositions,
+        this.rotationStartSimpleObjectPoints,
       );
 
     history.update(modelChanges);
@@ -1483,6 +1489,7 @@ abstract class SelectBase implements BaseTool {
     this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
+    this.rotationStartSimpleObjectPoints.clear();
     this.updateRotationView();
   }
 

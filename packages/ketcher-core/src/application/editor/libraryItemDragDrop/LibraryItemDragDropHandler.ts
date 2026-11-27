@@ -1,6 +1,9 @@
 import { Vec2 } from 'domain/entities';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import {
   AttachmentPointName,
   type MonomerItemType,
@@ -22,7 +25,10 @@ import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import type { CoreEditor } from 'application/editor/Editor';
-import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
+import {
+  isAmbiguousMonomerLibraryItem,
+  isLibraryItemRnaPreset,
+} from 'domain/helpers/monomers';
 import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from 'application/editor/tools/bondConnectionHelpers';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import type {
@@ -43,6 +49,7 @@ import {
   type PresetComponentRole,
 } from './replacementHelpers';
 import { KetcherLogger } from 'utilities';
+import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
@@ -1173,11 +1180,13 @@ export class LibraryItemDragDropHandler {
   existing replacement target.
 
   Flow:
-   1. Collect the bonds that would be lost during replacement.
+   1. Collect the bonds that would be lost and check for side-chain
+      connections on a different monomer type.
    2. If any bonds would be lost, show the "Deletion of bonds" modal.
       - On Cancel: abort, restore canvas state.
       - On Yes: execute the replacement.
-   3. If no bonds would be lost: execute the replacement immediately.
+   3. Otherwise, ask before replacing a different-type side-connected
+      monomer; replace immediately when neither condition applies.
   */
   private executeReplacement(
     item: IRnaPreset | MonomerOrAmbiguousType,
@@ -1192,6 +1201,10 @@ export class LibraryItemDragDropHandler {
 
     // Determine what bonds would be lost
     const lostBonds = this.computeLostBondsForReplacement(item, replaceTarget);
+    const needsSideChainConfirmation =
+      replaceTarget.kind === 'monomer' &&
+      !isLibraryItemRnaPreset(item) &&
+      this.hasDifferentTypeSideChainConnection(item, replaceTarget.monomer);
 
     const doReplace = () => {
       const command = this.buildReplacementCommand(
@@ -1217,9 +1230,42 @@ export class LibraryItemDragDropHandler {
           'Some bonds will get deleted during replacement. Do you wish to proceed.',
         onConfirm: doReplace,
       });
+    } else if (needsSideChainConfirmation) {
+      events.openConfirmationDialog.dispatch({
+        confirmationText:
+          'The monomer type is different and side chain connections may be affected. Do you want to proceed?',
+        onConfirm: doReplace,
+      });
     } else {
       doReplace();
     }
+  }
+
+  private hasDifferentTypeSideChainConnection(
+    item: MonomerOrAmbiguousType,
+    monomer: BaseMonomer,
+  ): boolean {
+    const hasSideChainConnection = Object.values(
+      monomer.attachmentPointsToBonds,
+    ).some(
+      (bond) =>
+        bond instanceof MonomerToAtomBond ||
+        (bond instanceof PolymerBond && bond.isSideChainConnection),
+    );
+
+    if (!hasSideChainConnection) {
+      return false;
+    }
+
+    const originalClass =
+      monomer instanceof AmbiguousMonomer
+        ? monomer.monomerClass
+        : resolveMonomerClass(monomer.monomerItem);
+    const replacementClass = isAmbiguousMonomerLibraryItem(item)
+      ? AmbiguousMonomer.getMonomerClass(item.monomers)
+      : resolveMonomerClass(item);
+
+    return originalClass !== replacementClass;
   }
 
   /**

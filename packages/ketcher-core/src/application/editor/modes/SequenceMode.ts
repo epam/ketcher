@@ -87,6 +87,7 @@ import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import type { CoreEditor } from 'application/editor/Editor';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
+import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
 import { registerMode } from './modesRegistry';
 
 const naturalAnalogues = uniq([
@@ -2551,10 +2552,13 @@ export class SequenceMode extends BaseMode {
       AttachmentPointName,
       PolymerBond | MonomerToAtomBond | null | undefined,
     ][] = hasSideChainConnections
-      ? (Object.entries(selectedNode.monomer.attachmentPointsToBonds) as [
-          AttachmentPointName,
-          PolymerBond | MonomerToAtomBond | null | undefined,
-        ][])
+      ? selectedNode.monomers.flatMap(
+          (monomer) =>
+            Object.entries(monomer.attachmentPointsToBonds) as [
+              AttachmentPointName,
+              PolymerBond | MonomerToAtomBond | null | undefined,
+            ][],
+        )
       : [
           [
             AttachmentPointName.R1,
@@ -2565,6 +2569,33 @@ export class SequenceMode extends BaseMode {
             selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
           ],
         ];
+
+    if (
+      hasSideChainConnections &&
+      selectedNode.monomers.some((monomer) => {
+        const hasSideChainConnection = Object.values(
+          monomer.attachmentPointsToBonds,
+        ).some(
+          (bond) =>
+            bond instanceof MonomerToAtomBond ||
+            (bond instanceof PolymerBond && bond.isSideChainConnection),
+        );
+
+        if (!hasSideChainConnection) {
+          return false;
+        }
+
+        const oldMonomerClass =
+          monomer instanceof AmbiguousMonomer
+            ? monomer.monomerClass
+            : resolveMonomerClass(monomer.monomerItem);
+
+        return oldMonomerClass !== resolveMonomerClass(monomerItem);
+      })
+    ) {
+      return false;
+    }
+
     // Backbone
     return oldMonomerBonds.every(([key, bond]) => {
       if (

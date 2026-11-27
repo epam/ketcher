@@ -48,6 +48,17 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { updateMonomersLibraryAndGetLoggedErrors } from '@utils/library/updateLibrary';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import {
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+} from '@utils/canvas/helpers';
 
 let page: Page;
 
@@ -979,5 +990,360 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 21 }), {
       padding: 200,
     });
+  });
+
+  test('Case 26 — Monomer layout inside r-group box become corrupted if user grabs and moves bond between monomers', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/7021
+     * Description: Monomer layout inside r-group box become corrupted if user grabs and moves bond between monomers
+     *
+     * Scenario:
+     * 1. Go to Macro - Flex mode (clean canvas)
+     * 2. Load from HELM: PEPTIDE1{A.C}$$$$V2.0
+     * 3. Go to Molecules mode
+     * 4. Select all structure, grab its bond and move it aside
+     * 5. Expand all monomers
+     * 6. Verify that monomer layout inside r-group box remains correct
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{A.C}$$$$V2.0',
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await selectAllStructuresOnCanvas(page);
+    const abbreviationA = getAbbreviationLocator(page, { name: 'A' }).first();
+    await expect(abbreviationA).toBeVisible();
+    const box = await abbreviationA.boundingBox();
+    if (box) {
+      await page.mouse.move(box.x + box.width + 20, box.y + box.height / 2);
+      await dragMouseTo(page, box.x + box.width + 20, box.y + 150);
+    }
+    await ContextMenu(
+      page,
+      getAbbreviationLocator(page, { name: 'A' }).first(),
+    ).click(MonomerOnMicroOption.ExpandMonomers);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 27 — Unable to paste using Ctrl+V chain from clipboard after clear canvas action', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/6476
+     * Description: Unable to paste using Ctrl+V chain from clipboard after clear canvas action
+     *
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM: RNA1{R(U)P.R(U)}|RNA2{R(A)P.R(A)}$RNA2,RNA1,5:pair-2:pair$$$V2.0
+     * 3. Right-click on A symbol and select "Edit sequence"
+     * 4. Press Clear Canvas button
+     * 5. Paste the same HELM using Ctrl+V
+     * 6. Verify that no errors appear and structure is pasted
+     *
+     * Version 3.15.0
+     */
+    const helm =
+      'RNA1{R(U)P.R(U)}|RNA2{R(A)P.R(A)}$RNA2,RNA1,5:pair-2:pair$$$V2.0';
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      helm,
+    );
+    const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await ContextMenu(page, symbolA).click(SequenceSymbolOption.EditSequence);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, helm);
+    await pasteFromClipboardByKeyboard(page);
+
+    await expect(
+      getSymbolLocator(page, { symbolAlias: 'A' }).first(),
+    ).toBeVisible();
+  });
+
+  test('Case 28 — Update the hint for preset components defining in the monomer creation wizard', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/9542
+     * Description: Update the hint for preset components defining in the monomer creation wizard
+     *
+     * Scenario:
+     * 1. Go to Molecules mode, load CCCCCC
+     * 2. Open Monomer Creation Wizard and select Nucleotide (preset) type
+     * 3. Open Base, Sugar and Phosphate tabs one by one
+     * 4. Verify hints: "Select all atoms that form the base.", "...the sugar.", "...the phosphate."
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+    await LeftToolbar(page).createMonomer();
+    await CreateMonomerDialog(page).selectType(MonomerType.NucleotidePreset);
+    const presetSection = NucleotidePresetSection(page);
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(
+      page.getByText('Select all atoms that form the base.'),
+    ).toBeVisible();
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(
+      page.getByText('Select all atoms that form the sugar.'),
+    ).toBeVisible();
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(
+      page.getByText('Select all atoms that form the phosphate.'),
+    ).toBeVisible();
+  });
+
+  test('Case 29 — Scrollbar appears unnecessarily in Create Monomer attributes panel after selecting Type', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/8402
+     * Description: Scrollbar appears unnecessarily in "Create Monomer" attributes panel after selecting Type, and disappears when expanding Aliases
+     *
+     * Scenario:
+     * 1. Load a structure and open Create Monomer wizard
+     * 2. Select Amino acid type
+     * 3. Verify that no vertical scrollbar appears in the Attributes panel
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+    const dialog = CreateMonomerDialog(page);
+    await dialog.selectType(MonomerType.AminoAcid);
+
+    await takeElementScreenshot(page, dialog.window, { padding: 10 });
+  });
+
+  test('Case 30 — The "File format" drop-down does not open in the "Save Structure" window in the full-screen mode', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/4248
+     * Description: The "File format" drop-down does not open in the "Save Structure" window in the full-screen mode
+     *
+     * Scenario:
+     * 1. Launch Ketcher and draw any structure
+     * 2. Click on the "Fullscreen mode" button
+     * 3. Click on the "Save as" button
+     * 4. Select any file format in the "File format" drop-down
+     * 5. Verify that the format is selected and the preview is shown
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await CommonTopRightToolbar(page).fullScreen();
+    await CommonTopLeftToolbar(page).saveFile();
+    const saveDialog = SaveStructureDialog(page);
+    await saveDialog.chooseFileFormat(MoleculesFileFormatType.MDLMolfileV3000);
+
+    await expect(saveDialog.saveStructureTextarea).toContainText('V3000');
+    await saveDialog.cancel();
+    await CommonTopRightToolbar(page).fullScreen();
+  });
+
+  test('Case 31 — HELM (and IDT) alias collision should cause error in console', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/8394
+     * Description: HELM (and IDT) alias collision should cause error in console
+     *
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load sugar Sugar2 with HELM alias Sugar1_HELM through ketcher.updateMonomersLibrary
+     * 3. Load sugar Sugar3 with the same HELM alias
+     * 4. Verify that error with the monomer name is thrown/logged for the second sugar
+     *
+     * Version 3.15.0
+     */
+    const buildSugar = (name: string) =>
+      `\n  -INDIGO-10092512212D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 ${name} 10.4962 -10.55 0.0 0 CLASS=SUGAR SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 SUGAR/${name}/${name} NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 13 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(3 1 13 12) BRKXYZ=-\nM  V30 (9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.-\nM  V30 000000 0.000000) BRKXYZ=(9 0.433000 0.250000 0.000000 0.000000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000) LABEL=${name} CLASS=SUGAR SAP=(3-\nM  V30  2 1 Al) SAP=(3 12 13 Br) SAP=(3 2 14 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\nSugar1_HELM\n\n$$$$\n`;
+
+    await updateMonomersLibraryAndGetLoggedErrors(page, buildSugar('Sugar2'));
+    const { error, loggedErrors } =
+      await updateMonomersLibraryAndGetLoggedErrors(page, buildSugar('Sugar3'));
+
+    expect(`${error ?? ''}\n${loggedErrors}`).toContain('Sugar3');
+  });
+
+  test.skip('Case 32 — Nucleotide presets: Unable to create preset after adding and removing simple extensions – console error', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/9455
+     * Description: Nucleotide presets: Unable to create preset after adding and removing simple extensions – console error
+     *
+     * Scenario:
+     * 1. Open Nucleotide preset file in the Molecules mode
+     * 2. Open Monomer Creation Wizard and select Nucleotide (preset)
+     * 3. Define base, sugar, phosphate components
+     * 4. Extend Base with a short side chain, then delete the added atoms
+     * 5. Submit the preset and verify there is no console error
+     *
+     * Skipped: the structure file of the bug is attached to the issue only (not
+     * available in the repo), so the scenario cannot be reproduced exactly.
+     * See https://github.com/epam/ketcher/issues/9455
+     *
+     * Version 3.15.0
+     */
+  });
+
+  test('Case 33 — Aromatic bond is mirrored if used as inside one on Macro canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/6239
+     * Description: Aromatic bond is mirrored if used as inside one on Macro canvas
+     *
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load from Extended SMILES: [#6]1-[#6]=[#6]-[#6]2-[#6]=[#6]-[#6]=[#6]-[#6]:2-[#6]=1
+     * 3. Go to Macro mode - Flex
+     * 4. Verify that the aromatic bond looks the same as on Molecules mode
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[#6]1-[#6]=[#6]-[#6]2-[#6]=[#6]-[#6]=[#6]-[#6]:2-[#6]=1',
+    );
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  test('Case 34 — In View mode, in the "selected+hover" state, a green color does not become darker', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/5198
+     * Description: In View mode, in the "selected+hover" state, a green color does not become darker
+     *
+     * Scenario:
+     * 1. Switch to the Macro mode - Sequence
+     * 2. Enter any letters (load RNA via HELM)
+     * 3. Click on an empty place on the canvas
+     * 4. Select any letter, move the cursor away and hover over the selected letter again
+     * 5. Verify that the green color becomes darker
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(C)P.R(G)P}$$$$V2.0',
+    );
+    await clickOnCanvas(page, 100, 100);
+    const symbolC = getSymbolLocator(page, { symbolAlias: 'C' }).first();
+    await symbolC.click();
+    await page.mouse.move(100, 100);
+    await symbolC.hover();
+    await takeElementScreenshot(page, symbolC, { padding: 50 });
+  });
+
+  test('Case 35 — It is impossible to cut a structure from a canvas using Ctrl+X', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/4675
+     * Description: It is impossible to cut a structure from a canvas using Ctrl+X
+     *
+     * Scenario:
+     * 1. Switch to the Macro mode
+     * 2. Add any nucleotide on the canvas
+     * 3. Select this nucleotide and press Ctrl+X
+     * 4. Verify that the nucleotide is removed from the canvas
+     * 5. Press Ctrl+V and verify that the nucleotide is pasted back
+     *
+     * Version 3.15.0
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P}$$$$V2.0',
+    );
+    await selectAllStructuresOnCanvas(page);
+    await cutToClipboardByKeyboard(page);
+    await expect(getMonomerLocator(page, { monomerAlias: 'A' })).toHaveCount(
+      0,
+    );
+
+    await pasteFromClipboardByKeyboard(page);
+    await clickOnCanvas(page, 400, 300);
+    await expect(
+      getMonomerLocator(page, { monomerAlias: 'A' }).first(),
+    ).toBeVisible();
+  });
+
+  test.skip('Case 36 — Correct the LGA of meK and meE amino-acids', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/9617
+     * Description: Correct the LGA of meK and meE amino-acids
+     *
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode
+     * 2. Add meK and meE from the library to the canvas
+     * 3. Switch to Molecules mode and expand the monomers
+     * 4. Verify that the R1 leaving group is hydrogen, not a methyl carbon
+     *
+     * Skipped: the issue gives no automatable steps, only an attached monomer
+     * library file that is not in the repo.
+     * See https://github.com/epam/ketcher/issues/9617
+     *
+     * Version 3.15.0
+     */
+  });
+
+  test('Case 37 — System allow to load monomers with invalid HELM aliases', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9964
+     * Bug: https://github.com/epam/ketcher/issues/8142
+     * Description: System allow to load monomers with invalid HELM aliases
+     *
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load _Peptide1 with an invalid HELM alias through ketcher.updateMonomersLibrary
+     * 3. Verify that an error about the invalid HELM alias is reported
+     * 4. Verify that the monomer does not appear in the library
+     *
+     * Version 3.15.0
+     */
+    const sdf =
+      '\n  -INDIGO-10092516592D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _Peptide1 10.0194 -9.20822 0.0 0 CLASS=AA SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 AA/_Peptide1/_Peptide1/ NATREPLACE=AA/A\nM  V30 BEGIN CTAB\nM  V30 COUNTS 9 8 3 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -2.394 0.508 0.0 0\nM  V30 2 C -1.528 0.008 0.0 0\nM  V30 3 C -0.662 0.508 0.0 0\nM  V30 4 C 0.204 0.008 0.0 0\nM  V30 5 C -1.528 -0.992 0.0 0\nM  V30 6 C -0.662 -1.492 0.0 0\nM  V30 7 C 1.17 0.267 0.0 0\nM  V30 8 C 1.428 1.233 0.0 0\nM  V30 9 H 2.394 1.492 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 2 5\nM  V30 5 1 5 6\nM  V30 6 1 4 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 9) XBONDS=(1 8) BRKXYZ=(9 -0.483000 -0.129500 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 3 SUP 3 ATOMS=(7 2 3 4 5 6 7 8) XBONDS=(2 1 8) BRKXYZ=(9 -0.433000 0.2-\nM  V30 50000 0.000000 0.483000 0.129500 0.000000 0.000000 0.000000 0.000000) -\nM  V30 LABEL=_Peptide1 CLASS=AA SAP=(3 2 1 Al) SAP=(3 8 9 Br) NATREPLACE=AA/A\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <modificationType>\nNatural amino acid2222222;ssssss;\n\n>  <aliasHELM>\n_Peptide1_HELM(%\\x3C!--&?@ЭТОПРОВАЛ\n\n>  <idtAliases>\nbase=_Peptide1\n\n$$$$\n';
+
+    const { error, loggedErrors } =
+      await updateMonomersLibraryAndGetLoggedErrors(page, sdf);
+    expect(`${error ?? ''}\n${loggedErrors}`).toContain('HELM alias');
+
+    await Library(page).switchToPeptidesTab();
+    await Library(page).setSearchValue('_Peptide1');
+    await expect(
+      page.getByTestId('_Peptide1___Natural amino acid2222222;ssssss;'),
+    ).toHaveCount(0);
   });
 });

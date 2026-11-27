@@ -56,3 +56,6 @@ output.txt
 
 # CodeMie analytics reports
 docs/codemie/analytics/
+
+# Review hub run log (scripts/review/index.mjs)
+review-run.json

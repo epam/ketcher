@@ -620,7 +620,7 @@ Ketcher allows to subscribe on events to react to changes in the editor.
 
 A new object that has one field 'handler'.
 
---- 
+---
 
 `Unsubscribe()` - method that removes event handler.
 
@@ -1478,4 +1478,3 @@ try {
 - Invalid structure data
 
 ---
-

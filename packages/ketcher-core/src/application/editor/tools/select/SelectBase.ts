@@ -28,10 +28,9 @@ import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
-import {
-  type DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-  SequenceRenderer,
-} from 'application/render';
+import { SequenceRenderer } from 'application/render';
+import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import type { MonomersAlignment } from 'application/editor/tools/types';
 import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
@@ -261,19 +260,21 @@ abstract class SelectBase implements BaseTool {
 
     const bbox =
       this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    if (bbox) {
-      const viewParams = this.buildRotationViewParams(
-        this.rotationCenter,
-        bbox,
-        this.rotationStartAngle,
-      );
-      this.editor.transientDrawingView.showRotation({
-        ...viewParams,
-        rotationAngle: 0,
-        isRotating: true,
-      });
-      this.editor.transientDrawingView.update();
+    if (!bbox) {
+      return;
     }
+
+    const viewParams = this.buildRotationViewParams(
+      this.rotationCenter,
+      bbox,
+      this.rotationStartAngle,
+    );
+    this.editor.transientDrawingView.showRotation({
+      ...viewParams,
+      rotationAngle: 0,
+      isRotating: true,
+    });
+    this.editor.transientDrawingView.update();
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
@@ -1323,10 +1324,9 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const renderer =
-      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
-        event,
-      );
+    const renderer = SelectBase.getRendererFromEvent<
+      FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer
+    >(event);
     if (!renderer) {
       return;
     }
@@ -1339,10 +1339,9 @@ abstract class SelectBase implements BaseTool {
   }
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
-    const renderer =
-      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
-        event,
-      );
+    const renderer = SelectBase.getRendererFromEvent<
+      FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer
+    >(event);
     if (!renderer?.polymerBond) {
       return;
     }
@@ -1435,19 +1434,21 @@ abstract class SelectBase implements BaseTool {
 
       const bbox =
         this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-      if (bbox && this.rotationCenter) {
-        const viewParams = this.buildRotationViewParams(
-          this.rotationCenter,
-          bbox,
-          this.rotationStartAngle,
-        );
-        this.editor.transientDrawingView.showRotation({
-          ...viewParams,
-          rotationAngle: angleDelta,
-          isRotating: true,
-        });
-        this.editor.transientDrawingView.update();
+      if (!bbox || !this.rotationCenter) {
+        return;
       }
+
+      const viewParams = this.buildRotationViewParams(
+        this.rotationCenter,
+        bbox,
+        this.rotationStartAngle,
+      );
+      this.editor.transientDrawingView.showRotation({
+        ...viewParams,
+        rotationAngle: angleDelta,
+        isRotating: true,
+      });
+      this.editor.transientDrawingView.update();
     });
   }
 
@@ -1498,13 +1499,15 @@ abstract class SelectBase implements BaseTool {
     this.rotationCenterUnsubscribe?.();
     this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (this.editor.selectedTool?.name !== 'eraser-tool') {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
-
-      this.editor.renderersContainer.update(modelChanges);
+    if (this.editor.selectedTool?.name === 'eraser-tool') {
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public stopMovement() {

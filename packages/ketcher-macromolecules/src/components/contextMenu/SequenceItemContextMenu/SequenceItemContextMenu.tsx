@@ -330,37 +330,37 @@ export const SequenceItemContextMenu = ({
 
         selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
           if (
-            selectedTwoStrandedNode.antisenseChain &&
-            selectedTwoStrandedNode.antisenseNode &&
-            !(
-              selectedTwoStrandedNode.antisenseNode instanceof
-                EmptySequenceNode ||
-              selectedTwoStrandedNode.antisenseNode instanceof
-                BackBoneSequenceNode
+            !selectedTwoStrandedNode.antisenseChain ||
+            !selectedTwoStrandedNode.antisenseNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              EmptySequenceNode ||
+            selectedTwoStrandedNode.antisenseNode instanceof
+              BackBoneSequenceNode
+          ) {
+            return;
+          }
+
+          if (
+            !antisenseChainToSelectedNodeMap.has(
+              selectedTwoStrandedNode.antisenseChain,
             )
           ) {
-            if (
-              !antisenseChainToSelectedNodeMap.has(
-                selectedTwoStrandedNode.antisenseChain,
-              )
-            ) {
-              antisenseChainToSelectedNodeMap.set(
-                selectedTwoStrandedNode.antisenseChain,
-                new Set(),
-              );
-            }
-
-            const antisenseChainSelectedNodes =
-              antisenseChainToSelectedNodeMap.get(
-                selectedTwoStrandedNode.antisenseChain,
-              );
-
-            if (!antisenseChainSelectedNodes) {
-              return;
-            }
-
-            antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
+            antisenseChainToSelectedNodeMap.set(
+              selectedTwoStrandedNode.antisenseChain,
+              new Set(),
+            );
           }
+
+          const antisenseChainSelectedNodes =
+            antisenseChainToSelectedNodeMap.get(
+              selectedTwoStrandedNode.antisenseChain,
+            );
+
+          if (!antisenseChainSelectedNodes) {
+            return;
+          }
+
+          antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
         });
 
         let isGoingToDeleteAllHydrogenBondsForAnyChain = false;

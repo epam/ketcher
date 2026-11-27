@@ -17,6 +17,7 @@ import type { TransientDrawingView } from 'application/render/renderers/Transien
 import type { IEditorEvents } from 'application/editor/editorEvents';
 import type {
   AttachmentPointTarget,
+  CreateInsertionBondsViaModalPayload,
   LibraryItemDragState,
 } from 'application/editor/editor.types';
 import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalculations';
@@ -30,7 +31,10 @@ import {
 } from 'domain/helpers/monomers';
 import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from 'application/editor/tools/bondConnectionHelpers';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
-import type { DragDropModalContext } from './libraryItemDragDrop.types';
+import type {
+  DragDropModalContext,
+  InsertionSession,
+} from './libraryItemDragDrop.types';
 import {
   applyPresetMirroringIfNeeded,
   computeAndApplyFlexDropRepositioning,
@@ -46,6 +50,36 @@ import {
 } from './replacementHelpers';
 import { KetcherLogger } from 'utilities';
 import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import { Sugar } from 'domain/entities/Sugar';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { SnakeLayoutCellWidth } from 'domain/constants';
+import {
+  buildCircularReplacementExtension,
+  buildShiftCommand,
+  collectPolymerBondEdges,
+  computeFlexInsertionLayout,
+  findBondInsertionTarget,
+  getInsertionEnds,
+  resolveItemInsertion,
+  type BondInsertionTarget,
+  type FlexInsertionLayout,
+  type InsertionEnds,
+} from './insertion';
+import {
+  DRAG_INSERT_INNER_THRESHOLD_PX,
+  DRAG_INSERT_OUTER_THRESHOLD_PX,
+  PRESET_TRIANGLE_SIDE_B_ANGSTROM,
+  isBondInCycle,
+  type PresetInsertionResolution,
+} from './insertionHelpers';
+import { PolymerBondSnapToMonomersOperation } from 'application/editor/operations/polymerBond';
+
+export const INSERT_PRESET_ERROR_MESSAGE =
+  'Preset cannot be inserted because default bonds cannot be established.';
+export const INSERT_SINGLE_AP_ERROR_MESSAGE =
+  'The monomer cannot be inserted because it only has one attachment point.';
 
 /**
 AP bond-target ring threshold in canvas pixels.
@@ -80,7 +114,9 @@ export interface LibraryItemDragDropHandlerDependencies {
     | 'setLibraryItemDragState'
     | 'placeLibraryItemOnCanvas'
     | 'openMonomerConnectionModal'
+    | 'openInsertionConnectionModal'
     | 'openConfirmationDialog'
+    | 'openErrorModal'
     | 'error'
   >;
   getCanvasOffset(): DOMRect;
@@ -152,6 +188,11 @@ export class LibraryItemDragDropHandler {
   Cleared when the cursor moves outside the threshold or the drag ends.
   */
   private dragReplaceTarget: ReplacementTarget | null = null;
+  /**
+   * The polymer bond the cursor is close enough to for insertion, if any.
+   * Replacement and AP highlights take priority over it.
+   */
+  private dragInsertTarget: BondInsertionTarget | null = null;
 
   constructor(
     private readonly dependencies: LibraryItemDragDropHandlerDependencies,
@@ -249,6 +290,13 @@ export class LibraryItemDragDropHandler {
   and this.isDragDropBondModalOpen is true.
   */
   handleMonomerConnectionCancel(): void {
+    const insertion = this.dragDropModalContext?.insertion;
+    if (insertion) {
+      // Nothing reached history yet: roll back what was applied on screen.
+      insertion.command.invert(this.dependencies.renderersContainer);
+      insertion.ends.left.setPotentialSecondAttachmentPoint(null);
+      insertion.ends.right.setPotentialSecondAttachmentPoint(null);
+    }
     this.isDragDropBondModalOpen = false;
     this.dragDropModalContext = undefined;
   }
@@ -264,6 +312,7 @@ export class LibraryItemDragDropHandler {
     } else {
       this.clearDragDropBondTarget();
       this.clearReplacementTarget();
+      this.clearInsertTarget();
     }
   }
 
@@ -292,6 +341,8 @@ export class LibraryItemDragDropHandler {
       const hasTargetChanged =
         classified.monomer !== previousTarget?.monomer ||
         classified.kind !== previousTarget?.kind;
+
+      this.clearInsertTarget();
 
       if (hasTargetChanged) {
         // Clear previous replacement visual state
@@ -332,13 +383,30 @@ export class LibraryItemDragDropHandler {
       this.clearReplacementTarget();
     }
 
-    // --- ORIGINAL AP PROXIMITY CHECK ---
-    const nearestAP = this.findNearestFreeAttachmentPointForDrag(
-      state.position,
-    );
-    const circleHoverAP = this.findNearestFreeAttachmentPointForDrag(
-      state.position,
-      DRAG_CIRCLE_HOVER_THRESHOLD_PX,
+    // --- AP PROXIMITY CHECK ---
+    const { target: nearestAP, distance: nearestAPDist } =
+      this.findNearestFreeAttachmentPointForDrag(state.position);
+    const { target: circleHoverAP, distance: circleHoverAPDist } =
+      this.findNearestFreeAttachmentPointForDrag(
+        state.position,
+        DRAG_CIRCLE_HOVER_THRESHOLD_PX,
+      );
+
+    // --- BOND INSERTION CHECK with conflict resolution ---
+    // Always run the bond check so we can compare distances when both AP and
+    // bond are within range. When they conflict, whichever is geometrically
+    // closer wins and the other is suppressed — effectively reducing each
+    // hover area to avoid ambiguity (critical on circular or dense chains).
+    const bondTarget = this.findInsertTarget(state.position);
+    const minAPDist = Math.min(nearestAPDist, circleHoverAPDist);
+    const bondWins = bondTarget !== null && bondTarget.distance < minAPDist;
+
+    // Resolve the effective AP targets after the conflict check.
+    const effectiveNearestAP = bondWins ? null : nearestAP;
+    const effectiveCircleHoverAP = bondWins ? null : circleHoverAP;
+
+    this.updateInsertTarget(
+      effectiveNearestAP || effectiveCircleHoverAP ? null : bondTarget,
     );
 
     // Update circle hover state independently — no re-render needed, just
@@ -348,7 +416,7 @@ export class LibraryItemDragDropHandler {
       hasTargetChanged: hasCircleHoverTargetChanged,
     } = this.updateAttachmentPointTarget(
       this.dragCircleHoverTarget,
-      circleHoverAP,
+      effectiveCircleHoverAP,
       this.setMonomerDragCircleHoverAP.bind(this),
     );
     this.dragCircleHoverTarget = updatedCircleHoverTarget;
@@ -358,7 +426,7 @@ export class LibraryItemDragDropHandler {
       hasTargetChanged: hasBondTargetChanged,
     } = this.updateAttachmentPointTarget(
       this.dragDropBondTarget,
-      nearestAP,
+      effectiveNearestAP,
       this.setMonomerDragTargetAP.bind(this),
     );
 
@@ -373,9 +441,11 @@ export class LibraryItemDragDropHandler {
     const command = new Command();
     command.merge(drawingEntitiesManager.removeHoverForAllMonomers());
 
-    if (nearestAP) {
+    if (effectiveNearestAP) {
       command.merge(
-        drawingEntitiesManager.intendToStartBondCreation(nearestAP.monomer),
+        drawingEntitiesManager.intendToStartBondCreation(
+          effectiveNearestAP.monomer,
+        ),
       );
     }
 
@@ -548,10 +618,398 @@ export class LibraryItemDragDropHandler {
   Clears the current replacement target visual state and the stored field.
   */
   private clearReplacementTarget(): void {
-    if (this.dragReplaceTarget) {
-      this.clearReplacementVisualState();
-      this.dragReplaceTarget = null;
+    if (!this.dragReplaceTarget) {
+      return;
     }
+
+    this.clearReplacementVisualState();
+    this.dragReplaceTarget = null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Private: bond insertion
+  // ---------------------------------------------------------------------------
+
+  private getCursorCanvas(position: { x: number; y: number }): Vec2 | null {
+    const rootOffset = this.dependencies.getKetcherRootRect();
+    if (!rootOffset) return null;
+    const canvasOffset = this.dependencies.getCanvasOffset();
+    return Coordinates.viewToCanvas(
+      new Vec2(
+        position.x - (canvasOffset.left - rootOffset.left),
+        position.y - (canvasOffset.top - rootOffset.top),
+      ),
+    );
+  }
+
+  private findInsertTarget(position: {
+    x: number;
+    y: number;
+  }): BondInsertionTarget | null {
+    const cursorCanvas = this.getCursorCanvas(position);
+    if (!cursorCanvas) return null;
+    return findBondInsertionTarget(
+      this.dependencies.drawingEntitiesManager,
+      cursorCanvas,
+      {
+        outer: DRAG_INSERT_OUTER_THRESHOLD_PX,
+        inner: DRAG_INSERT_INNER_THRESHOLD_PX,
+      },
+      this.dependencies.getModeName() === 'snake-layout-mode',
+    );
+  }
+
+  private updateInsertTarget(next: BondInsertionTarget | null): void {
+    const previous = this.dragInsertTarget;
+    if (
+      previous?.bond === next?.bond &&
+      previous?.level === next?.level &&
+      previous?.indicatorPosition.x === next?.indicatorPosition.x &&
+      previous?.indicatorPosition.y === next?.indicatorPosition.y
+    ) {
+      return;
+    }
+    this.dragInsertTarget = next;
+    const view = this.dependencies.getTransientDrawingView();
+    if (next) {
+      view.showBondInsertionIndicator({
+        position: next.indicatorPosition,
+        level: next.level,
+      });
+    } else {
+      view.hideBondInsertionIndicator();
+    }
+    view.update();
+  }
+
+  private clearInsertTarget(): void {
+    this.updateInsertTarget(null);
+  }
+
+  private showInsertionError(message: string): void {
+    this.dependencies.events.openErrorModal.dispatch({
+      errorMessage: message,
+      errorTitle: 'Error Message',
+    });
+  }
+
+  /**
+   * Inserts the dragged item between the two monomers of `target.bond`.
+   * Nothing is changed when the default connection cannot be established and
+   * no dialog applies; the user sees the matching error modal instead.
+   */
+  private executeInsertion(
+    item: IRnaPreset | MonomerOrAmbiguousType,
+    target: BondInsertionTarget,
+  ): void {
+    const {
+      drawingEntitiesManager,
+      renderersContainer,
+      getModeName,
+      placeItemOnCanvas,
+    } = this.dependencies;
+
+    const ends = getInsertionEnds(target.bond);
+    if (!ends) return;
+
+    const resolution = resolveItemInsertion(item, ends);
+    if (resolution.status === 'failed') {
+      if (resolution.failure === 'preset-error') {
+        this.showInsertionError(INSERT_PRESET_ERROR_MESSAGE);
+        return;
+      }
+      if (resolution.failure === 'single-ap-error') {
+        this.showInsertionError(INSERT_SINGLE_AP_ERROR_MESSAGE);
+        return;
+      }
+    }
+
+    const isFlex = getModeName() === 'flex-layout-mode';
+    const hasPhosphate =
+      isLibraryItemRnaPreset(item) && Boolean(item.phosphate);
+    // Geometry is read before anything is added to the model.
+    const layout = isFlex
+      ? computeFlexInsertionLayout(drawingEntitiesManager, ends, hasPhosphate)
+      : null;
+    const middle =
+      layout?.middle ??
+      new Vec2(
+        (ends.left.position.x + ends.right.position.x) / 2,
+        (ends.left.position.y + ends.right.position.y) / 2,
+      );
+
+    const addResult = placeItemOnCanvas(
+      item,
+      Coordinates.modelToCanvas(middle),
+    );
+    if (!addResult) return;
+
+    const addedMonomers = addResult.drawingEntities.filter(
+      (entity): entity is BaseMonomer => entity instanceof BaseMonomer,
+    );
+
+    const command = new Command();
+    command.merge(addResult.modelChanges);
+    command.merge(drawingEntitiesManager.deletePolymerBond(target.bond));
+    if (layout)
+      command.merge(buildShiftCommand(drawingEntitiesManager, layout));
+
+    let session: InsertionSession | null = null;
+
+    if (isLibraryItemRnaPreset(item)) {
+      command.merge(this.connectPreset(addedMonomers, item, ends, layout));
+    } else if (
+      resolution.status === 'resolved' &&
+      resolution.kind === 'monomer'
+    ) {
+      const newMonomer = addResult.firstMonomer;
+      command.merge(
+        drawingEntitiesManager.createPolymerBond(
+          ends.left,
+          newMonomer,
+          ends.leftAp,
+          resolution.leftAp,
+        ),
+      );
+      command.merge(
+        drawingEntitiesManager.createPolymerBond(
+          newMonomer,
+          ends.right,
+          resolution.rightAp,
+          ends.rightAp,
+        ),
+      );
+    } else {
+      // No default connection but the monomer has 2+ APs: ask the user.
+      session = {
+        command,
+        ends,
+        drawingEntities: addResult.drawingEntities,
+        lastMonomer: addResult.lastMonomer,
+      };
+    }
+
+    if (session) {
+      renderersContainer.update(command);
+      this.openInsertionDialog(session, addResult.firstMonomer);
+      return;
+    }
+
+    this.finishInsertion(command, addedMonomers, ends, addResult);
+  }
+
+  /**
+   * Bonds the preset's sugar/phosphate to the two original monomers and, in
+   * Flex mode, places the preset components along the extended bond (the
+   * sugar–phosphate bond centre sits at the bond midpoint).
+   */
+  private connectPreset(
+    addedMonomers: BaseMonomer[],
+    item: IRnaPreset,
+    ends: InsertionEnds,
+    layout: FlexInsertionLayout | null,
+  ): Command {
+    const { drawingEntitiesManager } = this.dependencies;
+    const command = new Command();
+    const sugar = addedMonomers.find((m) => m instanceof Sugar);
+    const phosphate = addedMonomers.find((m) => m instanceof Phosphate);
+    const base = addedMonomers.find((m) => m instanceof RNABase);
+    if (!sugar) return command;
+
+    // The real orientation is known now that the entities exist.
+    const isFivePrime =
+      phosphate !== undefined &&
+      sugar.attachmentPointsToBonds.R1?.getAnotherEntity(sugar) === phosphate;
+    const resolution = resolveItemInsertion(
+      { ...item, phosphatePosition: isFivePrime ? 'left' : 'right' },
+      ends,
+    ) as PresetInsertionResolution;
+    if (resolution.status !== 'resolved') return command;
+
+    const componentOf = (name: 'sugar' | 'phosphate') =>
+      name === 'sugar' ? sugar : (phosphate ?? sugar);
+    const leftComponent = componentOf(resolution.leftComponent);
+    const rightComponent = componentOf(resolution.rightComponent);
+
+    if (layout) {
+      const { middle, direction } = layout;
+      const half = phosphate ? PRESET_TRIANGLE_SIDE_B_ANGSTROM : 0;
+      command.merge(
+        drawingEntitiesManager.moveMonomer(
+          leftComponent,
+          new Vec2(
+            middle.x - direction.x * half,
+            middle.y - direction.y * half,
+          ),
+        ),
+      );
+      if (phosphate) {
+        command.merge(
+          drawingEntitiesManager.moveMonomer(
+            rightComponent,
+            new Vec2(
+              middle.x + direction.x * half,
+              middle.y + direction.y * half,
+            ),
+          ),
+        );
+      }
+      if (base) {
+        // Place the base perpendicular to the bond at the standard side-chain
+        // distance. For a horizontal bond (direction = (1,0)) the 90° CCW
+        // perpendicular is (0,1) — directly below — matching the snake-layout
+        // and autochain conventions.
+        const { macroModeScale } = provideEditorSettings();
+        const baseDistance = SnakeLayoutCellWidth / macroModeScale;
+        const perp = new Vec2(-direction.y, direction.x);
+        command.merge(
+          drawingEntitiesManager.moveMonomer(
+            base,
+            new Vec2(
+              sugar.position.x + perp.x * baseDistance,
+              sugar.position.y + perp.y * baseDistance,
+            ),
+          ),
+        );
+      }
+    }
+
+    command.merge(
+      drawingEntitiesManager.createPolymerBond(
+        ends.left,
+        leftComponent,
+        ends.leftAp,
+        resolution.leftAp,
+      ),
+    );
+    command.merge(
+      drawingEntitiesManager.createPolymerBond(
+        rightComponent,
+        ends.right,
+        resolution.rightAp,
+        ends.rightAp,
+      ),
+    );
+    return command;
+  }
+
+  /**
+   * Records an insertion command in history and renders it (single undo step).
+   */
+  private finishInsertion(
+    command: Command,
+    addedMonomers: BaseMonomer[],
+    ends: InsertionEnds,
+    addResult: IAutochainMonomerAddResult,
+    alreadyRendered = false,
+  ): void {
+    const {
+      drawingEntitiesManager,
+      renderersContainer,
+      getModeName,
+      getEditor,
+    } = this.dependencies;
+
+    const finishing = new Command();
+    // Re-snap every bond touching a moved or new monomer.
+    const snapped = new Set<unknown>();
+    const touched = [...addedMonomers, ends.left, ends.right];
+    touched.forEach((monomer) =>
+      monomer.polymerBonds.forEach((bond) => {
+        if (snapped.has(bond)) return;
+        snapped.add(bond);
+        finishing.addOperation(new PolymerBondSnapToMonomersOperation(bond));
+      }),
+    );
+
+    if (getModeName() === 'snake-layout-mode') {
+      finishing.merge(drawingEntitiesManager.applySnakeLayout(true));
+    }
+    finishing.merge(
+      drawingEntitiesManager.selectDrawingEntities(addResult.drawingEntities),
+    );
+
+    if (alreadyRendered) {
+      renderersContainer.update(finishing);
+      command.merge(finishing);
+      command.setUndoOperationsByPriority();
+      EditorHistory.getInstance(getEditor()).update(command);
+    } else {
+      command.merge(finishing);
+      command.setUndoOperationsByPriority();
+      EditorHistory.getInstance(getEditor()).update(command);
+      renderersContainer.update(command);
+    }
+    this.dependencies.calculateAndStoreNextAutochainPosition(
+      addResult.lastMonomer,
+    );
+  }
+
+  private openInsertionDialog(
+    session: InsertionSession,
+    newMonomer: BaseMonomer,
+  ): void {
+    this.isDragDropBondModalOpen = true;
+    this.dragDropModalContext = {
+      insertion: session,
+      droppedMonomer: newMonomer,
+      addedMonomers: [newMonomer],
+      targetMonomer: session.ends.left,
+      targetAP: session.ends.leftAp,
+    };
+    this.dependencies.events.openInsertionConnectionModal.dispatch({
+      leftMonomer: session.ends.left,
+      newMonomer,
+      rightMonomer: session.ends.right,
+      leftAp: session.ends.leftAp,
+      rightAp: session.ends.rightAp,
+    });
+  }
+
+  /**
+   * Called from Editor when the user clicks Connect in the insertion-connection
+   * dialog. Creates both new bonds and commits the insertion to history.
+   */
+  handleInsertionConnection(
+    payload: CreateInsertionBondsViaModalPayload,
+  ): void {
+    const session = this.dragDropModalContext?.insertion;
+    if (!session) return;
+    const { drawingEntitiesManager, renderersContainer } = this.dependencies;
+
+    const leftBondCmd = drawingEntitiesManager.createPolymerBond(
+      payload.leftMonomer,
+      payload.newMonomer,
+      payload.leftAp,
+      payload.leftNewAp,
+    );
+    renderersContainer.update(leftBondCmd);
+    session.command.merge(leftBondCmd);
+
+    const rightBondCmd = drawingEntitiesManager.createPolymerBond(
+      payload.newMonomer,
+      payload.rightMonomer,
+      payload.rightNewAp,
+      payload.rightAp,
+    );
+    renderersContainer.update(rightBondCmd);
+    session.command.merge(rightBondCmd);
+
+    this.isDragDropBondModalOpen = false;
+    this.dragDropModalContext = undefined;
+
+    this.finishInsertion(
+      session.command,
+      [payload.newMonomer],
+      session.ends,
+      {
+        modelChanges: session.command,
+        firstMonomer: payload.newMonomer,
+        lastMonomer: session.lastMonomer,
+        drawingEntities: session.drawingEntities,
+      },
+      true,
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -588,6 +1046,17 @@ export class LibraryItemDragDropHandler {
       );
       return;
     }
+
+    // -----------------------------------------------------------------------
+    // BOND INSERTION BRANCH — only when no AP circle is being targeted
+    // -----------------------------------------------------------------------
+    if (this.dragInsertTarget && !this.dragCircleHoverTarget) {
+      const insertTarget = this.dragInsertTarget;
+      this.clearInsertTarget();
+      this.executeInsertion(item, insertTarget);
+      return;
+    }
+    this.clearInsertTarget();
 
     // -----------------------------------------------------------------------
     // NORMAL PLACEMENT BRANCH
@@ -745,11 +1214,13 @@ export class LibraryItemDragDropHandler {
         drawingEntitiesManager,
       );
 
-      if (command) {
-        const history = EditorHistory.getInstance(getEditor());
-        history.update(command);
-        renderersContainer.update(command);
+      if (!command) {
+        return;
       }
+
+      const history = EditorHistory.getInstance(getEditor());
+      history.update(command);
+      renderersContainer.update(command);
     };
 
     if (lostBonds > 0) {
@@ -1042,9 +1513,22 @@ export class LibraryItemDragDropHandler {
             phosphatePosition,
           );
           const anchor = newPhosphate ?? newSugar;
-          finalCommand.merge(
-            shiftDownstreamChainMonomers(drawingEntitiesManager, anchor, 1),
-          );
+          const circularExtension = newPhosphate
+            ? buildCircularReplacementExtension(
+                drawingEntitiesManager,
+                newPhosphate,
+                newSugar,
+              )
+            : new Command();
+          if (circularExtension.operations.length > 0) {
+            // Circular structure (req. 8): extend the bond instead of
+            // shifting a chain that loops back on itself.
+            finalCommand.merge(circularExtension);
+          } else if (!newPhosphate || !this.isInCircularStructure(newSugar)) {
+            finalCommand.merge(
+              shiftDownstreamChainMonomers(drawingEntitiesManager, anchor, 1),
+            );
+          }
           finalCommand.setUndoOperationsByPriority();
         }
       }
@@ -1053,6 +1537,20 @@ export class LibraryItemDragDropHandler {
     }
 
     return null;
+  }
+
+  /**
+  Whether any polymer bond of `monomer` lies on a cycle of polymer bonds.
+  */
+  private isInCircularStructure(monomer: BaseMonomer): boolean {
+    const edges = collectPolymerBondEdges(
+      this.dependencies.drawingEntitiesManager,
+    );
+    return monomer.polymerBonds.some(
+      (bond) =>
+        bond.secondMonomer !== undefined &&
+        isBondInCycle([bond.firstMonomer.id, bond.secondMonomer.id], edges),
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -1134,9 +1632,9 @@ export class LibraryItemDragDropHandler {
   private findNearestFreeAttachmentPointForDrag(
     position: { x: number; y: number },
     threshold = DRAG_BOND_PROXIMITY_THRESHOLD_PX,
-  ): AttachmentPointTarget | null {
+  ): { target: AttachmentPointTarget | null; distance: number } {
     const rootOffset = this.dependencies.getKetcherRootRect();
-    if (!rootOffset) return null;
+    if (!rootOffset) return { target: null, distance: Infinity };
 
     const canvasOffset = this.dependencies.getCanvasOffset();
     // Convert the cursor from ketcherRoot-relative screen coords to SVG
@@ -1182,7 +1680,7 @@ export class LibraryItemDragDropHandler {
       }
     }
 
-    return nearest;
+    return { target: nearest, distance: nearest ? minDistribution : Infinity };
   }
 
   /**

@@ -284,30 +284,32 @@ export class SequenceRenderer {
         chain.length,
       );
 
-      if (!isEditInRnaBuilderMode) {
-        const nextChain = sequenceViewModel.chains[chainIndex + 1];
+      if (isEditInRnaBuilderMode) {
+        return;
+      }
 
-        // Extract actual Chain objects with type safety
-        const currentChain = chain.firstNode?.chain;
-        const nextChainObj = nextChain?.firstNode?.chain;
+      const nextChain = sequenceViewModel.chains[chainIndex + 1];
 
-        // Check if chains are connected via side-chain bonds
-        // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
-        const hasSideChainConnection =
-          currentChain &&
-          nextChainObj &&
-          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+      // Extract actual Chain objects with type safety
+      const currentChain = chain.firstNode?.chain;
+      const nextChainObj = nextChain?.firstNode?.chain;
 
-        // Show PLUS button only if there are no side-chain connections between chains
-        if (!hasSideChainConnection) {
-          this.showNewSequenceButton(
-            chainIndex,
-            Math.max(
-              chain.lastRow.sequenceViewModelItems.length,
-              nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
-            ),
-          );
-        }
+      // Check if chains are connected via side-chain bonds
+      // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
+      const hasSideChainConnection =
+        currentChain &&
+        nextChainObj &&
+        this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+
+      // Show PLUS button only if there are no side-chain connections between chains
+      if (!hasSideChainConnection) {
+        this.showNewSequenceButton(
+          chainIndex,
+          Math.max(
+            chain.lastRow.sequenceViewModelItems.length,
+            nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
+          ),
+        );
       }
     });
 
@@ -464,17 +466,19 @@ export class SequenceRenderer {
           });
         });
       });
-      if (chain.isCyclic) {
-        const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
-          .R1 as PolymerBond;
-        const bondRenderer = new PolymerBondSequenceRenderer(
-          polymerBond,
-          chain.firstNode,
-          chain.lastNonEmptyNode,
-        );
-        this.showBondRenderer(bondRenderer);
-        polymerBond.setRenderer(bondRenderer);
+      if (!chain.isCyclic) {
+        return;
       }
+
+      const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
+        .R1 as PolymerBond;
+      const bondRenderer = new PolymerBondSequenceRenderer(
+        polymerBond,
+        chain.firstNode,
+        chain.lastNonEmptyNode,
+      );
+      this.showBondRenderer(bondRenderer);
+      polymerBond.setRenderer(bondRenderer);
     });
   }
 
@@ -634,15 +638,17 @@ export class SequenceRenderer {
     const monomers: BaseMonomer[] = [];
     this.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
-        startCaretPosition <= nodeIndexOverall &&
-        nodeIndexOverall < (endCaretPosition ?? this.caretPosition)
+        startCaretPosition > nodeIndexOverall ||
+        nodeIndexOverall >= (endCaretPosition ?? this.caretPosition)
       ) {
-        if (twoStrandedNode.senseNode?.monomer) {
-          monomers.push(twoStrandedNode.senseNode?.monomer);
-        }
-        if (twoStrandedNode.antisenseNode?.monomer) {
-          monomers.push(twoStrandedNode.antisenseNode?.monomer);
-        }
+        return;
+      }
+
+      if (twoStrandedNode.senseNode?.monomer) {
+        monomers.push(twoStrandedNode.senseNode?.monomer);
+      }
+      if (twoStrandedNode.antisenseNode?.monomer) {
+        monomers.push(twoStrandedNode.antisenseNode?.monomer);
       }
     });
     return monomers;
@@ -1286,16 +1292,18 @@ export class SequenceRenderer {
         twoStrandedNode.senseNode.renderer?.removeSelection();
       }
       if (
-        twoStrandedNode.antisenseNode instanceof EmptySequenceNode ||
-        twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
+        !(twoStrandedNode.antisenseNode instanceof EmptySequenceNode) &&
+        !(twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode)
       ) {
-        command.merge(
-          editor.drawingEntitiesManager.unselectDrawingEntity(
-            twoStrandedNode.antisenseNode.monomer,
-          ),
-        );
-        twoStrandedNode.antisenseNode.renderer?.removeSelection();
+        return;
       }
+
+      command.merge(
+        editor.drawingEntitiesManager.unselectDrawingEntity(
+          twoStrandedNode.antisenseNode.monomer,
+        ),
+      );
+      twoStrandedNode.antisenseNode.renderer?.removeSelection();
     });
     return command;
   }
@@ -1391,16 +1399,18 @@ export class SequenceRenderer {
 
     this.forEachNode(({ twoStrandedNode }) => {
       if (
-        twoStrandedNode.senseNode?.monomers.includes(monomer) ||
-        twoStrandedNode.antisenseNode?.monomers.includes(monomer)
+        !twoStrandedNode.senseNode?.monomers.includes(monomer) &&
+        !twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
-        const renderer =
-          twoStrandedNode.senseNode?.renderer ??
-          twoStrandedNode.antisenseNode?.renderer;
+        return;
+      }
 
-        if (renderer instanceof BaseSequenceItemRenderer) {
-          rendererToReturn = renderer;
-        }
+      const renderer =
+        twoStrandedNode.senseNode?.renderer ??
+        twoStrandedNode.antisenseNode?.renderer;
+
+      if (renderer instanceof BaseSequenceItemRenderer) {
+        rendererToReturn = renderer;
       }
     });
 
@@ -1482,10 +1492,12 @@ export class SequenceRenderer {
       this.chainsCollection.chains.forEach((chain) => {
         chain.monomers.forEach((monomer) => {
           monomer.forEachBond((bond) => {
-            if (!handledBonds.has(bond)) {
-              handledBonds.add(bond);
-              bond.renderer?.remove();
+            if (handledBonds.has(bond)) {
+              return;
             }
+
+            handledBonds.add(bond);
+            bond.renderer?.remove();
           });
         });
       });

@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { type Mock, vi } from 'vitest';
 import {
+  fromSgroupAddition,
   fromSgroupDeletion,
   setExpandMonomerSGroup,
 } from 'application/editor/actions/sgroup';
@@ -36,8 +38,8 @@ import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointS
 import { peptideMonomerItem } from '../../../mock-data';
 import { SGroupCreate } from 'application/editor/operations/sgroup';
 
-jest.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
-  getAttachmentPointStereoBond: jest.fn(),
+vi.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
+  getAttachmentPointStereoBond: vi.fn(),
 }));
 
 const createMonomerSGroup = (struct: Struct, atomId: number) => {
@@ -118,7 +120,7 @@ const addAttachmentPoint = (
 
 describe('setExpandMonomerSGroup', () => {
   afterEach(() => {
-    (getAttachmentPointStereoBond as jest.Mock).mockReset();
+    (getAttachmentPointStereoBond as Mock).mockReset();
   });
 
   it('preserves explicit false expanded state when creating monomer S-groups', () => {
@@ -207,7 +209,7 @@ describe('setExpandMonomerSGroup', () => {
 
     const firstMonomerSGroup = struct.sgroups.get(firstMonomerSGroupId);
     const secondMonomerSGroup = struct.sgroups.get(secondMonomerSGroupId);
-    const stereoBondMock = getAttachmentPointStereoBond as jest.Mock;
+    const stereoBondMock = getAttachmentPointStereoBond as Mock;
     stereoBondMock.mockImplementation((sgroup) => {
       if (sgroup === firstMonomerSGroup) {
         return Bond.PATTERN.STEREO.UP;
@@ -436,5 +438,61 @@ describe('setExpandMonomerSGroup', () => {
       MonomerMicromolecule,
     );
     expect(struct.frags.has(-1)).toBe(false);
+  });
+});
+
+describe('star atoms at the ends of an SRU polymer', () => {
+  const createPolymer = () => {
+    const struct = new Struct();
+    const atomIds = createZigZagChain(struct, 7);
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+    const restruct = createRestruct(struct);
+    const endAtom = struct.atoms.get(atomIds[6]);
+    const sgroupId = struct.sgroups.newId();
+
+    fromSgroupAddition(
+      restruct,
+      SGroup.TYPES.SRU,
+      atomIds.slice(0, 6),
+      {},
+      sgroupId,
+      [],
+    );
+
+    return { struct, restruct, atomIds, endAtom, sgroupId };
+  };
+
+  it('has no implicit hydrogens on the star atom', () => {
+    const { endAtom } = createPolymer();
+
+    expect(endAtom?.label).toBe('*');
+    expect(endAtom?.implicitH).toBe(0);
+  });
+
+  it('gets the hydrogens of the carbon back when the polymer is removed', () => {
+    const { restruct, endAtom, sgroupId } = createPolymer();
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(endAtom?.label).toBe('C');
+    expect(endAtom?.implicitH).toBe(3);
+  });
+
+  it('keeps the star atom when the polymer is edited', () => {
+    const { struct, restruct, atomIds, endAtom, sgroupId } = createPolymer();
+
+    fromSgroupAddition(
+      restruct,
+      SGroup.TYPES.SRU,
+      atomIds.slice(0, 6),
+      { subscript: 'm' },
+      struct.sgroups.newId(),
+      [],
+    );
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(endAtom?.label).toBe('*');
+    expect(endAtom?.implicitH).toBe(0);
   });
 });

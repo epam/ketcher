@@ -88,8 +88,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
   await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheCanvas(page);
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
 
   await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);

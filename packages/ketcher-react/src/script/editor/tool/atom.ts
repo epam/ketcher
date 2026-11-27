@@ -23,7 +23,7 @@ import {
   FunctionalGroup,
   SGroup,
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
   fromFragmentDeletion,
   fromSgroupDeletion,
@@ -91,7 +91,9 @@ class AtomTool implements Tool {
               selectAtomId,
             ),
         );
-        action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
+        action.mergeWith(
+          fromAtomsAttributes(struct, updatedAtoms, atomProps, true),
+        );
         editor.update(action);
         editor.selection(null);
         this.editor.hoverIcon.hide();
@@ -304,7 +306,12 @@ class AtomTool implements Tool {
               }),
             );
             action.mergeWith(
-              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true),
+              fromAtomsAttributes(
+                reStruct,
+                sGroupPositionAtomId,
+                atomProps,
+                true,
+              ),
             );
           }
         } else if (ci.map === 'atoms') {
@@ -324,7 +331,9 @@ class AtomTool implements Tool {
               true,
             ) === null
           ) {
-            action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
+            action.mergeWith(
+              fromAtomsAttributes(reStruct, atomId, atomProps, true),
+            );
           }
         }
       }
@@ -366,10 +375,10 @@ export function atomLongtapEvent(tool, render) {
     }
     editor.selection(null);
     const res = editor.event.quickEdit.dispatch(atom);
-    Promise.resolve(res)
+    void Promise.resolve(res)
       .then((newatom) => {
         const action = atomid
-          ? fromAtomsAttrs(render.ctab, atomid, newatom, null)
+          ? fromAtomsAttributes(render.ctab, atomid, newatom, null)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
@@ -379,10 +388,12 @@ export function atomLongtapEvent(tool, render) {
   }, 750);
 
   dragCtx.stopTapping = function () {
-    if (dragCtx.timeout) {
-      clearTimeout(dragCtx.timeout);
-      delete dragCtx.timeout;
+    if (!dragCtx.timeout) {
+      return;
     }
+
+    clearTimeout(dragCtx.timeout);
+    delete dragCtx.timeout;
   };
 }
 

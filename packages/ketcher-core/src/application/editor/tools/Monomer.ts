@@ -22,7 +22,6 @@ import {
   AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
 import type { MonomerOrAmbiguousType } from 'domain/types';
-import type { Command } from 'domain/entities/Command';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { assert } from 'utilities';
 import { Coordinates } from '../shared/coordinates';
@@ -34,42 +33,41 @@ class MonomerTool implements BaseTool {
   private monomerPreviewRenderer:
     BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
 
+  private readonly monomer: MonomerOrAmbiguousType;
+
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
-  private readonly monomer: MonomerOrAmbiguousType;
+
   constructor(
     private readonly editor: CoreEditor,
-    ...args: unknown[]
+    ...arguments_: unknown[]
   ) {
-    const [monomer] = args as [MonomerOrAmbiguousType];
+    const [monomer] = arguments_ as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    let modelChanges: Command;
     const position = Coordinates.canvasToModel(
       new Vec2(
         this.editor.lastCursorPositionOfCanvas.x,
         this.editor.lastCursorPositionOfCanvas.y,
       ),
     );
-    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-      modelChanges = this.editor.drawingEntitiesManager.addAmbiguousMonomer(
-        this.monomer,
-        position,
-      );
-    } else {
-      modelChanges = this.editor.drawingEntitiesManager.addMonomer(
-        this.monomer,
-        // We convert monomer coordinates from pixels to angstroms
-        // because the model layer (like BaseMonomer) should not work with pixels
-        position,
-      );
-    }
+    const modelChanges = isAmbiguousMonomerLibraryItem(this.monomer)
+      ? this.editor.drawingEntitiesManager.addAmbiguousMonomer(
+          this.monomer,
+          position,
+        )
+      : this.editor.drawingEntitiesManager.addMonomer(
+          this.monomer,
+          // We convert monomer coordinates from pixels to angstroms
+          // because the model layer (like BaseMonomer) should not work with pixels
+          position,
+        );
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
@@ -94,27 +92,29 @@ class MonomerTool implements BaseTool {
   }
 
   public mouseover() {
-    if (!this.monomerPreview) {
-      if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-        const variantMonomer = new AmbiguousMonomer(this.monomer);
-        this.monomerPreview = variantMonomer;
-        this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
-          variantMonomer,
-          this.MONOMER_PREVIEW_SCALE_FACTOR,
-        );
-      } else {
-        const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
-
-        this.monomerPreview = new Monomer(this.monomer);
-        this.monomerPreviewRenderer = new MonomerRenderer(
-          this.monomerPreview,
-          this.MONOMER_PREVIEW_SCALE_FACTOR,
-          false,
-        );
-      }
-
-      this.monomerPreviewRenderer?.show(this.editor.theme);
+    if (this.monomerPreview) {
+      return;
     }
+
+    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
+      const variantMonomer = new AmbiguousMonomer(this.monomer);
+      this.monomerPreview = variantMonomer;
+      this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
+        variantMonomer,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+      );
+    } else {
+      const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
+
+      this.monomerPreview = new Monomer(this.monomer);
+      this.monomerPreviewRenderer = new MonomerRenderer(
+        this.monomerPreview,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+        false,
+      );
+    }
+
+    this.monomerPreviewRenderer?.show(this.editor.theme);
   }
 
   hidePreview() {

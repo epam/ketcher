@@ -46,10 +46,12 @@ export const canCreateMonomer = (
     first: BaseMonomer | CoreAtom,
     second?: BaseMonomer | CoreAtom,
   ) => {
-    if (second && nodes.has(first) && nodes.has(second)) {
-      neighbours.get(first)?.add(second);
-      neighbours.get(second)?.add(first);
+    if (!second || !nodes.has(first) || !nodes.has(second)) {
+      return;
     }
+
+    neighbours.get(first)?.add(second);
+    neighbours.get(second)?.add(first);
   };
   manager.bonds.forEach((bond) => connect(bond.firstAtom, bond.secondAtom));
   manager.polymerBonds.forEach((bond) => {
@@ -63,7 +65,7 @@ export const canCreateMonomer = (
 
   const pending = [[...nodes][0]];
   const visited = new Set<BaseMonomer | CoreAtom>();
-  while (pending.length) {
+  while (pending.length > 0) {
     const node = pending.pop();
     if (!node || visited.has(node)) continue;
     visited.add(node);

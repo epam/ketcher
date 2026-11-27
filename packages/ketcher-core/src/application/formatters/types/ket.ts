@@ -43,6 +43,7 @@ export interface IKetMonomerNode {
 export interface IKetAmbiguousMonomerNode {
   type: KetNodeType.AMBIGUOUS_MONOMER;
   id: string;
+  seqid?: number;
   position: {
     x: number;
     y: number;

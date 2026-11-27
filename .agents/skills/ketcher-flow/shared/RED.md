@@ -10,9 +10,9 @@ The loop discipline is the vendored `diagnosing-bugs` skill ([its SKILL.md](../.
 
 1. **Read the area.** Its `GLOSSARY.md` is [glossary.md](../../../../.memory-bank/glossary.md) here, and its ADRs live in [adr/](../../../../.memory-bank/adr/). Also read [domain.md](../../../../.memory-bank/domain.md) and the `modules/` doc of the area, and use their terms.
 
-2. **Reproduce in the app.** When the bug shows in the editor, reproduce it with `verify-ketcher` ([its SKILL.md](../../verify-ketcher/SKILL.md)) on `<base>`: load the structure the issue gives, do the steps, and export. This is the skill's headless-browser loop, already built. Save the evidence to `<run dir>/repro/<issue or topic>/`. When other agents drive the app at the same time, follow _Parallel runs_ in [VERIFY.md](../roles/VERIFY.md). Skip this step for a bug outside the editor (a build, an API call with no UI, a type).
+2. **Reproduce in the app.** When the bug shows in the editor, reproduce it with `verify-ketcher` ([its SKILL.md](../../verify-ketcher/SKILL.md)) on `<base>`: load the structure the issue gives, do the steps, and export. When the bug involves editor mount or unmount, state shared across editors, the struct service, or the Indigo worker, reproduce it on the host pages that [example-app.md](../../../../.memory-bank/modules/example-app.md) names, not only on `index.html`. This is the skill's headless-browser loop, already built. Save the evidence to `<run dir>/repro/<issue or topic>/`. When other agents drive the app at the same time, follow _Parallel runs_ in [VERIFY.md](../roles/VERIFY.md). Skip this step for a bug outside the editor (a build, an API call with no UI, a type).
 
-3. **Push the loop down** to a failing Jest test at the lowest seam that reaches the bug: a serializer, a domain entity, an operation, a hook, a component. Trace from the toolbar button or dialog through the editor tool and the operation to the entity or serializer behind it, noting each `file:line`. When the bug names `file:line` sites, aim the test there first. The red you build now is the red the fix turns green.
+3. **Push the loop down** to a failing Vitest test at the lowest seam that reaches the bug: a serializer, a domain entity, an operation, a hook, a component. Trace from the toolbar button or dialog through the editor tool and the operation to the entity or serializer behind it, noting each `file:line`. When the bug names `file:line` sites, aim the test there first. The red you build now is the red the fix turns green.
 
    When the bug lives only in rendering or in a browser interaction, push the loop to the **pure decision** behind it (the function that computes the position, the label, the selection). When nothing pure decides it, the `verify-ketcher` recipe from step 2 is the loop, and the regression test is a Playwright spec. `AGENTS.md` says to ask the user before writing one, per _Asking the user_ in [ROLES.md](../roles/ROLES.md).
 
@@ -25,7 +25,7 @@ Done when both hold:
 - A loop goes **red** on this bug, and you can run it on demand.
 - You can name the cause in one line and point at the file and line.
 
-If the loop stays green everywhere you can reach, the behavior is by design (check the [OpenSpec specs](../../../../openspec/specs/) and the [ADRs](../../../../.memory-bank/adr/)) or the description is about something else. Show what you ran. The flow that sent you here says what happens next.
+If the loop stays green everywhere you can reach, the behavior is by design (check the [feature files](../../../../.memory-bank/features/) and the [ADRs](../../../../.memory-bank/adr/)) or the description is about something else. Show what you ran. The flow that sent you here says what happens next.
 
 ## Turning it green
 

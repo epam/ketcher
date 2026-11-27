@@ -72,7 +72,20 @@ const SUPERSCRIPT_FLAG = 64;
 
 const SCALE = 40; // from ketcher-core
 
+function normalizeTextWhitespace(text: string): string {
+  return text
+    .split(/([^\S\r\n]+)/)
+    .map((part, index) =>
+      index % 2 === 1 ? '\u00a0'.repeat(part.length) : part,
+    )
+    .join('');
+}
+
 class ReText extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
@@ -81,12 +94,8 @@ class ReText extends ReObject {
     this.item = text;
   }
 
-  static isSelectable() {
-    return true;
-  }
-
   getReferencePoints(): Array<Vec2> {
-    if (!this.paths.length) return [];
+    if (this.paths.length === 0) return [];
 
     const { p0, p1 } = this.getRelBox(this.paths);
 
@@ -163,7 +172,7 @@ class ReText extends ReObject {
   }
 
   drawHover(render: Render): Element | null {
-    if (!this.paths.length) return null;
+    if (this.paths.length === 0) return null;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
@@ -174,8 +183,9 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-    if (!paper || !this.paths.length) return null;
-    return this.hoverPath(restruct.render).attr(options.selectionStyle);
+    return this.paths.length === 0 || !paper
+      ? null
+      : this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
   show(restruct: ReStruct, _id: number, options: RenderOptions): void {
@@ -187,7 +197,7 @@ class ReText extends ReObject {
     this.paths = [];
     // TODO: create parser in ketcher-core package
 
-    let editorState: SerializedEditorState | null = null;
+    let editorState: SerializedEditorState | undefined;
     try {
       if (this.item.content) {
         const parsed = JSON.parse(this.item.content);
@@ -237,8 +247,7 @@ class ReText extends ReObject {
       } else {
         textNodes.forEach((textNode: SerializedTextNode) => {
           const styles = this.getStylesFromTextNode(textNode, options);
-          const text =
-            textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
+          const text = normalizeTextWhitespace(textNode.text) || '\u00a0';
 
           const path = paper.text(paperScale.x, paperScale.y, text).attr({
             font: options.font,
@@ -270,7 +279,7 @@ class ReText extends ReObject {
       LayerMap.data,
       this.visel,
       flatten(this.paths),
-      null,
+      undefined,
       true,
     );
   }
@@ -283,7 +292,7 @@ class ReText extends ReObject {
     const format = textNode.format || 0;
 
     // Parse font-size from style string
-    let customFontSize: number | null = null;
+    let customFontSize: number | undefined;
     if (textNode.style) {
       const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(
         textNode.style,

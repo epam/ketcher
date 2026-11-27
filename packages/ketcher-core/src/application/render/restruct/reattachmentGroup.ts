@@ -14,17 +14,17 @@ import type { ReBondEndpoint } from './rebondEndpoint';
 import type { Vec2 } from 'domain/entities/vec2';
 
 export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
+  static isSelectable(): true {
+    return true;
+  }
+
+  private centerMarkerHovered = false;
   a: AttachmentGroup;
   showLabel = false;
-  private centerMarkerHovered = false;
 
   constructor(attachmentGroup: AttachmentGroup) {
     super('attachmentGroup');
     this.a = attachmentGroup;
-  }
-
-  static isSelectable(): true {
-    return true;
   }
 
   private shouldShowMarker(render: Render) {
@@ -56,10 +56,9 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
-    if (this.visel.boundingBox) {
-      return super.getVBoxObj(render);
-    }
-    return new Box2Abs(this.a.pp, this.a.pp);
+    return this.visel.boundingBox
+      ? super.getVBoxObj(render)
+      : new Box2Abs(this.a.pp, this.a.pp);
   }
 
   getShiftedSegmentPosition(

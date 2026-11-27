@@ -4,7 +4,6 @@ import { undoByKeyboard, redoByKeyboard } from '@utils/canvas';
 import { addAtoms } from '@utils/canvas/atoms/addAtoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -158,9 +157,10 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
      *
      * Version 3.21.0
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     // Flex layout is required for dragged monomers to appear as canvas items
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer1 = getMonomerLocator(page, Peptide.Tza);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 450, y: 300 });

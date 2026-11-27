@@ -31,15 +31,13 @@ const useDisabledForSequenceMode = (
   } else if (groupName === MonomerGroups.PHOSPHATES) {
     return !(item?.props?.MonomerCaps?.R1 && item?.props?.MonomerCaps?.R2);
   } else if (groupName === MonomerGroups.SUGARS) {
-    if (isSequenceFirstsOnlyNucleoelementsSelected) {
-      return !(item?.props?.MonomerCaps?.R3 && item?.props?.MonomerCaps?.R2);
-    } else {
-      return !(
-        item?.props?.MonomerCaps?.R3 &&
-        item?.props?.MonomerCaps?.R2 &&
-        item?.props?.MonomerCaps?.R1
-      );
-    }
+    return isSequenceFirstsOnlyNucleoelementsSelected
+      ? !(item?.props?.MonomerCaps?.R3 && item?.props?.MonomerCaps?.R2)
+      : !(
+          item?.props?.MonomerCaps?.R3 &&
+          item?.props?.MonomerCaps?.R2 &&
+          item?.props?.MonomerCaps?.R1
+        );
   }
 
   return false;

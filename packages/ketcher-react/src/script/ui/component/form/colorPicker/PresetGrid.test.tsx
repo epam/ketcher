@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -6,21 +8,21 @@ import { presetColors } from './ColorPicker.constants';
 
 describe('PresetGrid', () => {
   it('renders a swatch button for every preset color', () => {
-    render(<PresetGrid selectedColor="#FF3232" onSelectColor={jest.fn()} />);
+    render(<PresetGrid selectedColor="#FF3232" onSelectColor={vi.fn()} />);
     presetColors.forEach((color) => {
       expect(screen.getByRole('button', { name: color })).toBeInTheDocument();
     });
   });
 
   it('highlights the swatch matching the selected color', () => {
-    render(<PresetGrid selectedColor="#ff3232" onSelectColor={jest.fn()} />);
+    render(<PresetGrid selectedColor="#ff3232" onSelectColor={vi.fn()} />);
     expect(screen.getByRole('button', { name: '#FF3232' }).className).toContain(
       'swatchSelected',
     );
   });
 
   it('calls onSelectColor with the clicked color', async () => {
-    const onSelectColor = jest.fn();
+    const onSelectColor = vi.fn();
     render(
       <PresetGrid selectedColor="#FF3232" onSelectColor={onSelectColor} />,
     );

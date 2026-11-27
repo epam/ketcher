@@ -225,14 +225,11 @@ export function calculateBondPreviewPositionByCoordinates(
     let topValue: number;
     const spaceAbove = top - canvasWrapperTop;
     const spaceBelow = canvasWrapperBottom - bottom;
-    if (
+    topValue =
       spaceAbove >= preview.heightForBond + preview.gap ||
       spaceAbove >= spaceBelow
-    ) {
-      topValue = top - preview.heightForBond - preview.gap;
-    } else {
-      topValue = bottom + preview.gap;
-    }
+        ? top - preview.heightForBond - preview.gap
+        : bottom + preview.gap;
 
     let horizontalTranslate = '0';
 
@@ -255,14 +252,11 @@ export function calculateBondPreviewPositionByCoordinates(
     let leftValue: number;
     const spaceOnLeft = left - horizontalBoundaryLeft;
     const spaceOnRight = horizontalBoundaryRight - right;
-    if (
+    leftValue =
       spaceOnLeft >= preview.widthForBond + preview.gap ||
       spaceOnLeft >= spaceOnRight
-    ) {
-      leftValue = left - preview.widthForBond / 2 - preview.gap;
-    } else {
-      leftValue = right + preview.widthForBond / 2 + preview.gap;
-    }
+        ? left - preview.widthForBond / 2 - preview.gap
+        : right + preview.widthForBond / 2 + preview.gap;
 
     const horizontalTranslate = '-50%';
     let verticalTranslate = '0';

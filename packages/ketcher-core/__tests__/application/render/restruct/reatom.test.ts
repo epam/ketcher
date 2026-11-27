@@ -19,7 +19,7 @@ describe('atom annotation DOM traversal', () => {
     const aid = molecule.atoms.add(atom);
     const reatom = new ReAtom(atom);
     const nodes: SVGElement[] = [];
-    const text = jest.fn(() => {
+    const text = vi.fn(() => {
       const node = document.createElementNS(
         'http://www.w3.org/2000/svg',
         'text',
@@ -31,9 +31,9 @@ describe('atom annotation DOM traversal', () => {
       nodes.push(node);
       return {
         node,
-        attr: jest.fn().mockReturnThis(),
+        attr: vi.fn().mockReturnThis(),
         getBBox: () => ({ x: 0, y: 0, width: 10, height: 10 }),
-        translateAbs: jest.fn(),
+        translateAbs: vi.fn(),
       };
     });
     const options = {
@@ -50,9 +50,9 @@ describe('atom annotation DOM traversal', () => {
     const restruct = {
       molecule,
       render: { paper: { text }, options },
-      addReObjectPath: jest.fn(),
+      addReObjectPath: vi.fn(),
     } as unknown as ReStruct;
-    jest.spyOn(reatom, 'setHover').mockImplementation(() => undefined);
+    vi.spyOn(reatom, 'setHover').mockImplementation(() => undefined);
 
     reatom.show(restruct, aid, options);
 

@@ -12,7 +12,8 @@
       "types": ["../ketcher-core/src/types"]
     },
     "moduleResolution": "bundler",
-    "rootDir": "../.."
+    "rootDir": "../..",
+    "types": ["node", "vitest/globals"]
   },
   "include": ["src", "../ketcher-core/src/typing.d.ts"]
 }

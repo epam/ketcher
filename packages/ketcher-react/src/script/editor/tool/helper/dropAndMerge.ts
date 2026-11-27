@@ -82,16 +82,16 @@ function getExpandGroupsInMergeAction(
 }
 
 /**
- * @example
- * const mergeItems = {
- *   atomToFunctionalGroup: { 3 => 1 } // Drag atom-3 and drop on functional-group-1
- * }
- * // Given functional-group-1's attachment atom is atom-0
- * const [
- *   newMergeItems, // { atoms: { 3 => 0 } }
- *   action // action to remove non-attachment atoms and that S-Group
- * ] = extractAttachmentAtom(mergeItems)
- */
+@example
+const mergeItems = {
+  atomToFunctionalGroup: { 3 => 1 } // Drag atom-3 and drop on functional-group-1
+}
+// Given functional-group-1's attachment atom is atom-0
+const [
+  newMergeItems, // { atoms: { 3 => 0 } }
+  action // action to remove non-attachment atoms and that S-Group
+] = extractAttachmentAtom(mergeItems)
+*/
 function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
   const struct = editor.struct();
   const reStruct = editor.render.ctab;
@@ -110,20 +110,22 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
       reStruct.molecule,
     );
 
-    if (positionAtomId !== undefined) {
-      const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
-        (atomId) => atomId !== positionAtomId,
-      );
-      const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
-      action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
-      action.mergeWith(
-        fromFragmentDeletion(reStruct, {
-          atoms: atomsToDelete,
-          bonds: bondsToDelete,
-        }),
-      );
-      newMergeItems.atoms.set(srcAtomId, positionAtomId);
+    if (positionAtomId === undefined) {
+      return;
     }
+
+    const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
+      (atomId) => atomId !== positionAtomId,
+    );
+    const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
+    action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
+    action.mergeWith(
+      fromFragmentDeletion(reStruct, {
+        atoms: atomsToDelete,
+        bonds: bondsToDelete,
+      }),
+    );
+    newMergeItems.atoms.set(srcAtomId, positionAtomId);
   });
 
   return [newMergeItems, action] as const;

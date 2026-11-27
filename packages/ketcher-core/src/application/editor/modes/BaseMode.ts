@@ -17,6 +17,8 @@ import {
   legacyPaste,
   getSvgFromDrawnStructures,
   normalizeError,
+  notifyCopyCut,
+  notifyPasteCompleted,
   PLAIN_TEXT_MIME_TYPE,
   convertSvgToPng,
 } from 'utilities';
@@ -217,12 +219,15 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      this.writeToClipboard(serializedKet, drawingEntitiesManager);
+      void this.writeToClipboard(serializedKet, drawingEntitiesManager)
+        .then(notifyCopyCut)
+        .catch((error) => KetcherLogger.error('BaseMode.ts::onCopy', error));
     } else if (event) {
       legacyCopy(event.clipboardData, {
         [PLAIN_TEXT_MIME_TYPE]: serializedKet,
       });
       event.preventDefault();
+      notifyCopyCut();
     }
   }
 
@@ -285,18 +290,18 @@ export abstract class BaseMode {
   }
 
   /**
-   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
-   * exports it (monomers are drawn as they look on the canvas).
-   */
+  Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+  exports it (monomers are drawn as they look on the canvas).
+  */
   /**
-   * Puts the copied structure on the clipboard. By default only KET is written
-   * as plain text; modes can override it to add other formats.
-   */
+  Puts the copied structure on the clipboard. By default only KET is written
+  as plain text; modes can override it to add other formats.
+  */
   protected writeToClipboard(
     serializedKet: string,
     _drawingEntitiesManager: DrawingEntitiesManager,
-  ): void | Promise<void> {
-    navigator.clipboard.writeText(serializedKet);
+  ): Promise<void> {
+    return navigator.clipboard.writeText(serializedKet);
   }
 
   async onPaste(event?: ClipboardEvent): Promise<void> {
@@ -315,20 +320,23 @@ export abstract class BaseMode {
       this._pasteIsInProgress = true;
 
       const clipboardData = await navigator.clipboard.read();
-      this.pasteFromClipboard(clipboardData).finally(() => {
-        this._pasteIsInProgress = false;
+      void (async () => {
+        try {
+          await this.pasteFromClipboard(clipboardData);
+        } finally {
+          this._pasteIsInProgress = false;
 
-        if (!isCanvasEmptyBeforePaste) {
-          return;
+          if (isCanvasEmptyBeforePaste) {
+            editor.zoomToStructuresIfNeeded();
+          }
         }
-
-        editor.zoomToStructuresIfNeeded();
-      });
+        notifyPasteCompleted();
+      })();
     } else if (event) {
       const clipboardData = legacyPaste(event.clipboardData, [
         PLAIN_TEXT_MIME_TYPE,
       ]);
-      this.pasteFromClipboard(clipboardData);
+      void this.pasteFromClipboard(clipboardData).then(notifyPasteCompleted);
       event.preventDefault();
 
       if (!isCanvasEmptyBeforePaste) {
@@ -343,19 +351,19 @@ export abstract class BaseMode {
     }
   }
 
-  async isPasteContentValid(pastedStr: string): Promise<boolean> {
-    if (!pastedStr.trim()) {
+  async isPasteContentValid(pastedString: string): Promise<boolean> {
+    if (!pastedString.trim()) {
       return false;
     }
 
     try {
       const editor = provideEditorInstance();
-      const format = identifyStructFormat(pastedStr, true);
-      let ketStruct = pastedStr;
+      const format = identifyStructFormat(pastedString, true);
+      let ketStruct = pastedString;
 
       if (format !== SupportedFormat.ket) {
         const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
-        const convertedStruct = await indigo.convert(pastedStr, {
+        const convertedStruct = await indigo.convert(pastedString, {
           outputFormat: ChemicalMimeType.KET,
           sequenceType: editor.sequenceTypeEnterMode,
         });
@@ -381,19 +389,18 @@ export abstract class BaseMode {
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
     let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
-    const pastedStr = await getStructStringFromClipboardData(clipboardData);
-    if (!pastedStr?.trim()) {
+    const pastedString = await getStructStringFromClipboardData(clipboardData);
+    if (!pastedString?.trim()) {
       return;
     }
-    const format = identifyStructFormat(pastedStr, true);
-    if (format === SupportedFormat.ket) {
-      pasteOperations = this.pasteKetFormatFragment(pastedStr);
-    } else {
-      pasteOperations = await this.pasteWithIndigoConversion(
-        pastedStr,
-        editor.sequenceTypeEnterMode,
-      );
-    }
+    const format = identifyStructFormat(pastedString, true);
+    pasteOperations =
+      format === SupportedFormat.ket
+        ? this.pasteKetFormatFragment(pastedString)
+        : await this.pasteWithIndigoConversion(
+            pastedString,
+            editor.sequenceTypeEnterMode,
+          );
 
     if (!pasteOperations || pasteOperations.operations.length === 0) {
       return;
@@ -406,11 +413,11 @@ export abstract class BaseMode {
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string): Command | undefined {
+  pasteKetFormatFragment(pastedString: string): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
-      ketSerializer.deserializeToDrawingEntities(pastedStr);
+      ketSerializer.deserializeToDrawingEntities(pastedString);
     if (!deserialisedKet) {
       throw new Error('Error during parsing file');
     }
@@ -445,13 +452,13 @@ export abstract class BaseMode {
   }
 
   async pasteWithIndigoConversion(
-    pastedStr: string,
+    pastedString: string,
     sequenceType: SequenceType,
   ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
-      const ketStruct = await indigo.convert(pastedStr, {
+      const ketStruct = await indigo.convert(pastedString, {
         outputFormat: ChemicalMimeType.KET,
         sequenceType,
       });

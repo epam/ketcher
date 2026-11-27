@@ -61,6 +61,13 @@ Three layout modes managed by `BaseMode` subclasses:
 
 Mode is stored in Redux and triggers `CoreEditor.onSelectMode()` which switches the active `BaseMode`.
 
+After `selectMode` finishes initializing and synchronously rendering the requested
+layout and updating history, CoreEditor dispatches the global
+`layoutModeSwitchComplete` CustomEvent with `{ ketcherId, mode }`. This includes
+empty canvases and does not wait for the debounced `renderComplete` event. A failed
+transition does not dispatch completion. The event covers explicit layout
+selection, not undo/redo replay or canvas (Molecules/Macromolecules) switches.
+
 ## Dependencies
 
 - `ketcher-core` (all domain and application types)
@@ -77,4 +84,5 @@ Mode is stored in Redux and triggers `CoreEditor.onSelectMode()` which switches 
 - The `CoreEditor` instance is created inside this package (in `Editor.tsx`) and stored both in the Redux slice and via `setEditorInstance()` singleton.
 - All canvas event handling is delegated through `CoreEditor.events` (an `IEditorEvents` object), not through React synthetic events.
 - The monomer library panel interacts with `CoreEditor.monomersLibrary` directly (not through Redux).
+- `RnaEditorExpanded` owns its deferred library scroll timers and cancels all pending scrolls on unmount.
 - SVG avatars (SVG icons for monomers on the canvas) are rendered as inline SVG components: `PeptideAvatar`, `ChemAvatar`, `SugarAvatar`, `PhosphateAvatar`, `RNABaseAvatar`, etc.

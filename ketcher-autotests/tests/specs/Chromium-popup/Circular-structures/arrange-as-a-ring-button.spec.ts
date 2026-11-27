@@ -71,34 +71,40 @@ test(`2. Check that after selecting the closed structure, the user able to acces
   await takeEditorScreenshot(page);
 });
 
-test(`3. Check that the button deactivated in other modes (Sequence, Snake)`, async ({
-  FlexCanvas: _,
-}) => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
-   * Description: Check that the button deactivated in other modes (Sequence, Snake)
-   *
-   * Case:
-   *      1. Open Macromolecules canvas - flex mode
-   *      2. Load cyclic peptide HELM 'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0' from clipboard as new project
-   *      3. Select the entire structure on the canvas
-   *      4. Switch to Sequence mode and verify that 'Arrange as a Ring' button is absent
-   *      5. Switch to Snake mode and verify that 'Arrange as a Ring' button is absent
-   *
-   * Version 3.11
-   */
-  await pasteFromClipboardAndOpenAsNewProjectMacro(
-    page,
-    MacroFileType.HELM,
-    'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0',
-  );
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
-  await selectAllStructuresOnCanvas(page);
-  expect(MacromoleculesTopToolbar(page).arrangeAsRingButton).not.toBeVisible();
+test.fail(
+  `3. Check that the button deactivated in other modes (Sequence, Snake)`,
+  async ({ FlexCanvas: _ }) => {
+    // This test is expected to fail due to the bug: https://github.com/epam/ketcher/issues/12789
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8436
+     * Description: Check that the button deactivated in other modes (Sequence, Snake)
+     *
+     * Case:
+     *      1. Open Macromolecules canvas - flex mode
+     *      2. Load cyclic peptide HELM 'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0' from clipboard as new project
+     *      3. Select the entire structure on the canvas
+     *      4. Switch to Sequence mode and verify that 'Arrange as a Ring' button is absent
+     *      5. Switch to Snake mode and verify that 'Arrange as a Ring' button is absent
+     *
+     * Version 3.11
+     */
+    await pasteFromClipboardAndOpenAsNewProjectMacro(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0',
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await expect(
+      MacromoleculesTopToolbar(page).arrangeAsRingButton,
+    ).not.toBeVisible();
 
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-  await selectAllStructuresOnCanvas(page);
-  expect(MacromoleculesTopToolbar(page).arrangeAsRingButton).not.toBeVisible();
-});
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await selectAllStructuresOnCanvas(page);
+    await expect(
+      MacromoleculesTopToolbar(page).arrangeAsRingButton,
+    ).not.toBeVisible();
+  },
+);

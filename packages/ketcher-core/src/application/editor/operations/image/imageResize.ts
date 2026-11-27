@@ -29,7 +29,7 @@ const moveBottomPositions = new Set<ImageReferenceName>([
 ]);
 
 export class ImageResize extends BaseOperation {
-  private previousPosition: Vec2 | null = null;
+  private previousPosition: Vec2 | undefined;
   constructor(
     private readonly id: number,
     private readonly position: Vec2,
@@ -71,9 +71,9 @@ export class ImageResize extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    // `previousPosition` is only null before `execute` has run. `invert` is
+    // `previousPosition` is only unset before `execute` has run. `invert` is
     // only ever called on an operation that has already been executed, so
-    // reaching this with a null value indicates a programming error.
+    // reaching this with an unset value indicates a programming error.
     if (!this.previousPosition) {
       throw new Error(
         'ImageResize: cannot invert an operation that has not been executed yet',

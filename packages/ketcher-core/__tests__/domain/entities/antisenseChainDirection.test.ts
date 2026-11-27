@@ -49,13 +49,13 @@ const testRenderTheme = {
   },
 };
 
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -347,9 +347,9 @@ describe('antisense chain direction', () => {
 
     // The chain is still fully connected end to end: walking forward from
     // the untouched chain-start sugar reaches the untouched chain-end sugar.
-    // (Comparing .id rather than the monomer objects themselves: Jest's
-    // diff-printer chokes on BaseMonomer's internal Pool-backed fields when
-    // an object equality assertion fails, obscuring the real failure.)
+    // (Comparing .id rather than the monomer objects themselves: an object
+    // equality failure prints BaseMonomer's Pool-backed internal fields and
+    // buries the real difference in a very long diff.)
     expect(visitedChain[visitedChain.length - 1].id).toBe(
       antisenseNucleotides[0].sugar.id,
     );

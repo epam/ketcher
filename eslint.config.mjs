@@ -4,7 +4,6 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jestPlugin from 'eslint-plugin-jest';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
@@ -22,15 +21,13 @@ import {
 } from './scripts/eslint-invariants-rules.mjs';
 
 const sanitizeGlobals = (source) => {
-  if (!source || typeof source !== 'object') {
-    return {};
-  }
-
-  return Object.fromEntries(
-    Object.entries(source).filter(([name]) =>
-      /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
-    ),
-  );
+  return !source || typeof source !== 'object'
+    ? {}
+    : Object.fromEntries(
+        Object.entries(source).filter(([name]) =>
+          /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
+        ),
+      );
 };
 
 const defaults = [
@@ -81,7 +78,6 @@ const defaults = [
         ...sanitizeGlobals(globals.browser),
         ...sanitizeGlobals(globals.node),
         ...sanitizeGlobals(globals.es2024),
-        ...sanitizeGlobals(globals.jest),
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
@@ -99,7 +95,6 @@ const defaults = [
     plugins: {
       '@typescript-eslint': tseslint,
       import: importPlugin,
-      jest: jestPlugin,
       'jsx-a11y': jsxA11yPlugin,
       n: nPlugin,
       promise: promisePlugin,
@@ -138,7 +133,6 @@ const defaults = [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/preserve-manual-memoization': 'off',
-      'jest/expect-expect': 'off',
       'testing-library/no-container': 'off',
       'testing-library/no-node-access': 'off',
       'testing-library/no-unnecessary-act': 'off',

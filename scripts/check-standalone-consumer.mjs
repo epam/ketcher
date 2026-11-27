@@ -65,16 +65,15 @@ const WASM_FILE_NAMES = {
   binaryWasmNoRender: `indigo-ketcher-norender-${INDIGO_VERSION}.wasm`,
 };
 
-// Vite and jsdom are the exact versions the root lockfile resolves, so the
-// consumer installs match what this repo builds and tests with. The
-// standalone package declares `^8.3.1`, which would let the consumer float.
+// Vite is the exact version the root lockfile resolves, so the consumer
+// install matches what this repo builds with. The standalone package declares
+// `^8.3.1`, which would let the consumer float.
 const ROOT_LOCKFILE_PACKAGES = readJson(
   join(repoRoot, 'package-lock.json'),
 ).packages;
 
 // Top-level entry first. A workspace that does not hoist a package gets its
-// own copy (jsdom is nested under each workspace), which is accepted only if
-// every copy agrees on one version.
+// own copy, which is accepted only if every copy agrees on one version.
 function lockedVersion(name) {
   const hoisted = ROOT_LOCKFILE_PACKAGES[`node_modules/${name}`]?.version;
   if (hoisted) return hoisted;
@@ -96,12 +95,13 @@ function lockedVersion(name) {
 }
 
 const VITE_VERSION = lockedVersion('vite');
-const JSDOM_VERSION = lockedVersion('jsdom');
-// Webpack is not a dependency of anything in this repo, so the lockfile has
-// no version to read. It stays an exact literal, not a range, so this check
-// does not start failing from an unrelated bundler release.
+// Webpack and jsdom are not dependencies of anything in this repo (unit tests
+// run on happy-dom), so the lockfile has no version to read. They stay exact
+// literals, not ranges, so this check does not start failing from an
+// unrelated release.
 const WEBPACK_VERSION = '5.99.0';
 const WEBPACK_CLI_VERSION = '5.1.4';
+const JSDOM_VERSION = '26.1.0';
 
 // Instantiate at module scope, not behind an unused export - the
 // constructor is what calls getIndigoWorker()/new Worker(). An export

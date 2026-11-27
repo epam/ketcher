@@ -57,7 +57,7 @@ async function getVisibleAttachmentPointAtomOptionTexts() {
       continue;
     }
 
-    const text = (await option.textContent())?.replaceAll('\u200b', '').trim();
+    const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
     if (text) {
       optionTexts.push(text);
     }

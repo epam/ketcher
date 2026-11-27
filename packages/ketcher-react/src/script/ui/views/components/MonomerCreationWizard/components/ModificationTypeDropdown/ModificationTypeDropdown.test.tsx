@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { render, screen } from '@testing-library/react';
 import { resetEditorInstance } from 'ketcher-core';
 import ModificationTypeDropdown from './ModificationTypeDropdown';
@@ -16,7 +18,7 @@ describe('ModificationTypeDropdown', () => {
       <ModificationTypeDropdown
         naturalAnalogue="A"
         value={null}
-        onChange={jest.fn()}
+        onChange={vi.fn()}
         testId="modification-type"
       />,
     );

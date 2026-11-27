@@ -22,6 +22,7 @@ const color = {
   graphite: '#333333',
   grey: '#cad3dd',
   darkGrey: '#b4b9d6',
+  divider: '#AEAEAE',
 } as const;
 
 const text = {

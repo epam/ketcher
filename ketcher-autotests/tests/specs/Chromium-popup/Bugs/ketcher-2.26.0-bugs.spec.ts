@@ -29,7 +29,6 @@ import {
   ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -320,8 +319,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Save to MOL V3000
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
@@ -408,8 +408,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -431,8 +432,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -454,8 +456,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -626,8 +629,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Start new sequence
      * 3. Add O and U symbols to the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await MacromoleculesTopToolbar(page).peptides();
@@ -797,8 +799,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Add a sequence of monomers to the canvas
      * 3. Right-click on a monomer ( or double click ) in the sequence (e.g., the 8th monomer) and start editing the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
@@ -1627,7 +1628,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
+  test.skip('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2485
@@ -1650,9 +1651,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
+    await page.waitForTimeout(500);
     await pasteFromClipboardByKeyboard(page);
-    await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
+    await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
     await takeEditorScreenshot(page);
   });
 

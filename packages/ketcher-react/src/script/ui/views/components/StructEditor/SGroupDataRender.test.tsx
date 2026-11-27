@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import type { Render, SGroup } from 'ketcher-core';
 import SGroupDataRender from './SGroupDataRender';
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
+vi.mock('ketcher-core', async () => ({
+  ...(await vi.importActual<typeof import('ketcher-core')>('ketcher-core')),
   CoordinateTransformation: {
     canvasToView: (point: { x: number; y: number }) => point,
   },

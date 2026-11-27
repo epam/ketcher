@@ -1,3 +1,6 @@
+/// <reference path="./typings.d.ts" />
+
+import '@testing-library/jest-dom/vitest';
 import type { ComponentProps } from 'react';
 import {
   act,
@@ -8,14 +11,15 @@ import {
 } from '@testing-library/react';
 import { Subscription } from 'subscription';
 import type { MonomerCreationWizardRequest } from 'ketcher-core';
+import { describe, expect, it, vi } from 'vitest';
 import { Editor } from './Editor';
 
 const mockMicroEditor = {
   event: { monomerWizardStateChange: new Subscription<boolean>() },
-  closeMonomerCreationWizard: jest.fn(),
-  openMonomerCreationWizardFromMacro: jest.fn(),
-  focusCliparea: jest.fn(),
-  errorHandler: jest.fn(),
+  closeMonomerCreationWizard: vi.fn(),
+  openMonomerCreationWizardFromMacro: vi.fn(),
+  focusCliparea: vi.fn(),
+  errorHandler: vi.fn(),
 };
 const mockMacroEditor = {
   events: {
@@ -23,16 +27,16 @@ const mockMacroEditor = {
     switchToMoleculesMode: new Subscription(),
     openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
   },
-  switchToMacromolecules: jest.fn(),
-  switchToMicromolecules: jest.fn(),
-  finishMonomerWizardSession: jest.fn(),
-  ensureDefaultMonomersLibraryLoaded: jest.fn().mockResolvedValue(undefined),
+  switchToMacromolecules: vi.fn(),
+  switchToMicromolecules: vi.fn(),
+  finishMonomerWizardSession: vi.fn(),
+  ensureDefaultMonomersLibraryLoaded: vi.fn().mockResolvedValue(undefined),
 };
 
-jest.mock('ketcher-core', () => ({
+vi.mock('ketcher-core', () => ({
   ketcherProvider: { getIndexById: () => 0 },
 }));
-jest.mock('./MicromoleculesEditor', () => ({
+vi.mock('./MicromoleculesEditor', () => ({
   MicromoleculesEditor: ({
     onInit,
     onSetKetcherId,
@@ -55,31 +59,24 @@ jest.mock('./MicromoleculesEditor', () => ({
     </>
   ),
 }));
-jest.mock(
-  'ketcher-macromolecules',
-  () => ({
-    __esModule: true,
-    default: ({
-      onInit,
-      togglerComponent,
-    }: {
-      onInit: (editor: unknown) => void;
-      togglerComponent: React.ReactNode;
-    }) => (
-      <>
-        <button
-          data-testid="init-macro"
-          onClick={() => onInit(mockMacroEditor)}
-        >
-          Init macro
-        </button>
-        {togglerComponent}
-      </>
-    ),
-  }),
-  { virtual: true },
-);
-jest.mock('./script/ui/views/toolbars/ModeControl', () => ({
+vi.mock('ketcher-macromolecules', () => ({
+  __esModule: true,
+  default: ({
+    onInit,
+    togglerComponent,
+  }: {
+    onInit: (editor: unknown) => void;
+    togglerComponent: React.ReactNode;
+  }) => (
+    <>
+      <button data-testid="init-macro" onClick={() => onInit(mockMacroEditor)}>
+        Init macro
+      </button>
+      {togglerComponent}
+    </>
+  ),
+}));
+vi.mock('./script/ui/views/toolbars/ModeControl', () => ({
   ModeControl: ({
     disabled,
     isPolymerEditor,
@@ -98,7 +95,7 @@ jest.mock('./script/ui/views/toolbars/ModeControl', () => ({
     </button>
   ),
 }));
-jest.mock('./script/ui/views/components', () => ({
+vi.mock('./script/ui/views/components', () => ({
   LoadingCircles: () => null,
 }));
 
@@ -109,12 +106,69 @@ const initialize = async () => {
   await act(async () =>
     mockMacroEditor.events.switchToMacromoleculesMode.dispatch(),
   );
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 };
 
 describe('Editor monomer wizard mode bridge', () => {
+  it('announces canvas mode switches after the editor transition completes', async () => {
+    await initialize();
+    const transitions: string[] = [];
+    const details: Array<{ ketcherId: string; mode: string }> = [];
+    const macroWrapper = screen
+      .getByTestId('init-macro')
+      .closest('[data-ketcher-editor]') as HTMLElement;
+
+    mockMacroEditor.switchToMicromolecules.mockImplementation(() => {
+      transitions.push('switch:molecules');
+    });
+    mockMacroEditor.switchToMacromolecules.mockImplementation(() => {
+      transitions.push('switch:macromolecules');
+    });
+    const onCanvasModeSwitchComplete = (event: Event) => {
+      const { detail } = event as CustomEvent<{
+        ketcherId: string;
+        mode: string;
+      }>;
+      details.push(detail);
+      transitions.push(`complete:${detail.mode}:${macroWrapper.style.display}`);
+    };
+    globalThis.addEventListener(
+      'canvasModeSwitchComplete',
+      onCanvasModeSwitchComplete,
+    );
+
+    try {
+      fireEvent.click(screen.getAllByTestId('mode-switch')[0]);
+      await waitFor(() =>
+        expect(transitions).toContain('complete:molecules:none'),
+      );
+
+      fireEvent.click(screen.getAllByTestId('mode-switch')[0]);
+      await waitFor(() =>
+        expect(transitions).toContain('complete:macromolecules:'),
+      );
+    } finally {
+      globalThis.removeEventListener(
+        'canvasModeSwitchComplete',
+        onCanvasModeSwitchComplete,
+      );
+    }
+
+    expect(transitions).toEqual([
+      'switch:molecules',
+      'complete:molecules:none',
+      'switch:macromolecules',
+      'complete:macromolecules:',
+    ]);
+    expect(details).toEqual([
+      { ketcherId: 'wizard-test', mode: 'molecules' },
+      { ketcherId: 'wizard-test', mode: 'macromolecules' },
+    ]);
+    expect(macroWrapper).toHaveAttribute('data-ketcher-id', 'wizard-test');
+  });
+
   it('converts when macro mode is requested before the macro editor is ready', async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     render(<Editor {...({} as ComponentProps<typeof Editor>)} />);
     fireEvent.click(screen.getByText('Init micro'));
     const initializeMacro = await screen.findByTestId('init-macro');

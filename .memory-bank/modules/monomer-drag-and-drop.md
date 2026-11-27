@@ -1,12 +1,12 @@
 # Monomer Drag-and-Drop
 
-> How library items (monomers, ambiguous monomers, RNA presets) are dragged from the library panel and placed on the macromolecules canvas.
+> How library items (monomers, ambiguous monomers, RNA presets) are dragged from the library panel and, depending on where the cursor is over the canvas, placed freely, bonded to a free attachment point, used to replace a canvas monomer/preset, or inserted into an existing polymer bond.
 
 Complements [monomer-library](./monomer-library.md) (the library data and UI) and [editor-engine](./editor-engine.md) (modes, tools, events).
 
 ## Responsibility
 
-Translate a user drag gesture that begins on a library card into a model mutation (monomer added at the correct canvas position) with a corresponding visual ghost during the drag, while respecting the active editor mode.
+Translate a user drag gesture that begins on a library card into a model mutation, with a corresponding visual ghost during the drag, while respecting the active editor mode. Below the basic placement path, `LibraryItemDragDropHandler` decides between placement, bond establishment, replacement, and insertion based on cursor proximity, and executes whichever one applies on drop.
 
 ## Two placement mechanisms
 
@@ -77,6 +77,48 @@ The monomer-add operation (priority 1) does the actual work:
 - At construction time it immediately runs the model-add step: it picks the concrete entity class via a factory, creates the entity, moves it to the target position, and stores it in the drawing-entities manager.
 - When the renderers manager executes the operation it picks the matching renderer class (again via the factory), creates a renderer instance, and calls its show method — this is the moment the monomer visually appears on the SVG canvas.
 - Inverting the operation removes both the model entry and the renderer, providing undo.
+
+## Proximity detection and drop-outcome orchestration
+
+`LibraryItemDragDropHandler` (ketcher-core,
+`application/editor/libraryItemDragDrop/LibraryItemDragDropHandler.ts`) owns what a drag-state
+event does beyond the ghost preview: on every drag-state event (`onLibraryItemDragOver`) it decides
+which of three mutually-exclusive hover states is active, and on drop it executes the matching
+outcome.
+
+**Hover-state priority.** A replacement-target check runs first (center-to-center distance to a
+canvas monomer or compatible preset); if it matches, both other checks are skipped entirely for
+that event. Otherwise the AP-proximity check (nearest free attachment point) and the
+bond-proximity check (nearest polymer bond, via `findBondInsertionTarget`) both run, and whichever
+target is geometrically closer to the cursor wins — the other is suppressed. This is a distance
+race, not a second strict priority tier: on dense or circular chains an AP can be nearer than a
+bond or vice versa, and the loser never shows its hover state for that event.
+
+**Drop outcomes**, one per hover state:
+
+- *Replacement* → `DrawingEntitiesManager.replaceMonomer` / `.replacePreset`. Geometry and
+  bond-rerouting rules for this path are pure functions in `replacementHelpers.ts`.
+- *Bond establishment* (AP hover) → `handleMonomerConnection`, using `bondConnectionHelpers.ts` to
+  decide whether the *Select Attachment Points* modal is needed and, for a preset, which component
+  bonds.
+- *Insertion* (bond hover) → `executeInsertion` builds one `Command` (delete the hovered bond, add
+  the new monomer/preset, add two bonds, apply any positional shift) from pure functions in
+  `insertion.ts` and `insertionHelpers.ts`, and pushes it to history once. The AP-resolution rule
+  there (`resolveMonomerInsertion`/`resolvePresetInsertion`: R3–R1 for sugar/base, otherwise the
+  R1↔R2 complement) is its own table — it does not call into `bondConnectionHelpers.ts` or into
+  `SequenceMode.ts`'s own inline R1/R2 handling, even though all three encode a similar idea.
+  Failure routes to the three-monomer `InsertionConnection` dialog (two or more APs, no default) or
+  one of two Close-only error modals (preset / single-AP), matching
+  [monomer-insertion-drag-drop](../features/monomer-insertion-drag-drop.md).
+
+**Shared geometry.** `insertionHelpers.ts`'s bond-extension and shift-set functions
+(`getExtendedBondLength`, `computeShiftSet`, `isBondInCycle`) are reused by the replacement path
+(`buildCircularReplacementExtension` in `insertion.ts`) when a phosphate-containing preset replaces
+a monomer inside a circular structure — one geometry implementation, two call sites.
+
+**Transient hover views** (the bond-insertion circle, the AP `+` indicator, the replacement
+highlight) follow the pattern in [transient-views](./transient-views.md); layout re-runs after a
+drop go through [snake-layout](./snake-layout.md) in Snake mode, or the Flex shift functions above.
 
 ## Assumptions & constraints
 

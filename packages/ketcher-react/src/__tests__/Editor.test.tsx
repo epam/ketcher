@@ -1,10 +1,12 @@
+import { vi } from 'vitest';
+
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import type * as ReactTypes from 'react';
 import { ketcherProvider, type Ketcher } from 'ketcher-core';
 import { Editor } from '../Editor';
 
-jest.mock('../MicromoleculesEditor', () => {
-  const React = jest.requireActual('react') as typeof ReactTypes;
+vi.mock('../MicromoleculesEditor', async () => {
+  const React = await import('react');
 
   return {
     MicromoleculesEditor: ({
@@ -43,42 +45,38 @@ jest.mock('../MicromoleculesEditor', () => {
   };
 });
 
-jest.mock(
-  'ketcher-macromolecules',
-  () => {
-    const React = jest.requireActual('react') as typeof ReactTypes;
+vi.mock('ketcher-macromolecules', async () => {
+  const React = await import('react');
 
-    return {
-      __esModule: true,
-      default: ({
-        onInit,
-      }: {
-        onInit: (
-          editor: ReturnType<typeof mockCreateMacromoleculesEditor>,
-        ) => void;
-      }) => {
-        React.useEffect(() => {
-          const editor = mockCreateMacromoleculesEditor();
-          mockMacromoleculesEditors.push(editor);
-          onInit(editor);
-          return () => editor.destroy();
-        }, []);
+  return {
+    __esModule: true,
+    default: ({
+      onInit,
+    }: {
+      onInit: (
+        editor: ReturnType<typeof mockCreateMacromoleculesEditor>,
+      ) => void;
+    }) => {
+      React.useEffect(() => {
+        const editor = mockCreateMacromoleculesEditor();
+        mockMacromoleculesEditors.push(editor);
+        onInit(editor);
+        return () => editor.destroy();
+      }, []);
 
-        return React.createElement('div', {
-          'data-testid': 'macromolecules-editor',
-        });
-      },
-    };
-  },
-  { virtual: true },
-);
+      return React.createElement('div', {
+        'data-testid': 'macromolecules-editor',
+      });
+    },
+  };
+});
 
 const mockMoleculesEditor = {
   event: {
-    monomerWizardStateChange: { add: jest.fn(), remove: jest.fn() },
+    monomerWizardStateChange: { add: vi.fn(), remove: vi.fn() },
   },
-  closeMonomerCreationWizard: jest.fn(),
-  focusCliparea: jest.fn(),
+  closeMonomerCreationWizard: vi.fn(),
+  focusCliparea: vi.fn(),
 };
 const mockCreateEvent = () => {
   const handlers = new Set<() => void>();
@@ -94,10 +92,10 @@ const mockCreateMacromoleculesEditor = () => ({
     switchToMoleculesMode: mockCreateEvent(),
     openMonomerCreationWizard: mockCreateEvent(),
   },
-  ensureDefaultMonomersLibraryLoaded: jest.fn().mockResolvedValue(undefined),
-  switchToMacromolecules: jest.fn(),
-  switchToMicromolecules: jest.fn(),
-  destroy: jest.fn(),
+  ensureDefaultMonomersLibraryLoaded: vi.fn().mockResolvedValue(undefined),
+  switchToMacromolecules: vi.fn(),
+  switchToMicromolecules: vi.fn(),
+  destroy: vi.fn(),
 });
 const mockMacromoleculesEditors: Array<
   ReturnType<typeof mockCreateMacromoleculesEditor>
@@ -115,13 +113,13 @@ const editorProps: Omit<
   structServiceProvider: {} as ReactTypes.ComponentProps<
     typeof Editor
   >['structServiceProvider'],
-  errorHandler: jest.fn(),
+  errorHandler: vi.fn(),
 };
 
 describe('Editor', () => {
   beforeEach(() => {
     mockMacromoleculesEditors.length = 0;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     ketcherProvider.addKetcherInstance(testKetcher);
   });
@@ -141,7 +139,7 @@ describe('Editor', () => {
   });
 
   it('reports micromolecules initialization when the feature is disabled', async () => {
-    const onInit = jest.fn();
+    const onInit = vi.fn();
 
     render(
       <Editor {...editorProps} onInit={onInit} disableMacromoleculesEditor />,
@@ -193,15 +191,15 @@ describe('Editor', () => {
 
   describe('when the browser has requestIdleCallback', () => {
     let idleCallbacks: Array<() => void>;
-    let cancelIdleCallback: jest.Mock;
+    let cancelIdleCallback: Mock;
     const IDLE_CALLBACK_ID = 42;
 
     beforeEach(() => {
       idleCallbacks = [];
-      cancelIdleCallback = jest.fn();
+      cancelIdleCallback = vi.fn();
       Object.defineProperty(globalThis, 'requestIdleCallback', {
         configurable: true,
-        value: jest.fn((callback: () => void) => {
+        value: vi.fn((callback: () => void) => {
           idleCallbacks.push(callback);
           return IDLE_CALLBACK_ID;
         }),
@@ -247,11 +245,11 @@ describe('Editor', () => {
   });
 
   it('does not repeat initialization when the consumer callback changes', async () => {
-    const onInit = jest.fn();
+    const onInit = vi.fn();
     const { rerender } = render(<Editor {...editorProps} onInit={onInit} />);
     await waitFor(() => expect(onInit).toHaveBeenCalledTimes(1));
 
-    const replacementOnInit = jest.fn();
+    const replacementOnInit = vi.fn();
     rerender(<Editor {...editorProps} onInit={replacementOnInit} />);
 
     expect(onInit).toHaveBeenCalledTimes(1);

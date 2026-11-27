@@ -1138,6 +1138,11 @@ export class KetSerializer implements Serializer<Struct> {
       struct.rxnPluses.add(micromoleculeRxnPlus);
     });
 
+    MacromoleculesConverter.convertStaticObjectsToStruct(
+      drawingEntitiesManager,
+      struct,
+    );
+
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
     return {

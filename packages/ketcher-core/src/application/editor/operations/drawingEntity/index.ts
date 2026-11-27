@@ -6,6 +6,7 @@ import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import { CoreStaticObject } from 'domain/entities/CoreStaticObject';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 export class DrawingEntityHoverOperation implements Operation {
@@ -72,7 +73,8 @@ export class DrawingEntityMoveOperation implements Operation {
       this.drawingEntity instanceof RxnArrow ||
       this.drawingEntity instanceof MultitailArrow ||
       this.drawingEntity instanceof RxnPlus ||
-      this.drawingEntity instanceof CoreStereoFlag
+      this.drawingEntity instanceof CoreStereoFlag ||
+      this.drawingEntity instanceof CoreStaticObject
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {

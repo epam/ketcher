@@ -41,6 +41,7 @@ import {
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
+import { StaticObjectResizeGesture } from './StaticObjectResizeGesture';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -99,6 +100,7 @@ abstract class SelectBase implements BaseTool {
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
+  private staticObjectResize: StaticObjectResizeGesture | null = null;
   protected userRotationCenter: Vec2 | undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
@@ -168,6 +170,11 @@ abstract class SelectBase implements BaseTool {
       }
       this.onSelectionStart();
     } else {
+      this.staticObjectResize = StaticObjectResizeGesture.fromEvent(event);
+      if (this.staticObjectResize) {
+        return;
+      }
+
       const renderer = event.target?.__data__;
 
       if (!renderer || !(renderer instanceof BaseRenderer)) {
@@ -1093,6 +1100,14 @@ abstract class SelectBase implements BaseTool {
   }
 
   mousemove(event: MouseEvent) {
+    if (this.staticObjectResize) {
+      this.staticObjectResize.update(
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+        this.editor.renderersContainer,
+      );
+      return;
+    }
+
     if (this.mode === 'standby') {
       return;
     }
@@ -1230,6 +1245,17 @@ abstract class SelectBase implements BaseTool {
     const history = EditorHistory.getInstance(this.editor);
 
     try {
+      if (this.staticObjectResize) {
+        const resizeCommand = this.staticObjectResize.finish(
+          this.editor.drawingEntitiesManager,
+        );
+        this.staticObjectResize = null;
+        if (resizeCommand) {
+          history.update(resizeCommand);
+        }
+        return;
+      }
+
       if (this.mode === 'rotating') {
         this.finishRotation();
         return;

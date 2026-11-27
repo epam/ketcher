@@ -7,6 +7,9 @@ import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
 import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
 import { SGroup } from 'domain/entities/sgroup';
+import { SimpleObject } from 'domain/entities/simpleObject';
+import { Text } from 'domain/entities/text';
+import { CoreStaticObject } from 'domain/entities/CoreStaticObject';
 import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
@@ -20,6 +23,9 @@ import {
   ReRxnArrow,
   ReRxnPlus,
   ReSGroup,
+  ReSimpleObject,
+  ReText,
+  ReImage,
 } from 'application/render/restruct';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
@@ -145,6 +151,48 @@ export class MacromoleculesConverter {
         );
       },
     );
+  }
+
+  public static convertStaticObjectsToStruct(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    struct: Struct,
+    reStruct?: ReStruct,
+  ) {
+    drawingEntitiesManager.staticObjects.forEach((staticObject) => {
+      const entity = staticObject.toStructEntity();
+
+      if (entity instanceof SimpleObject) {
+        const id = struct.simpleObjects.add(entity);
+        reStruct?.simpleObjects.set(id, new ReSimpleObject(entity));
+      } else if (entity instanceof Text) {
+        const id = struct.texts.add(entity);
+        reStruct?.texts.set(id, new ReText(entity));
+      } else {
+        const id = struct.images.add(entity);
+        reStruct?.images.set(id, new ReImage(entity));
+      }
+    });
+  }
+
+  public static convertStaticObjectsToDrawingEntities(
+    struct: Struct,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    const command = new Command();
+
+    [
+      ...struct.simpleObjects.values(),
+      ...struct.texts.values(),
+      ...struct.images.values(),
+    ].forEach((entity) => {
+      const { content, initiallySelected } =
+        CoreStaticObject.fromStructEntity(entity);
+      command.merge(
+        drawingEntitiesManager.addStaticObject(content, initiallySelected),
+      );
+    });
+
+    return command;
   }
 
   public static convertDrawingEntitiesToStruct(
@@ -392,6 +440,12 @@ export class MacromoleculesConverter {
 
       reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
     });
+
+    MacromoleculesConverter.convertStaticObjectsToStruct(
+      drawingEntitiesManager,
+      struct,
+      reStruct,
+    );
 
     struct.findConnectedComponents();
     struct.setImplicitHydrogen();
@@ -942,6 +996,13 @@ export class MacromoleculesConverter {
 
       command.merge(rxnPlusAddCommand);
     });
+
+    command.merge(
+      MacromoleculesConverter.convertStaticObjectsToDrawingEntities(
+        struct,
+        drawingEntitiesManager,
+      ),
+    );
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
     drawingEntitiesManager.detectBondsOverlappedByMonomers();

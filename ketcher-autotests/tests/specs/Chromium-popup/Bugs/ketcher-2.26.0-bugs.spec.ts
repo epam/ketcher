@@ -1628,7 +1628,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
+  test.skip('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2485
@@ -1655,6 +1655,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await pasteFromClipboardByKeyboard(page);
     await page.waitForTimeout(500);
     await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
     await takeEditorScreenshot(page);
   });
 

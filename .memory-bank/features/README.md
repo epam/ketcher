@@ -29,11 +29,13 @@ The main features, distilled from [documentation/help.md](../../documentation/he
 
 6. [Macromolecules (Polymers)](./macromolecules.md) — monomer library, sequence/snake/flex layouts, antisense strands, polymer properties
 7. [Drag-Drop Bond Establishment](./drag-drop-bond-establishment.md) — proximity-triggered AP highlighting and automatic bond creation when dropping a library monomer/preset near a canvas monomer
+8. [Monomer Replacement via Drag-Drop](./monomer-replacement-drag-drop.md) — dropping a library monomer/preset onto a canvas monomer or matching preset replaces it in place
+9. [Monomer Insertion via Drag-Drop](./monomer-insertion-drag-drop.md) — dropping a library monomer/preset onto a polymer bond inserts it between the bond's two monomers
 
 ### Both modes
 
-8. [Selection & Manipulation](./selection.md) — selection tools, move, rotate, flip, erase, highlight
-9. [Clipboard (Copy / Cut / Paste)](./clipboard.md) — copy/cut/paste across chemical formats
-10. [Undo / Redo](./undo-redo.md) — bounded 32-step command history
-11. [Import, Export & Structure Checking](./import-export.md) — file formats, open/save, structure check, calculated values
-12. [Localization (i18n)](./localization.md) — language switcher, persistence, what translates vs. what stays as chemistry data
+10. [Selection & Manipulation](./selection.md) — selection tools, move, rotate, flip, erase, highlight
+11. [Clipboard (Copy / Cut / Paste)](./clipboard.md) — copy/cut/paste across chemical formats
+12. [Undo / Redo](./undo-redo.md) — bounded 32-step command history
+13. [Import, Export & Structure Checking](./import-export.md) — file formats, open/save, structure check, calculated values
+14. [Localization (i18n)](./localization.md) — language switcher, persistence, what translates vs. what stays as chemistry data

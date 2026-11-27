@@ -1,0 +1,17 @@
+{
+  "type": "result",
+  "subtype": "success",
+  "is_error": false,
+  "duration_ms": 1479,
+  "num_turns": 3,
+  "total_cost_usd": 0.0017,
+  "modelUsage": {
+    "claude-sonnet-5-5": {
+      "inputTokens": 6,
+      "outputTokens": 57,
+      "costUSD": 0.0017
+    }
+  },
+  "result": "{\"findings\":[]}",
+  "structured_output": { "findings": [] }
+}

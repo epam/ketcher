@@ -54,6 +54,7 @@ describe('Save modal', () => {
           rxnArrows: [],
           multitailArrows: [],
           rxnPluses: [],
+          simpleObjects: new Map(),
         },
         viewModel: {
           initialize: vi.fn(),
@@ -132,6 +133,7 @@ describe('Save modal', () => {
         rxnArrows: [],
         multitailArrows: [],
         rxnPluses: [],
+        simpleObjects: new Map(),
       },
       monomersLibrary: {},
       canvas: document.createElement('canvas'),

@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,9 @@ import RectangleIcon from 'assets/icons/files/rectangle.svg';
 import SearchIcon from 'assets/icons/files/search.svg';
 import SelectLassoIcon from 'assets/icons/files/select-lasso.svg';
 import SelectRectangleIcon from 'assets/icons/files/select-rectangle.svg';
+import ShapeEllipseIcon from 'assets/icons/files/shape-ellipse.svg';
+import ShapeLineIcon from 'assets/icons/files/shape-line.svg';
+import ShapeRectangleIcon from 'assets/icons/files/shape-rectangle.svg';
 import SelectFragmentIcon from 'assets/icons/files/select-fragment.svg';
 import SettingsIcon from 'assets/icons/files/settings.svg';
 import StarIcon from 'assets/icons/files/star.svg';
@@ -86,6 +89,9 @@ const iconMap = {
   search: SearchIcon,
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,
+  'shape-ellipse': ShapeEllipseIcon,
+  'shape-line': ShapeLineIcon,
+  'shape-rectangle': ShapeRectangleIcon,
   'select-fragment': SelectFragmentIcon,
   settings: SettingsIcon,
   star: StarIcon,

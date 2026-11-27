@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,10 @@ import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
 import { selectIsSettingsPanelOpen } from 'state/modal';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
-import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import {
+  SELECT_SUBMENU_ID,
+  SHAPES_SUBMENU_ID,
+} from 'components/menu/constants';
 import { useTranslation } from 'react-i18next';
 
 export function LeftMenuComponent() {
@@ -85,6 +88,33 @@ export function LeftMenuComponent() {
           testId="erase"
           disabled={isDisabled}
         />
+      </Menu.Group>
+      <Menu.Group divider={true}>
+        <Menu.Submenu
+          testId="shapes-drop-down-button"
+          disabled={isDisabled}
+          subMenuId={SHAPES_SUBMENU_ID}
+          needOpenByMenuItemClick={true}
+        >
+          <Menu.Item
+            itemId="shape-rectangle"
+            title={t('leftMenu.shapeRectangle')}
+            testId="shape-rectangle"
+            disabled={isDisabled}
+          />
+          <Menu.Item
+            itemId="shape-ellipse"
+            title={t('leftMenu.shapeEllipse')}
+            testId="shape-ellipse"
+            disabled={isDisabled}
+          />
+          <Menu.Item
+            itemId="shape-line"
+            title={t('leftMenu.shapeLine')}
+            testId="shape-line"
+            disabled={isDisabled}
+          />
+        </Menu.Submenu>
       </Menu.Group>
       <Menu.Group>
         <Menu.Submenu

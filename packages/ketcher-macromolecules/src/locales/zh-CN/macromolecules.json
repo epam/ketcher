@@ -23,7 +23,10 @@
     "structureSelection": "结构选择 ({shortcut})",
     "erase": "橡皮擦 ({shortcut})",
     "singleBond": "单键 (1)",
-    "hydrogenBond": "氢键 (2)"
+    "hydrogenBond": "氢键 (2)",
+    "shapeRectangle": "矩形形状",
+    "shapeEllipse": "椭圆形状",
+    "shapeLine": "直线形状"
   },
   "floatingTools": {
     "flipHorizontally": "水平翻转",

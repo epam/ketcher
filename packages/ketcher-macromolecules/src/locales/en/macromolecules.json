@@ -23,7 +23,10 @@
     "structureSelection": "Structure Selection ({shortcut})",
     "erase": "Erase ({shortcut})",
     "singleBond": "Single Bond (1)",
-    "hydrogenBond": "Hydrogen Bond (2)"
+    "hydrogenBond": "Hydrogen Bond (2)",
+    "shapeRectangle": "Shape Rectangle",
+    "shapeEllipse": "Shape Ellipse",
+    "shapeLine": "Shape Line"
   },
   "floatingTools": {
     "flipHorizontally": "Flip horizontally",

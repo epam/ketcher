@@ -519,7 +519,10 @@ export class Molfile {
       this.writePadded(sgroup.type, 3);
       this.writeCR();
 
-      if (sgroup.type === 'COP' && sgroup.data.subtype) {
+      if (
+        ['COP', 'ANY', 'MER', 'MON'].includes(sgroup.type) &&
+        sgroup.data.subtype
+      ) {
         this.write('M  SST');
         this.writePaddedNumber(1, 3);
         this.writeWhiteSpace(1);
@@ -550,7 +553,10 @@ export class Molfile {
       }
 
       // connectivity
-      if (['SRU', 'COP'].includes(sgroup.type) && sgroup.data.connectivity) {
+      if (
+        ['SRU', 'COP', 'ANY', 'MER'].includes(sgroup.type) &&
+        sgroup.data.connectivity
+      ) {
         const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`;

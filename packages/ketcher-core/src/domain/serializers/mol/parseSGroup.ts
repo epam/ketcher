@@ -141,12 +141,14 @@ function postLoadDat(sgroup: SGroup, mol?: Struct): void {
   sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
 }
 
-function postLoadMon(_sgroup: SGroup): void {
-  // TODO: Implement after adding MON type support
+function postLoadMon(sgroup: SGroup): void {
+  // MON only has a bracket type, so it normalizes like GEN.
+  postLoadGen(sgroup);
 }
 
-function postLoadMer(_sgroup: SGroup): void {
-  // TODO: Implement after adding MER type support
+function postLoadMer(sgroup: SGroup): void {
+  // MER has a repeat pattern and bracket type, so it normalizes like SRU.
+  postLoadSru(sgroup);
 }
 
 function postLoadCop(sgroup: SGroup): void {
@@ -178,8 +180,9 @@ function postLoadFor(_sgroup: SGroup): void {
   // TODO: Implement after adding FOR type support
 }
 
-function postLoadAny(_sgroup: SGroup): void {
-  // TODO: Implement after adding ANY type support
+function postLoadAny(sgroup: SGroup): void {
+  // ANY has a repeat pattern and bracket type, so it normalizes like SRU.
+  postLoadSru(sgroup);
 }
 
 const postLoadMap: Record<string, PostLoadHandler> = {

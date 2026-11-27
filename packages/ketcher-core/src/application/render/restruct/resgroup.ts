@@ -38,6 +38,14 @@ import type {
 import type { RenderOptions } from '../render.types';
 import { uniteHoverPaths } from './hoverPath';
 export { paperPathFromSVGElement } from './hoverPath';
+
+// Label drawn outside the closing bracket's lower-right side
+const POLYMER_CLASSIFICATION_ABBREVIATIONS: Partial<Record<string, string>> = {
+  ANY: 'anyp',
+  MER: 'mer',
+  MON: 'mon',
+};
+
 interface SGroupdrawBracketsOptions {
   set: RaphaelSet;
   render: Render;
@@ -112,6 +120,21 @@ class ReSGroup extends ReObject {
           }
           break;
         }
+        case 'ANY':
+        case 'MER': {
+          // Repeat pattern is drawn the same way as for SRU polymers
+          let connectivity: string = sgroup.data.connectivity || 'eu';
+          if (connectivity === 'ht') connectivity = '';
+          SGroupdrawBracketsOptions.lowerIndexText =
+            POLYMER_CLASSIFICATION_ABBREVIATIONS[sgroup.type];
+          SGroupdrawBracketsOptions.upperIndexText = connectivity;
+          break;
+        }
+        case 'MON': {
+          SGroupdrawBracketsOptions.lowerIndexText =
+            POLYMER_CLASSIFICATION_ABBREVIATIONS[sgroup.type];
+          break;
+        }
         case 'SUP': {
           const superatomClass = sgroup.data.class as
             SUPERATOM_CLASS | undefined;
@@ -140,6 +163,9 @@ class ReSGroup extends ReObject {
         'SUP',
         'GEN',
         'COP',
+        'ANY',
+        'MER',
+        'MON',
         'queryComponent',
       ];
       if (

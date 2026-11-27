@@ -102,6 +102,9 @@ const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
     DAT: prepareDatForSaving,
     GEN: prepareGenForSaving,
     COP: prepareCopForSaving,
+    ANY: prepareAnyForSaving,
+    MER: prepareMerForSaving,
+    MON: prepareGenForSaving,
     queryComponent: prepareQueryComponentForSaving,
   };
 
@@ -129,6 +132,16 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
 }
 
 function prepareCopForSaving(sgroup: SGroup, mol: Struct): void {
+  // Same cross-bond computation as SRU.
+  prepareSruForSaving(sgroup, mol);
+}
+
+function prepareAnyForSaving(sgroup: SGroup, mol: Struct): void {
+  // Same cross-bond computation as SRU.
+  prepareSruForSaving(sgroup, mol);
+}
+
+function prepareMerForSaving(sgroup: SGroup, mol: Struct): void {
   // Same cross-bond computation as SRU.
   prepareSruForSaving(sgroup, mol);
 }
@@ -182,6 +195,9 @@ const saveToMolfile: Record<
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,
+  ANY: saveAnyToMolfile,
+  MER: saveMerToMolfile,
+  MON: saveMonToMolfile,
 };
 
 function saveMulToMolfile(
@@ -345,6 +361,39 @@ function saveGenToMolfile(
 ): string {
   // GEN is serialized identically to SRU.
   return saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap);
+}
+
+function saveAnyToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
+  // ANY is serialized identically to SRU.
+  return saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap);
+}
+
+function saveMerToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
+  // MER is serialized identically to SRU.
+  return saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap);
+}
+
+function saveMonToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
+  // MON is serialized identically to GEN.
+  return saveGenToMolfile(sgroup, mol, sgMap, atomMap, bondMap);
 }
 
 function makeAtomBondLines(

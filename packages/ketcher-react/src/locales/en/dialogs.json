@@ -394,6 +394,10 @@
           "enumEitherUnknown": "Either unknown"
         },
         "variantCopolymer": "Copolymer",
+        "variantAnyPolymer": "Any polymer",
+        "variantMer": "Mer",
+        "variantGeneric": "Generic",
+        "variantMonomer": "Monomer",
         "subtype": {
           "title": "Subtype",
           "enumBlank": "<Blank>",

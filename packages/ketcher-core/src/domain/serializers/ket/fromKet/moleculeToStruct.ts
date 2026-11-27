@@ -165,9 +165,15 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
       break;
     }
-    case 'COP': {
-      ifDef(sgroup.data, 'subtype', source.subtype);
+    case 'COP':
+    case 'ANY':
+    case 'MER': {
+      ifDef(sgroup.data, 'subtype', source.subtype?.toLowerCase());
       ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
+      break;
+    }
+    case 'MON': {
+      ifDef(sgroup.data, 'subtype', source.subtype?.toLowerCase());
       break;
     }
     case 'SUP': {

@@ -156,6 +156,64 @@ describe('Copolymer S-Group Subtype dropdown', () => {
   });
 });
 
+describe('Polymer classification S-Group types', () => {
+  const renderWithType = (type: string) =>
+    renderWithMockStore(<SGroup type={type} selectedSruCount={2} />, {
+      modal: {
+        name: 'SGroup',
+        form: {
+          errors: {},
+          result: { type },
+        },
+        prop: null,
+        parentModal: null,
+      },
+    });
+
+  it('should list Any polymer, Mer, Generic and Monomer after Copolymer', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    const copolymer = screen.getByTestId('Copolymer-option');
+    const expectedAfterCopolymer = [
+      'Any polymer-option',
+      'Mer-option',
+      'Generic-option',
+      'Monomer-option',
+    ];
+    let previous = copolymer;
+    for (const testId of expectedAfterCopolymer) {
+      const option = screen.getByTestId(testId);
+      // eslint-disable-next-line no-bitwise
+      expect(
+        previous.compareDocumentPosition(option) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      previous = option;
+    }
+  });
+
+  it('should show Repeat Pattern and Subtype for Any polymer and Mer', () => {
+    for (const type of ['ANY', 'MER']) {
+      const { unmount } = renderWithType(type);
+      expect(screen.getByText('Repeat Pattern')).toBeInTheDocument();
+      expect(screen.getByTestId('subtype-input-span')).toBeInTheDocument();
+      unmount();
+    }
+  });
+
+  it('should show only Subtype for Monomer', () => {
+    renderWithType('MON');
+    expect(screen.getByTestId('subtype-input-span')).toBeInTheDocument();
+    expect(screen.queryByText('Repeat Pattern')).not.toBeInTheDocument();
+  });
+
+  it('should show neither Repeat Pattern nor Subtype for Generic', () => {
+    renderWithType('GEN');
+    expect(screen.queryByText('Repeat Pattern')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('subtype-input-span')).not.toBeInTheDocument();
+  });
+});
+
 describe('S-Group DAT type rendering', () => {
   it('should render SDataFieldset when type is DAT', () => {
     renderWithMockStore(<SGroup type="DAT" />, {

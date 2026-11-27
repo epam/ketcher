@@ -15,12 +15,10 @@
  ***************************************************************************/
 import {
   type ReSGroup,
-  type ReStruct,
-  type Vec2,
   CoordinateTransformation,
   fromImageResize,
   fromMultipleMove,
-  fromSimpleObjectResizing,
+  fromSimpleObjectHandleDrag,
   fromTextDeletion,
   fromTextUpdating,
   FunctionalGroup,
@@ -77,7 +75,6 @@ import {
 import {
   type DragContext,
   type SelectMode,
-  type SimpleObjectSelectionDragContext,
   isArrowDragContext,
   isImageSelectionDragContext,
   isSelectionMoveDragContext,
@@ -318,10 +315,11 @@ class SelectTool implements Tool {
       */
       if (isSimpleObjectSelectionDragContext(selectionDragCtx)) {
         if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
-        const props = getResizingProps(editor, selectionDragCtx, event);
-        selectionDragCtx.action = fromSimpleObjectResizing(
-          ...props,
-          event.shiftKey,
+        selectionDragCtx.action = fromSimpleObjectHandleDrag(
+          rnd.ctab,
+          selectionDragCtx.item.id,
+          selectionDragCtx.item.ref,
+          CoordinateTransformation.pageToModel(event, rnd),
         );
         editor.update(selectionDragCtx.action, true);
         return true;
@@ -843,22 +841,6 @@ function getMapsForClosestItem(shouldSelectFragment: boolean) {
     IMAGE_KEY,
     ...(shouldSelectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
-}
-
-function getResizingProps(
-  editor: Editor,
-  dragCtx: SimpleObjectSelectionDragContext,
-  event: PointerEvent,
-): [
-  ReStruct,
-  number,
-  Vec2,
-  Vec2,
-  NonNullable<SimpleObjectSelectionDragContext['item']['ref']>,
-] {
-  const current = CoordinateTransformation.pageToModel(event, editor.render);
-  const diff = current.sub(dragCtx.xy0);
-  return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }
 
 export default SelectTool;

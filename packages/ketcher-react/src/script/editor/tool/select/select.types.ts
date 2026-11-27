@@ -1,5 +1,6 @@
 import {
   type Action,
+  type Handle,
   type getItemsToFuse,
   type ImageReferencePositionInfo,
   type Vec2,
@@ -29,8 +30,8 @@ export type SelectionMoveDragContext = SharedDragContext & {
 };
 
 export type SimpleObjectSelectionDragContext = SelectionMoveDragContext & {
-  item: ClosestItemWithMap<Vec2, 'simpleObjects'> & {
-    ref: Vec2;
+  item: ClosestItemWithMap<Handle, 'simpleObjects'> & {
+    ref: Handle;
   };
 };
 

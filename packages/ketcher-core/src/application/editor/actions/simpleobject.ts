@@ -17,10 +17,15 @@
 import {
   SimpleObjectAdd,
   SimpleObjectDelete,
-  SimpleObjectResize,
+  SimpleObjectSetGeometry,
 } from '../operations';
 
 import { Action } from './action';
+import type { ReStruct } from 'application/render';
+import type { Handle, ShapeGeometry } from 'domain/staticObjects/types';
+import type { Vec2 } from 'domain/entities/vec2';
+import { resizeShape } from 'domain/staticObjects/geometry';
+import { getOrThrow } from 'utilities';
 
 export function fromSimpleObjectDeletion(restruct, id) {
   const action = new Action();
@@ -34,15 +39,30 @@ export function fromSimpleObjectAddition(restruct, pos, mode, toCircle) {
   return action.perform(restruct);
 }
 
-export function fromSimpleObjectResizing(
-  restruct,
-  id,
-  d,
-  current,
-  anchor,
-  toCircle,
+export function fromSimpleObjectGeometryUpdate(
+  restruct: ReStruct,
+  id: number,
+  geometry: ShapeGeometry,
 ) {
   const action = new Action();
-  action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle));
+  action.addOp(new SimpleObjectSetGeometry(id, geometry));
   return action.perform(restruct);
+}
+
+export function fromSimpleObjectHandleDrag(
+  restruct: ReStruct,
+  id: number,
+  handle: Handle,
+  pointer: Vec2,
+) {
+  const item = getOrThrow(
+    restruct.molecule.simpleObjects,
+    id,
+    `Simple object with id ${id} not found`,
+  );
+  return fromSimpleObjectGeometryUpdate(
+    restruct,
+    id,
+    resizeShape(item.geometry, handle, pointer),
+  );
 }

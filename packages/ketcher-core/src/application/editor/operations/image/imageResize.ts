@@ -1,32 +1,12 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import type { ImageReferenceName } from 'domain/entities/image';
-import { Vec2 } from 'domain/entities/vec2';
+import {
+  type ImageReferenceName,
+  IMAGE_REFERENCE_NAME_TO_HANDLE,
+} from 'domain/entities/image';
+import { resizeBox } from 'domain/staticObjects/geometry';
+import type { Vec2 } from 'domain/entities/vec2';
 import type { ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-
-const moveLeftPositions = new Set<ImageReferenceName>([
-  'topLeftPosition',
-  'leftMiddlePosition',
-  'bottomLeftPosition',
-]);
-
-const moveRightPositions = new Set<ImageReferenceName>([
-  'topRightPosition',
-  'rightMiddlePosition',
-  'bottomRightPosition',
-]);
-
-const moveTopPositions = new Set<ImageReferenceName>([
-  'topLeftPosition',
-  'topMiddlePosition',
-  'topRightPosition',
-]);
-
-const moveBottomPositions = new Set<ImageReferenceName>([
-  'bottomLeftPosition',
-  'bottomMiddlePosition',
-  'bottomRightPosition',
-]);
 
 export class ImageResize extends BaseOperation {
   private previousPosition: Vec2 | undefined;
@@ -45,26 +25,18 @@ export class ImageResize extends BaseOperation {
     if (!item || !renderItem) {
       return;
     }
-    const referencePositions = item.getReferencePositions();
-    this.previousPosition = referencePositions[this.referencePositionName];
-    const diff = Vec2.diff(this.position, this.previousPosition);
-    const topLeftPosition = new Vec2(referencePositions.topLeftPosition);
-    const bottomRightPosition = new Vec2(
-      referencePositions.bottomRightPosition,
+    this.previousPosition =
+      item.getReferencePositions()[this.referencePositionName];
+    const { min, max } = resizeBox(
+      {
+        min: item.getTopLeftPosition(),
+        max: item.getBottomRightPosition(),
+      },
+      IMAGE_REFERENCE_NAME_TO_HANDLE[this.referencePositionName],
+      this.position,
     );
 
-    if (moveTopPositions.has(this.referencePositionName)) {
-      topLeftPosition.add_(new Vec2(0, diff.y));
-    } else if (moveBottomPositions.has(this.referencePositionName)) {
-      bottomRightPosition.add_(new Vec2(0, diff.y));
-    }
-    if (moveLeftPositions.has(this.referencePositionName)) {
-      topLeftPosition.add_(new Vec2(diff.x, 0));
-    } else if (moveRightPositions.has(this.referencePositionName)) {
-      bottomRightPosition.add_(new Vec2(diff.x, 0));
-    }
-
-    item.resize(topLeftPosition, bottomRightPosition);
+    item.resize(min, max);
     const next = renderItem.visel.paths[0].next;
     reStruct.clearVisel(renderItem.visel);
     renderItem.show(reStruct, reStruct.render.options, next);

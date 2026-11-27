@@ -1,6 +1,5 @@
 import ReRxnArrow from 'application/render/restruct/rerxnarrow';
-import ReSimpleObject from 'application/render/restruct/resimpleObject';
-import { SimpleObjectMode, Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 
 describe('reference point distances', () => {
@@ -8,10 +7,6 @@ describe('reference point distances', () => {
   const end = new Vec2(10, 0);
   const objects = [
     new ReRxnArrow({ mode: RxnArrowMode.OpenAngle, pos: [start, end] }),
-    new ReSimpleObject({
-      mode: SimpleObjectMode.line,
-      pos: [start, end],
-    }),
   ];
 
   it.each(objects)(

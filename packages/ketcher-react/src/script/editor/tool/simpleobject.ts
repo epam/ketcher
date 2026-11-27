@@ -16,12 +16,16 @@
 
 import {
   type Action,
+  type Handle,
+  type ShapeDrawSession,
   type SimpleObjectMode,
   type Vec2,
+  createShapeDrawSession,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
-  fromSimpleObjectResizing,
+  fromSimpleObjectGeometryUpdate,
+  fromSimpleObjectHandleDrag,
   CoordinateTransformation,
   SimpleObjectDelete,
 } from 'ketcher-core';
@@ -32,8 +36,8 @@ import type { Tool } from './Tool';
 interface SimpleObjectDragContext {
   p0: Vec2;
   previous?: Vec2;
-  ci?: ClosestItemWithMap;
-  isNew?: boolean;
+  ci?: ClosestItemWithMap<Handle>;
+  drawSession?: ShapeDrawSession;
   action?: Action;
   itemId?: number;
 }
@@ -54,14 +58,16 @@ class SimpleObjectTool implements Tool {
     const p0 = CoordinateTransformation.pageToModel(event, rnd);
     this.dragCtx = { p0 };
 
-    const ci = this.editor.findItem(event, ['simpleObjects']);
+    const ci = this.editor.findItem(event, [
+      'simpleObjects',
+    ]) as ClosestItemWithMap<Handle> | null;
 
     if (ci?.map === 'simpleObjects') {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
       this.dragCtx.ci = ci;
     } else {
-      this.dragCtx.isNew = true;
+      this.dragCtx.drawSession = createShapeDrawSession(this.mode, p0);
       this.editor.selection(null);
     }
   }
@@ -69,94 +75,97 @@ class SimpleObjectTool implements Tool {
   mousemove(event: PointerEvent) {
     const rnd = this.editor.render;
 
-    if (this.dragCtx) {
-      const current = CoordinateTransformation.pageToModel(event, rnd);
-      const diff = current.sub(this.dragCtx.p0);
-      this.dragCtx.previous = current;
-
-      if (this.dragCtx.ci) {
-        if (this.dragCtx.action) {
-          this.dragCtx.action.perform(rnd.ctab);
-        }
-
-        if (this.dragCtx.ci.ref) {
-          this.dragCtx.action = fromSimpleObjectResizing(
-            rnd.ctab,
-            this.dragCtx.ci.id,
-            diff,
-            current,
-            this.dragCtx.ci.ref,
-            event.shiftKey,
-          );
-        } else {
-          this.dragCtx.action = fromMultipleMove(
-            rnd.ctab,
-            this.editor.selection() ?? {},
-            diff,
-          );
-        }
-        this.editor.update(this.dragCtx.action, true);
-      } else {
-        if (this.dragCtx.action) {
-          this.dragCtx.action.perform(rnd.ctab);
-        } else {
-          const action = fromSimpleObjectAddition(
-            rnd.ctab,
-            [this.dragCtx.p0, this.dragCtx.p0],
-            this.mode,
-            false,
-          );
-          // TODO: need to rework  actions/operations logic
-          const addOperation = action.operations[0];
-          if (!(addOperation instanceof SimpleObjectDelete)) {
-            throw new TypeError(
-              'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
-            );
-          }
-          this.dragCtx.itemId = addOperation.data.id;
-          this.dragCtx.action = action;
-          this.editor.update(this.dragCtx.action, true);
-        }
-
-        this.dragCtx.action = fromSimpleObjectResizing(
-          rnd.ctab,
-          this.dragCtx.itemId,
-          diff,
-          current,
-          null,
-          event.shiftKey,
-        );
-        this.editor.update(this.dragCtx.action, true);
-      }
-    } else {
+    if (!this.dragCtx) {
       const items = this.editor.findItem(event, ['simpleObjects']);
       this.editor.hover(items, null, event);
-    }
-  }
-
-  mouseup(event: PointerEvent) {
-    if (!this.dragCtx) {
       return;
     }
 
-    if (this.dragCtx.action) {
-      if (this.dragCtx.isNew) {
-        const rnd = this.editor.render;
-        this.editor.update(
-          fromSimpleObjectDeletion(rnd.ctab, this.dragCtx.itemId),
-          true,
-        );
-        this.dragCtx.action = fromSimpleObjectAddition(
-          rnd.ctab,
-          [this.dragCtx.p0, this.dragCtx.previous],
-          this.mode,
-          event.shiftKey,
-        );
-      }
-      this.editor.update(this.dragCtx.action);
+    const current = CoordinateTransformation.pageToModel(event, rnd);
+    this.dragCtx.previous = current;
+    this.dragCtx.action?.perform(rnd.ctab);
+
+    if (this.dragCtx.ci) {
+      this.dragCtx.action = this.dragCtx.ci.ref
+        ? fromSimpleObjectHandleDrag(
+            rnd.ctab,
+            this.dragCtx.ci.id,
+            this.dragCtx.ci.ref,
+            current,
+          )
+        : fromMultipleMove(
+            rnd.ctab,
+            this.editor.selection() ?? {},
+            current.sub(this.dragCtx.p0),
+          );
+      this.editor.update(this.dragCtx.action, true);
+      return;
     }
 
+    const preview = this.dragCtx.drawSession?.update(current, {
+      shift: event.shiftKey,
+    });
+    if (!preview) {
+      return;
+    }
+
+    if (this.dragCtx.itemId === undefined) {
+      const addition = fromSimpleObjectAddition(
+        rnd.ctab,
+        [preview.start, preview.start],
+        this.mode,
+        false,
+      );
+      const addOperation = addition.operations[0];
+      if (!(addOperation instanceof SimpleObjectDelete)) {
+        throw new TypeError(
+          'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
+        );
+      }
+      this.dragCtx.itemId = addOperation.data.id;
+      this.editor.update(addition, true);
+    }
+
+    this.dragCtx.action = fromSimpleObjectGeometryUpdate(
+      rnd.ctab,
+      this.dragCtx.itemId,
+      preview,
+    );
+    this.editor.update(this.dragCtx.action, true);
+  }
+
+  mouseup(event: PointerEvent) {
+    const dragCtx = this.dragCtx;
     delete this.dragCtx;
+
+    if (!dragCtx?.action) {
+      return;
+    }
+
+    if (dragCtx.drawSession && dragCtx.itemId !== undefined) {
+      const rnd = this.editor.render;
+      this.editor.update(
+        fromSimpleObjectDeletion(rnd.ctab, dragCtx.itemId),
+        true,
+      );
+      const shape = dragCtx.drawSession.finish(dragCtx.previous ?? dragCtx.p0, {
+        shift: event.shiftKey,
+      });
+      if (!shape) {
+        return;
+      }
+      this.editor.update(
+        fromSimpleObjectAddition(
+          rnd.ctab,
+          [shape.start, shape.end],
+          this.mode,
+          false,
+        ),
+      );
+      return;
+    }
+
+    this.editor.update(dragCtx.action);
   }
 }
 

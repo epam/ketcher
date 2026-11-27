@@ -19,6 +19,9 @@ import { Vec2 } from 'domain/entities/vec2';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
 import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import { getBoxHandles } from 'domain/staticObjects/geometry';
+import { getOrThrow } from 'utilities';
+import type { BoxHandle } from 'domain/staticObjects/types';
 
 export interface KetFileImageNode extends KetFileNode<string> {
   format: string;
@@ -43,6 +46,20 @@ export interface ImageReferencePositions {
 }
 
 export type ImageReferenceName = keyof ImageReferencePositions;
+
+export const IMAGE_REFERENCE_NAME_TO_HANDLE: Record<
+  ImageReferenceName,
+  BoxHandle
+> = {
+  topLeftPosition: 'topLeft',
+  topMiddlePosition: 'top',
+  topRightPosition: 'topRight',
+  rightMiddlePosition: 'right',
+  bottomRightPosition: 'bottomRight',
+  bottomMiddlePosition: 'bottom',
+  bottomLeftPosition: 'bottomLeft',
+  leftMiddlePosition: 'left',
+};
 
 export interface ImageReferencePositionInfo {
   name: ImageReferenceName;
@@ -105,24 +122,26 @@ export class Image extends BaseMicromoleculeEntity {
   }
 
   getReferencePositions(): ImageReferencePositions {
-    const [
-      topLeftPosition,
-      topRightPosition,
-      bottomRightPosition,
-      bottomLeftPosition,
-    ] = this.getCornerPositions();
+    const handles = getBoxHandles({
+      min: this.getTopLeftPosition(),
+      max: this.getBottomRightPosition(),
+    });
+    const positionOf = (name: ImageReferenceName) =>
+      getOrThrow(
+        handles,
+        IMAGE_REFERENCE_NAME_TO_HANDLE[name],
+        `Image handle ${name} not found`,
+      );
+
     return {
-      topLeftPosition,
-      topMiddlePosition: Vec2.centre(topLeftPosition, topRightPosition),
-      topRightPosition,
-      rightMiddlePosition: Vec2.centre(topRightPosition, bottomRightPosition),
-      bottomRightPosition,
-      bottomMiddlePosition: Vec2.centre(
-        bottomLeftPosition,
-        bottomRightPosition,
-      ),
-      bottomLeftPosition,
-      leftMiddlePosition: Vec2.centre(topLeftPosition, bottomLeftPosition),
+      topLeftPosition: positionOf('topLeftPosition'),
+      topMiddlePosition: positionOf('topMiddlePosition'),
+      topRightPosition: positionOf('topRightPosition'),
+      rightMiddlePosition: positionOf('rightMiddlePosition'),
+      bottomRightPosition: positionOf('bottomRightPosition'),
+      bottomMiddlePosition: positionOf('bottomMiddlePosition'),
+      bottomLeftPosition: positionOf('bottomLeftPosition'),
+      leftMiddlePosition: positionOf('leftMiddlePosition'),
     };
   }
 

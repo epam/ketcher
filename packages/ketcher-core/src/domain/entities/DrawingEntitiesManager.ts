@@ -2852,6 +2852,11 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addRxnPlus(rxnPlus);
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      editor.renderersContainer.deleteSimpleObject(simpleObject);
+      editor.renderersContainer.addSimpleObject(simpleObject);
+    });
+
     this.sgroups.forEach((sgroup) => {
       editor.renderersContainer.deleteSGroup(sgroup);
       editor.renderersContainer.addSGroup(sgroup);
@@ -2909,6 +2914,10 @@ export class DrawingEntitiesManager {
 
     this.rxnPluses.forEach((rxnPlus) => {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
+    });
+
+    this.simpleObjects.forEach((simpleObject) => {
+      editor.renderersContainer.deleteSimpleObject(simpleObject);
     });
 
     this.stereoFlags.forEach((stereoFlag) => {

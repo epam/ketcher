@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -42,6 +42,7 @@ import { MultitailArrowRenderer } from 'application/render/renderers/MultitailAr
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import type { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
+import { SimpleObjectRenderer } from 'application/render/renderers/SimpleObjectRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
@@ -590,9 +591,15 @@ export class RenderersManager {
     rxnPlus.renderer?.remove();
   }
 
-  public addSimpleObject(_simpleObject: CoreSimpleObject) {}
+  public addSimpleObject(simpleObject: CoreSimpleObject) {
+    const simpleObjectRenderer = new SimpleObjectRenderer(simpleObject);
 
-  public deleteSimpleObject(_simpleObject: CoreSimpleObject) {}
+    simpleObjectRenderer.show();
+  }
+
+  public deleteSimpleObject(simpleObject: CoreSimpleObject) {
+    simpleObject.baseRenderer?.remove();
+  }
 
   public addStereoFlag(stereoFlag: CoreStereoFlag) {
     const stereoFlagRenderer = new StereoFlagRenderer(stereoFlag);

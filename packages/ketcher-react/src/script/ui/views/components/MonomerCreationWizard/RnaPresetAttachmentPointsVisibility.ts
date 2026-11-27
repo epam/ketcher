@@ -132,6 +132,64 @@ export const getConnectionAttachmentPointsForRnaPresetComponent = (
   )[componentKey];
 };
 
+export const getConnectionAttachmentPointAtomIdsForComponent = (
+  wizardState: RnaPresetWizardState,
+  struct: Struct,
+  componentKey: RnaPresetComponentKey,
+  phosphatePosition?: PhosphatePosition,
+): AttachmentPointMap => {
+  const result: AttachmentPointMap = new Map();
+  const baseAtoms = wizardState.base.structure?.atoms ?? [];
+  const sugarAtoms = wizardState.sugar.structure?.atoms ?? [];
+  const phosphateAtoms = wizardState.phosphate.structure?.atoms ?? [];
+
+  if (sugarAtoms.length > 0 && baseAtoms.length > 0) {
+    const bond = findBondBetweenRnaPresetComponents(
+      struct,
+      sugarAtoms,
+      baseAtoms,
+    );
+    if (bond) {
+      const sugarAtomId = sugarAtoms.includes(bond.begin)
+        ? bond.begin
+        : bond.end;
+      const baseAtomId = baseAtoms.includes(bond.begin) ? bond.begin : bond.end;
+
+      if (componentKey === 'sugar') {
+        result.set(AttachmentPointName.R3, [sugarAtomId, baseAtomId]);
+      } else if (componentKey === 'base') {
+        result.set(AttachmentPointName.R1, [baseAtomId, sugarAtomId]);
+      }
+    }
+  }
+
+  if (phosphatePosition && sugarAtoms.length > 0 && phosphateAtoms.length > 0) {
+    const bond = findBondBetweenRnaPresetComponents(
+      struct,
+      sugarAtoms,
+      phosphateAtoms,
+    );
+    if (bond) {
+      const sugarAtomId = sugarAtoms.includes(bond.begin)
+        ? bond.begin
+        : bond.end;
+      const phosphateAtomId = phosphateAtoms.includes(bond.begin)
+        ? bond.begin
+        : bond.end;
+      const { sugar: sugarApName, phosphate: phosphateApName } =
+        getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
+
+      if (componentKey === 'sugar') {
+        result.set(sugarApName, [sugarAtomId, phosphateAtomId]);
+      } else if (componentKey === 'phosphate') {
+        result.set(phosphateApName, [phosphateAtomId, sugarAtomId]);
+      }
+    }
+  }
+
+  return result;
+};
+
 /**
 Returns all inter-component connection atom IDs for the RNA preset.
 Each boundary atom is included so both ends of every connection are visible.

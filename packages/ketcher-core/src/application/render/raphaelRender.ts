@@ -84,6 +84,10 @@ export type MonomerCreationState = {
   hasDefaultAttachmentPoints?: boolean;
   // RNA preset component atoms and bonds
   rnaComponentAtoms?: RnaComponentAtoms;
+  rnaComponentConnectionAttachmentPoints?: Map<
+    RnaPresetComponentKey,
+    Map<AttachmentPointName, [number, number]>
+  >;
   isRnaPresetMode?: boolean;
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;

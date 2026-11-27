@@ -857,6 +857,21 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
+  public setRnaComponentConnectionAttachmentPoints(
+    points: Map<
+      RnaPresetComponentKey,
+      Map<AttachmentPointName, [number, number]>
+    >,
+  ) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+
+    this.render.monomerCreationState = {
+      ...currentState,
+      rnaComponentConnectionAttachmentPoints: points,
+    };
+  }
+
   /**
   Restricts which assigned attachment points are rendered on the canvas.
   Pass undefined to show all assigned attachment points (e.g. on Preset tab).

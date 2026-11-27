@@ -50,6 +50,7 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
+  getConnectionAttachmentPointAtomIdsForComponent,
   getConnectionAttachmentPointAtomIdsForRnaPreset,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
@@ -220,6 +221,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         wizardState,
         struct,
         phosphatePosition,
+      ),
+    );
+    editor.setRnaComponentConnectionAttachmentPoints(
+      new Map(
+        RNA_COMPONENT_KEYS.map((componentKey) => [
+          componentKey,
+          getConnectionAttachmentPointAtomIdsForComponent(
+            wizardState,
+            struct,
+            componentKey,
+            phosphatePosition,
+          ),
+        ]),
       ),
     );
   }, [editor, struct, wizardState, phosphatePosition]);

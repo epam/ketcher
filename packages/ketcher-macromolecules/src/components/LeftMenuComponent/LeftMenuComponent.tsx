@@ -106,6 +106,32 @@ export function LeftMenuComponent() {
           />
         </Menu.Submenu>
       </Menu.Group>
+      <Menu.Group>
+        <Menu.Submenu
+          disabled={isDisabled}
+          testId="shapes-drop-down-button"
+          needOpenByMenuItemClick={false}
+        >
+          <Menu.Item
+            itemId="shape-ellipse"
+            title={t('toolbar:tools.shapeEllipse')}
+            testId="shape-ellipse"
+            disabled={isDisabled}
+          />
+          <Menu.Item
+            itemId="shape-rectangle"
+            title={t('toolbar:tools.shapeRectangle')}
+            testId="shape-rectangle"
+            disabled={isDisabled}
+          />
+          <Menu.Item
+            itemId="shape-line"
+            title={t('toolbar:tools.shapeLine')}
+            testId="shape-line"
+            disabled={isDisabled}
+          />
+        </Menu.Submenu>
+      </Menu.Group>
     </Menu>
   );
 }

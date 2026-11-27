@@ -3,7 +3,7 @@ import {
   validateImageDimensions,
   validateImageMimeType,
 } from '../image';
-import { resolveTextEdit } from '../text';
+import { parseTextContent, resolveTextEdit } from '../text';
 
 describe('validateImageMimeType', () => {
   it.each(['image/png', 'image/svg+xml'])('accepts %s', (mimeType) => {
@@ -81,4 +81,60 @@ describe('resolveTextEdit', () => {
       );
     },
   );
+});
+
+describe('parseTextContent', () => {
+  const lexical = (children: unknown[]) =>
+    JSON.stringify({ root: { type: 'root', children } });
+
+  it('returns null for content that is not Lexical JSON', () => {
+    expect(parseTextContent('not json')).toBeNull();
+    expect(parseTextContent(JSON.stringify({ blocks: [] }))).toBeNull();
+  });
+
+  it('maps paragraphs and formatted runs', () => {
+    const paragraphs = parseTextContent(
+      lexical([
+        {
+          type: 'paragraph',
+          children: [
+            { type: 'text', text: 'H', format: 1, style: '' },
+            { type: 'text', text: '2', format: 32, style: 'font-size: 20px' },
+            { type: 'linebreak' },
+          ],
+        },
+        { type: 'paragraph', children: [] },
+      ]),
+    );
+
+    expect(paragraphs).toEqual([
+      [
+        {
+          text: 'H',
+          bold: true,
+          italic: false,
+          script: 'normal',
+          fontSizePx: undefined,
+        },
+        {
+          text: '2',
+          bold: false,
+          italic: false,
+          script: 'subscript',
+          fontSizePx: 20,
+        },
+      ],
+      [],
+    ]);
+  });
+
+  it('keeps runs of spaces visible', () => {
+    const paragraphs = parseTextContent(
+      lexical([
+        { type: 'paragraph', children: [{ type: 'text', text: 'a  b' }] },
+      ]),
+    );
+
+    expect(paragraphs?.[0][0].text).toBe('a  b');
+  });
 });

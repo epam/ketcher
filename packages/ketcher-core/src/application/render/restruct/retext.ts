@@ -27,6 +27,7 @@ import { Scale } from 'domain/helpers';
 import type { Element, RaphaelBaseElement, RaphaelPaper } from 'raphael';
 import type { Render } from '../raphaelRender';
 import type { RenderOptionStyles, RenderOptions } from '../render.types';
+import { type TextRun, parseTextContent } from 'domain/staticObjects/text';
 
 export interface SerializedTextNode {
   detail?: number;
@@ -65,21 +66,7 @@ export interface SerializedEditorState {
 
 type TextStyles = RenderOptionStyles & { shiftY?: number };
 
-const BOLD_FLAG = 1;
-const ITALIC_FLAG = 2;
-const SUBSCRIPT_FLAG = 32;
-const SUPERSCRIPT_FLAG = 64;
-
 const SCALE = 40; // from ketcher-core
-
-function normalizeTextWhitespace(text: string): string {
-  return text
-    .split(/([^\S\r\n]+)/)
-    .map((part, index) =>
-      index % 2 === 1 ? '\u00a0'.repeat(part.length) : part,
-    )
-    .join('');
-}
 
 class ReText extends ReObject {
   static isSelectable() {
@@ -195,39 +182,15 @@ class ReText extends ReObject {
 
     let shiftY = 0;
     this.paths = [];
-    // TODO: create parser in ketcher-core package
 
-    let editorState: SerializedEditorState | undefined;
-    try {
-      if (this.item.content) {
-        const parsed = JSON.parse(this.item.content);
-        // Support Lexical format only (convert at import time).
-        if (parsed?.root) {
-          editorState = parsed as SerializedEditorState;
-        } else {
-          console.warn(
-            'Unsupported editor state format in text content; expected Lexical JSON.',
-          );
-        }
-      }
-    } catch (error) {
-      console.error('Error processing text content:', error);
-    }
+    const paragraphs = parseTextContent(this.item.content);
 
-    if (!editorState?.root) {
+    if (!paragraphs) {
       console.log('No valid editorState, skipping render');
       return;
     }
 
-    const paragraphs = editorState.root.children.filter(
-      (child) => child.type === 'paragraph',
-    );
-
-    paragraphs.forEach((paragraph: SerializedParagraphNode) => {
-      const textNodes = paragraph.children.filter(
-        (child): child is SerializedTextNode => child.type === 'text',
-      );
-
+    paragraphs.forEach((textNodes) => {
       let shiftX = 0;
       const row: Array<RaphaelBaseElement> = [];
 
@@ -245,17 +208,18 @@ class ReText extends ReObject {
         path.translateAbs(0, shiftY);
         row.push(path);
       } else {
-        textNodes.forEach((textNode: SerializedTextNode) => {
-          const styles = this.getStylesFromTextNode(textNode, options);
-          const text = normalizeTextWhitespace(textNode.text) || '\u00a0';
+        textNodes.forEach((textRun) => {
+          const styles = this.getStylesFromTextRun(textRun, options);
 
-          const path = paper.text(paperScale.x, paperScale.y, text).attr({
-            font: options.font,
-            'font-size': options.fontszInPx,
-            'text-anchor': 'start',
-            fill: '#000000',
-            ...styles,
-          });
+          const path = paper
+            .text(paperScale.x, paperScale.y, textRun.text)
+            .attr({
+              font: options.font,
+              'font-size': options.fontszInPx,
+              'text-anchor': 'start',
+              fill: '#000000',
+              ...styles,
+            });
           path.node.dataset.testid = 'text-label';
           path.node.dataset.textId = String(
             restruct.molecule.texts.keyOf(this.item),
@@ -284,42 +248,30 @@ class ReText extends ReObject {
     );
   }
 
-  getStylesFromTextNode(
-    textNode: SerializedTextNode,
-    options: RenderOptions,
-  ): TextStyles {
+  getStylesFromTextRun(textRun: TextRun, options: RenderOptions): TextStyles {
     const styles: TextStyles = {};
-    const format = textNode.format || 0;
 
-    // Parse font-size from style string
-    let customFontSize: number | undefined;
-    if (textNode.style) {
-      const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(
-        textNode.style,
-      );
-      if (fontSizeMatch) {
-        customFontSize = Number.parseFloat(fontSizeMatch[1]);
-        styles['font-size'] = customFontSize + 'px';
-      }
+    if (textRun.fontSizePx !== undefined) {
+      styles['font-size'] = textRun.fontSizePx + 'px';
     }
 
-    if (format & BOLD_FLAG) {
+    if (textRun.bold) {
       styles['font-weight'] = 'bold';
     }
 
-    if (format & ITALIC_FLAG) {
+    if (textRun.italic) {
       styles['font-style'] = 'italic';
     }
 
-    const fontsz = customFontSize ?? options.fontszInPx;
-    const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
+    const fontsz = textRun.fontSizePx ?? options.fontszInPx;
+    const fontszsub = (textRun.fontSizePx ?? options.fontszsubInPx) * 0.5;
 
-    if (format & SUBSCRIPT_FLAG) {
+    if (textRun.script === 'subscript') {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = fontsz / 4;
     }
 
-    if (format & SUPERSCRIPT_FLAG) {
+    if (textRun.script === 'superscript') {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = -fontsz / 3;
     }

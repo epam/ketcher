@@ -118,7 +118,10 @@ export function TopMenuComponent() {
   });
 
   const menuItemChanged = (name) => {
-    if (modalComponentList[name]) {
+    const modal = Object.hasOwn(modalComponentList, name)
+      ? modalComponentList[name]
+      : undefined;
+    if (modal) {
       dispatch(openModal(name));
       return;
     }

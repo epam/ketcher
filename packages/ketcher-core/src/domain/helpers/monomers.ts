@@ -466,8 +466,12 @@ export const libraryItemHasR1AttachmentPoint = (
   // Rely on MonomerCaps field is not the best approach,
   // but for indeterminate library items it is universal and easy.
   if (isLibraryItemRnaPreset(libraryItem)) {
-    return Boolean(
-      libraryItem.sugar?.props?.MonomerCaps?.[attachmentPointName],
+    const caps = libraryItem.sugar?.props?.MonomerCaps;
+    const cap = caps?.[attachmentPointName];
+    return (
+      caps !== undefined &&
+      Object.hasOwn(caps, attachmentPointName) &&
+      Boolean(cap)
     );
   } else if (isAmbiguousMonomerLibraryItem(libraryItem)) {
     return libraryItem.monomers.every((monomer) =>

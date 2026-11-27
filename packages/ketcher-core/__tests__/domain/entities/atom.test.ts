@@ -100,6 +100,11 @@ describe('Atom', () => {
   });
 
   describe('attrGetDefault static function', () => {
+    it('ignores inherited property names', () => {
+      expect(Atom.attrGetDefault('constructor')).toBeUndefined();
+      expect(Atom.attrGetDefault('toString')).toBeUndefined();
+    });
+
     it('should return default attr if value is in attrsList', () => {
       expect(Atom.attrGetDefault('label')).toBe('C');
     });

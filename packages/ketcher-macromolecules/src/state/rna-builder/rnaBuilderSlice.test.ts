@@ -18,6 +18,7 @@ import { buildRnaPresetConnections, IRnaPreset } from 'ketcher-core';
 import {
   rnaBuilderReducer,
   selectFilteredPresets,
+  selectCurrentMonomerGroup,
   selectPresetFullName,
   setActivePreset,
   startPresetDuplication,
@@ -60,6 +61,21 @@ const makePreset = (
   name,
   nameInList: name,
   ...overrides,
+});
+
+describe('selectCurrentMonomerGroup', () => {
+  it.each(['constructor', 'toString', '__proto__'])(
+    'ignores inherited group name %s',
+    (name) => {
+      expect(selectCurrentMonomerGroup(presetMonomers, name)).toBeUndefined();
+    },
+  );
+
+  it('returns a monomer for a known group', () => {
+    expect(selectCurrentMonomerGroup(presetMonomers, 'Bases')).toBe(
+      presetMonomers.base,
+    );
+  });
 });
 
 describe('selectPresetFullName', () => {

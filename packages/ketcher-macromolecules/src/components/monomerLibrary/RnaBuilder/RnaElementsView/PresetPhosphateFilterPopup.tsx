@@ -82,7 +82,10 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   }, [onClose]);
 
   const toggle = (key: keyof PresetPhosphateFilter) => () => {
-    setDraftFilter((prev) => ({ ...prev, [key]: !prev[key] }));
+    setDraftFilter((prev) => {
+      const selected = prev[key];
+      return { ...prev, [key]: !selected };
+    });
   };
 
   const handleResetAll = () => {

@@ -194,7 +194,10 @@ export const librarySlice: Slice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      if (state.favorites[key]) {
+      const favorite = Object.hasOwn(state.favorites, key)
+        ? state.favorites[key]
+        : undefined;
+      if (favorite) {
         delete state.favorites[key];
         localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
@@ -666,9 +669,13 @@ export const selectFilteredMonomers = createSelector(
         }
       })
       .map((item: MonomerOrAmbiguousType) => {
+        const key = getMonomerUniqueKey(item);
+        const favorite = Object.hasOwn(favorites, key)
+          ? favorites[key]
+          : undefined;
         return {
           ...item,
-          favorite: !!favorites[getMonomerUniqueKey(item)],
+          favorite: Boolean(favorite),
         };
       });
   },
@@ -685,7 +692,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
       const code =
         monomerItem.props.MonomerNaturalAnalogCode ||
         NoNaturalAnalogueGroupCode;
-      if (!result[code]) {
+      if (!Object.hasOwn(result, code)) {
         result[code] = [];
       }
       result[code].push({
@@ -694,7 +701,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
       });
       return result;
     },
-    {},
+    Object.create(null),
   );
 
   const sortedPreparedData = Object.entries(preparedData).reduce(
@@ -711,7 +718,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
       result[code] = sortedMonomers;
       return result;
     },
-    {},
+    Object.create(null),
   );
 
   // generate list of monomer groups

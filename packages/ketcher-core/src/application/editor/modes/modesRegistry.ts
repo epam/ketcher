@@ -3,20 +3,21 @@ import type { BaseMode } from './BaseMode';
 
 type ModeConstructor = new (previousMode?: LayoutMode) => BaseMode;
 
-const modesMap: Partial<Record<LayoutMode, ModeConstructor>> = {};
+const modesMap = new Map<LayoutMode, ModeConstructor>();
 
 export function registerMode(mode: LayoutMode, ctor: ModeConstructor) {
-  if (modesMap[mode] && modesMap[mode] !== ctor) {
+  const registered = modesMap.get(mode);
+  if (registered && registered !== ctor) {
     throw new Error(`Mode "${mode}" is already registered`);
   }
-  if (modesMap[mode] === ctor) {
+  if (registered === ctor) {
     return;
   }
-  modesMap[mode] = ctor;
+  modesMap.set(mode, ctor);
 }
 
 export function getModeConstructor(mode: LayoutMode): ModeConstructor {
-  const ctor = modesMap[mode];
+  const ctor = modesMap.get(mode);
   if (!ctor) {
     throw new Error(`Mode "${mode}" is not registered`);
   }

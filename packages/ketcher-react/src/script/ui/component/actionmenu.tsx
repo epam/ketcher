@@ -316,7 +316,10 @@ function toolMargin(
   menu: MenuItem[],
   visibleTools: VisibleTools,
 ): CSSProperties {
-  if (!visibleTools[menuName]) return {};
+  const visibleTool = Object.hasOwn(visibleTools, menuName)
+    ? visibleTools[menuName]
+    : undefined;
+  if (!visibleTool) return {};
   // now not found better way
   const iconHeight =
     window.innerHeight <= 600 || window.innerWidth <= 1040 ? 32 : 40;

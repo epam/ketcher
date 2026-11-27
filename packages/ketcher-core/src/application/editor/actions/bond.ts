@@ -256,10 +256,10 @@ export function fromBondsAttributes(
     let shouldUpdateStereo = false;
 
     Object.keys(Bond.attrlist).forEach((key) => {
-      if (!(key in attributes) && !shouldReset) return;
+      const hasAttribute = Reflect.has(attributes, key);
+      if (!hasAttribute && !shouldReset) return;
 
-      const value =
-        key in attributes ? attributes[key] : Bond.attrGetDefault(key);
+      const value = hasAttribute ? attributes[key] : Bond.attrGetDefault(key);
 
       action.addOp(
         new BondAttribute(
@@ -271,7 +271,7 @@ export function fromBondsAttributes(
       if (key === 'type') {
         shouldRecalculateImplicitH = true;
       }
-      if (key !== 'stereo' || !(key in attributes)) {
+      if (key !== 'stereo' || !hasAttribute) {
         return;
       }
 

@@ -147,6 +147,9 @@ const onFieldNameChange = (
 
   const context = state.result.context;
   const sdataMap = sdataSchema as SchemaMap;
+  const contextFields = Object.hasOwn(sdataMap, context)
+    ? sdataMap[context]
+    : undefined;
   const radiobuttons = String(
     payload.radiobuttons ?? state.result.radiobuttons,
   );
@@ -154,14 +157,19 @@ const onFieldNameChange = (
 
   let fieldValue = String(payload.fieldValue ?? '');
 
-  if (sdataMap[context]?.[fieldName])
+  const selectedField =
+    contextFields && Object.hasOwn(contextFields, fieldName)
+      ? contextFields[fieldName]
+      : undefined;
+  const previousField =
+    contextFields && Object.hasOwn(contextFields, state.result.fieldName)
+      ? contextFields[state.result.fieldName]
+      : undefined;
+
+  if (selectedField)
     fieldValue = getSdataDefaultValue(sdataSchema, context, fieldName);
 
-  if (
-    fieldValue === state.result.fieldValue &&
-    sdataMap[context]?.[state.result.fieldName]
-  )
-    fieldValue = '';
+  if (fieldValue === state.result.fieldValue && previousField) fieldValue = '';
 
   return {
     result: {

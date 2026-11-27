@@ -6,7 +6,10 @@ export class Matrix<T> {
   }
 
   get(x: number, y: number): T | undefined {
-    return !this.matrix[x] ? undefined : this.matrix[x][y];
+    if (this.matrix[x] === undefined) {
+      return undefined;
+    }
+    return this.matrix[x][y];
   }
 
   getRow(x: number) {
@@ -14,7 +17,7 @@ export class Matrix<T> {
   }
 
   set(x: number, y: number, value: T) {
-    if (!this.matrix[x]) {
+    if (this.matrix[x] === undefined) {
       this.matrix[x] = [];
     }
     this.matrix[x][y] = value;

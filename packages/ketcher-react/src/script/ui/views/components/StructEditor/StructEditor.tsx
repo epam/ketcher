@@ -92,17 +92,19 @@ function setupEditor(
 
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
+    const oldHandler = oldProps[eventName];
+    const handler = props[eventName];
 
-    if (props[eventName] === oldProps[eventName]) {
+    if (handler === oldHandler) {
       return;
     }
 
-    if (oldProps[eventName]) {
-      editor.event[name].remove(oldProps[eventName]);
+    if (oldHandler) {
+      editor.event[name].remove(oldHandler);
     }
 
-    if (props[eventName]) {
-      editor.event[name].add(props[eventName]);
+    if (handler) {
+      editor.event[name].add(handler);
     }
   });
 
@@ -117,8 +119,8 @@ function setupEditor(
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
-
-    if (props[eventName]) editor.event[name].remove(props[eventName]);
+    const handler = props[eventName];
+    if (handler) editor.event[name].remove(handler);
   });
 }
 

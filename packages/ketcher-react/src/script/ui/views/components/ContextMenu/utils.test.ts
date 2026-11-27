@@ -223,9 +223,14 @@ describe('Utils', () => {
           requiredPropName,
           ignoreList,
         );
+
         expect(result).toBe(expectedResult);
       },
     );
+
+    it('does not count inherited properties as selected', () => {
+      expect(onlyHasProperty({ atoms: [] }, 'toString')).toBe(false);
+    });
   });
 
   describe('Attachment Group creation selection', () => {

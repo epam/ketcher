@@ -107,16 +107,18 @@ export function fromAtomsAttributes(
     }
 
     attributeNames.forEach((key) => {
-      if (key === 'attachmentPoints' && !(key in atomAttributes)) return;
-      if (!reset && !(key in atomAttributes)) return;
+      const hasAttribute = Reflect.has(atomAttributes, key);
+      if (key === 'attachmentPoints' && !hasAttribute) return;
+      if (!reset && !hasAttribute) return;
 
-      const value =
-        key in atomAttributes ? atomAttributes[key] : Atom.attrGetDefault(key);
+      const value = hasAttribute
+        ? atomAttributes[key]
+        : Atom.attrGetDefault(key);
 
       switch (key) {
         case 'stereoLabel':
         case 'stereoParity': {
-          if (value && key in atomAttributes) {
+          if (value && hasAttribute) {
             action.addOp(
               new AtomAttribute(atomId, key, value).perform(restruct),
             );

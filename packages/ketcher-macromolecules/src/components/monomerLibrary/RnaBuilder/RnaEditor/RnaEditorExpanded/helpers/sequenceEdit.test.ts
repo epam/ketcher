@@ -26,6 +26,29 @@ describe('generateSequenceSelectionName', () => {
 });
 
 describe('generateSequenceSelectionGroupNames', () => {
+  it('ignores an empty nucleotide label rather than treating it as present', () => {
+    expect(
+      generateSequenceSelectionGroupNames([
+        {
+          type: Entities.Nucleotide,
+          sugarLabel: '',
+          baseLabel: 'A',
+          nodeIndexOverall: 0,
+          hasR1Connection: false,
+          strandType: STRAND_TYPE.SENSE,
+        },
+        {
+          type: Entities.Nucleotide,
+          sugarLabel: 'R',
+          baseLabel: 'A',
+          nodeIndexOverall: 1,
+          hasR1Connection: false,
+          strandType: STRAND_TYPE.SENSE,
+        },
+      ]),
+    ).toEqual({ Sugars: 'R', Bases: 'A', Phosphates: '' });
+  });
+
   it('returns undefined when no nucleotide passed', () => {
     expect(generateSequenceSelectionGroupNames()).toBeUndefined();
   });

@@ -219,7 +219,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
-    if (params && key in params && (key !== 'onOk' || valid())) {
+    if (params && Reflect.has(params, key) && (key !== 'onOk' || valid())) {
       params[key]?.(result());
     }
   };

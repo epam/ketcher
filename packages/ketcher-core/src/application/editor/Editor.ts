@@ -2305,6 +2305,15 @@ export class CoreEditor {
     this.previousModes.push(this.mode);
     this.mode = new ModeConstructor(this.mode.modeName);
     command.merge(this.mode.initialize(true, false, !hasModeChanged));
+    this.transientDrawingView.clear();
+    if (
+      hasModeChanged &&
+      this.isSequenceMode &&
+      SequenceRenderer.chainsCollection.length > 0 &&
+      !this.isSequenceStartInViewport()
+    ) {
+      this.mode.scrollForView();
+    }
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
@@ -2313,6 +2322,19 @@ export class CoreEditor {
       new CustomEvent('layoutModeSwitchComplete', {
         detail: { ketcherId: this.ketcherId, mode },
       }),
+    );
+  }
+
+  private isSequenceStartInViewport() {
+    const { left, top } = SequenceRenderer.getRenderedStructuresBbox();
+    const { width, height } = this.zoomTool.canvasWrapperSize;
+    const sequenceStartInView = Coordinates.canvasToView(new Vec2(left, top));
+
+    return (
+      sequenceStartInView.x >= 0 &&
+      sequenceStartInView.x <= width &&
+      sequenceStartInView.y >= 0 &&
+      sequenceStartInView.y <= height
     );
   }
 

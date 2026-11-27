@@ -86,10 +86,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     ],
   },
   {
-    file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.replaceMonomer.ts',
-    imports: ['application/editor/tools/types'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
     imports: [
       'application/editor/editorSettings',
@@ -110,7 +106,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
       'application/editor/operations/stereoFlag',
       'application/editor/shared/coordinates',
       'application/editor/tools/rnaPresetConnections',
-      'application/editor/tools/types',
       'application/render/renderers/sequence/SequenceRenderer',
     ],
   },
@@ -135,21 +130,10 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     ],
   },
   {
-    file: 'packages/ketcher-core/src/domain/entities/sgroup.ts',
-    imports: ['application/editor/shared/constants'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/snake-layout-model/SnakeLayoutModel.ts',
     imports: [
       'application/editor/editorSettings',
       'application/editor/editorSingleton',
-    ],
-  },
-  {
-    file: 'packages/ketcher-core/src/domain/entities/struct.ts',
-    imports: [
-      'application/editor/actions/helpers',
-      'application/editor/shared/utils',
     ],
   },
   {
@@ -161,15 +145,10 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     imports: ['application/editor/editorSingleton'],
   },
   {
-    file: 'packages/ketcher-core/src/domain/serializers/ket/fromKet/textToStruct.ts',
-    imports: ['application/render/restruct/draftToLexical'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/serializers/ket/ketSerializer.ts',
     imports: [
       'application/editor/MacromoleculesConverter',
       'application/editor/editorSingleton',
-      'application/editor/tools/types',
     ],
   },
 ];

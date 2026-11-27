@@ -42,7 +42,7 @@ import type { Struct } from 'domain/entities/struct';
 import { atomGetAttribute, atomGetDegree, atomGetSGroups } from './utilities';
 
 import { Action } from './action';
-import { SgContexts } from '../shared/constants';
+import { SgContexts } from 'domain/constants/sgroup';
 import { uniq } from 'lodash/fp';
 import { fromAtomsAttributes, mergeFragmentsIfNeeded } from './atom';
 import {

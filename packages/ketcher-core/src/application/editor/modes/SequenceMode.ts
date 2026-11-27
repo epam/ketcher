@@ -85,7 +85,7 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import type { CoreEditor } from 'application/editor/Editor';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { KetMonomerClass } from 'application/formatters';
 import { registerMode } from './modesRegistry';
 

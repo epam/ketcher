@@ -16,14 +16,6 @@
 
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
-export const SgContexts = {
-  Fragment: 'Fragment',
-  Multifragment: 'Multifragment',
-  Bond: 'Bond',
-  Atom: 'Atom',
-  Group: 'Group',
-};
-
 export const selectionKeys = [
   'atoms',
   'attachmentGroups',

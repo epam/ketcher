@@ -5,7 +5,7 @@ import type {
   SerializedEditorState,
   SerializedParagraphNode,
   SerializedTextNode,
-} from './retext';
+} from 'application/render/restruct/retext';
 
 const BOLD_FLAG = 1;
 const ITALIC_FLAG = 2;

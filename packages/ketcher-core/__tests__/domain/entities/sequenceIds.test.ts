@@ -1,6 +1,6 @@
 import { CoreEditor, FlexMode } from 'application/editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { Struct, Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import { KetSerializer } from 'domain/serializers/ket';

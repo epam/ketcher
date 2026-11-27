@@ -170,6 +170,12 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
       break;
     }
+    case 'GRA':
+    case 'CRO':
+    case 'MOD': {
+      ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
+      break;
+    }
     case 'SUP': {
       ifDef(sgroup.data, 'name', source.name);
       ifDef(sgroup.data, 'expanded', source.expanded);

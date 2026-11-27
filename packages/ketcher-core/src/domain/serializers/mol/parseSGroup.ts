@@ -154,16 +154,16 @@ function postLoadCop(sgroup: SGroup): void {
   postLoadGen(sgroup);
 }
 
-function postLoadCro(_sgroup: SGroup): void {
-  // TODO: Implement after adding CRO type support
+function postLoadCro(sgroup: SGroup): void {
+  postLoadGen(sgroup);
 }
 
-function postLoadMod(_sgroup: SGroup): void {
-  // TODO: Implement after adding MOD type support
+function postLoadMod(sgroup: SGroup): void {
+  postLoadGen(sgroup);
 }
 
-function postLoadGra(_sgroup: SGroup): void {
-  // TODO: Implement after adding GRA type support
+function postLoadGra(sgroup: SGroup): void {
+  postLoadGen(sgroup);
 }
 
 function postLoadCom(_sgroup: SGroup): void {

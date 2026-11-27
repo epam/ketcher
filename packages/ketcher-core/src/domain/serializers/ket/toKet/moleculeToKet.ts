@@ -227,6 +227,16 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       );
       break;
     }
+    case 'GRA':
+    case 'CRO':
+    case 'MOD': {
+      ifDef(
+        result,
+        'connectivity',
+        source.data.connectivity.toUpperCase() || 'HT',
+      );
+      break;
+    }
     case 'SUP': {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);

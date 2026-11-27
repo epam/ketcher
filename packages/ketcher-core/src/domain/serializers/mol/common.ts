@@ -102,6 +102,9 @@ const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
     DAT: prepareDatForSaving,
     GEN: prepareGenForSaving,
     COP: prepareCopForSaving,
+    GRA: prepareCopForSaving,
+    CRO: prepareCopForSaving,
+    MOD: prepareCopForSaving,
     queryComponent: prepareQueryComponentForSaving,
   };
 
@@ -179,6 +182,9 @@ const saveToMolfile: Record<
   MUL: saveMulToMolfile,
   SRU: saveSruToMolfile,
   COP: saveCopToMolfile,
+  GRA: saveCopToMolfile,
+  CRO: saveCopToMolfile,
+  MOD: saveCopToMolfile,
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,

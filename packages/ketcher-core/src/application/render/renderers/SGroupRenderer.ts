@@ -147,6 +147,27 @@ export class SGroupRenderer extends BaseRenderer {
         }
         break;
       }
+      case SGroup.TYPES.GRA: {
+        const connectivity = this.sgroup.data.connectivity || 'eu';
+        options.lowerIndexText = 'grf';
+        options.upperIndexText =
+          connectivity === 'ht' ? undefined : connectivity;
+        break;
+      }
+      case SGroup.TYPES.CRO: {
+        const connectivity = this.sgroup.data.connectivity || 'eu';
+        options.lowerIndexText = 'xl';
+        options.upperIndexText =
+          connectivity === 'ht' ? undefined : connectivity;
+        break;
+      }
+      case SGroup.TYPES.MOD: {
+        const connectivity = this.sgroup.data.connectivity || 'eu';
+        options.lowerIndexText = 'mod';
+        options.upperIndexText =
+          connectivity === 'ht' ? undefined : connectivity;
+        break;
+      }
       case SGroup.TYPES.SUP: {
         options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };

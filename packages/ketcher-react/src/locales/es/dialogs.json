@@ -394,6 +394,9 @@
           "enumEitherUnknown": "Cualquiera desconocido"
         },
         "variantCopolymer": "Copolímero",
+        "variantGraft": "Injerto (grf)",
+        "variantCrosslink": "Reticulación (xl)",
+        "variantModification": "Modificación (mod)",
         "subtype": {
           "title": "Subtipo",
           "enumBlank": "<En blanco>",

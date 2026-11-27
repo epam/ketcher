@@ -21,5 +21,8 @@ export const supportedSGroupTypes = {
   DAT: 'DAT',
   GEN: 'GEN',
   COP: 'COP',
+  GRA: 'GRA',
+  CRO: 'CRO',
+  MOD: 'MOD',
   queryComponent: 'queryComponent',
 } as const;

@@ -190,6 +190,21 @@ describe('SRU S-Group defaults', () => {
   });
 });
 
+describe('Polymer-related S-Group types', () => {
+  it.each([
+    ['Graft (grf)', 'Graft (grf)'],
+    ['Crosslink (xl)', 'Crosslink (xl)'],
+    ['Modification (mod)', 'Modification (mod)'],
+  ])('should expose %s with Repeat Pattern', (optionName) => {
+    renderWithMockStore(<SGroup type="MUL" />);
+
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: optionName }));
+
+    expect(screen.getByText('Repeat Pattern')).toBeInTheDocument();
+  });
+});
+
 const reducer = combineReducers({
   modal: modalReducer,
 });

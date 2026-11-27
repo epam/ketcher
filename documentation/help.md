@@ -234,6 +234,7 @@ Available S-Group types:
 - _Multiple group_ - indicates a number of replications of a fragment or a part of a structure in contracted form;
 - _SRU Polymer_ - the Structural Repeating Unit (SRU) brackets enclose the structural repeating of a polymer. You have three available patterns: head-to-tail (the default), head-to-head, and either/unknown;
 - _Copolymer_ - indicates a polymer made up of different repeating units. There are four subtypes: alternating, block, random, and not specified. Repeat patterns available for SRU polymers are also available for copolymers;
+- _Graft (grf), Crosslink (xl), Modification (mod)_ - polymer-related S-groups with the Repeat Pattern behavior of SRU polymers. Their abbreviations are displayed outside the closing bracket;
 - _Superatom_ - part of the structure or the whole structure that will be abbreviated to a text label or expanded to see the group chemistry surrounded with square brackets;
 - _Query component_ - a pair of square brackets enclosing the selected part(s) of the structure or whole structure(s), can be used to support SMARTS query properties;
 - _Nucleotide Component_ - a special kind of superatom S-group used to indicate if a structure is a sugar, a base, or a phosphate.

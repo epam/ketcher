@@ -34,6 +34,7 @@ export const canCreateMonomer = (
       ...manager.rxnArrows.values(),
       ...manager.rxnPluses.values(),
       ...manager.multitailArrows.values(),
+      ...manager.simpleObjects.values(),
     ].some((entity) => entity.selected)
   ) {
     return false;

@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import { AtomRenderer } from '../AtomRenderer';
 import {
   AtomLabel,
@@ -9,8 +10,8 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 // The singleton needs a live canvas; isLabelVisible only reads its viewModel.
-jest.mock('application/editor/editorSingleton', () => ({
-  provideEditorInstance: jest.fn(),
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: vi.fn(),
 }));
 
 /**
@@ -106,7 +107,7 @@ describe('AtomRenderer.isLabelVisible', () => {
     const halfEdges = Array.from({ length: neighborCount }, (_, index) => ({
       direction: { x: Math.cos(index), y: Math.sin(index) },
     }));
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    (provideEditorInstance as Mock).mockReturnValue({
       viewModel: { atomsToHalfEdges: new Map([[atom, halfEdges]]) },
     });
     const descriptor = Object.getOwnPropertyDescriptor(

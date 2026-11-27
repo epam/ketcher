@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
@@ -41,16 +42,21 @@ export class StereoFlagRenderer extends BaseRenderer {
 
   private get flagLabel(): string {
     switch (this.stereoFlag.flagType) {
-      case StereoFlagEnum.Abs:
+      case StereoFlagEnum.Abs: {
         return 'ABS';
-      case StereoFlagEnum.And:
+      }
+      case StereoFlagEnum.And: {
         return 'AND Enantiomer';
-      case StereoFlagEnum.Or:
+      }
+      case StereoFlagEnum.Or: {
         return 'OR Enantiomer';
-      case StereoFlagEnum.Mixed:
+      }
+      case StereoFlagEnum.Mixed: {
         return 'Mixed';
-      default:
+      }
+      default: {
         return '';
+      }
     }
   }
 
@@ -195,8 +201,8 @@ export class StereoFlagRenderer extends BaseRenderer {
 
     this.selectionElement = this.canvas
       ?.insert('rect', ':first-child')
-      .attr('fill', '#57ff8f')
-      .attr('stroke', '#57ff8f')
+      .attr('fill', SELECTION_COLOR)
+      .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');
 
     this.setSelectionContourAttributes(
@@ -231,8 +237,8 @@ export class StereoFlagRenderer extends BaseRenderer {
   }
 
   /**
-   * Movement selection handling is done through move() method for stereo flags.
-   * This empty implementation satisfies the base interface.
-   */
+  Movement selection handling is done through move() method for stereo flags.
+  This empty implementation satisfies the base interface.
+  */
   public moveSelection(): void {}
 }

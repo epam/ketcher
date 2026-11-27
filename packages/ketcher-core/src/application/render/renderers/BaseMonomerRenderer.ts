@@ -51,7 +51,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmentPoint: AttachmentPointName | null = null;
+  private hoveredAttachmentPoint: AttachmentPointName | undefined;
   private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
@@ -117,13 +117,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   /**
-   * The path that outlines this monomer's replacement-highlight area.
-   *
-   * The default is a rectangle matching the monomer body; renderers with a
-   * different body shape (e.g. phosphates, RNA bases) override this. The
-   * optional offset lets transient views request an inflated path while keeping
-   * the body-shape knowledge inside the renderer.
-   */
+  The path that outlines this monomer's replacement-highlight area.
+
+  The default is a rectangle matching the monomer body; renderers with a
+  different body shape (e.g. phosphates, RNA bases) override this. The
+  optional offset lets transient views request an inflated path while keeping
+  the body-shape knowledge inside the renderer.
+  */
   public getHighlightPath(offset = 0): HighlightPathData {
     return createRectHighlightPath(
       this.center,
@@ -166,7 +166,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
+    this.hoveredAttachmentPoint = undefined;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -177,7 +177,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public updateAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
+    this.hoveredAttachmentPoint = undefined;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {
@@ -199,10 +199,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return item.getAngle();
     });
     const isSectorOccupied = allAngles.some((item) => {
-      if (angle !== item && typeof angle === 'number') {
-        return Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340;
-      }
-      return false;
+      return angle !== item && typeof angle === 'number'
+        ? Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340
+        : false;
     });
 
     if (isSectorOccupied) {
@@ -219,7 +218,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public drawAttachmentPoints(
-    appendFn?: (
+    appendFunction?: (
       apName: AttachmentPointName,
       customAngle?: number,
     ) => Pick<AttachmentPoint, 'getAngle'>,
@@ -228,13 +227,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return;
     }
 
-    const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
+    const appendFunctionToUse =
+      appendFunction ?? this.appendAttachmentPoint.bind(this);
     const hasDragTarget = this._dragTargetAttachmentPoint !== null;
 
     // draw used attachment points (hidden when a drag target is active)
     if (!hasDragTarget) {
       this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-        const attachmentPoint = appendFnToUse(item);
+        const attachmentPoint = appendFunctionToUse(item);
         const angle: number = attachmentPoint.getAngle();
 
         this.attachmentPoints.push(attachmentPoint as never);
@@ -259,7 +259,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
       // if this angle is free for unused att point, draw it
       if (this.freeSectorsList.includes(properAngleForFreeAttachmentPoint)) {
-        const attachmentPoint = appendFnToUse(
+        const attachmentPoint = appendFunctionToUse(
           item,
           properAngleForFreeAttachmentPoint,
         );
@@ -278,7 +278,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     unrenderedAtPoints.forEach((item) => {
       const customAngle = this.freeSectorsList.shift();
-      const attachmentPoint = appendFnToUse(item, customAngle);
+      const attachmentPoint = appendFunctionToUse(item, customAngle);
       this.attachmentPoints.push(attachmentPoint as never);
     });
   }
@@ -655,26 +655,27 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected drawModification() {
     const config = this.modificationConfig;
+    if (!config || !this.monomer.isModification) {
+      return;
+    }
+
     const DARK_COLOR = '#333333';
     const LIGHT_COLOR = 'white';
+    let fillColor: string | undefined;
 
-    if (config && this.monomer.isModification) {
-      let fillColor: string | undefined;
+    if (config.requiresFill) {
+      const isTextColorDark = this.textColor === DARK_COLOR;
+      fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
+    }
 
-      if (config.requiresFill) {
-        const isTextColorDark = this.textColor === DARK_COLOR;
-        fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
-      }
+    const useElement = this.rootElement
+      ?.append('use')
+      .attr('xlink:href', config.backgroundId)
+      .attr('pointer-events', 'none')
+      .attr('class', 'modification-background');
 
-      const useElement = this.rootElement
-        ?.append('use')
-        .attr('xlink:href', config.backgroundId)
-        .attr('pointer-events', 'none')
-        .attr('class', 'modification-background');
-
-      if (fillColor) {
-        useElement?.attr('fill', fillColor);
-      }
+    if (fillColor) {
+      useElement?.attr('fill', fillColor);
     }
   }
 

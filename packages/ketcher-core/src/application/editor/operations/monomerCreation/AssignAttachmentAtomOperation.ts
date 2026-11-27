@@ -8,7 +8,7 @@ import { getNextFreeAttachmentPoint } from 'domain/helpers';
 import { getNextAttachmentPointName } from './getNextAttachmentPointName';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
-  private attachmentPointName: AttachmentPointName | null = null;
+  private attachmentPointName: AttachmentPointName | undefined;
   private assignedAttachmentPoints: Map<AttachmentPointName, [number, number]> =
     new Map();
   private potentialLeavingAtoms?: Set<number>;
@@ -61,7 +61,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    assert(this.attachmentPointName !== null);
+    assert(this.attachmentPointName !== undefined);
 
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,

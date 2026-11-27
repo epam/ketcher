@@ -3,36 +3,35 @@
 // through, and the tooltip must show that one.
 
 type HotkeyModules = {
-  hotkeysConfiguration: typeof import('../editorEvents').hotkeysConfiguration;
+  hotkeysConfiguration: typeof import('../editorEvents').hotkeysConfig;
   keyNorm: typeof import('../../../utilities/keynorm').keyNorm;
   initHotKeys: typeof import('../../../utilities/keynorm').initHotKeys;
   generateMenuShortcuts: typeof import('../../../utilities/shortcutsUtil').generateMenuShortcuts;
 };
 
-const loadOnPlatform = (platform: string, isMacOs: boolean): HotkeyModules => {
+const loadOnPlatform = async (
+  platform: string,
+  isMacOs: boolean,
+): Promise<HotkeyModules> => {
   Object.defineProperty(navigator, 'platform', {
     value: platform,
     configurable: true,
   });
 
-  let modules = {} as HotkeyModules;
-  jest.isolateModules(() => {
-    jest.doMock('react-device-detect', () => ({ isMacOs }));
-    const { hotkeysConfiguration } = jest.requireActual('../editorEvents');
-    const { keyNorm, initHotKeys } = jest.requireActual(
-      '../../../utilities/keynorm',
-    );
-    const { generateMenuShortcuts } = jest.requireActual(
-      '../../../utilities/shortcutsUtil',
-    );
-    modules = {
-      hotkeysConfiguration,
-      keyNorm,
-      initHotKeys,
-      generateMenuShortcuts,
-    };
-  });
-  return modules;
+  vi.resetModules();
+  vi.doMock('react-device-detect', () => ({ isMacOs }));
+  const { hotkeysConfig: hotkeysConfiguration } =
+    await import('../editorEvents');
+  const { keyNorm, initHotKeys } = await import('../../../utilities/keynorm');
+  const { generateMenuShortcuts } =
+    await import('../../../utilities/shortcutsUtil');
+
+  return {
+    hotkeysConfiguration,
+    keyNorm,
+    initHotKeys,
+    generateMenuShortcuts,
+  };
 };
 
 const keydown = (code: string, init: KeyboardEventInit) =>
@@ -52,17 +51,15 @@ describe('sequence-type hotkeys', () => {
       value: originalPlatform,
       configurable: true,
     });
-    jest.resetModules();
+    vi.resetModules();
   });
 
   describe('on macOS', () => {
     it.each(cases)(
       '$action is triggered by Ctrl+Option+$letter',
-      ({ action, code }) => {
-        const { hotkeysConfiguration, keyNorm, initHotKeys } = loadOnPlatform(
-          'MacIntel',
-          true,
-        );
+      async ({ action, code }) => {
+        const { hotkeysConfiguration, keyNorm, initHotKeys } =
+          await loadOnPlatform('MacIntel', true);
         const hotKeys = initHotKeys(hotkeysConfiguration);
 
         expect(
@@ -76,11 +73,9 @@ describe('sequence-type hotkeys', () => {
 
     it.each(cases)(
       '$action still accepts Cmd+Option+$letter',
-      ({ action, code }) => {
-        const { hotkeysConfiguration, keyNorm, initHotKeys } = loadOnPlatform(
-          'MacIntel',
-          true,
-        );
+      async ({ action, code }) => {
+        const { hotkeysConfiguration, keyNorm, initHotKeys } =
+          await loadOnPlatform('MacIntel', true);
         const hotKeys = initHotKeys(hotkeysConfiguration);
 
         expect(
@@ -94,11 +89,9 @@ describe('sequence-type hotkeys', () => {
 
     it.each(cases)(
       '$action tooltip shows Ctrl+Option+$letter',
-      ({ action, letter }) => {
-        const { hotkeysConfiguration, generateMenuShortcuts } = loadOnPlatform(
-          'MacIntel',
-          true,
-        );
+      async ({ action, letter }) => {
+        const { hotkeysConfiguration, generateMenuShortcuts } =
+          await loadOnPlatform('MacIntel', true);
 
         expect(generateMenuShortcuts(hotkeysConfiguration)[action]).toBe(
           `Ctrl+Option+${letter}`,
@@ -110,13 +103,13 @@ describe('sequence-type hotkeys', () => {
   describe('on Windows and Linux', () => {
     it.each(cases)(
       '$action is triggered by Ctrl+Alt+$letter, as before',
-      ({ action, code, letter }) => {
+      async ({ action, code, letter }) => {
         const {
           hotkeysConfiguration,
           keyNorm,
           initHotKeys,
           generateMenuShortcuts,
-        } = loadOnPlatform('Win32', false);
+        } = await loadOnPlatform('Win32', false);
         const hotKeys = initHotKeys(hotkeysConfiguration);
 
         expect(

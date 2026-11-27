@@ -191,9 +191,9 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
 };
 
 /**
- * Returns all inter-component connection atom IDs for the RNA preset.
- * Each boundary atom is included so both ends of every connection are visible.
- */
+Returns all inter-component connection atom IDs for the RNA preset.
+Each boundary atom is included so both ends of every connection are visible.
+*/
 export const getConnectionAttachmentPointAtomIdsForRnaPreset = (
   wizardState: RnaPresetWizardState,
   struct: Struct,

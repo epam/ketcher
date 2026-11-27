@@ -16,39 +16,41 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 - Build the packages and the example app: `npm run build`.
 - Dev server for the example app: `cd example && npm run dev:standalone`. It serves only `index.html`. The host pages for two editors on one page, Show/Hide, and a popup need a production build: [example-app.md](.memory-bank/modules/example-app.md) says which page a change needs.
 - Checks for the four packages: `npm test`. It runs each package's `test` script.
-- Unit tests in one package: `cd packages/<name> && npm run test:unit`. Unit tests use Jest.
+- Unit tests in one package: `cd packages/<name> && npm run test:unit`. Unit tests use Vitest.
 - Types in all workspaces: `npm run test:types`.
+- Build output checks, after `npm run build`: `npm run check:package-metadata` and `node scripts/check-standalone-consumer.mjs`. Run them before a PR that touches a `vite.config.mjs`, `build-config/`, a package's `exports`, or a build script. [build.md](.memory-bank/build.md#verification) lists all four.
 - E2E tests: `cd ketcher-autotests && npm test`. Playwright. Conventions are in `.memory-bank/testing/testing.md`.
 
 ## Where knowledge lives
 
 `.memory-bank/` is the knowledge base. Read it before any non-trivial task: before implementing, fixing, refactoring, writing tests, or designing a change, and whenever architecture, domain terms, or invariants are unclear. Each fact has one owner file. Other files link to it and do not restate it.
 
-| Fact                                           | Owner                                            | Format                                                                                                 |
-| ---------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| Current product behavior (WHEN/THEN scenarios) | `openspec/specs/<capability>/spec.md`            | Requirements with SHALL text and scenarios. Archiving a change merges its deltas here.                 |
-| Feature summary and limitations                | `.memory-bank/features/<name>.md`                | Title, problem, link to the spec, Limitations, Related. No second copy of behavior.                    |
-| Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                               |
-| Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                 |
-| Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                                   |
-| Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                                              |
-| Non-negotiable rules                           | `.memory-bank/invariants.md`                     | Labeled IDs (D1, A1, B1, ...), each a rule that must never break                                       |
-| Architecture decisions                         | `.memory-bank/adr/YYYY-MM-DD-<title>.md`         | Decision, Context, Alternatives considered, Rationale, Consequences                                    |
-| File formats (KET, MOL)                        | `.memory-bank/formats/`                          | Format specifications and their index                                                                  |
-| E2E testing strategy                           | `.memory-bank/testing/testing.md`                | Levels, locations, how to run, selector and fixture rules                                              |
-| Plan for a new E2E spec file                   | `.memory-bank/testing/e2e-test-plan-template.md` | Plan structure, approved before spec code                                                              |
-| Review rules                                   | `.memory-bank/review-rules.md`                   | `### R<n>` blocks with Scope, Severity, Enforced by, Status, Why, Source                               |
-| Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                                  |
-| Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                                    |
-| PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                                  |
-| Public API reference                           | `packages/ketcher-core/docs/`                    | Generated TypeDoc output. It is committed and not regenerated, so check the source before you trust it |
-| Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                                               |
-| Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                                   |
+| Fact                                           | Owner                                            | Format                                                                                                              |
+| ---------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Current product behavior (WHEN/THEN scenarios) | `.memory-bank/features/<name>.md`                | Requirements with SHALL text and scenarios, Limitations, Related. Archiving a change folds its deltas here by hand (see the archiving rule below — other owner files below are folded in the same way, not just this one). |
+| Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                                            |
+| Builds and toolchain                           | `.memory-bank/build.md`                          | Targets, build order, per-package pipelines, output contract, verification checks                                   |
+| Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                              |
+| Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                                                |
+| Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                                                           |
+| Non-negotiable rules                           | `.memory-bank/invariants.md`                     | Labeled IDs (D1, A1, B1, ...), each a rule that must never break                                                    |
+| Architecture decisions                         | `.memory-bank/adr/YYYY-MM-DD-<title>.md`         | Decision, Context, Alternatives considered, Rationale, Consequences                                                 |
+| File formats (KET, MOL)                        | `.memory-bank/formats/`                          | Format specifications and their index                                                                               |
+| E2E testing strategy                           | `.memory-bank/testing/testing.md`                | Levels, locations, how to run, selector and fixture rules                                                           |
+| Plan for a new E2E spec file                   | `.memory-bank/testing/e2e-test-plan-template.md` | Plan structure, approved before spec code                                                                           |
+| Review rules                                   | `.memory-bank/review-rules.md`                   | `### R<n>` blocks with Scope, Severity, Enforced by, Status, Why, Source                                            |
+| Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                                               |
+| Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                                                 |
+| PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                                               |
+| Public API reference                           | `packages/ketcher-core/docs/`                    | Generated TypeDoc output. It is committed and not regenerated, so check the source before you trust it              |
+| Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                                                            |
+| Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                                                |
 
 Rules for updating the memory bank:
 
 - The PR that changes a fact also updates the file that owns it (table above). An OpenSpec change in progress is the exception: it updates the memory bank when it is archived, not before.
-- The PR description names the memory-bank file it updated, or says "Memory bank: not needed".
+- Archiving updates every owner file the change made true or obsolete, not only `.memory-bank/features/`. A behavior change usually also touches a `modules/<name>.md` (responsibility, interfaces, dependencies), and sometimes `domain.md`, `glossary.md`, `invariants.md`, or `formats/`. Decide which from the diff and the feature delta, not from whether the change's `tasks.md` happens to list them.
+- The PR description names every memory-bank file it updated (features and any others), or says "Memory bank: not needed".
 - Features and `domain.md` name no functions, files, or variables. Put those in `modules/` or code comments.
 - Edit each file in the format its row above gives.
 
@@ -65,9 +67,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 
 ## Git and commits
 
-- Work on a feature branch. Commit, push it, and open a PR without asking. `master` is protected, so every change lands through PR review.
-- Exception: the `/commit` skill and `prepare-release` show the staged diff and wait for approval before each commit. Their purpose is that review.
-- Do not commit to `master` or a release branch, force-push a branch someone else works on, or merge a PR.
+- **Never commit/push autonomously.** If a commit/push seems warranted, ask the user first and commit only after explicit approval. Staging (`git add`) is fine without asking.
 - Commit subjects and PR titles use the form in [coding-standards.md](.memory-bank/coding-standards.md#tooling-and-process).
 
 ## Skills and tool files
@@ -79,7 +79,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 - **Verify in the app**: before you report a change that a user can see in the editor as done, run `verify-ketcher`. It starts the example app, drives it in a browser, and saves the exported structure, a screenshot, and console errors as evidence. Put its result in the PR under "Verified in the app". Remote mode is not proven yet.
 - **OpenSpec skills**: `openspec-propose` starts a change in `openspec/changes/`, `openspec-apply-change` implements its tasks, and `openspec-archive-change` archives it (then update the memory bank, see above). `openspec-explore`, `openspec-sync-specs`, and `openspec-update-change` help along the way. They are generated by the pinned `@fission-ai/openspec` (`npx openspec update --force`); do not edit them by hand. Ketcher rules for them live in `openspec/config.yaml` under `context:`. Using them is optional; the change folder format is what counts.
 - **PR body**: write the title and body of every PR with `ketcher-pr` ([SKILL.md](.agents/skills/ketcher-pr/SKILL.md)), the Ketcher adaptation of `pr` from `mattpocock/skills`.
-- **PR review**: `/review-pr <PR number>` ([SKILL.md](.agents/skills/review-pr/SKILL.md)) runs the code-review lenses its diff needs as fresh subagents on a PR (`scripts/review-panel.mjs` picks them) and posts the verified findings and the review brief. `claude-review.yml` runs it in CI.
+- **PR review**: `/review-pr <PR number>` ([SKILL.md](.agents/skills/review-pr/SKILL.md)) runs the code-review lenses its diff needs as fresh subagents on a PR (`scripts/review-panel.mjs` picks them) and writes the verified findings and the review brief. It is the local and agent review, and posts nothing without approval. In CI the `Run Claude Review` label (or `Claude Review: Opus`, for the stronger model) starts `claude-review.yml`, which runs the review hub in `scripts/review/` instead: deterministic code, with one isolated model run per lens and per role ([review-workflow.md](.memory-bank/review-workflow.md#ai-review)).
 - **Workflow**: `/ketcher-flow <scope>` ([SKILL.md](.agents/skills/ketcher-flow/SKILL.md)) takes a feature, a bug, a refactor, a small change, a list of symptoms, a batch of tasks of any kinds, or review comments on open PRs to a reviewed PR. Features go through the OpenSpec skills. When you take on a task with code changes and your tool cannot run the skill, read that file and follow the flow it picks.
 - **E2E tests**: before you write Playwright specs, read [testing.md](.memory-bank/testing/testing.md) and ask the user to proceed. For a new spec file or folder, follow its E2E Test Plans section.
 - **Copilot** reads skills from `.agents/skills/` and `.claude/skills/`. `.github/instructions/*.instructions.md` are generated from `review-rules.md`; do not edit them by hand.

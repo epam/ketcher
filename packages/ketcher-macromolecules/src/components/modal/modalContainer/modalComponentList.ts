@@ -18,6 +18,7 @@ import { Save } from 'components/modal/save';
 import { Delete } from 'components/modal/Delete';
 import { UpdateSequenceInRNABuilder } from 'components/modal/UpdateSequenceInRNABuilder';
 import { MonomerConnection } from 'components/modal/monomerConnection';
+import { InsertionConnection } from 'components/modal/insertionConnection';
 import { ConfirmationDialog } from 'components/modal/ConfirmationDialog';
 import { SettingsPanelAdapter } from 'components/modal/Settings';
 import { ModalName } from 'state/modal';
@@ -29,6 +30,7 @@ export const modalComponentList: Record<
   | typeof Delete
   | typeof UpdateSequenceInRNABuilder
   | typeof MonomerConnection
+  | typeof InsertionConnection
   | typeof ConfirmationDialog
   | typeof SettingsPanelAdapter
 > = {
@@ -37,6 +39,7 @@ export const modalComponentList: Record<
   delete: Delete,
   updateSequenceInRNABuilder: UpdateSequenceInRNABuilder,
   monomerConnection: MonomerConnection,
+  insertionConnection: InsertionConnection,
   confirmationDialog: ConfirmationDialog,
   settings: SettingsPanelAdapter,
 };

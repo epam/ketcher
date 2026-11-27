@@ -19,7 +19,7 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import type { RaphaelPaper } from 'raphael';
 
-import Raphael from './raphael-ext';
+import Raphael from './raphael-extension';
 import ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
@@ -55,11 +55,11 @@ export type MonomerCreationInitialValues = {
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
   /**
-   * When editMode is 'all' and the user had multiple monomers of the same
-   * type/symbol selected, this contains the SGroup IDs of those specific
-   * monomers. If provided, only these monomers will be replaced instead of
-   * all canvas instances.
-   */
+  When editMode is 'all' and the user had multiple monomers of the same
+  type/symbol selected, this contains the SGroup IDs of those specific
+  monomers. If provided, only these monomers will be replaced instead of
+  all canvas instances.
+  */
   selectedSGroupIds?: number[];
 };
 
@@ -100,9 +100,9 @@ export type MonomerCreationState = {
 
 export class Render {
   private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
+  private oldCb: Box2Abs | undefined;
   private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
+  private resizeObserver: ResizeObserver | undefined;
   private _monomerCreationState: MonomerCreationState = null;
 
   public skipRaphaelInitialization = false;
@@ -121,13 +121,7 @@ export class Render {
       this.sz = this.getCanvasSizeVector();
       this.resizeViewBox();
     });
-
     this.resizeObserver.observe(this.paper.canvas);
-  };
-
-  unobserveCanvasResize = () => {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
   };
 
   constructor(
@@ -178,6 +172,11 @@ export class Render {
     return [viewBoxX, viewBoxY];
   }
 
+  unobserveCanvasResize = () => {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  };
+
   private zoomOnMouse(
     event: WheelEvent,
     zoomedWidth: number,
@@ -192,9 +191,9 @@ export class Render {
     return [viewBoxX, viewBoxY];
   }
 
-  updateOptions(opts: string) {
+  updateOptions(options: string) {
     try {
-      const passedOptions = JSON.parse(opts);
+      const passedOptions = JSON.parse(options);
       if (passedOptions && typeof passedOptions === 'object') {
         this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
@@ -243,10 +242,10 @@ export class Render {
   }
 
   /**
-   * The options this render was asked for, without the values defaultOptions
-   * derives from them. This is the right base for building a render with
-   * changed options: the derived values get recomputed instead of carried over.
-   */
+  The options this render was asked for, without the values defaultOptions
+  derives from them. This is the right base for building a render with
+  changed options: the derived values get recomputed instead of carried over.
+  */
   get userOptions(): Partial<RenderOptions> {
     return this.userOpts;
   }
@@ -255,20 +254,21 @@ export class Render {
     this.sz = this.getCanvasSizeVector();
     const newWidth = this.sz.x / this.options.zoom;
     const newHeight = this.sz.y / this.options.zoom;
-    this.setViewBox((prev) => ({
-      ...prev,
+    this.setViewBox((previous) => ({
+      ...previous,
       width: newWidth,
       height: newHeight,
     }));
   }
 
   /**
-   * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
-   */
-  setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
+  @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
+  */
+  setViewBox(function_: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;
-  setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
-    const newViewBox = typeof arg === 'function' ? arg(this.viewBox) : arg;
+  setViewBox(argument: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
+    const newViewBox =
+      typeof argument === 'function' ? argument(this.viewBox) : argument;
     this.viewBox = newViewBox;
     this.paper.canvas.setAttribute(
       'viewBox',
@@ -305,49 +305,51 @@ export class Render {
 
     const hasChanges = this.ctab.update(shouldForce);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (hasChanges) {
-      const bb = this.ctab
-        .getVBoxObj()
-        .transform(Scale.modelToCanvas, this.options)
-        .translate(this.options.offset ?? new Vec2());
-
-      if (this.options.downScale) {
-        this.ctab.molecule.rescale();
-      }
-
-      const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (isAutoScale) {
-        const sz1 = bb.sz();
-        const marg = this.options.autoScaleMargin;
-        const mv = new Vec2(marg, marg);
-        const csz = viewSz;
-        if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
-          throw new Error('View box too small for the given margin');
-        }
-        let rescale =
-          this.options.rescaleAmount ??
-          Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
-
-        const isForceDownscale = this.options.downScale && rescale < 1;
-        const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
-        if (isBondsLengthFit || isForceDownscale) {
-          rescale = 1;
-        }
-        const sz2 = sz1.add(mv.scaled(2 * rescale));
-        this.paper.setViewBox(
-          bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
-          bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
-          csz.x * rescale,
-          csz.y * rescale,
-        );
-      } else {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      }
-
-      notifyRenderComplete();
+    if (!hasChanges) {
+      return;
     }
+
+    const bb = this.ctab
+      .getVBoxObj()
+      .transform(Scale.modelToCanvas, this.options)
+      .translate(this.options.offset ?? new Vec2());
+
+    if (this.options.downScale) {
+      this.ctab.molecule.rescale();
+    }
+
+    const isAutoScale = this.options.autoScale || this.options.downScale;
+    if (isAutoScale) {
+      const sz1 = bb.sz();
+      const marg = this.options.autoScaleMargin;
+      const mv = new Vec2(marg, marg);
+      const csz = viewSz;
+      if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
+        throw new Error('View box too small for the given margin');
+      }
+      let rescale =
+        this.options.rescaleAmount ??
+        Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
+
+      const isForceDownscale = this.options.downScale && rescale < 1;
+      const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
+      if (isBondsLengthFit || isForceDownscale) {
+        rescale = 1;
+      }
+      const sz2 = sz1.add(mv.scaled(2 * rescale));
+      this.paper.setViewBox(
+        bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
+        bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
+        csz.x * rescale,
+        csz.y * rescale,
+      );
+    } else {
+      if (!this.oldCb) this.oldCb = new Box2Abs();
+      this.scrollbar.update();
+      this.options.offset = this.options.offset ?? new Vec2();
+    }
+
+    notifyRenderComplete();
   }
 
   get monomerCreationState() {

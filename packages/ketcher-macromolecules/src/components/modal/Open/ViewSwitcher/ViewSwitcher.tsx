@@ -41,12 +41,15 @@ export const ViewSwitcher = (props: SwitchProps) => {
     return <AnalyzingFile fileName={props.fileName} />;
   } else {
     switch (props.currentState) {
-      case props.states.openOptions:
+      case props.states.openOptions: {
         return <OpenOptions {...props} />;
-      case props.states.textEditor:
+      }
+      case props.states.textEditor: {
         return <StyledTextField testId="open-structure-textarea" {...props} />;
-      default:
+      }
+      default: {
         return null;
+      }
     }
   }
 };

@@ -212,6 +212,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 7: Screenshot stereogenic center to verify stereo bonds persist
     const collapsedLabel = getAbbreviationLocator(page, { name: 'sssS' });
+    await shiftCanvas(page, 150, 0);
     await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
   });
 
@@ -467,6 +468,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await clickOnCanvas(page, 0, 0);
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
+    await shiftCanvas(page, 150, 0);
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
       paddingWidth: 180,
       paddingHeight: 90,
@@ -495,8 +497,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      */
 
     // Step 1: Switch to Macromolecules → Snake mode
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
 
     // Step 2: Load the huge HELM structure
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -517,8 +520,21 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await page.mouse.move(298, 710, { steps: 8 });
     await page.mouse.up();
 
-    // Visual result validation: screenshot of the entire canvas
-    await takeEditorScreenshot(page);
+    // Functional validation: verify that monomers were selected after the
+    // scroll-during-selection operation.  Before the bug fix the selection
+    // rectangle did not account for the scroll offset, so 0 monomers ended up
+    // selected.  A screenshot comparison is intentionally NOT used here because
+    // the final viewport position after wheel + auto-scroll is non-deterministic
+    // across environments (the last requestAnimationFrame tick may or may not
+    // fire before mouseup, shifting the canvas by a few pixels each run).
+    //
+    // The HELM string has 200+ monomers; a large drag + 3200px of scroll should
+    // select well over 10.  A concrete lower bound catches partial regressions
+    // that would slip past a simple "greater than 0" check.
+    const selectedMonomersCount = await page
+      .locator('circle.dynamic-element')
+      .count();
+    expect(selectedMonomersCount).toBeGreaterThanOrEqual(10);
   });
 
   test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {

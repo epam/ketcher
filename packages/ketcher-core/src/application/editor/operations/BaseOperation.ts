@@ -25,7 +25,7 @@ type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationTypeValue = ValueOf<typeof OperationType>;
 
 class BaseOperation<D = unknown> {
-  static InverseConstructor: new (...args: never[]) => BaseOperation;
+  static InverseConstructor: new (...arguments_: never[]) => BaseOperation;
 
   private _inverted: BaseOperation | undefined;
   type: OperationTypeValue;

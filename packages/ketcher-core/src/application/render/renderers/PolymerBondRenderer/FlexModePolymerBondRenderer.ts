@@ -57,9 +57,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
+    return !rootNode ? undefined : rootNode.getBBox();
   }
 
   public get width(): number {
@@ -137,11 +135,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
     let thirdPoint: Vec2;
 
-    if (isBoundingBoxVertical) {
-      thirdPoint = new Vec2(firstPoint.x, secondPoint.y);
-    } else {
-      thirdPoint = new Vec2(secondPoint.x, firstPoint.y);
-    }
+    thirdPoint = isBoundingBoxVertical
+      ? new Vec2(firstPoint.x, secondPoint.y)
+      : new Vec2(secondPoint.x, firstPoint.y);
 
     this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}`;
 
@@ -171,12 +167,12 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   private addCornerBasedOnDirection(
-    prevPoint: Vec2,
+    previousPoint: Vec2,
     cornerPoint: Vec2,
     nextPoint: Vec2,
   ) {
-    if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
-      if (prevPoint.x < cornerPoint.x) {
+    if (previousPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
+      if (previousPoint.x < cornerPoint.x) {
         if (cornerPoint.y < nextPoint.y) {
           this.path += generateCornerFromLeftToBottom();
         } else {
@@ -187,8 +183,11 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.path += generateCornerFromRightToTop();
       }
-    } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
-      if (prevPoint.y < cornerPoint.y) {
+    } else if (
+      previousPoint.y !== cornerPoint.y &&
+      cornerPoint.x !== nextPoint.x
+    ) {
+      if (previousPoint.y < cornerPoint.y) {
         if (cornerPoint.x < nextPoint.x) {
           this.path += generateCornerFromTopToRight();
         } else {

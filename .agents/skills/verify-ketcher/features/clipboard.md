@@ -1,6 +1,6 @@
 # Clipboard
 
-A user copies, cuts, and pastes structures on the canvas. A paste follows the pointer until a click drops it. Behavior is owned by [openspec/specs/clipboard/spec.md](../../../../openspec/specs/clipboard/spec.md).
+A user copies, cuts, and pastes structures on the canvas. A paste follows the pointer until a click drops it. Behavior is owned by [.memory-bank/features/clipboard.md](../../../../.memory-bank/features/clipboard.md).
 
 ## Sub-features
 

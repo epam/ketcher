@@ -304,7 +304,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 
   const { editor } = state;
   const { render } = editor;
-  const actionState = state.actionState;
+  let actionState = state.actionState;
   const actionTool = actionState.activeTool;
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
@@ -333,6 +333,11 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 
   const group = keyNorm.lookup(hotKeys, event);
   if (group !== undefined) {
+    if (group.includes('copy') || group.includes('cut')) {
+      // Selection updates are debounced, but clipboard shortcuts need current state.
+      dispatch({ type: 'UPDATE' });
+      actionState = getState().actionState;
+    }
     handleHotkeyGroup(
       group,
       actionTool,
@@ -463,16 +468,18 @@ export function initClipboard(
       );
       const result = await runAsyncAction(async () => {
         const structStr = await getStructStringFromClipboardData(data);
-        if (structStr || !rxnTextPlain.test(data['text/plain'])) {
-          const opts = isSmarts
-            ? {
-                fragment: true,
-                isPaste: true,
-                'input-format': ChemicalMimeType.DaylightSmarts,
-              }
-            : { fragment: true, isPaste: true };
-          await dispatch(load(structStr, opts));
+        if (!structStr && rxnTextPlain.test(data['text/plain'])) {
+          return;
         }
+
+        const opts = isSmarts
+          ? {
+              fragment: true,
+              isPaste: true,
+              'input-format': ChemicalMimeType.DaylightSmarts,
+            }
+          : { fragment: true, isPaste: true };
+        await dispatch(load(structStr, opts));
       }, ketcherInstance.eventBus);
       return result;
     },

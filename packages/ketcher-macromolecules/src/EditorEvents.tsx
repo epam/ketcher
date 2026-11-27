@@ -25,6 +25,7 @@ import {
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
   ConfirmationDialogOnlyProps,
+  InsertionConnectionOnlyProps,
   MonomerConnectionOnlyProps,
 } from 'components/modal/modalContainer';
 import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
@@ -129,6 +130,9 @@ export const EditorEvents = () => {
     const handleOpenMonomerConnectionModal = (
       additionalProps: MonomerConnectionOnlyProps,
     ) => dispatch(openModal({ name: 'monomerConnection', additionalProps }));
+    const handleOpenInsertionConnectionModal = (
+      additionalProps: InsertionConnectionOnlyProps,
+    ) => dispatch(openModal({ name: 'insertionConnection', additionalProps }));
     const handleOpenConfirmationDialog = (
       additionalProps: ConfirmationDialogOnlyProps,
     ) => dispatch(openModal({ name: 'confirmationDialog', additionalProps }));
@@ -138,6 +142,9 @@ export const EditorEvents = () => {
       editor.events.openErrorModal.add(handleOpenErrorModal);
       editor.events.openMonomerConnectionModal.add(
         handleOpenMonomerConnectionModal,
+      );
+      editor.events.openInsertionConnectionModal.add(
+        handleOpenInsertionConnectionModal,
       );
       editor.events.openConfirmationDialog.add(handleOpenConfirmationDialog);
       editor.events.selectTool.add(selectToolHandler);
@@ -158,6 +165,9 @@ export const EditorEvents = () => {
       editor?.events.openErrorModal.remove(handleOpenErrorModal);
       editor?.events.openMonomerConnectionModal.remove(
         handleOpenMonomerConnectionModal,
+      );
+      editor?.events.openInsertionConnectionModal.remove(
+        handleOpenInsertionConnectionModal,
       );
       editor?.events.openConfirmationDialog.remove(
         handleOpenConfirmationDialog,

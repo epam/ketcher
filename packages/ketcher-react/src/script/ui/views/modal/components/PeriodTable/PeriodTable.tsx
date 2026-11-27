@@ -90,15 +90,15 @@ class Table extends Component<TableProps, TableState> {
   };
 
   onAtomSelect = (label?: string) => {
-    if (label) {
-      const { type, value } = this.state;
-      const normalizedValue = Array.isArray(value) ? value : [];
-      const newValue =
-        type === 'atom' || type === 'gen'
-          ? label
-          : xor([label], normalizedValue);
-      this.setState({ value: newValue });
+    if (!label) {
+      return;
     }
+
+    const { type, value } = this.state;
+    const normalizedValue = Array.isArray(value) ? value : [];
+    const newValue =
+      type === 'atom' || type === 'gen' ? label : xor([label], normalizedValue);
+    this.setState({ value: newValue });
   };
 
   onAtomActivate = (label?: string) => {
@@ -215,8 +215,7 @@ function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
   ) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<TableStateProps>;
+    return !atom ? {} : ({ ...fromElement(atom) } as Partial<TableStateProps>);
   }
 
   return {};

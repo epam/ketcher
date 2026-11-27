@@ -20,9 +20,11 @@ const App = () => {
   const [molecule, setMolecule] = useState('');
 
   const [structServiceProvider, setStructServiceProvider] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider);
+    void (async () => {
+      setStructServiceProvider(await getStructServiceProvider());
+    })();
   }, []);
 
   if (!structServiceProvider) {

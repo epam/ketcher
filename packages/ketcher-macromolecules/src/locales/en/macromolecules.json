@@ -27,7 +27,8 @@
     "shapeRectangle": "Shape Rectangle",
     "shapeEllipse": "Shape Ellipse",
     "shapeLine": "Shape Line",
-    "addImage": "Add Image"
+    "addImage": "Add Image",
+    "addText": "Add Text"
   },
   "floatingTools": {
     "flipHorizontally": "Flip horizontally",

@@ -27,7 +27,8 @@
     "shapeRectangle": "矩形形状",
     "shapeEllipse": "椭圆形状",
     "shapeLine": "直线形状",
-    "addImage": "添加图片"
+    "addImage": "添加图片",
+    "addText": "添加文本"
   },
   "floatingTools": {
     "flipHorizontally": "水平翻转",

@@ -44,6 +44,17 @@ declare module 'ketcher-react' {
   };
   export const PresetPosition: string;
 
+  export interface TextEditorLabels {
+    toolbar: string;
+    fontSize: string;
+    text: string;
+  }
+  export const RichTextEditor: React.ComponentType<{
+    labels: TextEditorLabels;
+    initialContent?: string;
+    children?: (getContent: () => string) => React.ReactNode;
+  }>;
+
   // Shared Settings window, mounted here over SettingsService
   export interface SettingsGroup {
     key: string;

@@ -8,6 +8,7 @@ import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
 import { SimpleObject as MicromoleculesSimpleObject } from 'domain/entities/simpleObject';
 import { Image as MicromoleculesImage } from 'domain/entities/image';
+import { Text as MicromoleculesText } from 'domain/entities/text';
 import { SGroup } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -393,6 +394,16 @@ export class MacromoleculesConverter {
       const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
 
       reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
+    });
+
+    drawingEntitiesManager.texts.forEach((text) => {
+      struct.texts.add(
+        new MicromoleculesText({
+          content: text.content,
+          position: text.position,
+          pos: text.pos,
+        }),
+      );
     });
 
     drawingEntitiesManager.images.forEach((image) => {
@@ -980,6 +991,10 @@ export class MacromoleculesConverter {
         center,
         image.getBottomRightPosition().sub(center),
       );
+    });
+
+    struct.texts.forEach((text) => {
+      drawingEntitiesManager.addText(text.content, text.position, text.pos);
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);

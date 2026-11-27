@@ -44,6 +44,7 @@ import SearchIcon from 'assets/icons/files/search.svg';
 import SelectLassoIcon from 'assets/icons/files/select-lasso.svg';
 import SelectRectangleIcon from 'assets/icons/files/select-rectangle.svg';
 import AddImageIcon from 'assets/icons/files/add-image.svg';
+import TextIcon from 'assets/icons/files/text.svg';
 import ShapeEllipseIcon from 'assets/icons/files/shape-ellipse.svg';
 import ShapeLineIcon from 'assets/icons/files/shape-line.svg';
 import ShapeRectangleIcon from 'assets/icons/files/shape-rectangle.svg';
@@ -91,6 +92,7 @@ const iconMap = {
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,
   images: AddImageIcon,
+  text: TextIcon,
   'shape-ellipse': ShapeEllipseIcon,
   'shape-line': ShapeLineIcon,
   'shape-rectangle': ShapeRectangleIcon,

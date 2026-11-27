@@ -80,6 +80,12 @@
     "importFailed": "导入失败：{message}",
     "exportFailed": "导出失败"
   },
+  "textEditor": {
+    "title": "文本编辑器",
+    "toolbar": "文本格式工具栏",
+    "fontSize": "字号",
+    "text": "文本："
+  },
   "confirmationDialog": {
     "defaultTitle": "确认您的操作"
   },

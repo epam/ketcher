@@ -26,6 +26,7 @@ import {
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { SimpleObject as MicromoleculeSimpleObject } from 'domain/entities/simpleObject';
+import { Text as MicromoleculeText } from 'domain/entities/text';
 import {
   Image as MicromoleculeImage,
   type KetFileImageNode,
@@ -1140,6 +1141,16 @@ export class KetSerializer implements Serializer<Struct> {
       });
 
       struct.rxnPluses.add(micromoleculeRxnPlus);
+    });
+
+    drawingEntitiesManager.texts.forEach((text) => {
+      struct.texts.add(
+        new MicromoleculeText({
+          content: text.content,
+          position: text.position,
+          pos: text.pos,
+        }),
+      );
     });
 
     drawingEntitiesManager.images.forEach((image) => {

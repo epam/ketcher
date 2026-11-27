@@ -28,6 +28,7 @@ export * from './rgroup';
 export * from './rgroupAttachmentPoint';
 export * from './rxnArrow';
 export * from './rxnPlus';
+export * from './CoreText';
 export * from './sgroup';
 export * from './sgroupForest';
 export * from './simpleObject';

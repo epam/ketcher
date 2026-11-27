@@ -26,6 +26,7 @@ import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
 import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
 import { SimpleObjectTool } from 'application/editor/tools/SimpleObject';
 import { ImageTool } from 'application/editor/tools/Image';
+import { TextTool } from 'application/editor/tools/Text';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
@@ -42,6 +43,7 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.shapeEllipse]: SimpleObjectTool,
   [ToolName.shapeLine]: SimpleObjectTool,
   [ToolName.image]: ImageTool,
+  [ToolName.text]: TextTool,
 };
 
 export * from './Tool';

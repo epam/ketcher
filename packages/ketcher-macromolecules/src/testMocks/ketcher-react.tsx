@@ -241,3 +241,11 @@ export const useSettingsPanelDrag = () => ({
   getBounds: () => null,
   setPreferredHeight: () => undefined,
 });
+
+export const RichTextEditor = ({
+  initialContent,
+}: {
+  initialContent?: string;
+}) => <div data-testid="text-editor-mock">{initialContent}</div>;
+
+export const serializeTextEditor = () => '';

@@ -80,6 +80,12 @@
     "importFailed": "Error al importar: {message}",
     "exportFailed": "Error al exportar"
   },
+  "textEditor": {
+    "title": "Editor de texto",
+    "toolbar": "Barra de herramientas de formato de texto",
+    "fontSize": "Tamaño de fuente",
+    "text": "Texto:"
+  },
   "confirmationDialog": {
     "defaultTitle": "Confirma tu acción"
   },

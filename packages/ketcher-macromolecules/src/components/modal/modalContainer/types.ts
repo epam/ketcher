@@ -1,4 +1,10 @@
-import { AttachmentPointName, BaseMonomer, PolymerBond } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  BaseMonomer,
+  PolymerBond,
+  type CoreText,
+  type Vec2,
+} from 'ketcher-core';
 
 export interface MonomerConnectionOnlyProps {
   firstMonomer?: BaseMonomer;
@@ -14,6 +20,13 @@ export interface InsertionConnectionOnlyProps {
   leftAp?: AttachmentPointName;
   rightAp?: AttachmentPointName;
 }
+
+export interface TextEditorOnlyProps {
+  position: Vec2;
+  text?: CoreText;
+}
+
+export type TextEditorProps = TextEditorOnlyProps & RequiredModalProps;
 
 export interface ConfirmationDialogOnlyProps {
   title?: string;
@@ -37,5 +50,6 @@ export type ConfirmationDialogProps = ConfirmationDialogOnlyProps &
 export type AdditionalModalProps = Partial<
   MonomerConnectionProps &
     ConfirmationDialogProps &
-    InsertionConnectionOnlyProps
+    InsertionConnectionOnlyProps &
+    TextEditorOnlyProps
 >;

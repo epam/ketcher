@@ -121,6 +121,12 @@ export function LeftMenuComponent() {
           testId="images"
           disabled={isDisabled}
         />
+        <Menu.Item
+          itemId="text"
+          title={t('leftMenu.addText')}
+          testId="text"
+          disabled={isDisabled}
+        />
       </Menu.Group>
       <Menu.Group>
         <Menu.Submenu

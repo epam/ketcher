@@ -136,6 +136,12 @@ import {
 } from 'application/editor/operations/coreRxn/rxnPlus';
 import { CoreSimpleObject } from 'domain/entities/CoreSimpleObject';
 import { CoreImage, type CoreImageState } from 'domain/entities/CoreImage';
+import { CoreText, type CoreTextState } from 'domain/entities/CoreText';
+import {
+  TextAddOperation,
+  TextDeleteOperation,
+  TextStateOperation,
+} from 'domain/entities/CoreTextOperations';
 import {
   ImageAddOperation,
   ImageDeleteOperation,
@@ -239,6 +245,7 @@ export class DrawingEntitiesManager {
   public rxnPluses: Map<number, RxnPlus> = new Map();
   public simpleObjects: Map<number, CoreSimpleObject> = new Map();
   public images: Map<number, CoreImage> = new Map();
+  public texts: Map<number, CoreText> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
   public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
@@ -367,6 +374,7 @@ export class DrawingEntitiesManager {
       ...(this.rxnPluses as Map<number, DrawingEntity>),
       ...(this.simpleObjects as Map<number, DrawingEntity>),
       ...(this.images as Map<number, DrawingEntity>),
+      ...(this.texts as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
     ];
   }
@@ -526,6 +534,8 @@ export class DrawingEntitiesManager {
       return this.deleteSimpleObject(drawingEntity);
     } else if (drawingEntity instanceof CoreImage) {
       return this.deleteImage(drawingEntity);
+    } else if (drawingEntity instanceof CoreText) {
+      return this.deleteText(drawingEntity);
     } else if (drawingEntity instanceof CoreStereoFlag) {
       return this.deleteStereoFlag(drawingEntity);
     } else {
@@ -693,6 +703,7 @@ export class DrawingEntitiesManager {
       ...this.rxnPluses.values(),
       ...this.simpleObjects.values(),
       ...this.images.values(),
+      ...this.texts.values(),
       ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
@@ -2464,6 +2475,7 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.multitailArrows = new Pool();
     this.micromoleculesHiddenEntities.simpleObjects = new Pool();
     this.micromoleculesHiddenEntities.images = new Pool();
+    this.micromoleculesHiddenEntities.texts = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -4655,6 +4667,70 @@ export class DrawingEntitiesManager {
     });
 
     return states;
+  }
+  private deleteTextModelChange(text: CoreText) {
+    this.texts.delete(text.id);
+  }
+
+  private addTextModelChange(text: CoreText) {
+    this.texts.set(text.id, text);
+
+    return text;
+  }
+
+  public addText(content: string, position: Vec2, pos: Vec2[] = []) {
+    const text = new CoreText(content, position);
+    text.pos = pos.map((point) => new Vec2(point.x, point.y));
+    const command = new Command();
+    const operation = new TextAddOperation(
+      (existing?: CoreText) => this.addTextModelChange(existing ?? text),
+      this.deleteTextModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteText(text: CoreText) {
+    const command = new Command();
+
+    command.addOperation(
+      new TextDeleteOperation(
+        text,
+        this.deleteTextModelChange.bind(this),
+        this.addTextModelChange.bind(this),
+      ),
+    );
+
+    return command;
+  }
+
+  public updateText(text: CoreText, content: string) {
+    const command = new Command();
+    const fromState = text.getState();
+
+    command.addOperation(
+      new TextStateOperation(text, fromState, {
+        content,
+        position: fromState.position,
+      }),
+    );
+
+    return command;
+  }
+
+  public createTextUpdateHistoryCommand(
+    text: CoreText,
+    startState: CoreTextState,
+  ) {
+    const command = new Command();
+
+    command.addOperation(
+      new TextStateOperation(text, startState, text.getState()),
+    );
+
+    return command;
   }
   public deleteSimpleObject(simpleObject: CoreSimpleObject) {
     const command = new Command();

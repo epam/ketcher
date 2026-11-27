@@ -56,6 +56,7 @@ describe('Save modal', () => {
           rxnPluses: [],
           simpleObjects: new Map(),
           images: new Map(),
+          texts: new Map(),
         },
         viewModel: {
           initialize: vi.fn(),
@@ -136,6 +137,7 @@ describe('Save modal', () => {
         rxnPluses: [],
         simpleObjects: new Map(),
         images: new Map(),
+        texts: new Map(),
       },
       monomersLibrary: {},
       canvas: document.createElement('canvas'),

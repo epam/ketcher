@@ -2,7 +2,7 @@
 
 The **small** kind of [SKILL.md](../SKILL.md): one reason, one PR, and no user sees a difference.
 
-You run it yourself, without subagents, until review, and go on without asking.
+You run it yourself, without subagents, until review, and go on without asking until _Landing_ in SKILL.md.
 
 The existing tests and the type check hold the behavior. A small change that needs new tests to hold it is a refactor: switch to [REFACTOR.md](REFACTOR.md) and say so.
 

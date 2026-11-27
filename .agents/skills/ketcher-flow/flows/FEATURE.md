@@ -46,20 +46,20 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
    Done when no two tickets on the same frontier share a path.
 
-8. **Draft PR.** Commit the change folder as the first commit in the task worktree, push, and open a draft PR, per TRACKER.md. Done when the draft PR exists.
+8. **Checkpoint.** Commit the change folder as the first commit in the task worktree. The PR opens at step 14, once the user approves the push. Done when the change folder is committed.
 
 9. **Implement.** Save the _Checks_ baseline. Dispatch an **implementer** per ticket on the frontier, each with [IMPLEMENT.md](../roles/IMPLEMENT.md), its ticket file, `<run dir>/notes/`, and its worktree or the shared branch. Done when every ticket on the frontier has an implementer.
 
-10. **Merge.** When an implementer reports, dispatch a **merger** with [MERGE.md](../roles/MERGE.md), the implementer's branch, and the path of the task worktree (it holds the PR branch). On a shared branch, skip the merger: the implementer committed there. Then tick the ticket's tasks in `tasks.md` and commit that. When a frontier changes, go to step 9 for the newly ready tickets.
+10. **Merge.** When an implementer reports, dispatch a **merger** with [MERGE.md](../roles/MERGE.md), the implementer's branch, and the path of the task worktree (it holds the task branch). On a shared branch, skip the merger: the implementer committed there. Then tick the ticket's tasks in `tasks.md` and commit that. When a frontier changes, go to step 9 for the newly ready tickets.
 
     An implementer that reports **shape misfit** merges nothing. Take its ticket back to step 6 with the report as evidence. When two tickets report the same misfit, the shared design is wrong: redesign every ticket built on it.
 
     Done when every ticket is merged and every task in `tasks.md` is ticked.
 
-11. **Verify** on the PR branch: dispatch a **verifier** with [VERIFY.md](../roles/VERIFY.md) and the change's spec deltas as the spec. A `fail` becomes a fix by a new implementer, then verify again. A `could not run` is not a pass: carry it to the PR and the final report. Done when the verdict is `pass`, `n/a`, or `could not run`.
+11. **Verify** on the task branch: dispatch a **verifier** with [VERIFY.md](../roles/VERIFY.md) and the change's spec deltas as the spec. A `fail` becomes a fix by a new implementer, then verify again. A `could not run` is not a pass: carry it to the PR and the final report. Done when the verdict is `pass`, `n/a`, or `could not run`.
 
 12. **Archive.** Run the `openspec-archive-change` skill ([its SKILL.md](../../openspec-archive-change/SKILL.md)) with `--skip-specs`. Then update the memory bank, as `AGENTS.md` says: fold the deltas into the feature file in `.memory-bank/features/`, and the `modules/`, `domain.md`, or `glossary.md` entries the change made true. Done when `npx openspec validate --all --strict` and `npm run check:agent-docs` pass, and the archive is one commit.
 
 13. **Review.** Follow [REVIEW.md](../shared/REVIEW.md) with the archived change folder as the spec, so the archive and the memory-bank edits are reviewed with the code. A fresh implementer does the cleanup, and a fresh one fixes each round's findings. Done when REVIEW.md's rounds have stopped.
 
-14. **Ready.** Update the PR body (the memory-bank files, "Verified in the app"), mark it ready, and remove this run's worktrees. Report: the PR, the verify verdict, the review outcome, and anything left open.
+14. **Land** as SKILL.md says, ready for review, with the memory-bank files and "Verified in the app" in the PR body. Then remove this run's worktrees. Report: the PR, the verify verdict, the review outcome, and anything left open.

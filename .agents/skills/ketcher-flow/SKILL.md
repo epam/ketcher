@@ -44,7 +44,7 @@ When no row fits, ask the user, offering the kinds that fit. Done when you have 
 
 ## Where a flow stops
 
-Code on a branch, a draft PR, and files in the run directory are reversible, so a flow goes on without asking. It stops for the user only at a decision that is theirs (product or design) or a write other people see on the tracker, and decides and records everything else. Each flow names its stops, on top of the open-PR stop in _Kinds_:
+Commits in the run's worktrees and files in the run directory stay on this machine and are reversible, so a flow goes on without asking until it lands. It stops for the user only at a decision that is theirs (product or design), at a write other people see on the tracker, and before every push (_Landing_), and decides and records everything else. Each flow names its stops, on top of the open-PR stop in _Kinds_ and the push stop in _Landing_:
 
 | Kind          | Stops                                                                         |
 | ------------- | ----------------------------------------------------------------------------- |
@@ -88,6 +88,6 @@ Every change a user can see in the editor is proven with the `verify-ketcher` sk
 
 ## Landing
 
-Every flow ends in a PR on its own branch, per [TRACKER.md](shared/TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). A change that alters what the canvas draws also runs [SNAPSHOTS.md](shared/SNAPSHOTS.md) once the PR is open. You never merge.
+Every flow ends in a PR on its own branch, per [TRACKER.md](shared/TRACKER.md). The commits stay local until the user approves them (`AGENTS.md`, Git and commits): before the first push, **stop** and show the branch, its commits, `git diff --stat <base>...HEAD`, the checks against the baseline, the verify verdict, and the review outcome. Push and open the PR only on the user's approval. Every later push of the run, such as a snapshot update, asks the same way. A change that alters what the canvas draws also runs [SNAPSHOTS.md](shared/SNAPSHOTS.md) once the PR is open. You never merge.
 
 Every flow's final report ends with **Lessons**: each blocker or major that review found and that a rule could have caught before review (a lint rule, a rule in [review-rules.md](../../../.memory-bank/review-rules.md), a line in [QUALITY.md](shared/QUALITY.md)), with the rule you would add. Propose it only: a new rule is a scope of its own, not part of this PR. Write `Lessons: none` when no finding fits.

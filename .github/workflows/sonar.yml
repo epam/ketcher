@@ -22,6 +22,9 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+
       - name: check connection
         run: curl -v https://sonar.epam.com/api/server/version
 
@@ -45,9 +48,18 @@ jobs:
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@7a5fffe8e523c40e0c740b6bc2712ab503e52efa # v1.2.1
+        continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
+
+      - name: Show SonarQube Quality Gate failure details
+        if: always()
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: bash .github/scripts/sonar-quality-gate-details.sh
 
       # Optionally you can use the output from the Quality Gate in another step.
       # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.

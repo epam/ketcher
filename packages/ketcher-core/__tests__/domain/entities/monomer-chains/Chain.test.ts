@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
@@ -132,5 +132,77 @@ describe('Chain phosphate nodes', () => {
     expect(nodes[0]).toBeInstanceOf(LinkerSequenceNode);
     expect(nodes[0].monomers).toEqual([firstPhosphate, secondPhosphate]);
     expect(nodes).toHaveLength(2);
+  });
+
+  // https://github.com/epam/ketcher/issues/6438: a phosphate hydrogen-bonded
+  // to the other strand is shown as its own "p", aligned with its pair, rather
+  // than merged into a group of phosphates shown as "@".
+  describe('with a phosphate paired to the other strand', () => {
+    const pairWithOtherStrand = (phosphate: BaseMonomer) => {
+      editor.drawingEntitiesManager.createPolymerBond(
+        phosphate,
+        addUnsplitNucleotide(20),
+        AttachmentPointName.HYDROGEN,
+        AttachmentPointName.HYDROGEN,
+        MACROMOLECULES_BOND_TYPES.HYDROGEN,
+      );
+    };
+
+    it('keeps a paired phosphate at the start of a group as its own node', () => {
+      const pairedPhosphate = addPhosphate(0);
+      const secondPhosphate = addPhosphate(2);
+      pairWithOtherStrand(pairedPhosphate);
+
+      const nodes = getNodes(
+        pairedPhosphate,
+        secondPhosphate,
+        addUnsplitNucleotide(4),
+      );
+
+      expect(nodes).toHaveLength(3);
+      expect(nodes[0]).toBeInstanceOf(MonomerSequenceNode);
+      expect(nodes[0].monomer).toBe(pairedPhosphate);
+      // The phosphate left alone next to it follows the usual "p" rule.
+      expect(nodes[1]).toBeInstanceOf(MonomerSequenceNode);
+      expect(nodes[1].monomer).toBe(secondPhosphate);
+    });
+
+    it('splits a paired phosphate off the end of a group', () => {
+      const firstPhosphate = addPhosphate(2);
+      const pairedPhosphate = addPhosphate(4);
+      pairWithOtherStrand(pairedPhosphate);
+
+      const nodes = getNodes(
+        addUnsplitNucleotide(0),
+        firstPhosphate,
+        pairedPhosphate,
+      );
+
+      expect(nodes).toHaveLength(3);
+      expect(nodes[1]).toBeInstanceOf(MonomerSequenceNode);
+      expect(nodes[1].monomer).toBe(firstPhosphate);
+      expect(nodes[2]).toBeInstanceOf(MonomerSequenceNode);
+      expect(nodes[2].monomer).toBe(pairedPhosphate);
+    });
+
+    it('keeps the other phosphates of a larger group as one linker', () => {
+      const pairedPhosphate = addPhosphate(0);
+      const secondPhosphate = addPhosphate(2);
+      const thirdPhosphate = addPhosphate(4);
+      pairWithOtherStrand(pairedPhosphate);
+
+      const nodes = getNodes(
+        pairedPhosphate,
+        secondPhosphate,
+        thirdPhosphate,
+        addUnsplitNucleotide(6),
+      );
+
+      expect(nodes).toHaveLength(3);
+      expect(nodes[0]).toBeInstanceOf(MonomerSequenceNode);
+      expect(nodes[0].monomer).toBe(pairedPhosphate);
+      expect(nodes[1]).toBeInstanceOf(LinkerSequenceNode);
+      expect(nodes[1].monomers).toEqual([secondPhosphate, thirdPhosphate]);
+    });
   });
 });

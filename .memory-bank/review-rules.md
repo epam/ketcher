@@ -46,6 +46,17 @@ Status: active
 Why: The agent instructions require a manual review of each new dependency. Check that the package is needed and maintained, and that an existing dependency does not already cover the job, as lodash does for many helpers.
 Source: agent-docs
 
+### R19: Convert between model, canvas, and view coordinates with the Coordinates class
+
+Scope: packages/ketcher-core/src/application/**, packages/ketcher-macromolecules/src/**
+Severity: major
+Enforced by: lint(ketcher-invariants/no-manual-coordinate-conversion)
+Status: proposed
+Why: `Coordinates` (application/editor/shared/coordinates.ts) owns the model, canvas, and view conversions and reads `macroModeScale` and the zoom transform for the caller. A hand-written copy of that math drifts when the scale or the transform changes. The rule flags calls to `invertZoom`, `scaleCoordinates`, and `getScreenCTM`; test files are exempt. `Coordinates` itself is the one allowlisted file (`ALLOWED_COORDINATE_CONVERSIONS` in scripts/eslint-invariants-rules.mjs), and no other file called them when the rule was added. Multiplying a length by `macroModeScale` is not flagged, because a size is not a position; review that by eye. See modules/rendering.md, section Coordinate spaces.
+Source: PR #12123
+Bad: `ZoomTool.instance.invertZoom(point).scaled(1 / editorSettings.macroModeScale)`, or `canvas.node()?.getScreenCTM()`
+Good: `Coordinates.viewToModel(point)`, or `Coordinates.canvasToView(new Vec2(x, y))`
+
 ## Types
 
 ### R5: Do not add casts to satisfy the type checker

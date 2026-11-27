@@ -136,6 +136,7 @@ import {
   getLibraryEditInitialValues,
   isSameMonomerType,
 } from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utils';
+import { getLeavingAtomForAttachmentPoint } from '../ui/views/components/MonomerCreationWizard/RnaPresetAttachmentPointValidation';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -3614,11 +3615,14 @@ class Editor implements KetcherEditor {
           return;
         }
 
-        const leavingAtomLabel =
-          componentKey === 'phosphate' ||
-          (componentKey === 'sugar' && connectedComponentKey === 'base')
-            ? AtomLabel.O
-            : AtomLabel.H;
+        const leavingAtomLabel = getLeavingAtomForAttachmentPoint(
+          {
+            base: KetMonomerClass.Base,
+            sugar: KetMonomerClass.Sugar,
+            phosphate: KetMonomerClass.Phosphate,
+          }[componentKey],
+          attachmentPointName,
+        );
 
         const leavingAtomPosition = connectedAtomPosition.rotateAroundOrigin(
           60,

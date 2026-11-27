@@ -2451,6 +2451,7 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.rxnArrows = new Pool();
     this.micromoleculesHiddenEntities.rxnPluses = new Pool();
     this.micromoleculesHiddenEntities.multitailArrows = new Pool();
+    this.micromoleculesHiddenEntities.simpleObjects = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {

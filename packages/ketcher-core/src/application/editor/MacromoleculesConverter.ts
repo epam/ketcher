@@ -1,4 +1,4 @@
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+﻿import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -6,6 +6,7 @@ import { Pile } from 'domain/entities/pile';
 import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
 import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
+import { SimpleObject as MicromoleculesSimpleObject } from 'domain/entities/simpleObject';
 import { SGroup } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -391,6 +392,16 @@ export class MacromoleculesConverter {
       const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
 
       reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
+    });
+
+    drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {
+      struct.simpleObjects.add(
+        new MicromoleculesSimpleObject({
+          mode: simpleObject.mode,
+          pos: simpleObject.pos,
+          initiallySelected: simpleObject.initiallySelected,
+        }),
+      );
     });
 
     struct.findConnectedComponents();
@@ -941,6 +952,17 @@ export class MacromoleculesConverter {
       );
 
       command.merge(rxnPlusAddCommand);
+    });
+
+    struct.simpleObjects.forEach((simpleObject) => {
+      const simpleObjectAddCommand = drawingEntitiesManager.addSimpleObject(
+        simpleObject.mode,
+        simpleObject.pos[0],
+        simpleObject.pos[1],
+        simpleObject.initiallySelected,
+      );
+
+      command.merge(simpleObjectAddCommand);
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);

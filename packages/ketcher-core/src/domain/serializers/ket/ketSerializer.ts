@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+﻿import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -25,6 +25,7 @@ import {
   MultitailArrow as MicromoleculeMultitailArrow,
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
+import { SimpleObject as MicromoleculeSimpleObject } from 'domain/entities/simpleObject';
 import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
@@ -1136,6 +1137,16 @@ export class KetSerializer implements Serializer<Struct> {
       });
 
       struct.rxnPluses.add(micromoleculeRxnPlus);
+    });
+
+    drawingEntitiesManager.simpleObjects.forEach((simpleObject) => {
+      struct.simpleObjects.add(
+        new MicromoleculeSimpleObject({
+          mode: simpleObject.mode,
+          pos: simpleObject.pos,
+          initiallySelected: simpleObject.initiallySelected,
+        }),
+      );
     });
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);

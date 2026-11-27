@@ -29,7 +29,8 @@ import { merge } from 'lodash';
 import {
   BaseMonomer,
   CoreEditor,
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  FlexModePolymerBondRenderer,
+  SnakeModePolymerBondRenderer,
   EditorLineLength,
   SetEditorLineLengthAction,
   NodeSelection,
@@ -301,7 +302,7 @@ function Editor({
     };
     const onRightClickPolymerBond = ([event, polymerBondRenderer]: [
       PointerEvent,
-      DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer,
     ]): void => {
       setContextMenuEvent(event);
       setSelectedMonomers([]);

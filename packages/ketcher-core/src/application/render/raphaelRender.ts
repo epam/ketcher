@@ -117,7 +117,6 @@ export class Render {
       this.sz = this.getCanvasSizeVector();
       this.resizeViewBox();
     });
-
     this.resizeObserver.observe(this.paper.canvas);
   };
 

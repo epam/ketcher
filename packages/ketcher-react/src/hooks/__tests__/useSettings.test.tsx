@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
 import { render, renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { type Store, createStore } from 'redux';
@@ -31,11 +32,11 @@ const TEST_KETCHER_ID = 'use-settings-test';
 
 const detachMockSettingsService = () => {
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
-  delete window.ketcher;
+  delete globalThis.ketcher;
 };
 
 const attachMockSettingsService = (settingsService: ISettingsService) => {
-  window.ketcher = { settingsService } as unknown as Ketcher;
+  globalThis.ketcher = { settingsService } as unknown as Ketcher;
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   ketcherProvider.addKetcherInstance({
     id: TEST_KETCHER_ID,
@@ -73,16 +74,16 @@ const createMockSettingsService = () => {
   const mockSettings = getDefaultSettings();
 
   return {
-    init: jest.fn().mockResolvedValue(undefined),
-    getSettings: jest.fn().mockReturnValue(mockSettings),
-    updateSettings: jest.fn().mockResolvedValue(mockSettings),
-    resetToDefaults: jest.fn().mockResolvedValue(mockSettings),
-    loadPreset: jest.fn().mockResolvedValue(mockSettings),
-    getAvailablePresets: jest.fn().mockReturnValue(['acs']),
-    validateSettings: jest.fn().mockReturnValue({ valid: true }),
-    exportSettings: jest.fn().mockReturnValue(JSON.stringify(mockSettings)),
-    importSettings: jest.fn().mockResolvedValue(mockSettings),
-    subscribe: jest.fn((listener: SettingsListener) => {
+    init: vi.fn().mockResolvedValue(undefined),
+    getSettings: vi.fn().mockReturnValue(mockSettings),
+    updateSettings: vi.fn().mockResolvedValue(mockSettings),
+    resetToDefaults: vi.fn().mockResolvedValue(mockSettings),
+    loadPreset: vi.fn().mockResolvedValue(mockSettings),
+    getAvailablePresets: vi.fn().mockReturnValue(['acs']),
+    validateSettings: vi.fn().mockReturnValue({ valid: true }),
+    exportSettings: vi.fn().mockReturnValue(JSON.stringify(mockSettings)),
+    importSettings: vi.fn().mockResolvedValue(mockSettings),
+    subscribe: vi.fn((listener: SettingsListener) => {
       listeners.push(listener);
       return () => {
         const index = listeners.indexOf(listener);

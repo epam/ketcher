@@ -5,18 +5,18 @@ let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const TOOLTIP_DELAY = 300;
 
-type InfoPanelData = {
+export type InfoPanelData = {
   groupStruct: Struct;
   sGroup: SGroup;
   event: PointerEvent;
 };
 
 /**
- * Why?
- * We need somehow display sgroup attachment points (tooltips, preview, templates),
- * But due to current rendering approach for sgroups (ungrouping sgroups)
- * - we have to use RGroup attachment points on atoms for this purposes
- */
+Why?
+We need somehow display sgroup attachment points (tooltips, preview, templates),
+But due to current rendering approach for sgroups (ungrouping sgroups)
+- we have to use RGroup attachment points on atoms for this purposes
+*/
 function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
   sGroup: SGroup,
@@ -35,6 +35,18 @@ function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
 }
 
 function makeStruct(editor: Editor, sGroup: SGroup) {
+  // For MonomerMicromolecule, use the monomer template struct directly.
+  // The template struct has rglabel set on leaving-group atoms (via
+  // fillStructRgLabelsByMonomerTemplate), so attachment points render as
+  // R1/R2/etc. instead of H. Using the canvas struct would show H atoms
+  // without rglabel (they are only set after a mode-switch round-trip).
+  if (sGroup instanceof MonomerMicromolecule) {
+    const monomerStruct = sGroup.monomer?.monomerItem?.struct;
+    if (monomerStruct) {
+      return monomerStruct.clone();
+    }
+  }
+
   const existingStruct = editor.struct();
   const struct = new Struct();
 
@@ -59,7 +71,7 @@ function makeBonds(
   struct: Struct,
   atomsIdMapping: Map<number, number>,
 ) {
-  Array.from(existingStruct.bonds).forEach((value) => {
+  [...existingStruct.bonds].forEach((value) => {
     const [_, bond] = value;
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =

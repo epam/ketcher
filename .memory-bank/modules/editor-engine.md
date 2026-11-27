@@ -13,7 +13,7 @@ Ketcher runs **two independent editor controllers** — one for micromolecules, 
 | Model     | `Struct` via a render-structure wrapper | `DrawingEntitiesManager` |
 | Render    | Raphael                                 | D3/SVG                   |
 | Mutations | Action + base operation                 | Command + operation      |
-| History   | stack held inside the editor            | history singleton        |
+| History   | shared stack held inside the editor     | adapter to shared stack  |
 | Modes     | single                                  | Flex / Snake / Sequence  |
 
 ## Micromolecules editor
@@ -51,6 +51,8 @@ There are three concrete modes, all extending a shared abstract base:
 | Sequence | `sequence-layout-mode` |
 
 The default mode is Sequence. Each mode is registered by name and looked up by name at runtime. The base mode provides common behaviour: initialization, keyboard handling, copy/cut/paste (including conversion from non-KET clipboard content via Indigo), and abstract hooks that each concrete mode implements — how to position a newly added node, whether pasting is allowed, and how to scroll the view.
+
+Snake mode's row packing and molecule placement are described in [snake-layout](./snake-layout.md).
 
 ### Tools
 

@@ -1,11 +1,10 @@
+import { vi } from 'vitest';
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { AbbreviationLookup } from './AbbreviationLookup';
-import {
-  ABBREVIATION_LOOKUP_TEST_ID,
-  NO_MATCHING_RESULTS_LABEL,
-  START_TYPING_NOTIFICATION_LABEL,
-} from './AbbreviationLookup.constants';
+import { ABBREVIATION_LOOKUP_TEST_ID } from './AbbreviationLookup.constants';
+import i18n from 'src/i18n/i18n';
 import {
   CLIP_AREA_TEST_ID,
   createOption,
@@ -19,22 +18,25 @@ import {
   AbbreviationType,
 } from './AbbreviationLookup.types';
 
-const mockedDispatch = jest.fn();
-jest.mock('react-redux', () => {
+const mockedAbbreviationLookupValue = vi.hoisted(() => ({
+  value: 'a',
+}));
+const mockedDispatch = vi.hoisted(() => vi.fn());
+
+vi.mock('react-redux', () => {
   return {
     useDispatch: () => mockedDispatch,
     useSelector: (fn) => fn(),
   };
 });
 
-let mockedAbbreviationLookupValue = 'a';
-jest.mock('../../state/abbreviationLookup/selectors', () => {
+vi.mock('../../state/abbreviationLookup/selectors', () => {
   return {
-    selectAbbreviationLookupValue: () => mockedAbbreviationLookupValue,
+    selectAbbreviationLookupValue: () => mockedAbbreviationLookupValue.value,
   };
 });
 
-jest.mock('../../state/common/selectors', () => {
+vi.mock('../../state/common/selectors', () => {
   return {
     selectCursorPosition: () => ({ x: 100, y: 100 }),
   };
@@ -56,7 +58,7 @@ describe('AbbreviationLookup', () => {
   });
 
   it('Should render dropdown with items', () => {
-    mockedAbbreviationLookupValue = 'a';
+    mockedAbbreviationLookupValue.value = 'a';
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
@@ -67,25 +69,29 @@ describe('AbbreviationLookup', () => {
   });
 
   it('Should render dropdown with no matching notification', () => {
-    mockedAbbreviationLookupValue = 'aaaaa';
+    mockedAbbreviationLookupValue.value = 'aaaaa';
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
-    const notes = screen.getByText(NO_MATCHING_RESULTS_LABEL);
+    const notes = screen.getByText(
+      i18n.t('dialogs:toolbox.abbreviationLookup.noMatchingResults'),
+    );
     expect(notes).toBeInTheDocument();
   });
 
   it('Should render dropdown with start typing notification', () => {
-    mockedAbbreviationLookupValue = '';
+    mockedAbbreviationLookupValue.value = '';
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
-    const notes = screen.getByText(START_TYPING_NOTIFICATION_LABEL);
+    const notes = screen.getByText(
+      i18n.t('dialogs:toolbox.abbreviationLookup.startTypingPrompt'),
+    );
     expect(notes).toBeInTheDocument();
   });
 
   it('Should dispatch close action on blur', () => {
-    mockedAbbreviationLookupValue = 'a';
+    mockedAbbreviationLookupValue.value = 'a';
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
@@ -96,7 +102,7 @@ describe('AbbreviationLookup', () => {
   });
 
   it('Should dispatch close on Escape key', () => {
-    mockedAbbreviationLookupValue = 'a';
+    mockedAbbreviationLookupValue.value = 'a';
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
@@ -109,7 +115,7 @@ describe('AbbreviationLookup', () => {
   });
 
   it('Should focus on cliparea after closing', async () => {
-    mockedAbbreviationLookupValue = 'a';
+    mockedAbbreviationLookupValue.value = 'a';
     const { rerender } = render(
       <AbbreviationLookup options={[optionA, optionB]} />,
       {
@@ -123,7 +129,7 @@ describe('AbbreviationLookup', () => {
   });
 
   it('Should dispatch atom tool action after option with an element is selected', () => {
-    mockedAbbreviationLookupValue = 'a';
+    mockedAbbreviationLookupValue.value = 'a';
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
       wrapper: KetcherWrapper,
     });
@@ -143,7 +149,7 @@ describe('AbbreviationLookup', () => {
   });
 
   it('Should dispatch template tool action after option with a tempalte is selected', () => {
-    mockedAbbreviationLookupValue = 'MEK';
+    mockedAbbreviationLookupValue.value = 'MEK';
     render(<AbbreviationLookup options={[optionA, optionB, optionC]} />, {
       wrapper: KetcherWrapper,
     });

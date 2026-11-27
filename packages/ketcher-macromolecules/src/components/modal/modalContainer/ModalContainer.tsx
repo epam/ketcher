@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,18 +16,26 @@
 import {
   closeModal,
   selectAdditionalProps,
-  selectModalIsOpen,
+  isModalOpened,
   selectModalName,
 } from 'state/modal';
+import { selectEditor } from 'state/common';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { modalComponentList } from './modalComponentList';
 
 export const ModalContainer = () => {
-  const isOpen = useAppSelector(selectModalIsOpen);
+  const isOpen = useAppSelector(isModalOpened);
   const modalName = useAppSelector(selectModalName);
   const additionalProps = useAppSelector(selectAdditionalProps);
+  const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
+
+  // The editor listens to paste on the whole document, so it has to be told
+  // when a dialog covers the canvas
+  useEffect(() => {
+    editor?.setIsModalOpen(isOpen);
+  }, [editor, isOpen]);
 
   const handleClose = useCallback(() => {
     dispatch(closeModal());

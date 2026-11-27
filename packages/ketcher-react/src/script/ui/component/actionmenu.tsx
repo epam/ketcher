@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +27,11 @@ import action, {
   type UiAction,
   type UiActionAction,
 } from '../action';
+import { resolveActionTitle } from '../action/resolveActionTitle';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
+import type { VisibleTools } from '../state/toolbar/types';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
@@ -47,16 +49,12 @@ interface StatusMap {
   [key: string]: ItemStatus;
 }
 
-interface VisibleToolsMap {
-  [key: string]: string;
-}
-
 interface SharedActionProps {
   status: StatusMap;
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
   opened?: string;
-  visibleTools: VisibleToolsMap;
+  visibleTools: VisibleTools;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -78,16 +76,6 @@ interface ActionButtonProps {
   action: UiAction;
   status?: ItemStatus;
   onAction: (action: UiActionAction) => void;
-  disableableButtons?: string[];
-  indigoVerification?: boolean;
-}
-
-interface SharedActionProps {
-  status: StatusMap;
-  onOpen: (id: string | undefined, isSelected: boolean) => void;
-  onAction: (action: UiActionAction) => void;
-  opened?: string;
-  visibleTools: VisibleToolsMap;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -125,10 +113,7 @@ function isMenuOpened(currentNode: HTMLElement | null): boolean {
 }
 
 function getItemKey(item: MenuItem): string {
-  if (typeof item === 'string') {
-    return item;
-  }
-  return item.id;
+  return typeof item === 'string' ? item : item.id;
 }
 
 export function showMenuOrButton(
@@ -168,17 +153,21 @@ function ActionButton({
   disableableButtons = [],
   indigoVerification,
 }: Readonly<ActionButtonProps>) {
+  const { t } = useTranslation();
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
+  const title = resolveActionTitle(t, action);
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!status.selected || isMenuOpened(menuRef.current)) {
-      onAction(action.action);
-      event.stopPropagation();
+    if (status.selected && !isMenuOpened(menuRef.current)) {
+      return;
     }
+
+    onAction(action.action);
+    event.stopPropagation();
   };
 
   return (
@@ -187,7 +176,7 @@ function ActionButton({
       disabled={disabled}
       onClick={onClick}
       role="menuitem"
-      title={shortcut ? `${action.title} (${shortcut})` : action.title}
+      title={shortcut ? `${title} (${shortcut})` : title}
     >
       <Icon name={name} />
       <kbd>{shortcut}</kbd>
@@ -283,10 +272,12 @@ function ActionMenu({
   const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);
   const handleMenuItemKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openHandle(event, props.onOpen);
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
     }
+
+    event.preventDefault();
+    openHandle(event, props.onOpen);
   };
 
   return (
@@ -323,7 +314,7 @@ function ActionMenu({
 function toolMargin(
   menuName: string,
   menu: MenuItem[],
-  visibleTools: VisibleToolsMap,
+  visibleTools: VisibleTools,
 ): CSSProperties {
   if (!visibleTools[menuName]) return {};
   // now not found better way
@@ -340,19 +331,21 @@ function toolMargin(
   if (index === -1) {
     const tools: string[] = [];
     menu.forEach((item) => {
-      if (isMenuItemWithMenu(item)) {
-        // Recursively flatten nested menu items
-        const nestedStrings = item.menu.filter(
-          (nestedItem): nestedItem is string => typeof nestedItem === 'string',
-        );
-        tools.push(...nestedStrings);
+      if (!isMenuItemWithMenu(item)) {
+        return;
       }
+
+      // Recursively flatten nested menu items
+      const nestedStrings = item.menu.filter(
+        (nestedItem): nestedItem is string => typeof nestedItem === 'string',
+      );
+      tools.push(...nestedStrings);
     });
 
     index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
   }
 
-  return index !== -1 ? { marginTop: -(iconHeight * index) + 'px' } : {};
+  return index === -1 ? {} : { marginTop: -(iconHeight * index) + 'px' };
 }
 
 function openHandle(

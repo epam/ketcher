@@ -224,8 +224,7 @@ test.describe('Import-Saving .mol Files', () => {
   */
   for (const monomer of monomersToDelete) {
     test(`Open file from .mol V3000 and Delete ${monomer.monomer.alias} monomer`, async () => {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       await openFileAndAddToCanvasMacro(
@@ -277,8 +276,7 @@ test.describe('Import-Saving .mol Files', () => {
       await page.close();
       page = await context.newPage();
       await waitForPageInit(page);
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
     },

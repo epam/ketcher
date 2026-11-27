@@ -1,18 +1,18 @@
 /* eslint-disable no-empty */
 /**
- * Safely sends a postMessage to parent window with proper error handling
- * @param message - The message to send
- * @param fallbackOrigin - Fallback origin if parent origin is not available
- */
+Safely sends a postMessage to parent window with proper error handling
+@param message - The message to send
+@param fallbackOrigin - Fallback origin if parent origin is not available
+*/
 export const safePostMessage = (
   message: Record<string, unknown>,
-  fallbackOrigin: string = window.location.origin,
+  fallbackOrigin: string = globalThis.location.origin,
 ): void => {
-  if (window.parent === window) return;
+  if (globalThis.parent === globalThis.window) return;
 
   let parentOrigin = fallbackOrigin;
   try {
-    parentOrigin = window.parent.location.origin || fallbackOrigin;
+    parentOrigin = globalThis.parent.location.origin || fallbackOrigin;
   } catch {}
 
   if (
@@ -23,5 +23,5 @@ export const safePostMessage = (
     parentOrigin = fallbackOrigin;
   }
 
-  window.parent.postMessage(message, parentOrigin);
+  globalThis.parent.postMessage(message, parentOrigin);
 };

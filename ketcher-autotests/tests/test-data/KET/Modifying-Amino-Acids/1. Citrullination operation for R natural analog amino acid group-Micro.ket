@@ -440,8 +440,7 @@
             "y": -1.25
         },
         "alias": "Cit",
-        "templateId": "Cit___Citrulline",
-        "seqid": 2
+        "templateId": "Cit___Citrulline"
     },
     "monomer2": {
         "type": "monomer",

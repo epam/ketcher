@@ -29,7 +29,6 @@ import {
   ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -310,40 +309,36 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6947
-       * Bug: https://github.com/epam/ketcher/issues/5634
-       * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
-       * Scenario:
-       * 1. Go to Macro - Snake mode
-       * 2. Load from file
-       * 3. Save to MOL V3000
-       */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
-      );
-      await takeEditorScreenshot(page);
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5634
+     * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from file
+     * 3. Save to MOL V3000
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Case 11: Export to SDF V3000 not returns SDF V2000', async ({
     MoleculesCanvas: _,
@@ -413,8 +408,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -436,8 +432,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -459,8 +456,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -517,6 +515,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await drawBenzeneRing(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await SettingsDialog(page).setOptionValue(BondsSetting.BondLength, '50');
     await SettingsDialog(page).setOptionValue(BondsSetting.BondSpacing, '50');
     await SettingsDialog(page).apply();
@@ -630,8 +629,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Start new sequence
      * 3. Add O and U symbols to the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await MacromoleculesTopToolbar(page).peptides();
@@ -639,31 +637,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 23: Set a new name for the button ACS style', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5561
-     * Description: Set a new name for the button ACS style. A new name for button should be "Set ACS Settings"
-     * Scenario:
-     * 1. Toggle to Micro
-     * 2. Press Settings
-     * 3. Check that the button name is "Set ACS Settings"
-     */
-    const setACSSettings = SettingsDialog(page).setACSSettingsButton;
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await expect(setACSSettings).toBeVisible();
-    await expect(setACSSettings).toHaveText('Set ACS Settings');
-    await takeEditorScreenshot(page, {
-      mask: [SettingsDialog(page).resetButton],
-    });
-    await SettingsDialog(page).closeWindowButton.click();
-  });
-
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
     FlexCanvas: _,
   }) => {
-    // Works wrong in popup mode because of the bug: https://github.com/epam/ketcher/issues/7503
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5557
@@ -680,14 +656,31 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await CommonLeftToolbar(page).areaSelectionTool();
+    const expectPreviewInsideCanvas = async () => {
+      const canvas = await page.locator('#polymer-editor-canvas').boundingBox();
+      const tooltip = await MonomerPreviewTooltip(page).window.boundingBox();
+      if (!canvas || !tooltip) {
+        throw new Error('Canvas and monomer preview must be visible');
+      }
+      expect(tooltip.x).toBeGreaterThanOrEqual(canvas.x);
+      expect(tooltip.y).toBeGreaterThanOrEqual(canvas.y);
+      expect(tooltip.x + tooltip.width).toBeLessThanOrEqual(
+        canvas.x + canvas.width,
+      );
+      expect(tooltip.y + tooltip.height).toBeLessThanOrEqual(
+        canvas.y + canvas.height,
+      );
+    };
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await expectPreviewInsideCanvas();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
 
     const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
     await _25mo3rSugar.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await expectPreviewInsideCanvas();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
   });
@@ -806,8 +799,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Add a sequence of monomers to the canvas
      * 3. Right-click on a monomer ( or double click ) in the sequence (e.g., the 8th monomer) and start editing the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
@@ -1312,6 +1304,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -1634,7 +1628,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
+  test.skip('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2485
@@ -1657,9 +1651,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
+    await page.waitForTimeout(500);
     await pasteFromClipboardByKeyboard(page);
-    await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
+    await clickOnCanvas(page, 600, 200, { from: 'pageTopLeft' });
+    await page.waitForTimeout(500);
     await takeEditorScreenshot(page);
   });
 

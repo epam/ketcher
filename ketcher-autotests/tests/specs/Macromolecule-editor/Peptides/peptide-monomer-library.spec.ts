@@ -18,13 +18,13 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).switchToPeptidesTab();
   });
 
@@ -220,7 +220,9 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getMonomerLocator(page, Chem.SMPEG2).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -257,7 +259,9 @@ test.describe('Peptide library testing', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getMonomerLocator(page, Peptide.Nal).hover();
     await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page, {

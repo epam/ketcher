@@ -20,9 +20,11 @@ const App = () => {
   const [molecule, setMolecule] = useState('');
 
   const [structServiceProvider, setStructServiceProvider] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider);
+    void (async () => {
+      setStructServiceProvider(await getStructServiceProvider());
+    })();
   }, []);
 
   if (!structServiceProvider) {
@@ -31,7 +33,16 @@ const App = () => {
 
   return (
     <StrictMode>
-      {!isVisisible ? (
+      {isVisisible ? (
+        <button
+          onClick={() => {
+            setIsVisisible(false);
+            setMolecule('');
+          }}
+        >
+          Hide
+        </button>
+      ) : (
         <>
           <button onClick={() => setIsVisisible(true)}>Show empty</button>
           <button
@@ -82,15 +93,6 @@ M  END
             Show molecule
           </button>
         </>
-      ) : (
-        <button
-          onClick={() => {
-            setIsVisisible(false);
-            setMolecule('');
-          }}
-        >
-          Hide
-        </button>
       )}
       {isVisisible && (
         <Editor
@@ -103,11 +105,11 @@ M  END
           staticResourcesUrl={process.env.PUBLIC_URL}
           structServiceProvider={structServiceProvider}
           onInit={(ketcher: Ketcher) => {
-            window.ketcher = ketcher;
+            globalThis.window.ketcher = ketcher;
             safePostMessage({
               eventType: 'init',
             });
-            window.scrollTo(0, 0);
+            globalThis.scrollTo(0, 0);
             if (molecule) {
               ketcher.setMolecule(molecule);
             }

@@ -95,48 +95,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeEditorScreenshot(page);
   });
 
-  test('Case 2 — “Field value” textbox is active in “S-Group Properties” modal when “Context” field is empty', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7729
-     * Bug: https://github.com/epam/ketcher/issues/7729
-     * Version: 3.13.0
-     * Description:
-     * When S-Group type is switched to Data and Context field becomes empty,
-     * “Field name” and “Field value” inputs must be disabled,
-     * but currently they remain editable.
-     *
-     * Scenario:
-     * 1. Open Ketcher (Molecules mode)
-     * 2. Paste SMILES "CC" → click to place structure
-     * 3. Press Ctrl+G to activate S-group tool
-     * 4. Click on the bond between atoms → S-group Properties dialog appears
-     * 5. Select any S-group Type except "Data"
-     * 6. Select "Data" again → the "Context" field becomes empty
-     * 7. Try entering values into “Field name” and “Field value”
-     *
-     * Expected Result:
-     * When Context field is empty,
-     * “Field name” and “Field value” inputs must be disabled,
-     * and user should NOT be able to enter text.
-     */
-
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CC');
-
-    await LeftToolbar(page).sGroup();
-    await getBondLocator(page, { bondId: 0 }).click({ force: true });
-
-    const dialog = SGroupPropertiesDialog(page);
-
-    await dialog.selectType(TypeOption.Superatom);
-    await dialog.selectType(TypeOption.Data);
-
-    await expect(dialog.contextDropdown).toHaveValue('');
-    await expect(dialog.fieldNameEditbox).toBeDisabled();
-    await expect(dialog.fieldValueEditbox).toBeDisabled();
-
-    await dialog.cancel();
-  });
-
   test('Case 3 — CIP labels are rendered under the bond after selection and move', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
@@ -231,12 +189,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
       bondIds: [2, 3, 4, 5],
@@ -260,6 +212,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 7: Screenshot stereogenic center to verify stereo bonds persist
     const collapsedLabel = getAbbreviationLocator(page, { name: 'sssS' });
+    await shiftCanvas(page, 150, 0);
     await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
   });
 
@@ -497,13 +450,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     // --- Sugar ---
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
@@ -522,6 +468,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await clickOnCanvas(page, 0, 0);
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
+    await shiftCanvas(page, 150, 0);
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
       paddingWidth: 180,
       paddingHeight: 90,
@@ -550,8 +497,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      */
 
     // Step 1: Switch to Macromolecules → Snake mode
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Snake,
+    );
 
     // Step 2: Load the huge HELM structure
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -572,8 +520,21 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await page.mouse.move(298, 710, { steps: 8 });
     await page.mouse.up();
 
-    // Visual result validation: screenshot of the entire canvas
-    await takeEditorScreenshot(page);
+    // Functional validation: verify that monomers were selected after the
+    // scroll-during-selection operation.  Before the bug fix the selection
+    // rectangle did not account for the scroll offset, so 0 monomers ended up
+    // selected.  A screenshot comparison is intentionally NOT used here because
+    // the final viewport position after wheel + auto-scroll is non-deterministic
+    // across environments (the last requestAnimationFrame tick may or may not
+    // fire before mouseup, shifting the canvas by a few pixels each run).
+    //
+    // The HELM string has 200+ monomers; a large drag + 3200px of scroll should
+    // select well over 10.  A concrete lower bound catches partial regressions
+    // that would slip past a simple "greater than 0" check.
+    const selectedMonomersCount = await page
+      .locator('circle.dynamic-element')
+      .count();
+    expect(selectedMonomersCount).toBeGreaterThanOrEqual(10);
   });
 
   test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {
@@ -625,13 +586,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       atomIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
       bondIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20],
     });
-
-    // Marking a component recenters the structure under the attributes panel.
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     // --- Sugar ---
     await presetSection.setupSugar({

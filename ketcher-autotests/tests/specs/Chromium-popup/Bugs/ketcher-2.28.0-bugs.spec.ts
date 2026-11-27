@@ -88,8 +88,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
   await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheCanvas(page);
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
 
   await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
@@ -121,7 +120,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 //     let changeEventSubscriber: any;
 //     await page.evaluate(() => {
-//       changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
+//       changeEventSubscriber = globalThis.window.ketcher.editor.subscribe('change', () =>
 //         console.log('hello'),
 //       );
 //     });
@@ -137,7 +136,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 //     });
 
 //     await page.evaluate(() => {
-//       window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+//       globalThis.window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
 //     });
 //   },
 // );
@@ -164,8 +163,9 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
-    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
-      console.log('in change event'),
+    changeEventSubscriber = globalThis.window.ketcher.editor.subscribe(
+      'change',
+      () => console.log('in change event'),
     );
   });
 
@@ -176,7 +176,10 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   expect(consoleMessage.text()).toBe('in change event');
 
   await page.evaluate(() => {
-    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+    globalThis.window.ketcher.editor.unsubscribe(
+      'change',
+      changeEventSubscriber,
+    );
   });
 });
 

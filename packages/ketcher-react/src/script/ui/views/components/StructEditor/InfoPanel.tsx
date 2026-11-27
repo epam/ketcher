@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +31,9 @@ import { functionGroupInfoSelector } from '../../../state/functionalGroups/selec
 import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
+import { useTranslation } from 'react-i18next';
 import classes from './InfoPanel.module.less';
+import type { StoreState } from 'src/script/ui/state/store.types';
 
 const HOVER_PANEL_PADDING = 20;
 const MAX_INFO_PANEL_SIZE = 200;
@@ -90,15 +91,16 @@ interface InfoPanelProps {
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
+  const { t } = useTranslation('components');
 
   const sGroupData = useMemo<string | null>(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
       return `${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`;
     } else if (sGroup && SGroup.isQuerySGroup(sGroup)) {
-      return 'Query component';
+      return t('structEditor.queryComponent');
     }
     return null;
-  }, [sGroup]);
+  }, [sGroup, t]);
 
   const molecule = useMemo<Struct | null>(
     () => (groupStruct ? groupStruct.clone() : null),
@@ -108,7 +110,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
   // so it must be checked before the clientX/clientY guard.
   // sGroup.pp must exist to avoid assertion error in getContractedPosition.
-  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
+  if (render && sGroup instanceof MonomerMicromolecule && sGroup.pp) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
       const { position } = sGroup.getContractedPosition(render.ctab.molecule);
@@ -137,9 +139,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
 
   if (
     nonTooltipSGroup ||
-    (!molecule && !sGroupData) ||
     clientX === undefined ||
-    clientY === undefined
+    clientY === undefined ||
+    (!molecule && !sGroupData)
   ) {
     return null;
   }
@@ -187,7 +189,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   );
 };
 
-export default connect((store: any) => ({
+export default connect((store: StoreState) => ({
   clientX: functionGroupInfoSelector(store)?.event?.clientX,
   clientY: functionGroupInfoSelector(store)?.event?.clientY,
   groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,

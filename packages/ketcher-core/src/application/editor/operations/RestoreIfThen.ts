@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +19,15 @@ import { OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class RestoreIfThen extends BaseOperation {
-  readonly rgid_new: number;
-  readonly rgid_old: number;
-  readonly ifThenHistory: Map<number, number>;
   static InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     skipRgids?: Array<number>,
   ) => BaseOperation;
+
+  readonly rgid_new: number;
+  readonly rgid_old: number;
+  readonly ifThenHistory: Map<number, number>;
 
   constructor(rgNew: number, rgOld: number, history: Map<number, number>) {
     super(OperationType.RESTORE_IF_THEN);

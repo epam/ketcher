@@ -15,7 +15,7 @@ export class EquilibriumFilledHalfBowArrowRenderer {
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
     const arrowOffset = ARROW_OFFSET * macroModeScale;
-    const arrowHeadAttr = ARROW_HEAD_ATTR * macroModeScale;
+    const arrowHeadAttribute = ARROW_HEAD_ATTR * macroModeScale;
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
@@ -26,19 +26,16 @@ export class EquilibriumFilledHalfBowArrowRenderer {
         `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+        `L${toFixed(endX - arrowHeadLength + arrowHeadAttribute)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-    );
-
-    // bottom arrow
-    pathParts.push(
+      // bottom arrow
       `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x + arrowHeadLength)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
-        `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr)},${
+        `L${toFixed(start.x + arrowHeadLength - arrowHeadAttribute)},${
           start.y + arrowOffset
         }Z`,
     );

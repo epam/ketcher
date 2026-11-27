@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,28 +20,30 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
 class EraserTool implements BaseTool {
-  readonly name = 'eraser-tool';
   private readonly history: EditorHistory;
+  readonly name = 'eraser-tool';
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = EditorHistory.getInstance(editor);
     if (
-      this.editor.drawingEntitiesManager.selectedEntities.length &&
-      this.editor.mode.modeName !== 'sequence-layout-mode'
+      this.editor.drawingEntitiesManager.selectedEntities.length === 0 ||
+      this.editor.mode.modeName === 'sequence-layout-mode'
     ) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.deleteSelectedEntities();
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
-      );
-      this.history.update(modelChanges);
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.events.selectEntities.dispatch(
-        this.editor.drawingEntitiesManager.selectedEntities.map(
-          (entity) => entity[1],
-        ),
-      );
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.deleteSelectedEntities();
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
+    this.history.update(modelChanges);
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.events.selectEntities.dispatch(
+      this.editor.drawingEntitiesManager.selectedEntities.map(
+        (entity) => entity[1],
+      ),
+    );
   }
 
   mousedown(event) {
@@ -51,24 +53,25 @@ class EraserTool implements BaseTool {
       return;
     }
 
-    if (selectedItemRenderer instanceof BaseRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.deleteDrawingEntity(
-          selectedItemRenderer.drawingEntity,
-          true,
-          true,
-        );
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
-      );
-      this.history.update(modelChanges);
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.events.selectEntities.dispatch(
-        this.editor.drawingEntitiesManager.selectedEntities.map(
-          (entity) => entity[1],
-        ),
-      );
+    if (!(selectedItemRenderer instanceof BaseRenderer)) {
+      return;
     }
+
+    const modelChanges = this.editor.drawingEntitiesManager.deleteDrawingEntity(
+      selectedItemRenderer.drawingEntity,
+      true,
+      true,
+    );
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
+    this.history.update(modelChanges);
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.events.selectEntities.dispatch(
+      this.editor.drawingEntitiesManager.selectedEntities.map(
+        (entity) => entity[1],
+      ),
+    );
   }
 
   // TODO move hover logic somewhere to apply it for all or several tools from one place.

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
-import { type RefObject, useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   type ToolbarGroupItemCallProps,
@@ -42,8 +39,8 @@ import { RGroup } from './RGroup';
 import { Shape } from './Shape';
 import classes from './LeftToolbar.module.less';
 import clsx from 'clsx';
-import { useInView } from 'react-intersection-observer';
 import { useResizeObserver } from '../../../../../hooks';
+import { useVerticalToolbarScroll } from '../useVerticalToolbarScroll';
 
 interface LeftToolbarProps extends Omit<
   ToolbarGroupItemProps,
@@ -77,21 +74,24 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
         status[item.id]?.hidden ||
         item.options?.every((option) => status[option.id]?.hidden)
           ? acc
-          : acc.concat(item),
+          : [...acc, item],
       [],
     ) ?? [];
 
-  return visibleItems.length ? (
+  return visibleItems.length > 0 ? (
     <div className={clsx(classes.group, className)}>
       {visibleItems.map((item) => {
         switch (item.id) {
-          case 'bond-common':
+          case 'bond-common': {
             return <Bond {...rest} height={height} key={item.id} />;
-          case 'rgroup':
+          }
+          case 'rgroup': {
             return <RGroup {...rest} key={item.id} />;
-          case 'shapes':
+          }
+          case 'shapes': {
             return <Shape {...rest} key={item.id} />;
-          case 'bonds':
+          }
+          case 'bonds': {
             return (
               <ToolbarGroupItem
                 id={item.id}
@@ -101,7 +101,8 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
                 {...rest}
               />
             );
-          default:
+          }
+          default: {
             return (
               <ToolbarGroupItem
                 id={item.id}
@@ -110,6 +111,7 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
                 {...rest}
               />
             );
+          }
         }
       })}
     </div>
@@ -119,26 +121,17 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
-  const [startRef, startInView] = useInView({ threshold: 1 });
-  const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
-
-  const scrollUp = () => {
-    if (!scrollRef.current || !sizeRef.current) {
-      return;
-    }
-
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
-  };
-
-  const scrollDown = () => {
-    if (!scrollRef.current || !sizeRef.current) {
-      return;
-    }
-
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
-  };
+  const {
+    scrollContainerRef,
+    scrollStepRef,
+    startRef,
+    endRef,
+    startInView,
+    endInView,
+    isOverflowing,
+    scrollBack,
+    scrollForward,
+  } = useVerticalToolbarScroll();
 
   return (
     <div
@@ -148,7 +141,7 @@ const LeftToolbar = (props: Props) => {
     >
       <div
         className={classes.buttons}
-        ref={scrollRef}
+        ref={scrollContainerRef}
         data-testid="left-toolbar-buttons"
       >
         <div className={classes.listener} ref={startRef}>
@@ -184,7 +177,7 @@ const LeftToolbar = (props: Props) => {
           height={height}
           rest={rest}
         />
-        <div className={classes.listener} ref={sizeRef}>
+        <div className={classes.listener} ref={scrollStepRef}>
           <Group
             className={classes.groupItem}
             items={[
@@ -224,12 +217,12 @@ const LeftToolbar = (props: Props) => {
           />
         </div>
       </div>
-      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
+      {height && isOverflowing && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}
-          scrollForward={scrollDown}
-          scrollBack={scrollUp}
+          scrollForward={scrollForward}
+          scrollBack={scrollBack}
         />
       )}
     </div>

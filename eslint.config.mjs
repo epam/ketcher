@@ -1,9 +1,9 @@
+import css from '@eslint/css';
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jestPlugin from 'eslint-plugin-jest';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import nPlugin from 'eslint-plugin-n';
 import promisePlugin from 'eslint-plugin-promise';
@@ -13,24 +13,29 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import testingLibraryPlugin from 'eslint-plugin-testing-library';
 import reactYouMightNotNeedAnEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
 import globals from 'globals';
+import { readFileSync } from 'node:fs';
+import {
+  rules as invariantRules,
+  ALLOWED_HTML_SINKS,
+  ALLOWED_MODEL_MUTATIONS,
+} from './scripts/eslint-invariants-rules.mjs';
 
 const sanitizeGlobals = (source) => {
-  if (!source || typeof source !== 'object') {
-    return {};
-  }
-
-  return Object.fromEntries(
-    Object.entries(source).filter(([name]) =>
-      /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
-    ),
-  );
+  return !source || typeof source !== 'object'
+    ? {}
+    : Object.fromEntries(
+        Object.entries(source).filter(([name]) =>
+          /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
+        ),
+      );
 };
 
-export default [
+const defaults = [
   {
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
+      '**/build/**',
       'packages/ketcher-core/docs/**',
       'example/public/**',
       'example/build/**',
@@ -48,7 +53,15 @@ export default [
       '**/__tests__/**',
     ],
   },
-  js.configs.recommended,
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+  },
+  {
+    ...js.configs.recommended,
+    files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
+  },
   {
     files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
     languageOptions: {
@@ -65,10 +78,10 @@ export default [
         ...sanitizeGlobals(globals.browser),
         ...sanitizeGlobals(globals.node),
         ...sanitizeGlobals(globals.es2024),
-        ...sanitizeGlobals(globals.jest),
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
+        ClipboardItem: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         JSX: 'readonly',
@@ -82,7 +95,6 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint,
       import: importPlugin,
-      jest: jestPlugin,
       'jsx-a11y': jsxA11yPlugin,
       n: nPlugin,
       promise: promisePlugin,
@@ -121,7 +133,6 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/preserve-manual-memoization': 'off',
-      'jest/expect-expect': 'off',
       'testing-library/no-container': 'off',
       'testing-library/no-node-access': 'off',
       'testing-library/no-unnecessary-act': 'off',
@@ -214,5 +225,189 @@ export default [
       ],
     },
   },
+  {
+    files: ['example/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      'jsx-a11y/label-has-associated-control': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+    },
+  },
+  {
+    files: [
+      'example/**/__tests__/**/*.[jt]s?(x)',
+      'example/**/*.{spec,test}.[jt]s?(x)',
+    ],
+    rules: {
+      'testing-library/no-container': 'warn',
+      'testing-library/no-node-access': 'warn',
+    },
+  },
+  {
+    files: ['ketcher-autotests/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      semi: ['error', 'always'],
+      'max-depth': ['error', 3],
+      'no-else-return': [
+        'error',
+        {
+          allowElseIf: true,
+        },
+      ],
+      'no-magic-numbers': 'off',
+      'no-nested-ternary': 'error',
+      'prefer-template': 'error',
+      'max-len': ['error', 180],
+      'no-multiple-empty-lines': ['error', { max: 1 }],
+      'no-implicit-coercion': 'error',
+      'no-inline-comments': 'error',
+      'no-lonely-if': 'error',
+      'no-multi-assign': 'error',
+      'no-restricted-exports': [
+        'error',
+        {
+          restrictDefaultExports: { direct: true },
+        },
+      ],
+      curly: 'error',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+      'no-duplicate-imports': 'error',
+      'react-hooks/rules-of-hooks': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/static-components': 'off',
+      'react-hooks/use-memo': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/refs': 'off',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          prefer: 'type-imports',
+          fixStyle: 'separate-type-imports',
+        },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'assert',
+              message:
+                "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'utilities'` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['packages/ketcher-standalone/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'assert',
+              message:
+                "Node's 'assert' module breaks browser bundlers (see issue #3733). Use `import { assert } from 'ketcher-core'` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/*.css'],
+    ignores: ['**/build/**', '**/dist/**', '**/node_modules/**'],
+    language: 'css/css',
+    plugins: {
+      css,
+    },
+    rules: {
+      ...css.configs.recommended.rules,
+    },
+  },
   prettierConfig,
 ];
+
+const coreDependencies = Object.keys(
+  JSON.parse(
+    readFileSync(
+      new URL('./packages/ketcher-core/package.json', import.meta.url),
+    ),
+  ).dependencies ?? {},
+);
+
+const invariantsPlugin = { rules: invariantRules };
+
+const invariantsBlocks = [
+  {
+    files: ['packages/*/src/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+    ],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/no-html-sinks': [
+        'error',
+        { allowedFiles: ALLOWED_HTML_SINKS },
+      ],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/domain/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/domain-no-application-imports': 'error',
+      'ketcher-invariants/ui-imports-in-core': 'error',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/ui-imports-in-core': 'error',
+      'ketcher-invariants/ui-deps-in-core': [
+        'error',
+        { forbiddenDeps: coreDependencies },
+      ],
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/application/render/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/renderer-no-model-mutations': [
+        'error',
+        { allowedFiles: ALLOWED_MODEL_MUTATIONS },
+      ],
+    },
+  },
+];
+
+export default [...defaults, ...invariantsBlocks];

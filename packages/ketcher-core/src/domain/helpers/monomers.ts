@@ -21,9 +21,9 @@ import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { Phosphate } from 'domain/entities/Phosphate';
 
 /**
- * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
- * and creating extra dependency edges in core entity/helper graph.
- */
+Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
+and creating extra dependency edges in core entity/helper graph.
+*/
 type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 
 type AmbiguousMonomerLike = {
@@ -32,9 +32,9 @@ type AmbiguousMonomerLike = {
 };
 
 /**
- * Runtime guard for ambiguous monomers without importing the AmbiguousMonomer class,
- * to avoid introducing an additional dependency edge into the entity graph.
- */
+Runtime guard for ambiguous monomers without importing the AmbiguousMonomer class,
+to avoid introducing an additional dependency edge into the entity graph.
+*/
 const isAmbiguousMonomerEntity = (
   monomer?: BaseMonomer,
 ): monomer is AmbiguousMonomerEntity => {
@@ -77,9 +77,9 @@ const isMonomerOfClass = (
 };
 
 /**
- * Maps ambiguous monomer class metadata to chain constructor types used in chain checks.
- * This keeps runtime checks independent from the AmbiguousMonomer class constructor.
- */
+Maps ambiguous monomer class metadata to chain constructor types used in chain checks.
+This keeps runtime checks independent from the AmbiguousMonomer class constructor.
+*/
 type ChainMonomerType = 'Peptide' | 'Phosphate' | 'Sugar' | 'UnsplitNucleotide';
 const CHAIN_MONOMER_TYPE_TO_CLASS: Record<ChainMonomerType, KetMonomerClass> = {
   Peptide: KetMonomerClass.AminoAcid,
@@ -93,16 +93,21 @@ const isMonomerClassCompatible = (
   monomerType: ChainMonomerType,
 ): boolean => {
   switch (monomerType) {
-    case 'Peptide':
+    case 'Peptide': {
       return monomer.monomerClass === KetMonomerClass.AminoAcid;
-    case 'Phosphate':
+    }
+    case 'Phosphate': {
       return monomer.monomerClass === KetMonomerClass.Phosphate;
-    case 'Sugar':
+    }
+    case 'Sugar': {
       return monomer.monomerClass === KetMonomerClass.Sugar;
-    case 'UnsplitNucleotide':
+    }
+    case 'UnsplitNucleotide': {
       return monomer.monomerClass === KetMonomerClass.RNA;
-    default:
+    }
+    default: {
       return false;
+    }
   }
 };
 
@@ -165,13 +170,10 @@ export function isChemMonomer(monomer: BaseMonomer): boolean {
 }
 
 export function isLinearChem(monomer?: BaseMonomer): boolean {
-  if (!monomer) {
-    return false;
-  }
-
-  return (
-    isChemMonomer(monomer) && monomer.usedAttachmentPointsNamesList.length <= 2
-  );
+  return !monomer
+    ? false
+    : isChemMonomer(monomer) &&
+        monomer.usedAttachmentPointsNamesList.length <= 2;
 }
 
 function getOrientedChemNeighbors(chem: BaseMonomer): {
@@ -180,8 +182,8 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
 } {
   let previous: BaseMonomer | undefined;
   let next: BaseMonomer | undefined;
-  let nextViaChemBackbone = false;
-  let previousViaChemBackbone = false;
+  let isNextViaChemBackbone = false;
+  let isPreviousViaChemBackbone = false;
 
   chem.usedAttachmentPointsNamesList.forEach((attachmentPointName) => {
     const bond = chem.attachmentPointsToBonds[attachmentPointName];
@@ -201,14 +203,14 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
     const isChemBackboneR2 = attachmentPointName === AttachmentPointName.R2;
 
     if (neighborAttachmentPoint === AttachmentPointName.R1) {
-      if (!next || (isChemBackboneR2 && !nextViaChemBackbone)) {
+      if (!next || (isChemBackboneR2 && !isNextViaChemBackbone)) {
         next = neighbor;
-        nextViaChemBackbone = isChemBackboneR2;
+        isNextViaChemBackbone = isChemBackboneR2;
       }
     } else if (neighborAttachmentPoint === AttachmentPointName.R2) {
-      if (!previous || (isChemBackboneR1 && !previousViaChemBackbone)) {
+      if (!previous || (isChemBackboneR1 && !isPreviousViaChemBackbone)) {
         previous = neighbor;
-        previousViaChemBackbone = isChemBackboneR1;
+        isPreviousViaChemBackbone = isChemBackboneR1;
       }
     }
   });
@@ -316,8 +318,8 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
       ? r1PolymerBondOfConnectedMonomer?.getAnotherMonomer(r3ConnectedMonomer)
       : undefined;
 
-  return isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer) &&
-    r1ConnectedMonomer === monomer
+  return r1ConnectedMonomer === monomer &&
+    isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer)
     ? r3ConnectedMonomer
     : undefined;
 }
@@ -341,8 +343,8 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       ? r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer)
       : undefined;
 
-  return isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar) &&
-    r3ConnectedMonomer === monomer
+  return r3ConnectedMonomer === monomer &&
+    isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar)
     ? r1ConnectedMonomer
     : undefined;
 }

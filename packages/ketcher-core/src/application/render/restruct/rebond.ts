@@ -887,6 +887,7 @@ function getBondPath(
             )
           : getBondDoublePath(
               render,
+              struct,
               hb1,
               hb2,
               bond,
@@ -1197,6 +1198,45 @@ export function getBondLineShift(cos: number, sin: number): number {
   return sin < 0 || Math.abs(cos) > 0.9 ? 0 : sin / (1 - cos);
 }
 
+function isHiddenHydrogenBond(struct: Struct, halfBond: HalfBond): boolean {
+  const bond = struct.bonds.get(halfBond.bid);
+  return (
+    bond?.type === Bond.PATTERN.TYPE.HYDROGEN &&
+    Bond.isBondToExpandedMonomer(struct, bond)
+  );
+}
+
+// Hidden hydrogen bonds of expanded monomers must not affect how the lines of
+// a neighbouring double bond are shortened.
+function getVisibleNeighborLineShift(
+  struct: Struct,
+  halfBond: HalfBond,
+  side: 'left' | 'right',
+): number {
+  let neighborId =
+    side === 'left' ? halfBond.leftNeighbor : halfBond.rightNeighbor;
+  let neighbor = struct.halfBonds.get(neighborId);
+
+  while (neighbor && neighbor !== halfBond) {
+    if (!isHiddenHydrogenBond(struct, neighbor)) break;
+    neighborId =
+      side === 'left' ? neighbor.leftNeighbor : neighbor.rightNeighbor;
+    neighbor = struct.halfBonds.get(neighborId);
+  }
+
+  if (!neighbor) return 0;
+
+  return side === 'left'
+    ? getBondLineShift(
+        Vec2.dot(neighbor.dir, halfBond.dir),
+        Vec2.cross(neighbor.dir, halfBond.dir),
+      )
+    : getBondLineShift(
+        Vec2.dot(halfBond.dir, neighbor.dir),
+        Vec2.cross(halfBond.dir, neighbor.dir),
+      );
+}
+
 function stereoUpBondGetCoordinates(
   hb: HalfBond,
   neihbid: number,
@@ -1312,6 +1352,7 @@ function getBondSingleEitherPath(
 
 function getBondDoublePath(
   render: Render,
+  struct: Struct,
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
@@ -1340,26 +1381,26 @@ function getBondDoublePath(
     if (shouldShiftA) {
       a1 = a1.addScaled(
         hb1.dir,
-        options.bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin),
+        options.bondSpace * getVisibleNeighborLineShift(struct, hb1, 'right'),
       );
     }
     if (shouldShiftB) {
       b1 = b1.addScaled(
         hb1.dir,
-        -options.bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin),
+        -options.bondSpace * getVisibleNeighborLineShift(struct, hb2, 'left'),
       );
     }
   } else if (shift < 0) {
     if (shouldShiftA) {
       a2 = a2.addScaled(
         hb1.dir,
-        options.bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin),
+        options.bondSpace * getVisibleNeighborLineShift(struct, hb1, 'left'),
       );
     }
     if (shouldShiftB) {
       b2 = b2.addScaled(
         hb1.dir,
-        -options.bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin),
+        -options.bondSpace * getVisibleNeighborLineShift(struct, hb2, 'right'),
       );
     }
   }

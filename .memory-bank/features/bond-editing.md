@@ -53,6 +53,14 @@ The system SHALL ensure that the bond's direction is reversed.
 - **Direction** — clicking a drawn stereo or dative bond flips its direction.
 - **Bond Properties dialog** — double-click a bond (or press `/`) to edit type, topology, and reacting-center properties.
 
+### Requirement: Editing dative bonds
+
+The system SHALL recalculate dative valence and implicit hydrogens consistently when dative bonds are flipped or retyped.
+
+#### Scenario: Flipping or retyping a bond with dative atoms
+
+- **WHEN** the user flips a dative bond or changes a bond's type
+- **THEN** implicit hydrogens are recalculated at both endpoints, and at every other dative atom in the same aromatic system (atoms joined by aromatic bonds), even when that system cannot be assigned a Kekulé structure
 ## Guarantees
 
 - Endpoint atoms and implicit hydrogen counts stay consistent with bond additions, removals, and type changes.

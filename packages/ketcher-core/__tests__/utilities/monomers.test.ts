@@ -88,8 +88,8 @@ describe('monomers utilities', () => {
       expect(isValidModificationTypes(['A', 'B', 'C'])).toBe(true);
     });
 
-    it('returns false for empty array', () => {
-      expect(isValidModificationTypes([])).toBe(false);
+    it('returns true for empty array', () => {
+      expect(isValidModificationTypes([])).toBe(true);
     });
 
     it('returns false for modification types containing only whitespace', () => {

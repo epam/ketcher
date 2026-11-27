@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
+export const isTouchDevice =
+  typeof globalThis.window !== 'undefined' &&
+  ('ontouchstart' in globalThis || navigator.maxTouchPoints > 0);
+
 /**
- * Determines the appropriate HTML element for fullscreen mode based on the current DOM structure.
- *
- * Priority order:
- * 1. Element with [data-ketcher-fullscreen-container] attribute (explicit user customization)
- * 2. Parent of [data-ketcher-editor] element:
- *    - If parent is #root -> return #root (standalone mode)
- *    - If parent is custom container -> return parent (iframe/embedded mode)
- * 3. Fallback to #root or documentElement
- *
- * @returns {HTMLElement} The element to be used for fullscreen mode
- */
+Determines the appropriate HTML element for fullscreen mode based on the current DOM structure.
+
+Priority order:
+1. Element with [data-ketcher-fullscreen-container] attribute (explicit user customization)
+2. Parent of [data-ketcher-editor] element:
+   - If parent is #root -> return #root (standalone mode)
+   - If parent is custom container -> return parent (iframe/embedded mode)
+3. Fallback to #root or documentElement
+
+@returns {HTMLElement} The element to be used for fullscreen mode
+*/
 export const getFullscreenElement = (): HTMLElement => {
   const ketcherRoot = document.querySelector(
     '.Ketcher-root, .Ketcher-polymer-editor-root',
@@ -48,10 +52,7 @@ export const getFullscreenElement = (): HTMLElement => {
         editorParent !== document.body &&
         editorParent !== document.documentElement
       ) {
-        if (editorParent.id === 'root') {
-          return editorParent;
-        }
-        return editorParent;
+        return editorParent.id === 'root' ? editorParent : editorParent;
       }
 
       const rootElement = editorRoot.closest('#root');

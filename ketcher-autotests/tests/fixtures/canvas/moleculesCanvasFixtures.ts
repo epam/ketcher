@@ -1,4 +1,4 @@
-import { test as utils } from '../utilsFixtures';
+import { test as utils } from '../utilitiesFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { waitForIndigoToLoad, waitForKetcherInit } from '@utils';
 import { mergeTests, Page } from '@playwright/test';
@@ -16,6 +16,7 @@ export const test = mergeTests(utils, pageObjects).extend<
       CommonTopRightToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
       resetSettingsValuesToDefault,
     },
     use,
@@ -34,6 +35,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     await resetZoomLevelToDefault(page);
     await resetSettingsValuesToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
     await use();
   },
   initMoleculesCanvas: [

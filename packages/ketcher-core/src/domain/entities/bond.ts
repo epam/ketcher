@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -7,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +24,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
+import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -51,6 +50,8 @@ export interface BondAttributes {
   hb2?: number;
 }
 
+export type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
+export type StructBondEndpointAccess = Pick<Struct, 'getBondEndpoint'>;
 export class Bond extends BaseMicromoleculeEntity {
   static readonly PATTERN = {
     TYPE: {
@@ -64,6 +65,7 @@ export class Bond extends BaseMicromoleculeEntity {
       ANY: 8,
       DATIVE: 9,
       HYDROGEN: 10,
+      HAPTIC: HAPTIC_BOND_TYPE,
     },
 
     STEREO: {
@@ -99,6 +101,237 @@ export class Bond extends BaseMicromoleculeEntity {
     cip: null,
     customQuery: null,
   };
+
+  static getAttrHash(
+    bond: Bond,
+  ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
+    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
+    for (const attr in this.attrlist) {
+      const key = attr as keyof typeof Bond.attrlist;
+      if (key === 'stereo' || bond[key]) {
+        attrs[key] = bond[key] as never;
+      }
+    }
+    return attrs;
+  }
+
+  static getBondNeighbourIds(struct: Struct, bondId: number) {
+    const bond = struct.bonds.get(bondId);
+    if (!bond) return { beginBondIds: [], endBondIds: [] };
+    const { begin, end } = bond;
+    const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
+      (id) => id !== bondId,
+    );
+    const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
+      (id) => id !== bondId,
+    );
+    return { beginBondIds, endBondIds };
+  }
+
+  static getFusingConditions(bond: Bond, bondBegin: Bond, bondEnd: Bond) {
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
+    const isFusingToDoubleBond =
+      bondBegin.type === SINGLE &&
+      bond.type === DOUBLE &&
+      bondEnd.type === SINGLE;
+    const isFusingToSingleBond =
+      bondBegin.type === DOUBLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === DOUBLE;
+    const isFusingDoubleSingleSingle =
+      bondBegin.type === DOUBLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === SINGLE;
+    const isFusingSingleSingleDouble =
+      bondBegin.type === SINGLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === DOUBLE;
+    const isAllSingle =
+      bondBegin.type === SINGLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === SINGLE;
+    return {
+      isFusingToSingleBond,
+      isFusingToDoubleBond,
+      isFusingDoubleSingleSingle,
+      isFusingSingleSingleDouble,
+      isAllSingle,
+    };
+  }
+
+  static getBenzeneConnectingBondType(
+    bond: Bond,
+    bondBegin: Bond,
+    bondEnd: Bond,
+  ): number | null {
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
+    const { isFusingToSingleBond, isFusingToDoubleBond } =
+      this.getFusingConditions(bond, bondBegin, bondEnd);
+
+    if (isFusingToDoubleBond) {
+      return DOUBLE;
+    } else if (isFusingToSingleBond) {
+      return SINGLE;
+    }
+    return null;
+  }
+
+  static getCyclopentadieneFusingBondType(
+    bond: Bond,
+    bondBegin: Bond,
+    bondEnd: Bond,
+  ): number | null {
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
+    const {
+      isFusingToSingleBond,
+      isFusingToDoubleBond,
+      isFusingDoubleSingleSingle,
+      isAllSingle,
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
+
+    if (isFusingToDoubleBond) {
+      return DOUBLE;
+    } else if (
+      isFusingToSingleBond ||
+      isAllSingle ||
+      isFusingDoubleSingleSingle
+    ) {
+      return SINGLE;
+    }
+    return null;
+  }
+
+  static getCyclopentadieneDoubleBondIndexes(
+    bond: Bond,
+    bondBegin: Bond,
+    bondEnd: Bond,
+  ) {
+    const {
+      isFusingToSingleBond,
+      isFusingToDoubleBond,
+      isFusingDoubleSingleSingle,
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
+
+    if (isFusingToSingleBond || isFusingToDoubleBond) {
+      return [3];
+    }
+
+    if (isFusingDoubleSingleSingle) {
+      return [2, 4];
+    }
+
+    return [1, 3];
+  }
+
+  static attrGetDefault(attr: string) {
+    if (attr in this.attrlist) {
+      return this.attrlist[attr];
+    }
+  }
+
+  isQuery(): boolean {
+    const TYPES = Bond.PATTERN.TYPE;
+    const QUERY_BOND_TYPES = [
+      TYPES.ANY,
+      TYPES.SINGLE_OR_DOUBLE,
+      TYPES.SINGLE_OR_AROMATIC,
+      TYPES.DOUBLE_OR_AROMATIC,
+      TYPES.AROMATIC,
+    ];
+    return (
+      this.customQuery !== null ||
+      QUERY_BOND_TYPES.includes(this.type) ||
+      (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
+    );
+  }
+
+  hasRxnProps(): boolean {
+    return !!this.reactingCenterStatus;
+  }
+
+  getCenter(struct: StructBondEndpointAccess): Vec2 {
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
+    return !p1 || !p2 ? new Vec2() : Vec2.lc2(p1, 0.5, p2, 0.5);
+  }
+
+  getDir(struct: StructBondEndpointAccess): Vec2 {
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
+    return !p1 || !p2 ? new Vec2() : p2.sub(p1).normalized();
+  }
+
+  clone(aidMap?: Map<number, number> | null): Bond {
+    const cp = new Bond(this);
+    if (aidMap) {
+      const newBegin = aidMap.get(cp.begin);
+      const newEnd = aidMap.get(cp.end);
+      if (newBegin !== undefined) cp.begin = newBegin;
+      if (newEnd !== undefined) cp.end = newEnd;
+    }
+    return cp;
+  }
+
+  getAttachedSGroups(struct: Struct) {
+    const sGroupsWithBeginAtom =
+      struct.atoms.get(this.begin)?.sgs ?? new Pile();
+    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs ?? new Pile();
+    return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
+  }
+
+  isExternalBondBetweenMonomers(struct: Struct) {
+    if (!struct.isBondFromMacromolecule(this)) {
+      return false;
+    }
+
+    const sGroup1 = struct.getGroupFromAtomId(this.begin);
+    const sGroup2 = struct.getGroupFromAtomId(this.end);
+
+    return !sGroup1 || !sGroup2 ? false : sGroup1 !== sGroup2;
+  }
+
+  public static isBondToHiddenLeavingGroup(
+    struct: Struct,
+    bond: Bond,
+    shouldIncludeAtomsInCollapsedSgroups = false,
+  ) {
+    const beginSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
+    const endSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
+
+    return (
+      (beginSuperatomAttachmentPoint &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.begin,
+          false,
+          shouldIncludeAtomsInCollapsedSgroups,
+        ) &&
+        bond.end === beginSuperatomAttachmentPoint.atomId) ||
+      (endSuperatomAttachmentPoint &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.end,
+          false,
+          shouldIncludeAtomsInCollapsedSgroups,
+        ) &&
+        bond.begin === endSuperatomAttachmentPoint.atomId)
+    );
+  }
+
+  public static isBondToExpandedMonomer(struct: Struct, bond: Bond) {
+    return [...struct.sgroups.values()].some((sgroup) => {
+      return (
+        ((sgroup.atoms.includes(bond.begin) &&
+          !sgroup.atoms.includes(bond.end)) ||
+          (sgroup.atoms.includes(bond.end) &&
+            !sgroup.atoms.includes(bond.begin))) &&
+        sgroup.isExpanded() &&
+        sgroup.isMonomer
+      );
+    });
+  }
 
   begin: number;
   end: number;
@@ -157,241 +390,5 @@ export class Bond extends BaseMicromoleculeEntity {
     }
 
     this.center = new Vec2();
-  }
-
-  static getAttrHash(
-    bond: Bond,
-  ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
-    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
-    for (const attr in Bond.attrlist) {
-      const key = attr as keyof typeof Bond.attrlist;
-      if (bond[key] || key === 'stereo') {
-        attrs[key] = bond[key] as never;
-      }
-    }
-    return attrs;
-  }
-
-  static getBondNeighbourIds(struct: Struct, bondId: number) {
-    const bond = struct.bonds.get(bondId);
-    if (!bond) return { beginBondIds: [], endBondIds: [] };
-    const { begin, end } = bond;
-    const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
-      (id) => id !== bondId,
-    );
-    const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
-      (id) => id !== bondId,
-    );
-    return { beginBondIds, endBondIds };
-  }
-
-  static getFusingConditions(bond: Bond, bondBegin: Bond, bondEnd: Bond) {
-    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
-    const isFusingToDoubleBond =
-      bondBegin.type === SINGLE &&
-      bond.type === DOUBLE &&
-      bondEnd.type === SINGLE;
-    const isFusingToSingleBond =
-      bondBegin.type === DOUBLE &&
-      bond.type === SINGLE &&
-      bondEnd.type === DOUBLE;
-    const isFusingDoubleSingleSingle =
-      bondBegin.type === DOUBLE &&
-      bond.type === SINGLE &&
-      bondEnd.type === SINGLE;
-    const isFusingSingleSingleDouble =
-      bondBegin.type === SINGLE &&
-      bond.type === SINGLE &&
-      bondEnd.type === DOUBLE;
-    const isAllSingle =
-      bondBegin.type === SINGLE &&
-      bond.type === SINGLE &&
-      bondEnd.type === SINGLE;
-    return {
-      isFusingToSingleBond,
-      isFusingToDoubleBond,
-      isFusingDoubleSingleSingle,
-      isFusingSingleSingleDouble,
-      isAllSingle,
-    };
-  }
-
-  static getBenzeneConnectingBondType(
-    bond: Bond,
-    bondBegin: Bond,
-    bondEnd: Bond,
-  ): number | null {
-    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
-    const { isFusingToSingleBond, isFusingToDoubleBond } =
-      Bond.getFusingConditions(bond, bondBegin, bondEnd);
-
-    if (isFusingToDoubleBond) {
-      return DOUBLE;
-    } else if (isFusingToSingleBond) {
-      return SINGLE;
-    }
-    return null;
-  }
-
-  static getCyclopentadieneFusingBondType(
-    bond: Bond,
-    bondBegin: Bond,
-    bondEnd: Bond,
-  ): number | null {
-    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
-    const {
-      isFusingToSingleBond,
-      isFusingToDoubleBond,
-      isFusingDoubleSingleSingle,
-      isAllSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
-
-    if (isFusingToDoubleBond) {
-      return DOUBLE;
-    } else if (
-      isFusingToSingleBond ||
-      isAllSingle ||
-      isFusingDoubleSingleSingle
-    ) {
-      return SINGLE;
-    }
-    return null;
-  }
-
-  static getCyclopentadieneDoubleBondIndexes(
-    bond: Bond,
-    bondBegin: Bond,
-    bondEnd: Bond,
-  ) {
-    const {
-      isFusingToSingleBond,
-      isFusingToDoubleBond,
-      isFusingDoubleSingleSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
-
-    if (isFusingToSingleBond || isFusingToDoubleBond) {
-      return [3];
-    }
-
-    if (isFusingDoubleSingleSingle) {
-      return [2, 4];
-    }
-
-    return [1, 3];
-  }
-
-  static attrGetDefault(attr: string) {
-    if (attr in Bond.attrlist) {
-      return Bond.attrlist[attr];
-    }
-  }
-
-  isQuery(): boolean {
-    const TYPES = Bond.PATTERN.TYPE;
-    const QUERY_BOND_TYPES = [
-      TYPES.ANY,
-      TYPES.SINGLE_OR_DOUBLE,
-      TYPES.SINGLE_OR_AROMATIC,
-      TYPES.DOUBLE_OR_AROMATIC,
-      TYPES.AROMATIC,
-    ];
-    return (
-      this.customQuery !== null ||
-      QUERY_BOND_TYPES.includes(this.type) ||
-      (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
-    );
-  }
-
-  hasRxnProps(): boolean {
-    return !!this.reactingCenterStatus;
-  }
-
-  getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp;
-    const p2 = struct.atoms.get(this.end).pp;
-    return Vec2.lc2(p1, 0.5, p2, 0.5);
-  }
-
-  getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)?.pp;
-    const p2 = struct.atoms.get(this.end)?.pp;
-    if (!p1 || !p2) return new Vec2();
-    return p2.sub(p1).normalized();
-  }
-
-  clone(aidMap?: Map<number, number> | null): Bond {
-    const cp = new Bond(this);
-    if (aidMap) {
-      const newBegin = aidMap.get(cp.begin);
-      const newEnd = aidMap.get(cp.end);
-      if (newBegin !== undefined) cp.begin = newBegin;
-      if (newEnd !== undefined) cp.end = newEnd;
-    }
-    return cp;
-  }
-
-  getAttachedSGroups(struct: Struct) {
-    const sGroupsWithBeginAtom =
-      struct.atoms.get(this.begin)?.sgs ?? new Pile();
-    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs ?? new Pile();
-    return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
-  }
-
-  isExternalBondBetweenMonomers(struct: Struct) {
-    if (!struct.isBondFromMacromolecule(this)) {
-      return false;
-    }
-
-    const sGroup1 = struct.getGroupFromAtomId(this.begin);
-    const sGroup2 = struct.getGroupFromAtomId(this.end);
-
-    if (!sGroup1 || !sGroup2) {
-      return false;
-    }
-
-    return sGroup1 !== sGroup2;
-  }
-
-  public static isBondToHiddenLeavingGroup(
-    struct: Struct,
-    bond: Bond,
-    includeAtomsInCollapsedSgroups = false,
-  ) {
-    const beginSuperatomAttachmentPoint =
-      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
-    const endSuperatomAttachmentPoint =
-      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
-
-    return (
-      (beginSuperatomAttachmentPoint &&
-        Atom.isHiddenLeavingGroupAtom(
-          struct,
-          bond.begin,
-          false,
-          includeAtomsInCollapsedSgroups,
-        ) &&
-        bond.end === beginSuperatomAttachmentPoint.atomId) ||
-      (endSuperatomAttachmentPoint &&
-        Atom.isHiddenLeavingGroupAtom(
-          struct,
-          bond.end,
-          false,
-          includeAtomsInCollapsedSgroups,
-        ) &&
-        bond.begin === endSuperatomAttachmentPoint.atomId)
-    );
-  }
-
-  public static isBondToExpandedMonomer(struct: Struct, bond: Bond) {
-    return [...struct.sgroups.values()].some((sgroup) => {
-      return (
-        ((sgroup.atoms.includes(bond.begin) &&
-          !sgroup.atoms.includes(bond.end)) ||
-          (sgroup.atoms.includes(bond.end) &&
-            !sgroup.atoms.includes(bond.begin))) &&
-        sgroup.isExpanded() &&
-        sgroup.isMonomer
-      );
-    });
   }
 }

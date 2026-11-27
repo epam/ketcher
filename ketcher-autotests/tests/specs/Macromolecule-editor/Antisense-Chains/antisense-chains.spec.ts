@@ -2734,8 +2734,6 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._2_damdA,
     unsplitNucleotide: true,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '7.1. Unsplit monomer 5NitInd (from library)',
@@ -2745,8 +2743,6 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Nucleotide._5NitInd,
     unsplitNucleotide: true,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6173',
   },
   {
     monomerDescription: '8. Unknown monomer',
@@ -2843,6 +2839,12 @@ const shortMonomerList: IMonomer[] = [
   },
 ];
 
+// An ineligible chain in the selection does not block the antisense creation
+// for the other chains (requirement 1.3 of #5678)
+const isEligibleForAntisenseChain = (monomer: IMonomer) =>
+  monomer.eligibleForAntisense &&
+  (monomer.baseWithR3R1ConnectionPresent || monomer.unsplitNucleotide);
+
 for (const monomer1 of shortMonomerList) {
   for (const monomer2 of shortMonomerList) {
     test(`4. Antisence for two chains: ${monomer1.monomerDescription} and ${monomer2.monomerDescription}`, async () => {
@@ -2875,22 +2877,8 @@ for (const monomer1 of shortMonomerList) {
       ).first();
 
       if (
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent &&
-          !monomer2.unsplitNucleotide) ||
-        (!monomer1.eligibleForAntisense &&
-          !monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer1.unsplitNucleotide &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        isEligibleForAntisenseChain(monomer1) ||
+        isEligibleForAntisenseChain(monomer2)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, monomerLocator).click(
@@ -2933,8 +2921,7 @@ const chainWithAllTypeOfConnections: IMonomer = {
   unsplitNucleotide: false,
 };
 
-test.skip(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
-  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
@@ -4117,22 +4104,8 @@ for (const monomer1 of shortMonomerList) {
       await loadMonomerOnCanvas(page, monomer2);
 
       if (
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent &&
-          !monomer2.unsplitNucleotide) ||
-        (!monomer1.eligibleForAntisense &&
-          !monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer1.unsplitNucleotide &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        isEligibleForAntisenseChain(monomer1) ||
+        isEligibleForAntisenseChain(monomer2)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4201,22 +4174,8 @@ for (const monomer1 of shortMonomerList) {
       await loadMonomerOnCanvas(page, monomer2);
 
       if (
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          !monomer2.baseWithR3R1ConnectionPresent &&
-          !monomer2.unsplitNucleotide) ||
-        (!monomer1.eligibleForAntisense &&
-          !monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer1.unsplitNucleotide &&
-          monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        isEligibleForAntisenseChain(monomer1) ||
+        isEligibleForAntisenseChain(monomer2)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4253,8 +4212,7 @@ for (const monomer1 of shortMonomerList) {
   }
 }
 
-test.skip(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
-  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
@@ -4284,8 +4242,7 @@ test.skip(`26.5.1 Check that all non R1-R2 connections of backbone monomers (exc
   });
 });
 
-test.skip(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
-  // Failed because of bug: https://github.com/epam/ketcher/issues/6173
+test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678

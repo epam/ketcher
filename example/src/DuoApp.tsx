@@ -16,15 +16,19 @@ const DuoApp = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [structServiceProvider1, setStructServiceProvider1] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider1);
+    void (async () => {
+      setStructServiceProvider1(await getStructServiceProvider());
+    })();
   }, []);
 
   const [structServiceProvider2, setStructServiceProvider2] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider2);
+    void (async () => {
+      setStructServiceProvider2(await getStructServiceProvider());
+    })();
   }, []);
 
   if (!structServiceProvider1 || !structServiceProvider2) {
@@ -46,11 +50,11 @@ const DuoApp = () => {
             staticResourcesUrl={process.env.PUBLIC_URL}
             structServiceProvider={structServiceProvider1}
             onInit={(ketcher: Ketcher) => {
-              window.ketcher = ketcher;
+              globalThis.window.ketcher = ketcher;
               safePostMessage({
                 eventType: 'init',
               });
-              window.scrollTo(0, 0);
+              globalThis.scrollTo(0, 0);
             }}
           />
           {hasError && (
@@ -80,11 +84,11 @@ const DuoApp = () => {
             staticResourcesUrl={process.env.PUBLIC_URL}
             structServiceProvider={structServiceProvider2}
             onInit={(ketcher: Ketcher) => {
-              window.ketcher = ketcher;
+              globalThis.window.ketcher = ketcher;
               safePostMessage({
                 eventType: 'init',
               });
-              window.scrollTo(0, 0);
+              globalThis.scrollTo(0, 0);
             }}
           />
           {hasError && (

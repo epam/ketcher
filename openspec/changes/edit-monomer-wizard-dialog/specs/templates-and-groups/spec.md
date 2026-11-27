@@ -1,8 +1,13 @@
 ## MODIFIED Requirements
 
-### Requirement: Editing atoms inside an abbreviation is blocked for monomers
+### Requirement: Editing atoms inside an abbreviation is blocked
 
 When a user applies an incompatible tool to atoms inside a **monomer** S-group in molecules mode, the system SHALL display the "Edit Monomer" dialog (not the "Edit Abbreviation" dialog). For plain functional-group abbreviations the existing "Edit Abbreviation" dialog behavior SHALL remain unchanged.
+
+#### Scenario: Editing atoms inside an abbreviation is blocked
+
+- **WHEN** the user applies an incompatible tool to an atom inside a functional group
+- **THEN** Ketcher blocks the edit and offers to _Remove the Abbreviation_
 
 #### Scenario: Tool action on atom inside a monomer S-group
 

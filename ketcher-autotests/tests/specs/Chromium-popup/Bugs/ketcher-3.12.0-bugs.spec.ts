@@ -328,8 +328,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      */
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, 120, 50);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     await Library(page).switchToCHEMTab();
     await Library(page).clickMonomerAutochain(Chem.Test_6_Ch);
     for (let i = 1; i <= 6; i++) {
@@ -516,11 +517,11 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const changeEventTriggered = await page.evaluate(() => {
       return new Promise<boolean>((resolve) => {
         let eventFired = false;
-        window.ketcher.editor.subscribe('change', () => {
+        globalThis.window.ketcher.editor.subscribe('change', () => {
           console.log('in change event');
           eventFired = true;
         });
-        (window as any).__changeEventTriggered = () => eventFired;
+        (globalThis as any).__changeEventTriggered = () => eventFired;
         resolve(true);
       });
     });
@@ -531,7 +532,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await Library(page).clickMonomerAutochain(Peptide.A);
 
     const eventFired = await page.evaluate(() => {
-      return (window as any).__changeEventTriggered?.() ?? false;
+      return (globalThis as any).__changeEventTriggered?.() ?? false;
     });
     expect(eventFired).toBeTruthy();
 
@@ -590,10 +591,6 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const presetSection = NucleotidePresetSection(page);
     await dialog.selectType(MonomerType.NucleotidePreset);
     await presetSection.setName('N1');
-
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupBase({
       atomIds: [9, 10, 8, 0, 1, 2, 3, 4, 5, 6, 7],

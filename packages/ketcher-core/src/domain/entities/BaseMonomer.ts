@@ -126,7 +126,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     bond: MonomerBond,
   ): AttachmentPointName | undefined {
     if (bond instanceof HydrogenBond) {
-      return this.hydrogenBonds.find((hydrogenBond) => hydrogenBond === bond)
+      return this.hydrogenBonds.some((hydrogenBond) => hydrogenBond === bond)
         ? AttachmentPointName.HYDROGEN
         : undefined;
     }
@@ -176,8 +176,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     for (const attachmentPoint in this.attachmentPointsToBonds) {
       const match = /R(\d+)/.exec(attachmentPoint);
       if (match) {
-        const pointNumber = parseInt(match[1]);
-        if (!isNaN(pointNumber) && pointNumber > maxAttachmentPointNumber) {
+        const pointNumber = Number.parseInt(match[1]);
+        if (
+          !Number.isNaN(pointNumber) &&
+          pointNumber > maxAttachmentPointNumber
+        ) {
           maxAttachmentPointNumber = pointNumber;
         }
       }
@@ -186,19 +189,15 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get R1AttachmentPoint(): AttachmentPointName | undefined {
-    if (this.attachmentPointsToBonds.R1 === null) {
-      return AttachmentPointName.R1;
-    }
-
-    return undefined;
+    return this.attachmentPointsToBonds.R1 === null
+      ? AttachmentPointName.R1
+      : undefined;
   }
 
   public get R2AttachmentPoint(): AttachmentPointName | undefined {
-    if (this.attachmentPointsToBonds.R2 === null) {
-      return AttachmentPointName.R2;
-    }
-
-    return undefined;
+    return this.attachmentPointsToBonds.R2 === null
+      ? AttachmentPointName.R2
+      : undefined;
   }
 
   public get hasFreeAttachmentPoint() {
@@ -347,8 +346,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.unsetBond(attachmentPointName);
   }
 
-  public removePotentialBonds(clearSelectedPoints = false) {
-    if (clearSelectedPoints) {
+  public removePotentialBonds(shouldClearSelectedPoints = false) {
+    if (shouldClearSelectedPoints) {
       this.chosenFirstAttachmentPointForBond = null;
       this.chosenSecondAttachmentPointForBond = null;
       this.potentialSecondAttachmentPointForBond = null;
@@ -360,10 +359,9 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get availableAttachmentPointForBondEnd() {
-    if (this.chosenSecondAttachmentPointForBond) {
-      return this.chosenSecondAttachmentPointForBond;
-    }
-    return this.firstFreeAttachmentPoint;
+    return this.chosenSecondAttachmentPointForBond
+      ? this.chosenSecondAttachmentPointForBond
+      : this.firstFreeAttachmentPoint;
   }
 
   public hasAttachmentPoint(attachmentPointName: AttachmentPointName) {
@@ -523,11 +521,9 @@ export abstract class BaseMonomer extends DrawingEntity {
       .filter((_, sgroup) => sgroup.isSuperatomWithoutLabel)
       ?.get(0);
 
-    if (!superatomWithoutLabel) {
-      return [];
-    }
-
-    return superatomWithoutLabel.getAttachmentPoints();
+    return !superatomWithoutLabel
+      ? []
+      : superatomWithoutLabel.getAttachmentPoints();
   }
 
   public getAttachmentPointDictFromAtoms(): AttachmentPointsToBonds {
@@ -599,15 +595,16 @@ export abstract class BaseMonomer extends DrawingEntity {
       ...(naturalAnalogThreeLettersCode ? [naturalAnalogThreeLettersCode] : []),
       naturalAnalogCode,
     ];
+    const naturalAnaloguesToCompareSet = new Set(naturalAnaloguesToCompare);
 
     return namesToCompareNaturalAnalog.every((nameToCompare) => {
-      if (naturalAnaloguesToCompare.includes(nameToCompare)) {
+      if (naturalAnaloguesToCompareSet.has(nameToCompare)) {
         return false;
       }
       // Check if the name is a variation with asterisk (e.g., D* for D)
       // These are the same monomers with different R groups and should not be marked as modified
       const nameWithoutAsterisk = nameToCompare.replace(/\*$/, '');
-      return !naturalAnaloguesToCompare.includes(nameWithoutAsterisk);
+      return !naturalAnaloguesToCompareSet.has(nameWithoutAsterisk);
     });
   }
 

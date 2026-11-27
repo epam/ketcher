@@ -1,0 +1,144 @@
+{
+  "pr": 12363,
+  "head": "651cde97dfac704e15e534a0a1c2bbc7ece57b40",
+  "config": "opus-finders-opus-verifier",
+  "models": {
+    "finder": "claude-opus-5-5",
+    "verifier": "claude-opus-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/editor/Editor.types.ts",
+      "line": 19,
+      "otherLocations": [
+        "packages/ketcher-core/src/application/editor/editor.types.ts:135"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The elementEdit result type is declared twice, with different shapes, in core and in react.",
+      "scenario": "The react `Editor` implements the core `Editor` interface (`class Editor implements KetcherEditor`, Editor.ts:276), and that interface already declares the event block (`event: {` at editor.types.ts:132). This diff types core `elementEdit` as `PipelineSubscription<unknown, Promise<Partial<AtomAttributes>>>`. It then adds a separate `ElementEditResult = Partial<AtomAttributes> & { content?: string }` in ketcher-react, and the react class uses that one. The two copies already disagree on `content`. A later change to the dialog result will have to update both places. Code typed against the core interface will not see `content`. Define the result type once in core `editor.types.ts`, export it, and use it from react. The other new payload types (BondEditResult, RGroupEditResult, RemoveFGParams, EditorCursor) should get the same treatment so the core interface and the react class stay in sync.",
+      "references": [
+        "packages/ketcher-core/src/application/editor/editor.types.ts:132",
+        "packages/ketcher-react/src/script/editor/Editor.ts:276"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.types.ts",
+      "line": 33,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New exported SGroupDialogResult copies the private interface already declared in sgroup.ts field for field.",
+      "scenario": "`sgroup.ts:43` already declares `interface SGroupDialogResult { type?: string; attrs: { context?: string; expanded?: boolean; [key: string]: unknown } }`, and the new file repeats it exactly. The editor's `sgroupEdit` event now resolves to one type, while `sgroup.ts:799` types `.then((newSg: SGroupDialogResult) => …)` with the other. If someone adds a field to the dialog result in one copy, the two drift apart without any error, because the copies match only by structure. Export the type from one place and import it in `sgroup.ts`.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/sgroup.ts:43"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/editor.types.ts",
+      "line": 135,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:295"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The elementEdit result type is now declared twice, and the two declarations already differ.",
+      "scenario": "In core, `elementEdit` is typed `PipelineSubscription<unknown, Promise<Partial<AtomAttributes>>>`. In react's `Editor.ts:295` it is typed `PipelineSubscription<unknown, Promise<ElementEditResult>>`, which is `Partial<AtomAttributes> & { content?: string }`. The same event now has two hand-synced type declarations. Code that reads `content` through the core `Editor` interface fails to compile, while code that uses the react class compiles. A later change to the dialog result has to edit both files. Define the result type once, in core, and reuse it.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/editorEvents.ts",
+      "line": 182,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R5",
+      "claim": "Widening editorEvents to Record<…, Subscription> turns off the new payload types, which works like a cast.",
+      "scenario": "The diff gives events typed payloads such as `Subscription<MonomerItemType>` and `Subscription<CreateBondViaModalPayload>`. The new `bivarianceHack` makes those assignable to `Subscription<unknown>`, so `const events: Record<keyof IEditorEvents, Subscription> = editorEvents` compiles. The loop then writes untyped `new Subscription()` objects into fields declared with specific payloads. The alias hides exactly the mismatch the typing was added to catch, just as `as` would. Build each reset value with its own typed factory instead, for example a function that returns a fresh `IEditorEvents` and is shared with the `editorEvents` initializer.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.types.ts",
+      "line": 23,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "BondEditResult is a bare alias of Bond, a name that adds nothing.",
+      "scenario": "`export type BondEditResult = Bond;` has one use, `bondEdit: PipelineSubscription<Bond[], Promise<BondEditResult>>`. A reader has to look up the alias only to find `Bond`, and `bonds.ts` still types the same value as `Bond | PromiseLike<Bond>` without the alias. Use `Bond` directly (Speculative Generality).",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/state/modal/bonds.ts",
+      "line": 10,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "changeBondPromise is typed to accept a plain Bond, so its name no longer describes its type.",
+      "scenario": "The parameter type was widened from `Promise<Bond>` to `Bond | PromiseLike<Bond>` to fit the new pipeline types, but it is still called `changeBondPromise`. Callers and the next reader will assume it is always awaitable. Either keep the type `Promise<Bond>` and fix the type at the source, or rename the parameter to match the wider contract.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:19",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The elementEdit result type is declared twice, with different shapes, in core and in react.",
+      "scenario": "The react `Editor` implements the core `Editor` interface (Editor.ts:276). This diff gives core `event.elementEdit` the result type `Promise<Partial<AtomAttributes>>` (editor.types.ts:135). It also adds `ElementEditResult = Partial<AtomAttributes> & { content?: string }` in ketcher-react/Editor.types.ts:19, and the react class uses that type (Editor.ts:295). So the same dialog result is declared twice, and the two declarations already differ on `content`. Code typed against the core interface does not see `content`, and a later change to the result has to update both places. Define the result type once in core editor.types.ts, export it, and reuse it in react.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "3ff3c28f67acd78e"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:23",
+      "severity": "nit",
+      "id": "none",
+      "claim": "BondEditResult is a bare alias of Bond, a name that adds nothing.",
+      "scenario": "Editor.types.ts:23 adds `export type BondEditResult = Bond;`. Its only use is `bondEdit: PipelineSubscription<Bond[], Promise<BondEditResult>>` (Editor.ts:299). Readers have to look up the alias to learn that it is just `Bond`. Meanwhile bonds.ts types the same value as `Bond | PromiseLike<Bond>` without the alias. Using `Bond` directly says the same thing with one less name.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "5bce12a75c8887d3"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.types.ts:33",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New exported SGroupDialogResult copies the private interface already declared in sgroup.ts field for field.",
+      "scenario": "`sgroup.ts:43` already declares `interface SGroupDialogResult` with the same fields, and the new `Editor.types.ts:33` repeats it. `Editor.ts:301` types `sgroupEdit` with the new copy, while `sgroup.ts:799`, `:855` and `:937` still use the private copy. The two match only by shape, so a field added to one copy lets them drift apart with no compile error. Export the type from `Editor.types.ts`, import it in `sgroup.ts`, and delete the local interface there.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "81e1d3e6a5d93dfb"
+    }
+  ],
+  "dropped": 3,
+  "failed": [],
+  "ranModels": [
+    "claude-opus-5-5"
+  ],
+  "runs": 11,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.9630302,
+    "finderUsd": 0.9630302,
+    "verifierUsd": 1.2772812,
+    "totalUsd": 2.2403114
+  },
+  "time": {
+    "initialFinderMs": 26629,
+    "totalMs": 61658
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "pr": 12363,
+  "head": "651cde97dfac704e15e534a0a1c2bbc7ece57b40",
+  "config": "sonnet-finders-sonnet-verifier",
+  "models": {
+    "finder": "claude-sonnet-5-5",
+    "verifier": "claude-sonnet-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/editor/editorEvents.ts",
+      "line": 88,
+      "otherLocations": [
+        "packages/ketcher-core/src/application/editor/editorEvents.ts:89",
+        "packages/ketcher-core/src/application/editor/editorEvents.ts:169",
+        "packages/ketcher-core/src/application/editor/editorEvents.ts:172"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The payload unions for autochain and previewAutochain are written out twice each, once in the interface and once in the initializer, with no shared alias.",
+      "scenario": "Someone adds a member to the autochain payload, for example a new monomer kind. They must edit the interface line and the `new Subscription<...>()` line for each event. If they miss one, the two declarations drift apart. `createBondViaModal` and `selectMode` already use named aliases (`CreateBondViaModalPayload`, `SelectLayoutModePayload`). The same pattern would fix this: `AutochainPayload` and `PreviewAutochainPayload` in `editor.types.ts`.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-core/src/application/editor/editorEvents.ts:88",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The payload unions for autochain and previewAutochain are written out twice each, once in the interface and once in the initializer, with no shared alias.",
+      "scenario": "Someone adds a member to the autochain payload union. They must edit both the interface line (88) and the `new Subscription<...>()` line (169-171), and likewise for previewAutochain (89, 172). If they miss one, the two declarations drift apart. A shared alias in editor.types.ts, like `CreateBondViaModalPayload`, would avoid this.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "1f76696b9573e78c"
+    }
+  ],
+  "dropped": 0,
+  "failed": [],
+  "ranModels": [
+    "claude-sonnet-5-5"
+  ],
+  "runs": 6,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.3844757,
+    "finderUsd": 0.3844757,
+    "verifierUsd": 0.17094340000000002,
+    "totalUsd": 0.5554190999999999
+  },
+  "time": {
+    "initialFinderMs": 10259,
+    "totalMs": 24330
+  }
+}

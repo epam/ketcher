@@ -1,0 +1,146 @@
+{
+  "pr": 10447,
+  "head": "1180f13b9b00e1e72ca769fd5e208325bfcbde7e",
+  "config": "sonnet-finders-haiku-verifier",
+  "models": {
+    "finder": "claude-sonnet-5-5",
+    "verifier": "claude-haiku-5-5"
+  },
+  "findersFrom": "sonnet-finders-sonnet-verifier",
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts",
+      "line": 624,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:573"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "Three-letter-code matching uses substring includes, so one- and two-letter queries now return unrelated amino acids.",
+      "scenario": "The user types \"l\" or \"p\" in the library search. matchesAminoAcidThreeLetterCode lowercases the code and calls includes(\"l\"). That now matches Ala (A), Val (V), Leu (L), Pyl (O), Xle (J) and Ile (I), whose names or labels do not contain \"l\". Before this change those monomers did not match. The test 'still matches single-letter A' only asserts toContain('A'), so it hides the extra hits. A prefix match (startsWith), or a minimum query length of 2, would limit the match to a code the user is typing.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 65,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:107",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:119"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test fixtures use `as unknown as AmbiguousMonomerType`, `as RootState` and `{} as ...` casts to hide incomplete stubs.",
+      "scenario": "createAmbiguous builds a partial object (`options: []`, `monomers` with only `props.MonomerClass`) and casts it through unknown. If selectFilteredMonomers later reads another member, such as `monomerItem.props.Name`, the stub fails at runtime instead of compile time. buildState casts a partial state with `as RootState`, and `struct: {} as MonomerItemType['struct']` does the same.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts",
+      "line": 69,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:564",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:623"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The helper takes an `isAminoAcid` boolean that acts as a guard, so each caller builds the class check itself.",
+      "scenario": "matchesAminoAcidThreeLetterCode(code, isAminoAcid, filter) returns false when the flag is false. The ambiguous branch computes `isAminoAcidAmbiguous` inline, and the plain branch computes `props.MonomerClass === AminoAcid` inline. A third caller has to rebuild the class rule. Pass the item and let the helper own the amino-acid class rule.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/constants.ts",
+      "line": 59,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "`as const` on a `Record<string, string>` annotation has no effect.",
+      "scenario": "The explicit annotation widens the type, so `as const` adds no literal or readonly typing. It misleads readers into thinking the keys are checked. Drop `as const`, or drop the annotation and type the lookup by key.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 129,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:21",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:33"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "Test helpers repeat the same logic: two near-identical monomer factories and label extraction written twice.",
+      "scenario": "createAminoAcid is createNonAminoAcid with fixed class and type. The label mapping (`isAmbiguous ? label : props.MonomerName`) appears in both getMatchedLabels and getMatchedAminoAcidLabels. A change to the fixture shape has to be made in each copy. Have createAminoAcid call createNonAminoAcid, and extract a getLabel helper.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test fixtures use `as unknown as AmbiguousMonomerType`, `as RootState` and `{} as ...` casts to hide incomplete stubs.",
+      "scenario": "createAmbiguous (test lines 56-71) builds `monomers[].monomerItem` with only `props.MonomerClass` and casts the whole object through `as unknown as AmbiguousMonomerType`. The compiler cannot see the missing members. In selectFilteredMonomers the ambiguous branch reads `Name`, `MonomerName` and the other props from each component's `monomerItem.props` (librarySlice.ts ~lines 575-600). Those reads return undefined in the test without any type error, so a test that depends on them can pass or fail for the wrong reason. Two more casts follow the same pattern: `as RootState` in buildState (line 129) and `{} as MonomerItemType['struct']` (lines 46 and 61 equivalents). The finding's cited lines 107 and 119 are not cast sites, so the corrected location is line 71.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "c1304452475381d5"
+    },
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:624",
+      "severity": "major",
+      "id": "none",
+      "claim": "Three-letter-code matching uses substring includes, so one- and two-letter queries now return unrelated amino acids.",
+      "scenario": "The helper at librarySlice.ts:624 (same logic at 573) matches any substring of the three-letter code. A user typing \"sn\" gets Asn (code \"asn\" contains \"sn\"), though its name \"Asparagine\" does not contain \"sn\", and the monomer did not match before this change. Typing \"hr\" gets Thr the same way. The \"l\" example in the original finding is wrong: Ala, Val, Leu, Ile, Pyl and similar names already contain \"l\" and matched before. A prefix match (startsWith) would limit three-letter code hits to codes the user is typing.",
+      "lenses": [
+        "correctness"
+      ],
+      "fingerprint": "38d9e2a68d5deab6"
+    },
+    {
+      "location": "packages/ketcher-macromolecules/src/constants.ts:86",
+      "severity": "nit",
+      "id": "none",
+      "claim": "`as const` on a `Record<string, string>` annotation has no effect.",
+      "scenario": "`packages/ketcher-macromolecules/src/constants.ts:59` annotates the object as `Record<string, string>`, and `as const` at line 86 ends the initializer. The annotation fixes the variable's type, so `as const` adds no literal or readonly typing to it. A reader may assume the keys are checked, but any string key still type-checks. Dropping `as const`, or dropping the annotation and typing the lookup by key, would make the intent match the types.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "29f6172cb5ae4144"
+    },
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:27",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "Test helpers repeat the same logic: two near-identical monomer factories and label extraction written twice.",
+      "scenario": "Test-file duplication, not a runtime defect. `createAminoAcid` (librarySlice.test.ts:27-37) builds the same fixture as `createNonAminoAcid` (lines 39-54) with MonomerClass and MonomerType fixed, so a change to the fixture shape must be made in both. The label mapping `item.isAmbiguous ? (item as AmbiguousMonomerType).label : (item as MonomerItemType).props.MonomerName` appears at line 133-135 in `getMatchedLabels` and again in `getMatchedAminoAcidLabels`. Fix: have createAminoAcid call createNonAminoAcid, and extract a getLabel helper. Corrected locations: 27 and 133, not 21 and 33 as cited; line 129 is the `} as RootState);` closing of buildState and is not part of the finding.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "8d1637e65cfdbf44"
+    }
+  ],
+  "dropped": 1,
+  "failed": [],
+  "ranModels": [
+    "claude-haiku-5-5"
+  ],
+  "runs": 6,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.2552319,
+    "finderUsd": 0.2552319,
+    "verifierUsd": 0.02447092,
+    "totalUsd": 0.27970282
+  },
+  "time": {
+    "initialFinderMs": 23575,
+    "totalMs": 61790
+  }
+}

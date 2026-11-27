@@ -1,0 +1,111 @@
+{
+  "pr": 12473,
+  "head": "076c2272728f4b0c005bbc011abd7d9c4d477c32",
+  "config": "opus-finders-opus-verifier",
+  "models": {
+    "finder": "claude-opus-5-5",
+    "verifier": "claude-opus-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts",
+      "line": 312,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stub gets an `as unknown as RotateTool['dragCtx']` cast that hides the missing required fields `xy0` and `angle1`.",
+      "scenario": "The stub `{ action: { operations: [], perform: () => undefined } }` has no `xy0` or `angle1`, and those fields are required in the new `RotateDragContext`. The double cast hides that from the type checker. If a later change makes the code under test read `dragCtx.xy0` (for example `vectorUtils.calcAngle(dragCtx.xy0, ...)` in mousemove), the test hits `undefined` at runtime instead of failing to compile. The `// @ts-ignore` on line 309 already suppresses the check, so the cast adds nothing. Build a real `RotateDragContext` instead, with `xy0: new Vec2()`, `angle1: 0` and a real `Action`, so the stub matches the declared type.",
+      "references": []
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+      "line": 42,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New `MergeItems` alias is a third local copy of the same `ReturnType<typeof getItemsToFuse>` alias.",
+      "scenario": "rotate.ts:42 adds `type MergeItems = ReturnType<typeof getItemsToFuse>;`. The same line already exists, unexported, at select/select.types.ts:17 and chain.ts:39, and fragmentSelection.ts:47 writes the same type inline. The rotate tool now has its own copy as well. If `getItemsToFuse` is changed or the merge-items shape gets a single named type (template.types.ts:71 already exports a separate `MergeItems` with a different, nullable shape), each copy has to be found and updated by hand. Export the alias once, for example from select.types.ts next to the other drag-context types, and import it in rotate.ts.",
+      "references": [
+        "packages/ketcher-react/src/script/editor/tool/select/select.types.ts:17",
+        "packages/ketcher-react/src/script/editor/tool/chain.ts:39",
+        "packages/ketcher-react/src/script/editor/tool/fragmentSelection.ts:47"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts",
+      "line": 312,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R5",
+      "claim": "New `as unknown as RotateTool['dragCtx']` cast hides that the stub is missing required members.",
+      "scenario": "The stub has only `action` and lacks the required `xy0` and `angle1` fields of `RotateDragContext`. Its `action` is a plain object, not an `Action`. The double cast stops the type checker from seeing either problem, and the `// @ts-ignore` on line 309 stays in place too. If a later change makes `mouseup` read `dragCtx.xy0`, the test still compiles but fails at runtime. Build a valid `RotateDragContext` instead: `{ xy0: new Vec2(), angle1: 0, action: new Action() }`. Then remove the cast, and the `@ts-ignore` if it is no longer needed.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/rotate.ts",
+      "line": 44,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:237",
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:290",
+        "packages/ketcher-react/src/script/editor/tool/rotate.ts:306"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "`angle`, `action` and `mergeItems` are three separate optional fields, but they mark one phase and are always set together.",
+      "scenario": "`mousemove` (lines 240-253) sets all three fields together, and nothing else sets them. Because the type makes each one optional on its own, every reader needs its own fallback: `'angle' in dragCtx` at line 237, `?? new Action()` at line 290, `?? 0` at line 306, and `?? {}` at line 271. The next contributor has to keep these fallbacks consistent by hand. If `mouseup` runs before any `mousemove`, it silently records a 0° monomer rotation instead of skipping it. Use a union instead: `{ xy0; angle1 } | { xy0; angle1; rotation: { angle; action; mergeItems } }`, or one optional `rotation` object. That makes the phase explicit and removes the scattered defaults. Also, `!('angle' in dragCtx)` on line 237 is now redundant, because `dragCtx.angle !== rotateAngleInDegrees` already covers the undefined case.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/editor/tool/rotate-controller.test.ts:312",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stub gets an `as unknown as RotateTool['dragCtx']` cast that hides the missing required fields `xy0` and `angle1`.",
+      "scenario": "The stub `{ action: { operations: [], perform: () => undefined } }` has no `xy0` or `angle1`, and its `action` is not a real `Action`. All of these are required or typed in the new `RotateDragContext`. The double cast `as unknown as RotateTool['dragCtx']` hides that from the type checker, together with the `// @ts-ignore` on line 309. If a later change makes the code under test read `dragCtx.xy0` or `dragCtx.angle1`, the test gets `undefined` at runtime instead of failing to compile. Build a real `RotateDragContext` instead (for example `xy0: new Vec2()`, `angle1: 0`, and an `Action`).",
+      "lenses": [
+        "correctness",
+        "code-quality"
+      ],
+      "fingerprint": "31ddd3db45737780"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/tool/rotate.ts:42",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New `MergeItems` alias is a third local copy of the same `ReturnType<typeof getItemsToFuse>` alias.",
+      "scenario": "The diff adds `type MergeItems = ReturnType<typeof getItemsToFuse>;` at rotate.ts:42. The same alias already exists, unexported, at select/select.types.ts:17 and chain.ts:39, and fragmentSelection.ts:47 writes the same type inline. That makes this the third local copy. If the merge-items type changes or gets one named export, every copy has to be found and updated by hand. Export the alias once, for example from select.types.ts, and import it here.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "c2f6093f8334b477"
+    }
+  ],
+  "dropped": 1,
+  "failed": [],
+  "ranModels": [
+    "claude-opus-5-5"
+  ],
+  "runs": 9,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.6767055999999999,
+    "finderUsd": 0.6767055999999999,
+    "verifierUsd": 0.46171,
+    "totalUsd": 1.1384155999999999
+  },
+  "time": {
+    "initialFinderMs": 24103,
+    "totalMs": 53020
+  }
+}

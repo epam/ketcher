@@ -87,6 +87,8 @@ Rounds are manual. The hub removes the label when the run ends, so a new round n
 
 Both roles run on `claude-opus-5-5`. The finder model runs the lens passes; the verifier model runs the verifier, the duplicates and the linked-issue runs. The `REVIEW_FINDER_MODEL` and `REVIEW_VERIFIER_MODEL` repository variables change a role's model without a pull request, and `REVIEW_STRONG_MODEL` changes the model the `Claude Review: Opus` label sets.
 
+The evaluation in `scripts/review/eval/` measures the hub on merged PRs: some with maintainer findings, some approved with no comment. `run-eval.mjs` runs each PR once per model configuration as a dry run, at the reviewed commit, and posts nothing. `report.mjs` scores the results against the expected findings and the judgements in `matches.json`. It reports recall before and after verification, false positives, and cost and time per PR.
+
 `/review-pr` is the same review by hand, for local and agent runs. It shares the panel script, the lens files and the role prompts with the hub, and it posts nothing without approval.
 
 Planned:
@@ -94,7 +96,7 @@ Planned:
 - Module docs loaded by their `paths:` lists from Phase 1 (task 5.3).
 - Suggestion blocks in inline comments, and a second, independent verifier pass (task 5.4).
 - AI review may raise a risk tier, never lower it (task 5.5).
-- An evaluation set that measures recall and false positives on known PRs, and sets the default models from the result (follow-up of #12246).
+- Set the default models from the evaluation result (follow-up of #12246).
 
 ### Human review
 

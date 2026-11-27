@@ -1,0 +1,288 @@
+{
+  "pr": 7767,
+  "head": "33741bf3f217dd7c5372cf1eec84f31c46093cb1",
+  "config": "sonnet-finders-sonnet-verifier",
+  "models": {
+    "finder": "claude-sonnet-5-5",
+    "verifier": "claude-sonnet-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality",
+    "performance"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 807,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:1061"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "potentialAttachmentPoints is keyed by attachment atom id, so two leaving atoms on one attachment atom collide and one is lost.",
+      "scenario": "Select a carbon with two single bonds to outside atoms. Both pass the wizard-enabled check, but `potentialAttachmentPoints.set(attachmentAtomId, leavingId)` overwrites the first entry. Only one can be assigned. `assignLeavingGroupAtom` then calls `delete(attachmentAtomId)`, which drops the other one too. `removeAttachmentPoint` overwrites in the same way.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 786,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "The attachment atom is taken from the outside atom's neighbors[0], which need not be the selected atom.",
+      "scenario": "An outside atom has two neighbors (for example a methyl bonded to another outside atom). `neighbors[0]` can be the half-bond to the non-selected atom. Then `originalToSelectedAtomsIdMap.get` returns undefined and `assert(selectedStructAttachmentAtomId !== undefined)` throws while opening the wizard. An outside atom bonded to two selected atoms is also pushed twice.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx",
+      "line": 44,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "none",
+      "claim": "The assigned-attachment check matches the attachment atom as well as the leaving atom, so the edit action can relabel the wrong atom.",
+      "scenario": "Right-click the attachment atom (a carbon) of an assigned R1. `atomsPair.includes(selectedAtomId)` is true, so the menu offers 'Edit connection point'. The popup carries `atomId` = the carbon. Choosing 'Cl' or 'OH' calls `reassignAttachmentPointAtom` and changes the carbon's label.",
+      "references": []
+    },
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.tsx",
+      "line": 211,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The order validation rejects R1+R3, although the message says R1 and R2 may be skipped.",
+      "scenario": "Attachment points [R1, R3]: `startingIndex` stops at 1. At i=1, 3-1=2 > 1, so `incorrectAttachmentPointsOrder` is set. R2 is skipped, which the message allows.",
+      "references": []
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx",
+      "line": 19,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The R1–R8 option list is rebuilt with a template string instead of using the existing `attachmentPointNames` constant.",
+      "scenario": "The diff adds `Array.from({ length: 8 }).map((_, i) => ({ value: `R${i + 1}` ... }))`. `attachmentPointNames` already lists 'R1'..'R8', and `AttachmentPointName` is an enum of the same values. Both are in ketcher-core `domain/types/monomers.ts`. The popup then casts `value as AttachmentPointName`. If the attachment-point limit changes, this local list and its hardcoded 8 will not follow the ketcher-core list. The same hardcoded 8 appears in `useMakeLeavingGroupAtomMenuItem.tsx` (`>= 8`), in `Editor.ts` (`> 8`) and in `getNextFreeAttachmentPoint`.",
+      "references": [
+        "packages/ketcher-core/src/domain/types/monomers.ts:89",
+        "packages/ketcher-core/src/domain/types/monomers.ts:29"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 970,
+      "otherLocations": [],
+      "severity": "major",
+      "id": "R8",
+      "claim": "A commented-out block of old bond-attachment logic is left in saveNewMonomer.",
+      "scenario": "The `// this.singleBondsToOutsideOfSelection.forEach(...)` block refers to a field this change deleted, so it cannot compile if uncommented. `sGroupAttachmentPoints` is still computed just above it and nothing uses it. Delete the block and track the TODO in an issue.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 651,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:726"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "The isMonomerCreationWizardEnabled getter writes terminalRGroupAtoms and potentialLeavingAtoms, and openMonomerCreationWizard reads them later.",
+      "scenario": "openMonomerCreationWizard iterates `this.terminalRGroupAtoms` and `this.potentialLeavingAtoms`. Only an earlier read of the getter fills them. If the wizard is opened without that read, or the selection changes between the two calls, it works from stale atoms. A getter should not hold side effects. Compute the data in a method that returns it, and pass it to open.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/Editor.ts",
+      "line": 1068,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:866",
+        "packages/ketcher-react/src/script/editor/Editor.ts:1047"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "The monomer creation state is mutated in place, and only some mutators copy it by hand for Redux.",
+      "scenario": "assignLeavingGroupAtom and removeAttachmentPoint end with `Object.assign({}, this.monomerCreationState)` so Redux sees a change. reassignAttachmentPoint changes the same Maps and does not. State owned by Render, mutated by Editor and read through Redux needs one update path, such as a helper that mutates and then republishes. Otherwise the next mutator that forgets the copy leaves the UI stale.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/application/render/restruct/reatom.ts",
+      "line": 660,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:57",
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:35"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The lookup of an attachment point name from an atom id, and the dispatch of the click CustomEvent, are copied in three places.",
+      "scenario": "reatom.ts and useMakeLeavingGroupAtomMenuItem.tsx each scan `assignedAttachmentPoints` keys with `.get(key)` plus an assert to find the name by atom id. Both also build and dispatch the same `MonomerCreationAttachmentPointClickEvent` with an `AttachmentPointClickData` payload. The Map is keyed by name only to be searched by value, so a shared `findAttachmentPointName(state, atomId)` helper and a `dispatchAttachmentPointClick(data)` helper would stop the copies drifting apart.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/src/domain/helpers/attachmentPointCalculations.ts",
+      "line": 283,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/editor/Editor.ts:651",
+        "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:48",
+        "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx:20"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The limit of 8 attachment points is repeated as a bare literal in four files.",
+      "scenario": "The number 8 appears in `getNextFreeAttachmentPoint`, in `totalPotentialLeavingAtoms > 8`, in `assignedAttachmentPoints.size >= 8`, and in `Array.from({ length: 8 })` in the popup. Changing the limit means editing every one of them. Export one `MAX_ATTACHMENT_POINTS` constant from the domain helpers.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx",
+      "line": 39,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx:98",
+        "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.tsx:397"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "Casts are used where a typed option list or a guard would work.",
+      "scenario": "`event.target as Node`, `event.target as Element`, and `value as AttachmentPointName` turn the type check off. The name options are typed as plain `string`, so the cast on `onNameChange` hides a mismatch. `entry as [AttachmentPointName, [number, number]]` in MonomerCreationWizard.tsx is also needless, because `Map.entries()` of that Map type already has this shape. Type the options as `AttachmentPointName` and drop the casts.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx",
+      "line": 44,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The click-outside check depends on MUI class names and a wildcard data-testid selector.",
+      "scenario": "The check lists `.MuiPaper-root`, `.MuiList-root`, `.MuiMenuItem-root` and `[data-testid*=\"select\"]`. It breaks silently if the Select component is restyled. The `clickedElement.closest &&` guard is also pointless, because `Element.closest` always exists. Keep the dropdown in a ref or portal the popup can recognise instead of matching class names.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/editor/tool/create-monomer.ts",
+      "line": 7,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "A setTimeout of 0 in the tool constructor switches tools without a comment.",
+      "scenario": "The constructor opens the wizard and then schedules `this.editor.tool('select')` for the next tick, which works around ordering by timing. If the wizard open becomes async, or the tool is replaced before the tick, the timer fires against the wrong tool. Switch tools from `openMonomerCreationWizard` explicitly, or document why the delay is needed.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.module.less",
+      "line": 104,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R8",
+      "claim": "The .attachmentPointIcon class is now unused.",
+      "scenario": "The change removed the only `<Icon name=\"close\" className={styles.attachmentPointIcon}/>` and moved the other attachment point styles to AttachmentPoint.module.less. This class is still in the old file with nothing using it.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/MonomerCreationWizard/MonomerCreationWizard.tsx",
+      "line": 404,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R14",
+      "claim": "The fallback with a TODO hides a stale-state bug that the code itself says should be an assert.",
+      "scenario": "`if (!atom) return { name, atomLabel: 'H' }` is kept because `assignedAttachmentPoints` goes stale after close, so a wrong 'H' label can appear in the UI. This also reads `editor.struct()` during render. The stale state should be fixed at the source, where `closeMonomerCreationWizard` and the Render state clear it.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.ts:786",
+      "severity": "blocker",
+      "id": "none",
+      "claim": "The attachment atom is taken from the outside atom's neighbors[0], which need not be the selected atom.",
+      "scenario": "The user selects part of a molecule. An outside atom has a single bond to the selection, which `isMonomerCreationWizardEnabled` accepts, and a second bond to another atom outside the selection. If the half-bond to the outside atom is `neighbors[0]`, `halfBonds.get(...).end` is the unselected atom. `originalToSelectedAtomsIdMap.get(attachmentAtomId)` then returns undefined, so `assert(selectedStructAttachmentAtomId !== undefined)` throws in `openMonomerCreationWizard`. The old code walked the bonds that cross the selection boundary, so it did not have this bug. If one outside atom is bonded to two selected atoms, `potentialLeavingAtoms` receives it twice, one entry per bond. Two leaving-atom clones are then created, and both pair with that atom's first neighbor.",
+      "lenses": [
+        "correctness"
+      ],
+      "fingerprint": "a85ff1a2447846ab"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/editor/Editor.ts:807",
+      "severity": "blocker",
+      "id": "none",
+      "claim": "potentialAttachmentPoints is keyed by attachment atom id, so two leaving atoms on one attachment atom collide and one is lost.",
+      "scenario": "Select a carbon that has two single bonds to atoms outside the selection. The enable check counts both leaving atoms, so the wizard opens. The loop at line 807 calls `potentialAttachmentPoints.set(attachmentAtomId, leavingId)` for each, and the second call overwrites the first. Only one leaving atom can then be assigned. `assignLeavingGroupAtom` calls `potentialAttachmentPoints.delete(attachmentAtomId)` at line 859, which would remove any other entry for that atom. `removeAttachmentPoint` at line 1061 overwrites the same way.",
+      "lenses": [
+        "correctness"
+      ],
+      "fingerprint": "ecbebe256e93580e"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/AttachmentPointEditPopup/AttachmentPointEditPopup.tsx:43",
+      "severity": "major",
+      "id": "R5",
+      "claim": "Casts are used where a typed option list or a guard would work.",
+      "scenario": "The diff adds casts where a guard or a typed option list would work. In AttachmentPointEditPopup.tsx, `event.target as Node` is at line 43 and `event.target as Element` is at line 51. `value as AttachmentPointName` is at line 93. The name options are built as plain `string` values, so the cast hides that mismatch. In MonomerCreationWizard.tsx at line 400, `entry as [AttachmentPointName, [number, number]]` is redundant, because `Map.entries()` of that Map type already has this shape. Fix: type the options as `AttachmentPointName`, use an `instanceof Element` guard, and drop the entry cast.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "f8b11d3bba338b30"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/ContextMenu/hooks/useMakeLeavingGroupAtomMenuItem.tsx:44",
+      "severity": "blocker",
+      "id": "none",
+      "claim": "The assigned-attachment check matches the attachment atom as well as the leaving atom, so the edit action can relabel the wrong atom.",
+      "scenario": "In the monomer creation wizard, right-click the attachment atom, a carbon, of an assigned R1. `atomsPair.includes(selectedAtomId)` is true, so the menu shows 'Edit connection point'. `handleEditClick` dispatches the click event with `atomId` set to the carbon and `atomLabel` set to 'C'. The popup's atom Select then calls `onAtomChange(carbonId, value)`, which reaches `editor.reassignAttachmentPointAtom`. That sets `atom.label` on the carbon, so the attachment atom is relabeled instead of the leaving atom. 'Remove assignment' is offered on the attachment atom too, which is harmless.",
+      "lenses": [
+        "correctness"
+      ],
+      "fingerprint": "d3152e3ca7cde333"
+    },
+    {
+      "location": "packages/ketcher-core/src/application/render/restruct/reatom.ts:629",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The lookup of an attachment point name from an atom id, and the dispatch of the click CustomEvent, are copied in three places.",
+      "scenario": "reatom.ts:625-631 and useMakeLeavingGroupAtomMenuItem.tsx:40-45 both scan the assignedAttachmentPoints Map to find an attachment point name from an atom id. The two lookups differ: reatom matches only the leaving atom id, while the hook matches either atom of the pair. Both files also build and dispatch the same click CustomEvent. This is two copies, not three, and the lookups are similar rather than identical. A shared dispatch helper (and optionally a lookup helper) would keep them from drifting.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "af53e2c9fb316e36"
+    },
+    {
+      "location": "packages/ketcher-core/src/domain/helpers/attachmentPointCalculations.ts:284",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The limit of 8 attachment points is repeated as a bare literal in four files.",
+      "scenario": "The attachment point limit 8 is hard-coded in getNextFreeAttachmentPoint (attachmentPointCalculations.ts:284), in `totalPotentialLeavingAtoms > 8` (Editor.ts:648), in `assignedAttachmentPoints.size >= 8` (useMakeLeavingGroupAtomMenuItem.tsx:54), and in `Array.from({ length: 8 })` (AttachmentPointEditPopup.tsx:19). Changing the limit means editing all four, and a missed one leaves the checks inconsistent. A single exported constant would remove this.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "fafaaf57ae13f3f4"
+    }
+  ],
+  "dropped": 4,
+  "failed": [],
+  "ranModels": [
+    "claude-sonnet-5-5"
+  ],
+  "runs": 15,
+  "failedRuns": 0,
+  "runErrors": [],
+  "cost": {
+    "initialFinderUsd": 0.9192461000000001,
+    "finderUsd": 0.9192461000000001,
+    "verifierUsd": 2.0484103,
+    "totalUsd": 2.9676564
+  },
+  "time": {
+    "initialFinderMs": 45080,
+    "totalMs": 89322
+  }
+}

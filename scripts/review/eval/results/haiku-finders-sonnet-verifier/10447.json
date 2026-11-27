@@ -1,0 +1,181 @@
+{
+  "pr": 10447,
+  "head": "1180f13b9b00e1e72ca769fd5e208325bfcbde7e",
+  "config": "haiku-finders-sonnet-verifier",
+  "models": {
+    "finder": "claude-haiku-5-5",
+    "verifier": "claude-sonnet-5-5"
+  },
+  "findersFrom": "haiku-finders-haiku-verifier",
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "correctness",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 71,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:129"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test stubs use casts that hide missing members of AmbiguousMonomerType and RootState.",
+      "scenario": "createAmbiguous returns an object literal cast with `as unknown as AmbiguousMonomerType`, so the type checker cannot flag a missing field. buildState casts a partial library object `as RootState`. If selectFilteredMonomers later reads another field of either type, the test still compiles and fails only at runtime, or passes on a stub that no longer matches the real shape.",
+      "references": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:378"
+      ]
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-macromolecules/src/constants.ts",
+      "line": 59,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New hardcoded one-to-three-letter table repeats per-monomer three-letter data the library already carries.",
+      "scenario": "Monomers already expose MonomerNaturalAnalogThreeLettersCode in their props, read by BaseMonomer.isModification and set by monomerToDrawingEntity. A three-letter search can match that prop instead of a parallel 26-entry table. A monomer whose library data differs from the table, or a new amino acid added to the library, will match differently from how the rest of the app reads it. I did not confirm that the library populates this field for every natural amino acid, so check that before switching.",
+      "references": [
+        "packages/ketcher-core/src/domain/entities/BaseMonomer.ts:591",
+        "packages/ketcher-core/src/domain/serializers/ket/fromKet/monomerToDrawingEntity.ts:32",
+        "packages/ketcher-core/src/domain/types/monomers.ts:50"
+      ]
+    },
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.ts",
+      "line": 69,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:573",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:624"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "New matcher runs as a parallel path beside checkMonomerMatch instead of passing the code as one more alias.",
+      "scenario": "checkMonomerMatch already takes alias strings (helmAlias, bilnAlias, axoLabsAlias), lowercases them, and tests them against the search filter. The three-letter code could be passed to it as one more alias argument, so the monomer branch and the ambiguous branch would share one match path. Instead there are two calls to a second matcher, and a future change to how aliases match, such as a prefix rule or a trim, has to be made in two places.",
+      "references": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:384",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.ts:405"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 71,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:29",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:46",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:129"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test fixtures build partial objects and cast them to full types with `as unknown as` and `as RootState`.",
+      "scenario": "createAmbiguous returns a partial object cast to AmbiguousMonomerType. If a later change reads a field the stub omits (for example options or subtype), the test still compiles and fails late or passes for the wrong reason. Build a typed fixture that satisfies the real type, or narrow it with a type guard instead of casting.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 27,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:39"
+      ],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "createAminoAcid repeats the object literal of createNonAminoAcid, and createNonAminoAcid's name misdescribes its use.",
+      "scenario": "Both builders construct the same MonomerItemType shape. A change to that shape must be made in two places. createAminoAcid could call createNonAminoAcid(oneLetter, name, KetMonomerClass.AminoAcid, 'PEPTIDE'). The name createNonAminoAcid also reads as excluding amino acids, but it accepts any class, so a rename to createMonomer would fit.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 138,
+      "otherLocations": [
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:132",
+        "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:156"
+      ],
+      "severity": "major",
+      "id": "none",
+      "claim": "getMatchedAminoAcidLabels post-filters results with a copy of the production class gate, which hides a leaked match.",
+      "scenario": "If matchesAminoAcidThreeLetterCode stopped checking the class, 'Ala' would still yield only ['A'] here, because this helper filters out Adenine itself. The per-code it.each cases would keep passing. Only the hand-written .some checks further down would catch the regression. The label mapping is also repeated in getMatchedLabels and in this helper. Assert on selectFilteredMonomers output directly and drop the duplicated predicate.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts",
+      "line": 173,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "Test title says 'failing code' where it means three-letter code.",
+      "scenario": "The title reads 'returns exactly the natural monomer for failing code Trp → W'. A reader scanning failures is misled about what the case covers. Rename it to 'three-letter code'.",
+      "references": []
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-macromolecules/src/constants.ts",
+      "line": 59,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The Record<string, string> annotation combined with `as const` is redundant and loses key checking.",
+      "scenario": "The annotation sets the type, so `as const` has no effect. Because the key type is string, any string key typechecks, so a misspelt lookup compiles and falls through to the undefined branch in the caller. Drop the annotation and keep `as const`, or type the keys as a union of the letters.",
+      "references": []
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:71",
+      "severity": "major",
+      "id": "R5",
+      "claim": "Test stubs use casts that hide missing members of AmbiguousMonomerType and RootState.",
+      "scenario": "createAmbiguous builds a partial object and casts it with `as unknown as AmbiguousMonomerType`. buildState (line 129) casts a partial `library` object with `as RootState`. If selectFilteredMonomers or the types later read another field, the tests still compile and fail only at runtime, or pass on a stub that no longer matches the real shape.",
+      "lenses": [
+        "correctness",
+        "code-quality"
+      ],
+      "fingerprint": "46b666c73daccbbd"
+    },
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:27",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "createAminoAcid repeats the object literal of createNonAminoAcid, and createNonAminoAcid's name misdescribes its use.",
+      "scenario": "Both test builders build the same MonomerItemType literal (label, struct, props). A change to that shape has to be made twice. createAminoAcid could delegate to createNonAminoAcid(oneLetter, name, KetMonomerClass.AminoAcid, 'PEPTIDE'). The name createNonAminoAcid is also misleading, because the function accepts any class.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "d5cc8b621187ad45"
+    },
+    {
+      "location": "packages/ketcher-macromolecules/src/state/library/librarySlice.test.ts:173",
+      "severity": "nit",
+      "id": "none",
+      "claim": "Test title says 'failing code' where it means three-letter code.",
+      "scenario": "The it.each title says 'for failing code %s → %s', but the cases (Trp, Ile, Asn, ...) are three-letter amino-acid codes. A reader scanning test output is misled about what the case covers. Rename it to 'three-letter code'.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "de1ada674f8def27"
+    }
+  ],
+  "dropped": 4,
+  "failed": [],
+  "ranModels": [
+    "claude-sonnet-5-5"
+  ],
+  "runs": 9,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.022898390000000005,
+    "finderUsd": 0.022898390000000005,
+    "verifierUsd": 0.5388746999999999,
+    "totalUsd": 0.56177309
+  },
+  "time": {
+    "initialFinderMs": 51152,
+    "totalMs": 98407
+  }
+}

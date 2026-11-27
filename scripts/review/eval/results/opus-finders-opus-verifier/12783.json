@@ -1,0 +1,87 @@
+{
+  "pr": 12783,
+  "head": "1c707106e1815ed949a4ecce76094e12d8afc429",
+  "config": "opus-finders-opus-verifier",
+  "models": {
+    "finder": "claude-opus-5-5",
+    "verifier": "claude-opus-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "reuse",
+      "file": "packages/ketcher-core/src/application/editor/actions/sgroup.ts",
+      "line": 600,
+      "otherLocations": [],
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The new SRU filter compares against a hard-coded 'SRU' string when `SGroup.isSRUSGroup` already does this check.",
+      "scenario": "New line: `.filter((sgroup) => sgroup !== sG && sgroup.type === 'SRU')`. The existing helper is `static isSRUSGroup(sGroup: SGroup): boolean { return sGroup.type === this.TYPES.SRU; }` at sgroup.ts:923, and InfoPanel.tsx already uses it. If the SRU type identifier or the polymer check changes in `SGroup.isSRUSGroup` / `SGroup.TYPES.SRU`, this filter keeps the old string. Star atoms shared with another polymer would then turn back into carbons. Use `.filter((sgroup) => sgroup !== sG && SGroup.isSRUSGroup(sgroup))`.",
+      "references": [
+        "packages/ketcher-core/src/domain/entities/sgroup.ts:923",
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/InfoPanel.tsx:138"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts",
+      "line": 137,
+      "otherLocations": [
+        "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:138"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The new test adds `as unknown as` casts for RenderOptions and HTMLElement instead of using correctly typed stubs.",
+      "scenario": "The new test repeats the Render/ReStruct setup from atomMerge.test.ts:55-61 and adds two more casts: `} as unknown as RenderOptions;` and `new Render(document as unknown as HTMLElement, options)`. Both are double casts that switch off type checking. If Render later reads a RenderOptions field that this three-field stub lacks, the test still compiles and fails only at runtime. R5 covers unit tests too. Fix it with one typed setup helper, like `createRestruct` in sgroup.test.ts:58, typed through a correct partial or factory instead of a cast. Both tests can then share it, so the casts are not copied again.",
+      "references": [
+        "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:55",
+        "packages/ketcher-core/__tests__/application/editor/actions/sgroup.test.ts:58"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-core/__tests__/application/editor/actions/atomMerge.test.ts:137",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The new test adds `as unknown as` casts for RenderOptions and HTMLElement instead of using correctly typed stubs.",
+      "scenario": "The new test copies the Render/ReStruct setup from atomMerge.test.ts:55-61, so it adds two new casts: `} as unknown as RenderOptions;` (line 137) and `new Render(document as unknown as HTMLElement, options)` (line 138). Both turn off type checking. If Render later reads a RenderOptions field that this three-field stub does not have, the test still compiles and fails only at runtime. `createRestruct` in sgroup.test.ts:58 does the same setup but uses the same casts, so it is not a cast-free model. The fix is one shared, correctly typed setup helper (a full RenderOptions factory or a typed partial merged with defaults) that both test files use instead of repeating the casts.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "0eb16c76049c976b"
+    },
+    {
+      "location": "packages/ketcher-core/src/application/editor/actions/sgroup.ts:600",
+      "severity": "nit",
+      "id": "R9",
+      "claim": "The new SRU filter compares against a hard-coded 'SRU' string when `SGroup.isSRUSGroup` already does this check.",
+      "scenario": "The new filter that collects the end atoms of other SRU polymers checks the hard-coded string 'SRU'. It does not call the existing `SGroup.isSRUSGroup(sgroup)` helper (`return sGroup.type === this.TYPES.SRU;`), which InfoPanel.tsx:138 already uses. `SGroup` is already imported in this file, so the helper can be used with no new dependency: `.filter((sgroup) => sgroup !== sG && SGroup.isSRUSGroup(sgroup))`. Today the behavior is the same. The duplicated type check is what R9 forbids.",
+      "lenses": [
+        "reuse"
+      ],
+      "fingerprint": "4d4946c7d0125df4"
+    }
+  ],
+  "dropped": 0,
+  "failed": [],
+  "ranModels": [
+    "claude-opus-5-5"
+  ],
+  "runs": 6,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.9039606,
+    "finderUsd": 0.9039606,
+    "verifierUsd": 0.3960842,
+    "totalUsd": 1.3000448
+  },
+  "time": {
+    "initialFinderMs": 75294,
+    "totalMs": 118620
+  }
+}

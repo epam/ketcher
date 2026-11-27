@@ -1,0 +1,87 @@
+{
+  "pr": 12695,
+  "head": "c4497219e06ded8555e168e8822678ec1b954158",
+  "config": "opus-finders-opus-verifier",
+  "models": {
+    "finder": "claude-opus-5-5",
+    "verifier": "claude-opus-5-5"
+  },
+  "panel": [
+    "correctness",
+    "reuse",
+    "code-quality"
+  ],
+  "finderFindings": [
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx",
+      "line": 41,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:35"
+      ],
+      "severity": "nit",
+      "id": "none",
+      "claim": "The new `removed` guard repeats a case the empty-path fix in helpers.ts already handles.",
+      "scenario": "A removed outline has `attrs: null`, so `attrs?.path?.map(...) ?? []` gives `[]`. With the change at helpers.ts:9, `calculateMiddleCoordsForRect([])` returns `[]`, the destructured sides are undefined, and the existing check at lines 52-62 returns null. So the empty-path guard alone fixes the crash, and `if (hoveringWithAttrs.removed)` is a second check for the same case. It also adds `removed` to the hand-written cast of `hovering`. The next contributor has two guards to keep in sync, and the comment on the guard suggests it is the fix when it isn't. Either drop the guard and the `removed` field, or keep the guard and leave the helper's contract unchanged.",
+      "references": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:52"
+      ]
+    },
+    {
+      "lens": "code-quality",
+      "file": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx",
+      "line": 14,
+      "otherLocations": [
+        "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:22"
+      ],
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stubs use `as unknown as Render` and `as unknown as SGroup` casts, which R5 forbids in tests too.",
+      "scenario": "`{ clientArea: {...} } as unknown as Render` and `{ hovering } as unknown as SGroup` hide every member the stubs lack. If SGroupDataRender or getPanelPositionRelativeToRect later reads another field (for example `render.options` or `sGroup.data`), the type checker stays silent and the test fails at runtime or passes against an undefined value. Type the stubs instead: for example `Pick<Render, 'clientArea'>` with a narrowed prop type, or build a real `SGroup` and set `hovering` on it, since `SGroup.hovering` is typed `unknown` and needs no cast.",
+      "references": [
+        "packages/ketcher-core/src/domain/entities/sgroup.ts:131"
+      ]
+    }
+  ],
+  "confirmed": [
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.test.tsx:14",
+      "severity": "major",
+      "id": "R5",
+      "claim": "The test stubs use `as unknown as Render` and `as unknown as SGroup` casts, which R5 forbids in tests too.",
+      "scenario": "The test builds its stubs with `{ clientArea: {...} } as unknown as Render` (line 14) and `{ hovering } as unknown as SGroup` (line 22). These casts turn off the type check for every member the stubs leave out. If SGroupDataRender or its helpers later read another field of `render` or `sGroup`, the compiler stays silent and the test either fails at runtime or passes on an undefined value. Build a real `SGroup` and assign `hovering` to it (the field is typed `unknown`, so no cast is needed), and type the render stub without `as unknown as`.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "4cd99269ac40c984"
+    },
+    {
+      "location": "packages/ketcher-react/src/script/ui/views/components/StructEditor/SGroupDataRender.tsx:41",
+      "severity": "nit",
+      "id": "none",
+      "claim": "The new `removed` guard repeats a case the empty-path fix in helpers.ts already handles.",
+      "scenario": "Raphael's remove() nulls the element's fields, so a removed hover outline has `attrs: null`. Then `rectCoords` is `[]`. Before this change, the helper's `!rectCoords` check let `[]` through and the helper crashed on `rectCoords[0][0]`. With the new check at helpers.ts:9 it returns `[]`, the destructured sides are undefined, and the check at SGroupDataRender.tsx:52-62 returns null. So the `removed` guard at line 41 and the `removed` field added to the cast at line 34 repeat a case the helper fix already handles. The guard's comment also presents it as the fix, which it isn't.",
+      "lenses": [
+        "code-quality"
+      ],
+      "fingerprint": "334d4c648febb26a"
+    }
+  ],
+  "dropped": 0,
+  "failed": [],
+  "ranModels": [
+    "claude-opus-5-5"
+  ],
+  "runs": 6,
+  "failedRuns": 0,
+  "cost": {
+    "initialFinderUsd": 0.4836728,
+    "finderUsd": 0.4836728,
+    "verifierUsd": 0.3123422,
+    "totalUsd": 0.796015
+  },
+  "time": {
+    "initialFinderMs": 25630,
+    "totalMs": 46528
+  }
+}

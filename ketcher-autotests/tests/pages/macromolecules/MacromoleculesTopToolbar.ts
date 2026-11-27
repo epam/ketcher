@@ -47,7 +47,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     arrowScrollRightButton: page.getByTestId('arrow-scroll-right-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async createAntisenseStrand() {
@@ -88,7 +88,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     async selectAntisenseStrand(
       antisenseStrandType: AntisenseStrandType = AntisenseStrandType.RNA,
     ) {
-      await this.expandCreateAntisenseStrandDropdown();
+      await pageObject.expandCreateAntisenseStrandDropdown();
       await waitForRender(page, async () => {
         await page.getByTestId(antisenseStrandType).first().click();
       });
@@ -162,7 +162,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         .filter({ has: layoutOption });
       const layoutModeButton = switchLayoutModeDropdown.getByTestId(layoutMode);
       if (!(await layoutModeButton.isVisible())) {
-        await this.expandSwitchLayoutModeDropdown();
+        await pageObject.expandSwitchLayoutModeDropdown();
       }
       const ketcherId = await locators.switchLayoutModeDropdownButton.evaluate(
         (element) =>
@@ -219,6 +219,8 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       return locators.arrowScrollRightButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type MacromoleculesTopToolbarType = ReturnType<

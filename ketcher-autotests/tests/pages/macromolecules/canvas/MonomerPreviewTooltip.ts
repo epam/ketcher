@@ -13,7 +13,7 @@ export const MonomerPreviewTooltip = (page: Page) => {
     monomerPreviewTooltipPicture: page.getByTestId('monomer-preview-micro'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -33,34 +33,36 @@ export const MonomerPreviewTooltip = (page: Page) => {
     },
     async hide() {
       await page.mouse.move(9999, 9999);
-      await this.waitForBecomeHidden();
+      await pageObject.waitForBecomeHidden();
     },
 
     async getTitleText() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.monomerPreviewTooltipTitle.textContent();
     },
 
     async getHELMAlias() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.window.getAttribute('data-helm');
     },
 
     async getAxoLabsAlias() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.window.getAttribute('data-axolabs');
     },
 
     async getIDTAliases() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.window.getAttribute('data-idtAliases');
     },
 
     async getModificationTypes() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.window.getAttribute('data-modificationtype');
     },
   };
+
+  return pageObject;
 };
 
 export type MonomerPreviewTooltipLocatorsType = ReturnType<

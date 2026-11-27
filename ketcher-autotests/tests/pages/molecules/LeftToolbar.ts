@@ -39,7 +39,7 @@ export const LeftToolbar = (page: Page) => {
     addImageButton: page.getByTestId('images'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async chain() {
@@ -66,7 +66,7 @@ export const LeftToolbar = (page: Page) => {
       const rGroupToolbar = page.getByTestId('multi-tool-dropdown');
 
       try {
-        await this.reactionPlusTool();
+        await pageObject.reactionPlusTool();
         await locators.rGroupToolsButton.click({ force: true });
         await page.waitForTimeout(100);
         await locators.rGroupToolsButton.click({ force: true });
@@ -81,7 +81,7 @@ export const LeftToolbar = (page: Page) => {
     },
 
     async selectRGroupTool(rGroupType: RGroupType = RGroupType.RGroupLabel) {
-      await this.expandRGroupToolsDropdown();
+      await pageObject.expandRGroupToolsDropdown();
       await page.getByTestId(rGroupType).first().click();
     },
 
@@ -97,7 +97,7 @@ export const LeftToolbar = (page: Page) => {
       const arrowToolbar = page.getByTestId('multi-tool-dropdown');
 
       try {
-        await this.reactionPlusTool();
+        await pageObject.reactionPlusTool();
         await locators.arrowToolsButton.click();
         await page.waitForTimeout(100);
         await locators.arrowToolsButton.click();
@@ -114,7 +114,7 @@ export const LeftToolbar = (page: Page) => {
     },
 
     async selectArrowTool(arrowType: ArrowTool = ArrowTool.ArrowOpenAngle) {
-      await this.expandArrowToolsDropdown();
+      await pageObject.expandArrowToolsDropdown();
       await page.getByTestId(arrowType).first().click();
     },
 
@@ -130,7 +130,7 @@ export const LeftToolbar = (page: Page) => {
     async selectReactionMappingTool(
       reactionMappingType: ReactionMappingType = ReactionMappingType.ReactionMapping,
     ) {
-      await this.expandReactionMappingToolsDropdown();
+      await pageObject.expandReactionMappingToolsDropdown();
       await page.getByTestId(reactionMappingType).first().click();
     },
 
@@ -142,7 +142,7 @@ export const LeftToolbar = (page: Page) => {
     },
 
     async selectShapeTool(shapeType: ShapeType) {
-      await this.expandShapeToolsDropdown();
+      await pageObject.expandShapeToolsDropdown();
       await page.getByTestId(shapeType).first().click();
     },
 
@@ -154,6 +154,8 @@ export const LeftToolbar = (page: Page) => {
       await locators.addImageButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type LeftToolbarType = ReturnType<typeof LeftToolbar>;

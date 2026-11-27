@@ -51,7 +51,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
     cancelButton: page.getByTestId('Cancel'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async closeWindow() {
@@ -162,29 +162,31 @@ export const SGroupPropertiesDialog = (page: Page) => {
     },
 
     async setOptions(options: SGroupPropertiesSettings) {
-      await this.selectType(options.Type);
+      await pageObject.selectType(options.Type);
       if (options.Type === TypeOption.Data) {
-        await this.selectContext(options.Context);
-        await this.setFieldNameValue(options.FieldName);
-        await this.setFieldValueValue(options.FieldValue);
-        await this.selectPropertyLabelType(options.PropertyLabelType);
+        await pageObject.selectContext(options.Context);
+        await pageObject.setFieldNameValue(options.FieldName);
+        await pageObject.setFieldValueValue(options.FieldValue);
+        await pageObject.selectPropertyLabelType(options.PropertyLabelType);
       } else if (options.Type === TypeOption.MultipleGroup) {
-        await this.setRepeatCountValue(options.RepeatCount);
+        await pageObject.setRepeatCountValue(options.RepeatCount);
       } else if (options.Type === TypeOption.SRUPolymer) {
-        await this.setPolymerLabelValue(options.PolymerLabel);
-        await this.selectRepeatPattern(options.RepeatPattern);
+        await pageObject.setPolymerLabelValue(options.PolymerLabel);
+        await pageObject.selectRepeatPattern(options.RepeatPattern);
       } else if (options.Type === TypeOption.Copolymer) {
-        await this.selectSubtype(options.Subtype);
-        await this.selectRepeatPattern(options.RepeatPattern);
+        await pageObject.selectSubtype(options.Subtype);
+        await pageObject.selectRepeatPattern(options.RepeatPattern);
       } else if (options.Type === TypeOption.Superatom) {
-        await this.setNameValue(options.Name);
+        await pageObject.setNameValue(options.Name);
       } else if (options.Type === TypeOption.NucleotideComponent) {
-        await this.selectType(options.Type);
-        await this.selectComponent(options.Component);
+        await pageObject.selectType(options.Type);
+        await pageObject.selectComponent(options.Component);
       }
-      await this.apply();
+      await pageObject.apply();
     },
   };
+
+  return pageObject;
 };
 
 export type SGroupPropertiesDialogType = ReturnType<

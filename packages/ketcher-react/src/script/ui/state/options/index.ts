@@ -89,11 +89,16 @@ export const initOptionsState: OptionsState = {
   },
   settings: readSettings(),
   getSettings() {
-    this.settings = readSettings();
+    initOptionsState.settings = readSettings();
   },
   getServerSettings() {
-    const serializedServerOptions = getSerializedServerOptions(this.settings);
-    const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
+    const serializedServerOptions = getSerializedServerOptions(
+      initOptionsState.settings,
+    );
+    const defaultServerOptions = pick(
+      SERVER_OPTIONS,
+      initOptionsState.settings,
+    );
 
     return {
       ...defaultServerOptions,

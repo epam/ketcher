@@ -29,7 +29,7 @@ export const PeriodicTableDialog = (page: Page) => {
     closeWindowButton: page.getByTestId('close-window-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -63,10 +63,12 @@ export const PeriodicTableDialog = (page: Page) => {
     },
 
     async addElements(elementNames: PeriodicTableElement[]) {
-      await this.selectElements(elementNames);
-      await this.add();
+      await pageObject.selectElements(elementNames);
+      await pageObject.add();
     },
   };
+
+  return pageObject;
 };
 
 export async function selectElementFromPeriodicTable(

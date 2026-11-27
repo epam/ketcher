@@ -14,7 +14,7 @@ export const MoleculesTopToolbar = (page: Page) => {
     cutButton: page.getByTestId('cut-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async copy() {
@@ -25,7 +25,7 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async copyAsMOL() {
-      await this.expandCopyDropdown();
+      await pageObject.expandCopyDropdown();
       await waitForSpinnerFinishedWork(
         page,
         async () => await page.getByTestId('copy-mol-button').click(),
@@ -33,7 +33,7 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async copyAsKET() {
-      await this.expandCopyDropdown();
+      await pageObject.expandCopyDropdown();
       await waitForSpinnerFinishedWork(
         page,
         async () => await page.getByTestId('copy-ket-button').click(),
@@ -41,7 +41,7 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async copyAsImage() {
-      await this.expandCopyDropdown();
+      await pageObject.expandCopyDropdown();
       await waitForSpinnerFinishedWork(
         page,
         async () => await page.getByTestId('copy-image-button').click(),
@@ -77,6 +77,8 @@ export const MoleculesTopToolbar = (page: Page) => {
       }
     },
   };
+
+  return pageObject;
 };
 
 export type MoleculesTopToolbarType = ReturnType<typeof MoleculesTopToolbar>;

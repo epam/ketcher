@@ -33,7 +33,7 @@ export const BondPropertiesDialog = (page: Page) => {
     applyButton: page.getByTestId('OK'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async close() {
@@ -59,7 +59,7 @@ export const BondPropertiesDialog = (page: Page) => {
     },
 
     async fillCustomQueryText(text: string) {
-      const isEnabled = await this.isCustomQueryTextEnabled();
+      const isEnabled = await pageObject.isCustomQueryTextEnabled();
       if (!isEnabled) {
         throw new Error(
           'Bond custom query text field is disabled. Ensure the checkbox is selected.',
@@ -115,24 +115,26 @@ export const BondPropertiesDialog = (page: Page) => {
           },
     ) {
       if ('customQuery' in options && options.customQuery) {
-        await this.checkCustomQueryCheckbox();
-        await this.fillCustomQueryText(options.customQuery);
-        await this.apply();
+        await pageObject.checkCustomQueryCheckbox();
+        await pageObject.fillCustomQueryText(options.customQuery);
+        await pageObject.apply();
         return;
       }
-      await this.uncheckCustomQueryCheckbox();
+      await pageObject.uncheckCustomQueryCheckbox();
       if ('type' in options && options.type) {
-        await this.selectBondType(options.type);
+        await pageObject.selectBondType(options.type);
       }
       if ('topology' in options && options.topology) {
-        await this.selectBondTopology(options.topology);
+        await pageObject.selectBondTopology(options.topology);
       }
       if ('reactingCenter' in options && options.reactingCenter) {
-        await this.selectBondReactingCenter(options.reactingCenter);
+        await pageObject.selectBondReactingCenter(options.reactingCenter);
       }
-      await this.apply();
+      await pageObject.apply();
     },
   };
+
+  return pageObject;
 };
 
 export type BondPropertiesDialogLocatorsType = ReturnType<

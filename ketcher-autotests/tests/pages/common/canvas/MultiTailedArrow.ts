@@ -94,7 +94,7 @@ export const MultiTailedArrow = async (
 
     async addTail() {
       await waitForRender(page, async () => {
-        await ContextMenu(page, this.getSpineMoveHandler()).click(
+        await ContextMenu(page, multiTailedArrow.getSpineMoveHandler()).click(
           MultiTailedArrowOption.AddNewTail,
         );
       });
@@ -102,22 +102,23 @@ export const MultiTailedArrow = async (
 
     async removeTail(options: { tailIndex: number }) {
       await waitForRender(page, async () => {
-        await ContextMenu(page, this.getTailsMoveHandler(options)).click(
-          MultiTailedArrowOption.RemoveTail,
-        );
+        await ContextMenu(
+          page,
+          multiTailedArrow.getTailsMoveHandler(options),
+        ).click(MultiTailedArrowOption.RemoveTail);
       });
     },
 
     getHeadMoveHandler() {
-      return this.headMoveHandler;
+      return multiTailedArrow.headMoveHandler;
     },
 
     getSpineMoveHandler() {
-      return this.spineMoveHandler;
+      return multiTailedArrow.spineMoveHandler;
     },
 
     getHeadResizeHandler() {
-      return this.headResizeHandler;
+      return multiTailedArrow.headResizeHandler;
     },
   });
 

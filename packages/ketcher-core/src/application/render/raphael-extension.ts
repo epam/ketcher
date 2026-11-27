@@ -17,7 +17,11 @@
 // Single entry point to Raphaël library
 
 import { Vec2 } from 'domain/entities/vec2';
-import type { RaphaelStatic } from 'raphael';
+import type {
+  Element as RaphaelElement,
+  RaphaelSet,
+  RaphaelStatic,
+} from 'raphael';
 
 type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
 
@@ -40,7 +44,11 @@ const Raphael = resolveRaphael();
 
 if (Raphael) {
   // TODO: refactor ugly prototype extensions to plain old functions
-  Raphael.el.translateAbs = function (x: number, y: number): void {
+  Raphael.el.translateAbs = function (
+    this: RaphaelElement & { delta?: Vec2 },
+    x: number,
+    y: number,
+  ): void {
     this.delta = this.delta || new Vec2();
     // TODO check that only numbers might be passed to this function
     this.delta.x += x - 0;
@@ -50,9 +58,13 @@ if (Raphael) {
     );
   };
 
-  Raphael.st.translateAbs = function (x: number, y: number): void {
-    this.forEach((element) => {
-      element.translateAbs(x, y);
+  Raphael.st.translateAbs = function (
+    this: RaphaelSet,
+    x: number,
+    y: number,
+  ): void {
+    this.forEach((el) => {
+      el.translateAbs(x, y);
     });
   };
 }

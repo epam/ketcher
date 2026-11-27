@@ -38,7 +38,7 @@ export const TextEditorDialog = (page: Page) => {
     fontSizeDropdown: page.getByTestId('font-size-button'),
     textEditor: page.getByTestId('text-editor'),
   };
-  return {
+  const pageObject = {
     ...locators,
 
     async close() {
@@ -123,16 +123,18 @@ export const TextEditorDialog = (page: Page) => {
       }
 
       if (fontOption.fontSize) {
-        await this.selectFontSize(fontOption.fontSize);
+        await pageObject.selectFontSize(fontOption.fontSize);
       }
 
       if (fontOption.content) {
-        await this.setText(fontOption.content);
+        await pageObject.setText(fontOption.content);
       }
 
-      await this.apply();
+      await pageObject.apply();
     },
   };
+
+  return pageObject;
 };
 
 export async function addTextBoxToCanvas(page: Page) {

@@ -48,14 +48,10 @@ export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {
   return editor.monomersLibrary.find((libraryItem) => {
     // Check for ambiguous peptides
     if (isAmbiguousMonomerLibraryItem(libraryItem)) {
-      if (
-        AmbiguousMonomer.getMonomerClass(libraryItem.monomers) !==
+      return AmbiguousMonomer.getMonomerClass(libraryItem.monomers) !==
         KetMonomerClass.AminoAcid
-      ) {
-        return false;
-      }
-
-      return libraryItem.label === peptideName;
+        ? false
+        : libraryItem.label === peptideName;
     }
 
     // Check for regular peptides
@@ -68,11 +64,14 @@ export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {
 
 export function getSugarBySequenceType(sequenceType: SequenceType) {
   switch (sequenceType) {
-    case SequenceType.DNA:
+    case SequenceType.DNA: {
       return RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
-    case SequenceType.RNA:
+    }
+    case SequenceType.RNA: {
       return RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
-    default:
+    }
+    default: {
       return undefined;
+    }
   }
 }

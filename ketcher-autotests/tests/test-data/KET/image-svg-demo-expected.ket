@@ -6,8 +6,8 @@
                 "type": "image",
                 "format": "image/svg+xml",
                 "boundingBox": {
-                    "x": 4.700000000000001,
-                    "y": 2.0249999999999995,
+                    "x": 4.625,
+                    "y": 2.125,
                     "z": 0,
                     "width": 20,
                     "height": 20

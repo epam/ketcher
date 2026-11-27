@@ -5,18 +5,18 @@ let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const TOOLTIP_DELAY = 300;
 
-type InfoPanelData = {
+export type InfoPanelData = {
   groupStruct: Struct;
   sGroup: SGroup;
   event: PointerEvent;
 };
 
 /**
- * Why?
- * We need somehow display sgroup attachment points (tooltips, preview, templates),
- * But due to current rendering approach for sgroups (ungrouping sgroups)
- * - we have to use RGroup attachment points on atoms for this purposes
- */
+Why?
+We need somehow display sgroup attachment points (tooltips, preview, templates),
+But due to current rendering approach for sgroups (ungrouping sgroups)
+- we have to use RGroup attachment points on atoms for this purposes
+*/
 function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
   sGroup: SGroup,
@@ -71,7 +71,7 @@ function makeBonds(
   struct: Struct,
   atomsIdMapping: Map<number, number>,
 ) {
-  Array.from(existingStruct.bonds).forEach((value) => {
+  [...existingStruct.bonds].forEach((value) => {
     const [_, bond] = value;
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =

@@ -876,8 +876,7 @@
             "y": -1.25
         },
         "alias": "F",
-        "templateId": "F___Phenylalanine",
-        "seqid": 2
+        "templateId": "F___Phenylalanine"
     },
     "monomer2": {
         "type": "monomer",

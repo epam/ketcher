@@ -1,11 +1,18 @@
-import { BaseMonomer } from 'ketcher-core';
-import { PolymerBond } from 'ketcher-core/dist/domain/entities/PolymerBond';
+import { AttachmentPointName, BaseMonomer, PolymerBond } from 'ketcher-core';
 
 export interface MonomerConnectionOnlyProps {
   firstMonomer?: BaseMonomer;
   secondMonomer?: BaseMonomer;
   polymerBond?: PolymerBond;
   isReconnectionDialog?: boolean;
+}
+
+export interface InsertionConnectionOnlyProps {
+  leftMonomer?: BaseMonomer;
+  newMonomer?: BaseMonomer;
+  rightMonomer?: BaseMonomer;
+  leftAp?: AttachmentPointName;
+  rightAp?: AttachmentPointName;
 }
 
 export interface ConfirmationDialogOnlyProps {
@@ -21,9 +28,14 @@ export interface RequiredModalProps {
 export type MonomerConnectionProps = MonomerConnectionOnlyProps &
   RequiredModalProps;
 
+export type InsertionConnectionProps = InsertionConnectionOnlyProps &
+  RequiredModalProps;
+
 export type ConfirmationDialogProps = ConfirmationDialogOnlyProps &
   RequiredModalProps;
 
 export type AdditionalModalProps = Partial<
-  MonomerConnectionProps & ConfirmationDialogProps
+  MonomerConnectionProps &
+    ConfirmationDialogProps &
+    InsertionConnectionOnlyProps
 >;

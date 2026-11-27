@@ -1,6 +1,8 @@
+import { type Mock } from 'vitest';
 import { initResize, removeResizeListener } from './index';
+import type { ClearVisibleAction, ToolbarResizeState } from './types';
 
-jest.mock('../../action/tools', () => ({
+vi.mock('../../action/tools', () => ({
   __esModule: true,
   default: {},
 }));
@@ -8,7 +10,7 @@ jest.mock('../../action/tools', () => ({
 type ResizeState = {
   editor: null | {
     render: {
-      update: jest.Mock<void, []>;
+      update: Mock<() => void>;
     };
   };
   actionState?: {
@@ -30,8 +32,8 @@ describe('initResize', () => {
   // the resize handler ran before the editor was set in the store and threw
   // "Cannot read properties of null (reading 'render')".
   it('should not throw when a resize event fires before state.editor is set', () => {
-    const dispatch = jest.fn<void, [ClearVisibleAction]>();
-    const getState = jest.fn<ResizeState, []>(() => ({ editor: null }));
+    const dispatch = vi.fn<(action: ClearVisibleAction) => void>();
+    const getState = vi.fn<() => ResizeState>(() => ({ editor: null }));
 
     initResize()(dispatch, getState);
 
@@ -40,11 +42,11 @@ describe('initResize', () => {
   });
 
   it('should update the editor render and clear the active tool on resize', () => {
-    const update = jest.fn<void, []>();
-    const dispatch = jest.fn<void, [ClearVisibleAction]>();
-    const getState = jest.fn<ResizeState, []>(() => ({
+    const update = vi.fn<() => void>();
+    const dispatch = vi.fn<(action: ClearVisibleAction) => void>();
+    const getState = vi.fn<() => ResizeState>(() => ({
       editor: { render: { update } },
-      actionState: { activeTool: 'select' },
+      actionState: { activeTool: { tool: 'select' } },
     }));
 
     initResize()(dispatch, getState);
@@ -53,16 +55,16 @@ describe('initResize', () => {
     expect(update).toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith({
       type: 'CLEAR_VISIBLE',
-      data: 'select',
+      data: { tool: 'select' },
     });
   });
 
   it('should stop reacting to resize after removeResizeListener is called', () => {
-    const update = jest.fn<void, []>();
-    const dispatch = jest.fn<void, [ClearVisibleAction]>();
-    const getState = jest.fn<ResizeState, []>(() => ({
+    const update = vi.fn<() => void>();
+    const dispatch = vi.fn<(action: ClearVisibleAction) => void>();
+    const getState = vi.fn<() => ResizeState>(() => ({
       editor: { render: { update } },
-      actionState: { activeTool: 'select' },
+      actionState: { activeTool: { tool: 'select' } },
     }));
 
     initResize()(dispatch, getState);

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +17,13 @@
 import {
   Action,
   Atom,
+  type AtomAttributes,
+  type ElementLabel,
   Bond,
   FunctionalGroup,
   SGroup,
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
   fromFragmentDeletion,
   fromSgroupDeletion,
@@ -34,18 +35,19 @@ import {
 
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import type { AtomToolDragContext } from './atom.types';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
-  private readonly atomProps: any;
-  private dragCtx: any;
+  private readonly atomProps: AtomAttributes;
+  private dragCtx?: AtomToolDragContext;
   readonly #bondProps: { stereo: number; type: number };
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor, atomProps) {
+  constructor(editor: Editor, atomProps: AtomAttributes) {
     this.editor = editor;
     this.atomProps = atomProps;
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
@@ -89,7 +91,9 @@ class AtomTool implements Tool {
               selectAtomId,
             ),
         );
-        action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
+        action.mergeWith(
+          fromAtomsAttributes(struct, updatedAtoms, atomProps, true),
+        );
         editor.update(action);
         editor.selection(null);
         this.editor.hoverIcon.hide();
@@ -97,7 +101,7 @@ class AtomTool implements Tool {
       this.isNotActiveTool = true;
     } else {
       this.editor.hoverIcon.show();
-      this.editor.hoverIcon.label = atomProps.label;
+      this.editor.hoverIcon.label = atomProps.label as ElementLabel;
       this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000';
       this.editor.hoverIcon.updatePosition();
     }
@@ -267,11 +271,11 @@ class AtomTool implements Tool {
     const struct = editor.struct();
     const action = new Action();
 
-    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+    if (!dragCtx || struct.isTargetFromMacromolecule(ci)) {
       return;
     }
 
-    if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
+    if (!ci && (!dragCtx.item || dragCtx?.isSaltOrSolvent)) {
       action.mergeWith(
         fromAtomAddition(
           reStruct,
@@ -279,7 +283,7 @@ class AtomTool implements Tool {
           atomProps,
         ),
       );
-    } else if (dragCtx.item && ci) {
+    } else if (ci && dragCtx.item) {
       if (dragCtx.item.id === ci.id) {
         if (
           ci.map === 'functionalGroups' &&
@@ -302,7 +306,12 @@ class AtomTool implements Tool {
               }),
             );
             action.mergeWith(
-              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true),
+              fromAtomsAttributes(
+                reStruct,
+                sGroupPositionAtomId,
+                atomProps,
+                true,
+              ),
             );
           }
         } else if (ci.map === 'atoms') {
@@ -322,7 +331,9 @@ class AtomTool implements Tool {
               true,
             ) === null
           ) {
-            action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
+            action.mergeWith(
+              fromAtomsAttributes(reStruct, atomId, atomProps, true),
+            );
           }
         }
       }
@@ -351,9 +362,9 @@ export function atomLongtapEvent(tool, render) {
   const fgs = render.ctab.molecule.functionalGroups;
   // edit atom or add atom
   const atom =
-    atomid !== undefined && atomid !== null
-      ? render.ctab.molecule.atoms.get(atomid)
-      : new Atom({ label: '' });
+    atomid === undefined || atomid === null
+      ? new Atom({ label: '' })
+      : render.ctab.molecule.atoms.get(atomid);
   const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid);
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
@@ -364,23 +375,25 @@ export function atomLongtapEvent(tool, render) {
     }
     editor.selection(null);
     const res = editor.event.quickEdit.dispatch(atom);
-    Promise.resolve(res)
+    void Promise.resolve(res)
       .then((newatom) => {
         const action = atomid
-          ? fromAtomsAttrs(render.ctab, atomid, newatom, null)
+          ? fromAtomsAttributes(render.ctab, atomid, newatom, null)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('atom.ts::atomLongtapEvent', e);
+      .catch((error) => {
+        KetcherLogger.error('atom.ts::atomLongtapEvent', error);
       }); // w/o changes
   }, 750);
 
   dragCtx.stopTapping = function () {
-    if (dragCtx.timeout) {
-      clearTimeout(dragCtx.timeout);
-      delete dragCtx.timeout;
+    if (!dragCtx.timeout) {
+      return;
     }
+
+    clearTimeout(dragCtx.timeout);
+    delete dragCtx.timeout;
   };
 }
 

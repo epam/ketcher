@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,15 +22,15 @@ import { Scale } from 'domain/helpers';
 import type { SGroup } from 'domain/entities/sgroup';
 
 class ReDataSGroupData extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   public sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
     super('sgroupData');
     this.sgroup = sgroup;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   hoverPath(render: Render) {

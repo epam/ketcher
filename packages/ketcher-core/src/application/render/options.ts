@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -80,10 +80,12 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
 
     radiusScaleFactor: 0.38,
 
-    /* styles */
+    /*
+    styles
+    */
     lineattr: {
       stroke: '#000',
-      'stroke-width': options.bondThicknessInPx || scaleFactorMicro / 20,
+      'stroke-width': options.bondThicknessInPx ?? scaleFactorMicro / 20,
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round',
     },
@@ -148,10 +150,10 @@ function convertValue(
   measureFrom: keyof typeof measureMap,
   measureTo: keyof typeof measureMap,
 ) {
-  const convertedValue =
-    measureTo === 'px' || measureTo === 'pt'
-      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
-      : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3);
+  const convertedValue = (
+    (value * measureMap[measureFrom]) /
+    measureMap[measureTo]
+  ).toFixed(3);
   return Number(convertedValue);
 }
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +29,12 @@ type Data = {
 export class AtomMove extends BaseOperation {
   data: Data;
 
-  constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(atomId?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
     this.data = {
       aid: atomId ?? null,
       d: d ?? null,
-      noinvalidate: noinvalidate ?? false,
+      noinvalidate: shouldSkipInvalidation ?? false,
     };
   }
 

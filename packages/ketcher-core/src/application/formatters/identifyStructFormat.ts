@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,8 @@ function isIdtString(s: string): boolean {
   // Phosphorothioate nucleotide sequence: A, C, G, T, U joined by *
   const idtBaseSeq = /^[ACGTUacgtu](\*[ACGTUacgtu])+$/;
   // IDT modification token: /3Name/, /5Name/, /iName/, /rName/
-  const idtModToken = /\/[35ir][A-Za-z0-9][A-Za-z0-9-]*\/?/;
-  return idtBaseSeq.test(s) || idtModToken.test(s);
+  const idtModificationToken = /\/[35ir][A-Za-z0-9][A-Za-z0-9-]*\/?/;
+  return idtBaseSeq.test(s) || idtModificationToken.test(s);
 }
 
 export function identifyStructFormat(
@@ -36,8 +36,8 @@ export function identifyStructFormat(
     if (JSON.parse(sanitizedString)) {
       return SupportedFormat.ket;
     }
-  } catch (e) {
-    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
+  } catch (error) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', error);
   }
 
   const isRXN = sanitizedString.includes('$RXN');
@@ -50,11 +50,7 @@ export function identifyStructFormat(
   }
 
   if (isSDF) {
-    if (isV2000) {
-      return SupportedFormat.sdf;
-    } else {
-      return SupportedFormat.sdfV3000;
-    }
+    return isV2000 ? SupportedFormat.sdf : SupportedFormat.sdfV3000;
   }
 
   if (isV2000) {
@@ -84,16 +80,18 @@ export function identifyStructFormat(
     return SupportedFormat.cml;
   }
 
-  const clearStr = sanitizedString
-    .replace(/\s/g, '')
-    .replace(/(\\r)|(\\n)/g, '');
-  const isBase64String =
+  const clearString = sanitizedString
+    .split(/\s+/)
+    .join('')
+    .replaceAll('\\r', '')
+    .replaceAll('\\n', '');
+  const base64StringPattern =
     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   const cdxHeader = 'VjCD0100';
   if (
-    clearStr.length % 4 === 0 &&
-    isBase64String.test(clearStr) &&
-    window.atob(clearStr).startsWith(cdxHeader)
+    clearString.length % 4 === 0 &&
+    base64StringPattern.test(clearString) &&
+    globalThis.atob(clearString).startsWith(cdxHeader)
   ) {
     return SupportedFormat.cdx;
   }
@@ -114,7 +112,7 @@ export function identifyStructFormat(
     return SupportedFormat.idt;
   }
 
-  if (!sanitizedString.includes('\n') && !isMacromolecules) {
+  if (!isMacromolecules && !sanitizedString.includes('\n')) {
     // TODO: smiles regexp
     return SupportedFormat.smiles;
   }
@@ -122,9 +120,7 @@ export function identifyStructFormat(
   const isSequence = /^[a-zA-Z\s]*$/.test(sanitizedString);
   const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
 
-  if (!isThreeLetter && isSequence) {
-    return SupportedFormat.sequence;
-  }
-
-  return SupportedFormat.unknown;
+  return !isThreeLetter && isSequence
+    ? SupportedFormat.sequence
+    : SupportedFormat.unknown;
 }

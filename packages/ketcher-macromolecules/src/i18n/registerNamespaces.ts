@@ -11,17 +11,17 @@ import {
   EXTRA_LOCALE_RESOURCES,
 } from './localeResources.generated';
 
-const MULTI_LANGUAGE_BUILD =
-  process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
+const IS_MULTI_LANGUAGE_BUILD =
+  import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
 
 /**
- * ketcher-macromolecules renders inside ketcher-react's <I18nextProvider>
- * (see Editor.tsx), so it reuses that shared i18next instance instead of
- * standing up its own. Namespaces are merged in here via addResourceBundle
- * rather than added to ketcher-react's own i18n.ts, to avoid a reverse
- * ketcher-react -> ketcher-macromolecules source dependency (macromolecules
- * already depends on react, not the other way around).
- */
+ketcher-macromolecules renders inside ketcher-react's <I18nextProvider>
+(see Editor.tsx), so it reuses that shared i18next instance instead of
+standing up its own. Namespaces are merged in here via addResourceBundle
+rather than added to ketcher-react's own i18n.ts, to avoid a reverse
+ketcher-react -> ketcher-macromolecules source dependency (macromolecules
+already depends on react, not the other way around).
+*/
 i18n.addResourceBundle('en', 'macromolecules', BASE_RESOURCES.macromolecules);
 i18n.addResourceBundle(
   'en',
@@ -29,7 +29,7 @@ i18n.addResourceBundle(
   BASE_RESOURCES.macromoleculesDialogs,
 );
 
-if (MULTI_LANGUAGE_BUILD) {
+if (IS_MULTI_LANGUAGE_BUILD) {
   for (const [locale, resources] of Object.entries(EXTRA_LOCALE_RESOURCES)) {
     i18n.addResourceBundle(locale, 'macromolecules', resources.macromolecules);
     i18n.addResourceBundle(

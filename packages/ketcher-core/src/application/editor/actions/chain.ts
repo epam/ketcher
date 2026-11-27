@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ import { AtomAdd, FragmentAdd } from '../operations';
 
 import { Action } from './action';
 import { Vec2 } from 'domain/entities/vec2';
-import { atomGetAttr } from './utils';
+import { atomGetAttribute } from './utilities';
 import { fromBondAddition } from './bond';
 import type { ReAtom, ReStruct } from 'application/render';
 
@@ -44,7 +44,7 @@ export function fromChain(
     atomId === null
       ? ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
           .frid as number)
-      : (atomGetAttr(restruct, atomId, 'fragment') as number);
+      : (atomGetAttribute(restruct, atomId, 'fragment') as number);
 
   const chainItems: { atoms: number[]; bonds: number[] } = {
     atoms: [],
@@ -67,7 +67,7 @@ export function fromChain(
   for (let i = 0; i < nSect; i++) {
     const pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-    const ret = fromBondAddition(
+    const returnValue = fromBondAddition(
       restruct,
       {},
       id0,
@@ -75,9 +75,9 @@ export function fromChain(
       undefined,
       pos,
     );
-    action = ret[0].mergeWith(action);
-    id0 = ret[2];
-    chainItems.bonds.push(ret[3]);
+    action = returnValue[0].mergeWith(action);
+    id0 = returnValue[2];
+    chainItems.bonds.push(returnValue[3]);
     chainItems.atoms.push(id0);
   }
 

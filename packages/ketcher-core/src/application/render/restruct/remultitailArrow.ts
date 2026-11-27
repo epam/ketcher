@@ -46,20 +46,45 @@ export class ReMultitailArrow extends ReObject {
   static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
   static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
 
-  private testSelectionPoints: TestSelectionPoint[] = [];
-
   static isSelectable(): boolean {
     return true;
   }
 
   static getTailIdFromRefName(name: string): number | null {
-    if (name.startsWith(MultitailArrowRefName.TAILS)) {
-      return Number.parseInt(
-        name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
-      );
-    }
-    return null;
+    return name.startsWith(MultitailArrowRefName.TAILS)
+      ? Number.parseInt(name.replace(`${MultitailArrowRefName.TAILS}-`, ''))
+      : null;
   }
+
+  static drawSingleLineHover(
+    builder: PathBuilder,
+    offset: number,
+    lineStart: Vec2,
+    lineEnd: Vec2,
+    verticalDirection: -1 | 1,
+    horizontalDirection: -1 | 1,
+  ): void {
+    const cubicBezierOffset =
+      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+    const start = lineStart.add(
+      new Vec2(offset * horizontalDirection, offset * verticalDirection),
+    );
+    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
+    builder
+      .addLine(start)
+      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
+        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
+      )
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
+        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
+      )
+      .addLine(end);
+  }
+
+  private testSelectionPoints: TestSelectionPoint[] = [];
 
   constructor(public multitailArrow: MultitailArrow) {
     super(MULTITAIL_ARROW_KEY);
@@ -102,40 +127,12 @@ export class ReMultitailArrow extends ReObject {
     return this.multitailArrow.getReferenceLines(referencePositions);
   }
 
-  static drawSingleLineHover(
-    builder: PathBuilder,
-    offset: number,
-    lineStart: Vec2,
-    lineEnd: Vec2,
-    verticalDirection: -1 | 1,
-    horizontalDirection: -1 | 1,
-  ): void {
-    const cubicBezierOffset =
-      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
-    const start = lineStart.add(
-      new Vec2(offset * horizontalDirection, offset * verticalDirection),
-    );
-    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
-    builder
-      .addLine(start)
-      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
-      .addQuadraticBezierCurve(
-        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
-        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
-      )
-      .addQuadraticBezierCurve(
-        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
-        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
-      )
-      .addLine(end);
-  }
-
   buildFrame(renderOptions: RenderOptions): string {
     const offset = this.getFrameOffset(renderOptions);
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions(renderOptions);
     const builder = new PathBuilder();
-    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+    const tailsPoints = [...tails.values()].sort((a, b) => a.y - b.y);
 
     const start = topSpine.add(new Vec2(offset, offset));
 
@@ -281,7 +278,7 @@ export class ReMultitailArrow extends ReObject {
         'head',
         OFFSET,
       ),
-      ...Array.from(tails.entries()).reduce(
+      ...[...tails.entries()].reduce(
         (acc, [key, value]) => ({
           ...acc,
           ...this.getSelectionPointsFromReferencePoint(
@@ -399,7 +396,7 @@ export class ReMultitailArrow extends ReObject {
       LayerMap.data,
       this.visel,
       [path, header],
-      null,
+      undefined,
       true,
     );
     this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);
@@ -463,13 +460,13 @@ export class ReMultitailArrow extends ReObject {
           ? {
               distance,
               ref:
-                refName !== MultitailArrowRefName.SPINE
-                  ? {
+                refName === MultitailArrowRefName.SPINE
+                  ? null
+                  : {
                       name: refName,
                       isLine,
                       tailId,
-                    }
-                  : null,
+                    },
             }
           : acc;
       },
@@ -481,7 +478,7 @@ export class ReMultitailArrow extends ReObject {
   }
 
   private getTailArrayFromPool<T>(tails: Pool<T>): Array<[string, T]> {
-    return Array.from(tails.entries()).map(([key, value]) => [
+    return [...tails.entries()].map(([key, value]) => [
       `${MultitailArrow.TAILS_NAME}-${key}`,
       value,
     ]);
@@ -498,9 +495,10 @@ export class ReMultitailArrow extends ReObject {
       referencePositions,
     );
     const { tails, ...rest } = referenceLines;
-    const tailsAndHeadLines: Array<[string, Line]> = Object.entries(
-      rest,
-    ).concat(this.getTailArrayFromPool(tails));
+    const tailsAndHeadLines: Array<[string, Line]> = [
+      ...Object.entries(rest),
+      ...this.getTailArrayFromPool(tails),
+    ];
 
     const lineResult = this.getClosestArrowPartPosition(
       point,
@@ -516,9 +514,10 @@ export class ReMultitailArrow extends ReObject {
         ...validReferencePositions
       } = referencePositions;
 
-      const tailsAnddHeadPoints: Array<[string, Vec2]> = Object.entries(
-        validReferencePositions,
-      ).concat(this.getTailArrayFromPool(tailsPoints));
+      const tailsAnddHeadPoints: Array<[string, Vec2]> = [
+        ...Object.entries(validReferencePositions),
+        ...this.getTailArrayFromPool(tailsPoints),
+      ];
 
       const pointsResult = this.getClosestArrowPartPosition(
         point,

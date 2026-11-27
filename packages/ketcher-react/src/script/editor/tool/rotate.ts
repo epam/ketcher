@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +28,7 @@ import {
   getItemsToFuse,
   isAttachmentBond,
   vectorUtils,
-  getRelSGroupsBySelection,
+  getRelatedSGroupsBySelection,
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
@@ -37,8 +36,14 @@ import {
 } from 'ketcher-core';
 import { intersection, throttle } from 'lodash';
 import type { Editor, Selection } from '../Editor';
-import type { Tool } from './Tool';
+import type { MergeItems, MoveDragContext, Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
+
+interface RotateDragContext extends MoveDragContext {
+  angle1: number;
+  angle?: number;
+  mergeItems?: MergeItems;
+}
 
 type SnapMode = 'one-bond' | 'multiple-bonds';
 type SnapInfo = {
@@ -65,7 +70,7 @@ const ANGLE_INDICATOR_VISIBLE_DELTA = Math.PI / 9; // 20 degrees
 
 class RotateTool implements Tool {
   private readonly editor: Editor;
-  dragCtx: any;
+  dragCtx?: RotateDragContext;
   isNotActiveTool = true;
   private centerAtomId?: number;
   private snapInfo: SnapInfo | null = null;
@@ -73,18 +78,20 @@ class RotateTool implements Tool {
   constructor(editor: Editor, flipDirection?: FlipDirection) {
     this.editor = editor;
 
-    if (flipDirection) {
-      const selectionCenter = this.getCenter();
-      const canvasCenter = this.reStruct.getVBoxObj().centre();
-      const action = fromFlip(
-        this.reStruct,
-        this.selection,
-        flipDirection,
-        selectionCenter || canvasCenter,
-      );
-      editor.update(action);
-      editor.rotateController.rerender();
+    if (!flipDirection) {
+      return;
     }
+
+    const selectionCenter = this.getCenter();
+    const canvasCenter = this.reStruct.getVBoxObj().centre();
+    const action = fromFlip(
+      this.reStruct,
+      this.selection,
+      flipDirection,
+      selectionCenter || canvasCenter,
+    );
+    editor.update(action);
+    editor.rotateController.rerender();
   }
 
   private get reStruct() {
@@ -134,10 +141,10 @@ class RotateTool implements Tool {
 
     if (attachmentBonds.size > 1) {
       /**
-       *  Handle multiple attachment bonds with one intersection:
-       *               0    (selected atom)
-       *             / | \  (bonds)
-       */
+      Handle multiple attachment bonds with one intersection:
+                   0    (selected atom)
+                 / | \  (bonds)
+      */
       const bondPoints: [number, number][] = [];
       attachmentBonds.forEach((bond) => {
         bondPoints.push([bond.begin, bond.end]);
@@ -152,16 +159,16 @@ class RotateTool implements Tool {
       }
     } else if (attachmentBonds.size === 1) {
       /**
-       * Handle one attachment bond:
-       * 1. the bond is unselected
-       *          0  (selected atom) --> center
-       *          |  (unselected bond)
-       *          o  (unselected atom)
-       * 2. the bond is selected
-       *          0  (selected atom)
-       *          |  (selected bond)
-       *          o  (unselected atom) --> center
-       */
+      Handle one attachment bond:
+      1. the bond is unselected
+               0  (selected atom) --> center
+               |  (unselected bond)
+               o  (unselected atom)
+      2. the bond is selected
+               0  (selected atom)
+               |  (selected bond)
+               o  (unselected atom) --> center
+      */
       const attachmentBondId = attachmentBonds.keys().next().value as number;
       const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond;
       const centerAtomId = [attachmentBond.begin, attachmentBond.end].find(
@@ -183,10 +190,10 @@ class RotateTool implements Tool {
     const { texts, rxnArrows, rxnPluses } = this.selection;
     if (
       !center &&
-      (visibleAtoms.length ||
-        texts?.length ||
-        rxnArrows?.length ||
-        rxnPluses?.length)
+      (visibleAtoms.length > 0 ||
+        (texts?.length ?? 0) > 0 ||
+        (rxnArrows?.length ?? 0) > 0 ||
+        (rxnPluses?.length ?? 0) > 0)
     ) {
       center = this.reStruct.getSelectionBoxCenter({
         atoms: visibleAtoms,
@@ -200,9 +207,7 @@ class RotateTool implements Tool {
   }
 
   mousemove = throttle((event) => {
-    if (!this.dragCtx) {
-      this.editor.hover(null, null, event);
-    } else {
+    if (this.dragCtx) {
       const dragCtx = this.dragCtx;
 
       const mousePos = CoordinateTransformation.pageToModel(
@@ -226,9 +231,7 @@ class RotateTool implements Tool {
 
       const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
       if (!('angle' in dragCtx) || dragCtx.angle !== rotateAngleInDegrees) {
-        if ('action' in dragCtx) {
-          dragCtx.action.perform(this.reStruct);
-        }
+        dragCtx.action?.perform(this.reStruct);
 
         dragCtx.angle = rotateAngleInDegrees;
         dragCtx.action = fromRotate(
@@ -248,6 +251,8 @@ class RotateTool implements Tool {
 
         this.editor.update(dragCtx.action, true);
       }
+    } else {
+      this.editor.hover(null, null, event);
     }
     return true;
   }, 40); // 25fps
@@ -280,31 +285,45 @@ class RotateTool implements Tool {
         }
       });
 
-      let action: Action = dragCtx.action;
+      let action = dragCtx.action ?? new Action();
 
       if (!isMergingSGroup) {
-        action = action
-          ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(action)
-          : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
+        action = fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(
+          action,
+        );
       }
 
       if (this.selection?.atoms) {
-        const sGroups = getRelSGroupsBySelection(
+        const sGroups = getRelatedSGroupsBySelection(
           this.struct,
           this.selection?.atoms,
         );
-        const monomerRotateAction = new Action();
+        const monomerSGroups: MonomerMicromolecule[] = [];
         sGroups.forEach((sGroup) => {
           if (sGroup instanceof MonomerMicromolecule) {
-            const angleInRadians = (dragCtx.angle * Math.PI) / 180;
+            monomerSGroups.push(sGroup);
+          }
+        });
+        // If at least one monomer in the selection is expanded, every
+        // monomer (including collapsed ones) gets its rotation metadata
+        // assigned, matching the atom-transform behavior in `fromRotate`.
+        // If none are expanded, no monomer gets a `RotateMonomerOperation`
+        // since their atoms were only rigidly translated, not rotated.
+        const hasExpandedMonomer = monomerSGroups.some((sGroup) =>
+          sGroup.isExpanded(),
+        );
+        const monomerRotateAction = new Action();
+        if (hasExpandedMonomer) {
+          monomerSGroups.forEach((sGroup) => {
+            const angleInRadians = ((dragCtx.angle ?? 0) * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
                 id: sGroup.id,
                 value: angleInRadians,
               }),
             );
-          }
-        });
+          });
+        }
         // `perform` executes the rotation and returns the inverted action
         // (the one that must go into the undo history). Merging the
         // un-inverted `monomerRotateAction` here instead would make `undo`

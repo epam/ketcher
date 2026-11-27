@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -64,11 +64,7 @@ const RgroupLogic = (props: Props) => {
 
 function rangeConv(range) {
   // structConv
-  const res = range
-    .replace(/\s*/g, '')
-    .replace(/,+/g, ',')
-    .replace(/^,/, '')
-    .replace(/,$/, '');
+  const res = range.split(/\s+/).join('').split(',').filter(Boolean).join(',');
 
   return res
     .split(',')

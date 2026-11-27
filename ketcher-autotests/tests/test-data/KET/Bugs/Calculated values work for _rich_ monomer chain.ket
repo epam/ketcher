@@ -18628,7 +18628,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomerTemplate-unknown_monomer_with_idt_alias_Unknown": {
         "type": "monomerTemplate",
@@ -18741,7 +18741,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomer197": {
         "type": "monomer",
@@ -18752,7 +18752,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomer198": {
         "type": "ambiguousMonomer",
@@ -21625,7 +21625,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomer484": {
         "type": "monomer",
@@ -21636,7 +21636,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomer485": {
         "type": "monomer",
@@ -21647,7 +21647,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomer486": {
         "type": "ambiguousMonomer",

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,16 @@
 import { initLib } from './init-lib';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
+import { isNumber } from 'lodash';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
 
 export { default as initTmplLib } from './init-lib';
 
-/* TEMPLATES */
+/*
+TEMPLATES
+*/
 export function selectTmpl(tmpl) {
   return {
     type: 'TMPL_SELECT',
@@ -52,7 +55,9 @@ export function changeTab(tab) {
   };
 }
 
-/* TEMPLATE-ATTACH-EDIT */
+/*
+TEMPLATE-ATTACH-EDIT
+*/
 export function initAttach(name, attach) {
   return {
     type: 'INIT_ATTACH',
@@ -83,26 +88,34 @@ export function setTmplName(name) {
 
 export function editTmpl(tmpl) {
   return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
-      .then(
-        (formData) => {
-          const data = formData as {
-            name: string;
-            attach?: Record<string, unknown>;
-          };
-          tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
-          tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
+    void (async () => {
+      let formData: unknown;
+      let dialogResolved = false;
+      try {
+        formData = await openDialog(dispatch, 'attach', { tmpl });
+        dialogResolved = true;
+      } catch {
+        // Continue to the template dialog when the attachment dialog is cancelled.
+      }
 
-          if (tmpl.props.group === 'User Templates')
-            updateLocalStore(getState().templates.lib);
-        },
-        () => null,
-      )
-      .then(() =>
-        openDialog(dispatch, 'templates').catch((e) => {
-          KetcherLogger.error('index.ts::editTmpl', e);
-        }),
-      );
+      if (dialogResolved) {
+        const data = formData as {
+          name: string;
+          attach?: Record<string, unknown>;
+        };
+        tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
+        tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
+
+        if (tmpl.props.group === 'User Templates')
+          updateLocalStore(getState().templates.lib);
+      }
+
+      try {
+        await openDialog(dispatch, 'templates');
+      } catch (e) {
+        KetcherLogger.error('index.ts::editTmpl', e);
+      }
+    })();
   };
 }
 
@@ -123,14 +136,17 @@ export function deleteTmpl(tmpl) {
   };
 }
 
-/* SAVE */
+/*
+SAVE
+*/
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
   const tmpl = { struct: struct.clone(), props: {} };
 
   return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
-      .then((result) => {
+    void (async () => {
+      try {
+        const result = await openDialog(dispatch, 'attach', { tmpl });
         const { name, attach } = result as {
           name: string;
           attach?: Record<string, unknown>;
@@ -138,13 +154,13 @@ export function saveUserTmpl(struct) {
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
-        const lib = getState().templates.lib.concat(tmpl);
+        const lib = [...getState().templates.lib, tmpl];
         dispatch(initLib(lib));
         updateLocalStore(lib);
-      })
-      .catch((e) => {
+      } catch (e) {
         KetcherLogger.error('index.ts::saveUserTmpl', e);
-      });
+      }
+    })();
   };
 }
 
@@ -160,7 +176,9 @@ function updateLocalStore(lib) {
   storage.setItem('ketcher-tmpls', userLib);
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 export const initTmplsState = {
   lib: [],
   selected: null,
@@ -187,6 +205,14 @@ const attachActions = new Set([
 
 function templatesReducer(state = initTmplsState, action) {
   if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
+
+  if (
+    action.type === 'MODAL_OPEN' &&
+    action.data?.name === 'templates' &&
+    isNumber(action.data?.prop?.tab)
+  ) {
+    return { ...state, tab: action.data.prop.tab };
+  }
 
   if (attachActions.has(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };

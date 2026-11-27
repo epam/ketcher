@@ -16,17 +16,17 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1" BoundingBox="236.343460 255.749985 288.304962 195.750000">
+    <page HeightPages="1" WidthPages="1" BoundingBox="234.093460 251.250000 286.054962 191.250000">
         <fragment id="4">
             <n id="5" p="25.980762 -0.000000"/>
             <n id="6" p="0.000000 15.000000"/>
-            <n id="7" p="0.000000 44.999985">
-                <t p="0.000000 44.999985" LabelJustification="Left">
+            <n id="7" NodeType="GenericNickname" GenericNickname="*" p="0.000000 45.000000">
+                <t p="0.000000 45.000000" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>
                 </t>
             </n>
-            <n id="8" p="25.980762 59.999985"/>
-            <n id="9" p="51.961514 44.999985"/>
+            <n id="8" p="25.980762 60.000000"/>
+            <n id="9" p="51.961514 45.000000"/>
             <n id="10" p="51.961514 15.000000"/>
             <b id="11" B="5" E="6" Order="2"/>
             <b id="12" B="6" E="7"/>

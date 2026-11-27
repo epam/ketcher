@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import {
   IKetMonomerGroupTemplate,
@@ -10,23 +11,23 @@ import { selectDefaultRnaPresets } from 'state/library';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 import useSetRnaPresets from './useSetRnaPresets';
 
-jest.mock('./stateHooks', () => ({
-  useAppDispatch: jest.fn(),
-  useAppSelector: jest.fn(),
+vi.mock('./stateHooks', () => ({
+  useAppDispatch: vi.fn(),
+  useAppSelector: vi.fn(),
 }));
 
-jest.mock('helpers', () => ({
-  ...jest.requireActual('helpers'),
-  getPresets: jest.fn(() => []),
+vi.mock('helpers', async () => ({
+  ...(await vi.importActual<typeof import('helpers')>('helpers')),
+  getPresets: vi.fn(() => []),
 }));
 
-jest.mock('helpers/manipulateCachedRnaPresets', () => ({
-  getCachedCustomRnaPresets: jest.fn(() => null),
-  setCachedCustomRnaPreset: jest.fn(),
+vi.mock('helpers/manipulateCachedRnaPresets', () => ({
+  getCachedCustomRnaPresets: vi.fn(() => null),
+  setCachedCustomRnaPreset: vi.fn(),
 }));
 
-const mockUseAppSelector = jest.mocked(useAppSelector);
-const mockGetPresets = jest.mocked(getPresets);
+const mockUseAppSelector = vi.mocked(useAppSelector);
+const mockGetPresets = vi.mocked(getPresets);
 
 const createPreset = (
   name: string,
@@ -62,7 +63,7 @@ const renderWithPresets = (
 
 describe('useSetRnaPresets', () => {
   beforeEach(() => {
-    jest.mocked(useAppDispatch).mockReturnValue(jest.fn());
+    vi.mocked(useAppDispatch).mockReturnValue(vi.fn());
     mockGetPresets.mockClear();
   });
 

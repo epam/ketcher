@@ -1,40 +1,67 @@
 import { xor } from 'lodash/fp';
-import { type Atom, type Bond, type ReStruct, SGroup } from 'ketcher-core';
+import {
+  type Atom,
+  type Bond,
+  type ReStruct,
+  type Struct,
+  Bond as BondEntity,
+  SGroup,
+} from 'ketcher-core';
 import type { Editor, Selection } from '../../Editor';
 import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 
-function uniqArray(dest, add, reversible: boolean) {
+function uniqArray(dest, add, isReversible: boolean) {
   return add.reduce((_, item) => {
-    if (reversible) dest = xor(dest, [item]);
+    if (isReversible) dest = xor(dest, [item]);
     else if (!dest.includes(item)) dest.push(item);
     return dest;
   }, []);
 }
 
 // TODO: deep-merge?
-export function selMerge(selection, add, reversible: boolean) {
+export function selMerge(selection, add, isReversible: boolean) {
   if (add) {
     Object.keys(add).forEach((item) => {
-      if (!selection[item]) selection[item] = add[item].slice();
-      else selection[item] = uniqArray(selection[item], add[item], reversible);
+      if (selection[item]) {
+        selection[item] = uniqArray(selection[item], add[item], isReversible);
+      } else {
+        selection[item] = [...add[item]];
+      }
     });
   }
   return selection;
 }
 
 export function getSelectedAtoms(selection, molecule) {
-  if (selection?.atoms) {
-    return mapAtomIdsToAtoms(selection?.atoms, molecule);
-  }
-  return [];
+  return selection?.atoms ? mapAtomIdsToAtoms(selection?.atoms, molecule) : [];
 }
 
 export function getSelectedBonds(selection, molecule) {
-  if (selection?.bonds) {
-    return mapBondIdsToBonds(selection?.bonds, molecule);
+  return selection?.bonds ? mapBondIdsToBonds(selection?.bonds, molecule) : [];
+}
+
+export function canOpenAtomProperties(molecule: Struct, atomId: number) {
+  return molecule.atoms.has(atomId);
+}
+
+export function getMovableAtomIdsForBond(
+  molecule: Struct,
+  bondId: number,
+  atomIds: number[],
+) {
+  const bond = molecule.bonds.get(bondId);
+  if (bond?.type !== BondEntity.PATTERN.TYPE.HAPTIC) {
+    return atomIds;
   }
-  return [];
+
+  const attachmentGroupId = [bond.begin, bond.end].find((endpointId) =>
+    molecule.attachmentGroups.has(endpointId),
+  );
+
+  return attachmentGroupId === undefined
+    ? atomIds
+    : atomIds.filter((atomId) => atomId !== attachmentGroupId);
 }
 
 export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {
@@ -69,17 +96,17 @@ export function getFragSelection(
 }
 
 /**
- * Returns true when the given closest item is part of the current selection.
- *
- * The micro-mode selection model only stores primitive items
- * (`atoms`, `bonds`, `rxnArrows`, `rxnPluses`, `simpleObjects`, `texts`,
- * `enhancedFlags`, images, multitail arrows, `sgroupData`). For composite
- * items (`sgroups`, `functionalGroups`, `rgroups`, `frags`) "selected" is
- * defined as: every atom that the item expands to is already in
- * `selection.atoms`. Without this expansion a multi-selection of
- * sgroup-rendered items (e.g. monomers in molecules mode) collapses to the
- * single clicked item on mousedown, breaking multi-drag.
- */
+Returns true when the given closest item is part of the current selection.
+
+The micro-mode selection model only stores primitive items
+(`atoms`, `bonds`, `rxnArrows`, `rxnPluses`, `simpleObjects`, `texts`,
+`enhancedFlags`, images, multitail arrows, `sgroupData`). For composite
+items (`sgroups`, `functionalGroups`, `rgroups`, `frags`) "selected" is
+defined as: every atom that the item expands to is already in
+`selection.atoms`. Without this expansion a multi-selection of
+sgroup-rendered items (e.g. monomers in molecules mode) collapses to the
+single clicked item on mousedown, breaking multi-drag.
+*/
 export function isItemSelected(
   selection: Selection | null | undefined,
   ci: ClosestItem,
@@ -89,7 +116,7 @@ export function isItemSelected(
     return false;
   }
 
-  const atomsSubsetOfSelection = (atomIds: number[]): boolean => {
+  const areAtomsSubsetOfSelection = (atomIds: number[]): boolean => {
     if (atomIds.length === 0) {
       return false;
     }
@@ -98,23 +125,38 @@ export function isItemSelected(
   };
 
   switch (ci.map) {
+    case 'attachmentGroups': {
+      const attachmentGroupSelection = getAttachmentGroupSelection(
+        restruct.molecule,
+        ci.id,
+      );
+      return (
+        selection.attachmentGroups?.includes(ci.id) === true &&
+        attachmentGroupSelection.atoms?.every((atomId) =>
+          selection.atoms?.includes(atomId),
+        ) === true &&
+        attachmentGroupSelection.bonds?.every((bondId) =>
+          selection.bonds?.includes(bondId),
+        ) === true
+      );
+    }
     case 'sgroups':
     case 'functionalGroups': {
       const sgroup = restruct.sgroups.get(ci.id)?.item;
       return sgroup
-        ? atomsSubsetOfSelection(SGroup.getAtoms(restruct.molecule, sgroup))
+        ? areAtomsSubsetOfSelection(SGroup.getAtoms(restruct.molecule, sgroup))
         : false;
     }
     case 'rgroups': {
       const rgroup = restruct.rgroups.get(ci.id);
       return rgroup
-        ? atomsSubsetOfSelection(rgroup.getAtoms(restruct.render))
+        ? areAtomsSubsetOfSelection(rgroup.getAtoms(restruct.render))
         : false;
     }
     case 'frags': {
       const frag = restruct.frags.get(ci.id);
       return frag
-        ? atomsSubsetOfSelection(frag.fragGetAtoms(restruct, ci.id))
+        ? areAtomsSubsetOfSelection(frag.fragGetAtoms(restruct, ci.id))
         : false;
     }
     case 'bonds': {
@@ -134,12 +176,13 @@ export function isItemSelected(
         selectedAtoms.includes(bond.begin) && selectedAtoms.includes(bond.end)
       );
     }
-    default:
+    default: {
       return (
         (selection as Record<string, number[] | undefined>)[ci.map]?.includes(
           ci.id,
         ) ?? false
       );
+    }
   }
 }
 
@@ -162,6 +205,28 @@ export function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
   return newSelected;
 }
 
+export function getAttachmentGroupSelection(
+  molecule: Struct,
+  attachmentGroupId: number,
+): Selection {
+  const atomIds =
+    molecule.attachmentGroups.get(attachmentGroupId)?.atomIds ?? [];
+  const atomIdSet = new Set(atomIds);
+  const bondIds: number[] = [];
+
+  molecule.bonds.forEach((bond, bondId) => {
+    if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
+      bondIds.push(bondId);
+    }
+  });
+
+  return {
+    attachmentGroups: [attachmentGroupId],
+    atoms: [...atomIds],
+    bonds: bondIds,
+  };
+}
+
 export function selectElementsOnCanvas(
   elements: { atoms: number[]; bonds: number[] },
   editor: Editor,
@@ -173,7 +238,7 @@ export function selectElementsOnCanvas(
       ? selMerge(lassoHelper.end(), elements, false)
       : lassoHelper.end();
   editor.selection(
-    !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+    event.shiftKey ? selMerge(sel, editor.selection(), false) : sel,
   );
 }
 
@@ -186,7 +251,7 @@ export function onSelectionStart(
   if (!lassoHelper.fragment) lassoHelper.begin(event);
 }
 
-export function onSelectionMove(
+export function isSelectionMoveHandled(
   event: PointerEvent,
   editor: Editor,
   lassoHelper: LassoHelper,
@@ -195,7 +260,7 @@ export function onSelectionMove(
     const sel = lassoHelper.addPoint(event);
 
     editor.selection(
-      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+      event.shiftKey ? selMerge(sel, editor.selection(), false) : sel,
     );
     return true;
   }

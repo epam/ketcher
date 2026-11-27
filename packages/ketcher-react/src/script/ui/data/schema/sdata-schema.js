@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -346,22 +346,22 @@ export const sdataSchema = Object.keys(sData).reduce((acc, title) => {
 }, {});
 
 /**
- * Returns first key of passed object
- * @param obj { object }
- */
+Returns first key of passed object
+@param obj { object }
+*/
 function firstKeyOf(obj) {
   return Object.keys(obj)[0];
 }
 
 /**
- * Returns schema default values. Depends on passed arguments:
- * pass schema only -> returns default context
- * pass schema & context -> returns default fieldName
- * pass schema & context & fieldName -> returns default fieldValue
- * @param context? { string }
- * @param fieldName? { string }
- * @returns { string }
- */
+Returns schema default values. Depends on passed arguments:
+pass schema only -> returns default context
+pass schema & context -> returns default fieldName
+pass schema & context & fieldName -> returns default fieldValue
+@param context? { string }
+@param fieldName? { string }
+@returns { string }
+*/
 export function getSdataDefault(
   schema = sdataSchema,
   context = undefined,

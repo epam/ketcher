@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,8 +31,8 @@ import {
 } from 'components/monomerLibrary/monomerLibraryItem/styles';
 import {
   selectEditor,
-  selectIsSequenceMode,
-  selectIsDragging,
+  isSequenceModeEnabled,
+  isEditorDragging,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
@@ -50,8 +50,8 @@ const RnaPresetItem = ({
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useAppSelector(selectIsSequenceMode);
-  const isDragging = useAppSelector(selectIsDragging);
+  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 

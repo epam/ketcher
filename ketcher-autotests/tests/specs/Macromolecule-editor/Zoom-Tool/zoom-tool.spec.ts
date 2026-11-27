@@ -43,8 +43,7 @@ test.beforeAll(async ({ browser }) => {
   // Reminder: do not pass page as async paramenter to test
   page = await sharedContext.newPage();
   await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
 });
 
 test.afterEach(async () => {

@@ -1,5 +1,12 @@
 import { Locator, Page } from '@playwright/test';
 import { moveMouseAway } from '../moveMouseAway';
+import { keyboardPressOnCanvas } from '../keyboard';
+import { SequenceEditor } from '@tests/pages/macromolecules/canvas/SequenceEditor';
+
+export async function exitFromEditMode(page: Page) {
+  await keyboardPressOnCanvas(page, 'Escape');
+  await SequenceEditor(page).waitForEditModeToExit();
+}
 
 export async function selectSequenceRangeInEditMode(
   page: Page,

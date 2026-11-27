@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -95,7 +94,7 @@ const App = (props: Props) => {
       // Ideally is to remove ketcher instance in cleanup function of the most parent component (MicromoleculesEditor, or Editor, depends on usage)
       ketcherProvider.removeKetcherInstance(ketcherId);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- Library initialization intentionally runs once per App mount.
 
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{

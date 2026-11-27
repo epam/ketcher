@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,10 +44,15 @@ import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import type { IconName } from 'components';
+import type { FormState } from 'src/script/ui/component/form/form/form';
+
+interface TextFormState {
+  form: FormState;
+}
 
 interface TextProps extends DialogParams {
-  formState: any;
-  id?: any;
+  formState: TextFormState;
+  id?: string;
   content: string;
   position?: string;
 }
@@ -118,9 +122,9 @@ function EditorRefPlugin({
 }
 
 const TextEditorInner = (props: {
-  formState: any;
+  formState: TextFormState;
   position?: string;
-  id?: any;
+  id?: string;
   params: TextProps;
 }) => {
   const { formState, position, id, params } = props;
@@ -133,16 +137,18 @@ const TextEditorInner = (props: {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          const formats = new Set<string>();
-          if (selection.hasFormat('bold')) formats.add(TextCommand.Bold);
-          if (selection.hasFormat('italic')) formats.add(TextCommand.Italic);
-          if (selection.hasFormat('subscript'))
-            formats.add(TextCommand.Subscript);
-          if (selection.hasFormat('superscript'))
-            formats.add(TextCommand.Superscript);
-          setActiveFormats(formats);
+        if (!$isRangeSelection(selection)) {
+          return;
         }
+
+        const formats = new Set<string>();
+        if (selection.hasFormat('bold')) formats.add(TextCommand.Bold);
+        if (selection.hasFormat('italic')) formats.add(TextCommand.Italic);
+        if (selection.hasFormat('subscript'))
+          formats.add(TextCommand.Subscript);
+        if (selection.hasFormat('superscript'))
+          formats.add(TextCommand.Superscript);
+        setActiveFormats(formats);
       });
     });
   }, [editor]);
@@ -181,10 +187,12 @@ const TextEditorInner = (props: {
   }, [editor]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      setFocusInEditor();
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
     }
+
+    event.preventDefault();
+    setFocusInEditor();
   };
 
   return (
@@ -263,8 +271,8 @@ export const normalizeEditorState = (
     ) {
       return content;
     }
-  } catch (e) {
-    console.warn('Failed to parse editor state', e);
+  } catch (error) {
+    console.warn('Failed to parse editor state', error);
   }
   // For import-time conversion we expect Serialised Lexical state stored in `content`.
   // If it's not valid Lexical JSON, return undefined so the editor starts empty.
@@ -297,4 +305,6 @@ const Text = (props: TextProps) => {
   );
 };
 
-export default connect((store: any) => ({ formState: store.modal }))(Text);
+export default connect((store: { modal: TextFormState }) => ({
+  formState: store.modal,
+}))(Text);

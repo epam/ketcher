@@ -1,8 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import {
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils/common/loaders';
+import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
 
 type MoleculesTopToolbarLocators = {
   copyButton: Locator;
@@ -52,21 +49,15 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async paste() {
-      await waitForRender(page, async () => {
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await locators.pasteButton.click(),
-        );
-      });
+      await waitForSpinnerFinishedWork(page, async () =>
+        locators.pasteButton.click(),
+      );
     },
 
     async cut() {
-      await waitForRender(page, async () => {
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await locators.cutButton.click(),
-        );
-      });
+      await waitForSpinnerFinishedWork(page, async () =>
+        locators.cutButton.click(),
+      );
     },
 
     async expandCopyDropdown() {

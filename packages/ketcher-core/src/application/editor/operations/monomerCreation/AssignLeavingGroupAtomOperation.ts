@@ -68,7 +68,7 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
 }
 
 export class AssignLeavingGroupAtomOperation extends BaseOperation {
-  private attachmentPointName: AttachmentPointName | null = null;
+  private attachmentPointName: AttachmentPointName | undefined;
   private potentialLeavingAtoms: Set<number> = new Set();
 
   constructor(
@@ -81,10 +81,13 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { assignedAttachmentPoints, potentialAttachmentPoints } =
-      this.monomerCreationState;
+    const {
+      assignedAttachmentPoints,
+      potentialAttachmentPoints,
+      connectionAttachmentPoints,
+    } = this.monomerCreationState;
 
-    let atomPairForLeavingGroup: [number, number] | null = null;
+    let atomPairForLeavingGroup: [number, number] | undefined;
     for (const attachmentPointAtoms of potentialAttachmentPoints.entries()) {
       const [attachmentAtomId, leavingAtomIds] = attachmentPointAtoms;
       if (leavingAtomIds.has(this.atomId)) {
@@ -99,9 +102,13 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
 
     const [attachmentAtomId, leavingAtomId] = atomPairForLeavingGroup;
 
-    const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
-    );
+    const occupiedAttachmentPointNames = new Set([
+      ...assignedAttachmentPoints.keys(),
+      ...(connectionAttachmentPoints?.keys() ?? []),
+    ]);
+    const attachmentPointName = getNextFreeAttachmentPoint([
+      ...occupiedAttachmentPointNames,
+    ]);
     this.attachmentPointName = attachmentPointName;
 
     assignedAttachmentPoints.set(attachmentPointName, atomPairForLeavingGroup);
@@ -118,7 +125,7 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   }
 
   invert() {
-    assert(this.attachmentPointName !== null);
+    assert(this.attachmentPointName !== undefined);
 
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,

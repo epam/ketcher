@@ -4,7 +4,10 @@
     {
       "files": ["**/*.less"],
       "extends": ["stylelint-config-standard-less"],
-      "customSyntax": "postcss-less"
+      "customSyntax": "postcss-less",
+      "rules": {
+        "declaration-property-value-no-unknown": null
+      }
     }
   ],
   "rules": {

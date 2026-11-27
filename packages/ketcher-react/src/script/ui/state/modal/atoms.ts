@@ -3,15 +3,17 @@ import {
   type AtomQueryProperties,
   Action,
   Atom,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   KetcherLogger,
 } from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
-export function isAtomsArray(selectedElements: Atom | Atom[]): boolean {
+export function isAtomsArray(
+  selectedElements: Atom | Atom[],
+): selectedElements is Atom[] {
   return (
     Array.isArray(selectedElements) &&
-    selectedElements?.every((element) => element instanceof Atom)
+    selectedElements.every((element) => element instanceof Atom)
   );
 }
 
@@ -30,7 +32,7 @@ export function updateSelectedAtoms({
   const struct = editor.render.ctab;
   const { molecule } = struct;
   if (atoms) {
-    Promise.resolve(changeAtomPromise)
+    void Promise.resolve(changeAtomPromise)
       .then((userChangedAtom) => {
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
@@ -41,13 +43,18 @@ export function updateSelectedAtoms({
             userChangedAtom,
           );
           action.mergeWith(
-            fromAtomsAttrs(struct, atomId, atomWithChangedProperties, false),
+            fromAtomsAttributes(
+              struct,
+              atomId,
+              atomWithChangedProperties,
+              false,
+            ),
           );
         });
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('atoms.ts::updateSelectedAtoms', e);
+      .catch((error) => {
+        KetcherLogger.error('atoms.ts::updateSelectedAtoms', error);
       });
   }
 }

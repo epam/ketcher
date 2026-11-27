@@ -51,10 +51,10 @@
       "enumOff": "关闭"
     },
     "autoFadeOfStereoLabels": {
-      "title": "自动淡化 And/Or 中心标签"
+      "title": "自动淡化 AND/OR 中心标签"
     },
     "absFlagLabel": {
-      "title": "绝对标志文本"
+      "title": "ABS 标志文本"
     },
     "andFlagLabel": {
       "title": "AND 标志文本"
@@ -87,7 +87,12 @@
       "title": "显示价态"
     },
     "showHydrogenLabels": {
-      "title": "显式显示氢标签"
+      "title": "显式显示氢标签",
+      "enumOff": "Off",
+      "enumHetero": "Hetero",
+      "enumTerminal": "Terminal",
+      "enumTerminalAndHetero": "Terminal and Hetero",
+      "enumOn": "On"
     },
     "aromaticCircle": {
       "title": "芳香键显示为圆圈"

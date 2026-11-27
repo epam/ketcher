@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -53,7 +53,7 @@ type UploadFile =
     };
 
 function normalizeBase64Content(content: string) {
-  return content.replace(/\s+/g, '');
+  return content.split(/\s+/).join('');
 }
 
 // Generated CDX snapshots may be stored as base64 text, while uploaded .cdx files
@@ -218,9 +218,7 @@ export async function openImageAndAddToCanvas(
   if (!(await ErrorMessageDialog(page).isVisible())) {
     const imageBoxId = await getImageLocator(page, {}).evaluateAll(
       (elements) => {
-        const ids = elements.map((element) =>
-          Number(element.getAttribute('data-image-id')),
-        );
+        const ids = elements.map((element) => Number(element.dataset.imageId));
         const validIds = ids.filter(Number.isFinite);
         return validIds.length > 0 ? Math.max(...validIds) : null;
       },
@@ -236,16 +234,18 @@ export async function openImageAndAddToCanvas(
 export async function openPPTXFileAndAddToCanvasAsNewProject(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
-  if (numberOf.Structure !== 1) {
-    await OpenPPTXFileDialog(page).selectStructure(numberOf);
+  if (Structure !== 1) {
+    await OpenPPTXFileDialog(page).selectStructure({ Structure });
   }
   await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
 }
@@ -258,7 +258,8 @@ export async function filteredFile(
     .split('\n')
     .filter((_str, index) => index > filteredIndex)
     .join('\n')
-    .replace(/\s+/g, '');
+    .split(/\s+/)
+    .join('');
 }
 
 export async function pasteFromClipboardAndAddToCanvas(

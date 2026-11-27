@@ -146,9 +146,9 @@ class ReBond extends ReObject {
     this.doubleBondShift = 0;
   }
   drawHover(render: Render, shouldDrawOutline = true) {
-    const ret = this.makeHoverPlate(render, shouldDrawOutline);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
+    const returnValue = this.makeHoverPlate(render, shouldDrawOutline);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
+    return returnValue;
   }
 
   getSelectionPoints(render: Render, isHighlight = false) {
@@ -461,9 +461,18 @@ class ReBond extends ReObject {
     this.setHover(this.hover, render);
 
     let ipath: ReturnType<typeof getIdsPath>;
-    const bondIdxOff = options.subFontSize * 0.6;
+    const bondIndexOff = options.subFontSize * 0.6;
     if (options.showBondIds) {
-      ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm);
+      ipath = getIdsPath(
+        bid,
+        paper,
+        hb1,
+        hb2,
+        bondIndexOff,
+        0.5,
+        0.5,
+        hb1.norm,
+      );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
     }
     if (options.showHalfBondIds) {
@@ -472,7 +481,7 @@ class ReBond extends ReObject {
         paper,
         hb1,
         hb2,
-        bondIdxOff,
+        bondIndexOff,
         0.8,
         0.2,
         hb1.norm,
@@ -483,7 +492,7 @@ class ReBond extends ReObject {
         paper,
         hb1,
         hb2,
-        bondIdxOff,
+        bondIndexOff,
         0.2,
         0.8,
         hb2.norm,
@@ -496,7 +505,7 @@ class ReBond extends ReObject {
         paper,
         hb1,
         hb2,
-        bondIdxOff,
+        bondIndexOff,
         0.5,
         0.5,
         hb2.norm,
@@ -507,7 +516,7 @@ class ReBond extends ReObject {
         paper,
         hb1,
         hb2,
-        bondIdxOff,
+        bondIndexOff,
         0.5,
         0.5,
         hb1.norm,
@@ -540,8 +549,8 @@ class ReBond extends ReObject {
         stroke: 'none',
       };
 
-      const ret = this.makeHighlitePlate(restruct, style);
-      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+      const returnValue = this.makeHighlitePlate(restruct, style);
+      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
     }
 
     if (bond.cip) {
@@ -1033,13 +1042,13 @@ function getBondSingleUpPath(
   const DEGENERATE_LENGTH = 1e-4;
   let n = hb1.norm;
   if (!n || n.length() < DEGENERATE_LENGTH) {
-    const renderedDir = b.sub(a);
-    if (renderedDir.length() < DEGENERATE_LENGTH) {
+    const renderedDirection = b.sub(a);
+    if (renderedDirection.length() < DEGENERATE_LENGTH) {
       // Both the stored normal and the rendered direction are degenerate —
       // the bond has zero length; skip drawing to avoid a zero-width wedge.
       return null;
     }
-    n = renderedDir.normalized().rotateSC(1, 0);
+    n = renderedDirection.normalized().rotateSC(1, 0);
   }
   const bsp = 0.7 * options.stereoBond;
   let b2 = b.addScaled(n, bsp);
@@ -1246,25 +1255,29 @@ function getBondSingleDownPath(
   const b = hb2.p;
   const options = render.options;
   let d = b.sub(a);
-  const len = d.length() + 0.2;
+  const length_ = d.length() + 0.2;
   d = d.normalized();
   let hashSpacingInPx = options.hashSpacingInPx ?? DEFAULT_HASH_SPACING_IN_PX;
   const interval = hashSpacingInPx * options.lineWidth;
   const gaps = MIN_LINES - 1;
-  const isHashSpacingTooLarge = interval >= len / gaps;
+  const isHashSpacingTooLarge = interval >= length_ / gaps;
 
-  const nlines = calculateLines(len, options.lineWidth, interval);
+  const nlines = calculateLines(length_, options.lineWidth, interval);
 
   if (isHashSpacingTooLarge && nlines < MIN_LINES) {
-    const averageSpacing = (len - options.lineWidth) / gaps;
+    const averageSpacing = (length_ - options.lineWidth) / gaps;
     hashSpacingInPx = averageSpacing / options.lineWidth;
   }
 
   const intervalAdjusted = hashSpacingInPx * options.lineWidth;
 
-  const finalLines = calculateLines(len, options.lineWidth, intervalAdjusted);
+  const finalLines = calculateLines(
+    length_,
+    options.lineWidth,
+    intervalAdjusted,
+  );
 
-  const step = len / (finalLines - 1);
+  const step = length_ / (finalLines - 1);
   return draw.bondSingleDown(
     render.paper,
     hb1,
@@ -1289,15 +1302,17 @@ function getBondSingleEitherPath(
   const b = hb2.p;
   const options = render.options;
   let d = b.sub(a);
-  const len = d.length();
+  const length_ = d.length();
   d = d.normalized();
   const interval = 0.6 * options.lineWidth;
   const nlines =
     Math.max(
-      Math.floor((len - options.lineWidth) / (options.lineWidth + interval)),
+      Math.floor(
+        (length_ - options.lineWidth) / (options.lineWidth + interval),
+      ),
       0,
     ) + 2;
-  const step = len / (nlines - 0.5);
+  const step = length_ / (nlines - 0.5);
   return draw.bondSingleEither(
     render.paper,
     hb1,
@@ -1628,12 +1643,12 @@ function getIdsPath(
   paper: RaphaelPaper,
   hb1: HalfBond,
   hb2: HalfBond,
-  bondIdxOff: number,
-  param1: number,
-  param2: number,
+  bondIndexOff: number,
+  parameter1: number,
+  parameter2: number,
   norm: Vec2,
 ) {
-  const pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
+  const pb = Vec2.lc(hb1.p, parameter1, hb2.p, parameter2, norm, bondIndexOff);
   const ipath = paper.text(pb.x, pb.y, bid.toString());
   const irbb = utility.relBox(ipath.getBBox());
   draw.recenterText(ipath, irbb);

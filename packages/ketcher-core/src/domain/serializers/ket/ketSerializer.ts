@@ -57,7 +57,7 @@ import { Command } from 'domain/entities/Command';
 import type { CoreEditor } from 'application/editor/Editor';
 import type { EditorSelection } from 'application/editor/editor.types';
 import {
-  type MonomerFactoryFn,
+  type MonomerFactoryFunction,
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,
   templateToMonomerProps,
@@ -225,13 +225,13 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
 }
 
 export class KetSerializer implements Serializer<Struct> {
-  private static _monomerFactory: MonomerFactoryFn | undefined;
+  private static _monomerFactory: MonomerFactoryFunction | undefined;
 
-  public static setMonomerFactory(factory: MonomerFactoryFn): void {
+  public static setMonomerFactory(factory: MonomerFactoryFunction): void {
     KetSerializer._monomerFactory = factory;
   }
 
-  private static getMonomerFactory(): MonomerFactoryFn {
+  private static getMonomerFactory(): MonomerFactoryFunction {
     if (!this._monomerFactory) {
       throw new Error(
         'KetSerializer: monomerFactory has not been initialized. Call KetSerializer.setMonomerFactory() before using serializer features that require it.',

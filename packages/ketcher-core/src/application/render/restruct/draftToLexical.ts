@@ -112,10 +112,10 @@ function buildTextSegments(
 
   // Apply each style range to the character positions it covers
   styleRanges.forEach((range) => {
-    const startIdx = range.offset;
-    const endIdx = Math.min(range.offset + range.length, text.length);
+    const startIndex = range.offset;
+    const endIndex = Math.min(range.offset + range.length, text.length);
 
-    for (let i = startIdx; i < endIdx; i++) {
+    for (let i = startIndex; i < endIndex; i++) {
       applyStyleToChar(charStyles[i], range.style);
     }
   });

@@ -185,16 +185,17 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-    for (const attr in Atom.attrlist) {
-      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
+    const attributes: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
+    for (const attribute in Atom.attrlist) {
+      if (atom[attribute] !== undefined)
+        attributes[attribute] = atom[attribute];
     }
-    return attrs;
+    return attributes;
   }
 
-  static attrGetDefault(attr: string) {
-    if (attr in Atom.attrlist) {
-      return Atom.attrlist[attr];
+  static attrGetDefault(attribute: string) {
+    if (attribute in Atom.attrlist) {
+      return Atom.attrlist[attribute];
     }
   }
 
@@ -372,13 +373,13 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   clone(fidMap?: Map<number, number>): Atom {
-    const ret = new Atom(this);
+    const returnValue = new Atom(this);
     const fragmentId = fidMap?.get(this.fragment);
 
     if (fragmentId !== undefined) {
-      ret.fragment = fragmentId;
+      returnValue.fragment = fragmentId;
     }
-    return ret;
+    return returnValue;
   }
 
   isQuery(): boolean {

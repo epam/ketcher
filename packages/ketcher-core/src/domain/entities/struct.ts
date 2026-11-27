@@ -1053,26 +1053,26 @@ export class Struct {
   }
 
   getAvgClosestAtomDistance(): number {
-    let totalDist = 0;
-    let minDist;
+    let totalDistance = 0;
+    let minDistance;
     const keys = [...this.atoms.keys()];
     let k;
     let j;
     for (k = 0; k < keys.length; ++k) {
-      minDist = -1;
+      minDistance = -1;
       for (j = 0; j < keys.length; ++j) {
         if (j === k) continue;
         const atomJ = this.atoms.get(keys[j]);
         const atomK = this.atoms.get(keys[k]);
         assert(atomJ, `Atom ${keys[j]} not found`);
         assert(atomK, `Atom ${keys[k]} not found`);
-        const dist = Vec2.dist(atomJ.pp, atomK.pp);
-        if (minDist < 0 || minDist > dist) minDist = dist;
+        const distance = Vec2.dist(atomJ.pp, atomK.pp);
+        if (minDistance < 0 || minDistance > distance) minDistance = distance;
       }
-      totalDist += minDist;
+      totalDistance += minDistance;
     }
 
-    return keys.length > 0 ? totalDist / keys.length : -1;
+    return keys.length > 0 ? totalDistance / keys.length : -1;
   }
 
   checkBondExists(begin: number, end: number): boolean {
@@ -1359,8 +1359,11 @@ export class Struct {
   }
 
   loopIsConvex(loop: LoopHalfBondIds): boolean {
-    return loop.every((item, k, loopArr) => {
-      const angle = this.halfBondAngle(item, loopArr[(k + 1) % loopArr.length]);
+    return loop.every((item, k, loopArray) => {
+      const angle = this.halfBondAngle(
+        item,
+        loopArray[(k + 1) % loopArray.length],
+      );
       return angle <= 0;
     });
   }
@@ -1369,8 +1372,8 @@ export class Struct {
   //  by measuring the total angle between bonds
   loopIsInner(loop: LoopHalfBondIds): boolean {
     let totalAngle = 2 * Math.PI;
-    loop.forEach((hbida, k, loopArr) => {
-      const hbidb = loopArr[(k + 1) % loopArr.length];
+    loop.forEach((hbida, k, loopArray) => {
+      const hbidb = loopArray[(k + 1) % loopArray.length];
       const hbb = this.halfBonds.get(hbidb);
       assert(hbb, `HalfBond ${hbidb} not found`);
       const angle = this.halfBondAngle(hbida, hbidb);
@@ -1497,8 +1500,8 @@ export class Struct {
     }
 
     if (atom.explicitValence >= 0) {
-      const elem = Elements.get(atom.label);
-      atom.implicitH = elem
+      const element = Elements.get(atom.label);
+      atom.implicitH = element
         ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
         : 0;
       if (atom.implicitH < 0) {
@@ -1545,10 +1548,10 @@ export class Struct {
         atom.stereoLabel = null;
         atom.stereoParity = 0;
       } else {
-        const stereoProp = stereAtomsMap.get(id);
-        if (stereoProp) {
-          atom.stereoLabel = stereoProp.stereoLabel;
-          atom.stereoParity = stereoProp.stereoParity;
+        const stereoProperty = stereAtomsMap.get(id);
+        if (stereoProperty) {
+          atom.stereoLabel = stereoProperty.stereoLabel;
+          atom.stereoParity = stereoProperty.stereoParity;
         }
       }
     });
@@ -2036,17 +2039,17 @@ export class Struct {
     this.bonds.set(bondId, newBond);
 
     this.bondInitHalfBonds(bondId);
-    const newBondObj = this.bonds.get(bondId);
-    if (!newBondObj?.hb1 || !newBondObj?.hb2) {
+    const newBondObject = this.bonds.get(bondId);
+    if (!newBondObject?.hb1 || !newBondObject?.hb2) {
       return;
     }
 
     // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
     // by hb.ang — inserting with ang=0 (the HalfBond default) would place
     // the half-bond in the wrong position in the neighbor list.
-    this.halfBondUpdate(newBondObj.hb1);
-    this.halfBondUpdate(newBondObj.hb2);
-    this.atomAddNeighbor(newBondObj.hb1);
-    this.atomAddNeighbor(newBondObj.hb2);
+    this.halfBondUpdate(newBondObject.hb1);
+    this.halfBondUpdate(newBondObject.hb2);
+    this.atomAddNeighbor(newBondObject.hb1);
+    this.atomAddNeighbor(newBondObject.hb2);
   }
 }

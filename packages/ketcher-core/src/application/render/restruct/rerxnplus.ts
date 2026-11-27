@@ -45,9 +45,9 @@ class ReRxnPlus extends ReObject {
   }
 
   drawHover(render: Render) {
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
+    const returnValue = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
+    return returnValue;
   }
 
   makeSelectionPlate(

@@ -354,12 +354,12 @@ class ReStruct {
       let bb = isVisible
         ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
         : null;
-      const ext = pos && bb ? bb.translate(pos.negated()) : null;
+      const extension = pos && bb ? bb.translate(pos.negated()) : null;
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y);
         bb = bb ? bb.translate(offset) : null;
       }
-      visel.add(path, bb, ext);
+      visel.add(path, bb, extension);
       path.insertBefore(this.layers[LayerMap[group]]);
     });
   }
@@ -433,9 +433,9 @@ class ReStruct {
     visel.clear();
   }
 
-  eachItem(func) {
+  eachItem(function_) {
     Object.keys(ReStruct.maps).forEach((map) => {
-      this[map].forEach(func);
+      this[map].forEach(function_);
     });
   }
 
@@ -811,11 +811,11 @@ class ReStruct {
     this.reloops.forEach((reloop) => {
       this.clearVisel(reloop.visel);
     });
-    const ret = this.molecule.findLoops();
-    ret.bondsToMark.forEach((bid) => {
+    const returnValue = this.molecule.findLoops();
+    returnValue.bondsToMark.forEach((bid) => {
       this.markBond(bid, 1);
     });
-    ret.newLoops.forEach((loopId) => {
+    returnValue.newLoops.forEach((loopId) => {
       const loop = this.molecule.loops.get(loopId);
       if (loop === undefined) return;
       this.reloops.set(loopId, new ReLoop(loop));

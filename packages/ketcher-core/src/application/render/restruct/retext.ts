@@ -129,8 +129,8 @@ class ReText extends ReObject {
   }
 
   getRelBox(paths: Array<Array<RaphaelBaseElement>>): { p0: Vec2; p1: Vec2 } {
-    const firstElOfFirstRow: RaphaelBaseElement = paths[0][0];
-    const leftEdge = firstElOfFirstRow.getBBox().x;
+    const firstElementOfFirstRow: RaphaelBaseElement = paths[0][0];
+    const leftEdge = firstElementOfFirstRow.getBBox().x;
 
     const firstRow: Array<RaphaelBaseElement> = paths[0];
     const topEdge: number = Math.min(
@@ -144,15 +144,16 @@ class ReText extends ReObject {
           : widestRow,
       paths[0],
     );
-    const lastElOfWidestRow = widestRow.at(-1);
+    const lastElementOfWidestRow = widestRow.at(-1);
     const lastRow = paths.at(-1);
 
-    if (!lastElOfWidestRow || !lastRow) {
+    if (!lastElementOfWidestRow || !lastRow) {
       throw new Error('Cannot get the bounds of empty selection paths');
     }
 
     const rightEdge: number =
-      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width;
+      lastElementOfWidestRow.getBBox().x +
+      lastElementOfWidestRow.getBBox().width;
 
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
@@ -173,9 +174,9 @@ class ReText extends ReObject {
 
   drawHover(render: Render): Element | null {
     if (this.paths.length === 0) return null;
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
+    const returnValue = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
+    return returnValue;
   }
 
   makeSelectionPlate(

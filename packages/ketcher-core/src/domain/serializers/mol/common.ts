@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -324,9 +324,9 @@ function saveDatToMolfile(
     utils.paddedNum(data.daspPos, 1) + // n
     '  '; // oo
   lines.push(sddLine);
-  const val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
+  const value = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
   const charsPerLine = 69;
-  val.split('\n').forEach((chars) => {
+  value.split('\n').forEach((chars) => {
     while (chars.length > charsPerLine) {
       lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
       chars = chars.slice(charsPerLine);
@@ -398,22 +398,22 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   return lines;
 }
 
-function normalizeNewlines(str: string): string {
-  return str.split(/\r\n|[\n\r]/).join('\n');
+function normalizeNewlines(string_: string): string {
+  return string_.split(/\r\n|[\n\r]/).join('\n');
 }
 
 function partitionLine(
-  str: string,
+  string_: string,
   parts: number[],
   hasSpaceBetweenParts?: boolean,
 ): string[] {
-  const res: string[] = [];
+  const result: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
-    res.push(str.slice(shift, shift + parts[i]));
+    result.push(string_.slice(shift, shift + parts[i]));
     if (hasSpaceBetweenParts) shift++;
     shift += parts[i];
   }
-  return res;
+  return result;
 }
 
 export default {

@@ -36,12 +36,12 @@ import type {
 } from '../types';
 
 export function toRlabel(values: number[]): number {
-  let res = 0;
-  values.forEach((val) => {
-    const rgi = val - 1;
-    res |= 1 << rgi;
+  let result = 0;
+  values.forEach((value) => {
+    const rgi = value - 1;
+    result |= 1 << rgi;
   });
-  return res;
+  return result;
 }
 
 type KetMoleculeItem = KetItem & {
@@ -113,7 +113,7 @@ export function rglabelToStruct(source: KetRgLabelNode): Atom {
   });
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(
-    (source.$refs ?? []).map((el) => parseInt(el.slice(3), 10)),
+    (source.$refs ?? []).map((element) => parseInt(element.slice(3), 10)),
   );
   ifDef(params, 'rglabel', rglabel);
   const newAtom = new Atom(params);

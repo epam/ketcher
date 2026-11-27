@@ -79,7 +79,7 @@ export function monomerToDrawingEntity(
   );
 }
 
-export type MonomerFactoryFn = (
+export type MonomerFactoryFunction = (
   monomerItem: MonomerItemType,
 ) => [
   new (
@@ -93,7 +93,7 @@ export type MonomerFactoryFn = (
 export function createMonomersForVariantMonomer(
   variantMonomerTemplate: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
-  monomerFactory: MonomerFactoryFn,
+  monomerFactory: MonomerFactoryFunction,
 ) {
   const monomerTemplates = variantMonomerTemplate.options.map((option) => {
     return parsedFileContent[setMonomerTemplatePrefix(option.templateId)];
@@ -122,7 +122,7 @@ export function variantMonomerToDrawingEntity(
   node: IKetAmbiguousMonomerNode,
   template: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
-  monomerFactory: MonomerFactoryFn,
+  monomerFactory: MonomerFactoryFunction,
 ) {
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(node.position.x, node.position.y),

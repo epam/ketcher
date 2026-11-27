@@ -66,40 +66,40 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const pos = item.pos;
 
-    let dist: number = point.calculateDistanceToLine([pos[0], pos[1]]);
+    let distance: number = point.calculateDistanceToLine([pos[0], pos[1]]);
 
     if (RxnArrow.isElliptical(item)) {
       // currently an elliptical arrow is highlighted if a pointer is close to one of the 3 virtual lines
       // that form a triangle from the arrow's 3 reference points
       // TODO: make a better detection (maybe rectangular, so it's similar to visual highlight/selection)
       const [startPoint, endPoint, middlePoint] = this.getReferencePoints();
-      dist = Math.min(
-        dist,
+      distance = Math.min(
+        distance,
         point.calculateDistanceToLine([startPoint, middlePoint]),
         point.calculateDistanceToLine([middlePoint, endPoint]),
       );
     }
 
-    const refPoint: Vec2 | null =
+    const referencePoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null;
     // distance is a smallest between dist to figure and it's reference points
-    dist = Math.min(distRef.minDist, dist);
-    return { minDist: dist, refPoint };
+    distance = Math.min(distRef.minDist, distance);
+    return { minDist: distance, refPoint: referencePoint };
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const dist: MinDistanceWithReferencePoint[] = [];
-    const refPoints = this.getReferencePoints();
-    refPoints.forEach((rp) => {
-      dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
+    const distances: MinDistanceWithReferencePoint[] = [];
+    const referencePoints = this.getReferencePoints();
+    referencePoints.forEach((rp) => {
+      distances.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce(
+    const minDistance: MinDistanceWithReferencePoint = distances.reduce(
       (acc, current) => (acc.minDist < current.minDist ? acc : current),
       { minDist: Infinity, refPoint: null },
     );
 
-    return minDist;
+    return minDistance;
   }
 
   hoverPath(render: Render) {
@@ -109,31 +109,31 @@ class ReRxnArrow extends ReObject {
   }
 
   drawHover(render: Render) {
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
+    const returnValue = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
+    return returnValue;
   }
 
   getReferencePoints(): Array<Vec2> {
-    const refPoints: Array<Vec2> = [];
+    const referencePoints: Array<Vec2> = [];
     const item = this.item;
     const [a, b] = item.pos;
     const height = item.height;
-    refPoints.push(new Vec2(a.x, a.y), new Vec2(b.x, b.y));
+    referencePoints.push(new Vec2(a.x, a.y), new Vec2(b.x, b.y));
 
     if (height !== undefined && RxnArrow.isElliptical(item)) {
       const middlePoint = findMiddlePoint(height, a, b);
-      refPoints.push(middlePoint);
+      referencePoints.push(middlePoint);
     }
-    return refPoints;
+    return referencePoints;
   }
 
   makeAdditionalInfo(restruct: ReStruct) {
     const scaleFactor = restruct.render.options.microModeScale;
-    const refPoints = this.getReferencePoints();
+    const referencePoints = this.getReferencePoints();
     const selectionSet = restruct.render.paper.set();
 
-    refPoints.forEach((rp) => {
+    referencePoints.forEach((rp) => {
       const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
       selectionSet.push(
         restruct.render.paper

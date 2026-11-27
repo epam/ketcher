@@ -197,8 +197,8 @@ export class SGroup {
   //      and should only accept valid attributes for each S-group type.
   //      The attributes should be accessed via these methods only and not directly through this.data.
   // stub
-  getAttr(attr: string): unknown {
-    return this.data[attr];
+  getAttr(attribute: string): unknown {
+    return this.data[attribute];
   }
 
   setFunctionalGroup(functionalGroup: FunctionalGroup) {
@@ -207,23 +207,23 @@ export class SGroup {
 
   // TODO: should be group-specific
   getAttrs(): Record<string, unknown> {
-    const attrs: Record<string, unknown> = {};
-    Object.keys(this.data).forEach((attr) => {
-      attrs[attr] = this.data[attr];
+    const attributes: Record<string, unknown> = {};
+    Object.keys(this.data).forEach((attribute) => {
+      attributes[attribute] = this.data[attribute];
     });
-    return attrs;
+    return attributes;
   }
 
   // stub
-  setAttr(attr: string, value: unknown): unknown {
-    const oldValue = this.data[attr];
-    this.data[attr] = value;
+  setAttr(attribute: string, value: unknown): unknown {
+    const oldValue = this.data[attribute];
+    this.data[attribute] = value;
     return oldValue;
   }
 
   // stub
-  checkAttr(attr: string, value: unknown): boolean {
-    return this.data[attr] === value;
+  checkAttr(attribute: string, value: unknown): boolean {
+    return this.data[attribute] === value;
   }
 
   updateOffset(offset: Vec2): void {
@@ -253,8 +253,8 @@ export class SGroup {
         assert(atom, `SGroup.calculatePP: atom ${aid} is not found`);
         const pos = new Vec2(atom.pp);
 
-        const ext = new Vec2(0.05 * 3, 0.05 * 3);
-        const bba = new Box2Abs(pos, pos).extend(ext, ext);
+        const extension = new Vec2(0.05 * 3, 0.05 * 3);
+        const bba = new Box2Abs(pos, pos).extend(extension, extension);
         contentBoxes.push(bba);
       });
 
@@ -521,11 +521,11 @@ export class SGroup {
       cp.data[field] = sgroup.data[field];
     });
 
-    cp.atoms = sgroup.atoms.map((elem) => {
-      const remappedAtomId = aidMap.get(elem);
+    cp.atoms = sgroup.atoms.map((element) => {
+      const remappedAtomId = aidMap.get(element);
       assert(
         remappedAtomId !== undefined,
-        `SGroup.clone: missing remapped atom id for ${elem}`,
+        `SGroup.clone: missing remapped atom id for ${element}`,
       );
       return remappedAtomId;
     });

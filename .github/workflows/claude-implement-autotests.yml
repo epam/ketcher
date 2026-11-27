@@ -233,6 +233,11 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The action hides Claude's output, so a failed run shows no reason.
+          # Set the AUTOTEST_SHOW_FULL_OUTPUT repository variable to true to
+          # print it in the job log while you look into a failure, and unset
+          # it after: the log of this public repository is public.
+          show_full_output: ${{ vars.AUTOTEST_SHOW_FULL_OUTPUT == 'true' }}
           claude_args: |
             --model ${{ env.AUTOTEST_MODEL }}
             --allowedTools "Read" "Glob" "Grep" "Edit(ketcher-autotests/**)" "Write(ketcher-autotests/**)"

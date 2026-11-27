@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,14 +43,18 @@ export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
     return <AnalyzingFile fileName={props.fileName} />;
   } else {
     switch (props.currentState) {
-      case props.states.idle:
+      case props.states.idle: {
         return <OpenOptions {...props} />;
-      case props.states.textEditor:
+      }
+      case props.states.textEditor: {
         return <TextEditor {...props} testId="open-structure-textarea" />;
-      case props.states.presentationViewer:
+      }
+      case props.states.presentationViewer: {
         return <CDXStructuresViewer {...props} />;
-      default:
+      }
+      default: {
         return null;
+      }
     }
   }
 };

@@ -89,13 +89,13 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
     V,
   ];
   const code = getMonomersCode((monomer as AmbiguousMonomer).monomers);
-  return ambigues.some((v) => v === code);
+  return ambigues.includes(code);
 };
 
 /**
- * An unsplit nucleotide is a fused sugar+base+phosphate monomer, so it has no
- * RNA base to inspect — its eligibility is decided by its own natural analogue.
- */
+An unsplit nucleotide is a fused sugar+base+phosphate monomer, so it has no
+RNA base to inspect — its eligibility is decided by its own natural analogue.
+*/
 const hasSenseNaturalAnalogue = (monomer: BaseMonomer) =>
   rnaDnaNaturalAnalogues.includes(
     monomer.monomerItem.props.MonomerNaturalAnalogCode,
@@ -134,10 +134,10 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
 };
 
 /**
- * The eligibility rules apply per chain: an ineligible chain in the selection
- * does not block the antisense creation for the other chains (requirement 1.3
- * of #5678), but one ineligible base still disables it for its own chain.
- */
+The eligibility rules apply per chain: an ineligible chain in the selection
+does not block the antisense creation for the other chains (requirement 1.3
+of #5678), but one ineligible base still disables it for its own chain.
+*/
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
@@ -207,7 +207,7 @@ export const getModifyAminoAcidsMenuItems = (
     const monomerNaturalAnalogCode =
       selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
 
-    if (!(selectedMonomer instanceof Peptide) || !monomerNaturalAnalogCode) {
+    if (!monomerNaturalAnalogCode || !(selectedMonomer instanceof Peptide)) {
       return;
     }
 
@@ -226,7 +226,7 @@ export const getModifyAminoAcidsMenuItems = (
         monomerLibraryItem.props?.MonomerNaturalAnalogCode,
       );
 
-    if (!monomerLibraryItem.props || !monomersWithSameNaturalAnalogCode) {
+    if (!monomersWithSameNaturalAnalogCode || !monomerLibraryItem.props) {
       return;
     }
 
@@ -306,7 +306,7 @@ export const getMonomersForAminoAcidModification = (
   const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
   let monomerCandidates: BaseMonomer[] = [];
 
-  if (selectedMonomers.length) {
+  if (selectedMonomers.length > 0) {
     monomerCandidates = selectedMonomers;
   } else if (clickedMonomer) {
     monomerCandidates = [clickedMonomer];
@@ -357,7 +357,10 @@ export const isCycleExistsForSelectedMonomers = (
     return neighbors;
   };
 
-  const dfs = (monomer: BaseMonomer, parent: BaseMonomer | null): boolean => {
+  const hasCycleFromMonomer = (
+    monomer: BaseMonomer,
+    parent?: BaseMonomer,
+  ): boolean => {
     visited.add(monomer);
     inRecursionStack.add(monomer);
 
@@ -373,7 +376,7 @@ export const isCycleExistsForSelectedMonomers = (
       }
 
       if (!visited.has(neighbor)) {
-        if (dfs(neighbor, monomer)) {
+        if (hasCycleFromMonomer(neighbor, monomer)) {
           return true;
         }
       }
@@ -385,7 +388,7 @@ export const isCycleExistsForSelectedMonomers = (
 
   for (const monomer of selectedMonomers) {
     if (!visited.has(monomer)) {
-      if (dfs(monomer, null)) {
+      if (hasCycleFromMonomer(monomer)) {
         return true;
       }
     }

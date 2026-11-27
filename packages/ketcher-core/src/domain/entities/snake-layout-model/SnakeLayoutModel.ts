@@ -32,20 +32,21 @@ import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/Mole
 
 export class SnakeLayoutModel {
   private readonly nodes: ITwoStrandedSnakeLayoutNode[] = [];
-  public chains: SnakeLayoutModelChain[] = [];
   private readonly monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     ITwoStrandedSnakeLayoutNode
   > = new Map();
 
+  public chains: SnakeLayoutModelChain[] = [];
+
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needFillMolecules = true,
+    shouldFillMolecules = true,
   ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
-    if (needFillMolecules) {
+    if (shouldFillMolecules) {
       this.fillMolecules(drawingEntitiesManager);
     }
   }
@@ -74,11 +75,15 @@ export class SnakeLayoutModel {
 
     if (node instanceof Nucleotide) {
       if (isAntisense) {
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
+        nodes.push(
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+        );
       } else {
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
+        nodes.push(
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+        );
       }
     } else if (node instanceof Nucleoside) {
       nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
@@ -227,8 +232,8 @@ export class SnakeLayoutModel {
 
               if (
                 currentTwoStrandedSnakeLayoutNode &&
-                !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-                isNodeInSameChain
+                isNodeInSameChain &&
+                !currentTwoStrandedSnakeLayoutNode.antisenseNode
               ) {
                 currentTwoStrandedSnakeLayoutNode.antisenseNode =
                   currentNodeBeforeHydrogenConnectionToBase;
@@ -259,69 +264,68 @@ export class SnakeLayoutModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        !lastTwoStrandedNodeWithHydrogenBond ||
+        nodesBeforeHydrogenConnectionToBase.length === 0
       ) {
-        for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-          const lastTwoStrandedNodeWithHydrogenBondIndex =
-            lastTwoStrandedNodeWithHydrogenBond
-              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
-              : -1;
-          const currentTwoStrandedSnakeLayoutNodeIndex =
-            lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
-          const currentTwoStrandedSnakeLayoutNode:
-            ITwoStrandedSnakeLayoutNode | undefined =
-            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
-          const currentAntisenseSnakeLayoutNode =
-            nodesBeforeHydrogenConnectionToBase[i];
-          const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
-            lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
-          const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
-            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
-          const isNodeInSameChain =
-            firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
-            firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
-            monomerToChain.get(
-              firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
-            ) ===
-              monomerToChain.get(
-                firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
-              );
-          const hasAnotherAntisenseConnection =
-            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
-              (monomer) => {
-                return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
-                );
-              },
-            );
-
-          if (
-            currentTwoStrandedSnakeLayoutNode &&
-            isNodeInSameChain &&
-            !hasAnotherAntisenseConnection
-          ) {
-            currentTwoStrandedSnakeLayoutNode.antisenseNode =
-              currentAntisenseSnakeLayoutNode;
-          } else if (
-            currentTwoStrandedSnakeLayoutNode &&
-            (!isNodeInSameChain || hasAnotherAntisenseConnection)
-          ) {
-            this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
-              antisenseNode: currentAntisenseSnakeLayoutNode,
-              chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-            });
-          } else {
-            this.nodes.push({
-              antisenseNode: currentAntisenseSnakeLayoutNode,
-              chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-            });
-          }
-        }
-
-        lastTwoStrandedNodeWithHydrogenBond = undefined;
+        return;
       }
+
+      for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
+        const lastTwoStrandedNodeWithHydrogenBondIndex =
+          lastTwoStrandedNodeWithHydrogenBond
+            ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+            : -1;
+        const currentTwoStrandedSnakeLayoutNodeIndex =
+          lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
+        const currentTwoStrandedSnakeLayoutNode:
+          ITwoStrandedSnakeLayoutNode | undefined =
+          this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+        const currentAntisenseSnakeLayoutNode =
+          nodesBeforeHydrogenConnectionToBase[i];
+        const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
+          lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
+        const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
+          currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
+        const isNodeInSameChain =
+          firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
+          firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
+          monomerToChain.get(
+            firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
+          ) ===
+            monomerToChain.get(firstMonomerInCurrentTwoStrandedSnakeLayoutNode);
+        const hasAnotherAntisenseConnection =
+          currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
+            (monomer) => {
+              return (
+                monomer instanceof RNABase && monomer.hydrogenBonds.length > 0
+              );
+            },
+          );
+
+        if (
+          currentTwoStrandedSnakeLayoutNode &&
+          isNodeInSameChain &&
+          !hasAnotherAntisenseConnection
+        ) {
+          currentTwoStrandedSnakeLayoutNode.antisenseNode =
+            currentAntisenseSnakeLayoutNode;
+        } else if (
+          currentTwoStrandedSnakeLayoutNode &&
+          (!isNodeInSameChain || hasAnotherAntisenseConnection)
+        ) {
+          this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
+            antisenseNode: currentAntisenseSnakeLayoutNode,
+            chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+          });
+        } else {
+          this.nodes.push({
+            antisenseNode: currentAntisenseSnakeLayoutNode,
+            chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+          });
+        }
+      }
+
+      lastTwoStrandedNodeWithHydrogenBond = undefined;
     });
   }
 
@@ -429,10 +433,12 @@ export class SnakeLayoutModel {
                 ),
               );
 
-              if (!isHandledMolecule) {
-                handledMolecules.push(molecule[0]);
-                nodeIndexToMolecules.get(nodeIndex)?.push(molecule);
+              if (isHandledMolecule) {
+                return;
               }
+
+              handledMolecules.push(molecule[0]);
+              nodeIndexToMolecules.get(nodeIndex)?.push(molecule);
             });
           });
         });
@@ -531,7 +537,7 @@ export class SnakeLayoutModel {
         });
 
         // Fill the rest of the last row with empty nodes
-        if (currentRowToHandle.snakeLayoutModelItems.length) {
+        if (currentRowToHandle.snakeLayoutModelItems.length > 0) {
           for (
             let i = currentRowToHandle.snakeLayoutModelItems.length;
             i < lineLength;

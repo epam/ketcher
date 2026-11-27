@@ -46,6 +46,7 @@ interface IMonomerCreationWizardFieldsProps {
     leavingAtomLabel: AtomLabel;
   }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
+  initialModificationTypes?: string[];
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
   onReadonlyLeavingAtomChange?: (
     apName: AttachmentPointName,
@@ -72,6 +73,7 @@ const MonomerCreationWizardFields = (
     assignedAttachmentPoints,
     readonlyAttachmentPoints = [],
     onChangeModificationTypes,
+    initialModificationTypes = [],
     onFieldChange,
     onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
@@ -80,8 +82,8 @@ const MonomerCreationWizardFields = (
   const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
-  >([]);
-  const modificationTypeIdRef = useRef(0);
+  >(() => initialModificationTypes.map((value, id) => ({ id, value })));
+  const modificationTypeIdRef = useRef(initialModificationTypes.length);
 
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
@@ -242,18 +244,16 @@ const MonomerCreationWizardFields = (
         {(assignedAttachmentPoints.size > 0 ||
           readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
-            {Array.from(assignedAttachmentPoints.entries()).map(
-              ([name, atomPair]) => (
-                <AttachmentPoint
-                  name={name}
-                  editor={editor}
-                  onNameChange={handleAttachmentPointNameChange}
-                  onLeavingAtomChange={handleLeavingAtomChange}
-                  onRemove={handleAttachmentPointRemove}
-                  key={`${name}-${atomPair[0]}-${atomPair[1]}`}
-                />
-              ),
-            )}
+            {[...assignedAttachmentPoints.entries()].map(([name, atomPair]) => (
+              <AttachmentPoint
+                name={name}
+                editor={editor}
+                onNameChange={handleAttachmentPointNameChange}
+                onLeavingAtomChange={handleLeavingAtomChange}
+                onRemove={handleAttachmentPointRemove}
+                key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+              />
+            ))}
             {readonlyAttachmentPoints.map(
               ({ name: attachmentPointName, leavingAtomLabel }) => (
                 <ReadonlyAttachmentPoint

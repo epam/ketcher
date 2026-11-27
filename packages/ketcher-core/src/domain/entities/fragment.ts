@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ function calcStereoFlag(
   const filteredStereoAtoms = stereoAids
     .map((aid) => struct.atoms.get(aid))
     .filter((atom) => Boolean(atom?.stereoLabel));
-  if (!filteredStereoAtoms.length) return undefined;
+  if (filteredStereoAtoms.length === 0) return undefined;
 
   const atom = filteredStereoAtoms[0];
   const stereoLabel = atom?.stereoLabel; // {string} "<abs|and|or>-<group>"
@@ -72,18 +72,20 @@ function calcStereoFlag(
 }
 
 export class Fragment {
+  static getDefaultStereoFlagPosition(
+    struct: Struct,
+    fragmentId: number,
+  ): Vec2 | undefined {
+    const fragmentAtomIds = struct.getFragmentIds(fragmentId);
+    if (fragmentAtomIds.size === 0) return undefined;
+    const bb = struct.getCoordBoundingBox(fragmentAtomIds);
+    return new Vec2(bb.max.x, bb.min.y - 1);
+  }
+
   #enhancedStereoFlag?: StereoFlag;
+  #stereoAtoms: Array<number>;
   stereoFlagPosition?: Vec2;
   properties?: Array<StructProperty>;
-  #stereoAtoms: Array<number>;
-
-  get stereoAtoms(): Array<number> {
-    return [...this.#stereoAtoms];
-  }
-
-  get enhancedStereoFlag() {
-    return this.#enhancedStereoFlag;
-  }
 
   constructor(
     stereoAtoms: Array<number> = [],
@@ -99,14 +101,12 @@ export class Fragment {
     this.#stereoAtoms = stereoAtoms;
   }
 
-  static getDefaultStereoFlagPosition(
-    struct: Struct,
-    fragmentId: number,
-  ): Vec2 | undefined {
-    const fragmentAtomIds = struct.getFragmentIds(fragmentId);
-    if (fragmentAtomIds.size === 0) return undefined;
-    const bb = struct.getCoordBoundingBox(fragmentAtomIds);
-    return new Vec2(bb.max.x, bb.min.y - 1);
+  get stereoAtoms(): Array<number> {
+    return [...this.#stereoAtoms];
+  }
+
+  get enhancedStereoFlag() {
+    return this.#enhancedStereoFlag;
   }
 
   clone(aidMap: Map<number, number>) {
@@ -133,7 +133,7 @@ export class Fragment {
     if (
       !isAdd &&
       (struct.atoms.get(aid)?.fragment !== frId ||
-        !Array.from(struct.bonds.values())
+        ![...struct.bonds.values()]
           .filter(
             (bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE,
           )
@@ -160,7 +160,7 @@ export class Fragment {
   ): boolean {
     if (
       struct.atoms.get(atomId)?.fragment !== fragmentId ||
-      !Array.from(struct.bonds.values())
+      ![...struct.bonds.values()]
         .filter((bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
         .some((bond) => bond.begin === atomId)
     ) {

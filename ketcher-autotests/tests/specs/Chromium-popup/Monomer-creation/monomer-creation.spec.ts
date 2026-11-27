@@ -90,6 +90,17 @@ test.afterAll(async ({ closePage }) => {
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
+test('Create a monomer stays enabled after a mode round trip (#12252)', async () => {
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  const createMonomerButton = LeftToolbar(page).createMonomerButton;
+  await expect(createMonomerButton).toBeEnabled();
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+  await expect(createMonomerButton).toBeEnabled();
+});
+
 test('1. Check that a monomer creation wizard button added to the sidebar', async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
@@ -669,8 +680,7 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
   await CreateMonomerDialog(page).submit();
 
   // Verify monomer was created successfully by switching to macromolecules mode
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(LayoutMode.Flex);
   const monomerOnMacro = getMonomerLocator(page, {
     monomerAlias: testSymbol,
   });
@@ -752,8 +762,8 @@ test(`12. Check that Nucleotide (preset) is placed 6 in the Type drop-down`, asy
     .locator('[data-testid$="-option"]')
     .evaluateAll((elements) =>
       elements
-        .map((element) => element.getAttribute('data-testid'))
-        .filter(Boolean),
+        .map((element) => element.dataset.testid ?? null)
+        .filter((testId): testId is string => Boolean(testId)),
     );
 
   const monomerTypeOptionsOrder = actualOptionsOrder.filter((testId) =>
@@ -1046,8 +1056,9 @@ for (const [index, eligableName] of eligableNames.entries()) {
       code: `Test11-${index}`,
       name: eligableName.value,
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomer = getMonomerLocator(page, {
       monomerAlias: `Test11-${index}`,
     });
@@ -1102,8 +1113,9 @@ for (const eligableCode of eligableCodes) {
       code: eligableCode.value,
       name: 'Temp',
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomer = getMonomerLocator(page, {
       monomerAlias: eligableCode.value,
     });
@@ -1553,8 +1565,9 @@ for (const monomerToCreate of monomersToCreate) {
       ...monomerToCreate,
     });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomer = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.code,
     });
@@ -2070,54 +2083,44 @@ const monomersToCreate29 = [
   },
 ];
 
-// Indigo #3292 still breaks SDF V2000 round-trip for these two; the rest pass
-// since the #5275 median-rescale fix corrected the saved geometry.
-const stillFailingSdfV2000 = ['1. Amino Acid', '6. CHEM'];
-
 for (const monomerToCreate of monomersToCreate29) {
-  const test29 = stillFailingSdfV2000.includes(monomerToCreate.description)
-    ? test.fail
-    : test;
-  test29(
-    `29. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode`,
-    async () => {
-      // Test fails due to issue: https://github.com/epam/Indigo/issues/3292
-      // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode
-       *
-       * Case:
-       *      1. Open Molecules canvas
-       *      2. Load molecule on canvas
-       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-       *      4. Create monomer with given attributes
-       *      5. Save it to SDF V2000 and validate the result
-       *      6. Load saved monomer from SDF V2000 as New Project
-       *      7. Take screenshot to validate monomer got loaded
-       *
-       * Version 3.7
-       */
-      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await deselectAtomAndBonds(page, ['0']);
+  test(`29. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode`, async () => {
+    // Test fails due to issue: https://github.com/epam/Indigo/issues/3292
+    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Save it to SDF V2000 and validate the result
+     *      6. Load saved monomer from SDF V2000 as New Project
+     *      7. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await deselectAtomAndBonds(page, ['0']);
 
-      await createMonomer(page, {
-        ...monomerToCreate,
-      });
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
 
-      await verifyFileExport(
-        page,
-        `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
-        FileType.SDF,
-        SdfFileFormat.v2000,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await verifyFileExport(
+      page,
+      `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
+      FileType.SDF,
+      SdfFileFormat.v2000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
+    );
+    await takeEditorScreenshot(page);
+  });
 }
 
 const monomersToCreate30 = [
@@ -4089,8 +4092,9 @@ for (const monomerToCreate of monomersToCreate56) {
     await getAtomLocator(page, { atomId: 0 }).click();
     await CommonLeftToolbar(page).erase();
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
+      LayoutMode.Flex,
+    );
     const monomerOnMacro = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.code,
     });
@@ -4175,8 +4179,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       const monomerOnMacro = getMonomerLocator(page, {
@@ -4237,8 +4240,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Snake,
       );
       const monomerOnMacro = getMonomerLocator(page, {
@@ -4299,8 +4301,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Flex,
       );
       const monomerOnMacro = getMonomerLocator(page, {
@@ -4367,8 +4368,7 @@ for (const monomerToCreate of monomersToCreate) {
         await CommonLeftToolbar(page).erase();
       }
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
         LayoutMode.Snake,
       );
       const monomerOnMacro = getMonomerLocator(page, {

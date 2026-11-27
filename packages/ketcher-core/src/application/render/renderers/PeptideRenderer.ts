@@ -45,10 +45,9 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return undefined;
-    }
-    return { backgroundId: '#modified-background', requiresFill: true };
+    return this.monomer.monomerItem.props.unresolved
+      ? undefined
+      : { backgroundId: '#modified-background', requiresFill: true };
   }
 
   protected appendBody(

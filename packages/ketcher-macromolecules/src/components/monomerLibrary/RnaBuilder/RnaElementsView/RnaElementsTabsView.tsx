@@ -14,6 +14,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
 import { groupNameToTabLabelKey } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/groupNameToTabLabelKey';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -25,8 +26,8 @@ import {
   RnaBuilderPresetsItem,
   selectActiveMonomerKey,
   selectFilteredPresets,
-  selectIsActivePresetNewAndEmpty,
-  selectIsEditMode,
+  isActiveRnaPresetNewAndEmpty,
+  isRnaBuilderEditMode,
   selectPresetPhosphateFilter,
   setActiveRnaBuilderItem,
 } from 'state/rna-builder';
@@ -45,13 +46,13 @@ const RnaElementsTabsView = ({
   editPreset,
   libraryName,
 }: RnaElementsViewProps) => {
-  const { t } = useTranslation('macromoleculesDialogs');
+  const { t } = useTranslation(['macromoleculesDialogs', 'macromolecules']);
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isActivePresetNewAndEmpty = useAppSelector(
-    selectIsActivePresetNewAndEmpty,
+    isActiveRnaPresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
   const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
@@ -71,7 +72,7 @@ const RnaElementsTabsView = ({
       <RnaTabsContainer>
         {groupsData.map((groupData) => {
           const { groupName, groups, iconName } = groupData;
-          const selected = groupName === activeRnaBuilderItem;
+          const isSelected = groupName === activeRnaBuilderItem;
           const variantMonomers = selectAmbiguousMonomersInCategory(
             monomers,
             groupName as MonomerGroups,
@@ -81,17 +82,17 @@ const RnaElementsTabsView = ({
             0,
           );
           const label = t(groupNameToTabLabelKey[groupName]);
-          const caption = selected ? `${label} (${quantity})` : null;
+          const caption = isSelected ? `${label} (${quantity})` : undefined;
 
           return (
             <RnaTabWrapper
               key={groupName}
-              className={clsx(selected && 'rna-tab--selected')}
+              className={clsx(isSelected && 'rna-tab--selected')}
             >
               <RnaTab
                 label={caption}
                 title={label}
-                selected={selected}
+                selected={isSelected}
                 icon={<Icon name={iconName as IconName} />}
                 onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}
                 data-testid={`summary-${groupName}`}
@@ -103,7 +104,7 @@ const RnaElementsTabsView = ({
       {groupsData.map((groupData) => {
         const { groupName, groups } = groupData;
         if (groupName !== activeRnaBuilderItem) {
-          return null;
+          return;
         }
 
         const variantMonomers = selectAmbiguousMonomersInCategory(
@@ -149,47 +150,59 @@ const RnaElementsTabsView = ({
           ) : (
             <DetailsContainer compact>
               <>
-                {groups.map(({ groupItems, groupTitle }) => (
-                  <MonomerGroup
-                    key={groupTitle}
-                    title={
-                      [MonomerGroups.BASES, MonomerGroups.NUCLEOTIDES].includes(
-                        groupName as MonomerGroups,
-                      ) || groups.length > 1
-                        ? groupTitle
-                        : undefined
-                    }
-                    groupName={groupName}
-                    items={groupItems}
-                    selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) => onSelectItem(monomer, groupName)}
-                  />
-                ))}
-                {variantMonomers.map(({ groupTitle, groupItems }) => (
-                  <MonomerGroup
-                    key={groupTitle}
-                    title={groupTitle}
-                    items={groupItems}
-                    groupName={groupName as MonomerGroups}
-                    libraryName={libraryName}
-                    selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) => onSelectItem(monomer, groupName)}
-                  />
-                ))}
+                {groups.map(({ groupItems, groupTitle }) => {
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={
+                        [
+                          MonomerGroups.BASES,
+                          MonomerGroups.NUCLEOTIDES,
+                        ].includes(groupName as MonomerGroups) ||
+                        groups.length > 1
+                          ? resolvedTitle
+                          : undefined
+                      }
+                      groupName={groupName}
+                      items={groupItems}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        onSelectItem(monomer, groupName)
+                      }
+                    />
+                  );
+                })}
+                {variantMonomers.map(({ groupTitle, groupItems }) => {
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={resolvedTitle}
+                      items={groupItems}
+                      groupName={groupName as MonomerGroups}
+                      libraryName={libraryName}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        onSelectItem(monomer, groupName)
+                      }
+                    />
+                  );
+                })}
               </>
             </DetailsContainer>
           );
 
-        const firstTabSelected =
+        const isFirstTabSelected =
           activeRnaBuilderItem === RnaBuilderPresetsItem.Presets;
-        const lastTabSelected =
+        const isLastTabSelected =
           activeRnaBuilderItem === MonomerGroups.NUCLEOTIDES;
 
         return (
           <RnaTabContent
             className={clsx(
-              firstTabSelected && 'first-tab',
-              lastTabSelected && 'last-tab',
+              isFirstTabSelected && 'first-tab',
+              isLastTabSelected && 'last-tab',
             )}
             key={groupName}
           >

@@ -11,12 +11,23 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
 import type { BaseProps } from '../../../../modal.types';
+import type { AtomType } from 'ketcher-core';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
 
-const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
+export type AtomFormResult = {
+  atomType: AtomType;
+  atomList: string;
+  notList: boolean;
+  pseudo: string;
+  label: string;
+};
+
+const AtomElement = ({
+  formState,
+}: Pick<BaseProps<AtomFormResult>, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -26,7 +37,10 @@ const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
     props: object,
     onChange: ChangeFunction,
   ) => {
-    openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
+    void openDialog(dispatch, modalName, {
+      ...props,
+      isNestedModal: true,
+    }).then(
       (result) => {
         const el = result as { values?: string[]; label: string };
         onChange(el.values?.join(',') || el.label);
@@ -63,7 +77,7 @@ const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
               'period-table',
               {
                 type: notList ? 'not-list' : 'list',
-                values: atomList !== '' ? atomList.split(',') : [],
+                values: atomList === '' ? [] : atomList.split(','),
               },
               onChange,
             )

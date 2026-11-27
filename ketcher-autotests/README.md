@@ -69,18 +69,18 @@ For bonds:
 
 ### Prerequisites:
 
-- **Docker Desktop**
-  - How to install for Mac OS: https://docs.docker.com/desktop/install/mac-install/
-  - How to install for Windows: https://docs.docker.com/desktop/install/windows-install/
-  - How to install for Linux: https://docs.docker.com/desktop/install/linux-install/
+- **Install Docker**
+  - For macOS use https://colima.run/
+  - For windows use WSL
+
 - **Build Docker**:
   - Directory "ketcher-autotests": `npm run docker:build`
 - **Set environment**:
   In the directory "ketcher-autotests" set .env variable
   - DOCKER=true
-  - KETCHER_URL
-    - Rc: KETCHER_URL=link_to_rc
-    - Local frontend: KETCHER_URL=http://localhost:4002
+  - Docker tests use the standalone build served inside the container at
+    `http://127.0.0.1:4002` by default. To test an external deployment instead,
+    set `DOCKER_KETCHER_URL` to its URL. Use HTTPS for clipboard tests.
   - OPTIONAL: IGNORE_UNSTABLE_TESTS=true (if you want to ignore unstable tests)
   - OPTIONAL: NUM_WORKERS=8 (default=num cpus, if you want to define custom number of workers)
 

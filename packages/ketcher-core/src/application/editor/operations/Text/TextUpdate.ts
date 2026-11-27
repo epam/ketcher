@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,7 +74,6 @@ export class TextUpdate extends BaseOperation {
   isDummy(restruct?: ReStruct) {
     if (!restruct) return false;
     const text = restruct.molecule.texts.get(this.data.id);
-    if (!text) return false;
-    return text.content === this.data.content;
+    return !text ? false : text.content === this.data.content;
   }
 }

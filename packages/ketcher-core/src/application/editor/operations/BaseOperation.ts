@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,59 +25,28 @@ type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationTypeValue = ValueOf<typeof OperationType>;
 
 class BaseOperation<D = unknown> {
+  static InverseConstructor: new (...arguments_: never[]) => BaseOperation;
+
   private _inverted: BaseOperation | undefined;
   type: OperationTypeValue;
   priority: number;
   data!: D;
-
-  static InverseConstructor: new (...args: never[]) => BaseOperation;
-
-  constructor(type: OperationTypeValue, priority = 0) {
-    this.type = type;
-    this.priority = priority;
-  }
-
-  execute(_restruct: ReStruct): void {
-    throw new Error('Operation.execute() is not implemented');
-  }
-
-  /** Returns inverted of this */
-  perform(restruct: ReStruct): ReturnType<this['invert']> {
-    this.execute(restruct);
-    if (!this._inverted) {
-      this._inverted = this.invert();
-      this._inverted._inverted = this;
-    }
-    return this._inverted as ReturnType<this['invert']>;
-  }
-
-  invert(): BaseOperation {
-    const InverseConstructor = (this.constructor as typeof BaseOperation)
-      .InverseConstructor;
-    if (!InverseConstructor) {
-      KetcherLogger.error('Operation.invert() is not implemented');
-      return this;
-    }
-    const inverted = new InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
-  }
-
-  isDummy(_restruct: ReStruct): boolean {
-    return false;
-  }
 
   protected static invalidateAtom(
     restruct: ReStruct,
     atomId: number,
     level = 0,
   ) {
-    const atom = restruct.atoms.get(atomId);
+    const atom = restruct.getBondEndpoint(atomId);
     if (!atom) {
       return;
     }
 
-    restruct.markAtom(atomId, level ? 1 : 0);
+    if (restruct.attachmentGroups.has(atomId)) {
+      restruct.markAttachmentGroup(atomId, level ? 1 : 0);
+    } else {
+      restruct.markAtom(atomId, level ? 1 : 0);
+    }
 
     const halfBonds = restruct.molecule.halfBonds;
 
@@ -92,12 +61,18 @@ class BaseOperation<D = unknown> {
       }
 
       restruct.markBond(halfBond.bid, 1);
-      restruct.markAtom(halfBond.end, 0);
+      if (restruct.attachmentGroups.has(halfBond.end)) {
+        restruct.markAttachmentGroup(halfBond.end, 0);
+      } else {
+        restruct.markAtom(halfBond.end, 0);
+      }
 
       if (level) {
-        BaseOperation.invalidateLoop(restruct, halfBond.bid);
+        this.invalidateLoop(restruct, halfBond.bid);
       }
     });
+
+    if (restruct.attachmentGroups.has(atomId)) return;
 
     const fragment = atom.a.fragment;
     const stereoLabelStyle = restruct.render.options.stereoLabelStyle;
@@ -133,14 +108,14 @@ class BaseOperation<D = unknown> {
   }
 
   protected static invalidateBond(restruct: ReStruct, bondId: number) {
-    BaseOperation.invalidateLoop(restruct, bondId);
+    this.invalidateLoop(restruct, bondId);
 
     const bond = restruct.bonds.get(bondId);
     if (!bond) {
       return;
     }
-    BaseOperation.invalidateAtom(restruct, bond.b.begin, 0);
-    BaseOperation.invalidateAtom(restruct, bond.b.end, 0);
+    this.invalidateAtom(restruct, bond.b.begin, 0);
+    this.invalidateAtom(restruct, bond.b.end, 0);
   }
 
   protected static invalidateItem(
@@ -150,15 +125,20 @@ class BaseOperation<D = unknown> {
     level = 0,
   ) {
     if (mapName === 'atoms') {
-      BaseOperation.invalidateAtom(restruct, id, level);
+      this.invalidateAtom(restruct, id, level);
+      return;
+    }
+
+    if (mapName === 'attachmentGroups') {
+      this.invalidateAtom(restruct, id, level);
       return;
     }
 
     if (mapName === 'bonds') {
-      BaseOperation.invalidateBond(restruct, id);
+      this.invalidateBond(restruct, id);
 
       if (level > 0) {
-        BaseOperation.invalidateLoop(restruct, id);
+        this.invalidateLoop(restruct, id);
       }
       return;
     }
@@ -170,7 +150,42 @@ class BaseOperation<D = unknown> {
     restruct: ReStruct,
     fragmentId: number,
   ) {
-    BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1);
+    this.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1);
+  }
+
+  constructor(type: OperationTypeValue, priority = 0) {
+    this.type = type;
+    this.priority = priority;
+  }
+
+  execute(_restruct: ReStruct): void {
+    throw new Error('Operation.execute() is not implemented');
+  }
+
+  /** Returns inverted of this */
+  perform(restruct: ReStruct): ReturnType<this['invert']> {
+    this.execute(restruct);
+    if (!this._inverted) {
+      this._inverted = this.invert();
+      this._inverted._inverted = this;
+    }
+    return this._inverted as ReturnType<this['invert']>;
+  }
+
+  invert(): BaseOperation {
+    const InverseConstructor = (this.constructor as typeof BaseOperation)
+      .InverseConstructor;
+    if (!InverseConstructor) {
+      KetcherLogger.error('Operation.invert() is not implemented');
+      return this;
+    }
+    const inverted = new InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
+  }
+
+  isDummy(_restruct: ReStruct): boolean {
+    return false;
   }
 }
 

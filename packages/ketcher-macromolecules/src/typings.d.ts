@@ -8,8 +8,7 @@ declare module '*.module.less' {
 declare module '*.less';
 
 declare namespace JSX {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type Element = React.ReactElement<any, any>;
+  type Element = React.ReactElement;
 }
 
 declare namespace NodeJS {
@@ -18,6 +17,21 @@ declare namespace NodeJS {
     BUILD_DATE: string;
     BUILD_NUMBER: string;
   }
+}
+
+interface ImportMetaEnv {
+  readonly VERSION?: string;
+  readonly BUILD_DATE?: string;
+  readonly BUILD_NUMBER?: string;
+  readonly HELP_LINK?: string;
+  readonly NODE_ENV?: string;
+  readonly INDIGO_VERSION?: string;
+  readonly INDIGO_MACHINE?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
 }
 
 declare module '*.svg' {
@@ -68,24 +82,22 @@ interface HTMLElement {
   webkitRequestFullscreen?: () => void;
 }
 
-// Functions available in Jest testing environment, declared in setupTests.tsx
+/**
+ * Test helpers registered on `globalThis` by `src/setupTests.tsx`.
+ */
+declare var withThemeProvider: typeof testHelpers.withThemeProvider;
 
 /**
- * Wraps component in provider of Emotion/Mui merged theme
+ * Wraps a component in a Redux store provider
  */
-declare var withThemeProvider: typeof jestHelpers.withThemeProvider;
-
-/**
- * Wraps component in provider of Redux store
- */
-declare var withStoreProvider: typeof jestHelpers.withStoreProvider;
+declare var withStoreProvider: typeof testHelpers.withStoreProvider;
 
 /**
  * Wraps component in Redux store and Emotion/Mui theme providers
  */
-declare var withThemeAndStoreProvider: typeof jestHelpers.withThemeAndStoreProvider;
+declare var withThemeAndStoreProvider: typeof testHelpers.withThemeAndStoreProvider;
 
-declare namespace jestHelpers {
+declare namespace testHelpers {
   import type { RootState } from './state';
   function withThemeProvider(arg: JSX.Element): React.Element;
   function withStoreProvider(

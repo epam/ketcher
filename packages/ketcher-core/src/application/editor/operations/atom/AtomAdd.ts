@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,15 +72,19 @@ class AtomAdd extends BaseOperation<Data> {
     struct.atomSetPos(aid, new Vec2(pos as Point));
 
     const arrow = struct.rxnArrows.get(0);
-    if (arrow) {
-      const atomInstance = struct.atoms.get(aid);
-      if (atomInstance) {
-        atomInstance.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
-          new Pile([aid]),
-          arrow.pos[0].x,
-        );
-      }
+    if (!arrow) {
+      return;
     }
+
+    const atomInstance = struct.atoms.get(aid);
+    if (!atomInstance) {
+      return;
+    }
+
+    atomInstance.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
+      new Pile([aid]),
+      arrow.pos[0].x,
+    );
   }
 }
 

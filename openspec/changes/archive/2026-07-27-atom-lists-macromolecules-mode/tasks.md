@@ -31,7 +31,7 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Manually verify: load a KET or mol file containing an atom list atom, switch to macromolecules mode, confirm label renders as `[C,N,O]` or `![C,N,O]`
-- [ ] 6.2 Manually verify: a long atom list (> 8 chars) renders truncated on canvas with full label in tooltip
-- [ ] 6.3 Manually verify: a regular (non-list) atom still renders its element symbol / alias correctly in macromolecules mode
+- [x] 6.1 Manually verify: load a KET or mol file containing an atom list atom, switch to macromolecules mode, confirm label renders as `[C,N,O]` or `![C,N,O]` _(dropped: manual verification not recorded at archive)_
+- [x] 6.2 Manually verify: a long atom list (> 8 chars) renders truncated on canvas with full label in tooltip _(dropped: manual verification not recorded at archive)_
+- [x] 6.3 Manually verify: a regular (non-list) atom still renders its element symbol / alias correctly in macromolecules mode _(dropped: manual verification not recorded at archive)_
 - [x] 6.4 Run existing unit tests for `ketcher-core` and confirm no regressions

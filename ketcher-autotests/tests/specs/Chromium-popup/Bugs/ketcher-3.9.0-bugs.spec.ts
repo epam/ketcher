@@ -157,8 +157,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      */
     await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor(
       LayoutMode.Sequence,
     );
     const newSequenceButton = page.getByTestId('NewSequencePlusButton');

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,14 +29,15 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
-import BracketParams from '../bracket-params';
+import BracketParams from '../bracket-parameters';
 import type {
   Element as RaphaelElement,
   RaphaelPaper,
   RaphaelSet,
 } from 'raphael';
 import type { RenderOptions } from '../render.types';
-import paperjs from 'paper';
+import { uniteHoverPaths } from './hoverPath';
+export { paperPathFromSVGElement } from './hoverPath';
 interface SGroupdrawBracketsOptions {
   set: RaphaelSet;
   render: Render;
@@ -50,60 +50,28 @@ interface SGroupdrawBracketsOptions {
   superatomClass?: SUPERATOM_CLASS;
 }
 
-// Helper function to convert SVG elements into Paper.js paths
-export function paperPathFromSVGElement(
-  element: SVGElement,
-): paper.Path | paper.CompoundPath | undefined {
-  const tagName = element.tagName;
-  let path: paper.Path | paper.CompoundPath | undefined;
-
-  if (tagName === 'circle') {
-    // Convert circle to Paper.js Path.Circle
-    const cx = Number.parseFloat(element.getAttribute('cx') ?? '0');
-    const cy = Number.parseFloat(element.getAttribute('cy') ?? '0');
-    const r = Number.parseFloat(element.getAttribute('r') ?? '0');
-    path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
-  } else if (tagName === 'rect') {
-    // Convert rectangle to Paper.js Path.Rectangle
-    const x = Number.parseFloat(element.getAttribute('x') ?? '0');
-    const y = Number.parseFloat(element.getAttribute('y') ?? '0');
-    const width = Number.parseFloat(element.getAttribute('width') ?? '0');
-    const height = Number.parseFloat(element.getAttribute('height') ?? '0');
-    path = new paperjs.Path.Rectangle(
-      new paperjs.Rectangle(x, y, width, height),
-      new paperjs.Size(
-        Number.parseFloat(element.getAttribute('rx') || '0'),
-        Number.parseFloat(element.getAttribute('ry') || '0'),
-      ),
-    );
-  } else if (tagName === 'path') {
-    // Use the `d` attribute directly for Path data
-    const d = element.getAttribute('d');
-    path = d ? new paperjs.CompoundPath(d) : undefined;
-  }
-  return path;
-}
-
 class ReSGroup extends ReObject {
-  public item: SGroup | undefined;
-  public render!: Render;
-  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
-
-  constructor(sgroup: SGroup) {
-    super('sgroup');
-    /** @type {SGroup} */
-    this.item = sgroup;
-  }
-
   static isSelectable(): boolean {
     return false;
   }
 
+  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
+  public item: SGroup | undefined;
+  public render!: Render;
+
+  constructor(sgroup: SGroup) {
+    super('sgroup');
+    /**
+    @type {SGroup}
+    */
+    this.item = sgroup;
+  }
+
   /**
-   * @param remol {ReStruct}
-   * @param sgroup {SGroup}
-   * @returns {*}
-   */
+  @param remol {ReStruct}
+  @param sgroup {SGroup}
+  @returns {*}
+  */
   draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
@@ -151,9 +119,7 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;
-          if (sgroup instanceof MonomerMicromolecule) {
-            set.push(drawExpandedMonomerLabel(remol, sgroup, bracketBox));
-          }
+          // An expanded monomer shows its structure, so it needs no label
           break;
         }
         case 'DAT': {
@@ -162,8 +128,9 @@ class ReSGroup extends ReObject {
         }
         case 'queryComponent':
         case 'GEN':
-        default:
+        default: {
           break;
+        }
       }
 
       // DAT S-Groups do not have brackets
@@ -246,101 +213,70 @@ class ReSGroup extends ReObject {
     const options = render.options;
     const paper = render.paper;
     const sGroupItem = this.item;
-    if (sGroupItem) {
-      const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
-      const functionalGroups = render.ctab.molecule.functionalGroups;
-      const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
-      const otherHovers = paper.set();
-
-      if (
-        FunctionalGroup.isContractedFunctionalGroup(
-          sGroupItem.id,
-          functionalGroups,
-        )
-      ) {
-        sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
-          options.hoverStyle,
-        );
-        hoversToCombine.push(sGroupItem.hovering);
-      } else if (!this.selected) {
-        sGroupItem.hovering = paper
-          .path(
-            'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-            toFixed(a0.x),
-            toFixed(a0.y),
-            toFixed(a1.x),
-            toFixed(a1.y),
-            toFixed(b1.x),
-            toFixed(b1.y),
-            toFixed(b0.x),
-            toFixed(b0.y),
-          )
-          .attr(options.hoverStyle);
-        otherHovers.push(sGroupItem.hovering);
-      }
-
-      SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
-        const atom = render?.ctab?.atoms?.get(aid);
-
-        hoversToCombine.push(atom?.makeHoverPlate(render));
-      });
-      SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
-        hoversToCombine.push(
-          render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
-        );
-      });
-
-      const elements: SVGElement[] = [];
-
-      hoversToCombine.forEach((item) => {
-        if (item?.node) {
-          elements.push(item.node);
-          item.node.remove();
-        }
-      });
-
-      paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
-
-      // Generate Paper.js paths from all SVG elements
-      let combinedPath: paper.PathItem | undefined;
-
-      elements.forEach((el) => {
-        const paperPath = paperPathFromSVGElement(el);
-
-        if (!paperPath) {
-          return;
-        }
-
-        if (!paperPath.closed) {
-          paperPath.closePath();
-        }
-
-        if (!combinedPath) {
-          combinedPath = paperPath;
-        } else {
-          combinedPath = combinedPath.unite(paperPath);
-        }
-      });
-
-      if (!combinedPath) {
-        return;
-      }
-
-      const combinedPathD = combinedPath.pathData;
-
-      render.ctab.addReObjectPath(
-        LayerMap.hovering,
-        this.visel,
-        paper.path(combinedPathD).attr(options.hoverStyle),
-      );
-      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
+    if (!sGroupItem) {
+      return;
     }
+
+    const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
+    const functionalGroups = render.ctab.molecule.functionalGroups;
+    const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
+    const otherHovers = paper.set();
+
+    if (
+      FunctionalGroup.isContractedFunctionalGroup(
+        sGroupItem.id,
+        functionalGroups,
+      )
+    ) {
+      sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
+        options.hoverStyle,
+      );
+      hoversToCombine.push(sGroupItem.hovering);
+    } else if (!this.selected) {
+      sGroupItem.hovering = paper
+        .path(
+          'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
+          toFixed(a0.x),
+          toFixed(a0.y),
+          toFixed(a1.x),
+          toFixed(a1.y),
+          toFixed(b1.x),
+          toFixed(b1.y),
+          toFixed(b0.x),
+          toFixed(b0.y),
+        )
+        .attr(options.hoverStyle);
+      otherHovers.push(sGroupItem.hovering);
+    }
+
+    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+      const atom = render?.ctab?.atoms?.get(aid);
+
+      hoversToCombine.push(atom?.makeHoverPlate(render));
+    });
+    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
+      hoversToCombine.push(
+        render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
+      );
+    });
+
+    const combinedPathData = uniteHoverPaths(hoversToCombine);
+    if (!combinedPathData) {
+      return;
+    }
+
+    render.ctab.addReObjectPath(
+      LayerMap.hovering,
+      this.visel,
+      paper.path(combinedPathData).attr(options.hoverStyle),
+    );
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
   }
 
-  setHover(hover: boolean, render: Render) {
-    super.setHover(hover, render);
+  setHover(isHovered: boolean, render: Render) {
+    super.setHover(isHovered, render);
 
-    if (!hover || this.selected) {
+    if (!isHovered || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();
 
       return;
@@ -381,21 +317,23 @@ class ReSGroup extends ReObject {
   show(restruct: ReStruct): void {
     const render = restruct.render;
     const sgroup = this.item;
-    if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
-      const remol = render.ctab;
-      const path = this.draw(remol, sgroup);
-      const includeInBoundingBox = !(
-        sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
-      );
-      restruct.addReObjectPath(
-        LayerMap.data,
-        this.visel,
-        path,
-        null,
-        includeInBoundingBox,
-      );
-      this.setHover(this.hover, render); // TODO: fix this
+    if (!sgroup || sgroup.data.fieldName === 'MRV_IMPLICIT_H') {
+      return;
     }
+
+    const remol = render.ctab;
+    const path = this.draw(remol, sgroup);
+    const shouldIncludeInBoundingBox = !(
+      sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
+    );
+    restruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      path,
+      undefined,
+      shouldIncludeInBoundingBox,
+    );
+    this.setHover(this.hover, render); // TODO: fix this
   }
 }
 
@@ -582,28 +520,6 @@ function showValue(
   return set;
 }
 
-function drawExpandedMonomerLabel(
-  restruct: ReStruct,
-  sgroup: MonomerMicromolecule,
-  monomerBBox: Box2Abs,
-): RaphaelSet {
-  const { render } = restruct;
-  const labelPosition = monomerBBox.p1
-    .add(new Vec2(0, 0.3))
-    .scaled(render.options.microModeScale);
-  const label = showValue(
-    render.paper,
-    labelPosition,
-    sgroup,
-    render.options,
-    sgroup.data.name || '?',
-  );
-  const labelBBox = util.relBox(label.getBBox());
-  label.translateAbs(0.5 * labelBBox.width, -0.5 * labelBBox.height);
-
-  return label;
-}
-
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
   if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
 
@@ -646,19 +562,21 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
 
   SGroup.getAtoms(restruct.molecule, sgroup).forEach((aid) => {
     const atom = restruct.atoms.get(aid);
-    if (atom) {
-      const p = Scale.modelToCanvas(atom.a.pp, options);
-      const bb = atom.visel.boundingBox;
-      if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
-      p.x += options.lineWidth; // shift a bit to the right
-      const nameI = showValue(paper, p, sgroup, options);
-      const boxI = util.relBox(nameI.getBBox());
-      nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
-      set.push(nameI);
-      let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
-      sboxI = sboxI.transform(Scale.canvasToModel, render.options);
-      sgroup.areas.push(sboxI);
+    if (!atom) {
+      return;
     }
+
+    const p = Scale.modelToCanvas(atom.a.pp, options);
+    const bb = atom.visel.boundingBox;
+    if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
+    p.x += options.lineWidth; // shift a bit to the right
+    const nameI = showValue(paper, p, sgroup, options);
+    const boxI = util.relBox(nameI.getBBox());
+    nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
+    set.push(nameI);
+    let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
+    sboxI = sboxI.transform(Scale.canvasToModel, render.options);
+    sgroup.areas.push(sboxI);
   });
 
   return set;
@@ -696,10 +614,10 @@ function getBracketParameters(bracketBox: Box2Abs, direction: Vec2) {
 }
 
 /**
- * @param sgroup {SGroup}
- * @param render {Render}
- * @returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
- */
+@param sgroup {SGroup}
+@param render {Render}
+@returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
+*/
 function getHighlighPathInfo(
   sgroup: SGroup,
   render: Render,

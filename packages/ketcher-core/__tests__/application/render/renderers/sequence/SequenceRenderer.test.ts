@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
   CoreEditor,
   MACROMOLECULES_BOND_TYPES,
@@ -5,6 +6,8 @@ import {
 } from 'application/editor';
 import { ClearTool } from 'application/editor/tools/Clear';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { getSvgFromDrawnStructures } from '../../../../../src/utilities/getSvgFromDrawnStructures';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
@@ -18,13 +21,13 @@ import {
   createRenderersManager,
 } from '../../../../helpers/dom';
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
   x: 0,
   y: 0,
   width: 12,
@@ -109,7 +112,7 @@ describe('SequenceRenderer', () => {
   afterEach(() => {
     SequenceRenderer.clear();
     document.body.innerHTML = '';
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('does not duplicate sequence bond paths when re-rendering via startNewSequence', () => {
@@ -137,5 +140,24 @@ describe('SequenceRenderer', () => {
 
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
     expect(getSequenceBondPaths()).toHaveLength(0);
+  });
+
+  it('keeps the caret and the chain start arrow out of the exported SVG (#4669)', () => {
+    setupCyclicTwoPeptideStructure();
+    // In text-editing mode the first symbol of a chain carries the start arrow
+    (editor.mode as SequenceMode).isEditMode = true;
+    showCurrentMonomersInSequenceLayout();
+    const [monomer] = [...editor.drawingEntitiesManager.monomers.values()];
+    (monomer.renderer as BaseSequenceItemRenderer).showCaret();
+
+    const caret = canvas.querySelector('.blinking');
+    const arrow = canvas.querySelector('[data-testid="sequence-start-arrow"]');
+    expect(caret).not.toBeNull();
+    expect(arrow).not.toBeNull();
+
+    const svg = getSvgFromDrawnStructures(canvas, 'file');
+
+    expect(svg).not.toContain('blinking');
+    expect(svg).not.toContain('sequence-start-arrow');
   });
 });

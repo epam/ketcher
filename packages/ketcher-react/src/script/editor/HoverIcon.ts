@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   type ElementLabel,
   type AtomColor,
@@ -7,18 +6,19 @@ import {
   getOptionsWithConvertedUnits,
 } from 'ketcher-core';
 import type Editor from './Editor';
+import type { RaphaelElement } from 'raphael';
 
 const HOVER_ICON_OPACITY = 0.7;
 
 export class HoverIcon {
-  element: any;
+  element: RaphaelElement;
   _fill: AtomColor;
   _label: ElementLabel | '';
   isShown: boolean;
   /**
-   Is required for the case, when mouse moved outside the canvas, then loading of structure
-   happens and icon needs to be shown above loader.
-   */
+  Is required for the case, when mouse moved outside the canvas, then loading of structure
+  happens and icon needs to be shown above loader.
+  */
   shouldBeShownWhenMouseBack: boolean;
   editor: Editor;
 
@@ -67,19 +67,23 @@ export class HoverIcon {
 
   onMouseMove(event: MouseEvent) {
     if (
-      this.isShown ||
-      (this.isOverLoader(event) && this.shouldBeShownWhenMouseBack)
+      !this.isShown &&
+      (!this.isOverLoader(event) || !this.shouldBeShownWhenMouseBack)
     ) {
-      this.show();
-      this.updatePosition();
+      return;
     }
+
+    this.show();
+    this.updatePosition();
   }
 
   onMouseLeave(event: MouseEvent) {
-    if (!this.isOverLoader(event) && this.isShown) {
-      this.shouldBeShownWhenMouseBack = true;
-      this.hide();
+    if (this.isOverLoader(event) || !this.isShown) {
+      return;
     }
+
+    this.shouldBeShownWhenMouseBack = true;
+    this.hide();
   }
 
   updatePosition() {
@@ -101,23 +105,23 @@ export class HoverIcon {
     this.shouldBeShownWhenMouseBack = false;
   }
 
-  hide(restShouldBeShownWhenMouseBack?: boolean) {
+  hide(shouldResetVisibilityOnMouseReturn?: boolean) {
     this.element.hide();
     this.isShown = false;
 
-    if (restShouldBeShownWhenMouseBack) {
+    if (shouldResetVisibilityOnMouseReturn) {
       this.shouldBeShownWhenMouseBack = false;
     }
   }
 
   initialize(): {
-    element: any;
+    element: RaphaelElement;
     fill: AtomColor;
     label: ElementLabel | '';
   } {
     const render = this.editor.render;
     const fillColor = this.fill ?? '#000000';
-    const element = render.paper.text(0, 0, this.label ?? '');
+    const element: RaphaelElement = render.paper.text(0, 0, this.label ?? '');
     const options = getOptionsWithConvertedUnits(this.editor.options());
 
     element.attr('fill', fillColor);

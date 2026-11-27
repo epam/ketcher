@@ -1,36 +1,47 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Monomer List should render correct with groups 1`] = `
+exports[`Monomer List > should render correct with groups 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="css-1fb0lk8"
+        class="css-15k7m6m-MonomerListContainer e1q2pzb30"
       >
         <div
-          class="css-4weiu8"
+          class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
         >
           <div
-            class="css-1a3tnc1"
+            class="css-1ls8773-ItemsContainer e1o66xil0"
           >
             <div
-              class="css-bite5"
+              class="css-13p7nhk-Card e17t7vlq0"
               data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
               data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             >
               <span
-                class="css-uahybi"
+                class="css-1da7ffc-CardTitle e17t7vlq2"
               >
                 Phe4SD
               </span>
+              <button
+                aria-haspopup="menu"
+                aria-label="Actions for Phe4SD"
+                class="dots"
+                type="button"
+              >
+                <svg
+                  class="css-ipnnca-StyledIcon eugifix2"
+                  name="vertical-dots"
+                />
+              </button>
               <div
                 aria-label=""
-                class="css-aj3s7v"
+                class="css-7xnoa5-AutochainIconWrapper e17t7vlq4"
                 data-mui-internal-clone-element="true"
               >
                 <svg
-                  class="autochain css-1u7bcdc"
+                  class="autochain css-p643xf-AutochainIcon e17t7vlq3"
                   name="monomer-autochain"
                 />
               </div>
@@ -49,31 +60,42 @@ exports[`Monomer List should render correct with groups 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1fb0lk8"
+      class="css-15k7m6m-MonomerListContainer e1q2pzb30"
     >
       <div
-        class="css-4weiu8"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
       >
         <div
-          class="css-1a3tnc1"
+          class="css-1ls8773-ItemsContainer e1o66xil0"
         >
           <div
-            class="css-bite5"
+            class="css-13p7nhk-Card e17t7vlq0"
             data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e17t7vlq2"
             >
               Phe4SD
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for Phe4SD"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-ipnnca-StyledIcon eugifix2"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e17t7vlq4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e17t7vlq3"
                 name="monomer-autochain"
               />
             </div>
@@ -143,37 +165,48 @@ exports[`Monomer List should render correct with groups 1`] = `
 }
 `;
 
-exports[`Monomer List should render correct without groups 1`] = `
+exports[`Monomer List > should render correct without groups 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="css-1fb0lk8"
+        class="css-15k7m6m-MonomerListContainer e1q2pzb30"
       >
         <div
-          class="css-4weiu8"
+          class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
         >
           <div
-            class="css-1a3tnc1"
+            class="css-1ls8773-ItemsContainer e1o66xil0"
           >
             <div
-              class="css-fjd4hq"
+              class="css-17hii03-Card e17t7vlq0"
               data-monomer-item-id="PEG2___Diethylene Glycol"
               data-testid="PEG2___Diethylene Glycol"
             >
               <span
-                class="css-uahybi"
+                class="css-1da7ffc-CardTitle e17t7vlq2"
               >
                 PEG2
               </span>
+              <button
+                aria-haspopup="menu"
+                aria-label="Actions for PEG2"
+                class="dots"
+                type="button"
+              >
+                <svg
+                  class="css-ipnnca-StyledIcon eugifix2"
+                  name="vertical-dots"
+                />
+              </button>
               <div
                 aria-label=""
-                class="css-aj3s7v"
+                class="css-7xnoa5-AutochainIconWrapper e17t7vlq4"
                 data-mui-internal-clone-element="true"
               >
                 <svg
-                  class="autochain css-1u7bcdc"
+                  class="autochain css-p643xf-AutochainIcon e17t7vlq3"
                   name="monomer-autochain"
                 />
               </div>
@@ -192,31 +225,42 @@ exports[`Monomer List should render correct without groups 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1fb0lk8"
+      class="css-15k7m6m-MonomerListContainer e1q2pzb30"
     >
       <div
-        class="css-4weiu8"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e1o66xil2"
       >
         <div
-          class="css-1a3tnc1"
+          class="css-1ls8773-ItemsContainer e1o66xil0"
         >
           <div
-            class="css-fjd4hq"
+            class="css-17hii03-Card e17t7vlq0"
             data-monomer-item-id="PEG2___Diethylene Glycol"
             data-testid="PEG2___Diethylene Glycol"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e17t7vlq2"
             >
               PEG2
             </span>
+            <button
+              aria-haspopup="menu"
+              aria-label="Actions for PEG2"
+              class="dots"
+              type="button"
+            >
+              <svg
+                class="css-ipnnca-StyledIcon eugifix2"
+                name="vertical-dots"
+              />
+            </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e17t7vlq4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e17t7vlq3"
                 name="monomer-autochain"
               />
             </div>

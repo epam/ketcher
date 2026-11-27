@@ -163,7 +163,10 @@ export function setExpandMonomerSGroup(
   const struct = restruct.molecule;
 
   const sGroup = struct.sgroups.get(sgid);
-  assert(sGroup != undefined);
+  assert(
+    sGroup !== undefined,
+    `setExpandMonomerSGroup: S-group with id ${sgid} was not found`,
+  );
 
   if (attributes.expanded === sGroup.isExpanded()) {
     return action;
@@ -202,7 +205,10 @@ function fromMonomerSGroupExpansionLayout(
   const struct = restruct.molecule;
 
   const sGroup = struct.sgroups.get(sgid);
-  assert(sGroup != undefined);
+  assert(
+    sGroup !== undefined,
+    `fromMonomerSGroupExpansionLayout: S-group with id ${sgid} was not found`,
+  );
 
   const sGroupAtoms: Set<number> = new Set(SGroup.getAtoms(struct, sGroup));
   const attachmentPoints = sGroup.getAttachmentPoints();

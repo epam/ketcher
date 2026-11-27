@@ -2637,6 +2637,23 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.rxnPluses.set(addedPlus.id, addedPlus);
     });
 
+    this.simpleObjects.forEach((simpleObject) => {
+      const simpleObjectAddCommand =
+        targetDrawingEntitiesManager.addSimpleObject(
+          simpleObject.mode,
+          simpleObject.pos[0],
+          simpleObject.pos[1],
+        );
+      const addedSimpleObject = simpleObjectAddCommand.operations[0]
+        .simpleObject as CoreSimpleObject;
+
+      command.merge(simpleObjectAddCommand);
+      mergedDrawingEntities.simpleObjects.set(
+        addedSimpleObject.id,
+        addedSimpleObject,
+      );
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -2751,6 +2768,12 @@ export class DrawingEntitiesManager {
           entity.position,
           entity.initiallySelected,
           entity,
+        );
+      } else if (entity instanceof CoreSimpleObject) {
+        filteredDrawingEntitiesManager.addSimpleObject(
+          entity.mode,
+          entity.pos[0],
+          entity.pos[1],
         );
       }
     });

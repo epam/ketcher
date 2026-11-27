@@ -3,6 +3,10 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { SimpleObjectMode } from 'domain/entities/simpleObject';
 import { Vec2 } from 'domain/entities/vec2';
 
+vi.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: () => ({ viewModel: { initialize: vi.fn() } }),
+}));
+
 function createRenderersManagerMock() {
   return {
     addSimpleObject: vi.fn(),
@@ -154,5 +158,48 @@ describe('DrawingEntitiesManager simple objects', () => {
 
     expect(simpleObject.pos[0]).toEqual(new Vec2(1, 0));
     expect(simpleObject.pos[1]).toEqual(new Vec2(3, 0));
+  });
+  it('copies a simple object with mode and points through mergeInto', () => {
+    const source = new DrawingEntitiesManager();
+    const target = new DrawingEntitiesManager();
+    const renderersManager = createRenderersManagerMock();
+    source
+      .addSimpleObject(SimpleObjectMode.ellipse, new Vec2(1, 1), new Vec2(4, 3))
+      .execute(renderersManager);
+    const [original] = source.simpleObjects.values();
+
+    const { command, mergedDrawingEntities } = source.mergeInto(target);
+    command.execute(renderersManager);
+
+    const [copied] = target.simpleObjects.values();
+    expect(target.simpleObjects.size).toBe(1);
+    expect(copied).not.toBe(original);
+    expect(copied.mode).toBe(SimpleObjectMode.ellipse);
+    expect(copied.pos).toEqual([new Vec2(1, 1), new Vec2(4, 3)]);
+    expect(mergedDrawingEntities.simpleObjects.size).toBe(1);
+  });
+
+  it('filterSelection copies only the selected simple objects', () => {
+    const source = new DrawingEntitiesManager();
+    const renderersManager = createRenderersManagerMock();
+    source
+      .addSimpleObject(SimpleObjectMode.line, new Vec2(0, 0), new Vec2(2, 0))
+      .execute(renderersManager);
+    source
+      .addSimpleObject(
+        SimpleObjectMode.rectangle,
+        new Vec2(5, 5),
+        new Vec2(6, 6),
+      )
+      .execute(renderersManager);
+    const [selected] = source.simpleObjects.values();
+    selected.turnOnSelection();
+
+    const filtered = source.filterSelection();
+
+    const [copy] = filtered.simpleObjects.values();
+    expect(filtered.simpleObjects.size).toBe(1);
+    expect(copy.mode).toBe(SimpleObjectMode.line);
+    expect(copy.pos).toEqual([new Vec2(0, 0), new Vec2(2, 0)]);
   });
 });

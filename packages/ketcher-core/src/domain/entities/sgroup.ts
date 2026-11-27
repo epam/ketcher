@@ -19,7 +19,7 @@ import type { Bond, StructBondEndpointAccess } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
 import type { Struct } from './struct';
-import { SaltsAndSolventsProvider } from '../helpers';
+import { SaltsAndSolventsProvider } from '../helpers/saltsAndSolventsProvider';
 import { Vec2 } from './vec2';
 import type { Render, ReStruct } from '../../application/render';
 import type { FunctionalGroup } from 'domain/entities/functionalGroup';

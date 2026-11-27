@@ -21,6 +21,7 @@ import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
+import { AtomCIP } from 'domain/entities/types';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 import { CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
@@ -128,7 +129,13 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
   ifDef(result, 'isotope', source.isotope);
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
-  ifDef(result, 'cip', source.cip, '');
+  // '?' (undefined stereocenter) is display-only and not part of the KET schema
+  ifDef(
+    result,
+    'cip',
+    source.cip === AtomCIP.Undefined ? null : source.cip,
+    '',
+  );
   ifDef(result, 'selected', source.getInitiallySelected());
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel);

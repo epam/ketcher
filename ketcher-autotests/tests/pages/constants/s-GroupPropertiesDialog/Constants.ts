@@ -1,8 +1,8 @@
 export enum TypeOption {
   Data = 'Data-option',
-  MultipleGroup = 'Multiple group-option',
-  SRUPolymer = 'SRU polymer-option',
-  Copolymer = 'Copolymer-option',
+  MultipleGroup = 'Multiple group (#)-option',
+  SRUPolymer = 'SRU polymer (n)-option',
+  Copolymer = 'Copolymer (co)-option',
   Superatom = 'Superatom-option',
   QueryComponent = 'Query component-option',
   NucleotideComponent = 'Nucleotide Component-option',
@@ -29,9 +29,9 @@ export enum RepeatPatternOption {
 }
 
 export enum SubtypeOption {
-  Random = 'Random-option',
-  Block = 'Block-option',
-  Alternating = 'Alternating-option',
+  Random = 'Random (ran)-option',
+  Block = 'Block (blk)-option',
+  Alternating = 'Alternating (alt)-option',
 }
 
 export enum ComponentOption {

@@ -15,6 +15,6 @@ Focus:
 
 - Known sinks: the files in `ALLOWED_HTML_SINKS` (`scripts/eslint-invariants-rules.mjs`) write HTML from a string. A change that sends new text into one of them is a finding when that text can come from a file, a paste, or a service. One known case is the fallback branch in `StructEditor.tsx` that writes `msg.info` as HTML when the JSON parse fails. Trace where the text comes from before you report it.
 - Script loads: a script or module loaded from a URL or path built from input.
-- Untrusted input: text from an opened, dropped, or pasted file (KET, MOL, SDF, RXN, and the other formats in [serialization.md](../../../.memory-bank/modules/serialization.md)) and from clipboard utilities in `packages/ketcher-core/src/utilities/clipboardUtils.ts`. Flag a path where that text reaches a sink or the Indigo worker without a typed parse first.
+- Untrusted input: text from an opened, dropped, or pasted file (KET, MOL, SDF, RXN, and the other formats in [serialization.md](../../../.memory-bank/modules/serialization.md)) and from clipboard utilities in `packages/ketcher-core/src/utilities/clipboardUtilities.ts`. Flag a path where that text reaches a sink or the Indigo worker without a typed parse first.
 - Worker messages: a handler on either side of the Indigo worker boundary (`packages/ketcher-standalone/src/infrastructure/services/struct/`) that uses a payload field it did not check against its type.
 - Configuration: Indigo service URLs, API keys, or tokens written in source rather than read from options or environment variables.

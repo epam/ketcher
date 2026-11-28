@@ -73,53 +73,53 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
       key = key.toUpperCase();
     }
 
-    if (tokens.some((mod) => ModifiersRegex.Mod.test(mod))) {
+    if (tokens.some((modifier) => ModifiersRegex.Mod.test(modifier))) {
       activeModifiers.add(
         isMac ? KeyboardModifiers.Meta : KeyboardModifiers.Ctrl,
       );
     }
-    if (tokens.some((mod) => ModifiersRegex.Meta.test(mod))) {
+    if (tokens.some((modifier) => ModifiersRegex.Meta.test(modifier))) {
       activeModifiers.add(KeyboardModifiers.Meta);
     }
-    if (tokens.some((mod) => ModifiersRegex.Ctrl.test(mod))) {
+    if (tokens.some((modifier) => ModifiersRegex.Ctrl.test(modifier))) {
       activeModifiers.add(KeyboardModifiers.Ctrl);
     }
-    if (tokens.some((mod) => ModifiersRegex.Alt.test(mod))) {
+    if (tokens.some((modifier) => ModifiersRegex.Alt.test(modifier))) {
       activeModifiers.add(KeyboardModifiers.Alt);
     }
-    if (tokens.some((mod) => ModifiersRegex.Shift.test(mod))) {
+    if (tokens.some((modifier) => ModifiersRegex.Shift.test(modifier))) {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
   } else if (input instanceof KeyboardEvent) {
-    const e = input;
+    const event = input;
 
-    if (e.code.includes(KeyboardModifiers.Control)) {
+    if (event.code.includes(KeyboardModifiers.Control)) {
       return KeyboardModifiers.Ctrl;
     }
-    if (e.code.includes(KeyboardModifiers.Alt)) {
+    if (event.code.includes(KeyboardModifiers.Alt)) {
       return KeyboardModifiers.Alt;
     }
-    if (e.code.includes(KeyboardModifiers.Meta)) {
+    if (event.code.includes(KeyboardModifiers.Meta)) {
       return KeyboardModifiers.Meta;
     }
-    if (e.code.includes(KeyboardModifiers.Shift)) {
+    if (event.code.includes(KeyboardModifiers.Shift)) {
       return KeyboardModifiers.Shift;
     }
 
-    if (e.ctrlKey) {
+    if (event.ctrlKey) {
       activeModifiers.add(KeyboardModifiers.Ctrl);
     }
-    if (e.altKey) {
+    if (event.altKey) {
       activeModifiers.add(KeyboardModifiers.Alt);
     }
-    if (e.metaKey) {
+    if (event.metaKey) {
       activeModifiers.add(KeyboardModifiers.Meta);
     }
-    if (e.shiftKey) {
+    if (event.shiftKey) {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
 
-    key = normalizeCode(e.code);
+    key = normalizeCode(event.code);
   } else {
     throw new TypeError('normalizeShortcut expects string or KeyboardEvent');
   }
@@ -133,8 +133,8 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
   const copy = Object.create(null) as HotKeyMap;
 
-  Object.keys(map).forEach((prop) => {
-    copy[normalizeShortcut(prop)] = map[prop];
+  Object.keys(map).forEach((property) => {
+    copy[normalizeShortcut(property)] = map[property];
   });
 
   return copy;
@@ -151,18 +151,18 @@ Normalizes a shortcut string, keyboard event, or normalized hotkey map.
 String and event inputs return a normalized shortcut key, while map inputs
 return a copy with normalized shortcut keys.
 */
-const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
-  if (obj instanceof KeyboardEvent) {
-    return normalizeShortcut(obj);
+const keyNormBase = ((object: string | KeyboardEvent | HotKeyMap) => {
+  if (object instanceof KeyboardEvent) {
+    return normalizeShortcut(object);
   }
 
-  return typeof obj === 'object'
-    ? normalizeKeyMap(obj)
-    : normalizeShortcut(obj);
+  return typeof object === 'object'
+    ? normalizeKeyMap(object)
+    : normalizeShortcut(object);
 }) as {
-  (obj: KeyboardEvent): string;
-  (obj: string): string;
-  (obj: HotKeyMap): HotKeyMap;
+  (object: KeyboardEvent): string;
+  (object: string): string;
+  (object: HotKeyMap): HotKeyMap;
 };
 
 const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {

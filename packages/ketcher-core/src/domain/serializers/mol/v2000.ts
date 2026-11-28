@@ -141,20 +141,20 @@ function handleAliasProperty(
   shift: number,
   props: MPropertyProps,
 ): void {
-  const propValue = ctabLines[shift];
+  const propertyValue = ctabLines[shift];
   // TODO: Atom entity only have pseudo getter. Check during refactoring
   // this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
   // https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf (page 47)
-  const isPseudo = /'.+'/.test(propValue);
-  const propType = isPseudo ? 'pseudo' : 'alias';
+  const isPseudo = /'.+'/.test(propertyValue);
+  const propertyType = isPseudo ? 'pseudo' : 'alias';
 
-  if (!props.get(propType)) {
-    props.set(propType, new Pool());
+  if (!props.get(propertyType)) {
+    props.set(propertyType, new Pool());
   }
 
-  const aliasPool = props.get(propType);
+  const aliasPool = props.get(propertyType);
   if (aliasPool) {
-    aliasPool.set(utils.parseDecimalInt(line.slice(3)) - 1, propValue);
+    aliasPool.set(utils.parseDecimalInt(line.slice(3)) - 1, propertyValue);
   }
 }
 
@@ -162,12 +162,12 @@ function handleAliasProperty(
 Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
 */
 function handleSimpleAtomProperty(
-  propName: string,
+  propertyName: string,
   propertyData: string,
   props: MPropertyProps,
 ): void {
-  if (!props.get(propName)) {
-    props.set(propName, sGroup.readKeyValuePairs(propertyData, false));
+  if (!props.get(propertyName)) {
+    props.set(propertyName, sGroup.readKeyValuePairs(propertyData, false));
   }
 }
 
@@ -489,20 +489,20 @@ function parsePropertyLines(
 /**
 @param atoms { Pool }
 @param values { Pool }
-@param propId { string }
+@param propertyId { string }
 */
-function applyAtomProp(
+function applyAtomProperty(
   atoms: Pool<Atom>,
   values: Pool<string | number | AtomList>,
-  propId: string,
+  propertyId: string,
 ): void {
   /*
   reader
   */
-  values.forEach((propVal, aid) => {
+  values.forEach((propertyValue, aid) => {
     const atom = atoms.get(aid);
     if (atom) {
-      (atom as Atom & Record<string, unknown>)[propId] = propVal;
+      (atom as Atom & Record<string, unknown>)[propertyId] = propertyValue;
     }
   });
 }
@@ -603,8 +603,8 @@ function parseCTabV2000(
     sGroups,
     rLogic,
   );
-  props.forEach((values, propId) => {
-    applyAtomProp(ctab.atoms, values, propId);
+  props.forEach((values, propertyId) => {
+    applyAtomProperty(ctab.atoms, values, propertyId);
   });
 
   const atomMap: AtomMap = {};
@@ -689,8 +689,8 @@ function parseRg2000(
   const core = parseCTab(coreLines, shouldIgnoreChiralFlag);
   const frag: Record<number, Struct[]> = {};
   if (shouldLoadRGroupFragments) {
-    for (const strId in fragmentLines) {
-      const id = Number.parseInt(strId, 10);
+    for (const stringId in fragmentLines) {
+      const id = Number.parseInt(stringId, 10);
       frag[id] = [];
       for (const fragmentLine of fragmentLines[id]) {
         frag[id].push(parseCTab(fragmentLine, shouldIgnoreChiralFlag));
@@ -789,15 +789,15 @@ function parsePropertyLineAtomList(
   const count = utils.parseDecimalInt(hdr[2]);
   const isNotList = hdr[4].trim() === 'T';
   const ids = labelsListToIds(lst.slice(0, count));
-  const ret = new Pool<AtomList>();
-  ret.set(
+  const returnValue = new Pool<AtomList>();
+  returnValue.set(
     aid,
     new AtomList({
       notList: isNotList,
       ids,
     }),
   );
-  return ret;
+  return returnValue;
 }
 
 export default {

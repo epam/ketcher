@@ -127,7 +127,7 @@ const RnaElementsTabsView = ({
                   hasIndicator={isFilterActive}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setIsFilterOpen((prev) => !prev);
+                    setIsFilterOpen((previous) => !previous);
                   }}
                   aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"

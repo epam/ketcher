@@ -38,8 +38,8 @@ export const ZoomInput = ({
 }: ZoomInputProps) => {
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
-      const inputEl = inputRef.current;
-      if (!inputEl) return;
+      const inputElement = inputRef.current;
+      if (!inputElement) return;
 
       // Prevent bubbling of keyDown events to capture input and Enter, allow bubbling of shortcuts
       const zoomShortcuts = [
@@ -54,25 +54,25 @@ export const ZoomInput = ({
       }
 
       onZoomSubmit();
-      inputEl.select();
+      inputElement.select();
     },
     [onZoomSubmit, inputRef],
   );
 
   const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
-    const el = event.target;
-    el.select();
+    const element = event.target;
+    element.select();
   };
 
   // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
-    const inputEl = inputRef.current;
+    const inputElement = inputRef.current;
     if (isTouchDevice) {
       return;
     }
 
-    inputEl?.focus();
-    inputEl?.select();
+    inputElement?.focus();
+    inputElement?.select();
   }, [inputRef]);
 
   return (

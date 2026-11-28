@@ -47,7 +47,7 @@ export const StyledHeader = styled.button`
 `;
 
 export const ExpandIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'expanded',
+  shouldForwardProp: (property) => property !== 'expanded',
 })<{ expanded?: boolean }>`
   height: 16px;
   width: 16px;

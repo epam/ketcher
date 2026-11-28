@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function ifDef<TValue = unknown>(
+export function ifDefined<TValue = unknown>(
   target: object,
   key: string,
   value: TValue,
@@ -29,3 +29,5 @@ export function ifDef<TValue = unknown>(
     (target as Record<string, unknown>)[key] = value;
   }
 }
+
+export const ifDef = ifDefined;

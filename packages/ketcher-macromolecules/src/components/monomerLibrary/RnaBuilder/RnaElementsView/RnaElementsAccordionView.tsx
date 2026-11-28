@@ -72,12 +72,12 @@ const RnaElementsAccordionView = ({
   const [expandedAccordion, setExpandedAccordion] = useState<
     RnaBuilderItem | null | undefined
   >(activeRnaBuilderItem);
-  const [prevActiveRnaBuilderItem, setPrevActiveRnaBuilderItem] =
+  const [previousActiveRnaBuilderItem, setPreviousActiveRnaBuilderItem] =
     useState(activeRnaBuilderItem);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  if (activeRnaBuilderItem !== prevActiveRnaBuilderItem) {
-    setPrevActiveRnaBuilderItem(activeRnaBuilderItem);
+  if (activeRnaBuilderItem !== previousActiveRnaBuilderItem) {
+    setPreviousActiveRnaBuilderItem(activeRnaBuilderItem);
     setExpandedAccordion(activeRnaBuilderItem);
   }
 
@@ -129,7 +129,7 @@ const RnaElementsAccordionView = ({
                   hasIndicator={isFilterActive}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setIsFilterOpen((prev) => !prev);
+                    setIsFilterOpen((previous) => !previous);
                   }}
                   aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"

@@ -55,7 +55,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 async function pollDeferred<T>(
   process: () => Promise<T>,
-  isComplete: (val: T) => boolean,
+  isComplete: (value: T) => boolean,
   timeGap: number,
   startTimeGap?: number,
 ): Promise<T> {
@@ -136,23 +136,23 @@ async function request<T = unknown>(
     return responseHandler(fetchResponse);
   }
 
-  const res = await fetchResponse;
+  const response = await fetchResponse;
   let json: unknown;
   try {
     // Error responses (e.g. a 413 from a reverse proxy rejecting an
     // oversized body) are not guaranteed to have a JSON body, so parsing
     // must not be the thing that decides whether the request succeeded.
-    json = await res.json();
+    json = await response.json();
   } catch {
     json = null;
   }
 
-  if (res.ok) return json as T;
+  if (response.ok) return json as T;
 
   const message =
     (json as { error?: string } | null)?.error ||
-    res.statusText ||
-    `Request failed with status ${res.status}`;
+    response.statusText ||
+    `Request failed with status ${response.status}`;
   throw new Error(message);
 }
 
@@ -450,7 +450,7 @@ export class RemoteStructService implements StructService {
 
   async recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : '';
-    const req = request<ImagoUploadResponse>(
+    const uploadRequest = request<ImagoUploadResponse>(
       'POST',
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
@@ -463,7 +463,7 @@ export class RemoteStructService implements StructService {
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
       request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
-    const data = await req;
+    const data = await uploadRequest;
     const response = await pollDeferred(
       status.bind(undefined, { id: data.upload_id }),
       (statusResponse: ImagoStatusResponse) => {

@@ -36,22 +36,22 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
       const chunk = m[0].replaceAll('\r', '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
-        const propChunks: string[] = chunk
+        const propertyChunks: string[] = chunk
           .substr(end + 7)
           .trim()
           .split(/^$\n?/m);
 
         const struct = molSerializer.deserialize(chunk.substring(0, end + 6));
-        const props = propChunks.reduce(
+        const props = propertyChunks.reduce(
           (acc: StructAssociatedData, pc: string) => {
             const m = /^> [ \d]*<(\S+)>/.exec(pc);
             if (m) {
               const field = m[1];
-              const valueArr = pc.split('\n').slice(1, -1);
+              const valueArray = pc.split('\n').slice(1, -1);
               let value: string;
               value =
-                valueArr.length > 1
-                  ? valueArr.join(',')
+                valueArray.length > 1
+                  ? valueArray.join(',')
                   : pc.split('\n')[1].trim();
 
               acc[field] = Number.isFinite(value) ? +value : value.toString();
@@ -70,15 +70,15 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
 
   serialize(sdfItems: Array<SdfItem>): string {
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    return sdfItems.reduce((res, item) => {
-      res += molSerializer.serialize(item.struct);
+    return sdfItems.reduce((result, item) => {
+      result += molSerializer.serialize(item.struct);
 
-      Object.keys(item.props).forEach((prop) => {
-        res += `> <${prop}>\n`;
-        res += `${item.props[prop]}\n\n`;
+      Object.keys(item.props).forEach((property) => {
+        result += `> <${property}>\n`;
+        result += `${item.props[property]}\n\n`;
       });
 
-      return `${res}$$$$\n`;
+      return `${result}$$$$\n`;
     }, '');
   }
 }

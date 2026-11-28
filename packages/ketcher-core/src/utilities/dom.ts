@@ -34,11 +34,16 @@ window.addEventListener('keydown', handler);
 // cleanup:
 window.removeEventListener('keydown', handler);
 */
-export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
-  handler: (...args: TArgs) => TResult,
-): (...args: TArgs) => TResult | undefined {
-  return (...args: TArgs) => {
-    return globalThis.isPolymerEditorTurnedOn ? handler(...args) : undefined;
+export function guardForMacromoleculesEditor<
+  TArguments extends unknown[],
+  TResult,
+>(
+  handler: (...arguments_: TArguments) => TResult,
+): (...arguments_: TArguments) => TResult | undefined {
+  return (...arguments_: TArguments) => {
+    return globalThis.isPolymerEditorTurnedOn
+      ? handler(...arguments_)
+      : undefined;
   };
 }
 
@@ -56,11 +61,16 @@ window.addEventListener('keydown', handler);
 // cleanup:
 window.removeEventListener('keydown', handler);
 */
-export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
-  handler: (...args: TArgs) => TResult,
-): (...args: TArgs) => TResult | undefined {
-  return (...args: TArgs) => {
-    return !globalThis.isPolymerEditorTurnedOn ? handler(...args) : undefined;
+export function guardForMicromoleculesEditor<
+  TArguments extends unknown[],
+  TResult,
+>(
+  handler: (...arguments_: TArguments) => TResult,
+): (...arguments_: TArguments) => TResult | undefined {
+  return (...arguments_: TArguments) => {
+    return !globalThis.isPolymerEditorTurnedOn
+      ? handler(...arguments_)
+      : undefined;
   };
 }
 
@@ -70,13 +80,13 @@ export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
 // page text (e.g. an error toast) and presses Ctrl+C. Only treat it as a
 // structure copy if the live selection is actually inside the given element.
 export function isSelectionOutsideElement(
-  containerEl: Element | null,
+  containerElement: Element | null,
 ): boolean {
-  if (!containerEl) {
+  if (!containerElement) {
     return false;
   }
   const selection = document.getSelection();
   return !selection || selection.isCollapsed || !selection.anchorNode
     ? false
-    : !containerEl.contains(selection.anchorNode);
+    : !containerElement.contains(selection.anchorNode);
 }

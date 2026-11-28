@@ -263,11 +263,11 @@ function Editor({
         monomersLibraryUpdate: initMonomersLibraryUpdate,
         monomersLibraryReplace: initMonomersLibraryReplace,
         onInit: initOnInit,
-        onLibraryError: (err) => {
+        onLibraryError: (error) => {
           dispatch(
             setMonomerLibraryLoadError(
-              err instanceof Error
-                ? err.message
+              error instanceof Error
+                ? error.message
                 : 'Failed to load monomers library',
             ),
           );
@@ -415,7 +415,7 @@ function Editor({
   };
 
   const toggleLibraryVisibility = useCallback(() => {
-    setIsMonomerLibraryHidden((prev) => !prev);
+    setIsMonomerLibraryHidden((previous) => !previous);
   }, []);
 
   return (

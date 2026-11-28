@@ -21,7 +21,7 @@ import { Icon } from 'ketcher-react';
 import { IStyledDropdownIconProps, OptionsContainerProps } from './types';
 
 export const StyledDropdownIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'isActive',
+  shouldForwardProp: (property) => property !== 'isActive',
 })<IStyledDropdownIconProps>`
   position: absolute;
   height: 7px;

@@ -57,7 +57,7 @@ export const TRIGGERS = [
     sourcePaths: [
       /^packages\/ketcher-core\/src\/application\/formatters\//,
       /^packages\/ketcher-core\/src\/domain\/serializers\//,
-      /^packages\/ketcher-core\/src\/utilities\/clipboardUtils\.ts$/,
+      /^packages\/ketcher-core\/src\/utilities\/clipboardUtilities\.ts$/,
       /^packages\/ketcher-standalone\/src\/infrastructure\/services\/struct\//,
     ],
     addedInSource:

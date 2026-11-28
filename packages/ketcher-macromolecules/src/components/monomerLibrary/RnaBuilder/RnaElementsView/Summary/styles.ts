@@ -33,7 +33,7 @@ export const SummaryText = styled.span((props) => ({
 }));
 
 export const StyledIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'expanded',
+  shouldForwardProp: (property) => property !== 'expanded',
 })<IStyledIconProps>((props) => ({
   width: '16px',
   height: '16px',

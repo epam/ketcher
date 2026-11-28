@@ -73,80 +73,80 @@ enum FragmentType {
 
 const SHOULD_RESCALE_MOLECULES = true;
 
-function paddedNum(
+function paddedNumber(
   number: number | string,
   width: number,
   precision?: number,
 ): string {
   const parsedNumber = Number.parseFloat(String(number));
 
-  const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
-  if (numStr.length > width) throw new Error('number does not fit');
+  const numberString = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
+  if (numberString.length > width) throw new Error('number does not fit');
 
-  return numStr.padStart(width);
+  return numberString.padStart(width);
 }
 
 /**
 Parse a decimal integer from string
-@param str - The string to parse
+@param string_ - The string to parse
 @returns The parsed integer, or 0 if parsing fails
 */
-function parseDecimalInt(str: string): number {
+function parseDecimalInt(string_: string): number {
   /*
   reader
   */
-  const val = Number.parseInt(str, 10);
+  const value = Number.parseInt(string_, 10);
 
-  return Number.isNaN(val) ? 0 : val;
+  return Number.isNaN(value) ? 0 : value;
 }
 
 /**
 Partition a line string into parts of varying lengths
-@param str - The string to partition
+@param string_ - The string to partition
 @param parts - Array of lengths for each part
 @param hasSpaceBetweenParts - Whether there's a space between parts (default: false)
 @returns Array of string parts
 */
 function partitionLine(
-  str: string,
+  string_: string,
   parts: number[],
   hasSpaceBetweenParts: boolean = false,
 ): string[] {
   /*
   reader
   */
-  const res: string[] = [];
+  const result: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
-    res.push(str.slice(shift, shift + parts[i]));
+    result.push(string_.slice(shift, shift + parts[i]));
     if (hasSpaceBetweenParts) shift++;
     shift += parts[i];
   }
-  return res;
+  return result;
 }
 
 /**
 Partition a line string into fixed-length parts
-@param str - The string to partition
+@param string_ - The string to partition
 @param itemLength - Length of each item
 @param hasSpaceBetweenParts - Whether there's a space between items (default: false)
 @returns Array of string parts
 */
 function partitionLineFixed(
-  str: string,
+  string_: string,
   itemLength: number,
   hasSpaceBetweenParts: boolean = false,
 ): string[] {
   /*
   reader
   */
-  const res: string[] = [];
+  const result: string[] = [];
   const step = hasSpaceBetweenParts ? itemLength + 1 : itemLength;
   let shift = 0;
-  while (shift < str.length) {
-    res.push(str.slice(shift, shift + itemLength));
+  while (shift < string_.length) {
+    result.push(string_.slice(shift, shift + itemLength));
     shift += step;
   }
-  return res;
+  return result;
 }
 
 const fmtInfo: FmtInfo = {
@@ -269,10 +269,10 @@ function categorizeMolecules(
 ): CategorizedMolecules {
   const bbReact: BoundingBox[] = [];
   const bbAgent: BoundingBox[] = [];
-  const bbProd: BoundingBox[] = [];
+  const bbProduction: BoundingBox[] = [];
   const molReact: Struct[] = [];
   const molAgent: Struct[] = [];
-  const molProd: Struct[] = [];
+  const molProduction: Struct[] = [];
 
   for (let j = 0; j < mols.length; ++j) {
     const mol = mols[j];
@@ -288,8 +288,8 @@ function categorizeMolecules(
       bbAgent.push(bb);
       molAgent.push(mol);
     } else if (fragmentType === FragmentType.Product) {
-      bbProd.push(bb);
-      molProd.push(mol);
+      bbProduction.push(bb);
+      molProduction.push(mol);
     }
 
     mol.atoms.forEach((atom: Atom) => {
@@ -297,12 +297,19 @@ function categorizeMolecules(
     });
   }
 
-  return { bbReact, bbAgent, bbProd, molReact, molAgent, molProd };
+  return {
+    bbReact,
+    bbAgent,
+    bbProd: bbProduction,
+    molReact,
+    molAgent,
+    molProd: molProduction,
+  };
 }
 
 /**
 Shift a molecule and merge it into the result
-@param ret - Result structure to merge into
+@param returnValue - Result structure to merge into
 @param mol - Molecule to shift and merge
 @param bb - Bounding box of the molecule
 @param xorig - X origin for shifting
@@ -310,7 +317,7 @@ Shift a molecule and merge it into the result
 @returns Width of the shifted molecule
 */
 function shiftMol(
-  ret: Struct,
+  returnValue: Struct,
   mol: Struct,
   bb: BoundingBox,
   xorig: number,
@@ -329,68 +336,70 @@ function shiftMol(
   });
   bb.min.add_(d);
   bb.max.add_(d);
-  mol.mergeInto(ret);
+  mol.mergeInto(returnValue);
   return bb.max.x - bb.min.x;
 }
 
 /**
 Layout reaction fragments (reactants, agents, products)
-@param ret - Result structure to add molecules to
+@param returnValue - Result structure to add molecules to
 @param molReact - Reactant molecules
 @param bbReact - Reactant bounding boxes
 @param molAgent - Agent molecules
 @param bbAgent - Agent bounding boxes
-@param molProd - Product molecules
-@param bbProd - Product bounding boxes
+@param molProduction - Product molecules
+@param bbProduction - Product bounding boxes
 */
 function layoutReactionFragments(
-  ret: Struct,
+  returnValue: Struct,
   molReact: Struct[],
   bbReact: BoundingBox[],
   molAgent: Struct[],
   bbAgent: BoundingBox[],
-  molProd: Struct[],
-  bbProd: BoundingBox[],
+  molProduction: Struct[],
+  bbProduction: BoundingBox[],
 ): void {
   let xorig = 0;
   for (let j = 0; j < molReact.length; ++j) {
-    xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2;
+    xorig += shiftMol(returnValue, molReact[j], bbReact[j], xorig, false) + 2;
   }
   xorig += 2;
   for (let j = 0; j < molAgent.length; ++j) {
-    xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2;
+    xorig += shiftMol(returnValue, molAgent[j], bbAgent[j], xorig, true) + 2;
   }
   xorig += 2;
 
-  for (let j = 0; j < molProd.length; ++j) {
-    xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2;
+  for (let j = 0; j < molProduction.length; ++j) {
+    xorig +=
+      shiftMol(returnValue, molProduction[j], bbProduction[j], xorig, false) +
+      2;
   }
 }
 
 /**
 Merge molecules without layout
-@param ret - Result structure to merge into
+@param returnValue - Result structure to merge into
 @param molReact - Reactant molecules
 @param molAgent - Agent molecules
-@param molProd - Product molecules
+@param molProduction - Product molecules
 */
 function mergeWithoutLayout(
-  ret: Struct,
+  returnValue: Struct,
   molReact: Struct[],
   molAgent: Struct[],
-  molProd: Struct[],
+  molProduction: Struct[],
 ): void {
-  for (const mol of molReact) mol.mergeInto(ret);
-  for (const mol of molAgent) mol.mergeInto(ret);
-  for (const mol of molProd) mol.mergeInto(ret);
+  for (const mol of molReact) mol.mergeInto(returnValue);
+  for (const mol of molAgent) mol.mergeInto(returnValue);
+  for (const mol of molProduction) mol.mergeInto(returnValue);
 }
 
 /**
 Add plus signs between molecule fragments
-@param ret - Result structure to add plus signs to
+@param returnValue - Result structure to add plus signs to
 @param boundingBoxes - Bounding boxes of molecules
 */
-function addPlusSigns(ret: Struct, boundingBoxes: BoundingBox[]): void {
+function addPlusSigns(returnValue: Struct, boundingBoxes: BoundingBox[]): void {
   for (let j = 0; j < boundingBoxes.length - 1; ++j) {
     const bb1 = boundingBoxes[j];
     const bb2 = boundingBoxes[j + 1];
@@ -398,7 +407,7 @@ function addPlusSigns(ret: Struct, boundingBoxes: BoundingBox[]): void {
     const x = (bb1.max.x + bb2.min.x) / 2;
     const y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-    ret.rxnPluses.add(new RxnPlus({ pp: new Vec2(x, y) }));
+    returnValue.rxnPluses.add(new RxnPlus({ pp: new Vec2(x, y) }));
   }
 }
 
@@ -496,40 +505,46 @@ function rxnMerge(
   /*
   reader
   */
-  const ret = new Struct();
+  const returnValue = new Struct();
 
   if (SHOULD_RESCALE_MOLECULES) {
     rescaleMolecules(mols);
   }
 
-  const { bbReact, bbAgent, bbProd, molReact, molAgent, molProd } =
-    categorizeMolecules(mols, nReactants, nProducts);
+  const {
+    bbReact,
+    bbAgent,
+    bbProd: bbProduction,
+    molReact,
+    molAgent,
+    molProd: molProduction,
+  } = categorizeMolecules(mols, nReactants, nProducts);
 
   if (shouldReactionRelayout) {
     layoutReactionFragments(
-      ret,
+      returnValue,
       molReact,
       bbReact,
       molAgent,
       bbAgent,
-      molProd,
-      bbProd,
+      molProduction,
+      bbProduction,
     );
   } else {
-    mergeWithoutLayout(ret, molReact, molAgent, molProd);
+    mergeWithoutLayout(returnValue, molReact, molAgent, molProduction);
   }
 
-  addPlusSigns(ret, bbReact);
-  addPlusSigns(ret, bbProd);
+  addPlusSigns(returnValue, bbReact);
+  addPlusSigns(returnValue, bbProduction);
 
   const bbReactAll = aggregateBoundingBoxes(bbReact);
-  const bbProdAll = aggregateBoundingBoxes(bbProd);
+  const bbProductionAll = aggregateBoundingBoxes(bbProduction);
 
-  const arrow = createReactionArrow(bbReactAll, bbProdAll);
-  ret.addRxnArrow(arrow);
+  const arrow = createReactionArrow(bbReactAll, bbProductionAll);
+  returnValue.addRxnArrow(arrow);
 
-  ret.isReaction = true;
-  return ret;
+  returnValue.isReaction = true;
+  return returnValue;
 }
 
 /**
@@ -542,9 +557,9 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
   /*
   reader
   */
-  const ret = new Struct();
+  const returnValue = new Struct();
 
-  scaffold.mergeInto(ret, undefined, undefined, false, true);
+  scaffold.mergeInto(returnValue, undefined, undefined, false, true);
 
   Object.keys(rgroups).forEach((id: string) => {
     const rgid = Number.parseInt(id, 10);
@@ -557,16 +572,16 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
       ctab.atoms.forEach((atom: Atom) => {
         atom.fragment = frid;
       });
-      ctab.mergeInto(ret);
+      ctab.mergeInto(returnValue);
     }
   });
 
-  return ret;
+  return returnValue;
 }
 
 export default {
   fmtInfo,
-  paddedNum,
+  paddedNum: paddedNumber,
   parseDecimalInt,
   partitionLine,
   partitionLineFixed,

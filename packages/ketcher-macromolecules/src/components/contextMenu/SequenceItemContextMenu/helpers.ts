@@ -103,20 +103,20 @@ function isNucleotideNucleosideOrPhosphate(selection: NodeSelection): boolean {
 const generateNucleoelementTitle = (
   elements: LabeledNodesWithPositionInSequence[],
 ) => {
-  let tempTitle = '';
+  let temporaryTitle = '';
   const element = elements.length === 1 ? elements[0] : merge({}, ...elements);
 
   for (const property of ['sugarLabel', 'baseLabel', 'phosphateLabel']) {
     const label = get(element, property, '');
 
     if (property === 'baseLabel') {
-      tempTitle += `(${label})`;
+      temporaryTitle += `(${label})`;
     } else {
-      tempTitle += label;
+      temporaryTitle += label;
     }
   }
 
-  return tempTitle;
+  return temporaryTitle;
 };
 
 export const generateSequenceContextMenuProps = (
@@ -138,11 +138,11 @@ export const generateSequenceContextMenuProps = (
 
   for (let i = 0; i < selectedSequenceLabeledNodes.length; i++) {
     const node = selectedSequenceLabeledNodes[i];
-    const prevNode = selectedSequenceLabeledNodes[i - 1];
+    const previousNode = selectedSequenceLabeledNodes[i - 1];
     const isNodeNucleotideOrNucleoside =
       node.type === Entities.Nucleotide || node.type === Entities.Nucleoside;
     const isNucleotideConnection =
-      prevNode?.isNucleosideConnectedAndSelectedWithPhosphate;
+      previousNode?.isNucleosideConnectedAndSelectedWithPhosphate;
 
     if (isNodeNucleotideOrNucleoside) {
       isSelectedAtLeastOneNucleoelement = true;

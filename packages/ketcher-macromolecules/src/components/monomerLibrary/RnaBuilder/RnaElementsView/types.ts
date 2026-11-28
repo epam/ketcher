@@ -6,7 +6,7 @@ import { IRnaPreset } from 'ketcher-core';
 export type RnaElementsViewProps = {
   activeRnaBuilderItem: RnaBuilderItem;
   groupsData: GroupsData;
-  onSelectItem: (...args) => void;
+  onSelectItem: (...arguments_) => void;
   onNewPresetClick: VoidFunction;
   libraryName: LibraryNameType;
   duplicatePreset: (preset?: IRnaPreset) => void;

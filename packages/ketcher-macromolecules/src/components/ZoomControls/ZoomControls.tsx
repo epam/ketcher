@@ -57,10 +57,10 @@ export const ZoomControls = () => {
       const newZoom = Math.round(zoomTool.getZoomLevel() * 100);
       setCurrentZoom(newZoom);
 
-      const inputEl = inputRef.current;
-      updateInputString(newZoom, inputEl);
-      if (document.activeElement === inputEl) {
-        inputEl?.select();
+      const inputElement = inputRef.current;
+      updateInputString(newZoom, inputElement);
+      if (document.activeElement === inputElement) {
+        inputElement?.select();
       }
     };
 
@@ -72,15 +72,15 @@ export const ZoomControls = () => {
   }, [zoomTool]);
 
   const onZoomSubmit = useCallback(() => {
-    const inputEl = inputRef.current;
-    if (!inputEl) return;
-    const userInput = getIntegerFromString(inputEl.value);
+    const inputElement = inputRef.current;
+    if (!inputElement) return;
+    const userInput = getIntegerFromString(inputElement.value);
     if (userInput && userInput !== currentZoom) {
       const zoomToSet = getValidZoom(userInput, currentZoom);
-      updateInputString(zoomToSet, inputEl);
+      updateInputString(zoomToSet, inputElement);
       ZoomTool.instance.zoomTo(zoomToSet / 100);
     } else {
-      updateInputString(currentZoom, inputEl);
+      updateInputString(currentZoom, inputElement);
     }
   }, [currentZoom]);
 

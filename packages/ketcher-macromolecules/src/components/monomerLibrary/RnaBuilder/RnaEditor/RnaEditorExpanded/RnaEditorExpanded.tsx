@@ -137,7 +137,8 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
-  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+  const [previousActivePreset, setPreviousActivePreset] =
+    useState(activePreset);
   const pendingScrollTimeouts = useRef(
     new Set<ReturnType<typeof setTimeout>>(),
   );
@@ -276,8 +277,8 @@ export const RnaEditorExpanded = ({
     right: t('monomerLibrary.phosphateDisabledRightTooltip'),
   };
 
-  if (activePreset !== prevActivePreset) {
-    setPrevActivePreset(activePreset);
+  if (activePreset !== previousActivePreset) {
+    setPreviousActivePreset(activePreset);
     setNewPreset(activePreset);
     setSelectedPhosphatePosition(
       activePreset?.connections?.length

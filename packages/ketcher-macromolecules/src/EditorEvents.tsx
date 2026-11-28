@@ -194,22 +194,22 @@ export const EditorEvents = () => {
   );
 
   const handleOpenPreview = useCallback(
-    (e) => {
-      if (e.buttons === 1) {
+    (event) => {
+      if (event.buttons === 1) {
         return;
       }
 
-      if (e.buttons === 2) {
+      if (event.buttons === 2) {
         return;
       }
 
       if (isContextMenuActive) {
-        e.preventDefault();
-        e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
         return;
       }
 
-      const polymerBond = e.target.__data__?.polymerBond;
+      const polymerBond = event.target.__data__?.polymerBond;
 
       if (
         (polymerBond && !polymerBond.finished) ||
@@ -221,7 +221,7 @@ export const EditorEvents = () => {
       if (polymerBond) {
         const style = calculateBondPreviewPosition(
           polymerBond,
-          e.target.getBoundingClientRect(),
+          event.target.getBoundingClientRect(),
         );
 
         handleOpenBondPreview(polymerBond, style);
@@ -229,9 +229,9 @@ export const EditorEvents = () => {
       }
 
       // TODO: Split to separate functions for monomers and presets
-      const sequenceNode = e.target.__data__?.node;
+      const sequenceNode = event.target.__data__?.node;
       const monomer: BaseMonomer | AmbiguousMonomer =
-        e.target.__data__?.monomer || sequenceNode?.monomer;
+        event.target.__data__?.monomer || sequenceNode?.monomer;
 
       if (sequenceNode && sequenceNode instanceof BackBoneSequenceNode) {
         return;
@@ -241,7 +241,7 @@ export const EditorEvents = () => {
         const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
           type: PreviewType.AmbiguousMonomer,
           monomer: monomer.variantMonomerItem,
-          target: e.target,
+          target: event.target,
         };
 
         debouncedShowPreview(ambiguousMonomerPreviewData);
@@ -264,7 +264,7 @@ export const EditorEvents = () => {
             type: PreviewType.Preset,
             monomers: monomers.map((m) => m.monomerItem),
             position: PresetPosition.ChainMiddle,
-            target: e.target,
+            target: event.target,
           };
 
           debouncedShowPreview(chemChainPreviewData);
@@ -290,7 +290,7 @@ export const EditorEvents = () => {
             type: PreviewType.AmbiguousMonomer,
             monomer: sequenceNode.rnaBase.variantMonomerItem,
             presetMonomers: monomers,
-            target: e.target,
+            target: event.target,
           };
 
           debouncedShowPreview(ambiguousMonomerPreviewData);
@@ -324,7 +324,7 @@ export const EditorEvents = () => {
           phosphatePosition:
             sequenceNode instanceof Nucleotide ? 'right' : undefined,
           position,
-          target: e.target,
+          target: event.target,
         };
 
         debouncedShowPreview(presetPreviewData);
@@ -335,7 +335,7 @@ export const EditorEvents = () => {
         type: PreviewType.Monomer,
         monomer: monomerItem,
         attachmentPointsToBonds,
-        target: e.target,
+        target: event.target,
       };
 
       debouncedShowPreview(monomerPreviewData);
@@ -344,8 +344,8 @@ export const EditorEvents = () => {
   );
 
   const handleOpenDrawingEntityTooltip = useCallback(
-    (e) => {
-      const renderer: BaseRenderer = e.target.__data__;
+    (event) => {
+      const renderer: BaseRenderer = event.target.__data__;
 
       if (
         !(renderer instanceof AtomRenderer) &&
@@ -362,7 +362,7 @@ export const EditorEvents = () => {
       const textPreviewData: TextPreviewState = {
         type: PreviewType.Text,
         text: tooltipText,
-        target: e.target,
+        target: event.target,
       };
       debouncedShowPreview(textPreviewData);
     },
@@ -381,11 +381,11 @@ export const EditorEvents = () => {
     editor?.events.mouseOverDrawingEntity.add(handleOpenDrawingEntityTooltip);
     editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
-    const onMoveHandler = (e) => {
+    const onMoveHandler = (event) => {
       handleClosePreview();
-      const isLeftClick = e.buttons === 1;
+      const isLeftClick = event.buttons === 1;
       if (!isLeftClick || !noPreviewTools.has(activeTool)) {
-        handleOpenPreview(e);
+        handleOpenPreview(event);
       }
     };
     editor?.events.mouseOnMoveMonomer.add(onMoveHandler);

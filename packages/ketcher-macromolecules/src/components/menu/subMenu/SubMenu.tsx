@@ -78,7 +78,7 @@ const SubMenu = ({
   const lastActiveOption = subMenuId ? selectedMenuGroupItem : undefined;
   const handleDropDownClick = () => {
     if (disabled) return;
-    setOpen((prev) => !prev);
+    setOpen((previous) => !previous);
   };
 
   const hideCollapse = () => {

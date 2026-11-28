@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './ifDef';
+export * from './ifDefined';
 export * from './toFixed';
 export * from './runAsyncAction';
 export * from './b64toBlob';
@@ -22,8 +22,8 @@ export * from './notifyRequestCompleted';
 export * from './KetcherLogger';
 export * from './SettingsManager';
 export * from './keynorm';
-export * from './shortcutsUtil';
-export * from './clipboardUtils';
+export * from './shortcutsUtility';
+export * from './clipboardUtilities';
 export * from './getSvgFromDrawnStructures';
 export * from './ensureString';
 export * from './normalizeError';

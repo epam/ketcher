@@ -112,6 +112,13 @@ class ReSGroup extends ReObject {
           }
           break;
         }
+        case 'MIX':
+        case 'FOR': {
+          SGroupdrawBracketsOptions.lowerIndexText =
+            SGroup.getMixtureAbbreviation(sgroup);
+          SGroupdrawBracketsOptions.upperIndexText = null;
+          break;
+        }
         case 'SUP': {
           const superatomClass = sgroup.data.class as
             SUPERATOM_CLASS | undefined;
@@ -140,6 +147,8 @@ class ReSGroup extends ReObject {
         'SUP',
         'GEN',
         'COP',
+        'MIX',
+        'FOR',
         'queryComponent',
       ];
       if (

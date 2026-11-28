@@ -147,6 +147,12 @@ export class SGroupRenderer extends BaseRenderer {
         }
         break;
       }
+      case SGroup.TYPES.MIX:
+      case SGroup.TYPES.FOR: {
+        options.lowerIndexText =
+          SGroup.getMixtureAbbreviation(this.sgroup) ?? undefined;
+        break;
+      }
       case SGroup.TYPES.SUP: {
         options.lowerIndexText = this.sgroup.superatomLabel;
         options.indexAttribute = { 'font-style': 'italic' };

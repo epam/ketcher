@@ -20,6 +20,7 @@ import {
   AtomList,
   Bond,
   Elements,
+  SGroup,
   StereoLabel,
   getAtomType,
 } from 'ketcher-core';
@@ -124,6 +125,8 @@ export interface SGroupFormData {
   name?: string;
   nucleotideComponent?: string;
   subscript?: string;
+  subtype?: string | null;
+  mixtureType?: string;
   expanded?: boolean;
   showUnits?: boolean;
   nCharsToDisplay?: number;
@@ -567,10 +570,22 @@ export function fromSgroup(ssgroup: SGroupInput) {
         }
       : {};
 
+  if (SGroup.isMixtureSGroup({ type })) {
+    return { ...ssgroup.attrs, type: 'mixture', mixtureType: type };
+  }
+
   return { type, ...ssgroup.attrs, ...sDataInitValue };
 }
 
 export function toSgroup(sgroup: SGroupFormData) {
+  if (sgroup.type === 'mixture') {
+    const { mixtureType } = sgroup;
+    if (!mixtureType || !SGroup.isMixtureSGroup({ type: mixtureType })) {
+      throw new Error(`Unknown mixture subtype: ${mixtureType}`);
+    }
+    return { type: mixtureType, attrs: {} };
+  }
+
   const { type, radiobuttons, ...props } = sgroup;
   const attrs = { ...props };
 

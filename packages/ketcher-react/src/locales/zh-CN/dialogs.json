@@ -399,13 +399,16 @@
           "enumBlank": "<空白>",
           "enumRandom": "随机",
           "enumBlock": "嵌段",
-          "enumAlternating": "交替"
+          "enumAlternating": "交替",
+          "enumOrdered": "有序",
+          "enumUnordered": "无序"
         },
         "variantSuperatom": "超原子",
         "name": {
           "title": "名称",
           "invalidMessage": "请为超原子提供一个名称"
         },
+        "variantMixture": "混合物",
         "variantQueryComponent": "查询组件",
         "variantNucleotideComponent": "核苷酸组件",
         "component": {

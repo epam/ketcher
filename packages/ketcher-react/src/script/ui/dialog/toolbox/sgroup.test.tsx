@@ -190,6 +190,134 @@ describe('SRU S-Group defaults', () => {
   });
 });
 
+describe('Mixture S-Group type', () => {
+  const selectMixture = () => {
+    const utils = renderWithMockStore(<SGroup type="MUL" />);
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: 'Mixture' }));
+    return utils;
+  };
+
+  const openSubtypeSelect = () => {
+    fireEvent.mouseDown(
+      within(screen.getByTestId('mixtureType-input-span')).getByRole(
+        'combobox',
+      ),
+    );
+  };
+
+  it('should list Mixture directly after Superatom', () => {
+    renderWithMockStore(<SGroup type="MUL" />);
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+
+    const options = screen
+      .getAllByRole('option')
+      .map((option) => option.textContent);
+
+    expect(options).toEqual([
+      'Data',
+      'Multiple group',
+      'SRU polymer',
+      'Copolymer',
+      'Superatom',
+      'Mixture',
+      'Query component',
+      'Nucleotide Component',
+    ]);
+  });
+
+  it('should offer Ordered and Unordered with neither selected', () => {
+    const { store } = selectMixture();
+
+    expect(store.getState().modal?.form?.result?.mixtureType).toBeUndefined();
+
+    openSubtypeSelect();
+    expect(
+      screen.getAllByRole('option').map((option) => option.textContent),
+    ).toEqual(['Ordered', 'Unordered']);
+  });
+
+  it('should disable Apply until a subtype is selected', () => {
+    selectMixture();
+    expect(screen.getByTestId('OK')).toBeDisabled();
+
+    openSubtypeSelect();
+    fireEvent.click(screen.getByRole('option', { name: 'Unordered' }));
+
+    expect(screen.getByTestId('OK')).toBeEnabled();
+  });
+
+  it('should store the S-group type of the selected subtype', () => {
+    const { store } = selectMixture();
+
+    openSubtypeSelect();
+    fireEvent.click(screen.getByRole('option', { name: 'Ordered' }));
+
+    expect(store.getState().modal?.form?.result).toMatchObject({
+      type: 'mixture',
+      mixtureType: 'FOR',
+    });
+  });
+
+  it('should show the subtype of an existing mixture and allow Apply', () => {
+    renderWithMockStore(<SGroup type="mixture" mixtureType="FOR" />, {
+      modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
+        form: {
+          errors: {},
+          result: { type: 'mixture', mixtureType: 'FOR' },
+        },
+      },
+    });
+
+    expect(
+      within(screen.getByTestId('mixtureType-input-span')).getByRole(
+        'combobox',
+      ),
+    ).toHaveTextContent('Ordered');
+    expect(screen.getByTestId('OK')).toBeEnabled();
+  });
+
+  it('should not carry the mixture subtype over to a copolymer', () => {
+    const { store } = selectMixture();
+    openSubtypeSelect();
+    fireEvent.click(screen.getByRole('option', { name: 'Unordered' }));
+
+    fireEvent.mouseDown(screen.getAllByRole('combobox')[0]);
+    fireEvent.click(screen.getByRole('option', { name: 'Copolymer' }));
+
+    const result = store.getState().modal?.form?.result;
+    expect(result).toMatchObject({ type: 'COP' });
+    expect(result).not.toHaveProperty('mixtureType');
+    expect(result?.subtype ?? null).toBeNull();
+    expect(screen.getByTestId('OK')).toBeEnabled();
+  });
+
+  it('should not carry the copolymer subtype over to a mixture', () => {
+    const { store } = renderWithMockStore(<SGroup type="COP" />, {
+      modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
+        form: {
+          errors: {},
+          result: { type: 'COP', subtype: 'ran', connectivity: 'ht' },
+        },
+      },
+    });
+
+    fireEvent.mouseDown(screen.getAllByRole('combobox')[0]);
+    fireEvent.click(screen.getByRole('option', { name: 'Mixture' }));
+
+    const result = store.getState().modal?.form?.result;
+    expect(result).toMatchObject({ type: 'mixture' });
+    expect(result).not.toHaveProperty('subtype');
+    expect(screen.getByTestId('OK')).toBeDisabled();
+  });
+});
+
 const reducer = combineReducers({
   modal: modalReducer,
 });

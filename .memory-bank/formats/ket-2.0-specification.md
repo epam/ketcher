@@ -301,7 +301,7 @@ All fields from description of "atom" type except label.
 | Field | Required | Type | Value | Description |
 |---|---|---|---|---|
 | sgroups | no | array of objects | | |
-| • type | yes | string | GEN, MUL, SRU, SUP, DAT | "GEN" - generic S-group, "MUL" - multiple S-group, "SRU" - S-group repetition unit, "SUP" - superatom, "DAT" - data S-group |
+| • type | yes | string | GEN, MUL, SRU, SUP, DAT, MIX, FOR | "GEN" - generic S-group, "MUL" - multiple S-group, "SRU" - S-group repetition unit, "SUP" - superatom, "DAT" - data S-group, "MIX" - unordered mixture, "FOR" - ordered mixture |
 | • atoms | yes | array of integers | integer >= 0 | Indices of atoms that belong to this group. |
 
 #### Fields for "MUL" type

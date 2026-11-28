@@ -523,6 +523,23 @@ const sgroup: Omit<StructSchema, 'properties'> & {
       required: ['name'],
     },
     {
+      key: 'mixture',
+      title: 'dialogs:toolbox.structSchema.sgroup.variantMixture',
+      type: 'object',
+      properties: {
+        type: { enum: ['mixture'] },
+        mixtureType: {
+          title: 'dialogs:toolbox.structSchema.sgroup.subtype.title',
+          enum: ['FOR', 'MIX'],
+          enumNames: [
+            'dialogs:toolbox.structSchema.sgroup.subtype.enumOrdered',
+            'dialogs:toolbox.structSchema.sgroup.subtype.enumUnordered',
+          ],
+        },
+      },
+      required: ['mixtureType'],
+    },
+    {
       key: 'queryComponent',
       title: 'dialogs:toolbox.structSchema.sgroup.variantQueryComponent',
       type: 'object',

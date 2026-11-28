@@ -1,0 +1,3 @@
+# The files each run wrote and its Playwright reports stay local: the result
+# files above them hold what the report reads.
+results/*/*/

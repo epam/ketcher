@@ -1,0 +1,175 @@
+{
+  "issue": 10009,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/10009-preset-definition-features.spec.ts"
+  ],
+  "expectedSpecName": "8854-Defining-the-preset-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": false,
+  "checklist": 11,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/10009-preset-definition-features.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify preset primary field is labeled Code instead of Name on preset definition tab",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify preset code is mandatory and triggers error when empty on save",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify preset code must be unique amongst other preset codes",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify allowed characters in preset code are accepted",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify invalid characters in preset code trigger specific validation error message",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify error highlighting on Code field and preset tab is cleared after fixing issues",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify monomer codes auto-update when preset code changes for auto-generated monomer codes",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify manually changed monomer code is not auto-updated when preset code changes",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify multiple sequential changes of preset code keep auto-update logic consistent",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify an existing preset with a valid code can be reopened and saved",
+          "caseNumber": 10,
+          "skip": false
+        },
+        {
+          "title": "Case 11 - Verify IDT and AxoLabs aliases for presets follow same uniqueness and validation rules as for monomers",
+          "caseNumber": 11,
+          "skip": true
+        }
+      ],
+      "testCount": 11,
+      "skipCount": 1,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 11,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 1 - Verify preset primary field is labeled Code instead of Name on preset definition tab",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 2 - Verify preset code is mandatory and triggers error when empty on save",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 3 - Verify preset code must be unique amongst other preset codes",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 4 - Verify allowed characters in preset code are accepted",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 5 - Verify invalid characters in preset code trigger specific validation error message",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 6 - Verify error highlighting on Code field and preset tab is cleared after fixing issues",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 7 - Verify monomer codes auto-update when preset code changes for auto-generated monomer codes",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 8 - Verify manually changed monomer code is not auto-updated when preset code changes",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 9 - Verify multiple sequential changes of preset code keep auto-update logic consistent",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 10 - Verify an existing preset with a valid code can be reopened and saved",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining the preset - presets in the monomer creation wizard > Case 11 - Verify IDT and AxoLabs aliases for presets follow same uniqueness and validation rules as for monomers",
+        "passed": 0,
+        "skipped": true,
+        "errors": [],
+        "outcome": "skipped"
+      }
+    ],
+    "passed": 10,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 1
+  },
+  "totalMs": 109876
+}

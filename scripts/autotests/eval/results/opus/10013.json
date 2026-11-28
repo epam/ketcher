@@ -1,0 +1,165 @@
+{
+  "issue": 10013,
+  "config": "opus",
+  "model": "claude-opus-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 1.3093414,
+    "durationMs": 159663,
+    "turns": 23,
+    "models": [
+      "claude-opus-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8778-Only-show-the-possible-monomer-properties-in-the-attributes-panel-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8778-Only-show-the-possible-monomer-properties-in-the-attributes-panel-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8778-Only-show-the-possible-monomer-properties-in-the-attributes-panel-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 9,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8778-Only-show-the-possible-monomer-properties-in-the-attributes-panel-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify attributes panel sections for CHEM monomer type match allowed properties table",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify attributes panel sections for Amino acid monomer type match allowed properties table",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify attributes panel sections for Sugar monomer type match allowed properties table",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify attributes panel sections for Base monomer type match allowed properties table",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify attributes panel sections for Phosphate monomer type match allowed properties table",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify attributes panel sections for 'Nucleotide (monomer)' type match allowed properties table",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify preset-level attributes panel for 'Nucleotide (preset)' only shows preset-specific properties",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify that changing monomer type dynamically updates visible sections in the attributes panel according to the table",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify that 'Aliases' section is hidden when no alias types are allowed for a monomer type",
+          "caseNumber": 9,
+          "skip": false
+        }
+      ],
+      "testCount": 9,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 9,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 1 - Verify attributes panel sections for CHEM monomer type match allowed properties table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 2 - Verify attributes panel sections for Amino acid monomer type match allowed properties table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 3 - Verify attributes panel sections for Sugar monomer type match allowed properties table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 4 - Verify attributes panel sections for Base monomer type match allowed properties table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 5 - Verify attributes panel sections for Phosphate monomer type match allowed properties table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 6 - Verify attributes panel sections for 'Nucleotide (monomer)' type match allowed properties table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 7 - Verify preset-level attributes panel for 'Nucleotide (preset)' only shows preset-specific properties",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 8 - Verify that changing monomer type dynamically updates visible sections in the attributes panel according to the table",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Only show the possible monomer properties in the attributes panel in the monomer creation wizard > Case 9 - Verify that 'Aliases' section is hidden when no alias types are allowed for a monomer type",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 9,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 191058
+}

@@ -1,0 +1,283 @@
+{
+  "issue": 10005,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/10005-monomer-properties-presets-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8775-Defining-other-monomer-properties-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": false,
+  "checklist": 27,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/10005-monomer-properties-presets-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify ability to leave component properties undefined in monomer wizard",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify fully defined base is saved as visible monomer",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify fully defined sugar is saved as visible monomer",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify fully defined phosphate is saved as visible monomer",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify all components fully defined become visible monomers",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify hidden monomer is created when required properties are missing",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify mixed visibility: base defined, others hidden",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify uniqueness rules ignore hidden monomers",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify hidden monomer auto-assigned type matches component type",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify auto-assigned code/name for hidden base",
+          "caseNumber": 10,
+          "skip": false
+        },
+        {
+          "title": "Case 11 - Verify auto-assigned code/name for hidden sugar",
+          "caseNumber": 11,
+          "skip": false
+        },
+        {
+          "title": "Case 12 - Verify auto-assigned code/name for hidden phosphate",
+          "caseNumber": 12,
+          "skip": false
+        },
+        {
+          "title": "Case 13 - Verify natural analogue auto-assigned to hidden base",
+          "caseNumber": 13,
+          "skip": false
+        },
+        {
+          "title": "Case 14 - Verify AP Scenario 1.1: phosphate→base→sugar",
+          "caseNumber": 14,
+          "skip": false
+        },
+        {
+          "title": "Case 15 - Verify AP Scenario 1.2: base→phosphate→sugar",
+          "caseNumber": 15,
+          "skip": false
+        },
+        {
+          "title": "Case 16 - Verify AP Scenario 2.1: phosphate→sugar",
+          "caseNumber": 16,
+          "skip": false
+        },
+        {
+          "title": "Case 17 - Verify AP Scenario 3.1: base→sugar",
+          "caseNumber": 17,
+          "skip": false
+        },
+        {
+          "title": "Case 18 - Integration: verify preset works in RNA/DNA builder",
+          "caseNumber": 18,
+          "skip": false
+        },
+        {
+          "title": "Case 19 - Integration: verify export/import preserves monomer data",
+          "caseNumber": 19,
+          "skip": false
+        },
+        {
+          "title": "Case 20 - Regression: verify manual monomer creation still works",
+          "caseNumber": 20,
+          "skip": false
+        }
+      ],
+      "testCount": 20,
+      "skipCount": 0,
+      "casesMatchChecklist": false,
+      "wrongVersionLines": 0,
+      "versionLines": 20,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 2
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 1 - Verify ability to leave component properties undefined in monomer wizard",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 2 - Verify fully defined base is saved as visible monomer",
+        "passed": 0,
+        "skipped": false,
+        "errors": ["Error: expect(received).toBeTruthy()"],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 3 - Verify fully defined sugar is saved as visible monomer",
+        "passed": 0,
+        "skipped": false,
+        "errors": ["Error: expect(received).toBeTruthy()"],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 4 - Verify fully defined phosphate is saved as visible monomer",
+        "passed": 0,
+        "skipped": false,
+        "errors": ["Error: expect(received).toBeTruthy()"],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 5 - Verify all components fully defined become visible monomers",
+        "passed": 0,
+        "skipped": false,
+        "errors": ["Error: expect(received).toBeTruthy()"],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 6 - Verify hidden monomer is created when required properties are missing",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 7 - Verify mixed visibility: base defined, others hidden",
+        "passed": 0,
+        "skipped": false,
+        "errors": ["Error: expect(received).toBeTruthy()"],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 8 - Verify uniqueness rules ignore hidden monomers",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 9 - Verify hidden monomer auto-assigned type matches component type",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 10 - Verify auto-assigned code/name for hidden base",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 11 - Verify auto-assigned code/name for hidden sugar",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 12 - Verify auto-assigned code/name for hidden phosphate",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 13 - Verify natural analogue auto-assigned to hidden base",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 14 - Verify AP Scenario 1.1: phosphate→base→sugar",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 15 - Verify AP Scenario 1.2: base→phosphate→sugar",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 16 - Verify AP Scenario 2.1: phosphate→sugar",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 17 - Verify AP Scenario 3.1: base→sugar",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 18 - Integration: verify preset works in RNA/DNA builder",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 19 - Integration: verify export/import preserves monomer data",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Defining other monomer properties - presets in the monomer creation wizard > Case 20 - Regression: verify manual monomer creation still works",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 15,
+    "flaky": 0,
+    "failed": 5,
+    "skipped": 0
+  },
+  "totalMs": 54596
+}

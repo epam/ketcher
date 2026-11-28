@@ -1,0 +1,127 @@
+{
+  "issue": 10018,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8781-attachment-points-editing-dropdown-logic.spec.ts"
+  ],
+  "expectedSpecName": "8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": false,
+  "checklist": 4,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8781-attachment-points-editing-dropdown-logic.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify dropdown shows only H and OH when current LGA is H",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify dropdown shows only H and OH when current LGA is OH",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify dropdown shows H, OH, then other atom when current LGA is not H or OH",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify LGA replacement works without changing position",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify currently selected LGA is visually indicated in dropdown",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify dropdown behavior with multiple attachment points",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify dropdown behavior after atom type changes",
+          "caseNumber": 7,
+          "skip": false
+        }
+      ],
+      "testCount": 7,
+      "skipCount": 0,
+      "casesMatchChecklist": false,
+      "wrongVersionLines": 7,
+      "versionLines": 7,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 2
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 1 - Verify dropdown shows only H and OH when current LGA is H",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 2 - Verify dropdown shows only H and OH when current LGA is OH",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 3 - Verify dropdown shows H, OH, then other atom when current LGA is not H or OH",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 4 - Verify LGA replacement works without changing position",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 5 - Verify currently selected LGA is visually indicated in dropdown",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 6 - Verify dropdown behavior with multiple attachment points",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing dropdown logic in monomer creation wizard > Case 7 - Verify dropdown behavior after atom type changes",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 7,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 26437
+}

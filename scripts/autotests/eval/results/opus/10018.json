@@ -1,0 +1,114 @@
+{
+  "issue": 10018,
+  "config": "opus",
+  "model": "claude-opus-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 1.2219984000000002,
+    "durationMs": 215550,
+    "turns": 35,
+    "models": [
+      "claude-opus-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "M ketcher-autotests/tests/pages/molecules/canvas/CreateMonomerDialog.ts",
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 4,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - If the current LGA is H or OH, only \"H\" and \"OH\" are present in the drop-down, in that order",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - If the current LGA is not H or OH, the drop-down displays \"H\" and \"OH\" first, followed by that atom",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - When a new atom is selected from the drop-down, the LGA is replaced with the new atom without changing its position",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - The currently selected LGA in the list is visually indicated",
+          "caseNumber": 4,
+          "skip": false
+        }
+      ],
+      "testCount": 4,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 4,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Attachment points editing drop-down in the monomer creation wizard > Case 1 - If the current LGA is H or OH, only \"H\" and \"OH\" are present in the drop-down, in that order",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toHaveText(expected) failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Attachment points editing drop-down in the monomer creation wizard > Case 2 - If the current LGA is not H or OH, the drop-down displays \"H\" and \"OH\" first, followed by that atom",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Attachment points editing drop-down in the monomer creation wizard > Case 3 - When a new atom is selected from the drop-down, the LGA is replaced with the new atom without changing its position",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Attachment points editing drop-down in the monomer creation wizard > Case 4 - The currently selected LGA in the list is visually indicated",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      }
+    ],
+    "passed": 0,
+    "flaky": 0,
+    "failed": 4,
+    "skipped": 0
+  },
+  "totalMs": 413604
+}

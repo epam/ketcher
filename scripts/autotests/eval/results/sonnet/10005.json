@@ -1,0 +1,394 @@
+{
+  "issue": 10005,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.5478775,
+    "durationMs": 138602,
+    "turns": 30,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8775-Defining-other-monomer-properties-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8775-Defining-other-monomer-properties-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8775-Defining-other-monomer-properties-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 27,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8775-Defining-other-monomer-properties-presets-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify ability to leave component properties undefined in monomer wizard",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify fully defined base is saved as visible monomer",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify fully defined sugar is saved as visible monomer",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify fully defined phosphate is saved as visible monomer",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify all components fully defined become visible monomers",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify hidden monomer is created when required properties are missing",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify mixed visibility: base defined, others hidden",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify uniqueness rules ignore hidden monomers",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify hidden monomer auto-assigned type matches component type",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case ${caseNumber} - Verify auto-assigned code/name for hidden ${kind}",
+          "caseNumber": null,
+          "skip": false
+        },
+        {
+          "title": "Case 13 - Verify natural analogue auto-assigned to hidden base",
+          "caseNumber": 13,
+          "skip": false
+        },
+        {
+          "title": "Case 14 - Verify correct structure assignment to hidden monomer",
+          "caseNumber": 14,
+          "skip": false
+        },
+        {
+          "title": "Case ${caseNumber} - Verify AP ${title}",
+          "caseNumber": null,
+          "skip": false
+        },
+        {
+          "title": "Case 21 - Verify AP Scenario 2.1: phosphate→sugar",
+          "caseNumber": 21,
+          "skip": false
+        },
+        {
+          "title": "Case 22 - Verify AP Scenario 2.2: sugar→phosphate",
+          "caseNumber": 22,
+          "skip": false
+        },
+        {
+          "title": "Case 23 - Verify AP Scenario 3.1: base→sugar",
+          "caseNumber": 23,
+          "skip": false
+        },
+        {
+          "title": "Case 24 - Verify AP Scenario 3.2: sugar→base with AP flipping",
+          "caseNumber": 24,
+          "skip": false
+        },
+        {
+          "title": "Case 25 - Integration: verify preset works in RNA/DNA builder",
+          "caseNumber": 25,
+          "skip": false
+        },
+        {
+          "title": "Case 26 - Integration: verify export/import preserves monomer data",
+          "caseNumber": 26,
+          "skip": false
+        },
+        {
+          "title": "Case 27 - Regression: verify manual monomer creation still works",
+          "caseNumber": 27,
+          "skip": false
+        }
+      ],
+      "testCount": 20,
+      "skipCount": 0,
+      "casesMatchChecklist": false,
+      "wrongVersionLines": 0,
+      "versionLines": 20,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [
+    "tests/specs/Chromium-popup/Features/8775-Defining-other-monomer-properties-presets-in-the-monomer-creation-wizard.spec.ts(29,7): error TS6133: 'TEST_TASK' is declared but its value is never read."
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 1 - Verify ability to leave component properties undefined in monomer wizard",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 2 - Verify fully defined base is saved as visible monomer",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 3 - Verify fully defined sugar is saved as visible monomer",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 4 - Verify fully defined phosphate is saved as visible monomer",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 5 - Verify all components fully defined become visible monomers",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toBeTruthy()"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 6 - Verify hidden monomer is created when required properties are missing",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 7 - Verify mixed visibility: base defined, others hidden",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 8 - Verify uniqueness rules ignore hidden monomers",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 9 - Verify hidden monomer auto-assigned type matches component type",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 10 - Verify auto-assigned code/name for hidden base",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 11 - Verify auto-assigned code/name for hidden sugar",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 12 - Verify auto-assigned code/name for hidden phosphate",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 13 - Verify natural analogue auto-assigned to hidden base",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 14 - Verify correct structure assignment to hidden monomer",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 15 - Verify AP Scenario 1.1: phosphate→base→sugar",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toContain(expected) // indexOf"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 16 - Verify AP Scenario 1.2: base→phosphate→sugar",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toContain(expected) // indexOf"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 17 - Verify AP Scenario 1.3: phosphate→sugar→base",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toContain(expected) // indexOf"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 18 - Verify AP Scenario 1.4: base→sugar→phosphate",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toContain(expected) // indexOf"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 19 - Verify AP Scenario 1.5: sugar→phosphate→base with AP flipping",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toContain(expected) // indexOf"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 20 - Verify AP Scenario 1.6: sugar→base→phosphate with flipping if needed",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toContain(expected) // indexOf"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 21 - Verify AP Scenario 2.1: phosphate→sugar",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 22 - Verify AP Scenario 2.2: sugar→phosphate",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 23 - Verify AP Scenario 3.1: base→sugar",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 24 - Verify AP Scenario 3.2: sugar→base with AP flipping",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 25 - Integration: verify preset works in RNA/DNA builder",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 26 - Integration: verify export/import preserves monomer data",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining other monomer properties - presets in the monomer creation wizard:  > Case 27 - Regression: verify manual monomer creation still works",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      }
+    ],
+    "passed": 4,
+    "flaky": 0,
+    "failed": 23,
+    "skipped": 0
+  },
+  "totalMs": 695724
+}

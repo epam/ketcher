@@ -1,0 +1,190 @@
+{
+  "issue": 10008,
+  "config": "opus",
+  "model": "claude-opus-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": false,
+    "error": "exit code 143",
+    "costUsd": 2.9986586000000006,
+    "durationMs": 497115,
+    "turns": 64,
+    "models": [
+      "claude-opus-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8852-Additions-to-the-structure-presets-in-the-monomer-creation-wizard.spec.ts",
+    "?? ketcher-autotests/tests/utils/canvas/atoms/addRingNearAtom.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8852-Additions-to-the-structure-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8852-Additions-to-the-structure-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 10,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8852-Additions-to-the-structure-presets-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify that additions connected to Base become part of Base component",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify that additions connected to Sugar become part of Sugar component",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify that additions connected to Phosphate become part of Phosphate component",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify that unconnected additions do not belong to any component and block preset saving",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify that previously unconnected structure becomes part of another single component when connected (Sugar or Phosphate)",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify behavior when structure connected to one component is subsequently extended to another component (multi-component connection)",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify behavior when part of a component structure is disconnected and reconnected to another component",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify that adding and removing simple extensions to a component does not break component continuity",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify that additions made before components are defined are handled correctly once components are defined",
+          "caseNumber": 10,
+          "skip": false
+        }
+      ],
+      "testCount": 10,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 10,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 1 - Verify that additions connected to Base become part of Base component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 2 - Verify that additions connected to Sugar become part of Sugar component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 3 - Verify that additions connected to Phosphate become part of Phosphate component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 4 - Verify that unconnected additions do not belong to any component and block preset saving",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 6 - Verify that previously unconnected structure becomes part of another single component when connected (Sugar or Phosphate)",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 7 - Verify behavior when structure connected to one component is subsequently extended to another component (multi-component connection)",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "\"beforeAll\" hook timeout of 60000ms exceeded.",
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 8 - Verify behavior when part of a component structure is disconnected and reconnected to another component",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 9 - Verify that adding and removing simple extensions to a component does not break component continuity",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Additions to the structure - presets in the monomer creation wizard > Case 10 - Verify that additions made before components are defined are handled correctly once components are defined",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      }
+    ],
+    "passed": 5,
+    "flaky": 0,
+    "failed": 5,
+    "skipped": 0
+  },
+  "totalMs": 5518857
+}

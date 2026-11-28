@@ -1,0 +1,55 @@
+{
+  "issue": 12490,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts"
+  ],
+  "expectedSpecName": "6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts",
+  "specNameMatches": true,
+  "checklist": 1,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify stereo-markings visible on molecules mode stays visible on switching to Macromolecules mode",
+          "caseNumber": 1,
+          "skip": false
+        }
+      ],
+      "testCount": 1,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 1,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Support for enhanced stereochemistry markings in macromolecules mode > Case 1 - Verify stereo-markings visible on molecules mode stays visible on switching to Macromolecules mode",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 1,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 15577
+}

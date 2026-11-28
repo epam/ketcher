@@ -1,0 +1,70 @@
+{
+  "issue": 12490,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.18244320000000003,
+    "durationMs": 31959,
+    "turns": 13,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "M ketcher-autotests/tests/specs/Chromium-popup/Features/6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts",
+    "M ketcher-autotests/tests/test-data/KET/Chromium-popup/6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode/different-marks-stereostructure.ket"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts"
+  ],
+  "expectedSpecName": "6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts",
+  "specNameMatches": true,
+  "checklist": 1,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/6917-Support-for-enhanced-stereochemistry-markings-in-macromolecules-mode.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Stereo-markings visible in Molecules mode stay visible on switching to Macromolecules mode",
+          "caseNumber": 1,
+          "skip": false
+        }
+      ],
+      "testCount": 1,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 1,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Support for enhanced stereochemistry markings in macromolecules mode > Case 1 - Stereo-markings visible in Molecules mode stay visible on switching to Macromolecules mode",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 1,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 18986
+}

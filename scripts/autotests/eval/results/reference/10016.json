@@ -1,0 +1,91 @@
+{
+  "issue": 10016,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8792-rename-monomer-symbol-to-code.spec.ts"
+  ],
+  "expectedSpecName": "8792-Rename-monomer-symbol-to-monomer-code-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": false,
+  "checklist": 4,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8792-rename-monomer-symbol-to-code.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify that the \"Symbol\" field name in the attributes panel of the monomer creation wizard is replaced with \"Code\"",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify that the updated error message is displayed when the user enters invalid characters in the \"Code\" field",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify that the updated error message is displayed when the user enters a duplicate Code that already exists in the monomer lists",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify that valid Code characters are accepted without error",
+          "caseNumber": 4,
+          "skip": false
+        }
+      ],
+      "testCount": 4,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 4,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Rename monomer symbol to monomer code: > Case 1 - Verify that the \"Symbol\" field name in the attributes panel of the monomer creation wizard is replaced with \"Code\"",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Rename monomer symbol to monomer code: > Case 2 - Verify that the updated error message is displayed when the user enters invalid characters in the \"Code\" field",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Rename monomer symbol to monomer code: > Case 3 - Verify that the updated error message is displayed when the user enters a duplicate Code that already exists in the monomer lists",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Rename monomer symbol to monomer code: > Case 4 - Verify that valid Code characters are accepted without error",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 4,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 18321
+}

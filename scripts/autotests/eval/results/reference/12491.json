@@ -1,0 +1,247 @@
+{
+  "issue": 12491,
+  "config": "reference",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "files": [],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts"
+  ],
+  "expectedSpecName": "8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts",
+  "specNameMatches": true,
+  "checklist": 16,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Rotation is enabled when two monomers without bonds are selected",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Rotation is enabled when two monomers with bonds are selected",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Rotation is enabled when more than two monomers are selected regardless of bonds",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 3b - Rotation is enabled when more than two disconnected monomers are selected",
+          "caseNumber": null,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Rotation is not enabled when only one monomer is selected",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Bounding box with rotation handle and center cross appears when two or more monomers are selected",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Rotation, flip, and delete buttons are shown above the bounding box for selected monomers",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Rotation angles are displayed near the bounding box while rotating",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Default rotation angle is set to 15°",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Rotation mode is activated by pressing left mouse button on the rotation handle",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - When rotation mode is deactivated, the selected fragment stays in its new position",
+          "caseNumber": 10,
+          "skip": false
+        },
+        {
+          "title": "Case 11 - Flip horizontally, flip vertically and delete buttons work as expected",
+          "caseNumber": 11,
+          "skip": false
+        },
+        {
+          "title": "Case 12 - Center of circle is at center of rotation and diameter equals bounding box height",
+          "caseNumber": 12,
+          "skip": false
+        },
+        {
+          "title": "Case 13 - Predefined angles are marked on the rotation circle: -90, -60, -45, -30, 0, 30, 45, 60, 90",
+          "caseNumber": 13,
+          "skip": false
+        },
+        {
+          "title": "Case 14 - Angles range always covers [-90 to +90] relative to the handle position when rotation starts",
+          "caseNumber": 14,
+          "skip": false
+        },
+        {
+          "title": "Case 15 - Current rotation angle is displayed at starting position when rotation starts",
+          "caseNumber": 15,
+          "skip": false
+        },
+        {
+          "title": "Case 16 - Ability to move the center of rotation in Macromolecules mode",
+          "caseNumber": 16,
+          "skip": false
+        }
+      ],
+      "testCount": 17,
+      "skipCount": 0,
+      "casesMatchChecklist": false,
+      "wrongVersionLines": 0,
+      "versionLines": 17,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 1 - Rotation is enabled when two monomers without bonds are selected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 2 - Rotation is enabled when two monomers with bonds are selected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 3 - Rotation is enabled when more than two monomers are selected regardless of bonds",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 3b - Rotation is enabled when more than two disconnected monomers are selected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 4 - Rotation is not enabled when only one monomer is selected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 5 - Bounding box with rotation handle and center cross appears when two or more monomers are selected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 6 - Rotation, flip, and delete buttons are shown above the bounding box for selected monomers",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 7 - Rotation angles are displayed near the bounding box while rotating",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 8 - Default rotation angle is set to 15°",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 9 - Rotation mode is activated by pressing left mouse button on the rotation handle",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 10 - When rotation mode is deactivated, the selected fragment stays in its new position",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 11 - Flip horizontally, flip vertically and delete buttons work as expected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 12 - Center of circle is at center of rotation and diameter equals bounding box height",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 13 - Predefined angles are marked on the rotation circle: -90, -60, -45, -30, 0, 30, 45, 60, 90",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 14 - Angles range always covers [-90 to +90] relative to the handle position when rotation starts",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 15 - Current rotation angle is displayed at starting position when rotation starts",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 16 - Ability to move the center of rotation in Macromolecules mode",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 17,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 33258
+}

@@ -1,0 +1,105 @@
+{
+  "issue": 10016,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.3557387,
+    "durationMs": 63972,
+    "turns": 21,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8792-Rename-monomer-symbol-to-monomer-code-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8792-Rename-monomer-symbol-to-monomer-code-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8792-Rename-monomer-symbol-to-monomer-code-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 4,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8792-Rename-monomer-symbol-to-monomer-code-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - \"Symbol\" field name in the attributes panel is replaced with \"Code\"",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Updated error message is displayed when invalid characters are entered in the \"Code\" field",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Updated error message is displayed when a duplicate Code that already exists in the monomer lists is entered",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Valid Code characters are accepted without error",
+          "caseNumber": 4,
+          "skip": false
+        }
+      ],
+      "testCount": 4,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 4,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Rename monomer symbol to monomer code in the monomer creation wizard:  > Case 1 - \"Symbol\" field name in the attributes panel is replaced with \"Code\"",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Rename monomer symbol to monomer code in the monomer creation wizard:  > Case 2 - Updated error message is displayed when invalid characters are entered in the \"Code\" field",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Rename monomer symbol to monomer code in the monomer creation wizard:  > Case 3 - Updated error message is displayed when a duplicate Code that already exists in the monomer lists is entered",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Rename monomer symbol to monomer code in the monomer creation wizard:  > Case 4 - Valid Code characters are accepted without error",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 4,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 22349
+}

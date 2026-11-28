@@ -665,3 +665,9 @@ Every new feature must have e2e tests that cover:
 
 ## Other rules to follow
 - Run tests after implementation to ensure they pass and do what they are supposed to do.
+
+## Evaluating Generated Autotests
+
+The evaluation in `scripts/autotests/eval/` measures the Claude Implement Autotests workflow with different models. Its eval set holds Autotest Request issues that a bot PR closed and a maintainer finished and merged. All entries run on one base commit. Before each generation the run deletes the merged spec, its snapshots and its test-data folder, so the model cannot copy them. Page objects that the merged PR added stay, so the model may get help from them.
+
+`run-eval.mjs` builds the prompt from the workflow file and gives the model the workflow's tools. It then checks what the model wrote. The code must compile. The page objects and helpers it changed must pass lint (the ESLint config ignores spec files). The spec must have one numbered test per checklist item. It also runs the spec against the app several times, so a flaky test shows. The first run writes the screenshots that have no baseline. Later runs compare against them, so a pass says the steps run and stay stable, not that the picture is right. The `reference` configuration runs the merged spec on the same app with no model, as the control. `report.mjs` scores the results. Its scores include the hand judgements in `judgements.json`: a verdict for each checklist item, and how many conventions the spec breaks.

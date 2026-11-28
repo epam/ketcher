@@ -15,64 +15,64 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
     class="css-8bc8yr-GroupsContainer e1lkl9ny2"
   >
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e59li3p5"
           name="sugar"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e59li3p8"
       >
         Sugar
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e59li3p5"
           name="base"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e59li3p8"
       >
         Base
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e59li3p5"
           name="phosphate"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e59li3p8"
       >
         Phosphate
       </p>
@@ -141,64 +141,64 @@ exports[`Test Rna Editor Expanded component > should render correctly in edit mo
     class="css-8bc8yr-GroupsContainer e1lkl9ny2"
   >
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-1ufngfc-GroupIcon e1yrwz0e5"
+          class="css-1ufngfc-GroupIcon e59li3p5"
           name="sugar"
         />
       </div>
       <p
-        class="css-v3da1w-CompactGroupText e1yrwz0e8"
+        class="css-v3da1w-CompactGroupText e59li3p8"
       >
         R
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-1ufngfc-GroupIcon e1yrwz0e5"
+          class="css-1ufngfc-GroupIcon e59li3p5"
           name="base"
         />
       </div>
       <p
-        class="css-v3da1w-CompactGroupText e1yrwz0e8"
+        class="css-v3da1w-CompactGroupText e59li3p8"
       >
         [multiple]
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-1ufngfc-GroupIcon e1yrwz0e5"
+          class="css-1ufngfc-GroupIcon e59li3p5"
           name="phosphate"
         />
       </div>
       <p
-        class="css-v3da1w-CompactGroupText e1yrwz0e8"
+        class="css-v3da1w-CompactGroupText e59li3p8"
       >
         P
       </p>
@@ -267,64 +267,64 @@ exports[`Test Rna Editor Expanded component > should render correctly in view mo
     class="css-8bc8yr-GroupsContainer e1lkl9ny2"
   >
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--sugar"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e59li3p5"
           name="sugar"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e59li3p8"
       >
         Sugar
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--base"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e59li3p5"
           name="base"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e59li3p8"
       >
         Base
       </p>
     </div>
     <div
-      class="css-cfpazt-CompactGroupBlockContainer e1yrwz0e6"
+      class="css-cfpazt-CompactGroupBlockContainer e59li3p6"
       data-testid="rna-builder-slot--phosphate"
     >
       <div
-        class="css-12ndeqe-CompactGroupConnection e1yrwz0e7"
+        class="css-12ndeqe-CompactGroupConnection e59li3p7"
       />
       <div
-        class="css-gk2rte-GroupIconContainer e1yrwz0e4"
+        class="css-gk2rte-GroupIconContainer e59li3p4"
       >
         <svg
-          class="css-ne7l56-GroupIcon e1yrwz0e5"
+          class="css-ne7l56-GroupIcon e59li3p5"
           name="phosphate"
         />
       </div>
       <p
-        class="css-1aj5yyk-CompactGroupText e1yrwz0e8"
+        class="css-1aj5yyk-CompactGroupText e59li3p8"
       >
         Phosphate
       </p>

@@ -31,7 +31,7 @@ exports[`Monomer List > should render correct with groups 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-ipnnca-StyledIcon eugifix2"
+                  class="css-ipnnca-StyledIcon ez1j6ww2"
                   name="vertical-dots"
                 />
               </button>
@@ -85,7 +85,7 @@ exports[`Monomer List > should render correct with groups 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon ez1j6ww2"
                 name="vertical-dots"
               />
             </button>
@@ -196,7 +196,7 @@ exports[`Monomer List > should render correct without groups 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-ipnnca-StyledIcon eugifix2"
+                  class="css-ipnnca-StyledIcon ez1j6ww2"
                   name="vertical-dots"
                 />
               </button>
@@ -250,7 +250,7 @@ exports[`Monomer List > should render correct without groups 1`] = `
               type="button"
             >
               <svg
-                class="css-ipnnca-StyledIcon eugifix2"
+                class="css-ipnnca-StyledIcon ez1j6ww2"
                 name="vertical-dots"
               />
             </button>

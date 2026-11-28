@@ -2230,7 +2230,48 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private preserveSideChainConnections(selectedNode: SequenceNode) {
+  private getMonomerClassForSideConnection(monomer: BaseMonomer) {
+    return (
+      monomer.monomerItem.props.MonomerClass ||
+      (monomer instanceof AmbiguousMonomer ? monomer.monomerClass : undefined)
+    );
+  }
+
+  // RNA and DNA are both unsplit nucleotides; every other class is a type of
+  // its own.
+  private isSameMonomerTypeForSideConnection(
+    monomer: BaseMonomer,
+    monomerItem: MonomerItemType,
+  ) {
+    const normalize = (monomerClass?: KetMonomerClass) =>
+      monomerClass === KetMonomerClass.DNA ? KetMonomerClass.RNA : monomerClass;
+
+    return (
+      normalize(this.getMonomerClassForSideConnection(monomer)) ===
+      normalize(monomerItem.props.MonomerClass)
+    );
+  }
+
+  private selectionsHaveSideConnectionOfDifferentType(
+    selections: TwoStrandedNodesSelection,
+    monomerItem: MonomerItemType,
+  ) {
+    return splitSelectionsIntoStrandRuns(selections).some(
+      ({ strandType, selectionRange }) =>
+        selectionRange.some((nodeSelection) =>
+          getNodeForStrand(nodeSelection.node, strandType)?.monomers.some(
+            (monomer) =>
+              monomer.sideConnections.length > 0 &&
+              !this.isSameMonomerTypeForSideConnection(monomer, monomerItem),
+          ),
+        ),
+    );
+  }
+
+  private preserveSideChainConnections(
+    selectedNode: SequenceNode,
+    newMonomerItem?: MonomerItemType,
+  ) {
     const allMonomers = selectedNode.monomers;
     const hasAnySideConnection = allMonomers.some(
       (monomer) => monomer.sideConnections.length > 0,
@@ -2243,6 +2284,13 @@ export class SequenceMode extends BaseMode {
     const sideConnectionsData: PreservedSideChainConnection[] = [];
 
     allMonomers.forEach((monomer) => {
+      if (
+        newMonomerItem &&
+        !this.isSameMonomerTypeForSideConnection(monomer, newMonomerItem)
+      ) {
+        return;
+      }
+
       Object.entries(monomer.attachmentPointsToBonds).forEach(([key, bond]) => {
         if (
           !bond ||
@@ -2295,8 +2343,10 @@ export class SequenceMode extends BaseMode {
       : SequenceRenderer.getNextNodeInSameChain(selectedTwoStrandedNode);
     const nextNodeInStrand = getNodeForStrand(nextTwoStrandedNode, strandType);
     const position = selectedNode.monomer.position;
-    const sideChainConnections =
-      this.preserveSideChainConnections(selectedNode);
+    const sideChainConnections = this.preserveSideChainConnections(
+      selectedNode,
+      monomerItem,
+    );
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
         return [
@@ -2390,10 +2440,7 @@ export class SequenceMode extends BaseMode {
     sourceMonomer: BaseMonomer,
   ): BaseMonomer | undefined {
     const sourceMonomerClass =
-      sourceMonomer.monomerItem.props.MonomerClass ||
-      (sourceMonomer instanceof AmbiguousMonomer
-        ? sourceMonomer.monomerClass
-        : undefined);
+      this.getMonomerClassForSideConnection(sourceMonomer);
 
     if (newPresetNode instanceof Nucleotide) {
       if (
@@ -2850,6 +2897,10 @@ export class SequenceMode extends BaseMode {
           },
         });
       } else if (
+        this.selectionsHaveSideConnectionOfDifferentType(
+          selections,
+          monomerItem,
+        ) ||
         this.getFirstMissingAttachmentPoint(selections, monomerItem, true)
       ) {
         editor.events.openConfirmationDialog.dispatch({

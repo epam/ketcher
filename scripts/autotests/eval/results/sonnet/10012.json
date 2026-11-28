@@ -1,0 +1,159 @@
+{
+  "issue": 10012,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.40329390000000004,
+    "durationMs": 90665,
+    "turns": 20,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8857-Monomer-saving-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8857-Monomer-saving-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8857-Monomer-saving-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 8,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8857-Monomer-saving-presets-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify that all monomers composing a preset are saved as hidden entries in the monomer library",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify that presets composed only of existing visible monomers do not create additional visible monomer entries",
+          "caseNumber": 2,
+          "skip": true
+        },
+        {
+          "title": "Case 3 - Verify that hidden monomer properties are not checked for uniqueness against visible monomers",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify that hidden monomer properties are not checked for uniqueness across different presets",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify that hidden monomer properties are still validated for formatting (invalid characters block preset saving)",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify that fixing formatting issues for hidden monomer properties allows preset to be saved",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify that visible monomer creation still enforces uniqueness while hidden monomers do not",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify that hidden monomers created with a preset are not selectable as components when creating other presets",
+          "caseNumber": 8,
+          "skip": false
+        }
+      ],
+      "testCount": 8,
+      "skipCount": 1,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 8,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 1 - Verify that all monomers composing a preset are saved as hidden entries in the monomer library",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 2 - Verify that presets composed only of existing visible monomers do not create additional visible monomer entries",
+        "passed": 0,
+        "skipped": true,
+        "errors": [],
+        "outcome": "skipped"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 3 - Verify that hidden monomer properties are not checked for uniqueness against visible monomers",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeHidden() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 4 - Verify that hidden monomer properties are not checked for uniqueness across different presets",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toBeTruthy()"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 5 - Verify that hidden monomer properties are still validated for formatting (invalid characters block preset saving)",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 6 - Verify that fixing formatting issues for hidden monomer properties allows preset to be saved",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 7 - Verify that visible monomer creation still enforces uniqueness while hidden monomers do not",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeHidden() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Autotests: Monomer saving - presets in the monomer creation wizard > Case 8 - Verify that hidden monomers created with a preset are not selectable as components when creating other presets",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 4,
+    "flaky": 0,
+    "failed": 3,
+    "skipped": 1
+  },
+  "totalMs": 77512
+}

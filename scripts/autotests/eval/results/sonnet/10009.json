@@ -1,0 +1,205 @@
+{
+  "issue": 10009,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.5150744,
+    "durationMs": 102925,
+    "turns": 25,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8854-Defining-the-preset-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8854-Defining-the-preset-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8854-Defining-the-preset-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 11,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8854-Defining-the-preset-presets-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify preset primary field is labeled 'Code' instead of 'Name' on preset definition tab",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify preset code is mandatory and triggers 'Mandatory fields must be filled.' when empty on save",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify preset code must be unique amongst other preset codes",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify allowed characters in preset code (letters, digits, hyphens, underscores, asterisks) are accepted",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify invalid characters in preset code trigger specific validation error message",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify error highlighting on Code field and preset tab is cleared after fixing issues",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify monomer codes auto-update when preset code changes for auto-generated monomer codes",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify manually changed monomer code is not auto-updated when preset code changes",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify multiple sequential changes of preset code keep auto-update logic consistent",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify existing presets with valid codes still save successfully after introducing new validation rules",
+          "caseNumber": 10,
+          "skip": true
+        },
+        {
+          "title": "Case 11 - Verify IDT and AxoLabs aliases for presets follow same uniqueness and validation rules as for monomers",
+          "caseNumber": 11,
+          "skip": true
+        }
+      ],
+      "testCount": 11,
+      "skipCount": 2,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 11,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [
+    "tests/specs/Chromium-popup/Features/8854-Defining-the-preset-presets-in-the-monomer-creation-wizard.spec.ts(59,16): error TS6133: 'expectPresetCodeNotHighlighted' is declared but its value is never read."
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 1 - Verify preset primary field is labeled 'Code' instead of 'Name' on preset definition tab",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 2 - Verify preset code is mandatory and triggers 'Mandatory fields must be filled.' when empty on save",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 3 - Verify preset code must be unique amongst other preset codes",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 4 - Verify allowed characters in preset code (letters, digits, hyphens, underscores, asterisks) are accepted",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 5 - Verify invalid characters in preset code trigger specific validation error message",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 6 - Verify error highlighting on Code field and preset tab is cleared after fixing issues",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 7 - Verify monomer codes auto-update when preset code changes for auto-generated monomer codes",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 8 - Verify manually changed monomer code is not auto-updated when preset code changes",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 9 - Verify multiple sequential changes of preset code keep auto-update logic consistent",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: Failed to click Clear Canvas button after max attempts"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 10 - Verify existing presets with valid codes still save successfully after introducing new validation rules",
+        "passed": 0,
+        "skipped": true,
+        "errors": [],
+        "outcome": "skipped"
+      },
+      {
+        "title": "Defining the preset - presets in the monomer creation wizard > Case 11 - Verify IDT and AxoLabs aliases for presets follow same uniqueness and validation rules as for monomers",
+        "passed": 0,
+        "skipped": true,
+        "errors": [],
+        "outcome": "skipped"
+      }
+    ],
+    "passed": 2,
+    "flaky": 0,
+    "failed": 7,
+    "skipped": 2
+  },
+  "totalMs": 89601
+}

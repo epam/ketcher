@@ -1,4 +1,333 @@
 {
-  "description": "Hand judgements of the generated specs, by configuration and then issue number. `cases` has one verdict per checklist item, in checklist order: covered (a test checks what the item asks for), partial (a test exists but misses part of the item), skipped (test.skip with a reason that holds), missing (no test), wrong (the test checks something else, or would pass on a broken app). `conventions` counts the testing.md and R15 breaks a reviewer would raise. Judge against the issue and the merged reference spec, with the result's files and Playwright reports at hand.",
-  "judgements": {}
+  "description": "Hand judgements of the generated specs, by configuration and then issue number. `cases` has one verdict per checklist item, in checklist order: covered (a test checks what the item asks for and passes, or fails only where the reference fails too), partial (a test passes but misses part of the item), failing (a test aims at the item but fails here through its own mistake, or because an earlier test of a shared page failed), skipped (test.skip with a reason that holds), missing (no test), wrong (the test checks something else, or would pass on a broken app). `conventions` counts the testing.md and R15 breaks a reviewer would raise. Judge against the issue and the merged reference spec, with the result's files and Playwright reports at hand.",
+  "judgements": {
+    "sonnet": {
+      "10016": {
+        "cases": ["covered", "covered", "covered", "covered"],
+        "conventions": 0,
+        "note": "Case 1 checks that the wizard has no 'Symbol' text, but 'Code' only as text anywhere in the wizard, not as the field's title. Cases 2 and 3 compare the full new messages. Case 3 uses an existing peptide code (1Nal). Case 4 checks that the wizard closes with no error banner."
+      },
+      "12490": {
+        "cases": ["covered"],
+        "conventions": 0,
+        "note": "Screenshot only, before and after the switch; the second picture shows the &1 and or1 labels in Macromolecules mode."
+      },
+      "12491": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "partial",
+          "covered",
+          "covered",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "Cases 7-9 and 12-15 are screenshot only; the pictures show the angle label, the 15 degree step, the rotation circle and the -90..90 marks. Case 13's picture shows only the 0 degree label, not the predefined angle marks. Case 16 times out."
+      },
+      "10012": {
+        "cases": [
+          "covered",
+          "missing",
+          "failing",
+          "failing",
+          "covered",
+          "covered",
+          "failing",
+          "covered"
+        ],
+        "conventions": 0,
+        "note": "Case 2 is test.skip as not automatable, but the reference automates it. Cases 3, 4 and 7 fail on their own expectations; the reference passes them."
+      },
+      "10018": {
+        "cases": ["failing", "covered", "failing", "covered"],
+        "conventions": 0,
+        "note": "Case 1 draws a structure whose leaving group is not H, so the option list differs. Case 3 compares the position with a 3 px tolerance and gets 41 px."
+      },
+      "10013": {
+        "cases": [
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "Cases 1, 2 and 8 expect a section to be hidden that the app shows; the wizard stays open and the later tests fail to clear the canvas. The reference and Opus pass all 9."
+      },
+      "10009": {
+        "cases": [
+          "failing",
+          "failing",
+          "failing",
+          "covered",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "missing",
+          "skipped"
+        ],
+        "conventions": 0,
+        "note": "Most tests fail at the start with 'Failed to click Clear Canvas button': an earlier test leaves the wizard open. One unused helper is a type error. Case 10 is test.skip, but the reference automates it; Case 11 is skipped in the reference too."
+      },
+      "10010": {
+        "cases": [
+          "covered",
+          "missing",
+          "covered",
+          "failing",
+          "failing",
+          "covered",
+          "skipped"
+        ],
+        "conventions": 0,
+        "note": "Case 2 is test.skip, but the reference and Opus automate it. Case 4 finds the success text where it expects none, Case 5 times out. Case 7 (different UI shells) is a fair skip."
+      },
+      "10005": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "failing",
+          "covered",
+          "failing",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "covered",
+          "failing",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "20 test calls cover the 27 items through loops; one unused constant is a type error. Cases 2-5 and 7 fail as the reference does: since #8857 every preset component is saved hidden. Most other cases time out or miss attachment points."
+      },
+      "10006": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "Case 11 is flaky: it passed in one run of three."
+      },
+      "10008": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "Cases 5-10 time out or miss a component highlight; the reference passes them."
+      }
+    },
+    "opus": {
+      "10016": {
+        "cases": ["covered", "covered", "covered", "covered"],
+        "conventions": 0,
+        "note": "Adds Code and Symbol title locators to the CreateMonomerDialog page object, so Case 1 checks the field title itself. Cases 2 and 3 compare the full new messages. Case 3 uses an existing CHEM code from the Chem catalog. Case 4 also checks that the new monomer is on the macromolecules canvas under its code."
+      },
+      "12490": {
+        "cases": ["covered"],
+        "conventions": 0,
+        "note": "Screenshot only, before and after the switch; the second picture shows the &1 and or1 labels in Macromolecules mode. The structure is cut off at the right edge."
+      },
+      "12491": {
+        "cases": [
+          "failing",
+          "failing",
+          "covered",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "Case 1 finds no rotation handle after selecting two unbonded monomers; the shared page then times out in most later tests. Cases 3, 4 and 11 pass."
+      },
+      "10012": {
+        "cases": [
+          "covered",
+          "missing",
+          "covered",
+          "failing",
+          "covered",
+          "covered",
+          "failing",
+          "covered"
+        ],
+        "conventions": 0,
+        "note": "Case 2 is test.skip as not automatable, but the reference automates it. Case 4 fails on its own expectation, Case 7 times out."
+      },
+      "10009": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "missing",
+          "skipped"
+        ],
+        "conventions": 0,
+        "note": "Cases 1-9 check labels, messages, error classes and the auto-updated component codes. Case 10 is test.skip, but the reference automates it; Case 11 is skipped in the reference too."
+      },
+      "10008": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "covered",
+          "covered",
+          "failing"
+        ],
+        "conventions": 0,
+        "note": "The model run hit the 60-minute limit (exit code 143) after it had written the spec. Cases 4-6 and 10 fail on a toBeVisible check; Case 7 times out in its beforeAll."
+      },
+      "10018": {
+        "cases": ["failing", "failing", "failing", "failing"],
+        "conventions": 0,
+        "note": "Case 1 draws a structure whose R1 leaving group is CH3, not H; the shared page then times out in Cases 2-4."
+      },
+      "10013": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered"
+        ],
+        "conventions": 0,
+        "note": "Each case checks the visible and hidden sections of the attributes panel for its monomer type."
+      },
+      "10010": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "skipped"
+        ],
+        "conventions": 0,
+        "note": "Case 7 (different UI shells) is a fair skip."
+      },
+      "10005": {
+        "cases": [
+          "covered",
+          "skipped",
+          "skipped",
+          "skipped",
+          "skipped",
+          "covered",
+          "skipped",
+          "failing",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "failing",
+          "failing",
+          "failing",
+          "failing",
+          "covered",
+          "covered",
+          "covered"
+        ],
+        "conventions": 0,
+        "note": "Cases 2-5 and 7 are test.skip with the reason that since #8857 every preset component is saved hidden; the reference's tests for them fail for that reason. Adds a helper that reads monomers from the KET export. Case 8 and the two-component attachment point cases 21-24 fail on their own expectations."
+      },
+      "10006": {
+        "cases": [
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered",
+          "covered"
+        ],
+        "conventions": 0,
+        "note": "All 11 pass in every run."
+      }
+    }
+  }
 }

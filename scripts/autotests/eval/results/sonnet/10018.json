@@ -1,0 +1,110 @@
+{
+  "issue": 10018,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.38685369999999997,
+    "durationMs": 91414,
+    "turns": 31,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "M ketcher-autotests/tests/pages/molecules/canvas/CreateMonomerDialog.ts",
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 4,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8781-Change-the-logic-for-attachment-points-editing-drop-down-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - If the current LGA is H or OH, only H and OH are in the drop-down, in that order",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - If the current LGA is not H or OH, the drop-down shows H and OH first, followed by that atom",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Selecting a new atom from the drop-down replaces the LGA without changing its position",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - The currently selected LGA in the list is visually indicated",
+          "caseNumber": 4,
+          "skip": false
+        }
+      ],
+      "testCount": 4,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 4,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Attachment points editing drop-down logic in the monomer creation wizard > Case 1 - If the current LGA is H or OH, only H and OH are in the drop-down, in that order",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toHaveText(expected) failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Attachment points editing drop-down logic in the monomer creation wizard > Case 2 - If the current LGA is not H or OH, the drop-down shows H and OH first, followed by that atom",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Attachment points editing drop-down logic in the monomer creation wizard > Case 3 - Selecting a new atom from the drop-down replaces the LGA without changing its position",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(received).toBeLessThanOrEqual(expected)"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Attachment points editing drop-down logic in the monomer creation wizard > Case 4 - The currently selected LGA in the list is visually indicated",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      }
+    ],
+    "passed": 2,
+    "flaky": 0,
+    "failed": 2,
+    "skipped": 0
+  },
+  "totalMs": 169527
+}

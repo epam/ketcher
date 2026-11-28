@@ -20,6 +20,7 @@ const HERE = fileURLToPath(new URL('.', import.meta.url));
 export const CASE_VERDICTS = [
   'covered',
   'partial',
+  'failing',
   'skipped',
   'missing',
   'wrong',
@@ -140,6 +141,7 @@ export function scoreConfig(results, judged = {}) {
     judged: judgedResults.length,
     covered: count('covered'),
     partial: count('partial'),
+    failing: count('failing'),
     skippedJudged: count('skipped'),
     missing: count('missing'),
     wrong: count('wrong'),
@@ -177,13 +179,13 @@ export function formatReport(byConfig, judgements) {
     '',
     '## Hand judgements',
     '',
-    '| Config | Issues judged | Covered | Partial | Skipped | Missing | Wrong | Coverage | Convention breaks |',
-    '| --- | --: | --: | --: | --: | --: | --: | --: | --: |',
+    '| Config | Issues judged | Covered | Partial | Failing | Skipped | Missing | Wrong | Coverage | Convention breaks |',
+    '| --- | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
     ...scores
       .filter(([name]) => name !== 'reference')
       .map(
         ([name, s]) =>
-          `| ${name} | ${s.judged} | ${s.covered} | ${s.partial} | ${s.skippedJudged} | ${s.missing} | ${s.wrong} | ${s.coverage} | ${s.conventionBreaks} |`,
+          `| ${name} | ${s.judged} | ${s.covered} | ${s.partial} | ${s.failing} | ${s.skippedJudged} | ${s.missing} | ${s.wrong} | ${s.coverage} | ${s.conventionBreaks} |`,
       ),
     '',
     '## Per issue',
@@ -199,7 +201,7 @@ export function formatReport(byConfig, judgements) {
       const tests = sum((r.analysis ?? []).map((a) => a.testCount));
       const p = r.playwright;
       lines.push(
-        `| #${r.issue} | ${tests} / ${r.checklist} | ${r.typeErrors?.length ?? '-'} | ${r.lint?.errors ?? '-'} | ${p?.passed ?? '-'} | ${p?.flaky ?? '-'} | ${p?.failed ?? '-'} | ${p?.skipped ?? '-'} | ${r.generation ? r.generation.costUsd.toFixed(2) : '-'} | ${r.generation?.error ?? r.loadErrors?.[0] ?? ''} |`,
+        `| #${r.issue} | ${tests} / ${r.checklist} | ${r.typeErrors?.length ?? '-'} | ${r.lint?.errors ?? '-'} | ${p?.passed ?? '-'} | ${p?.flaky ?? '-'} | ${p?.failed ?? '-'} | ${p?.skipped ?? '-'} | ${r.generation ? r.generation.costUsd.toFixed(2) : '-'} | ${r.generation?.error ?? r.toolErrors?.[0] ?? r.loadErrors?.[0] ?? ''} |`,
       );
     }
     lines.push('');

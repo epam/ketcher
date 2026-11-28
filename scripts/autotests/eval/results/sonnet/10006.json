@@ -1,0 +1,191 @@
+{
+  "issue": 10006,
+  "config": "sonnet",
+  "model": "claude-sonnet-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 0.33809110000000003,
+    "durationMs": 75458,
+    "turns": 16,
+    "models": [
+      "claude-sonnet-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8850-Defining-the-monomer-structure-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8850-Defining-the-monomer-structure-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8850-Defining-the-monomer-structure-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 11,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8850-Defining-the-monomer-structure-presets-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify 'Mark as a...' context menu option is available for Nucleotide (preset) with continuous selection",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify 'Mark as a...' is not visible for non-preset monomer types",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify 'Mark as a...' context menu has Base, Sugar and Phosphate sub-options",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify 'Mark as a...' is disabled for non-continuous selection",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify 'Mark as a...' becomes enabled when switching back to continuous selection",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify marking a fragment as Base via context menu opens Base tab and assigns structure",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify marking a fragment as Sugar via context menu opens Sugar tab and assigns structure",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify marking a fragment as Phosphate via context menu opens Phosphate tab and assigns structure",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify user can set component structure using dedicated button in Attributes panel for continuous selection",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify dedicated Attributes panel button is disabled for non-continuous selection",
+          "caseNumber": 10,
+          "skip": false
+        },
+        {
+          "title": "Case 11 - Verify multiple components can be defined sequentially using 'Mark as a...' on different selections",
+          "caseNumber": 11,
+          "skip": false
+        }
+      ],
+      "testCount": 11,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 11,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 1 - Verify 'Mark as a...' context menu option is available for Nucleotide (preset) with continuous selection",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 2 - Verify 'Mark as a...' is not visible for non-preset monomer types",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 3 - Verify 'Mark as a...' context menu has Base, Sugar and Phosphate sub-options",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 4 - Verify 'Mark as a...' is disabled for non-continuous selection",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 5 - Verify 'Mark as a...' becomes enabled when switching back to continuous selection",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 6 - Verify marking a fragment as Base via context menu opens Base tab and assigns structure",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 7 - Verify marking a fragment as Sugar via context menu opens Sugar tab and assigns structure",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 8 - Verify marking a fragment as Phosphate via context menu opens Phosphate tab and assigns structure",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 9 - Verify user can set component structure using dedicated button in Attributes panel for continuous selection",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 10 - Verify dedicated Attributes panel button is disabled for non-continuous selection",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Defining the monomer structure - presets in the monomer creation wizard > Case 11 - Verify multiple components can be defined sequentially using 'Mark as a...' on different selections",
+        "passed": 2,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeDisabled() failed"
+        ],
+        "outcome": "flaky"
+      }
+    ],
+    "passed": 10,
+    "flaky": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalMs": 41569
+}

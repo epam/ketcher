@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import {
   analyzeSpec,
@@ -7,6 +9,10 @@ import {
   combineRuns,
   CONFIGS,
   eslintCounts,
+  savedFiles,
+  takeLock,
+  toolPath,
+  tscResult,
   firstLine,
   accountFailure,
   insideCheckout,
@@ -389,5 +395,66 @@ describe('firstLine', () => {
       'Error: expect(received)',
     );
     assert.equal(firstLine(undefined), undefined);
+  });
+});
+
+describe('tscResult', () => {
+  const files = ['tests/specs/a.spec.ts'];
+  it('gives the type errors of a run that checked types', () => {
+    const run = {
+      exitCode: 2,
+      stdout: 'tests/specs/a.spec.ts(1,1): error TS2304: x',
+    };
+    assert.deepEqual(tscResult(run, files), {
+      typeErrors: ['tests/specs/a.spec.ts(1,1): error TS2304: x'],
+    });
+    assert.deepEqual(tscResult({ exitCode: 0, stdout: '' }, files), {
+      typeErrors: [],
+    });
+  });
+
+  it('gives a tool error, not zero errors, when tsc did not run', () => {
+    const result = tscResult(
+      { exitCode: 1, stdout: '', stderr: "Cannot find module 'typescript'" },
+      files,
+    );
+    assert.equal(result.typeErrors, null);
+    assert.match(result.toolError, /tsc did not run: Cannot find module/);
+  });
+});
+
+describe('savedFiles and toolPath', () => {
+  it('reads the files lines of a saved result', () => {
+    assert.deepEqual(savedFiles(['?? a/b c.ts', 'M d.ts', 'D e.ts']), [
+      { status: '??', path: 'a/b c.ts' },
+      { status: 'M', path: 'd.ts' },
+      { status: 'D', path: 'e.ts' },
+    ]);
+  });
+
+  it('takes the tools from the checkout, not from npx', () => {
+    assert.equal(toolPath('/w/c', 'tsc'), '/w/c/node_modules/.bin/tsc');
+  });
+});
+
+describe('takeLock', () => {
+  const lockPath = () =>
+    join(mkdtempSync(join(tmpdir(), 'eval-lock-')), 'run.lock');
+
+  it('takes a free lock and one whose process has ended', () => {
+    const path = lockPath();
+    assert.equal(takeLock(path, { pid: 10 }), path);
+    assert.equal(readFileSync(path, 'utf8'), '10');
+    takeLock(path, { pid: 11, running: () => false });
+    assert.equal(readFileSync(path, 'utf8'), '11');
+  });
+
+  it('refuses a lock that a running process holds', () => {
+    const path = lockPath();
+    writeFileSync(path, '10');
+    assert.throws(
+      () => takeLock(path, { pid: 11, running: () => true }),
+      /Another run \(process 10\)/,
+    );
   });
 });

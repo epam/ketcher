@@ -1,0 +1,275 @@
+{
+  "issue": 12491,
+  "config": "opus",
+  "model": "claude-opus-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 1.1270716,
+    "durationMs": 195998,
+    "turns": 33,
+    "models": [
+      "claude-opus-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "M ketcher-autotests/tests/specs/Chromium-popup/Features/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts"
+  ],
+  "expectedSpecName": "8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts",
+  "specNameMatches": true,
+  "checklist": 16,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8352-Introducing-rotation-of-monomers-in-Macromolecules-mode.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify that rotation is enabled in Macromolecules mode when two monomers without any bonds between them are selected",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify that rotation is enabled in Macromolecules mode when two monomers with bonds between them are selected",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify that rotation is enabled in Macromolecules mode when more than two monomers are selected, regardless of whether they are connected by bonds",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify that rotation is not enabled in Macromolecules mode when only one monomer is selected",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify that a bounding box with a rotaition handle and a cross in the center of rotation appears when two or more monomers are selected in Macromolecules mode",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify that there are rotation, flip, delete buttons above the bounding box for selected monomers in Macromolecules mode",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify that in Macromolecules mode rotation angles are displayed near the bounding box while rotating",
+          "caseNumber": 7,
+          "skip": false
+        },
+        {
+          "title": "Case 8 - Verify that the default rotation angle is set to 15° in Macromolecules mode",
+          "caseNumber": 8,
+          "skip": false
+        },
+        {
+          "title": "Case 9 - Verify that rotation mode gets activated in Macromolecules mode by pressing the left mouse button (a rotation handle turns blue, a cross turns blue, and a blue dashed line connectes them, the bounding box is replaced with a circle)",
+          "caseNumber": 9,
+          "skip": false
+        },
+        {
+          "title": "Case 10 - Verify that when rotation mode is deactivated in Macromolecules mode, the selected fragment remains in its new position, rotation circle is replaced with the bounding box, that is redrawn at its initial position, and all labels of the rotated fragment are aligned with horizontal axis",
+          "caseNumber": 10,
+          "skip": false
+        },
+        {
+          "title": "Case 11 - Verify that 'flip horizontally', 'flip vertically' and 'delete' buttons work as expected in Macromolecule mode",
+          "caseNumber": 11,
+          "skip": false
+        },
+        {
+          "title": "Case 12 - Verify that when rotation mode is activated, the center of the circle is at the center of rotation, the circle's diameter is equal to the height of the replaced bounding box",
+          "caseNumber": 12,
+          "skip": false
+        },
+        {
+          "title": "Case 13 - Verify that when rotation mode is activated in Macromolecule mode the following predefined angles is marked on the rotation circle: -90, -60, -45, -30, 0, 30, 45, 60, 90",
+          "caseNumber": 13,
+          "skip": false
+        },
+        {
+          "title": "Case 14 - Verify that when rotation starts in Macromolecule mode, the set of angles shown always covers the range [-90 - +90] relatively to the handle position",
+          "caseNumber": 14,
+          "skip": false
+        },
+        {
+          "title": "Case 15 - Verify that when rotation starts in Macromolecule mode, the current rotation angle is displayed at starting position",
+          "caseNumber": 15,
+          "skip": false
+        },
+        {
+          "title": "Case 16 - Verify ability to move the center of rotation in Macromolecules mode",
+          "caseNumber": 16,
+          "skip": false
+        }
+      ],
+      "testCount": 16,
+      "skipCount": 0,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 16,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 1 - Verify that rotation is enabled in Macromolecules mode when two monomers without any bonds between them are selected",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 2 - Verify that rotation is enabled in Macromolecules mode when two monomers with bonds between them are selected",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 3 - Verify that rotation is enabled in Macromolecules mode when more than two monomers are selected, regardless of whether they are connected by bonds",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 4 - Verify that rotation is not enabled in Macromolecules mode when only one monomer is selected",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 5 - Verify that a bounding box with a rotaition handle and a cross in the center of rotation appears when two or more monomers are selected in Macromolecules mode",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 6 - Verify that there are rotation, flip, delete buttons above the bounding box for selected monomers in Macromolecules mode",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Error: expect(locator).toBeVisible() failed"
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 7 - Verify that in Macromolecules mode rotation angles are displayed near the bounding box while rotating",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 8 - Verify that the default rotation angle is set to 15° in Macromolecules mode",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 9 - Verify that rotation mode gets activated in Macromolecules mode by pressing the left mouse button (a rotation handle turns blue, a cross turns blue, and a blue dashed line connectes them, the bounding box is replaced with a circle)",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 10 - Verify that when rotation mode is deactivated in Macromolecules mode, the selected fragment remains in its new position, rotation circle is replaced with the bounding box, that is redrawn at its initial position, and all labels of the rotated fragment are aligned with horizontal axis",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 11 - Verify that 'flip horizontally', 'flip vertically' and 'delete' buttons work as expected in Macromolecule mode",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 12 - Verify that when rotation mode is activated, the center of the circle is at the center of rotation, the circle's diameter is equal to the height of the replaced bounding box",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 13 - Verify that when rotation mode is activated in Macromolecule mode the following predefined angles is marked on the rotation circle: -90, -60, -45, -30, 0, 30, 45, 60, 90",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 14 - Verify that when rotation starts in Macromolecule mode, the set of angles shown always covers the range [-90 - +90] relatively to the handle position",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 15 - Verify that when rotation starts in Macromolecule mode, the current rotation angle is displayed at starting position",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      },
+      {
+        "title": "Introducing rotation of monomers in Macromolecules mode > Case 16 - Verify ability to move the center of rotation in Macromolecules mode",
+        "passed": 0,
+        "skipped": false,
+        "errors": [
+          "Test timeout of 60000ms exceeded."
+        ],
+        "outcome": "failed"
+      }
+    ],
+    "passed": 3,
+    "flaky": 0,
+    "failed": 13,
+    "skipped": 0
+  },
+  "totalMs": 392248
+}

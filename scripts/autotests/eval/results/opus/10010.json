@@ -1,0 +1,141 @@
+{
+  "issue": 10010,
+  "config": "opus",
+  "model": "claude-opus-5-5",
+  "base": "4b798014af9a73de22a6e19761558e7020650319",
+  "generation": {
+    "ok": true,
+    "costUsd": 1.3566694000000001,
+    "durationMs": 171091,
+    "turns": 29,
+    "models": [
+      "claude-opus-5-5"
+    ],
+    "testDataReport": ""
+  },
+  "files": [
+    "?? ketcher-autotests/tests/specs/Chromium-popup/Features/8464-Exiting-the-wizard-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "specs": [
+    "ketcher-autotests/tests/specs/Chromium-popup/Features/8464-Exiting-the-wizard-presets-in-the-monomer-creation-wizard.spec.ts"
+  ],
+  "expectedSpecName": "8464-Exiting-the-wizard-presets-in-the-monomer-creation-wizard.spec.ts",
+  "specNameMatches": true,
+  "checklist": 7,
+  "analysis": [
+    {
+      "spec": "ketcher-autotests/tests/specs/Chromium-popup/Features/8464-Exiting-the-wizard-presets-in-the-monomer-creation-wizard.spec.ts",
+      "tests": [
+        {
+          "title": "Case 1 - Verify success message text when creating a new preset via monomer creation wizard",
+          "caseNumber": 1,
+          "skip": false
+        },
+        {
+          "title": "Case 2 - Verify success message text when creating a preset from an alternative entry point into the wizard",
+          "caseNumber": 2,
+          "skip": false
+        },
+        {
+          "title": "Case 3 - Verify canceling preset creation does not show success message",
+          "caseNumber": 3,
+          "skip": false
+        },
+        {
+          "title": "Case 4 - Verify validation errors prevent showing preset success message",
+          "caseNumber": 4,
+          "skip": false
+        },
+        {
+          "title": "Case 5 - Verify non-preset monomer creation still uses monomer-specific success message",
+          "caseNumber": 5,
+          "skip": false
+        },
+        {
+          "title": "Case 6 - Verify success message is not duplicated for a single successful preset save",
+          "caseNumber": 6,
+          "skip": false
+        },
+        {
+          "title": "Case 7 - Verify success message appears after preset creation in environments with different UI shells (e.g., standalone vs embedded)",
+          "caseNumber": 7,
+          "skip": true
+        }
+      ],
+      "testCount": 7,
+      "skipCount": 1,
+      "casesMatchChecklist": true,
+      "wrongVersionLines": 0,
+      "versionLines": 7,
+      "wrongTestTaskLines": 0,
+      "rawSelectors": 0
+    }
+  ],
+  "typeErrors": [],
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "rules": []
+  },
+  "toolErrors": [],
+  "loadErrors": [],
+  "playwright": {
+    "runs": 3,
+    "tests": [
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 1 - Verify success message text when creating a new preset via monomer creation wizard",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 2 - Verify success message text when creating a preset from an alternative entry point into the wizard",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 3 - Verify canceling preset creation does not show success message",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 4 - Verify validation errors prevent showing preset success message",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 5 - Verify non-preset monomer creation still uses monomer-specific success message",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 6 - Verify success message is not duplicated for a single successful preset save",
+        "passed": 3,
+        "skipped": false,
+        "errors": [],
+        "outcome": "passed"
+      },
+      {
+        "title": "Exiting the wizard - presets in the monomer creation wizard:  > Case 7 - Verify success message appears after preset creation in environments with different UI shells (e.g., standalone vs embedded)",
+        "passed": 0,
+        "skipped": true,
+        "errors": [],
+        "outcome": "skipped"
+      }
+    ],
+    "passed": 6,
+    "flaky": 0,
+    "failed": 0,
+    "skipped": 1
+  },
+  "totalMs": 29205
+}

@@ -9,13 +9,16 @@
 //
 // Usage:
 //   node scripts/autotests/eval/run-eval.mjs --prepare
-//   node scripts/autotests/eval/run-eval.mjs [--plan]
+//   node scripts/autotests/eval/run-eval.mjs [--plan | --recheck]
 //     [--config <name>[,<name>...]] [--issue <N>[,<N>...]] [--runs <N>]
 //     [--set <file>] [--results <dir>] [--work-dir <dir>] [--ketcher-url <url>]
 //
 // --prepare makes the checkout at the set's base commit, installs and builds
 // it, and prints the command that serves the app. It runs no model.
 // --plan prints the issues and configurations it would run, and runs nothing.
+// --recheck runs no model: it checks again the files that an earlier run of
+// each configuration saved, for when the checks failed for a reason of their
+// own, such as a broken checkout.
 // The `reference` configuration runs no model: it checks the merged spec of
 // each issue on the same app, so a test that fails there is the app or the
 // machine, not the model.
@@ -29,7 +32,7 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir } from 'node:os';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -83,6 +86,7 @@ const HIDDEN_ENV = [
 
 const OPTIONS = {
   prepare: { type: 'boolean', default: false },
+  recheck: { type: 'boolean', default: false },
   plan: { type: 'boolean', default: false },
   config: { type: 'string' },
   issue: { type: 'string' },
@@ -91,7 +95,9 @@ const OPTIONS = {
   results: { type: 'string', default: join(HERE, 'results') },
   'work-dir': {
     type: 'string',
-    default: join(tmpdir(), 'ketcher-autotest-eval'),
+    // Not under the system temp folder, which macOS may clean while the
+    // checkout is in use.
+    default: join(homedir(), '.cache', 'ketcher-autotest-eval'),
   },
   'ketcher-url': { type: 'string', default: 'http://127.0.0.1:4002' },
 };
@@ -128,6 +134,7 @@ export function parseCommandLine(args, configs = CONFIGS) {
   }
   return {
     prepare: values.prepare,
+    recheck: values.recheck,
     plan: values.plan,
     configs: configs.filter((item) => names.includes(item.name)),
     issues,
@@ -541,6 +548,34 @@ function keepFiles(checkout, files, target) {
   }
 }
 
+/** The tools the checks run, from the checkout's own node_modules. */
+export const TOOLS = ['tsc', 'eslint', 'playwright'];
+
+/** @param {string} checkout @param {string} name one of TOOLS */
+export const toolPath = (checkout, name) =>
+  join(checkout, 'node_modules', '.bin', name);
+
+/** @param {string | undefined} text */
+const tailOf = (text) => (text ?? '').trim().slice(-300);
+
+/**
+ * The type errors of the given files, or a tool error when tsc did not get
+ * as far as checking types: a failed run with no TS error at all. Without
+ * this, a tsc that cannot start would read as a spec with no errors.
+ * @param {{ exitCode?: number | null, stdout?: string, stderr?: string }} run
+ * @param {string[]} files paths relative to the ketcher-autotests folder
+ */
+export function tscResult(run, files) {
+  const stdout = run.stdout ?? '';
+  if (run.exitCode !== 0 && !/ error TS\d+:/.test(stdout)) {
+    return {
+      typeErrors: null,
+      toolError: `tsc did not run: ${tailOf(run.stderr || stdout)}`,
+    };
+  }
+  return { typeErrors: tscErrors(stdout, files) };
+}
+
 /** The project a spec runs in, from its folder (testing.md, "Playwright Projects"). */
 const projectOf = (spec) =>
   spec.includes('/Chromium-popup/') ? POPUP_PROJECT : 'chromium';
@@ -574,23 +609,31 @@ async function checkSpecs({
     ...analyzeSpec(readFileSync(join(checkout, spec), 'utf8'), entry),
   }));
 
-  const tsc = await execa('npx', ['tsc', '--noEmit', '--pretty', 'false'], {
-    cwd: autotests,
-    reject: false,
-  });
-  const typeErrors = tscErrors(
-    tsc.stdout,
+  const toolErrors = [];
+  const tsc = await execa(
+    toolPath(checkout, 'tsc'),
+    ['--noEmit', '--pretty', 'false'],
+    { cwd: autotests, reject: false },
+  );
+  const { typeErrors, toolError } = tscResult(
+    tsc,
     codeFiles.map((file) => relative(AUTOTESTS, file)),
   );
+  if (toolError) {
+    toolErrors.push(toolError);
+  }
 
   // From the repository root, where the ESLint config is. That config
   // ignores spec files, so this lints the page objects and helpers only.
   const eslint = await execa(
-    'npx',
-    ['eslint', '--format', 'json', '--no-warn-ignored', ...codeFiles],
+    toolPath(checkout, 'eslint'),
+    ['--format', 'json', '--no-warn-ignored', ...codeFiles],
     { cwd: checkout, reject: false },
   );
   const lint = eslintCounts(eslint.stdout);
+  if (lint.errors < 0) {
+    toolErrors.push(`eslint did not run: ${tailOf(eslint.stderr)}`);
+  }
 
   const testEnv = {
     ...process.env,
@@ -608,10 +651,9 @@ async function checkSpecs({
     mkdirSync(reportDir, { recursive: true });
     // The first run writes the screenshots that have no baseline yet, so
     // later runs compare against them: a new spec has no baseline of its own.
-    await execa(
-      'npx',
+    const child = await execa(
+      toolPath(checkout, 'playwright'),
       [
-        'playwright',
         'test',
         ...local,
         ...projects.flatMap((project) => ['--project', project]),
@@ -628,23 +670,53 @@ async function checkSpecs({
     const report = existsSync(reportFile) ? readJson(reportFile) : undefined;
     const parsed = playwrightTests(report);
     if (!report) {
-      parsed.errors.push('no report: the run did not finish');
+      parsed.errors.push(
+        `no report: the run did not finish: ${tailOf(child.stderr)}`,
+      );
     }
     loadErrors.push(...parsed.errors.filter((e) => !loadErrors.includes(e)));
     runResults.push(parsed);
+  }
+  // The screenshots the first run wrote, kept for the hand judgement: the
+  // checkout is reset after the run.
+  for (const spec of specs) {
+    const snapshots = join(checkout, `${spec}-snapshots`);
+    if (existsSync(snapshots)) {
+      cpSync(snapshots, join(reportDir, '..', 'snapshots'), {
+        recursive: true,
+      });
+    }
   }
   return {
     analysis,
     typeErrors,
     lint,
+    toolErrors,
     loadErrors,
     playwright: combineRuns(runResults),
   };
 }
 
 /**
- * Runs one entry under one configuration and returns its result, or
- * `{ stopped }` when the account stopped the model run (see accountFailure).
+ * The files of a saved result, from its `files` lines ("<status> <path>").
+ * @param {string[]} lines
+ */
+export const savedFiles = (lines) =>
+  lines.map((line) => {
+    const space = line.indexOf(' ');
+    return { status: line.slice(0, space), path: line.slice(space + 1) };
+  });
+
+/** @param {{ status: string, path: string }[]} files */
+const specsOf = (files) =>
+  files
+    .filter((file) => file.status !== 'D' && file.path.endsWith('.spec.ts'))
+    .map((file) => file.path);
+
+/**
+ * Runs one entry under one configuration and returns its result,
+ * `{ stopped }` when the account stopped the model run (see accountFailure),
+ * or `{ skipped }` when --recheck has no earlier result to check.
  * @param {object} options
  * @param {any} options.entry
  * @param {EvalConfig} options.config
@@ -664,6 +736,26 @@ async function runEntry({ entry, config, base, checkout, template, settings }) {
     for (const path of entry.reference.remove) {
       rmSync(insideCheckout(checkout, path), { recursive: true, force: true });
     }
+  }
+  if (config.model && settings.recheck) {
+    const saved = resultPath(settings.resultsDir, config.name, entry.issue);
+    if (!existsSync(saved)) {
+      return { skipped: 'no saved result to check again' };
+    }
+    const earlier = readJson(saved);
+    generation = earlier.generation;
+    files = savedFiles(earlier.files);
+    const kept = join(outDir, 'files');
+    for (const file of files.filter((f) => f.status !== 'D')) {
+      const to = insideCheckout(checkout, file.path);
+      mkdirSync(dirname(to), { recursive: true });
+      cpSync(join(kept, file.path), to);
+    }
+    for (const file of files.filter((f) => f.status === 'D')) {
+      rmSync(insideCheckout(checkout, file.path), { force: true });
+    }
+    specs = specsOf(files);
+  } else if (config.model) {
     const child = await execa('claude', modelArgs(config.model), {
       cwd: checkout,
       env: modelEnv(process.env),
@@ -696,9 +788,7 @@ async function runEntry({ entry, config, base, checkout, template, settings }) {
       );
     files = (await changedFiles(checkout)).filter((f) => !removedByEval(f));
     keepFiles(checkout, files, join(outDir, 'files'));
-    specs = files
-      .filter((file) => file.status !== 'D' && file.path.endsWith('.spec.ts'))
-      .map((file) => file.path);
+    specs = specsOf(files);
   } else {
     specs = entry.reference.specs;
   }
@@ -762,13 +852,10 @@ async function prepare(settings, set) {
   for (const [command, args] of [
     ['npm', ['ci']],
     ['npm', ['run', 'build']],
-    ['npx', ['playwright', 'install', 'chromium']],
+    [toolPath(checkout, 'playwright'), ['install', 'chromium']],
   ]) {
     console.log(`$ ${command} ${args.join(' ')}`);
-    await execa(command, args, {
-      cwd: command === 'npx' ? join(checkout, AUTOTESTS) : checkout,
-      stdio: 'inherit',
-    });
+    await execa(command, args, { cwd: checkout, stdio: 'inherit' });
   }
   console.log(
     `Ready. Serve the app in another terminal and leave it running:\n  cd ${checkout} && npm run serve:standalone`,
@@ -776,8 +863,8 @@ async function prepare(settings, set) {
 }
 
 /**
- * Stops before any paid run when the checkout is not at the base commit or
- * the app does not answer.
+ * Stops before any paid run when the checkout is not at the base commit,
+ * lacks a tool the checks run, or the app does not answer.
  * @param {string} checkout
  * @param {string} base
  * @param {string} ketcherUrl
@@ -792,6 +879,12 @@ async function checkReady(checkout, base, ketcherUrl) {
       `The checkout is at ${stdout.trim()}, not at the base ${base}`,
     );
   }
+  const missing = TOOLS.filter((name) => !existsSync(toolPath(checkout, name)));
+  if (missing.length > 0) {
+    throw new Error(
+      `The checkout has no ${missing.join(', ')} in node_modules/.bin: run with --prepare again`,
+    );
+  }
   const url = `${ketcherUrl}/popup.html`;
   const response = await fetch(url).catch((error) => ({ ok: false, error }));
   if (!response.ok) {
@@ -799,6 +892,42 @@ async function checkReady(checkout, base, ketcherUrl) {
       `The app does not answer at ${url}: serve it first (see --prepare)`,
     );
   }
+}
+
+/**
+ * Whether a process with this ID still runs.
+ * @param {number} pid
+ */
+function isRunning(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error.code === 'EPERM';
+  }
+}
+
+/**
+ * Takes the lock of the checkout, so two runs do not reset each other's
+ * files. A lock whose process has ended is taken over.
+ * @param {string} path
+ * @param {{ pid?: number, running?: (pid: number) => boolean }} [options]
+ * @returns {string} the path, to remove when the run ends
+ */
+export function takeLock(
+  path,
+  { pid = process.pid, running = isRunning } = {},
+) {
+  if (existsSync(path)) {
+    const holder = Number(readFileSync(path, 'utf8'));
+    if (holder && holder !== pid && running(holder)) {
+      throw new Error(
+        `Another run (process ${holder}) is using the checkout. Wait for it to end.`,
+      );
+    }
+  }
+  writeFileSync(path, String(pid));
+  return path;
 }
 
 /** @param {string[]} args */
@@ -825,6 +954,7 @@ async function main(args) {
   const checkout = checkoutDir(settings.workDir);
   await checkReady(checkout, set.base, settings.ketcherUrl);
   const template = promptTemplate(readFileSync(WORKFLOW, 'utf8'));
+  const lock = takeLock(join(settings.workDir, 'run.lock'));
   try {
     for (const entry of entries) {
       for (const config of settings.configs) {
@@ -837,6 +967,10 @@ async function main(args) {
           template,
           settings,
         });
+        if (result.skipped) {
+          console.log(`#${entry.issue} ${config.name}: ${result.skipped}`);
+          continue;
+        }
         if (result.stopped) {
           console.log(
             `#${entry.issue} ${config.name}: ${result.stopped}\nThe account stopped the run: this result is not saved and the eval stops. Log in, or wait for the usage limit to reset, then rerun this configuration and the issues after it.`,
@@ -852,12 +986,14 @@ async function main(args) {
           `#${entry.issue} ${config.name}: ${result.specs.length} specs, ${result.analysis?.reduce((n, a) => n + a.testCount, 0) ?? 0}/${entry.checklist} tests, ${result.typeErrors?.length ?? '-'} type errors, ` +
             `${pw ? `${pw.passed} passed, ${pw.flaky} flaky, ${pw.failed} failed, ${pw.skipped} skipped` : 'not run'}` +
             `${result.generation ? `, $${result.generation.costUsd.toFixed(2)}, ${Math.round(result.generation.durationMs / 1000)} s` : ''}` +
-            `${result.generation?.error ? `, ERROR: ${result.generation.error}` : ''}`,
+            `${result.generation?.error ? `, ERROR: ${result.generation.error}` : ''}` +
+            `${result.toolErrors?.length ? `, CHECK FAILED: ${result.toolErrors.join('; ')}` : ''}`,
         );
       }
     }
   } finally {
     await resetAutotests(checkout, set.base);
+    rmSync(lock, { force: true });
   }
 }
 

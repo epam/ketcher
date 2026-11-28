@@ -24,6 +24,15 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { ToolName } from 'application/editor/tools/types';
 import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
 import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
+import {
+  EllipseShapeTool,
+  LineShapeTool,
+  RectangleShapeTool,
+} from 'application/editor/tools/StaticShape';
+import {
+  StaticImageTool,
+  StaticTextTool,
+} from 'application/editor/tools/StaticTextAndImage';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
@@ -36,6 +45,11 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.erase]: EraserTool,
   [ToolName.clear]: ClearTool,
   [ToolName.hand]: HandTool,
+  [ToolName.shapeEllipse]: EllipseShapeTool,
+  [ToolName.shapeRectangle]: RectangleShapeTool,
+  [ToolName.shapeLine]: LineShapeTool,
+  [ToolName.text]: StaticTextTool,
+  [ToolName.image]: StaticImageTool,
 };
 
 export * from './Tool';

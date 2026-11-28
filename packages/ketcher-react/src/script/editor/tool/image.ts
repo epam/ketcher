@@ -3,13 +3,16 @@ import {
   type ImageReferencePositionInfo,
   CoordinateTransformation,
   Scale,
-  Vec2,
+  type Vec2,
   fromImageCreation,
   KetcherLogger,
   Action,
   IMAGE_KEY,
   fromImageMove,
   fromImageResize,
+  IMAGE_VALIDATION_MESSAGES,
+  SUPPORTED_IMAGE_MIME_TYPES,
+  readImageFile,
 } from 'ketcher-core';
 import type { Tool } from './Tool';
 import type Editor from '../Editor';
@@ -17,15 +20,6 @@ import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';
 
 const TAG = 'tool/image.ts';
-const supportedMimes = ['png', 'svg+xml'];
-
-const supportedMimesForRegex = supportedMimes
-  .map((item) => item.replace('+', String.raw`\+`))
-  .join('|');
-
-const allowList = new RegExp(`^image/(${supportedMimesForRegex})$`);
-const MIN_DIMENSION_SIZE = 16;
-const MIN_SIZELESS_IMAGE_SRC_LENGTH = 320;
 
 interface DragContext {
   center: Vec2;
@@ -47,7 +41,7 @@ export class ImageTool implements Tool {
     uploader.style.display = 'none';
     uploader.id = ImageTool.INPUT_ID;
     uploader.type = 'file';
-    uploader.accept = supportedMimes.map((item) => `image/${item}`).join(',');
+    uploader.accept = SUPPORTED_IMAGE_MIME_TYPES.join(',');
     document.body.appendChild(uploader);
     return uploader;
   }
@@ -142,78 +136,34 @@ export class ImageTool implements Tool {
     return true;
   }
 
-  onFileUpload(clickPosition: Vec2): void {
-    const errorHandler = this.editor.errorHandler;
+  async onFileUpload(clickPosition: Vec2): Promise<void> {
     this.element.onchange = null;
     const file = this.element.files?.[0];
     if (!file) {
       return;
     }
 
-    const image = new Image();
-    const reader = new FileReader();
+    const result = await readImageFile(file);
+    this.resetElementValue();
 
-    if (!file.type || !allowList.exec(file.type)) {
-      const errorMessage = `Unsupported image type`;
-      KetcherLogger.error(`${TAG}:onFileUpload`, errorMessage);
-      if (errorHandler) {
-        errorHandler(errorMessage);
-      }
-
-      this.resetElementValue();
+    if ('error' in result) {
+      const errorMessage = IMAGE_VALIDATION_MESSAGES[result.error];
+      KetcherLogger.error(
+        `${TAG}:onFileUpload`,
+        errorMessage,
+        ...(result.cause === undefined ? [] : [result.cause]),
+      );
+      this.editor.errorHandler?.(errorMessage);
       return;
     }
 
-    reader.addEventListener('load', () => {
-      image.src = reader.result as string;
-    });
-
-    image.onload = () => {
-      this.resetElementValue();
-      const isValidSize =
-        image.width >= MIN_DIMENSION_SIZE && image.height >= MIN_DIMENSION_SIZE;
-      const isValidSizeless =
-        image.width === 0 &&
-        image.height === 0 &&
-        image.src.length >= MIN_SIZELESS_IMAGE_SRC_LENGTH;
-
-      if (!isValidSize && !isValidSizeless) {
-        const errorMessage = 'Image should be at least 16x16 pixels';
-        KetcherLogger.error(`${TAG}:onLoad`, errorMessage);
-        if (errorHandler) {
-          errorHandler(errorMessage);
-        }
-        return;
-      }
-
-      const halfSize = isValidSizeless
-        ? new Vec2(MIN_DIMENSION_SIZE, MIN_DIMENSION_SIZE)
-        : new Vec2(image.width / 2, image.height / 2);
-
-      const halfSizeScaled = Scale.canvasToModel(
-        halfSize,
-        this.editor.render.options,
-      );
-
-      this.editor.update(
-        fromImageCreation(
-          this.editor.render.ctab,
-          image.src,
-          clickPosition,
-          halfSizeScaled,
-        ),
-      );
-    };
-
-    image.onerror = (e) => {
-      this.resetElementValue();
-      const errorMessage = 'Cannot load image';
-      KetcherLogger.error(`${TAG}:onerror`, errorMessage, e);
-      if (errorHandler) {
-        errorHandler(errorMessage);
-      }
-    };
-
-    reader.readAsDataURL(file);
+    this.editor.update(
+      fromImageCreation(
+        this.editor.render.ctab,
+        result.dataUrl,
+        clickPosition,
+        Scale.canvasToModel(result.halfSizePx, this.editor.render.options),
+      ),
+    );
   }
 }

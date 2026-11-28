@@ -1,5 +1,6 @@
 import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { Image } from 'domain/entities/image';
 import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
@@ -178,5 +179,20 @@ describe('Struct.rescale', () => {
         expect(shapeDiagonal(struct)).toBeCloseTo(before, 6);
       },
     );
+  });
+});
+
+describe('Struct.scale with images', () => {
+  it('scales the image centre together with its size', () => {
+    const struct = new Struct();
+    const id = struct.images.add(
+      new Image('data:image/png;base64,AA==', new Vec2(2, 4), new Vec2(1, 1)),
+    );
+
+    struct.scale(2);
+
+    const image = struct.images.get(id);
+    expect(image?.center()).toEqual(new Vec2(4, 8));
+    expect(image?.getTopLeftPosition()).toEqual(new Vec2(2, 6));
   });
 });

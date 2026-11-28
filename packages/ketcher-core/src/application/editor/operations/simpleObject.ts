@@ -22,7 +22,9 @@ import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject, type ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
-import { getOrThrow, toFixed } from 'utilities';
+import { getOrThrow } from 'utilities';
+import { constrainToCircle } from 'domain/staticObjects/geometry';
+import type { ShapeGeometry } from 'domain/staticObjects/types';
 
 interface SimpleObjectAddData {
   id?: number;
@@ -182,152 +184,49 @@ export class SimpleObjectMove extends Base {
   }
 }
 
-interface SimpleObjectResizeData {
-  id: number;
-  d: Vec2;
-  current: Vec2;
-  anchor: Vec2;
-  noinvalidate: boolean;
-  toCircle: boolean;
-}
-
-function handleRectangleChangeWithAnchor(
-  item: SimpleObject,
-  anchor: Vec2,
-  current: Vec2,
-) {
-  const previousPos0 = item.pos[0].get_xy0();
-  const previousPos1 = item.pos[1].get_xy0();
-
-  if (toFixed(anchor.x) === toFixed(item.pos[1].x)) {
-    item.pos[1].x = anchor.x = current.x;
-    current.x = previousPos1.x;
-  }
-  if (toFixed(anchor.y) === toFixed(item.pos[1].y)) {
-    item.pos[1].y = anchor.y = current.y;
-    current.y = previousPos1.y;
-  }
-  if (toFixed(anchor.x) === toFixed(item.pos[0].x)) {
-    item.pos[0].x = anchor.x = current.x;
-    current.x = previousPos0.x;
-  }
-  if (toFixed(anchor.y) !== toFixed(item.pos[0].y)) {
-    return;
-  }
-
-  item.pos[0].y = anchor.y = current.y;
-  current.y = previousPos0.y;
-}
-
-export class SimpleObjectResize extends Base {
-  readonly data: SimpleObjectResizeData;
+export class SimpleObjectSetGeometry extends Base {
+  private previousGeometry: ShapeGeometry | null = null;
 
   constructor(
-    id: number,
-    d: Vec2,
-    current: Vec2,
-    anchor: Vec2,
-    shouldSkipInvalidation: boolean,
-    shouldConvertToCircle: boolean,
+    private readonly id: number,
+    private readonly geometry: ShapeGeometry,
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE);
-    this.data = {
-      id,
-      d,
-      current,
-      anchor,
-      noinvalidate: shouldSkipInvalidation,
-      toCircle: shouldConvertToCircle,
-    };
   }
 
   execute(restruct: ReStruct): void {
-    const struct = restruct.molecule;
-    const id = this.data.id;
-    const d = this.data.d;
-    const current = this.data.current;
     const item = getOrThrow(
-      struct.simpleObjects,
-      id,
-      `Simple object with id ${id} not found`,
+      restruct.molecule.simpleObjects,
+      this.id,
+      `Simple object with id ${this.id} not found`,
     );
-    const anchor = this.data.anchor;
-    if (item.mode === SimpleObjectMode.ellipse) {
-      if (anchor) {
-        handleRectangleChangeWithAnchor(item, anchor, current);
-      } else if (this.data.toCircle) {
-        const previousPos1 = item.pos[1].get_xy0();
-        const circlePoint = makeCircleFromEllipse(item.pos[0], current);
-        item.pos[1].x = circlePoint.x;
-        item.pos[1].y = circlePoint.y;
-        this.data.current = previousPos1;
-      } else {
-        const previousPos1 = item.pos[1].get_xy0();
-        item.pos[1].x = current.x;
-        item.pos[1].y = current.y;
-        this.data.current = previousPos1;
-      }
-    } else if (anchor && item.mode === SimpleObjectMode.line) {
-      const previousPos0 = item.pos[0].get_xy0();
-      const previousPos1 = item.pos[1].get_xy0();
-
-      if (
-        toFixed(anchor.x) === toFixed(item.pos[1].x) &&
-        toFixed(anchor.y) === toFixed(item.pos[1].y)
-      ) {
-        item.pos[1].x = anchor.x = current.x;
-        current.x = previousPos1.x;
-        item.pos[1].y = anchor.y = current.y;
-        current.y = previousPos1.y;
-      }
-
-      if (
-        toFixed(anchor.x) === toFixed(item.pos[0].x) &&
-        toFixed(anchor.y) === toFixed(item.pos[0].y)
-      ) {
-        item.pos[0].x = anchor.x = current.x;
-        current.x = previousPos0.x;
-        item.pos[0].y = anchor.y = current.y;
-        current.y = previousPos0.y;
-      }
-    } else if (anchor && item.mode === SimpleObjectMode.rectangle) {
-      handleRectangleChangeWithAnchor(item, anchor, current);
-    } else item.pos[1].add_(d);
-
-    getOrThrow(
-      restruct.simpleObjects,
-      id,
-      `ReSimpleObject with id ${id} not found`,
-    ).visel.translate(Scale.modelToCanvas(d, restruct.render.options));
-    this.data.d = d.negated();
-    if (!this.data.noinvalidate) {
-      Base.invalidateItem(restruct, 'simpleObjects', id, 1);
-    }
+    this.previousGeometry = item.geometry;
+    item.setGeometry(this.geometry);
+    Base.invalidateItem(restruct, 'simpleObjects', this.id, 1);
   }
 
   invert(): Base {
-    return new SimpleObjectResize(
-      this.data.id,
-      this.data.d,
-      this.data.current,
-      this.data.anchor,
-      this.data.noinvalidate,
-      this.data.toCircle,
-    );
+    if (!this.previousGeometry) {
+      throw new Error('SimpleObjectSetGeometry: cannot invert before execute');
+    }
+    return new SimpleObjectSetGeometry(this.id, this.previousGeometry);
   }
 
-  isDummy() {
-    const { d } = this.data;
-    return d.x === 0 && d.y === 0;
+  isDummy(restruct?: ReStruct) {
+    const item = restruct?.molecule.simpleObjects.get(this.id);
+    if (!item) {
+      return false;
+    }
+    const { start, end } = item.geometry;
+    return (
+      start.x === this.geometry.start.x &&
+      start.y === this.geometry.start.y &&
+      end.x === this.geometry.end.x &&
+      end.y === this.geometry.end.y
+    );
   }
 }
 
 export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
-  const diff = Vec2.diff(position1, position0);
-  const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y;
-  return new Vec2(
-    position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
-    position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
-    0,
-  );
+  return constrainToCircle(position0, position1);
 }

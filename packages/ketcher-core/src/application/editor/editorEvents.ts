@@ -1,4 +1,9 @@
 import { Subscription } from 'subscription';
+
+export interface OpenTextEditorPayload {
+  initialContent: string;
+  onApply: (content: string) => void;
+}
 import type {
   IRnaPreset,
   ToolEventHandlerName,
@@ -30,6 +35,7 @@ export interface IEditorEvents {
   openErrorModal: Subscription;
   openMonomerConnectionModal: Subscription;
   openInsertionConnectionModal: Subscription;
+  openTextEditor: Subscription<OpenTextEditorPayload>;
   createInsertionBondsViaModal: Subscription<CreateInsertionBondsViaModalPayload>;
   mouseOverPolymerBond: Subscription;
   mouseLeavePolymerBond: Subscription;
@@ -113,6 +119,7 @@ export const editorEvents: IEditorEvents = {
   openErrorModal: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
   openInsertionConnectionModal: new Subscription(),
+  openTextEditor: new Subscription<OpenTextEditorPayload>(),
   createInsertionBondsViaModal:
     new Subscription<CreateInsertionBondsViaModalPayload>(),
   mouseOverPolymerBond: new Subscription(),

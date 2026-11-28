@@ -41,6 +41,8 @@ import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import type { CoreStaticObject } from 'domain/entities/CoreStaticObject';
+import { StaticObjectRenderer } from 'application/render/renderers/StaticObjectRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
@@ -587,6 +589,14 @@ export class RenderersManager {
 
   public deleteRxnPlus(rxnPlus: RxnPlus) {
     rxnPlus.renderer?.remove();
+  }
+
+  public addStaticObject(staticObject: CoreStaticObject) {
+    new StaticObjectRenderer(staticObject).show();
+  }
+
+  public deleteStaticObject(staticObject: CoreStaticObject) {
+    staticObject.renderer?.remove();
   }
 
   public addStereoFlag(stereoFlag: CoreStereoFlag) {

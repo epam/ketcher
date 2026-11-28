@@ -20,6 +20,7 @@ export * from './domain/serializers';
 export * from './domain/services';
 export * from './domain/helpers';
 export * from './domain/types';
+export * from './domain/staticObjects';
 
 export * from './infrastructure/services';
 

@@ -21,6 +21,11 @@ export interface ConfirmationDialogOnlyProps {
   onConfirm?: () => void;
 }
 
+export interface TextEditorModalOnlyProps {
+  initialContent?: string;
+  onApply?: (content: string) => void;
+}
+
 export interface RequiredModalProps {
   onClose: () => void;
   isModalOpen: boolean;
@@ -34,8 +39,12 @@ export type InsertionConnectionProps = InsertionConnectionOnlyProps &
 export type ConfirmationDialogProps = ConfirmationDialogOnlyProps &
   RequiredModalProps;
 
+export type TextEditorModalProps = TextEditorModalOnlyProps &
+  RequiredModalProps;
+
 export type AdditionalModalProps = Partial<
   MonomerConnectionProps &
     ConfirmationDialogProps &
-    InsertionConnectionOnlyProps
+    InsertionConnectionOnlyProps &
+    TextEditorModalOnlyProps
 >;

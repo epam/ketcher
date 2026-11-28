@@ -19,6 +19,7 @@ import { TextCreate, TextDelete, TextUpdate } from '../operations';
 import { Action } from './action';
 import type { ReStruct } from '../../render';
 import type { Vec2 } from 'domain/entities/vec2';
+import { resolveTextEdit } from 'domain/staticObjects/text';
 
 export function fromTextCreation(
   restruct: ReStruct,
@@ -47,4 +48,36 @@ export function fromTextDeletion(restruct: ReStruct, id: number) {
   action.addOp(new TextDelete(id));
 
   return action.perform(restruct);
+}
+
+export function fromTextEdit(
+  restruct: ReStruct,
+  edit: {
+    id: number | null;
+    originalContent: string;
+    nextContent: string;
+    position?: Vec2;
+    pos?: Array<Vec2>;
+  },
+): Action | null {
+  const { id, originalContent, nextContent, position, pos } = edit;
+  const resolution = resolveTextEdit({
+    isNew: id === null,
+    originalContent,
+    nextContent,
+  });
+
+  if (resolution === 'create' && position && pos) {
+    return fromTextCreation(restruct, nextContent, position, pos);
+  }
+  if (id === null) {
+    return null;
+  }
+  if (resolution === 'delete') {
+    return fromTextDeletion(restruct, id);
+  }
+  if (resolution === 'update') {
+    return fromTextUpdating(restruct, id, nextContent);
+  }
+  return null;
 }

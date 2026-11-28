@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Handle,
   type ReStruct,
   type ImageReferencePositionInfo,
   type RenderOptions,
@@ -49,6 +50,7 @@ type FindMapFn = (
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
+const SIMPLE_OBJECT_HIT_TOLERANCE = 0.3;
 const SELECTION_DISTANCE_COEFFICIENT_FOR_ATTACHMENT_GROUP = 0.5;
 
 const findMaps: Record<string, FindMapFn> = {
@@ -130,24 +132,20 @@ function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
 }
 
 function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
-  let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
-  let ret: ClosestReturnType = null;
+  let ret: ClosestReturnType<Handle> = null;
 
   restruct.simpleObjects.forEach((simpleObject, id) => {
-    const dist = simpleObject.calcDistance(
+    const hit = simpleObject.hitTest(
       pos,
       restruct.render.options.microModeScale,
+      SIMPLE_OBJECT_HIT_TOLERANCE,
     );
 
-    if (dist.minDist >= 0.3 || (ret && dist.minDist >= minDist)) {
+    if (!hit || (ret && hit.distance >= ret.dist)) {
       return;
     }
 
-    minDist = dist.minDist;
-    refPoint = dist.refPoint;
-
-    ret = { id, dist: minDist, ref: refPoint };
+    ret = { id, dist: hit.distance, ref: hit.handle };
   });
   return ret;
 }

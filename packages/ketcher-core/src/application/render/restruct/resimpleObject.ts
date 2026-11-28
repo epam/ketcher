@@ -28,11 +28,13 @@ import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
+import {
+  getHandles,
+  getHandlesOnOutline,
+  hitTest as hitTestShape,
+} from 'domain/staticObjects/geometry';
+import type { ShapeGeometry } from 'domain/staticObjects/types';
 
-interface MinDistanceWithReferencePoint {
-  minDist: number;
-  refPoint: Vec2 | null;
-}
 interface StyledPath {
   path: Element;
   stylesApplied: boolean;
@@ -55,182 +57,27 @@ class ReSimpleObject extends ReObject {
     this.item = simpleObject;
   }
 
-  calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {
-    const point: Vec2 = new Vec2(p.x, p.y);
-
-    const distRef: MinDistanceWithReferencePoint =
-      this.getReferencePointDistance(p);
-    const item = this.item;
-    const mode = item.mode;
-    const pos = item.pos;
-    let dist: number;
-
-    switch (mode) {
-      case SimpleObjectMode.ellipse: {
-        const rad = Vec2.diff(pos[1], pos[0]);
-        const rx = rad.x / 2;
-        const ry = rad.y / 2;
-        const center = Vec2.sum(pos[0], new Vec2(rx, ry));
-        const pointToCenter = Vec2.diff(point, center);
-        // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
-        // in such case distance need to be calculated as a distance between line and current point
-        dist =
-          rx === 0 || ry === 0
-            ? point.calculateDistanceToLine([pos[0], pos[1]])
-            : Math.abs(
-                1 -
-                  (pointToCenter.x * pointToCenter.x) / (rx * rx) -
-                  (pointToCenter.y * pointToCenter.y) / (ry * ry),
-              );
-        break;
-      }
-      case SimpleObjectMode.rectangle: {
-        const topX = Math.min(pos[0].x, pos[1].x);
-        const topY = Math.min(pos[0].y, pos[1].y);
-        const bottomX = Math.max(pos[0].x, pos[1].x);
-        const bottomY = Math.max(pos[0].y, pos[1].y);
-
-        const distances: Array<number> = [];
-
-        if (point.x >= topX && point.x <= bottomX) {
-          if (point.y < topY) {
-            distances.push(topY - point.y);
-          } else if (point.y > bottomY) {
-            distances.push(point.y - bottomY);
-          } else {
-            distances.push(point.y - topY, bottomY - point.y);
-          }
-        }
-        if (point.x < topX && point.y < topY) {
-          distances.push(Vec2.dist(new Vec2(topX, topY), point));
-        }
-        if (point.x > bottomX && point.y > bottomY) {
-          distances.push(Vec2.dist(new Vec2(bottomX, bottomY), point));
-        }
-        if (point.x < topX && point.y > bottomY) {
-          distances.push(Vec2.dist(new Vec2(topX, bottomY), point));
-        }
-        if (point.x > bottomX && point.y < topY) {
-          distances.push(Vec2.dist(new Vec2(bottomX, topY), point));
-        }
-        if (point.y >= topY && point.y <= bottomY) {
-          if (point.x < topX) {
-            distances.push(topX - point.x);
-          } else if (point.x > bottomX) {
-            distances.push(point.x - bottomX);
-          } else {
-            distances.push(point.x - topX, bottomX - point.x);
-          }
-        }
-        dist = Math.min(...distances);
-        break;
-      }
-      case SimpleObjectMode.line: {
-        dist = point.calculateDistanceToLine([pos[0], pos[1]]);
-        break;
-      }
-
-      default: {
-        throw new Error('Unsupported shape type');
-      }
-    }
-
-    const refPoint: Vec2 | null =
-      distRef.minDist <= 8 / s ? distRef.refPoint : null;
-    // distance is a smallest between dist to figure and it's reference points
-    dist = Math.min(distRef.minDist, dist);
-    return { minDist: dist, refPoint };
+  private get geometry(): ShapeGeometry {
+    return {
+      kind: this.item.mode,
+      start: this.item.pos[0],
+      end: this.item.pos[1],
+    };
   }
 
-  getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const dist: Array<MinDistanceWithReferencePoint> = [];
-    const refPoints = this.getReferencePoints();
-    refPoints.forEach((rp) => {
-      dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
+  hitTest(point: Vec2, scale: number, outlineTolerance: number) {
+    return hitTestShape(this.geometry, point, {
+      outline: outlineTolerance,
+      handle: 8 / scale,
     });
-
-    const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) => (acc.minDist < current.minDist ? acc : current),
-      { minDist: Infinity, refPoint: null },
-    );
-
-    return minDist;
   }
 
   getReferencePoints(): Array<Vec2> {
-    const refPoints: Array<Vec2> = [];
-    switch (this.item.mode) {
-      case SimpleObjectMode.ellipse:
-      case SimpleObjectMode.rectangle: {
-        const p0: Vec2 = new Vec2(
-          Math.min(this.item.pos[0].x, this.item.pos[1].x),
-          Math.min(this.item.pos[0].y, this.item.pos[1].y),
-        );
-        const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
-        const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
-
-        refPoints.push(
-          new Vec2(p0.x + 0.5 * w, p0.y),
-          new Vec2(p0.x + w, p0.y + 0.5 * h),
-          new Vec2(p0.x + 0.5 * w, p0.y + h),
-          new Vec2(p0.x, p0.y + 0.5 * h),
-          p0,
-          new Vec2(p0.x, p0.y + h),
-          new Vec2(p0.x + w, p0.y + h),
-          new Vec2(p0.x + w, p0.y),
-        );
-        break;
-      }
-      case SimpleObjectMode.line: {
-        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
-        break;
-      }
-
-      default: {
-        throw new Error('Unsupported shape type');
-      }
-    }
-    return refPoints;
+    return [...getHandles(this.geometry).values()];
   }
 
   getReferencePointsOnObject(): Array<Vec2> {
-    const refPoints: Array<Vec2> = [];
-    switch (this.item.mode) {
-      case SimpleObjectMode.ellipse:
-      case SimpleObjectMode.rectangle: {
-        const p0: Vec2 = new Vec2(
-          Math.min(this.item.pos[0].x, this.item.pos[1].x),
-          Math.min(this.item.pos[0].y, this.item.pos[1].y),
-        );
-        const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
-        const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
-
-        refPoints.push(
-          new Vec2(p0.x + 0.5 * w, p0.y),
-          new Vec2(p0.x + w, p0.y + 0.5 * h),
-          new Vec2(p0.x + 0.5 * w, p0.y + h),
-          new Vec2(p0.x, p0.y + 0.5 * h),
-        );
-        if (this.item.mode === SimpleObjectMode.rectangle) {
-          refPoints.push(
-            p0,
-            new Vec2(p0.x, p0.y + h),
-            new Vec2(p0.x + w, p0.y + h),
-            new Vec2(p0.x + w, p0.y),
-          );
-        }
-        break;
-      }
-      case SimpleObjectMode.line: {
-        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
-        break;
-      }
-
-      default: {
-        throw new Error('Unsupported shape type');
-      }
-    }
-    return refPoints;
+    return [...getHandlesOnOutline(this.geometry).values()];
   }
 
   getBorderHoverPath(path: Element, render: Render) {

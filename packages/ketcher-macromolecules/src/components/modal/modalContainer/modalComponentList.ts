@@ -21,6 +21,7 @@ import { MonomerConnection } from 'components/modal/monomerConnection';
 import { InsertionConnection } from 'components/modal/insertionConnection';
 import { ConfirmationDialog } from 'components/modal/ConfirmationDialog';
 import { SettingsPanelAdapter } from 'components/modal/Settings';
+import { TextEditorModal } from 'components/modal/TextEditorModal';
 import { ModalName } from 'state/modal';
 
 export const modalComponentList: Record<
@@ -33,6 +34,7 @@ export const modalComponentList: Record<
   | typeof InsertionConnection
   | typeof ConfirmationDialog
   | typeof SettingsPanelAdapter
+  | typeof TextEditorModal
 > = {
   open: Open,
   save: Save,
@@ -42,4 +44,5 @@ export const modalComponentList: Record<
   insertionConnection: InsertionConnection,
   confirmationDialog: ConfirmationDialog,
   settings: SettingsPanelAdapter,
+  textEditor: TextEditorModal,
 };

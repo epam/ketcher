@@ -137,6 +137,15 @@ import {
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import {
+  type StaticObjectContent,
+  CoreStaticObject,
+} from 'domain/entities/CoreStaticObject';
+import {
+  StaticObjectAddOperation,
+  StaticObjectContentOperation,
+  StaticObjectDeleteOperation,
+} from 'domain/entities/CoreStaticObjectOperations';
 import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
 import {
   StereoFlagAddOperation,
@@ -225,6 +234,7 @@ export class DrawingEntitiesManager {
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
+  public staticObjects: Map<number, CoreStaticObject> = new Map();
   public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
@@ -351,6 +361,7 @@ export class DrawingEntitiesManager {
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
       ...(this.stereoFlags as Map<number, DrawingEntity>),
+      ...(this.staticObjects as Map<number, DrawingEntity>),
     ];
   }
 
@@ -507,6 +518,8 @@ export class DrawingEntitiesManager {
       return this.deleteRxnPlus(drawingEntity);
     } else if (drawingEntity instanceof CoreStereoFlag) {
       return this.deleteStereoFlag(drawingEntity);
+    } else if (drawingEntity instanceof CoreStaticObject) {
+      return this.deleteStaticObject(drawingEntity);
     } else {
       return new Command();
     }
@@ -671,6 +684,7 @@ export class DrawingEntitiesManager {
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
       ...this.stereoFlags.values(),
+      ...this.staticObjects.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -2405,6 +2419,9 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.rxnArrows = new Pool();
     this.micromoleculesHiddenEntities.rxnPluses = new Pool();
     this.micromoleculesHiddenEntities.multitailArrows = new Pool();
+    this.micromoleculesHiddenEntities.simpleObjects = new Pool();
+    this.micromoleculesHiddenEntities.texts = new Pool();
+    this.micromoleculesHiddenEntities.images = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -2591,6 +2608,20 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.rxnPluses.set(addedPlus.id, addedPlus);
     });
 
+    this.staticObjects.forEach((staticObject) => {
+      const staticObjectAddCommand =
+        targetDrawingEntitiesManager.addStaticObject(staticObject.content);
+      const addedStaticObject = (
+        staticObjectAddCommand.operations[0] as StaticObjectAddOperation
+      ).staticObject;
+
+      command.merge(staticObjectAddCommand);
+      mergedDrawingEntities.staticObjects.set(
+        addedStaticObject.id,
+        addedStaticObject,
+      );
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -2706,6 +2737,8 @@ export class DrawingEntitiesManager {
           entity.initiallySelected,
           entity,
         );
+      } else if (entity instanceof CoreStaticObject) {
+        filteredDrawingEntitiesManager.addStaticObjectModelChange(entity);
       }
     });
 
@@ -2782,6 +2815,11 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addRxnPlus(rxnPlus);
     });
 
+    this.staticObjects.forEach((staticObject) => {
+      editor.renderersContainer.deleteStaticObject(staticObject);
+      editor.renderersContainer.addStaticObject(staticObject);
+    });
+
     this.sgroups.forEach((sgroup) => {
       editor.renderersContainer.deleteSGroup(sgroup);
       editor.renderersContainer.addSGroup(sgroup);
@@ -2839,6 +2877,10 @@ export class DrawingEntitiesManager {
 
     this.rxnPluses.forEach((rxnPlus) => {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
+    });
+
+    this.staticObjects.forEach((staticObject) => {
+      editor.renderersContainer.deleteStaticObject(staticObject);
     });
 
     this.stereoFlags.forEach((stereoFlag) => {
@@ -4385,6 +4427,69 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(operation);
+
+    return command;
+  }
+
+  public addStaticObjectModelChange(staticObject: CoreStaticObject) {
+    this.staticObjects.set(staticObject.id, staticObject);
+
+    return staticObject;
+  }
+
+  private deleteStaticObjectModelChange(staticObject: CoreStaticObject) {
+    this.staticObjects.delete(staticObject.id);
+  }
+
+  public addStaticObject(
+    content: StaticObjectContent,
+    initiallySelected?: initiallySelectedType,
+  ) {
+    const staticObject = new CoreStaticObject(
+      content,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    const command = new Command();
+
+    command.addOperation(
+      new StaticObjectAddOperation(
+        (existing?: CoreStaticObject) =>
+          this.addStaticObjectModelChange(existing ?? staticObject),
+        this.deleteStaticObjectModelChange.bind(this),
+      ),
+    );
+
+    return command;
+  }
+
+  public deleteStaticObject(staticObject: CoreStaticObject) {
+    const command = new Command();
+
+    command.addOperation(
+      new StaticObjectDeleteOperation(
+        staticObject,
+        this.deleteStaticObjectModelChange.bind(this),
+        this.addStaticObjectModelChange.bind(this),
+      ),
+    );
+
+    return command;
+  }
+
+  public updateStaticObjectContent(
+    staticObject: CoreStaticObject,
+    previousContent: StaticObjectContent,
+    nextContent: StaticObjectContent,
+  ) {
+    const command = new Command();
+
+    command.addOperation(
+      new StaticObjectContentOperation(
+        staticObject,
+        previousContent,
+        nextContent,
+      ),
+    );
 
     return command;
   }

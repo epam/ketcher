@@ -19,6 +19,7 @@ import {
   type initiallySelectedType,
   BaseMicromoleculeEntity,
 } from 'domain/entities/BaseMicromoleculeEntity';
+import type { ShapeGeometry } from 'domain/staticObjects/types';
 
 export enum SimpleObjectMode {
   ellipse = 'ellipse',
@@ -48,6 +49,14 @@ export class SimpleObject extends BaseMicromoleculeEntity {
     }
 
     this.mode = attributes?.mode ?? SimpleObjectMode.line;
+  }
+
+  get geometry(): ShapeGeometry {
+    return { kind: this.mode, start: this.pos[0], end: this.pos[1] };
+  }
+
+  setGeometry(geometry: ShapeGeometry): void {
+    this.pos = [new Vec2(geometry.start), new Vec2(geometry.end)];
   }
 
   clone(): SimpleObject {

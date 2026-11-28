@@ -19,9 +19,7 @@ import {
   type Vec2,
   Action,
   fromMultipleMove,
-  fromTextCreation,
-  fromTextDeletion,
-  fromTextUpdating,
+  fromTextEdit,
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
@@ -144,16 +142,15 @@ function propsDialog(
 
   void res
     .then(({ content }) => {
-      if (!id && id !== 0 && content && position && pos) {
-        editor.update(
-          fromTextCreation(editor.render.ctab, content, position, pos),
-        );
-      } else if (id !== null && id !== undefined) {
-        if (!content) {
-          editor.update(fromTextDeletion(editor.render.ctab, id));
-        } else if (content !== origilContent) {
-          editor.update(fromTextUpdating(editor.render.ctab, id, content));
-        }
+      const action = fromTextEdit(editor.render.ctab, {
+        id: id ?? null,
+        originalContent: origilContent,
+        nextContent: content ?? '',
+        position,
+        pos,
+      });
+      if (action) {
+        editor.update(action);
       }
     })
     .catch((error) => {

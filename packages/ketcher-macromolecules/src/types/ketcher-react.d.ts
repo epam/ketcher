@@ -66,6 +66,16 @@ declare module 'ketcher-react' {
   }
   export const SettingsPanel: React.ComponentType<SettingsPanelProps>;
 
+  export interface TextEditorDialogProps {
+    initialContent: string;
+    onApply: (content: string) => void;
+    onCancel: () => void;
+    isValid?: () => boolean;
+    className?: string;
+  }
+
+  export const TextEditorDialog: React.ComponentType<TextEditorDialogProps>;
+
   export interface ManageSettingsMenuProps {
     onResetToDefault: () => void;
     onResetToACS: () => void;
